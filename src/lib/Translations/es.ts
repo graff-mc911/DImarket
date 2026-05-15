@@ -790,4 +790,17 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.success.passwordChanged': 'Contrasena cambiada correctamente.',
   'settings.confirm.deleteAccount':
     'Estas seguro de que quieres eliminar tu cuenta? Esta accion no se puede deshacer.',
+    'home.howItWorksTitle': 'Cómo funciona',
+  'home.howItWorksText': 'Tres pasos simples para encontrar un profesional o conseguir trabajos',
+  'home.howStep1Title': 'Crear cuenta',
+  'home.howStep1Text': 'Elige tu rol: cliente, profesional o empresa. Completa tu perfil con descripción y fotos de trabajos.',
+  'home.howStep2Title': 'Buscar o publicar',
+  'home.howStep2Text': 'Los clientes publican solicitudes. Los profesionales encuentran trabajos y responden directamente.',
+  'home.howStep3Title': 'Acordar directamente',
+  'home.howStep3Text': 'Comunícate mediante el chat integrado sin intermediarios. Deja reseñas después del trabajo.',
+  'home.statsProfessionals': 'profesionales',
+  'home.statsListings': 'anuncios activos',
+  'home.statsLanguages': 'idiomas de interfaz',
+  'professional.featured': 'Destacado',
+  'professional.verified': 'Verificado',
 }
