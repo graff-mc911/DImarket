@@ -535,7 +535,6 @@ export const zhTranslations: Partial<Record<TranslationKey, string>> = {
   'ads.label': '广告',
   'ads.visit': '访问',
   'common.required': '必填',
-  'footer.tagline': '连接客户与专业人士',
 
   // Contact та Footer ключі
   'contact.title': '联系我们',
