@@ -819,4 +819,17 @@ export const csTranslations: Partial<Record<TranslationKey, string>> = {
     'Heslo bylo uspesne zmeneno!',
   'settings.confirm.deleteAccount':
     'Opravdu chcete smazat svuj ucet? Tuto akci nelze vratit zpet.',
+  'home.howItWorksTitle': 'Jak to funguje',
+'home.howItWorksText': 'Tři jednoduché kroky k nalezení odborníka nebo získání zakázek',
+'home.howStep1Title': 'Vytvořit účet',
+'home.howStep1Text': 'Vyberte svou roli: klient, odborník nebo firma. Vyplňte profil popisem a fotografiemi práce.',
+'home.howStep2Title': 'Najít nebo zveřejnit',
+'home.howStep2Text': 'Klienti zveřejňují poptávky. Odborníci nacházejí zakázky a odpovídají přímo.',
+'home.howStep3Title': 'Domluvit se přímo',
+'home.howStep3Text': 'Komunikujte přes integrovaný chat bez prostředníků. Po práci zanechte hodnocení.',
+'home.statsProfessionals': 'odborníků',
+'home.statsListings': 'aktivních inzerátů',
+'home.statsLanguages': 'jazyků rozhraní',
+'professional.featured': 'Doporučený',
+'professional.verified': 'Ověřený',
 }
