@@ -821,4 +821,17 @@ export const roTranslations: Partial<Record<TranslationKey, string>> = {
     'Parola a fost schimbata cu succes!',
   'settings.confirm.deleteAccount':
     'Sigur vrei sa iti stergi contul? Aceasta actiune nu poate fi anulata.',
+  'home.howItWorksTitle': 'Cum funcționează',
+'home.howItWorksText': 'Trei pași simpli pentru a găsi un profesionist sau a obține lucrări',
+'home.howStep1Title': 'Creează cont',
+'home.howStep1Text': 'Alege rolul tău: client, profesionist sau companie. Completează profilul cu descriere și fotografii ale lucrărilor.',
+'home.howStep2Title': 'Găsește sau publică',
+'home.howStep2Text': 'Clienții publică cereri. Profesioniștii găsesc lucrări și răspund direct.',
+'home.howStep3Title': 'Stabilește direct',
+'home.howStep3Text': 'Comunică prin chatul integrat fără intermediari. Lasă recenzii după lucrare.',
+'home.statsProfessionals': 'profesioniști',
+'home.statsListings': 'anunțuri active',
+'home.statsLanguages': 'limbi interfață',
+'professional.featured': 'Recomandat',
+'professional.verified': 'Verificat',
 }
