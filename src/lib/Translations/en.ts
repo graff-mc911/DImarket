@@ -712,6 +712,19 @@ export const enTranslations = {
   'advertising.geo.noRegions': 'No regions selected',
   'advertising.geo.noCities': 'No cities selected',
   'advertising.geo.citiesCount': 'cities',
+    'home.howItWorksTitle': 'How it works',
+  'home.howItWorksText': 'Three simple steps to find a professional or get jobs',
+  'home.howStep1Title': 'Create an account',
+  'home.howStep1Text': 'Choose your role: client, professional, or company. Complete your profile with description and work photos.',
+  'home.howStep2Title': 'Find or post',
+  'home.howStep2Text': 'Clients post job requests. Professionals find jobs and respond directly.',
+  'home.howStep3Title': 'Agree directly',
+  'home.howStep3Text': 'Communicate through built-in chat without intermediaries. Leave reviews after the job.',
+  'home.statsProfessionals': 'professionals',
+  'home.statsListings': 'active listings',
+  'home.statsLanguages': 'interface languages',
+  'professional.featured': 'Featured',
+  'professional.verified': 'Verified',
 
 } as const
 
