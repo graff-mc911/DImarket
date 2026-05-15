@@ -815,4 +815,17 @@ export const bgTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.success.passwordChanged': 'Паролата е сменена успешно!',
   'settings.confirm.deleteAccount':
     'Сигурен ли си, че искаш да изтриеш акаунта си? Това действие е необратимо.',
+  'home.howItWorksTitle': 'Как работи',
+'home.howItWorksText': 'Три лесни стъпки за намиране на специалист или получаване на поръчки',
+'home.howStep1Title': 'Създайте акаунт',
+'home.howStep1Text': 'Изберете роля: клиент, специалист или фирма. Попълнете профила с описание и снимки на работа.',
+'home.howStep2Title': 'Намерете или публикувайте',
+'home.howStep2Text': 'Клиентите публикуват заявки. Специалистите намират работа и отговарят директно.',
+'home.howStep3Title': 'Уговорете се директно',
+'home.howStep3Text': 'Комуникирайте чрез вградения чат без посредници. Оставяйте отзиви след работа.',
+'home.statsProfessionals': 'специалисти',
+'home.statsListings': 'активни обяви',
+'home.statsLanguages': 'езици на интерфейса',
+'professional.featured': 'Препоръчан',
+'professional.verified': 'Потвърден',
 }
