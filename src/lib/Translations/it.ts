@@ -812,4 +812,17 @@ export const itTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.success.passwordChanged': 'Password cambiata con successo!',
   'settings.confirm.deleteAccount':
     'Sei sicuro di voler eliminare il tuo account? Questa azione non puo essere annullata.',
+    'home.howItWorksTitle': 'Come funziona',
+  'home.howItWorksText': 'Tre semplici passi per trovare un professionista o ottenere lavori',
+  'home.howStep1Title': 'Crea un account',
+  'home.howStep1Text': 'Scegli il tuo ruolo: cliente, professionista o azienda. Completa il profilo con descrizione e foto dei lavori.',
+  'home.howStep2Title': 'Trova o pubblica',
+  'home.howStep2Text': 'I clienti pubblicano richieste. I professionisti trovano lavori e rispondono direttamente.',
+  'home.howStep3Title': 'Accordati direttamente',
+  'home.howStep3Text': 'Comunica tramite chat integrata senza intermediari. Lascia recensioni dopo il lavoro.',
+  'home.statsProfessionals': 'professionisti',
+  'home.statsListings': 'annunci attivi',
+  'home.statsLanguages': 'lingue dell’interfaccia',
+  'professional.featured': 'In evidenza',
+  'professional.verified': 'Verificato',
 }
