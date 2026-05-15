@@ -789,4 +789,17 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.success.passwordChanged': 'Haslo zostalo pomyslnie zmienione!',
   'settings.confirm.deleteAccount':
     'Czy na pewno chcesz usunac konto? Tej operacji nie mozna cofnac.',
+    'home.howItWorksTitle': 'Jak to działa',
+  'home.howItWorksText': 'Trzy proste kroki, aby znaleźć specjalistę lub zdobyć zlecenia',
+  'home.howStep1Title': 'Utwórz konto',
+  'home.howStep1Text': 'Wybierz rolę: klient, specjalista lub firma. Uzupełnij profil opisem i zdjęciami prac.',
+  'home.howStep2Title': 'Znajdź lub opublikuj',
+  'home.howStep2Text': 'Klienci publikują zlecenia. Specjaliści znajdują pracę i odpowiadają bezpośrednio.',
+  'home.howStep3Title': 'Ustal bezpośrednio',
+  'home.howStep3Text': 'Komunikuj się przez wbudowany czat bez pośredników. Zostaw opinie po pracy.',
+  'home.statsProfessionals': 'specjalistów',
+  'home.statsListings': 'aktywnych ogłoszeń',
+  'home.statsLanguages': 'języków interfejsu',
+  'professional.featured': 'Polecany',
+  'professional.verified': 'Zweryfikowany',
 }
