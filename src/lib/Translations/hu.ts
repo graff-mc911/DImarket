@@ -816,4 +816,17 @@ export const huTranslations: Partial<Record<TranslationKey, string>> = {
     'A jelszo sikeresen megvaltozott!',
   'settings.confirm.deleteAccount':
     'Biztosan torolni szeretned a fiokodat? Ez a muvelet nem vonhato vissza.',
+    'home.howItWorksTitle': 'Hogyan működik',
+  'home.howItWorksText': 'Három egyszerű lépés szakember kereséséhez vagy munkák megszerzéséhez',
+  'home.howStep1Title': 'Fiók létrehozása',
+  'home.howStep1Text': 'Válassza ki a szerepét: ügyfél, szakember vagy cég. Töltse ki profilját leírással és munkafotókkal.',
+  'home.howStep2Title': 'Keressen vagy tegyen közzé',
+  'home.howStep2Text': 'Az ügyfelek munkakéréseket tesznek közzé. A szakemberek megtalálják a munkákat és közvetlenül válaszolnak.',
+  'home.howStep3Title': 'Egyezzen meg közvetlenül',
+  'home.howStep3Text': 'Kommunikáljon a beépített chaten közvetítők nélkül. A munka után hagyjon értékelést.',
+  'home.statsProfessionals': 'szakember',
+  'home.statsListings': 'aktív hirdetés',
+  'home.statsLanguages': 'felületi nyelv',
+  'professional.featured': 'Kiemelt',
+  'professional.verified': 'Ellenőrzött',
 }
