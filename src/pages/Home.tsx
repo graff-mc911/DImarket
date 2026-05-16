@@ -1,34 +1,19 @@
-// ============================================================
-// Home.tsx — Головна сторінка DImarket
-// Виправлено: всі видимі тексти винесені через t()
-// ============================================================
-
 import { useEffect, useState } from 'react'
 import {
   ArrowRight,
   Clock3,
   ClipboardList,
   MapPin,
-  MessageCircle,
   PlusCircle,
   Search,
   ShieldCheck,
   Star,
   UserRound,
-  Users,
-  Zap,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { Category, ListingWithImages, Profile } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
-import type { Category, ListingWithImages, Profile } from '../lib/types'
-import type { TranslationKey } from '../lib/i18n'
-
-interface PlatformStats {
-  professionals: number
-  listings: number
-  countries: number
-}
 
 export function Home() {
   const { currency, language, t } = useApp()
@@ -36,11 +21,6 @@ export function Home() {
   const [categories, setCategories] = useState<Category[]>([])
   const [professionals, setProfessionals] = useState<Profile[]>([])
   const [jobs, setJobs] = useState<ListingWithImages[]>([])
-  const [stats, setStats] = useState<PlatformStats>({
-    professionals: 0,
-    listings: 0,
-    countries: 0,
-  })
   const [searchQuery, setSearchQuery] = useState('')
   const [locationQuery, setLocationQuery] = useState('')
   const [loading, setLoading] = useState(true)
@@ -49,112 +29,118 @@ export function Home() {
     void loadHomeData()
   }, [])
 
-  const tr = (key: string) => t(key as TranslationKey)
-
   const loadHomeData = async () => {
     setLoading(true)
 
     try {
       const now = new Date().toISOString()
 
-      const [categoriesResult, professionalsResult, jobsResult, statsResult] =
-        await Promise.all([
-          supabase
-            .from('categories')
-            .select('*')
-            .is('parent_id', null)
-            .order('name')
-            .limit(8),
+      const [categoriesResult, professionalsResult, jobsResult] = await Promise.all([
+        supabase
+          .from('categories')
+          .select('*')
+          .is('parent_id', null)
+          .order('name')
+          .limit(8),
 
-          supabase
-            .from('profiles')
-            .select('*')
-            .eq('is_professional', true)
-            .order('rating', { ascending: false })
-            .order('total_reviews', { ascending: false })
-            .limit(4),
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('is_professional', true)
+          .order('rating', { ascending: false })
+          .order('total_reviews', { ascending: false })
+          .limit(4),
 
-          supabase
-            .from('listings')
-            .select('*, images:listing_images(*), category:categories(*)')
-            .eq('listing_type', 'service_request')
-            .eq('status', 'active')
-            .gte('expires_at', now)
-            .order('created_at', { ascending: false })
-            .limit(6),
-
-          supabase
-            .from('app_site_stats')
-            .select('total_professionals, total_listings_created')
-            .eq('id', 1)
-            .maybeSingle(),
-        ])
+        supabase
+          .from('listings')
+          .select(`
+            *,
+            images:listing_images(*),
+            category:categories(*)
+          `)
+          .eq('listing_type', 'service_request')
+          .eq('status', 'active')
+          .gte('expires_at', now)
+          .order('created_at', { ascending: false })
+          .limit(6),
+      ])
 
       setCategories(categoriesResult.data ?? [])
       setProfessionals(professionalsResult.data ?? [])
       setJobs((jobsResult.data as ListingWithImages[] | null) ?? [])
-
-      const { count: profCount } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_professional', true)
-
-      const { count: listCount } = await supabase
-        .from('listings')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'active')
-
-      setStats({
-        professionals: profCount || statsResult.data?.total_professionals || 0,
-        listings: listCount || statsResult.data?.total_listings_created || 0,
-        countries: 24,
-      })
     } finally {
       setLoading(false)
     }
   }
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
     const params = new URLSearchParams()
 
-    if (searchQuery.trim()) params.set('search', searchQuery.trim())
-    if (locationQuery.trim()) params.set('location', locationQuery.trim())
+    if (searchQuery.trim()) {
+      params.set('search', searchQuery.trim())
+    }
+
+    if (locationQuery.trim()) {
+      params.set('location', locationQuery.trim())
+    }
 
     const query = params.toString()
     navigateTo(query ? `/listings?${query}` : '/listings')
   }
 
+  const translateUnsafe = (key: string) => t(key)
+
   const getCategoryName = (category: Category) => {
     const newKey = `category.name.${category.slug}`
-    const newValue = tr(newKey)
-    if (newValue !== newKey) return newValue
+    const newValue = translateUnsafe(newKey)
+
+    if (newValue !== newKey) {
+      return newValue
+    }
 
     const legacyKey = `category.${category.slug}`
-    const legacyValue = tr(legacyKey)
-    if (legacyValue !== legacyKey) return legacyValue
+    const legacyValue = translateUnsafe(legacyKey)
+
+    if (legacyValue !== legacyKey) {
+      return legacyValue
+    }
 
     return category.name
   }
 
   const getCategoryDescription = (category: Category) => {
     const legacyKey = `category.${category.slug}Desc`
-    const legacyValue = tr(legacyKey)
+    const legacyValue = translateUnsafe(legacyKey)
 
-    if (legacyValue !== legacyKey) return legacyValue
+    if (legacyValue !== legacyKey) {
+      return legacyValue
+    }
 
     return category.description || t('home.unknownCategory')
   }
 
   const getListingCategoryName = (job: ListingWithImages) => {
-    if (!job.category) return t('home.unknownCategory')
+    if (!job.category) {
+      return t('home.unknownCategory')
+    }
+
     return getCategoryName(job.category)
   }
 
   return (
     <div className="page-bg min-h-screen">
-      <section className="px-4 pb-6 pt-4 md:px-6 xl:px-8 2xl:px-10">
+      <div className="flex">
+
+        {/* Ліва рекламна колонка */}
+        <div className="hidden xl:block w-[240px] shrink-0 pl-4 pt-4">
+          <AdBanner position="left" sticky={true} />
+        </div>
+
+        {/* Основний контент */}
+        <div className="flex-1 min-w-0">
+      <section className="px-4 pb-6 pt-4 md:px-6 md:pb-8 xl:px-8 2xl:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="glass-panel fade-rise p-6 md:p-7 xl:p-8">
             <div className="eyebrow">
@@ -166,6 +152,7 @@ export function Home() {
               <h1 className="font-[var(--font-display)] text-[1.72rem] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--ink-900)] md:text-[2.02rem] xl:text-[2.3rem]">
                 {t('home.heroSimpleTitle')}
               </h1>
+
               <p className="muted-text mt-4 max-w-2xl text-[14px] md:text-[15px]">
                 {t('home.heroSimpleDescription')}
               </p>
@@ -179,7 +166,7 @@ export function Home() {
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
                 <input
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder={t('home.whatNeedsToBeDone')}
                   className="input-glass h-[50px] pl-11"
                 />
@@ -189,7 +176,7 @@ export function Home() {
                 <MapPin className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
                 <input
                   value={locationQuery}
-                  onChange={(e) => setLocationQuery(e.target.value)}
+                  onChange={(event) => setLocationQuery(event.target.value)}
                   placeholder={t('home.cityOrCountry')}
                   className="input-glass h-[50px] pl-11"
                 />
@@ -241,58 +228,6 @@ export function Home() {
                 </button>
               ))}
             </div>
-
-            {!loading && (stats.professionals > 0 || stats.listings > 0) && (
-              <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3 border-t border-[var(--glass-border)] pt-5">
-                <StatPill
-                  icon={<Users className="h-4 w-4" />}
-                  value={stats.professionals}
-                  label={t('home.statsProfessionals')}
-                />
-                <StatPill
-                  icon={<ClipboardList className="h-4 w-4" />}
-                  value={stats.listings}
-                  label={t('home.statsListings')}
-                />
-                <StatPill
-                  icon={<ShieldCheck className="h-4 w-4" />}
-                  value={stats.countries}
-                  label={t('home.statsLanguages')}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-4 py-6 md:px-6 xl:px-8 2xl:px-10">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeader
-            title={t('home.howItWorksTitle')}
-            text={t('home.howItWorksText')}
-            buttonText={t('register.createAccount')}
-            onClick={() => navigateTo('/register')}
-          />
-
-          <div className="grid gap-4 md:grid-cols-3">
-            <HowItWorksCard
-              number="01"
-              icon={<UserRound className="h-6 w-6" />}
-              title={t('home.howStep1Title')}
-              text={t('home.howStep1Text')}
-            />
-            <HowItWorksCard
-              number="02"
-              icon={<Search className="h-6 w-6" />}
-              title={t('home.howStep2Title')}
-              text={t('home.howStep2Text')}
-            />
-            <HowItWorksCard
-              number="03"
-              icon={<MessageCircle className="h-6 w-6" />}
-              title={t('home.howStep3Title')}
-              text={t('home.howStep3Text')}
-            />
           </div>
         </div>
       </section>
@@ -321,6 +256,7 @@ export function Home() {
                     <div className="flex h-14 w-14 items-center justify-center rounded-[18px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] text-xl text-[var(--accent-700)]">
                       {category.icon || '•'}
                     </div>
+
                     <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-[var(--ink-500)] transition group-hover:text-[var(--accent-700)]" />
                   </div>
 
@@ -328,9 +264,7 @@ export function Home() {
                     {getCategoryName(category)}
                   </h3>
 
-                  <p className="muted-text mt-3 text-[13px]">
-                    {getCategoryDescription(category)}
-                  </p>
+                  <p className="muted-text mt-3 text-[13px]">{getCategoryDescription(category)}</p>
                 </button>
               ))}
             </div>
@@ -397,8 +331,6 @@ export function Home() {
                   newLabel={t('professional.new')}
                   reviewLabel={t('professional.reviews')}
                   actionLabel={t('professional.contact')}
-                  featuredLabel={t('professional.featured')}
-                  verifiedLabel={t('professional.verified')}
                 />
               ))}
             </div>
@@ -407,70 +339,19 @@ export function Home() {
           )}
         </div>
       </section>
-    </div>
-  )
-}
 
-function StatPill({
-  icon,
-  value,
-  label,
-}: {
-  icon: React.ReactNode
-  value: number
-  label: string
-}) {
-  return (
-    <div className="flex items-center gap-2" style={{ color: 'var(--ink-600)' }}>
-      <span style={{ color: 'var(--accent-600)' }}>{icon}</span>
-      <span className="text-lg font-extrabold" style={{ color: 'var(--ink-900)' }}>
-        {value > 0 ? `${value.toLocaleString()}+` : '—'}
-      </span>
-      <span className="text-sm">{label}</span>
-    </div>
-  )
-}
-
-function HowItWorksCard({
-  number,
-  icon,
-  title,
-  text,
-}: {
-  number: string
-  icon: React.ReactNode
-  title: string
-  text: string
-}) {
-  return (
-    <div className="glass-card p-6">
-      <div className="mb-4 flex items-center gap-3">
-        <div
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px]"
-          style={{
-            background: 'rgba(199,138,96,0.14)',
-            color: 'var(--accent-700)',
-          }}
-        >
-          {icon}
         </div>
 
-        <span
-          className="text-xs font-bold uppercase tracking-[0.2em]"
-          style={{ color: 'var(--ink-400)' }}
-        >
-          {number}
-        </span>
+        {/* Права рекламна колонка */}
+        <div className="hidden xl:block w-[240px] shrink-0 pr-4 pt-4">
+          <AdBanner position="right" sticky={true} />
+        </div>
+
       </div>
 
-      <h3
-        className="text-base font-extrabold tracking-[-0.02em]"
-        style={{ color: 'var(--ink-900)' }}
-      >
-        {title}
-      </h3>
+      {/* Мобільний банер */}
+      <MobileAdBanner variant="sticky" />
 
-      <p className="muted-text mt-2 text-sm leading-relaxed">{text}</p>
     </div>
   )
 }
@@ -492,9 +373,7 @@ function SectionHeader({
         <h2 className="font-[var(--font-display)] text-[1.35rem] font-bold leading-[1.08] tracking-[-0.03em] text-[var(--ink-900)] md:text-[1.6rem]">
           {title}
         </h2>
-        <p className="muted-text mt-2 max-w-2xl text-[13px] md:text-[14px]">
-          {text}
-        </p>
+        <p className="muted-text mt-2 max-w-2xl text-[13px] md:text-[14px]">{text}</p>
       </div>
 
       <button
@@ -575,9 +454,7 @@ function HomeJobCard({
         </span>
       </div>
 
-      <p className="muted-text mt-3 line-clamp-3 text-[13px]">
-        {job.description}
-      </p>
+      <p className="muted-text mt-3 line-clamp-3 text-[13px]">{job.description}</p>
 
       <div className="mt-4 space-y-2 text-[13px] text-[var(--ink-700)]">
         <div className="flex items-center gap-2">
@@ -592,12 +469,8 @@ function HomeJobCard({
       </div>
 
       <div className="mt-5 flex items-center justify-between border-t border-[var(--glass-border)] pt-4">
-        <span className="text-[13px] text-[var(--ink-500)]">
-          {budgetLabel}
-        </span>
-        <span className="text-[15px] font-bold text-[var(--ink-900)]">
-          {budgetValue}
-        </span>
+        <span className="text-[13px] text-[var(--ink-500)]">{budgetLabel}</span>
+        <span className="text-[15px] font-bold text-[var(--ink-900)]">{budgetValue}</span>
       </div>
     </button>
   )
@@ -611,8 +484,6 @@ function ProfessionalPreviewCard({
   newLabel,
   reviewLabel,
   actionLabel,
-  featuredLabel,
-  verifiedLabel,
 }: {
   professional: Profile
   noBioLabel: string
@@ -621,45 +492,23 @@ function ProfessionalPreviewCard({
   newLabel: string
   reviewLabel: string
   actionLabel: string
-  featuredLabel: string
-  verifiedLabel: string
 }) {
   const initials = getInitials(professional.full_name)
-  const ratingLabel = professional.rating > 0 ? professional.rating.toFixed(1) : newLabel
-  const avatarUrl = professional.profile_photo || professional.avatar_url || null
-  const isVerified = professional.is_verified === true
-  const isFeatured = professional.is_featured === true
+  const ratingLabel =
+    professional.rating > 0 ? professional.rating.toFixed(1) : newLabel
 
   return (
     <div className="glass-card p-5 transition duration-300 hover:-translate-y-1">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt={professional.full_name || defaultNameLabel}
-              className="h-14 w-14 shrink-0 rounded-[18px] object-cover"
-            />
-          ) : (
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.42)] text-base font-bold text-[var(--accent-700)]">
-              {initials}
-            </div>
-          )}
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.42)] text-base font-bold text-[var(--accent-700)]">
+            {initials}
+          </div>
 
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h3 className="truncate text-[0.98rem] font-bold tracking-[-0.02em] text-[var(--ink-900)] md:text-[1rem]">
-                {professional.full_name || defaultNameLabel}
-              </h3>
-
-              {isVerified && (
-                <ShieldCheck
-                  className="h-3.5 w-3.5 shrink-0 text-[#15803d]"
-                  aria-label={verifiedLabel}
-                />
-              )}
-            </div>
-
+            <h3 className="truncate text-[0.98rem] font-bold tracking-[-0.02em] text-[var(--ink-900)] md:text-[1rem]">
+              {professional.full_name || defaultNameLabel}
+            </h3>
             <p className="mt-1 text-[13px] text-[var(--ink-500)]">
               {professional.location || globalLabel}
             </p>
@@ -671,19 +520,6 @@ function ProfessionalPreviewCard({
           <span>{ratingLabel}</span>
         </div>
       </div>
-
-      {isFeatured && (
-        <div
-          className="mt-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold"
-          style={{
-            background: 'rgba(99,102,241,0.12)',
-            color: '#6366f1',
-          }}
-        >
-          <Zap className="h-3 w-3" />
-          {featuredLabel}
-        </div>
-      )}
 
       <p className="muted-text mt-4 line-clamp-3 text-[13px]">
         {professional.bio || noBioLabel}
@@ -711,23 +547,17 @@ function ProfessionalPreviewCard({
 }
 
 function LoadingBlock({ text }: { text: string }) {
-  return (
-    <div className="glass-card p-8 text-center text-[var(--ink-500)]">
-      {text}
-    </div>
-  )
+  return <div className="glass-card p-8 text-center text-[var(--ink-500)]">{text}</div>
 }
 
 function EmptyBlock({ text }: { text: string }) {
-  return (
-    <div className="glass-card p-8 text-center text-[var(--ink-500)]">
-      {text}
-    </div>
-  )
+  return <div className="glass-card p-8 text-center text-[var(--ink-500)]">{text}</div>
 }
 
-function getInitials(fullName: string | null): string {
-  if (!fullName) return 'DI'
+function getInitials(fullName: string | null) {
+  if (!fullName) {
+    return 'DI'
+  }
 
   const parts = fullName.trim().split(/\s+/).slice(0, 2)
 
