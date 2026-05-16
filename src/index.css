@@ -6,7 +6,7 @@
   :root {
     --font-sans: "Aptos", "Segoe UI Variable Text", "Segoe UI", sans-serif;
     --font-display: "Segoe UI Variable Display", "Aptos", "Segoe UI", sans-serif;
-    --bg-canvas: #f1f2f4;
+    --bg-canvas: #f6f1ea;
     --bg-soft: #f7f8fa;
     --panel: rgba(255, 255, 255, 0.5);
     --panel-strong: rgba(255, 255, 255, 0.68);
