@@ -37,6 +37,7 @@ import { supabase }    from '../lib/supabase'
 import { navigateTo }  from '../lib/navigation'
 import { useApp }      from '../contexts/AppContext'
 import { AdCampaign }  from '../lib/types'
+import { createCheckoutSession, eurosToCents } from '../lib/stripe'
 
 // ── Типи ──────────────────────────────────────────────────────────────────────
 
@@ -62,29 +63,11 @@ const ACCEPTED_MIME: Record<MediaType, string[]> = {
 
 const MAX_FILE_MB    = 20
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024
-const PRICE_PER_CITY_PER_WEEK = 2
+const PRICE_PER_CITY_PER_WEEK = 25
 
-// Географічні дані — пізніше замінити на таблиці в базі
-const GEO_DATA: GeoCountry[] = [
-  { name: 'Germany', regions: [
-    { name: 'Hessen',  cities: ['Frankfurt am Main', 'Darmstadt', 'Wiesbaden'] },
-    { name: 'Bayern',  cities: ['München', 'Nürnberg'] },
-    { name: 'Berlin',  cities: ['Berlin'] },
-  ]},
-  { name: 'Poland', regions: [
-    { name: 'Mazowieckie',  cities: ['Warszawa'] },
-    { name: 'Małopolskie',  cities: ['Kraków'] },
-  ]},
-  { name: 'Spain', regions: [
-    { name: 'Valencia',  cities: ['Alicante', 'Torrevieja', 'Valencia'] },
-    { name: 'Catalonia', cities: ['Barcelona'] },
-  ]},
-  { name: 'Ukraine', regions: [
-    { name: 'Kyiv',  cities: ['Kyiv'] },
-    { name: 'Lviv',  cities: ['Lviv'] },
-    { name: 'Odesa', cities: ['Odesa'] },
-  ]},
-]
+// GEO_DATA завантажується динамічно з бази даних
+// Заповнюється автоматично коли користувачі реєструються з різних міст
+const GEO_DATA: GeoCountry[] = []
 
 // ── Головний компонент ─────────────────────────────────────────────────────────
 
@@ -114,6 +97,10 @@ export function Advertising() {
   const [uploadState, setUploadState] = useState<UploadState>({ status: 'idle', progress: 0 })
   const [isDragOver, setIsDragOver] = useState(false)
 
+  // Географія з бази — завантажується автоматично
+  const [geoData, setGeoData] = useState<GeoCountry[]>([])
+  const [geoLoading, setGeoLoading] = useState(true)
+
   // Кампанії
   const [campaigns, setCampaigns]               = useState<AdCampaign[]>([])
   const [loadingCampaigns, setLoadingCampaigns] = useState(false)
@@ -127,14 +114,14 @@ export function Advertising() {
 
   // Всі міста в GEO_DATA
   const allCities = useMemo(() =>
-    GEO_DATA.flatMap(c => c.regions.flatMap(r => r.cities)), [])
+    geoData.flatMap(c => c.regions.flatMap(r => r.cities)), [geoData])
 
   // Доступні регіони для вибраних країн
   const availableRegions = useMemo(() =>
-    GEO_DATA
+    geoData
       .filter(c => selectedCountries.includes(c.name))
       .flatMap(c => c.regions.map(r => ({ country: c.name, name: r.name, cities: r.cities }))),
-    [selectedCountries])
+    [selectedCountries, geoData])
 
   // Доступні міста для вибраних регіонів
   const availableCities = useMemo(() => {
@@ -149,7 +136,7 @@ export function Advertising() {
   // Міста що потраплять в таргетинг
   const calculatedCities = useMemo(() => {
     if (geoMode === 'global')    return allCities
-    if (geoMode === 'countries') return GEO_DATA.filter(c => selectedCountries.includes(c.name)).flatMap(c => c.regions.flatMap(r => r.cities))
+    if (geoMode === 'countries') return geoData.filter(c => selectedCountries.includes(c.name)).flatMap(c => c.regions.flatMap(r => r.cities))
     if (geoMode === 'regions')   return availableRegions.filter(r => selectedRegions.includes(r.name)).flatMap(r => r.cities)
     return selectedCities
   }, [geoMode, allCities, selectedCountries, availableRegions, selectedRegions, selectedCities])
@@ -159,10 +146,57 @@ export function Advertising() {
   // Автоматичний розрахунок ціни
   const totalPrice = selectedCitiesCount * PRICE_PER_CITY_PER_WEEK * selectedPlacements.length * durationWeeks
 
+  // Завантажуємо географію з бази при старті
+  useEffect(() => {
+    void loadGeoData()
+  }, [])
+
+  // Завантажуємо кампанії при авторизації
   useEffect(() => {
     if (user) void loadOwnCampaigns()
     else setCampaigns([])
   }, [user])
+
+  // Завантаження унікальних країн/регіонів/міст з бази
+  const loadGeoData = async () => {
+    setGeoLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('active_geo')
+        .select('country, region, city, user_count')
+        .order('country')
+
+      if (error || !data) return
+
+      // Групуємо по країнах і регіонах
+      const grouped: Record<string, Record<string, string[]>> = {}
+
+      for (const row of data) {
+        if (!row.country || !row.city) continue
+        if (!grouped[row.country]) grouped[row.country] = {}
+        const reg = row.region || 'Інші'
+        if (!grouped[row.country][reg]) grouped[row.country][reg] = []
+        if (!grouped[row.country][reg].includes(row.city)) {
+          grouped[row.country][reg].push(row.city)
+        }
+      }
+
+      // Перетворюємо в масив GeoCountry
+      const result: GeoCountry[] = Object.entries(grouped).map(([country, regions]) => ({
+        name: country,
+        regions: Object.entries(regions).map(([region, cities]) => ({
+          name: region,
+          cities,
+        })),
+      }))
+
+      setGeoData(result)
+    } catch (e) {
+      console.error('Помилка завантаження географії:', e)
+    } finally {
+      setGeoLoading(false)
+    }
+  }
 
   const loadOwnCampaigns = async () => {
     if (!user) return
@@ -313,13 +347,32 @@ export function Advertising() {
 
       if (error) throw error
 
-      setFeedback({ type: 'success', text: t('advertising.success') })
-      resetForm()
-      await loadOwnCampaigns()
+      // Отримуємо ID щойно створеної кампанії
+      const { data: newCampaign } = await supabase
+        .from('ad_campaigns')
+        .select('id')
+        .eq('advertiser_id', user.id)
+        .eq('status', 'pending_payment')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      // Перенаправляємо на Stripe Checkout для оплати
+      const stripeResult = await createCheckoutSession({
+        payment_type: 'ad_campaign',
+        reference_id: newCampaign?.id || '',
+        user_id:      user.id,
+        amount:       eurosToCents(totalPrice),
+        currency:     'eur',
+        description:  'DImarket реклама: ' + title.trim(),
+      })
+
+      // Відкриваємо сторінку оплати Stripe
+      window.location.href = stripeResult.url
+
     } catch (err) {
       console.error('Помилка:', err)
       setFeedback({ type: 'error', text: t('advertising.error.save') })
-    } finally {
       setSaving(false)
     }
   }
@@ -594,7 +647,7 @@ export function Advertising() {
                       <div className="mt-5 space-y-4">
                         <CheckboxDropdown
                           title={t('advertising.geo.selectCountries')}
-                          options={GEO_DATA.map(c => c.name)}
+                          options={geoData.map(c => c.name)}
                           selected={selectedCountries}
                           noneText={t('advertising.geo.noneAvailable')}
                           selectedText={t('advertising.geo.selected')}
