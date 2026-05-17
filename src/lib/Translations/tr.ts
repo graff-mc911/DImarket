@@ -628,4 +628,19 @@ export const trTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Reddedildi',
   'advertising.status.expired': 'Süresi doldu',
   'advertising.geo.noneAvailable': 'Mevcut seçenek yok',
+
+  // Register — ролі з перекладами
+  'register.roleClient': 'Müşteri',
+  'register.roleClientDesc': 'Usta veya hizmet arıyorum',
+  'register.roleProfessional': 'Usta',
+  'register.roleProfessionalDesc': 'Bireysel olarak hizmet sunuyorum',
+  'register.roleCompany': 'Şirket',
+  'register.roleCompanyDesc': 'Bir firma veya işletme kaydediyorum',
+  'register.roleAdvertiser': 'Reklamveren',
+  'register.roleAdvertiserDesc': 'Platformda reklam veriyorum',
+  'register.whoAreYou': 'Siz kimsiniz?',
+  'register.hintClient': 'Müşteri olarak ilan oluşturabilir, usta bulabilir ve yorum bırakabilirsiniz.',
+  'register.hintProfessional': 'Usta olarak profil oluşturabilir, portföy ekleyebilir ve sipariş alabilirsiniz.',
+  'register.hintCompany': 'Şirket olarak firma profili yayınlayabilir ve müşteri çekebilirsiniz.',
+  'register.hintAdvertiser': 'Reklamveren olarak tüm platformda coğrafi hedefleme ile banner reklamlar yayınlayabilirsiniz.',
 }
