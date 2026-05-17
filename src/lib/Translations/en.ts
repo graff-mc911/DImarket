@@ -313,8 +313,8 @@ export const enTranslations = {
   'login.noRegistrationRequired': 'No registration required',
 
   // Реєстрація майстра.
-  'register.title': 'Register as Professional',
-  'register.subtitle': 'Join Dimarket and grow your business',
+  'register.title': 'Register on DImarket',
+  'register.subtitle': 'Choose your role and join the platform',
   'register.fullName': 'Full Name',
   'register.fullNamePlaceholder': 'John Doe',
   'register.passwordMin': 'Minimum 6 characters',
