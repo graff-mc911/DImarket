@@ -461,8 +461,8 @@ export function Register() {
         ? normalizedCompanyName || normalizedFullName
         : normalizedFullName
 
-    const isProfessionalRole =
-      selectedRole === 'professional' || selectedRole === 'company'
+    const roleForProfile: UserRole =
+      selectedRole === 'advertiser' ? 'client' : selectedRole
 
     try {
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -473,8 +473,8 @@ export function Register() {
             full_name: displayName,
             phone: normalizedPhone || null,
             location: locationText,
+            user_role: roleForProfile,
             requested_role: selectedRole,
-            is_professional: isProfessionalRole,
             company_name: normalizedCompanyName || null,
           },
         },
@@ -497,13 +497,14 @@ export function Register() {
               full_name: displayName,
               phone: normalizedPhone || null,
               location: locationText,
-              is_professional: isProfessionalRole,
+              user_role: roleForProfile,
+              is_professional: roleForProfile === 'professional' || roleForProfile === 'company',
             },
             { onConflict: 'id' }
           )
 
         if (profileError) {
-          throw new Error(profileError.message)
+          console.error('Профіль не синхронізувався одразу після реєстрації:', profileError)
         }
       }
 
@@ -580,9 +581,11 @@ export function Register() {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[linear-gradient(135deg,rgba(201,109,44,0.92),rgba(154,85,37,0.92))] text-white shadow-[0_18px_35px_rgba(15,23,42,0.18)]">
                 <UserPlus className="h-8 w-8" />
               </div>
+
               <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
                 {t('register.title')}
               </h1>
+
               <p className="mt-3 text-sm leading-6 text-[#6f665d]">
                 {t('register.subtitle')}
               </p>
@@ -605,6 +608,7 @@ export function Register() {
                 <label className="mb-3 block text-sm font-bold text-[#2f2a24]">
                   {t('register.whoAreYou')}
                 </label>
+
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {ROLE_OPTIONS.map((option) => (
                     <button
@@ -634,7 +638,9 @@ export function Register() {
                       >
                         {option.icon}
                       </div>
+
                       <span className="text-xs font-bold leading-tight">{option.title}</span>
+
                       <span className="text-[10px] leading-tight" style={{ color: 'var(--ink-500)' }}>
                         {option.description}
                       </span>

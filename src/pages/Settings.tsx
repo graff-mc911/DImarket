@@ -23,6 +23,9 @@ type FeedbackState = {
   text: string
 }
 
+type LanguageOption = (typeof LANGUAGES)[number]
+type CurrencyOption = (typeof CURRENCIES)[number]
+
 export function Settings() {
   const { user, language, currency, setLanguage, setCurrency, t } = useApp()
 
@@ -42,8 +45,8 @@ export function Settings() {
   const [portfolioImages, setPortfolioImages] = useState<string[]>([])
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
-  const [preferredLanguage, setPreferredLanguage] = useState(language.code)
-  const [preferredCurrency, setPreferredCurrency] = useState(currency.code)
+  const [preferredLanguage, setPreferredLanguage] = useState<LanguageOption['code']>(language.code)
+  const [preferredCurrency, setPreferredCurrency] = useState<CurrencyOption['code']>(currency.code)
 
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -122,6 +125,12 @@ export function Settings() {
         return
       }
 
+      const nextLanguage =
+        LANGUAGES.find((item) => item.code === data.preferred_language)?.code ?? language.code
+
+      const nextCurrency =
+        CURRENCIES.find((item) => item.code === data.preferred_currency)?.code ?? currency.code
+
       setFullName(data.full_name ?? '')
       setBio(data.bio ?? '')
       setPhone(data.phone ?? '')
@@ -130,8 +139,8 @@ export function Settings() {
       setProfilePhoto(data.profile_photo ?? '')
       setPortfolioImages(Array.isArray(data.portfolio_images) ? data.portfolio_images : [])
       setNotificationsEnabled(data.notifications_enabled !== false)
-      setPreferredLanguage(data.preferred_language || language.code)
-      setPreferredCurrency(data.preferred_currency || currency.code)
+      setPreferredLanguage(nextLanguage)
+      setPreferredCurrency(nextCurrency)
     } catch (error) {
       console.error('Помилка завантаження профілю:', error)
       resetProfileForm()
@@ -275,7 +284,24 @@ export function Settings() {
     setFeedback(null)
 
     try {
-      const { error } = await supabase.rpc('delete_my_account')
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession()
+
+      if (sessionError) {
+        throw sessionError
+      }
+
+      if (!session?.access_token) {
+        throw new Error('No active session')
+      }
+
+      const { error } = await supabase.functions.invoke('delete-account', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      })
 
       if (error) {
         throw error
@@ -287,24 +313,9 @@ export function Settings() {
       navigateTo('/')
     } catch (error) {
       console.error('Помилка видалення акаунта:', error)
-
-      const errorMessage = error instanceof Error ? error.message.toLowerCase() : ''
-
-      if (
-        errorMessage.includes('not authenticated') ||
-        errorMessage.includes('jwt') ||
-        errorMessage.includes('session')
-      ) {
-        await supabase.auth.signOut({ scope: 'local' })
-        setCurrentUserId(null)
-        resetProfileForm()
-        navigateTo('/')
-        return
-      }
-
       setFeedback({
         type: 'error',
-        text: error instanceof Error ? error.message : t('settings.error.deleteAccount'),
+        text: t('settings.error.deleteAccount'),
       })
     }
   }
@@ -536,7 +547,9 @@ export function Settings() {
                         </label>
                         <select
                           value={preferredLanguage}
-                          onChange={(event) => setPreferredLanguage(event.target.value)}
+                          onChange={(event) =>
+                            setPreferredLanguage(event.target.value as LanguageOption['code'])
+                          }
                           className="select-glass bg-white/80"
                         >
                           {LANGUAGES.map((item) => (
@@ -554,7 +567,9 @@ export function Settings() {
                         </label>
                         <select
                           value={preferredCurrency}
-                          onChange={(event) => setPreferredCurrency(event.target.value)}
+                          onChange={(event) =>
+                            setPreferredCurrency(event.target.value as CurrencyOption['code'])
+                          }
                           className="select-glass bg-white/80"
                         >
                           {CURRENCIES.map((item) => (
