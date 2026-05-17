@@ -1,132 +1,136 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
-import { LogIn } from 'lucide-react'
-import { useApp } from '../contexts/AppContext'
+import { Globe, LogIn } from 'lucide-react'
+import { supabase }   from '../lib/supabase'
+import { useApp }     from '../contexts/AppContext'
+import { navigateTo } from '../lib/navigation'
+import { LANGUAGES }  from '../lib/types'
 
 export function Login() {
-  const { t } = useApp()
-  const [email, setEmail] = useState('')
+  const { t, language, setLanguage } = useApp()
+  const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [loading,  setLoading]  = useState(false)
+  const [error,    setError]    = useState('')
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
-
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) throw error
+      const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
+      if (authError) throw authError
 
       // Визначаємо куди направити залежно від ролі
-      const { data: profileData } = await supabase
+      const { data: user } = await supabase.auth.getUser()
+      const { data: profile } = await supabase
         .from('profiles')
         .select('user_role, is_site_owner')
-        .eq('id', (await supabase.auth.getUser()).data.user?.id || '')
+        .eq('id', user.user?.id || '')
         .single()
 
-      if (profileData?.is_site_owner) {
-        window.location.href = '/dashboard'
-      } else if (profileData?.user_role === 'advertiser') {
-        window.location.href = '/advertising'
-      } else if (profileData?.user_role === 'client') {
-        window.location.href = '/listings'
-      } else {
-        window.location.href = '/settings'
-      }
+      if (profile?.is_site_owner)              window.location.href = '/dashboard'
+      else if (profile?.user_role === 'advertiser') window.location.href = '/advertising'
+      else if (profile?.user_role === 'client')     window.location.href = '/listings'
+      else                                           window.location.href = '/settings'
+
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to login')
+      setError(err instanceof Error ? err.message : t('common.error'))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="bg-gradient-to-br from-blue-900 to-blue-700 p-3 rounded-lg">
-              <LogIn className="w-8 h-8 text-white" />
+    <div className="page-bg min-h-screen px-4 py-10 md:px-6 xl:px-8">
+      <div className="mx-auto flex max-w-md items-center justify-center">
+        <div className="w-full">
+          <div className="glass-panel p-6 md:p-8">
+
+            {/* Вибір мови */}
+            <div className="mb-4 flex items-center justify-end gap-2">
+              <Globe className="h-4 w-4 text-[var(--ink-500)]" />
+              <select
+                value={language.code}
+                onChange={e => {
+                  const lang = LANGUAGES.find(l => l.code === e.target.value)
+                  if (lang) setLanguage(lang)
+                }}
+                className="select-glass py-1 text-xs"
+                style={{ width: 'auto', minWidth: '120px' }}
+              >
+                {LANGUAGES.map(lang => (
+                  <option key={lang.code} value={lang.code}>{lang.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Заголовок */}
+            <div className="text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[linear-gradient(135deg,rgba(201,109,44,0.92),rgba(154,85,37,0.92))] text-white shadow-[0_18px_35px_rgba(15,23,42,0.18)]">
+                <LogIn className="h-8 w-8" />
+              </div>
+              <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
+                {t('login.title')}
+              </h1>
+              <p className="mt-3 text-sm leading-6 text-[#6f665d]">
+                {t('login.subtitle')}
+              </p>
+            </div>
+
+            {error && (
+              <div className="mt-5 rounded-[20px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="mt-6 space-y-5">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                  {t('login.email')} *
+                </label>
+                <input
+                  type="email" required value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="input-glass"
+                  placeholder={t('login.emailPlaceholder')}
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                  {t('login.password')} *
+                </label>
+                <input
+                  type="password" required value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="input-glass"
+                  placeholder={t('login.passwordPlaceholder')}
+                />
+              </div>
+
+              <button type="submit" disabled={loading}
+                className="btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-50">
+                {loading ? t('login.signingIn') : t('login.signIn')}
+              </button>
+            </form>
+
+            <div className="mt-6 text-center space-y-3">
+              <p className="text-sm text-[#6f665d]">
+                {t('login.noAccount')}{' '}
+                <button onClick={() => navigateTo('/register')} type="button"
+                  className="font-semibold text-[#2f2a24] transition hover:text-[#9a5525]">
+                  {t('login.registerLink')}
+                </button>
+              </p>
+              <p className="text-sm text-[#6f665d]">
+                {t('login.lookingToPost')}{' '}
+                <button onClick={() => navigateTo('/create-ad')} type="button"
+                  className="font-semibold text-[var(--accent-700)] transition hover:text-[#9a5525]">
+                  {t('login.noRegistrationRequired')}
+                </button>
+              </p>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">
-            {t('login.title')}
-          </h2>
-          <p className="mt-2 text-gray-600">
-            {t('login.subtitle')}
-          </p>
-        </div>
-
-        <div className="bg-white py-8 px-6 shadow-lg rounded-xl">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                {t('login.email')}
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={t('login.emailPlaceholder')}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                {t('login.password')}
-              </label>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={t('login.passwordPlaceholder')}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? t('login.signingIn') : t('login.signIn')}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              {t('login.noAccount')}{' '}
-              <a href="/register" className="text-blue-900 font-semibold hover:text-blue-700">
-                {t('login.registerLink')}
-              </a>
-            </p>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <p className="text-sm text-gray-500">
-            {t('login.lookingToPost')}{' '}
-            <a href="/create-ad" className="text-orange-600 font-semibold hover:text-orange-500">
-              {t('login.noRegistrationRequired')}
-            </a>
-          </p>
         </div>
       </div>
     </div>
