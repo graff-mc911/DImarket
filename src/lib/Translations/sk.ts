@@ -275,8 +275,8 @@ export const skTranslations: Partial<Record<TranslationKey, string>> = {
   'login.noRegistrationRequired': 'Registracia nie je potrebna',
 
   // Реєстрація
-  'register.title': 'Registracia profesionala',
-  'register.subtitle': 'Pridajte sa k Dimarket a rozvijajte svoje podnikanie',
+  'register.title': 'Registrácia na DImarket',
+  'register.subtitle': 'Vyberte svoju rolu a pridajte sa k platforme',
   'register.fullName': 'Cele meno',
   'register.fullNamePlaceholder': 'Jan Novak',
   'register.passwordMin': 'Minimalne 6 znakov',
@@ -993,4 +993,31 @@ export const skTranslations: Partial<Record<TranslationKey, string>> = {
   // Register geo detect
   'register.detectingLocation': 'Zisťujeme krajinu...',
   'register.locationAutoDetected': 'Krajina automaticky zistená. Zmeňte ak je potrebné.',
+
+  // Register company
+  'register.companyName': 'Názov firmy',
+  'register.companyNamePlaceholder': 'napr. StavServis s.r.o.',
+  'register.representativeName': 'Meno zástupcu',
+
+  // Register — doplnené kľúče
+  'myListings.title': 'Moje inzeráty',
+  'myListings.subtitle': 'Spravujte svoje inzeráty',
+  'myListings.createNew': 'Nový inzerát',
+  'myListings.noListings': 'Zatiaľ nemáte žiadne inzeráty',
+  'myListings.loading': 'Načítavam inzeráty...',
+  'myListings.status.active': 'Aktívne',
+  'myListings.status.expired': 'Expirované',
+  'myListings.status.sold': 'Predané',
+  'myListings.status.deleted': 'Zmazané',
+  'profile.editProfile': 'Upraviť profil',
+  'profile.portfolio': 'Portfólio',
+  'profile.reviews': 'Recenzie',
+  'profile.noPortfolio': 'Zatiaľ žiadne portfólio',
+  'profile.noReviews': 'Zatiaľ žiadne recenzie',
+  'profile.memberSince': 'Člen od',
+  'profile.activeAds': 'aktívnych inzerátov',
+  'profile.viewAllListings': 'Všetky moje inzeráty',
+  'ads.label': 'Reklama',
+  'ads.visit': 'Navštíviť',
+  'listing.backToListings': 'Späť na inzeráty',
 }
