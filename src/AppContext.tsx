@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { type User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
-import { type Profile, CURRENCIES, LANGUAGES } from '../lib/types'
+import { type Profile, type UserRole, CURRENCIES, LANGUAGES } from '../lib/types'
 import { getTranslation, type LanguageCode } from '../lib/i18n'
 
 interface AppContextType {
@@ -24,8 +24,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<typeof LANGUAGES[number]>(LANGUAGES[0])
 
   useEffect(() => {
-    // Підтримуємо і нові, і старі ключі localStorage,
-    // щоб не втратити налаштування після перейменування проєкту.
     const savedCurrency =
       localStorage.getItem('dimarket_currency') ?? localStorage.getItem('buildster_currency')
 
@@ -34,7 +32,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     if (savedCurrency) {
       const foundCurrency = CURRENCIES.find((item) => item.code === savedCurrency)
-
       if (foundCurrency) {
         setCurrency(foundCurrency)
       }
@@ -42,29 +39,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     if (savedLanguage) {
       const foundLanguage = LANGUAGES.find((item) => item.code === savedLanguage)
-
       if (foundLanguage) {
         setLanguage(foundLanguage)
       }
     }
 
-    // Реєструємо візит лише один раз за поточну сесію вкладки,
-    // щоб не накручувати статистику через перерендери.
     void registerVisitOncePerSession()
-
-    // Важливо: використовуємо getUser(), а не getSession().
-    // getSession() може повернути кешовану сесію навіть якщо акаунт уже видалений,
-    // а getUser() перевіряє користувача через Supabase Auth.
     void bootstrapAuth()
 
-    // Оновлюємо стан після входу / виходу.
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
 
       if (session?.user) {
-        void loadProfile(session.user.id)
+        void loadOrCreateProfile(session.user)
       } else {
         setProfile(null)
       }
@@ -74,6 +63,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
       subscription.unsubscribe()
     }
   }, [])
+
+  const registerVisitOncePerSession = async () => {
+    try {
+      const alreadyTracked = sessionStorage.getItem('dimarket_visit_tracked')
+
+      if (alreadyTracked === '1') {
+        return
+      }
+
+      const { error } = await supabase.rpc('register_app_visit')
+
+      if (!error) {
+        sessionStorage.setItem('dimarket_visit_tracked', '1')
+      } else {
+        console.error('Помилка реєстрації візиту:', error)
+      }
+    } catch (error) {
+      console.error('Непередбачена помилка реєстрації візиту:', error)
+    }
+  }
 
   const bootstrapAuth = async () => {
     try {
@@ -89,75 +98,89 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setUser(activeUser ?? null)
 
       if (activeUser) {
-        await loadProfile(activeUser.id)
+        await loadOrCreateProfile(activeUser)
       } else {
         setProfile(null)
       }
     } catch (error) {
       console.error('Помилка відновлення сесії:', error)
-
-      // Якщо токен битий або користувача вже видалено,
-      // очищаємо локальну авторизацію, щоб застосунок не показував "привида" акаунта.
       await supabase.auth.signOut({ scope: 'local' })
       setUser(null)
       setProfile(null)
     }
   }
 
-  const registerVisitOncePerSession = async () => {
-    try {
-      const alreadyTracked = sessionStorage.getItem('dimarket_visit_tracked')
-
-      if (alreadyTracked === '1') {
-        return
-      }
-
-      // Викликаємо SQL-функцію, яка збільшує total_visits.
-      const { error } = await supabase.rpc('register_app_visit')
-
-      if (!error) {
-        sessionStorage.setItem('dimarket_visit_tracked', '1')
-      } else {
-        console.error('Помилка реєстрації візиту:', error)
-      }
-    } catch (error) {
-      console.error('Непередбачена помилка реєстрації візиту:', error)
+  const normalizeRole = (value: unknown): UserRole => {
+    if (value === 'professional' || value === 'company' || value === 'owner') {
+      return value
     }
+
+    return 'client'
   }
 
-  const loadProfile = async (userId: string) => {
+  const normalizeText = (value: unknown): string | null => {
+    if (typeof value !== 'string') {
+      return null
+    }
+
+    const trimmed = value.trim()
+    return trimmed ? trimmed : null
+  }
+
+  const loadOrCreateProfile = async (activeUser: User) => {
     try {
-      // Завантажуємо профіль поточного користувача.
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', userId)
+        .eq('id', activeUser.id)
         .maybeSingle()
 
       if (error) {
         throw error
       }
 
-      // Якщо профілю вже немає, явно очищаємо стан.
-      setProfile(data ?? null)
+      if (data) {
+        setProfile(data)
+        return
+      }
+
+      const metadata = activeUser.user_metadata ?? {}
+      const role = normalizeRole(metadata.user_role)
+
+      const profilePayload = {
+        id: activeUser.id,
+        full_name: normalizeText(metadata.full_name),
+        phone: normalizeText(metadata.phone),
+        location: normalizeText(metadata.location),
+        user_role: role,
+        is_professional: role === 'professional' || role === 'company',
+      }
+
+      const { data: createdProfile, error: createError } = await supabase
+        .from('profiles')
+        .upsert(profilePayload, { onConflict: 'id' })
+        .select('*')
+        .maybeSingle()
+
+      if (createError) {
+        throw createError
+      }
+
+      setProfile(createdProfile ?? null)
     } catch (error) {
-      console.error('Помилка завантаження профілю:', error)
+      console.error('Помилка завантаження або створення профілю:', error)
       setProfile(null)
     }
   }
 
   const handleSetCurrency = (newCurrency: typeof CURRENCIES[number]) => {
     setCurrency(newCurrency)
-
-    // Пишемо одразу в обидва ключі для сумісності.
     localStorage.setItem('dimarket_currency', newCurrency.code)
     localStorage.setItem('buildster_currency', newCurrency.code)
   }
 
   const handleSetLanguage = (newLanguage: typeof LANGUAGES[number]) => {
     setLanguage(newLanguage)
-
-    // Пишемо одразу в обидва ключі для сумісності.
     localStorage.setItem('dimarket_language', newLanguage.code)
     localStorage.setItem('buildster_language', newLanguage.code)
   }
@@ -167,8 +190,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut()
     } catch (error) {
       console.error('Помилка виходу з акаунта:', error)
-
-      // Якщо серверний signOut не вдався, все одно прибираємо локальну сесію.
       await supabase.auth.signOut({ scope: 'local' })
     } finally {
       setUser(null)
