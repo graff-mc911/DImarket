@@ -261,8 +261,8 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.radius.global': 'Todos os utilizadores',
 
   // Вхід
-  'login.title': 'Login de profissionais',
-  'login.subtitle': 'Entre para gerir o seu perfil e anuncios',
+  'login.title': 'Entrar',
+  'login.subtitle': 'Gerencie seu perfil',
   'login.email': 'Endereco de email',
   'login.emailPlaceholder': 'you@example.com',
   'login.password': 'Palavra-passe',
@@ -270,7 +270,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'login.signIn': 'Entrar',
   'login.signingIn': 'A entrar...',
   'login.noAccount': 'Ainda nao tem conta?',
-  'login.registerLink': 'Registar como profissional',
+  'login.registerLink': 'Registrar-se',
   'login.lookingToPost': 'Quer publicar um anuncio?',
   'login.noRegistrationRequired': 'Nao e necessario registo',
 
@@ -282,7 +282,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'register.passwordMin': 'Minimo de 6 caracteres',
   'register.phonePlaceholder': '+351 912 345 678',
   'register.locationPlaceholder': 'Cidade, distrito',
-  'register.createAccount': 'Criar conta profissional',
+  'register.createAccount': 'Criar conta',
   'register.creating': 'A criar conta...',
   'register.success': 'Registo efetuado com sucesso! A redirecionar para o painel...',
   'register.alreadyHave': 'Ja tem conta?',
@@ -985,4 +985,22 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'register.hintProfessional': 'Como profissional você pode criar um perfil, adicionar portfólio e receber pedidos.',
   'register.hintCompany': 'Como empresa você pode publicar um perfil empresarial e atrair clientes.',
   'register.hintAdvertiser': 'Como anunciante você pode colocar anúncios banner com geo-targeting em toda a plataforma.',
+
+  // Register — географія
+  'register.yourLocation': 'Sua localização',
+  'register.selectCountry': 'Selecionar país',
+  'register.selectRegion': 'Selecionar região (opcional)',
+  'register.selectCity': 'Selecionar cidade',
+  'register.cityNotInList': 'Sua cidade não está na lista?',
+  'register.cityPlaceholder': 'Inserir nome da cidade manualmente',
+  'register.enterManually': 'Inserir manualmente',
+
+  // Register geo detect
+  'register.detectingLocation': 'Detectando seu país...',
+  'register.locationAutoDetected': 'País detectado automaticamente. Altere se necessário.',
+
+  // Register company
+  'register.companyName': 'Nome da empresa',
+  'register.companyNamePlaceholder': 'ex. ServiConstrução Ltda',
+  'register.representativeName': 'Nome do representante',
 }
