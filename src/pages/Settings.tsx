@@ -29,16 +29,13 @@ type CurrencyOption = (typeof CURRENCIES)[number]
 export function Settings() {
   const { user, language, currency, setLanguage, setCurrency, t } = useApp()
 
-  // Зберігаємо id окремо, щоб сторінка не втрачала контекст між перерендереннями.
   const [currentUserId, setCurrentUserId] = useState<string | null>(user?.id ?? null)
 
-  // Базові стани сторінки та збереження форм.
   const [loading, setLoading] = useState(true)
   const [savingProfile, setSavingProfile] = useState(false)
   const [savingPassword, setSavingPassword] = useState(false)
   const [feedback, setFeedback] = useState<FeedbackState | null>(null)
 
-  // Поля профілю.
   const [fullName, setFullName] = useState('')
   const [bio, setBio] = useState('')
   const [phone, setPhone] = useState('')
@@ -47,12 +44,10 @@ export function Settings() {
   const [profilePhoto, setProfilePhoto] = useState('')
   const [portfolioImages, setPortfolioImages] = useState<string[]>([])
 
-  // Налаштування користувача.
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [preferredLanguage, setPreferredLanguage] = useState<LanguageOption['code']>(language.code)
   const [preferredCurrency, setPreferredCurrency] = useState<CurrencyOption['code']>(currency.code)
 
-  // Поля зміни пароля.
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
@@ -61,7 +56,6 @@ export function Settings() {
   }, [user])
 
   const resetProfileForm = () => {
-    // Очищаємо форму, якщо профіль не знайдено або користувач уже не авторизований.
     setFullName('')
     setBio('')
     setPhone('')
@@ -82,8 +76,6 @@ export function Settings() {
     try {
       let activeUser = user
 
-      // Якщо в контексті користувача ще немає,
-      // перевіряємо його напряму через Supabase Auth.
       if (!activeUser) {
         const {
           data: { user: remoteUser },
@@ -128,12 +120,16 @@ export function Settings() {
         throw error
       }
 
-      // Якщо рядка профілю вже немає,
-      // очищаємо форму, щоб не показувати старі значення.
       if (!data) {
         resetProfileForm()
         return
       }
+
+      const nextLanguage =
+        LANGUAGES.find((item) => item.code === data.preferred_language)?.code ?? language.code
+
+      const nextCurrency =
+        CURRENCIES.find((item) => item.code === data.preferred_currency)?.code ?? currency.code
 
       setFullName(data.full_name ?? '')
       setBio(data.bio ?? '')
@@ -143,8 +139,8 @@ export function Settings() {
       setProfilePhoto(data.profile_photo ?? '')
       setPortfolioImages(Array.isArray(data.portfolio_images) ? data.portfolio_images : [])
       setNotificationsEnabled(data.notifications_enabled !== false)
-      setPreferredLanguage((data.preferred_language ?? language.code) as LanguageOption['code'])
-      setPreferredCurrency((data.preferred_currency ?? currency.code) as CurrencyOption['code'])
+      setPreferredLanguage(nextLanguage)
+      setPreferredCurrency(nextCurrency)
     } catch (error) {
       console.error('Помилка завантаження профілю:', error)
       resetProfileForm()
@@ -169,8 +165,6 @@ export function Settings() {
     setSavingProfile(true)
     setFeedback(null)
 
-    // Нормалізуємо дані перед збереженням,
-    // щоб не тягнути в БД зайві пробіли та порожні URL.
     const normalizedFullName = fullName.trim()
     const normalizedBio = bio.trim()
     const normalizedPhone = phone.trim()
@@ -184,26 +178,27 @@ export function Settings() {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({
-          full_name: normalizedFullName,
-          bio: normalizedBio || null,
-          phone: normalizedPhone || null,
-          location: normalizedLocation || null,
-          website: normalizedWebsite || null,
-          profile_photo: normalizedProfilePhoto || null,
-          portfolio_images: normalizedPortfolioImages,
-          notifications_enabled: notificationsEnabled,
-          preferred_language: preferredLanguage,
-          preferred_currency: preferredCurrency,
-        })
-        .eq('id', currentUserId)
+        .upsert(
+          {
+            id: currentUserId,
+            full_name: normalizedFullName,
+            bio: normalizedBio || null,
+            phone: normalizedPhone || null,
+            location: normalizedLocation || null,
+            website: normalizedWebsite || null,
+            profile_photo: normalizedProfilePhoto || null,
+            portfolio_images: normalizedPortfolioImages,
+            notifications_enabled: notificationsEnabled,
+            preferred_language: preferredLanguage,
+            preferred_currency: preferredCurrency,
+          },
+          { onConflict: 'id' }
+        )
 
       if (error) {
         throw error
       }
 
-      // Після успіху синхронізуємо локальний стан форми
-      // з уже нормалізованими значеннями.
       setFullName(normalizedFullName)
       setBio(normalizedBio)
       setPhone(normalizedPhone)
@@ -280,7 +275,6 @@ export function Settings() {
   }
 
   const handleDeleteAccount = async () => {
-    // Показуємо підтвердження перед незворотною дією.
     const confirmed = window.confirm(t('settings.confirm.deleteAccount'))
 
     if (!confirmed || !currentUserId) {
@@ -290,7 +284,6 @@ export function Settings() {
     setFeedback(null)
 
     try {
-      // Беремо активну сесію, щоб передати access token у Edge Function.
       const {
         data: { session },
         error: sessionError,
@@ -304,8 +297,6 @@ export function Settings() {
         throw new Error('No active session')
       }
 
-      // Edge Function має видаляти користувача на бекенді через service role,
-      // а не намагатися робити це з браузера напряму.
       const { error } = await supabase.functions.invoke('delete-account', {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
@@ -316,10 +307,7 @@ export function Settings() {
         throw error
       }
 
-      // Після видалення очищаємо локальну сесію.
-      // Тут краще local signOut, бо серверний акаунт уже може бути видалений.
       await supabase.auth.signOut({ scope: 'local' })
-
       setCurrentUserId(null)
       resetProfileForm()
       navigateTo('/')
@@ -374,7 +362,7 @@ export function Settings() {
               <div className="mb-6">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(233,202,177,0.7)] bg-[rgba(255,247,239,0.88)] px-4 py-2 text-sm font-semibold text-[#a26233]">
                   <User className="h-4 w-4" />
-                  <span>{t('settings.profileInfoTitle')}</span>
+                  <span>{t('header.myProfile')}</span>
                 </div>
 
                 <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
@@ -539,7 +527,7 @@ export function Settings() {
                         onClick={addPortfolioImage}
                         className="btn-ghost justify-start rounded-full px-0"
                       >
-                        {t('settings.addPortfolioImage')}
+                        + {t('settings.addPortfolioImage')}
                       </button>
                     </div>
                   </div>
