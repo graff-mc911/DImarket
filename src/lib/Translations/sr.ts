@@ -627,4 +627,19 @@ export const srTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Odbijena',
   'advertising.status.expired': 'Istekla',
   'advertising.geo.noneAvailable': 'Nema dostupnih opcija',
+
+  // Register — ролі з перекладами
+  'register.roleClient': 'Klijent',
+  'register.roleClientDesc': 'Tražim majstora ili uslugu',
+  'register.roleProfessional': 'Majstor',
+  'register.roleProfessionalDesc': 'Pružam usluge kao fizičko lice',
+  'register.roleCompany': 'Kompanija',
+  'register.roleCompanyDesc': 'Registrujem firmu ili biznis',
+  'register.roleAdvertiser': 'Oglašivač',
+  'register.roleAdvertiserDesc': 'Postavljam oglase na platformi',
+  'register.whoAreYou': 'Ko ste vi?',
+  'register.hintClient': 'Kao klijent možete kreirati oglase, naći majstore i ostavljati recenzije.',
+  'register.hintProfessional': 'Kao majstor možete kreirati profil, dodati portfolio i primati narudžbine.',
+  'register.hintCompany': 'Kao kompanija možete objaviti firmski profil i privlačiti klijente.',
+  'register.hintAdvertiser': 'Kao oglašivač možete postavljati baner reklame sa geo-targetingom na celoj platformi.',
 }
