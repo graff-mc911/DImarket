@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { type User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
-import { type Profile, type UserRole, CURRENCIES, LANGUAGES } from '../lib/types'
-import { getTranslation, type LanguageCode } from '../lib/i18n'
+import { type Profile, CURRENCIES, LANGUAGES } from '../lib/types'
+import { getTranslation, type TranslationKey, type LanguageCode } from '../lib/i18n'
 
 interface AppContextType {
   user: User | null
@@ -12,7 +12,7 @@ interface AppContextType {
   setCurrency: (currency: typeof CURRENCIES[number]) => void
   setLanguage: (language: typeof LANGUAGES[number]) => void
   signOut: () => Promise<void>
-  t: (key: string) => string
+  t: (key: TranslationKey) => string
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -24,11 +24,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<typeof LANGUAGES[number]>(LANGUAGES[0])
 
   useEffect(() => {
-    const savedCurrency =
-      localStorage.getItem('dimarket_currency') ?? localStorage.getItem('buildster_currency')
-
-    const savedLanguage =
-      localStorage.getItem('dimarket_language') ?? localStorage.getItem('buildster_language')
+    const savedCurrency = localStorage.getItem('dimarket_currency')
+    const savedLanguage = localStorage.getItem('dimarket_language')
 
     if (savedCurrency) {
       const foundCurrency = CURRENCIES.find((item) => item.code === savedCurrency)
@@ -66,24 +63,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const registerVisitOncePerSession = async () => {
-    try {
-      const alreadyTracked = sessionStorage.getItem('dimarket_visit_tracked')
-
-      if (alreadyTracked === '1') {
-        return
-      }
-
-      const { error } = await supabase.rpc('register_app_visit')
-
-      if (!error) {
-        sessionStorage.setItem('dimarket_visit_tracked', '1')
-      } else {
-        console.error('Помилка реєстрації візиту:', error)
-      }
-    } catch (error) {
-      console.error('Непередбачена помилка реєстрації візиту:', error)
+  const normalizeText = (value: unknown): string | null => {
+    if (typeof value !== 'string') {
+      return null
     }
+
+    const trimmed = value.trim()
+    return trimmed ? trimmed : null
+  }
+
+  const isProfessionalMetadata = (metadata: Record<string, unknown>) => {
+    if (metadata.is_professional === true) {
+      return true
+    }
+
+    return (
+      metadata.user_role === 'professional' ||
+      metadata.user_role === 'company' ||
+      metadata.requested_role === 'professional' ||
+      metadata.requested_role === 'company'
+    )
   }
 
   const bootstrapAuth = async () => {
@@ -112,21 +111,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const normalizeRole = (value: unknown): UserRole => {
-    if (value === 'professional' || value === 'company' || value === 'owner') {
-      return value
+  const registerVisitOncePerSession = async () => {
+    try {
+      const alreadyTracked = sessionStorage.getItem('dimarket_visit_tracked')
+
+      if (alreadyTracked === '1') {
+        return
+      }
+
+      const { error } = await supabase.rpc('register_app_visit')
+
+      if (!error) {
+        sessionStorage.setItem('dimarket_visit_tracked', '1')
+      } else {
+        console.error('Помилка реєстрації візиту:', error)
+      }
+    } catch (error) {
+      console.error('Непередбачена помилка реєстрації візиту:', error)
     }
-
-    return 'client'
-  }
-
-  const normalizeText = (value: unknown): string | null => {
-    if (typeof value !== 'string') {
-      return null
-    }
-
-    const trimmed = value.trim()
-    return trimmed ? trimmed : null
   }
 
   const loadOrCreateProfile = async (activeUser: User) => {
@@ -146,16 +148,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      const metadata = activeUser.user_metadata ?? {}
-      const role = normalizeRole(metadata.user_role)
+      const metadata = (activeUser.user_metadata ?? {}) as Record<string, unknown>
 
       const profilePayload = {
         id: activeUser.id,
         full_name: normalizeText(metadata.full_name),
         phone: normalizeText(metadata.phone),
         location: normalizeText(metadata.location),
-        user_role: role,
-        is_professional: role === 'professional' || role === 'company',
+        is_professional: isProfessionalMetadata(metadata),
       }
 
       const { data: createdProfile, error: createError } = await supabase
@@ -178,13 +178,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const handleSetCurrency = (newCurrency: typeof CURRENCIES[number]) => {
     setCurrency(newCurrency)
     localStorage.setItem('dimarket_currency', newCurrency.code)
-    localStorage.setItem('buildster_currency', newCurrency.code)
   }
 
   const handleSetLanguage = (newLanguage: typeof LANGUAGES[number]) => {
     setLanguage(newLanguage)
     localStorage.setItem('dimarket_language', newLanguage.code)
-    localStorage.setItem('buildster_language', newLanguage.code)
   }
 
   const signOut = async () => {
@@ -199,8 +197,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const t = (key: string): string => {
-    return getTranslation(language.code as LanguageCode, key as never)
+  const t = (key: TranslationKey): string => {
+    return getTranslation(language.code as LanguageCode, key)
   }
 
   return (
