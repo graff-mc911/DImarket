@@ -11,7 +11,7 @@
 // ============================================================
 
 import { useState } from 'react'
-import { Building2, HardHat, User, UserPlus } from 'lucide-react'
+import { Building2, HardHat, Megaphone, User, UserPlus } from 'lucide-react'
 import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -41,6 +41,12 @@ const ROLE_OPTIONS: {
     icon:        <Building2 className="h-6 w-6" />,
     title:       'Компанія',
     description: 'Реєструю фірму або бізнес',
+  },
+  {
+    role:        'advertiser',
+    icon:        <Megaphone className="h-6 w-6" />,
+    title:       'Рекламодавець',
+    description: 'Розміщую рекламу на платформі',
   },
 ]
 
@@ -105,11 +111,9 @@ export function Register() {
 
         // Клієнт іде на головну, майстер і компанія — заповнювати профіль
         setTimeout(() => {
-          if (selectedRole === 'client') {
-            navigateTo('/listings')
-          } else {
-            navigateTo('/settings')
-          }
+          if (selectedRole === 'client') navigateTo('/listings')
+          else if (selectedRole === 'advertiser') navigateTo('/advertising')
+          else navigateTo('/settings')
         }, 1500)
       }
     } catch (err) {
