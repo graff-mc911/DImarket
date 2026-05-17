@@ -23,6 +23,9 @@ type FeedbackState = {
   text: string
 }
 
+type LanguageOption = (typeof LANGUAGES)[number]
+type CurrencyOption = (typeof CURRENCIES)[number]
+
 export function Settings() {
   const { user, language, currency, setLanguage, setCurrency, t } = useApp()
 
@@ -46,8 +49,8 @@ export function Settings() {
 
   // Налаштування користувача.
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
-  const [preferredLanguage, setPreferredLanguage] = useState(language.code)
-  const [preferredCurrency, setPreferredCurrency] = useState(currency.code)
+  const [preferredLanguage, setPreferredLanguage] = useState<LanguageOption['code']>(language.code)
+  const [preferredCurrency, setPreferredCurrency] = useState<CurrencyOption['code']>(currency.code)
 
   // Поля зміни пароля.
   const [newPassword, setNewPassword] = useState('')
@@ -57,19 +60,57 @@ export function Settings() {
     void bootstrapSettings()
   }, [user])
 
+  const resetProfileForm = () => {
+    // Очищаємо форму, якщо профіль не знайдено або користувач уже не авторизований.
+    setFullName('')
+    setBio('')
+    setPhone('')
+    setLocation('')
+    setWebsite('')
+    setProfilePhoto('')
+    setPortfolioImages([])
+    setNotificationsEnabled(true)
+    setPreferredLanguage(language.code)
+    setPreferredCurrency(currency.code)
+    setNewPassword('')
+    setConfirmPassword('')
+  }
+
   const bootstrapSettings = async () => {
     setLoading(true)
 
     try {
-      const activeUser = user ?? (await supabase.auth.getUser()).data.user ?? null
+      let activeUser = user
+
+      // Якщо в контексті користувача ще немає,
+      // перевіряємо його напряму через Supabase Auth.
+      if (!activeUser) {
+        const {
+          data: { user: remoteUser },
+          error,
+        } = await supabase.auth.getUser()
+
+        if (error) {
+          throw error
+        }
+
+        activeUser = remoteUser ?? null
+      }
 
       if (!activeUser) {
+        setCurrentUserId(null)
+        resetProfileForm()
         navigateTo('/login')
         return
       }
 
       setCurrentUserId(activeUser.id)
       await loadProfile(activeUser.id)
+    } catch (error) {
+      console.error('Помилка ініціалізації сторінки налаштувань:', error)
+      setCurrentUserId(null)
+      resetProfileForm()
+      navigateTo('/login')
     } finally {
       setLoading(false)
     }
@@ -87,22 +128,26 @@ export function Settings() {
         throw error
       }
 
+      // Якщо рядка профілю вже немає,
+      // очищаємо форму, щоб не показувати старі значення.
       if (!data) {
+        resetProfileForm()
         return
       }
 
-      setFullName(data.full_name || '')
-      setBio(data.bio || '')
-      setPhone(data.phone || '')
-      setLocation(data.location || '')
-      setWebsite(data.website || '')
-      setProfilePhoto(data.profile_photo || '')
+      setFullName(data.full_name ?? '')
+      setBio(data.bio ?? '')
+      setPhone(data.phone ?? '')
+      setLocation(data.location ?? '')
+      setWebsite(data.website ?? '')
+      setProfilePhoto(data.profile_photo ?? '')
       setPortfolioImages(Array.isArray(data.portfolio_images) ? data.portfolio_images : [])
       setNotificationsEnabled(data.notifications_enabled !== false)
-      setPreferredLanguage(data.preferred_language || language.code)
-      setPreferredCurrency(data.preferred_currency || currency.code)
+      setPreferredLanguage((data.preferred_language ?? language.code) as LanguageOption['code'])
+      setPreferredCurrency((data.preferred_currency ?? currency.code) as CurrencyOption['code'])
     } catch (error) {
       console.error('Помилка завантаження профілю:', error)
+      resetProfileForm()
       setFeedback({
         type: 'error',
         text: t('settings.error.loadProfile'),
@@ -124,17 +169,29 @@ export function Settings() {
     setSavingProfile(true)
     setFeedback(null)
 
+    // Нормалізуємо дані перед збереженням,
+    // щоб не тягнути в БД зайві пробіли та порожні URL.
+    const normalizedFullName = fullName.trim()
+    const normalizedBio = bio.trim()
+    const normalizedPhone = phone.trim()
+    const normalizedLocation = location.trim()
+    const normalizedWebsite = website.trim()
+    const normalizedProfilePhoto = profilePhoto.trim()
+    const normalizedPortfolioImages = portfolioImages
+      .map((url) => url.trim())
+      .filter(Boolean)
+
     try {
       const { error } = await supabase
         .from('profiles')
         .update({
-          full_name: fullName,
-          bio,
-          phone,
-          location,
-          website,
-          profile_photo: profilePhoto,
-          portfolio_images: portfolioImages,
+          full_name: normalizedFullName,
+          bio: normalizedBio || null,
+          phone: normalizedPhone || null,
+          location: normalizedLocation || null,
+          website: normalizedWebsite || null,
+          profile_photo: normalizedProfilePhoto || null,
+          portfolio_images: normalizedPortfolioImages,
           notifications_enabled: notificationsEnabled,
           preferred_language: preferredLanguage,
           preferred_currency: preferredCurrency,
@@ -144,6 +201,16 @@ export function Settings() {
       if (error) {
         throw error
       }
+
+      // Після успіху синхронізуємо локальний стан форми
+      // з уже нормалізованими значеннями.
+      setFullName(normalizedFullName)
+      setBio(normalizedBio)
+      setPhone(normalizedPhone)
+      setLocation(normalizedLocation)
+      setWebsite(normalizedWebsite)
+      setProfilePhoto(normalizedProfilePhoto)
+      setPortfolioImages(normalizedPortfolioImages)
 
       const selectedLanguage = LANGUAGES.find((item) => item.code === preferredLanguage)
       const selectedCurrency = CURRENCIES.find((item) => item.code === preferredCurrency)
@@ -213,6 +280,7 @@ export function Settings() {
   }
 
   const handleDeleteAccount = async () => {
+    // Показуємо підтвердження перед незворотною дією.
     const confirmed = window.confirm(t('settings.confirm.deleteAccount'))
 
     if (!confirmed || !currentUserId) {
@@ -222,19 +290,38 @@ export function Settings() {
     setFeedback(null)
 
     try {
-      // Отримуємо сесію для авторизації
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error('No session')
+      // Беремо активну сесію, щоб передати access token у Edge Function.
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession()
 
-      // Викликаємо Edge Function з адмін-привілеями
+      if (sessionError) {
+        throw sessionError
+      }
+
+      if (!session?.access_token) {
+        throw new Error('No active session')
+      }
+
+      // Edge Function має видаляти користувача на бекенді через service role,
+      // а не намагатися робити це з браузера напряму.
       const { error } = await supabase.functions.invoke('delete-account', {
-        headers: { Authorization: `Bearer ${session.access_token}` }
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       })
 
-      if (error) throw error
+      if (error) {
+        throw error
+      }
 
-      // Виходимо і переходимо на головну
-      await supabase.auth.signOut()
+      // Після видалення очищаємо локальну сесію.
+      // Тут краще local signOut, бо серверний акаунт уже може бути видалений.
+      await supabase.auth.signOut({ scope: 'local' })
+
+      setCurrentUserId(null)
+      resetProfileForm()
       navigateTo('/')
     } catch (error) {
       console.error('Помилка видалення акаунта:', error)
@@ -287,7 +374,7 @@ export function Settings() {
               <div className="mb-6">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(233,202,177,0.7)] bg-[rgba(255,247,239,0.88)] px-4 py-2 text-sm font-semibold text-[#a26233]">
                   <User className="h-4 w-4" />
-                  <span>{t('header.myProfile')}</span>
+                  <span>{t('settings.profileInfoTitle')}</span>
                 </div>
 
                 <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
@@ -452,7 +539,7 @@ export function Settings() {
                         onClick={addPortfolioImage}
                         className="btn-ghost justify-start rounded-full px-0"
                       >
-                        + {t('settings.addPortfolioImage')}
+                        {t('settings.addPortfolioImage')}
                       </button>
                     </div>
                   </div>
@@ -472,7 +559,9 @@ export function Settings() {
                         </label>
                         <select
                           value={preferredLanguage}
-                          onChange={(event) => setPreferredLanguage(event.target.value)}
+                          onChange={(event) =>
+                            setPreferredLanguage(event.target.value as LanguageOption['code'])
+                          }
                           className="select-glass bg-white/80"
                         >
                           {LANGUAGES.map((item) => (
@@ -490,7 +579,9 @@ export function Settings() {
                         </label>
                         <select
                           value={preferredCurrency}
-                          onChange={(event) => setPreferredCurrency(event.target.value)}
+                          onChange={(event) =>
+                            setPreferredCurrency(event.target.value as CurrencyOption['code'])
+                          }
                           className="select-glass bg-white/80"
                         >
                           {CURRENCIES.map((item) => (
@@ -605,7 +696,8 @@ export function Settings() {
                   <button
                     type="button"
                     onClick={handleDeleteAccount}
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[linear-gradient(135deg,rgba(185,63,63,0.95),rgba(153,27,27,0.95))] px-6 py-3 font-semibold text-white shadow-[0_18px_35px_rgba(153,27,27,0.22)] transition hover:scale-[1.01] active:scale-[0.99] sm:w-auto"
+                    disabled={!currentUserId}
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[linear-gradient(135deg,rgba(185,63,63,0.95),rgba(153,27,27,0.95))] px-6 py-3 font-semibold text-white shadow-[0_18px_35px_rgba(153,27,27,0.22)] transition hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                   >
                     {t('settings.deleteAccountButton')}
                   </button>
