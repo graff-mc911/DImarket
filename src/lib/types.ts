@@ -27,7 +27,7 @@ export type Json =
 // company     — фірма або компанія що надає послуги
 // owner       — власник платформи DImarket
 // ============================================================
-export type UserRole = 'client' | 'professional' | 'company' | 'owner'
+export type UserRole = 'client' | 'professional' | 'company' | 'owner' | 'advertiser'
 
 // ============================================================
 // СХЕМА БАЗИ ДАНИХ
