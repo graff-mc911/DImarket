@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Globe, LogIn } from 'lucide-react'
+import { Eye, EyeOff, Globe, LogIn } from 'lucide-react'
 import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -11,6 +11,7 @@ export function Login() {
   const [password, setPassword] = useState('')
   const [loading,  setLoading]  = useState(false)
   const [error,    setError]    = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -100,12 +101,18 @@ export function Login() {
                 <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
                   {t('login.password')} *
                 </label>
-                <input
-                  type="password" required value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  className="input-glass"
-                  placeholder={t('login.passwordPlaceholder')}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'} required value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    className="input-glass pr-11"
+                    placeholder={t('login.passwordPlaceholder')}
+                  />
+                  <button type="button" onClick={() => setShowPassword(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-400)] hover:text-[var(--ink-700)] transition">
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
               </div>
 
               <button type="submit" disabled={loading}
