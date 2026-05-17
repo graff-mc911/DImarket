@@ -961,4 +961,19 @@ export const bgTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Отхвърлена',
   'advertising.status.expired': 'Изтекла',
   'advertising.geo.noneAvailable': 'Няма налични варианти',
+
+  // Register — ролі з перекладами
+  'register.roleClient': 'Клиент',
+  'register.roleClientDesc': 'Търся майстор или услуга',
+  'register.roleProfessional': 'Майстор',
+  'register.roleProfessionalDesc': 'Предлагам услуги като физическо лице',
+  'register.roleCompany': 'Компания',
+  'register.roleCompanyDesc': 'Регистрирам фирма или бизнес',
+  'register.roleAdvertiser': 'Рекламодател',
+  'register.roleAdvertiserDesc': 'Пускам реклами в платформата',
+  'register.whoAreYou': 'Кой сте вие?',
+  'register.hintClient': 'Като клиент можете да създавате обяви, намирате майстори и оставяте отзиви.',
+  'register.hintProfessional': 'Като майстор можете да създадете профил, да добавите портфолио и да получавате поръчки.',
+  'register.hintCompany': 'Като компания можете да публикувате фирмен профил и да привличате клиенти.',
+  'register.hintAdvertiser': 'Като рекламодател можете да поставяте банерни реклами с гео-таргетиране в цялата платформа.',
 }
