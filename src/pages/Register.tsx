@@ -15,43 +15,22 @@ import { Building2, HardHat, Megaphone, User, UserPlus } from 'lucide-react'
 import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { LANGUAGES } from '../lib/types'
 import type { UserRole } from '../lib/types'
 
 // Описуємо варіанти ролей для UI
-const ROLE_OPTIONS: {
-  role:        UserRole
-  icon:        React.ReactNode
-  title:       string
-  description: string
-}[] = [
-  {
-    role:        'client',
-    icon:        <User className="h-6 w-6" />,
-    title:       'Клієнт',
-    description: 'Шукаю майстра або послугу',
-  },
-  {
-    role:        'professional',
-    icon:        <HardHat className="h-6 w-6" />,
-    title:       'Майстер',
-    description: 'Надаю послуги як фізична особа',
-  },
-  {
-    role:        'company',
-    icon:        <Building2 className="h-6 w-6" />,
-    title:       'Компанія',
-    description: 'Реєструю фірму або бізнес',
-  },
-  {
-    role:        'advertiser',
-    icon:        <Megaphone className="h-6 w-6" />,
-    title:       'Рекламодавець',
-    description: 'Розміщую рекламу на платформі',
-  },
-]
+// Ролі визначаються всередині компонента щоб мати доступ до t()
 
 export function Register() {
-  const { t } = useApp()
+  const { t, language, setLanguage } = useApp()
+
+  // Ролі з перекладами — всередині компонента щоб мати доступ до t()
+  const ROLE_OPTIONS = [
+    { role: 'client' as UserRole, icon: <User className="h-6 w-6" />, title: t('register.roleClient'), description: t('register.roleClientDesc') },
+    { role: 'professional' as UserRole, icon: <HardHat className="h-6 w-6" />, title: t('register.roleProfessional'), description: t('register.roleProfessionalDesc') },
+    { role: 'company' as UserRole, icon: <Building2 className="h-6 w-6" />, title: t('register.roleCompany'), description: t('register.roleCompanyDesc') },
+    { role: 'advertiser' as UserRole, icon: <Megaphone className="h-6 w-6" />, title: t('register.roleAdvertiser'), description: t('register.roleAdvertiserDesc') },
+  ]
 
   // --- Поля форми ---
   const [fullName, setFullName]       = useState('')
@@ -132,6 +111,22 @@ export function Register() {
 
           {/* Основна картка */}
           <div className="glass-panel p-6 md:p-8">
+
+            {/* Вибір мови прямо на сторінці реєстрації */}
+            <div className="flex justify-end mb-4">
+              <select
+                value={language.code}
+                onChange={e => {
+                  const lang = LANGUAGES.find((l) => l.code === e.target.value)
+                  if (lang) setLanguage(lang)
+                }}
+                className="select-glass text-xs py-1 px-2 w-auto"
+              >
+                {LANGUAGES.map(lang => (
+                  <option key={lang.code} value={lang.code}>{lang.flag || lang.name}</option>
+                ))}
+              </select>
+            </div>
 
             {/* Іконка і заголовок */}
             <div className="text-center">
