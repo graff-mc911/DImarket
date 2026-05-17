@@ -720,4 +720,19 @@ export const jaTranslations: Partial<Record<TranslationKey, string>> = {
   'home.statsLanguages': 'インターフェース言語',
   'professional.featured': 'おすすめ',
   'professional.verified': '認証済み',
+
+  // Register — ролі з перекладами
+  'register.roleClient': 'クライアント',
+  'register.roleClientDesc': '職人やサービスを探しています',
+  'register.roleProfessional': '職人',
+  'register.roleProfessionalDesc': '個人として サービスを提供しています',
+  'register.roleCompany': '会社',
+  'register.roleCompanyDesc': '会社や事業を登録しています',
+  'register.roleAdvertiser': '広告主',
+  'register.roleAdvertiserDesc': 'プラットフォームに広告を掲載しています',
+  'register.whoAreYou': 'あなたは誰ですか？',
+  'register.hintClient': 'クライアントとして広告を作成し、職人を見つけてレビューを残すことができます。',
+  'register.hintProfessional': '職人としてプロフィールを作成し、ポートフォリオを追加して注文を受けることができます。',
+  'register.hintCompany': '会社として企業プロフィールを掲載し、顧客を引き付けることができます。',
+  'register.hintAdvertiser': '広告主としてプラットフォーム全体でジオターゲティング付きバナー広告を掲載できます。',
 }
