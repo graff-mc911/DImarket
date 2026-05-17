@@ -227,14 +227,15 @@ export function Settings() {
       if (!session) throw new Error('No session')
 
       // Викликаємо Edge Function з адмін-привілеями
-      // Ігноруємо помилку функції бо після видалення сесія стає недійсною
-      await supabase.functions.invoke('delete-account', {
+      const { error } = await supabase.functions.invoke('delete-account', {
         headers: { Authorization: `Bearer ${session.access_token}` }
       })
 
-      // Виходимо і переходимо на головну незалежно від результату
+      if (error) throw error
+
+      // Виходимо і переходимо на головну
       await supabase.auth.signOut()
-      window.location.href = '/'
+      navigateTo('/')
     } catch (error) {
       console.error('Помилка видалення акаунта:', error)
       setFeedback({
