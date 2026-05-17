@@ -309,8 +309,8 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.radius.global': 'Alle Nutzer',
 
   // Вхід у систему.
-  'login.title': 'Login fuer Fachkraefte',
-  'login.subtitle': 'Melden Sie sich an, um Profil und Anzeigen zu verwalten',
+  'login.title': 'Anmelden',
+  'login.subtitle': 'Melden Sie sich an',
   'login.email': 'E-Mail-Adresse',
   'login.emailPlaceholder': 'you@example.com',
   'login.password': 'Passwort',
@@ -318,7 +318,7 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'login.signIn': 'Anmelden',
   'login.signingIn': 'Anmeldung...',
   'login.noAccount': 'Noch kein Konto?',
-  'login.registerLink': 'Als Fachkraft registrieren',
+  'login.registerLink': 'Registrieren',
   'login.lookingToPost': 'Moechten Sie eine Anzeige veroeffentlichen?',
   'login.noRegistrationRequired': 'Keine Registrierung erforderlich',
 
@@ -331,7 +331,7 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'register.passwordMin': 'Mindestens 6 Zeichen',
   'register.phonePlaceholder': '+49 170 1234567',
   'register.locationPlaceholder': 'Stadt, Bundesland',
-  'register.createAccount': 'Fachkraftkonto erstellen',
+  'register.createAccount': 'Konto erstellen',
   'register.creating': 'Konto wird erstellt...',
   'register.success':
     'Registrierung erfolgreich! Weiterleitung zum Dashboard...',
@@ -999,4 +999,22 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'register.hintProfessional': 'Als Fachkraft können Sie ein Profil erstellen, Portfolio hinzufügen und Aufträge erhalten.',
   'register.hintCompany': 'Als Unternehmen können Sie ein Firmenprofil erstellen und Kunden gewinnen.',
   'register.hintAdvertiser': 'Als Werbetreibender können Sie Bannerwerbung mit Geo-Targeting auf der gesamten Plattform schalten.',
+
+  // Register — географія
+  'register.yourLocation': 'Ihr Standort',
+  'register.selectCountry': 'Land auswählen',
+  'register.selectRegion': 'Region auswählen (optional)',
+  'register.selectCity': 'Stadt auswählen',
+  'register.cityNotInList': 'Ihre Stadt nicht in der Liste?',
+  'register.cityPlaceholder': 'Stadtname manuell eingeben',
+  'register.enterManually': 'Manuell eingeben',
+
+  // Register geo detect
+  'register.detectingLocation': 'Land wird erkannt...',
+  'register.locationAutoDetected': 'Land automatisch erkannt. Bei Bedarf ändern.',
+
+  // Register company
+  'register.companyName': 'Firmenname',
+  'register.companyNamePlaceholder': 'z.B. BauService GmbH',
+  'register.representativeName': 'Name des Vertreters',
 }
