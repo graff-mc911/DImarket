@@ -32,6 +32,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     if (savedCurrency) {
       const foundCurrency = CURRENCIES.find((item) => item.code === savedCurrency)
+
       if (foundCurrency) {
         setCurrency(foundCurrency)
       }
@@ -39,6 +40,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     if (savedLanguage) {
       const foundLanguage = LANGUAGES.find((item) => item.code === savedLanguage)
+
       if (foundLanguage) {
         setLanguage(foundLanguage)
       }
