@@ -23,7 +23,22 @@ export function Login() {
 
       if (error) throw error
 
-      window.location.href = '/dashboard'
+      // Визначаємо куди направити залежно від ролі
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('user_role, is_site_owner')
+        .eq('id', (await supabase.auth.getUser()).data.user?.id || '')
+        .single()
+
+      if (profileData?.is_site_owner) {
+        window.location.href = '/dashboard'
+      } else if (profileData?.user_role === 'advertiser') {
+        window.location.href = '/advertising'
+      } else if (profileData?.user_role === 'client') {
+        window.location.href = '/listings'
+      } else {
+        window.location.href = '/settings'
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to login')
     } finally {
