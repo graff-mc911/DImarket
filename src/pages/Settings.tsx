@@ -23,6 +23,9 @@ type FeedbackState = {
   text: string
 }
 
+type LanguageOption = (typeof LANGUAGES)[number]
+type CurrencyOption = (typeof CURRENCIES)[number]
+
 export function Settings() {
   const { user, language, currency, setLanguage, setCurrency, t } = useApp()
 
@@ -42,8 +45,8 @@ export function Settings() {
   const [portfolioImages, setPortfolioImages] = useState<string[]>([])
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
-  const [preferredLanguage, setPreferredLanguage] = useState(language.code)
-  const [preferredCurrency, setPreferredCurrency] = useState(currency.code)
+  const [preferredLanguage, setPreferredLanguage] = useState<LanguageOption['code']>(language.code)
+  const [preferredCurrency, setPreferredCurrency] = useState<CurrencyOption['code']>(currency.code)
 
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -52,19 +55,54 @@ export function Settings() {
     void bootstrapSettings()
   }, [user])
 
+  const resetProfileForm = () => {
+    setFullName('')
+    setBio('')
+    setPhone('')
+    setLocation('')
+    setWebsite('')
+    setProfilePhoto('')
+    setPortfolioImages([])
+    setNotificationsEnabled(true)
+    setPreferredLanguage(language.code)
+    setPreferredCurrency(currency.code)
+    setNewPassword('')
+    setConfirmPassword('')
+  }
+
   const bootstrapSettings = async () => {
     setLoading(true)
 
     try {
-      const activeUser = user ?? (await supabase.auth.getUser()).data.user ?? null
+      let activeUser = user
 
       if (!activeUser) {
+        const {
+          data: { user: remoteUser },
+          error,
+        } = await supabase.auth.getUser()
+
+        if (error) {
+          throw error
+        }
+
+        activeUser = remoteUser ?? null
+      }
+
+      if (!activeUser) {
+        setCurrentUserId(null)
+        resetProfileForm()
         navigateTo('/login')
         return
       }
 
       setCurrentUserId(activeUser.id)
       await loadProfile(activeUser.id)
+    } catch (error) {
+      console.error('Помилка ініціалізації сторінки налаштувань:', error)
+      setCurrentUserId(null)
+      resetProfileForm()
+      navigateTo('/login')
     } finally {
       setLoading(false)
     }
@@ -83,21 +121,29 @@ export function Settings() {
       }
 
       if (!data) {
+        resetProfileForm()
         return
       }
 
-      setFullName(data.full_name || '')
-      setBio(data.bio || '')
-      setPhone(data.phone || '')
-      setLocation(data.location || '')
-      setWebsite(data.website || '')
-      setProfilePhoto(data.profile_photo || '')
+      const nextLanguage =
+        LANGUAGES.find((item) => item.code === data.preferred_language)?.code ?? language.code
+
+      const nextCurrency =
+        CURRENCIES.find((item) => item.code === data.preferred_currency)?.code ?? currency.code
+
+      setFullName(data.full_name ?? '')
+      setBio(data.bio ?? '')
+      setPhone(data.phone ?? '')
+      setLocation(data.location ?? '')
+      setWebsite(data.website ?? '')
+      setProfilePhoto(data.profile_photo ?? '')
       setPortfolioImages(Array.isArray(data.portfolio_images) ? data.portfolio_images : [])
       setNotificationsEnabled(data.notifications_enabled !== false)
-      setPreferredLanguage(data.preferred_language || language.code)
-      setPreferredCurrency(data.preferred_currency || currency.code)
+      setPreferredLanguage(nextLanguage)
+      setPreferredCurrency(nextCurrency)
     } catch (error) {
       console.error('Помилка завантаження профілю:', error)
+      resetProfileForm()
       setFeedback({
         type: 'error',
         text: t('settings.error.loadProfile'),
@@ -119,26 +165,47 @@ export function Settings() {
     setSavingProfile(true)
     setFeedback(null)
 
+    const normalizedFullName = fullName.trim()
+    const normalizedBio = bio.trim()
+    const normalizedPhone = phone.trim()
+    const normalizedLocation = location.trim()
+    const normalizedWebsite = website.trim()
+    const normalizedProfilePhoto = profilePhoto.trim()
+    const normalizedPortfolioImages = portfolioImages
+      .map((url) => url.trim())
+      .filter(Boolean)
+
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({
-          full_name: fullName,
-          bio,
-          phone,
-          location,
-          website,
-          profile_photo: profilePhoto,
-          portfolio_images: portfolioImages,
-          notifications_enabled: notificationsEnabled,
-          preferred_language: preferredLanguage,
-          preferred_currency: preferredCurrency,
-        })
-        .eq('id', currentUserId)
+        .upsert(
+          {
+            id: currentUserId,
+            full_name: normalizedFullName,
+            bio: normalizedBio || null,
+            phone: normalizedPhone || null,
+            location: normalizedLocation || null,
+            website: normalizedWebsite || null,
+            profile_photo: normalizedProfilePhoto || null,
+            portfolio_images: normalizedPortfolioImages,
+            notifications_enabled: notificationsEnabled,
+            preferred_language: preferredLanguage,
+            preferred_currency: preferredCurrency,
+          },
+          { onConflict: 'id' }
+        )
 
       if (error) {
         throw error
       }
+
+      setFullName(normalizedFullName)
+      setBio(normalizedBio)
+      setPhone(normalizedPhone)
+      setLocation(normalizedLocation)
+      setWebsite(normalizedWebsite)
+      setProfilePhoto(normalizedProfilePhoto)
+      setPortfolioImages(normalizedPortfolioImages)
 
       const selectedLanguage = LANGUAGES.find((item) => item.code === preferredLanguage)
       const selectedCurrency = CURRENCIES.find((item) => item.code === preferredCurrency)
@@ -230,31 +297,25 @@ export function Settings() {
         throw new Error('No active session')
       }
 
-      const response = await fetch(
-        'https://wjlfvajloxkevggwjgtk.supabase.co/functions/v1/delete-account',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        }
-      )
+      const { error } = await supabase.functions.invoke('delete-account', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      })
 
-      const result = await response.json().catch(() => null)
-
-      if (!response.ok) {
-        throw new Error(result?.error || 'Delete account request failed')
+      if (error) {
+        throw error
       }
 
       await supabase.auth.signOut({ scope: 'local' })
+      setCurrentUserId(null)
+      resetProfileForm()
       navigateTo('/')
     } catch (error) {
       console.error('Помилка видалення акаунта:', error)
       setFeedback({
         type: 'error',
-        text: error instanceof Error ? error.message : t('settings.error.deleteAccount'),
+        text: t('settings.error.deleteAccount'),
       })
     }
   }
@@ -486,7 +547,9 @@ export function Settings() {
                         </label>
                         <select
                           value={preferredLanguage}
-                          onChange={(event) => setPreferredLanguage(event.target.value)}
+                          onChange={(event) =>
+                            setPreferredLanguage(event.target.value as LanguageOption['code'])
+                          }
                           className="select-glass bg-white/80"
                         >
                           {LANGUAGES.map((item) => (
@@ -504,7 +567,9 @@ export function Settings() {
                         </label>
                         <select
                           value={preferredCurrency}
-                          onChange={(event) => setPreferredCurrency(event.target.value)}
+                          onChange={(event) =>
+                            setPreferredCurrency(event.target.value as CurrencyOption['code'])
+                          }
                           className="select-glass bg-white/80"
                         >
                           {CURRENCIES.map((item) => (
@@ -619,7 +684,8 @@ export function Settings() {
                   <button
                     type="button"
                     onClick={handleDeleteAccount}
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[linear-gradient(135deg,rgba(185,63,63,0.95),rgba(153,27,27,0.95))] px-6 py-3 font-semibold text-white shadow-[0_18px_35px_rgba(153,27,27,0.22)] transition hover:scale-[1.01] active:scale-[0.99] sm:w-auto"
+                    disabled={!currentUserId}
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[linear-gradient(135deg,rgba(185,63,63,0.95),rgba(153,27,27,0.95))] px-6 py-3 font-semibold text-white shadow-[0_18px_35px_rgba(153,27,27,0.22)] transition hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                   >
                     {t('settings.deleteAccountButton')}
                   </button>
