@@ -26,16 +26,13 @@ type FeedbackState = {
 export function Settings() {
   const { user, language, currency, setLanguage, setCurrency, t } = useApp()
 
-  // Зберігаємо id окремо, щоб сторінка не втрачала контекст між перерендереннями.
   const [currentUserId, setCurrentUserId] = useState<string | null>(user?.id ?? null)
 
-  // Базові стани сторінки та збереження форм.
   const [loading, setLoading] = useState(true)
   const [savingProfile, setSavingProfile] = useState(false)
   const [savingPassword, setSavingPassword] = useState(false)
   const [feedback, setFeedback] = useState<FeedbackState | null>(null)
 
-  // Поля профілю.
   const [fullName, setFullName] = useState('')
   const [bio, setBio] = useState('')
   const [phone, setPhone] = useState('')
@@ -44,12 +41,10 @@ export function Settings() {
   const [profilePhoto, setProfilePhoto] = useState('')
   const [portfolioImages, setPortfolioImages] = useState<string[]>([])
 
-  // Налаштування користувача.
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [preferredLanguage, setPreferredLanguage] = useState(language.code)
   const [preferredCurrency, setPreferredCurrency] = useState(currency.code)
 
-  // Поля зміни пароля.
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
@@ -235,14 +230,22 @@ export function Settings() {
         throw new Error('No active session')
       }
 
-      const { error } = await supabase.functions.invoke('delete-account', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      })
+      const response = await fetch(
+        'https://wjlfvajloxkevggwjgtk.supabase.co/functions/v1/delete-account',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      )
 
-      if (error) {
-        throw error
+      const result = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Delete account request failed')
       }
 
       await supabase.auth.signOut({ scope: 'local' })
@@ -251,7 +254,7 @@ export function Settings() {
       console.error('Помилка видалення акаунта:', error)
       setFeedback({
         type: 'error',
-        text: t('settings.error.deleteAccount'),
+        text: error instanceof Error ? error.message : t('settings.error.deleteAccount'),
       })
     }
   }
