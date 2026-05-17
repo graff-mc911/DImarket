@@ -720,4 +720,19 @@ export const zhTranslations: Partial<Record<TranslationKey, string>> = {
   'home.statsLanguages': '界面语言',
   'professional.featured': '推荐',
   'professional.verified': '已验证',
+
+  // Register — ролі з перекладами
+  'register.roleClient': '客户',
+  'register.roleClientDesc': '寻找工匠或服务',
+  'register.roleProfessional': '工匠',
+  'register.roleProfessionalDesc': '以个人身份提供服务',
+  'register.roleCompany': '公司',
+  'register.roleCompanyDesc': '注册企业或公司',
+  'register.roleAdvertiser': '广告主',
+  'register.roleAdvertiserDesc': '在平台上投放广告',
+  'register.whoAreYou': '您是谁？',
+  'register.hintClient': '作为客户您可以创建广告、找到工匠并留下评价。',
+  'register.hintProfessional': '作为工匠您可以创建个人资料、添加作品集并接受订单。',
+  'register.hintCompany': '作为公司您可以发布公司简介并吸引客户。',
+  'register.hintAdvertiser': '作为广告主您可以在整个平台上投放带有地理定向的横幅广告。',
 }
