@@ -33,7 +33,7 @@ const GEO_DATA: Record<string, Record<string, string[]>> = {
   'Germany': {
     'Bavaria':             ['Munich','Nuremberg','Augsburg'],
     'Berlin':              ['Berlin'],
-    'Hessen':               ['Frankfurt','Wiesbaden','Darmstadt'],
+    'Hesse':               ['Frankfurt','Wiesbaden','Darmstadt'],
     'Hamburg':             ['Hamburg'],
     'Baden-Württemberg':   ['Stuttgart','Karlsruhe','Freiburg'],
     'North Rhine-Westphalia':['Cologne','Düsseldorf','Dortmund','Essen'],
@@ -378,35 +378,21 @@ export function Register() {
       const { data: authData, error: authError } = await supabase.auth.signUp({ email, password })
       if (authError) throw authError
       if (authData.user) {
-        // Базові поля які точно є в profiles
-        const profileData: Record<string, unknown> = {
-          id:              authData.user.id,
-          full_name:       selectedRole === 'company' ? (companyName || fullName) : fullName,
-          phone:           phone || null,
+        // Крок 1: вставляємо тільки базові поля без user_role (обхід кешу схеми)
+        const { error: profileError } = await supabase.from('profiles').insert({
+          id:        authData.user.id,
+          full_name: selectedRole === 'company' ? (companyName || fullName) : fullName,
+          phone:     phone || null,
+          location:  [city, region, country].filter(Boolean).join(', ') || null,
+        })
+
+        if (profileError) throw new Error(profileError.message)
+
+        // Крок 2: оновлюємо user_role через UPDATE (обходить кеш схеми)
+        await supabase.from('profiles').update({
           user_role:       selectedRole,
           is_professional: selectedRole === 'professional' || selectedRole === 'company',
-        }
-
-        // Додаємо location як текст (завжди є)
-        if (city || region || country) {
-          profileData.location = [city, region, country].filter(Boolean).join(', ')
-        }
-
-        // Намагаємось додати окремі гео-поля (можуть не існувати)
-        const { error: profileError } = await supabase.from('profiles').insert(profileData)
-
-        if (profileError) {
-          // Якщо помилка через відсутні гео-колонки — пробуємо без них
-          if (profileError.message?.includes('country') || profileError.message?.includes('region') || profileError.message?.includes('city')) {
-            delete profileData.country
-            delete profileData.region
-            delete profileData.city
-            const { error: retryError } = await supabase.from('profiles').insert(profileData)
-            if (retryError) throw new Error(retryError.message)
-          } else {
-            throw new Error(profileError.message)
-          }
-        }
+        }).eq('id', authData.user.id)
         setSuccess(true)
         setTimeout(() => {
           if (selectedRole === 'client')          navigateTo('/listings')
