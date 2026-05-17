@@ -307,8 +307,8 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.radius.global': 'Wszyscy uzytkownicy',
 
   // Вхід у систему.
-  'login.title': 'Logowanie dla fachowcow',
-  'login.subtitle': 'Zaloguj sie, aby zarzadzac profilem i ogloszeniami',
+  'login.title': 'Zaloguj się',
+  'login.subtitle': 'Zarządzaj swoim profilem',
   'login.email': 'Adres email',
   'login.emailPlaceholder': 'you@example.com',
   'login.password': 'Haslo',
@@ -316,7 +316,7 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'login.signIn': 'Zaloguj sie',
   'login.signingIn': 'Logowanie...',
   'login.noAccount': 'Nie masz jeszcze konta?',
-  'login.registerLink': 'Zarejestruj sie jako fachowiec',
+  'login.registerLink': 'Zarejestruj się',
   'login.lookingToPost': 'Chcesz opublikowac ogloszenie?',
   'login.noRegistrationRequired': 'Rejestracja nie jest wymagana',
 
@@ -328,7 +328,7 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'register.passwordMin': 'Minimum 6 znakow',
   'register.phonePlaceholder': '+48 500 123 456',
   'register.locationPlaceholder': 'Miasto, wojewodztwo',
-  'register.createAccount': 'Utworz konto fachowca',
+  'register.createAccount': 'Utwórz konto',
   'register.creating': 'Tworzenie konta...',
   'register.success':
     'Rejestracja zakonczona sukcesem! Przekierowanie do panelu...',
