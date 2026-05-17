@@ -958,4 +958,19 @@ export const itTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Rifiutata',
   'advertising.status.expired': 'Scaduta',
   'advertising.geo.noneAvailable': 'Nessuna opzione disponibile',
+
+  // Register — ролі з перекладами
+  'register.roleClient': 'Cliente',
+  'register.roleClientDesc': 'Cerco un artigiano o servizio',
+  'register.roleProfessional': 'Artigiano',
+  'register.roleProfessionalDesc': 'Fornisco servizi come individuo',
+  'register.roleCompany': 'Azienda',
+  'register.roleCompanyDesc': 'Registro un\'azienda o un\'impresa',
+  'register.roleAdvertiser': 'Inserzionista',
+  'register.roleAdvertiserDesc': 'Inserisco annunci sulla piattaforma',
+  'register.whoAreYou': 'Chi sei?',
+  'register.hintClient': 'Come cliente puoi creare annunci, trovare artigiani e lasciare recensioni.',
+  'register.hintProfessional': 'Come artigiano puoi creare un profilo, aggiungere un portfolio e ricevere ordini.',
+  'register.hintCompany': 'Come azienda puoi pubblicare un profilo aziendale e attrarre clienti.',
+  'register.hintAdvertiser': 'Come inserzionista puoi inserire annunci banner con targeting geografico su tutta la piattaforma.',
 }
