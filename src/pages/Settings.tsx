@@ -222,12 +222,19 @@ export function Settings() {
     setFeedback(null)
 
     try {
-      const { error } = await supabase.auth.admin.deleteUser(currentUserId)
+      // Отримуємо сесію для авторизації
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('No session')
 
-      if (error) {
-        throw error
-      }
+      // Викликаємо Edge Function з адмін-привілеями
+      const { error } = await supabase.functions.invoke('delete-account', {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      })
 
+      if (error) throw error
+
+      // Виходимо і переходимо на головну
+      await supabase.auth.signOut()
       navigateTo('/')
     } catch (error) {
       console.error('Помилка видалення акаунта:', error)
