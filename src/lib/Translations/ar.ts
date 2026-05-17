@@ -720,19 +720,4 @@ export const arTranslations: Partial<Record<TranslationKey, string>> = {
   'home.statsLanguages': 'لغات الواجهة',
   'professional.featured': 'مميز',
   'professional.verified': 'موثق',
-
-  // Register — ролі з перекладами
-  'register.roleClient': 'عميل',
-  'register.roleClientDesc': 'أبحث عن معلم أو خدمة',
-  'register.roleProfessional': 'معلم',
-  'register.roleProfessionalDesc': 'أقدم الخدمات كفرد',
-  'register.roleCompany': 'شركة',
-  'register.roleCompanyDesc': 'أسجل شركة أو عملاً تجارياً',
-  'register.roleAdvertiser': 'معلن',
-  'register.roleAdvertiserDesc': 'أضع إعلانات على المنصة',
-  'register.whoAreYou': 'من أنت؟',
-  'register.hintClient': 'كعميل يمكنك إنشاء إعلانات والعثور على معلمين وترك تقييمات.',
-  'register.hintProfessional': 'كمعلم يمكنك إنشاء ملف شخصي وإضافة محفظة واستقبال الطلبات.',
-  'register.hintCompany': 'كشركة يمكنك نشر ملف الشركة وجذب العملاء.',
-  'register.hintAdvertiser': 'كمعلن يمكنك وضع إعلانات بانر مع استهداف جغرافي عبر المنصة بأكملها.',
 }

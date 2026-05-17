@@ -984,19 +984,4 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'home.statsLanguages': 'Oberflächensprachen',
   'professional.featured': 'Empfohlen',
   'professional.verified': 'Verifiziert',
-
-  // Register — ролі з перекладами
-  'register.roleClient': 'Kunde',
-  'register.roleClientDesc': 'Suche Handwerker oder Service',
-  'register.roleProfessional': 'Fachkraft',
-  'register.roleProfessionalDesc': 'Ich biete Dienste als Einzelperson an',
-  'register.roleCompany': 'Unternehmen',
-  'register.roleCompanyDesc': 'Ich registriere eine Firma oder ein Unternehmen',
-  'register.roleAdvertiser': 'Werbetreibender',
-  'register.roleAdvertiserDesc': 'Ich schalte Werbung auf der Plattform',
-  'register.whoAreYou': 'Wer sind Sie?',
-  'register.hintClient': 'Als Kunde können Sie Anzeigen erstellen, Handwerker finden und Bewertungen hinterlassen.',
-  'register.hintProfessional': 'Als Fachkraft können Sie ein Profil erstellen, Portfolio hinzufügen und Aufträge erhalten.',
-  'register.hintCompany': 'Als Unternehmen können Sie ein Firmenprofil erstellen und Kunden gewinnen.',
-  'register.hintAdvertiser': 'Als Werbetreibender können Sie Bannerwerbung mit Geo-Targeting auf der gesamten Plattform schalten.',
 }

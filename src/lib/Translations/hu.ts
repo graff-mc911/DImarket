@@ -962,19 +962,4 @@ export const huTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Elutasítva',
   'advertising.status.expired': 'Lejárt',
   'advertising.geo.noneAvailable': 'Nincsenek elérhető lehetőségek',
-
-  // Register — ролі з перекладами
-  'register.roleClient': 'Ügyfél',
-  'register.roleClientDesc': 'Mestert vagy szolgáltatást keresek',
-  'register.roleProfessional': 'Mester',
-  'register.roleProfessionalDesc': 'Egyéni vállalkozóként nyújtok szolgáltatásokat',
-  'register.roleCompany': 'Cég',
-  'register.roleCompanyDesc': 'Céget vagy vállalkozást regisztrálok',
-  'register.roleAdvertiser': 'Hirdető',
-  'register.roleAdvertiserDesc': 'Hirdetéseket helyezek el a platformon',
-  'register.whoAreYou': 'Ki Ön?',
-  'register.hintClient': 'Ügyfélként hirdetéseket hozhat létre, mestereket kereshet és értékeléseket hagyhat.',
-  'register.hintProfessional': 'Mesterként profilt hozhat létre, portfóliót adhat hozzá és megrendeléseket fogadhat.',
-  'register.hintCompany': 'Cégként vállalati profilt tehet közzé és ügyfeleket vonzhat.',
-  'register.hintAdvertiser': 'Hirdetőként banner hirdetéseket helyezhet el geo-targetinggel az egész platformon.',
 }

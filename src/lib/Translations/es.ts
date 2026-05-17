@@ -936,19 +936,4 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Rechazada',
   'advertising.status.expired': 'Expirada',
   'advertising.geo.noneAvailable': 'No hay opciones disponibles',
-
-  // Register — ролі з перекладами
-  'register.roleClient': 'Cliente',
-  'register.roleClientDesc': 'Busco un maestro o servicio',
-  'register.roleProfessional': 'Profesional',
-  'register.roleProfessionalDesc': 'Ofrezco servicios como particular',
-  'register.roleCompany': 'Empresa',
-  'register.roleCompanyDesc': 'Registro una empresa o negocio',
-  'register.roleAdvertiser': 'Anunciante',
-  'register.roleAdvertiserDesc': 'Coloco anuncios en la plataforma',
-  'register.whoAreYou': '¿Quién eres?',
-  'register.hintClient': 'Como cliente puedes crear anuncios, encontrar profesionales y dejar reseñas.',
-  'register.hintProfessional': 'Como profesional puedes crear un perfil, añadir portfolio y recibir pedidos.',
-  'register.hintCompany': 'Como empresa puedes publicar un perfil empresarial y atraer clientes.',
-  'register.hintAdvertiser': 'Como anunciante puedes colocar anuncios banner con geo-targeting en toda la plataforma.',
 }

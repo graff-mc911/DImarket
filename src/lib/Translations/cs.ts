@@ -965,19 +965,4 @@ export const csTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Zamítnuta',
   'advertising.status.expired': 'Vypršela',
   'advertising.geo.noneAvailable': 'Žádné dostupné možnosti',
-
-  // Register — ролі з перекладами
-  'register.roleClient': 'Klient',
-  'register.roleClientDesc': 'Hledám mistra nebo službu',
-  'register.roleProfessional': 'Řemeslník',
-  'register.roleProfessionalDesc': 'Poskytuju služby jako fyzická osoba',
-  'register.roleCompany': 'Firma',
-  'register.roleCompanyDesc': 'Registruji firmu nebo podnik',
-  'register.roleAdvertiser': 'Inzerent',
-  'register.roleAdvertiserDesc': 'Inzeruji na platformě',
-  'register.whoAreYou': 'Kdo jste?',
-  'register.hintClient': 'Jako klient můžete vytvářet inzeráty, hledat řemeslníky a zanechávat hodnocení.',
-  'register.hintProfessional': 'Jako řemeslník můžete vytvořit profil, přidat portfolio a přijímat zakázky.',
-  'register.hintCompany': 'Jako firma můžete zveřejnit firemní profil a získávat zákazníky.',
-  'register.hintAdvertiser': 'Jako inzerent můžete umísťovat bannerové reklamy s geo-targetingem po celé platformě.',
 }

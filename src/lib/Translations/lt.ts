@@ -628,19 +628,4 @@ export const ltTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Atmesta',
   'advertising.status.expired': 'Pasibaigusi',
   'advertising.geo.noneAvailable': 'Nėra galimų variantų',
-
-  // Register — ролі з перекладами
-  'register.roleClient': 'Klientas',
-  'register.roleClientDesc': 'Ieškau meistro ar paslaugos',
-  'register.roleProfessional': 'Meistras',
-  'register.roleProfessionalDesc': 'Teikiu paslaugas kaip fizinis asmuo',
-  'register.roleCompany': 'Įmonė',
-  'register.roleCompanyDesc': 'Registruoju įmonę ar verslą',
-  'register.roleAdvertiser': 'Reklamuotojas',
-  'register.roleAdvertiserDesc': 'Skelbiu reklamas platformoje',
-  'register.whoAreYou': 'Kas jūs esate?',
-  'register.hintClient': 'Kaip klientas galite kurti skelbimus, rasti meistrus ir palikti atsiliepimus.',
-  'register.hintProfessional': 'Kaip meistras galite sukurti profilį, pridėti portfolio ir gauti užsakymus.',
-  'register.hintCompany': 'Kaip įmonė galite paskelbti įmonės profilį ir pritraukti klientus.',
-  'register.hintAdvertiser': 'Kaip reklamuotojas galite talpinti banerių skelbimus su geo-targetingu visoje platformoje.',
 }
