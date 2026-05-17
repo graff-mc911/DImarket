@@ -298,7 +298,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
 
   // Login
   'login.title': 'Вхід до DImarket',
-  'login.subtitle': 'Увійдіть, щоб керувати профілем та оголошеннями',
+  'login.subtitle': 'Керуйте профілем та оголошеннями',
   'login.email': 'Електронна пошта',
   'login.emailPlaceholder': 'you@example.com',
   'login.password': 'Пароль',
