@@ -950,4 +950,42 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'register.hintProfessional': 'Jako fachowiec możesz stworzyć profil, dodać portfolio i przyjmować zamówienia.',
   'register.hintCompany': 'Jako firma możesz opublikować profil firmy i przyciągać klientów.',
   'register.hintAdvertiser': 'Jako reklamodawca możesz umieszczać reklamy banerowe z geo-targetingiem na całej platformie.',
+
+  // Register — географія
+  'register.yourLocation': 'Twoja lokalizacja',
+  'register.selectCountry': 'Wybierz kraj',
+  'register.selectRegion': 'Wybierz region (opcjonalne)',
+  'register.selectCity': 'Wybierz miasto',
+  'register.cityNotInList': 'Twoje miasto nie jest na liście?',
+  'register.cityPlaceholder': 'Wpisz nazwę miasta ręcznie',
+  'register.enterManually': 'Wprowadzić ręcznie',
+
+  // Register geo detect
+  'register.detectingLocation': 'Wykrywanie kraju...',
+  'register.locationAutoDetected': 'Kraj wykryty automatycznie. Zmień jeśli potrzeba.',
+
+  // Brakujące klucze
+  'register.companyName': 'Nazwa firmy',
+  'register.companyNamePlaceholder': 'Np. BudSerwis sp. z o.o.',
+  'register.representativeName': 'Imię przedstawiciela',
+  'myListings.title': 'Moje ogłoszenia',
+  'myListings.subtitle': 'Zarządzaj swoimi ogłoszeniami',
+  'myListings.createNew': 'Nowe ogłoszenie',
+  'myListings.noListings': 'Nie masz jeszcze żadnych ogłoszeń',
+  'myListings.loading': 'Ładowanie ogłoszeń...',
+  'myListings.status.active': 'Aktywne',
+  'myListings.status.expired': 'Wygasłe',
+  'myListings.status.sold': 'Sprzedane',
+  'myListings.status.deleted': 'Usunięte',
+  'profile.editProfile': 'Edytuj profil',
+  'profile.portfolio': 'Portfolio',
+  'profile.reviews': 'Opinie',
+  'profile.noPortfolio': 'Brak portfolio',
+  'profile.noReviews': 'Brak opinii',
+  'profile.memberSince': 'Członek od',
+  'profile.activeAds': 'aktywnych ogłoszeń',
+  'profile.viewAllListings': 'Wszystkie moje ogłoszenia',
+  'ads.label': 'Reklama',
+  'ads.visit': 'Odwiedź',
+  'listing.backToListings': 'Powrót do ogłoszeń',
 }
