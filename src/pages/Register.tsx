@@ -6,323 +6,323 @@ import { navigateTo } from '../lib/navigation'
 import { LANGUAGES }  from '../lib/types'
 import type { UserRole } from '../lib/types'
 
-// ── Географічні дані ───────────────────────────────────────
+// ── Географічні дані (ключі англійською) ──────────────────
 const GEO_DATA: Record<string, Record<string, string[]>> = {
-  // ЄВРОПА
-  'Україна': {
-    'Київська':          ['Київ','Бориспіль','Бровари','Біла Церква'],
-    'Львівська':         ['Львів','Дрогобич','Стрий','Трускавець'],
-    'Одеська':           ['Одеса','Ізмаїл','Чорноморськ'],
-    'Харківська':        ['Харків','Суми','Полтава'],
-    'Дніпропетровська':  ['Дніпро','Кривий Ріг','Нікополь'],
-    'Запорізька':        ['Запоріжжя','Мелітополь'],
-    'Вінницька':         ['Вінниця'],
-    'Закарпатська':      ['Ужгород','Мукачево'],
-    'Чернівецька':       ['Чернівці'],
+  // EUROPE
+  'Ukraine': {
+    'Kyiv Oblast':         ['Kyiv','Boryspil','Brovary','Bila Tserkva'],
+    'Lviv Oblast':         ['Lviv','Drohobych','Stryi','Truskavets'],
+    'Odesa Oblast':        ['Odesa','Izmail','Chornomorsk'],
+    'Kharkiv Oblast':      ['Kharkiv','Sumy','Poltava'],
+    'Dnipro Oblast':       ['Dnipro','Kryvyi Rih','Nikopol'],
+    'Zaporizhzhia Oblast': ['Zaporizhzhia','Melitopol'],
+    'Vinnytsia Oblast':    ['Vinnytsia'],
+    'Zakarpattia Oblast':  ['Uzhhorod','Mukachevo'],
+    'Chernivtsi Oblast':   ['Chernivtsi'],
   },
-  'Польща': {
-    'Мазовецьке':        ['Варшава','Радом'],
-    'Малопольське':      ['Краків','Тарнів'],
-    'Сілезьке':          ['Катовіце','Ченстохова','Гливіце'],
-    'Великопольське':    ['Познань','Каліш'],
-    'Нижньосілезьке':    ['Вроцлав','Легниця'],
-    'Поморське':         ['Гданськ','Гдиня','Сопот'],
-    'Лодзьке':           ['Лодзь'],
-    'Підкарпатське':     ['Жешув','Перемишль'],
+  'Poland': {
+    'Masovian':            ['Warsaw','Radom'],
+    'Lesser Poland':       ['Krakow','Tarnow'],
+    'Silesian':            ['Katowice','Czestochowa','Gliwice'],
+    'Greater Poland':      ['Poznan','Kalisz'],
+    'Lower Silesian':      ['Wroclaw','Legnica'],
+    'Pomeranian':          ['Gdansk','Gdynia','Sopot'],
+    'Lodz':                ['Lodz'],
+    'Subcarpathian':       ['Rzeszow','Przemysl'],
   },
-  'Німеччина': {
-    'Баварія':           ['Мюнхен','Нюрнберг','Аугсбург'],
-    'Берлін':            ['Берлін'],
-    'Гессен':            ['Франкфурт-на-Майні','Вісбаден','Дармштадт'],
-    'Гамбург':           ['Гамбург'],
-    'Баден-Вюртемберг':  ['Штутгарт','Карлсруе','Фрайбург'],
-    'Пн.Рейн-Вестфалія': ['Кельн','Дюссельдорф','Дортмунд','Ессен'],
-    'Саксонія':          ['Дрезден','Лейпциг'],
-    'Бранденбург':       ['Потсдам'],
+  'Germany': {
+    'Bavaria':             ['Munich','Nuremberg','Augsburg'],
+    'Berlin':              ['Berlin'],
+    'Hesse':               ['Frankfurt','Wiesbaden','Darmstadt'],
+    'Hamburg':             ['Hamburg'],
+    'Baden-Württemberg':   ['Stuttgart','Karlsruhe','Freiburg'],
+    'North Rhine-Westphalia':['Cologne','Düsseldorf','Dortmund','Essen'],
+    'Saxony':              ['Dresden','Leipzig'],
+    'Brandenburg':         ['Potsdam'],
   },
-  'Іспанія': {
-    'Каталонія':         ['Барселона','Жирона','Таррагона'],
-    'Валенсія':          ['Валенсія','Аліканте','Торревєха'],
-    'Мадрид':            ['Мадрид'],
-    'Андалусія':         ['Севілья','Малага','Гранада'],
-    'Країна Басків':     ['Більбао','Сан-Себастьян'],
-    'Балеарські о-ви':   ['Пальма','Ібіца'],
-    'Канарські о-ви':    ['Лас-Пальмас','Санта-Крус-де-Тенерифе'],
+  'Spain': {
+    'Catalonia':           ['Barcelona','Girona','Tarragona'],
+    'Valencia':            ['Valencia','Alicante','Torrevieja'],
+    'Madrid':              ['Madrid'],
+    'Andalusia':           ['Seville','Malaga','Granada'],
+    'Basque Country':      ['Bilbao','San Sebastian'],
+    'Balearic Islands':    ['Palma','Ibiza'],
+    'Canary Islands':      ['Las Palmas','Santa Cruz de Tenerife'],
   },
-  'Франція': {
-    'Іль-де-Франс':      ['Париж','Версаль'],
-    'Прованс':           ['Марсель','Ніцца','Тулон'],
-    'Овернь-Рона-Альпи': ['Ліон','Гренобль'],
-    'Окситанія':         ['Тулуза','Монпельє'],
-    'Нова Аквітанія':    ['Бордо','Лімож'],
-    'Бретань':           ['Ренн','Брест'],
+  'France': {
+    'Île-de-France':       ['Paris','Versailles'],
+    'Provence':            ['Marseille','Nice','Toulon'],
+    'Auvergne-Rhône-Alpes':['Lyon','Grenoble'],
+    'Occitanie':           ['Toulouse','Montpellier'],
+    'New Aquitaine':       ['Bordeaux','Limoges'],
+    'Brittany':            ['Rennes','Brest'],
   },
-  'Італія': {
-    'Ломбардія':         ['Мілан','Бергамо','Брешія'],
-    'Лаціо':             ['Рим','Латина'],
-    'Кампанія':          ['Неаполь','Салерно'],
-    'Сицилія':           ['Палермо','Катанія'],
-    'Венето':            ['Венеція','Верона','Падуя'],
-    'Тоскана':           ['Флоренція','Сієна'],
-    'Емілія-Романья':    ['Болонья','Модена','Парма'],
+  'Italy': {
+    'Lombardy':            ['Milan','Bergamo','Brescia'],
+    'Lazio':               ['Rome','Latina'],
+    'Campania':            ['Naples','Salerno'],
+    'Sicily':              ['Palermo','Catania'],
+    'Veneto':              ['Venice','Verona','Padua'],
+    'Tuscany':             ['Florence','Siena'],
+    'Emilia-Romagna':      ['Bologna','Modena','Parma'],
   },
-  'Чехія': {
-    'Прага':             ['Прага'],
-    'Середньочеський':   ['Кладно'],
-    'Пльзенський':       ['Пльзень'],
-    'Моравськосілезький':['Острава','Опава'],
-    'Південноморавський':['Брно','Зноймо'],
+  'Czech Republic': {
+    'Prague':              ['Prague'],
+    'Central Bohemia':     ['Kladno'],
+    'Pilsen':              ['Pilsen'],
+    'Moravia-Silesia':     ['Ostrava','Opava'],
+    'South Moravia':       ['Brno','Znojmo'],
   },
-  'Словаччина': {
-    'Братиславський':    ['Братислава'],
-    'Трнавський':        ['Трнава'],
-    'Нітранський':       ['Нітра','Комарно'],
-    'Банськобистрицький':['Банська Бистриця'],
-    'Кошицький':         ['Кошиці'],
+  'Slovakia': {
+    'Bratislava':          ['Bratislava'],
+    'Trnava':              ['Trnava'],
+    'Nitra':               ['Nitra','Komarno'],
+    'Banska Bystrica':     ['Banska Bystrica'],
+    'Kosice':              ['Kosice'],
   },
-  'Угорщина': {
-    'Будапешт':          ['Будапешт'],
-    'Дьєр-Мошон-Шопрон':['Дьєр','Шопрон'],
-    'Боршод':            ['Мішкольц'],
-    'Хайду-Бігар':       ['Дебрецен'],
-    'Чонград-Чанад':     ['Сегед'],
+  'Hungary': {
+    'Budapest':            ['Budapest'],
+    'Gyor-Moson-Sopron':   ['Gyor','Sopron'],
+    'Borsod':              ['Miskolc'],
+    'Hajdu-Bihar':         ['Debrecen'],
+    'Csongrad-Csanad':     ['Szeged'],
   },
-  'Румунія': {
-    'Бухарест':          ['Бухарест'],
-    'Клуж':              ['Клуж-Напока'],
-    'Тімішоара':         ['Тімішоара'],
-    'Констанца':         ['Констанца'],
-    'Яси':               ['Яси'],
+  'Romania': {
+    'Bucharest':           ['Bucharest'],
+    'Cluj':                ['Cluj-Napoca'],
+    'Timis':               ['Timisoara'],
+    'Constanta':           ['Constanta'],
+    'Iasi':                ['Iasi'],
   },
-  'Австрія': {
-    'Відень':            ['Відень'],
-    'Нижня Австрія':     ['Санкт-Пельтен','Кремс'],
-    'Верхня Австрія':    ['Лінц','Вельс'],
-    'Штирія':            ['Грац'],
-    'Тіроль':            ['Інсбрук'],
-    'Зальцбург':         ['Зальцбург'],
+  'Austria': {
+    'Vienna':              ['Vienna'],
+    'Lower Austria':       ['St. Pölten','Krems'],
+    'Upper Austria':       ['Linz','Wels'],
+    'Styria':              ['Graz'],
+    'Tyrol':               ['Innsbruck'],
+    'Salzburg':            ['Salzburg'],
   },
-  'Великобританія': {
-    'Англія':            ['Лондон','Манчестер','Бірмінгем','Лідс','Ліверпуль'],
-    'Шотландія':         ['Единбург','Глазго','Абердин'],
-    'Уельс':             ['Кардіфф','Суонсі'],
-    'Північна Ірландія': ['Белфаст'],
+  'United Kingdom': {
+    'England':             ['London','Manchester','Birmingham','Leeds','Liverpool'],
+    'Scotland':            ['Edinburgh','Glasgow','Aberdeen'],
+    'Wales':               ['Cardiff','Swansea'],
+    'Northern Ireland':    ['Belfast'],
   },
-  'Нідерланди': {
-    'Пн.Голландія':      ['Амстердам','Харлем'],
-    'Пд.Голландія':      ['Роттердам','Гаага','Делфт'],
-    'Утрехт':            ['Утрехт'],
-    'Пн.Брабант':        ['Ейндговен','Тілбург'],
+  'Netherlands': {
+    'North Holland':       ['Amsterdam','Haarlem'],
+    'South Holland':       ['Rotterdam','The Hague','Delft'],
+    'Utrecht':             ['Utrecht'],
+    'North Brabant':       ['Eindhoven','Tilburg'],
   },
-  'Бельгія': {
-    'Брюссель':          ['Брюссель'],
-    'Фландрія':          ['Антверпен','Гент','Брюгге'],
-    'Валлонія':          ['Льєж','Намюр','Шарлеруа'],
+  'Belgium': {
+    'Brussels':            ['Brussels'],
+    'Flanders':            ['Antwerp','Ghent','Bruges'],
+    'Wallonia':            ['Liège','Namur','Charleroi'],
   },
-  'Португалія': {
-    'Лісабон':           ['Лісабон','Сінтра','Каскайш'],
-    'Порту':             ['Порту','Брага'],
-    'Алгарве':           ['Фару','Портімао'],
+  'Portugal': {
+    'Lisbon':              ['Lisbon','Sintra','Cascais'],
+    'Porto':               ['Porto','Braga'],
+    'Algarve':             ['Faro','Portimao'],
   },
-  'Греція': {
-    'Аттика':            ['Афіни','Пірей'],
-    'Центр.Македонія':   ['Салоніки','Кавала'],
-    'Крит':              ['Іракліон','Ханья'],
+  'Greece': {
+    'Attica':              ['Athens','Piraeus'],
+    'Central Macedonia':   ['Thessaloniki','Kavala'],
+    'Crete':               ['Heraklion','Chania'],
   },
-  'Болгарія': {
-    'Софія':             ['Софія'],
-    'Пловдивська':       ['Пловдив'],
-    'Варненська':        ['Варна','Добрич'],
-    'Бургаська':         ['Бургас'],
+  'Bulgaria': {
+    'Sofia':               ['Sofia'],
+    'Plovdiv':             ['Plovdiv'],
+    'Varna':               ['Varna','Dobrich'],
+    'Burgas':              ['Burgas'],
   },
-  'Хорватія': {
-    'Загребська':        ['Загреб'],
-    'Спліт-Далмація':    ['Спліт','Дубровник'],
-    'Рієка':             ['Рієка','Пула'],
+  'Croatia': {
+    'Zagreb':              ['Zagreb'],
+    'Split-Dalmatia':      ['Split','Dubrovnik'],
+    'Rijeka':              ['Rijeka','Pula'],
   },
-  'Сербія': {
-    'Белград':           ['Белград'],
-    'Пд.Бачський':       ['Новий Сад','Суботиця'],
-    'Нішавський':        ['Ніш'],
+  'Serbia': {
+    'Belgrade':            ['Belgrade'],
+    'South Backa':         ['Novi Sad','Subotica'],
+    'Nisava':              ['Nis'],
   },
-  'Швейцарія': {
-    'Цюрих':             ['Цюрих'],
-    'Женева':            ['Женева'],
-    'Берн':              ['Берн'],
-    'Базель':            ['Базель'],
+  'Switzerland': {
+    'Zurich':              ['Zurich'],
+    'Geneva':              ['Geneva'],
+    'Bern':                ['Bern'],
+    'Basel':               ['Basel'],
   },
-  'Казахстан': {
-    'Астана':            ['Астана'],
-    'Алмати':            ['Алмати'],
-    'Шимкент':           ['Шимкент'],
-    'Актобе':            ['Актобе'],
-    'Карагандинська':    ['Караганда'],
+  'Kazakhstan': {
+    'Astana':              ['Astana'],
+    'Almaty':              ['Almaty'],
+    'Shymkent':            ['Shymkent'],
+    'Aktobe':              ['Aktobe'],
+    'Karaganda':           ['Karaganda'],
   },
-  'ОАЕ': {
-    'Дубай':             ['Дубай'],
-    'Абу-Дабі':          ['Абу-Дабі','Аль-Айн'],
-    'Шарджа':            ['Шарджа'],
+  'UAE': {
+    'Dubai':               ['Dubai'],
+    'Abu Dhabi':           ['Abu Dhabi','Al Ain'],
+    'Sharjah':             ['Sharjah'],
   },
-  // АМЕРИКАНСЬКИЙ КОНТИНЕНТ
-  'США': {
-    'Каліфорнія':        ['Лос-Анджелес','Сан-Франциско','Сан-Дієго','Сан-Хосе','Фресно'],
-    'Нью-Йорк':          ['Нью-Йорк','Буффало','Рочестер'],
-    'Техас':             ['Хьюстон','Даллас','Остін','Сан-Антоніо'],
-    'Флорида':           ['Маямі','Орландо','Тампа','Джексонвілл'],
-    'Іллінойс':          ['Чикаго','Аврора','Рокфорд'],
-    'Пенсільванія':      ['Філадельфія','Піттсбург'],
-    'Огайо':             ['Колумбус','Клівленд','Цинциннаті'],
-    'Джорджія':          ['Атланта','Саванна'],
-    'Вашингтон':         ['Сіетл','Спокейн','Такома'],
-    'Аризона':           ['Фенікс','Тусон','Скоттсдейл'],
-    'Массачусетс':       ['Бостон','Спрингфілд'],
-    'Невада':            ['Лас-Вегас','Рено'],
-    'Мічиган':           ['Детройт','Гранд-Рапідс'],
-    'Колорадо':          ['Денвер','Колорадо-Спрінгс'],
-    'Північна Кароліна': ['Шарлотт','Роллі'],
-    'Мінесота':          ['Міннеаполіс','Сент-Пол'],
-    'Нью-Джерсі':        ['Ньюарк','Джерсі-Сіті'],
-    'Вірджинія':         ['Вірджинія-Біч','Норфолк'],
-    'Теннессі':          ['Нашвілл','Мемфіс'],
-    'Міссурі':           ['Сент-Луїс','Канзас-Сіті'],
+  // AMERICAS
+  'USA': {
+    'California':          ['Los Angeles','San Francisco','San Diego','San Jose','Fresno'],
+    'New York':            ['New York','Buffalo','Rochester'],
+    'Texas':               ['Houston','Dallas','Austin','San Antonio'],
+    'Florida':             ['Miami','Orlando','Tampa','Jacksonville'],
+    'Illinois':            ['Chicago','Aurora','Rockford'],
+    'Pennsylvania':        ['Philadelphia','Pittsburgh'],
+    'Ohio':                ['Columbus','Cleveland','Cincinnati'],
+    'Georgia':             ['Atlanta','Savannah'],
+    'Washington':          ['Seattle','Spokane','Tacoma'],
+    'Arizona':             ['Phoenix','Tucson','Scottsdale'],
+    'Massachusetts':       ['Boston','Springfield'],
+    'Nevada':              ['Las Vegas','Reno'],
+    'Michigan':            ['Detroit','Grand Rapids'],
+    'Colorado':            ['Denver','Colorado Springs'],
+    'North Carolina':      ['Charlotte','Raleigh'],
+    'Minnesota':           ['Minneapolis','Saint Paul'],
+    'New Jersey':          ['Newark','Jersey City'],
+    'Virginia':            ['Virginia Beach','Norfolk'],
+    'Tennessee':           ['Nashville','Memphis'],
+    'Missouri':            ['Saint Louis','Kansas City'],
   },
-  'Канада': {
-    'Онтаріо':           ['Торонто','Оттава','Міссісога','Гамільтон'],
-    'Британська Колумбія':['Ванкувер','Суррей','Бернабі'],
-    'Квебек':            ['Монреаль','Квебек-Сіті','Лаваль'],
-    'Альберта':          ['Калгарі','Едмонтон'],
-    'Манітоба':          ['Вінніпег'],
-    'Саскачеван':        ['Саскатун','Реджайна'],
-    'Нова Шотландія':    ['Галіфакс'],
+  'Canada': {
+    'Ontario':             ['Toronto','Ottawa','Mississauga','Hamilton'],
+    'British Columbia':    ['Vancouver','Surrey','Burnaby'],
+    'Quebec':              ['Montreal','Quebec City','Laval'],
+    'Alberta':             ['Calgary','Edmonton'],
+    'Manitoba':            ['Winnipeg'],
+    'Saskatchewan':        ['Saskatoon','Regina'],
+    'Nova Scotia':         ['Halifax'],
   },
-  'Мексика': {
-    'Мехіко (місто)':    ['Мехіко'],
-    'Халіско':           ['Гвадалахара','Сапопан','Тлакепаке'],
-    'Нуево-Леон':        ['Монтеррей','Сан-Ніколас'],
-    'Пуебла':            ['Пуебла'],
-    'Герреро':           ['Акапулько'],
-    'Кінтана-Роо':       ['Канкун','Плая-дель-Кармен'],
-    'Юкатан':            ['Мерида'],
-    'Нижня Каліфорнія':  ['Тіхуана','Мехікалі'],
-    'Чіуауа':            ['Чіуауа','Сьюдад-Хуарес'],
-    'Тамауліпас':        ['Матаморос','Рейноса'],
+  'Mexico': {
+    'Mexico City':         ['Mexico City'],
+    'Jalisco':             ['Guadalajara','Zapopan','Tlaquepaque'],
+    'Nuevo León':          ['Monterrey','San Nicolas'],
+    'Puebla':              ['Puebla'],
+    'Guerrero':            ['Acapulco'],
+    'Quintana Roo':        ['Cancun','Playa del Carmen'],
+    'Yucatan':             ['Merida'],
+    'Baja California':     ['Tijuana','Mexicali'],
+    'Chihuahua':           ['Chihuahua','Ciudad Juarez'],
+    'Tamaulipas':          ['Matamoros','Reynosa'],
   },
-  'Бразилія': {
-    'Сан-Паулу':         ['Сан-Паулу','Гуарульос','Кампінас','Санту-Андре'],
-    'Ріо-де-Жанейро':    ['Ріо-де-Жанейро','Нітерой','Дукі-де-Кашіас'],
-    'Мінас-Жерайс':      ['Белу-Оризонті','Уберландія'],
-    'Баія':              ['Салвадор','Феїра-де-Сантана'],
-    'Паранá':            ['Куритиба','Лондріна'],
-    'Ріо-Гранді-ду-Сул': ['Порту-Алегрі','Кашіас-ду-Сул'],
-    'Пернамбуку':        ['Ресіфі','Олінда'],
-    'Сеара':             ['Форталеза','Кауру'],
-    'Амазонас':          ['Манаус'],
-    'Пара':              ['Белен'],
+  'Brazil': {
+    'São Paulo':           ['São Paulo','Guarulhos','Campinas','Santo André'],
+    'Rio de Janeiro':      ['Rio de Janeiro','Niterói','Duque de Caxias'],
+    'Minas Gerais':        ['Belo Horizonte','Uberlândia'],
+    'Bahia':               ['Salvador','Feira de Santana'],
+    'Paraná':              ['Curitiba','Londrina'],
+    'Rio Grande do Sul':   ['Porto Alegre','Caxias do Sul'],
+    'Pernambuco':          ['Recife','Olinda'],
+    'Ceará':               ['Fortaleza'],
+    'Amazonas':            ['Manaus'],
+    'Pará':                ['Belém'],
   },
-  'Аргентина': {
-    'Буенос-Айрес':      ['Буенос-Айрес','Ла-Плата','Мар-дель-Плата'],
-    'Кордова':           ['Кордова','Рio-Куарто'],
-    'Санта-Фе':          ['Росаріо','Санта-Фе'],
-    'Мендоса':           ['Мендоса'],
-    'Тукуман':           ['Сан-Мігель-де-Тукуман'],
-    'Сальта':            ['Сальта'],
+  'Argentina': {
+    'Buenos Aires':        ['Buenos Aires','La Plata','Mar del Plata'],
+    'Córdoba':             ['Córdoba'],
+    'Santa Fe':            ['Rosario','Santa Fe'],
+    'Mendoza':             ['Mendoza'],
+    'Tucumán':             ['San Miguel de Tucumán'],
+    'Salta':               ['Salta'],
   },
-  'Колумбія': {
-    'Кундінамарка':      ['Богота'],
-    'Антіокія':          ['Медельїн','Бельо','Ітагуї'],
-    'Валье-дель-Каука':  ['Калі','Пальміра'],
-    'Атлантіко':         ['Барранкілья'],
-    'Болівар':           ['Картахена'],
+  'Colombia': {
+    'Cundinamarca':        ['Bogotá'],
+    'Antioquia':           ['Medellín','Bello','Itagüí'],
+    'Valle del Cauca':     ['Cali','Palmira'],
+    'Atlántico':           ['Barranquilla'],
+    'Bolívar':             ['Cartagena'],
   },
-  'Чилі': {
-    'Метрополітана':     ['Сантьяго','Пуенте-Альто','Макул'],
-    'Вальпараісо':       ['Вальпараісо','Вінья-дель-Мар'],
-    'Бiобiо':            ['Консепсьон','Талькауано'],
+  'Chile': {
+    'Metropolitan':        ['Santiago','Puente Alto','Maipú'],
+    'Valparaíso':          ['Valparaíso','Viña del Mar'],
+    'Biobío':              ['Concepción','Talcahuano'],
   },
-  'Перу': {
-    'Ліма':              ['Ліма','Кальяо'],
-    'Аррекіпа':          ['Аррекіпа'],
-    'Ла-Лібертад':       ['Труйільо'],
-    'Ламбаєке':          ['Чиклайо'],
+  'Peru': {
+    'Lima':                ['Lima','Callao'],
+    'Arequipa':            ['Arequipa'],
+    'La Libertad':         ['Trujillo'],
+    'Lambayeque':          ['Chiclayo'],
   },
-  'Венесуела': {
-    'Столичний округ':   ['Каракас'],
-    'Міранда':           ['Лос-Текес','Гуатіре'],
-    'Сулія':             ['Маракайбо'],
-    'Карабобо':          ['Валенсія'],
-    'Арагуа':            ['Маракай'],
-    'Болівар':           ['Сьюдад-Болівар'],
+  'Venezuela': {
+    'Capital District':    ['Caracas'],
+    'Miranda':             ['Los Teques','Guatire'],
+    'Zulia':               ['Maracaibo'],
+    'Carabobo':            ['Valencia'],
+    'Aragua':              ['Maracay'],
+    'Bolívar':             ['Ciudad Bolívar'],
   },
-  'Еквадор': {
-    'Гуаяс':             ['Гуаякіль','Самборондон'],
-    'Пічінча':           ['Кіто','Сангольки'],
-    'Маnабi':            ['Манта','Портовьєхо'],
+  'Ecuador': {
+    'Guayas':              ['Guayaquil','Samborondón'],
+    'Pichincha':           ['Quito','Sangolquí'],
+    'Manabí':              ['Manta','Portoviejo'],
   },
-  'Болівія': {
-    'Санта-Крус':        ['Санта-Крус-де-ла-Сьєрра'],
-    'Ла-Пас':            ['Ла-Пас','Ель-Альто'],
-    'Кочабамба':         ['Кочабамба'],
+  'Bolivia': {
+    'Santa Cruz':          ['Santa Cruz de la Sierra'],
+    'La Paz':              ['La Paz','El Alto'],
+    'Cochabamba':          ['Cochabamba'],
   },
-  'Парагвай': {
-    'Центральний':       ['Асунсьон','Ламбаре'],
-    'Альто-Парана':      ['Сьюдад-дель-Есте'],
+  'Paraguay': {
+    'Central':             ['Asunción','Lambaré'],
+    'Alto Paraná':         ['Ciudad del Este'],
   },
-  'Уругвай': {
-    'Монтевідео':        ['Монтевідео'],
-    'Канелонес':         ['Лас-Педрас'],
-    'Мальдонадо':        ['Пунта-дель-Есте'],
+  'Uruguay': {
+    'Montevideo':          ['Montevideo'],
+    'Canelones':           ['Las Piedras'],
+    'Maldonado':           ['Punta del Este'],
   },
-  'Панама': {
-    'Панама':            ['Панама-Сіті','Сан-Мігеліто'],
-    'Колон':             ['Колон'],
+  'Panama': {
+    'Panama':              ['Panama City','San Miguelito'],
+    'Colón':               ['Colón'],
   },
-  'Коста-Рика': {
-    'Сан-Хосе':          ['Сан-Хосе'],
-    'Алахуела':          ['Алахуела'],
-    'Картаго':           ['Картаго'],
+  'Costa Rica': {
+    'San José':            ['San José'],
+    'Alajuela':            ['Alajuela'],
+    'Cartago':             ['Cartago'],
   },
-  'Гватемала': {
-    'Гватемала':         ['Гватемала-Сіті'],
-    'Міксько':           ['Міксько'],
-    'Вілья-Нуева':       ['Вілья-Нуева'],
+  'Guatemala': {
+    'Guatemala':           ['Guatemala City'],
+    'Mixco':               ['Mixco'],
+    'Villa Nueva':         ['Villa Nueva'],
   },
-  'Куба': {
-    'Гавана':            ['Гавана'],
-    'Сантьяго-де-Куба':  ['Сантьяго-де-Куба'],
-    'Камагуей':          ['Камагуей'],
+  'Cuba': {
+    'Havana':              ['Havana'],
+    'Santiago de Cuba':    ['Santiago de Cuba'],
+    'Camagüey':            ['Camagüey'],
   },
-  'Домініканська Республіка': {
-    'Нац.округ':         ['Санто-Домінго'],
-    'Сантьяго':          ['Сантьяго-де-лос-Кабальєрос'],
-    'Ла-Альтаграсія':    ['Пунта-Кана','Іслабон'],
+  'Dominican Republic': {
+    'National District':   ['Santo Domingo'],
+    'Santiago':            ['Santiago de los Caballeros'],
+    'La Altagracia':       ['Punta Cana'],
   },
-  'Пуерто-Рико': {
-    'Сан-Хуан':          ['Сан-Хуан','Байямон','Каролiна'],
-    'Понсе':             ['Понсе'],
+  'Puerto Rico': {
+    'San Juan':            ['San Juan','Bayamón','Carolina'],
+    'Ponce':               ['Ponce'],
   },
 }
 
-// Відповідність коду країни IP → назва в GEO_DATA
+// Відповідність коду країни IP → ключ в GEO_DATA
 const IP_COUNTRY_MAP: Record<string, string> = {
-  UA:'Україна', PL:'Польща', DE:'Німеччина', ES:'Іспанія', FR:'Франція',
-  IT:'Італія', CZ:'Чехія', SK:'Словаччина', HU:'Угорщина', RO:'Румунія',
-  AT:'Австрія', GB:'Великобританія', NL:'Нідерланди', BE:'Бельгія',
-  PT:'Португалія', GR:'Греція', BG:'Болгарія', HR:'Хорватія', RS:'Сербія',
-  CH:'Швейцарія', KZ:'Казахстан', AE:'ОАЕ',
-  US:'США', CA:'Канада', MX:'Мексика', BR:'Бразилія', AR:'Аргентина',
-  CO:'Колумбія', CL:'Чилі', PE:'Перу', VE:'Венесуела', EC:'Еквадор',
-  BO:'Болівія', PY:'Парагвай', UY:'Уругвай', PA:'Панама', CR:'Коста-Рика',
-  GT:'Гватемала', CU:'Куба', DO:'Домініканська Республіка', PR:'Пуерто-Рико',
+  UA:'Ukraine', PL:'Poland', DE:'Germany', ES:'Spain', FR:'France',
+  IT:'Italy', CZ:'Czech Republic', SK:'Slovakia', HU:'Hungary', RO:'Romania',
+  AT:'Austria', GB:'United Kingdom', NL:'Netherlands', BE:'Belgium',
+  PT:'Portugal', GR:'Greece', BG:'Bulgaria', HR:'Croatia', RS:'Serbia',
+  CH:'Switzerland', KZ:'Kazakhstan', AE:'UAE',
+  US:'USA', CA:'Canada', MX:'Mexico', BR:'Brazil', AR:'Argentina',
+  CO:'Colombia', CL:'Chile', PE:'Peru', VE:'Venezuela', EC:'Ecuador',
+  BO:'Bolivia', PY:'Paraguay', UY:'Uruguay', PA:'Panama', CR:'Costa Rica',
+  GT:'Guatemala', CU:'Cuba', DO:'Dominican Republic', PR:'Puerto Rico',
 }
 
 export function Register() {
   const { t, language, setLanguage } = useApp()
 
   const ROLE_OPTIONS = [
-    { role: 'client'      as UserRole, icon: <User      className="h-6 w-6" />, title: t('register.roleClient'),      description: t('register.roleClientDesc') },
-    { role: 'professional'as UserRole, icon: <HardHat   className="h-6 w-6" />, title: t('register.roleProfessional'),description: t('register.roleProfessionalDesc') },
-    { role: 'company'     as UserRole, icon: <Building2 className="h-6 w-6" />, title: t('register.roleCompany'),     description: t('register.roleCompanyDesc') },
-    { role: 'advertiser'  as UserRole, icon: <Megaphone className="h-6 w-6" />, title: t('register.roleAdvertiser'),  description: t('register.roleAdvertiserDesc') },
+    { role: 'client'      as UserRole, icon: <User      className="h-6 w-6" />, title: t('register.roleClient'),       description: t('register.roleClientDesc') },
+    { role: 'professional'as UserRole, icon: <HardHat   className="h-6 w-6" />, title: t('register.roleProfessional'), description: t('register.roleProfessionalDesc') },
+    { role: 'company'     as UserRole, icon: <Building2 className="h-6 w-6" />, title: t('register.roleCompany'),      description: t('register.roleCompanyDesc') },
+    { role: 'advertiser'  as UserRole, icon: <Megaphone className="h-6 w-6" />, title: t('register.roleAdvertiser'),   description: t('register.roleAdvertiserDesc') },
   ]
 
   const [fullName,     setFullName]     = useState('')
@@ -335,38 +335,36 @@ export function Register() {
   const [error,        setError]        = useState('')
   const [success,      setSuccess]      = useState(false)
 
-  // Географія
-  const [country,     setCountry]     = useState('')
-  const [region,      setRegion]      = useState('')
-  const [city,        setCity]        = useState('')
-  const [geoLoading,  setGeoLoading]  = useState(true)
-  const [manualCity,  setManualCity]  = useState(false)
+  const [country,    setCountry]    = useState('')
+  const [region,     setRegion]     = useState('')
+  const [city,       setCity]       = useState('')
+  const [geoLoading, setGeoLoading] = useState(true)
+  const [autoDetected, setAutoDetected] = useState(false)
+  const [manualCity, setManualCity] = useState(false)
 
   const availableRegions = country ? Object.keys(GEO_DATA[country] || {}) : []
   const availableCities  = country && region ? (GEO_DATA[country]?.[region] || []) : []
+  const sortedCountries  = Object.keys(GEO_DATA).sort()
 
-  // Визначаємо країну автоматично за IP при завантаженні
+  // Визначаємо країну за IP
   useEffect(() => {
-    const detectCountry = async () => {
+    const detect = async () => {
       try {
         const res  = await fetch('https://ipapi.co/json/')
         const data = await res.json()
-        const code = data.country_code as string
-        const name = IP_COUNTRY_MAP[code]
+        const name = IP_COUNTRY_MAP[data.country_code as string]
         if (name && GEO_DATA[name]) {
           setCountry(name)
+          setAutoDetected(true)
         }
-      } catch {
-        // не вдалось — нічого страшного, користувач вибере вручну
-      } finally {
-        setGeoLoading(false)
-      }
+      } catch { /* нічого */ }
+      finally { setGeoLoading(false) }
     }
-    void detectCountry()
+    void detect()
   }, [])
 
   const handleCountryChange = (val: string) => {
-    setCountry(val); setRegion(''); setCity(''); setManualCity(false)
+    setCountry(val); setRegion(''); setCity(''); setManualCity(false); setAutoDetected(false)
   }
   const handleRegionChange = (val: string) => {
     setRegion(val); setCity(''); setManualCity(false)
@@ -413,7 +411,6 @@ export function Register() {
     if (selectedRole === 'advertiser')   return t('register.hintAdvertiser')
     return ''
   }
-
   const hintIcon = () => {
     if (selectedRole === 'client')       return '👤'
     if (selectedRole === 'professional') return '🔨'
@@ -541,17 +538,16 @@ export function Register() {
                   className="input-glass" placeholder={t('register.phonePlaceholder')} />
               </div>
 
-              {/* ===== ГЕОГРАФІЯ ===== */}
+              {/* Географія */}
               <div className="space-y-3">
                 <label className="block text-sm font-bold text-[#2f2a24]">
                   {t('register.yourLocation')}
                 </label>
 
-                {/* Індикатор автовизначення */}
                 {geoLoading && (
                   <div className="flex items-center gap-2 text-xs text-[var(--ink-500)]">
                     <Loader className="h-3 w-3 animate-spin" />
-                    Визначаємо вашу країну...
+                    {t('register.detectingLocation')}
                   </div>
                 )}
 
@@ -560,22 +556,16 @@ export function Register() {
                   <select value={country} onChange={e => handleCountryChange(e.target.value)}
                     className="input-glass appearance-none pr-10">
                     <option value="">{t('register.selectCountry')}</option>
-                    {Object.keys(GEO_DATA).sort().map(c => (
+                    {sortedCountries.map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
                   <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
-                  {country && !geoLoading && (
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-green-600 pointer-events-none opacity-0">
-                      {/* прапорець */}
-                    </span>
-                  )}
                 </div>
 
-                {/* Якщо країна визначена автоматично — показуємо підказку */}
-                {country && !geoLoading && (
+                {autoDetected && country && (
                   <p className="text-xs text-[var(--ink-500)]">
-                    🌍 Країну визначено автоматично. Змініть якщо потрібно.
+                    🌍 {t('register.locationAutoDetected')}
                   </p>
                 )}
 
@@ -594,7 +584,7 @@ export function Register() {
                 )}
 
                 {/* Місто */}
-                {country && region && !manualCity && (
+                {country && region && !manualCity && availableCities.length > 0 && (
                   <div className="relative">
                     <select value={city} onChange={e => setCity(e.target.value)}
                       className="input-glass appearance-none pr-10">
@@ -607,16 +597,17 @@ export function Register() {
                   </div>
                 )}
 
-                {/* Ручне введення міста */}
-                {country && region && manualCity && (
+                {/* Ручне місто */}
+                {(manualCity || (country && region && availableCities.length === 0)) && (
                   <input type="text" value={city} onChange={e => setCity(e.target.value)}
                     className="input-glass" placeholder={t('register.cityPlaceholder')} />
                 )}
 
-                {/* Посилання "Немає в списку" */}
-                {country && region && (
-                  <button type="button" onClick={() => { setManualCity(v => !v); setCity('') }}
-                    className="text-xs text-[var(--accent-700)] underline">
+                {country && region && availableCities.length > 0 && (
+                  <button type="button"
+                    onClick={() => { setManualCity(v => !v); setCity('') }}
+                    className="text-xs underline"
+                    style={{ color: 'var(--accent-700)' }}>
                     {manualCity ? t('register.selectCity') : t('register.cityNotInList')}
                   </button>
                 )}
