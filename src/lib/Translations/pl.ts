@@ -935,4 +935,19 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Odrzucona',
   'advertising.status.expired': 'Wygasła',
   'advertising.geo.noneAvailable': 'Brak dostępnych opcji',
+
+  // Register — ролі з перекладами
+  'register.roleClient': 'Klient',
+  'register.roleClientDesc': 'Szukam fachowca lub usługi',
+  'register.roleProfessional': 'Fachowiec',
+  'register.roleProfessionalDesc': 'Świadczę usługi jako osoba fizyczna',
+  'register.roleCompany': 'Firma',
+  'register.roleCompanyDesc': 'Rejestruję firmę lub biznes',
+  'register.roleAdvertiser': 'Reklamodawca',
+  'register.roleAdvertiserDesc': 'Zamieszczam reklamy na platformie',
+  'register.whoAreYou': 'Kim jesteś?',
+  'register.hintClient': 'Jako klient możesz tworzyć ogłoszenia, znajdować fachowców i zostawiać opinie.',
+  'register.hintProfessional': 'Jako fachowiec możesz stworzyć profil, dodać portfolio i przyjmować zamówienia.',
+  'register.hintCompany': 'Jako firma możesz opublikować profil firmy i przyciągać klientów.',
+  'register.hintAdvertiser': 'Jako reklamodawca możesz umieszczać reklamy banerowe z geo-targetingiem na całej platformie.',
 }
