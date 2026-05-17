@@ -299,8 +299,8 @@ export const enTranslations = {
   'createAd.radius.global': 'All Users',
 
   // Вхід у систему.
-  'login.title': 'Professional Login',
-  'login.subtitle': 'Sign in to manage your profile and listings',
+  'login.title': 'Sign In',
+  'login.subtitle': 'Sign in to manage your profile',
   'login.email': 'Email Address',
   'login.emailPlaceholder': 'you@example.com',
   'login.password': 'Password',
@@ -308,7 +308,7 @@ export const enTranslations = {
   'login.signIn': 'Sign In',
   'login.signingIn': 'Signing in...',
   'login.noAccount': "Don't have an account?",
-  'login.registerLink': 'Register as Professional',
+  'login.registerLink': 'Register',
   'login.lookingToPost': 'Looking to post an ad?',
   'login.noRegistrationRequired': 'No registration required',
 
@@ -320,9 +320,9 @@ export const enTranslations = {
   'register.passwordMin': 'Minimum 6 characters',
   'register.phonePlaceholder': '+1 234 567 8900',
   'register.locationPlaceholder': 'City, State',
-  'register.createAccount': 'Create Professional Account',
+  'register.createAccount': 'Create Account',
   'register.creating': 'Creating Account...',
-  'register.success': 'Registration successful! Redirecting to dashboard...',
+  'register.success': 'Account created! Redirecting...',
   'register.alreadyHave': 'Already have an account?',
   'register.afterRegistration': 'After registration:',
   'register.choosePlan': 'Choose a subscription plan',
