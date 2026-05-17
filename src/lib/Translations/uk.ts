@@ -297,7 +297,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.radius.global': 'Усі користувачі',
 
   // Login
-  'login.title': 'Вхід для майстрів',
+  'login.title': 'Вхід до DImarket',
   'login.subtitle': 'Увійдіть, щоб керувати профілем та оголошеннями',
   'login.email': 'Електронна пошта',
   'login.emailPlaceholder': 'you@example.com',
@@ -306,21 +306,21 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'login.signIn': 'Увійти',
   'login.signingIn': 'Вхід...',
   'login.noAccount': 'Ще не маєте акаунта?',
-  'login.registerLink': 'Зареєструватися як майстер',
+  'login.registerLink': 'Зареєструватися',
   'login.lookingToPost': 'Хочете опублікувати оголошення?',
   'login.noRegistrationRequired': 'Реєстрація не потрібна',
 
   // Register
-  'register.title': 'Реєстрація майстра',
-  'register.subtitle': 'Приєднуйтесь до Dimarket і розвивайте свій бізнес',
+  'register.title': 'Реєстрація на DImarket',
+  'register.subtitle': 'Оберіть свою роль і приєднуйтесь до платформи',
   'register.fullName': "Повне ім'я",
   'register.fullNamePlaceholder': 'Іван Іваненко',
   'register.passwordMin': 'Мінімум 6 символів',
   'register.phonePlaceholder': '+380 67 123 45 67',
   'register.locationPlaceholder': 'Місто, область',
-  'register.createAccount': 'Створити акаунт майстра',
+  'register.createAccount': 'Створити акаунт',
   'register.creating': 'Створення акаунта...',
-  'register.success': 'Реєстрація успішна! Перенаправляємо в панель...',
+  'register.success': 'Акаунт створено! Перенаправляємо...',
   'register.alreadyHave': 'Вже маєте акаунт?',
   'register.afterRegistration': 'Після реєстрації:',
   'register.choosePlan': 'Оберете тарифний план',
@@ -751,4 +751,17 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'register.companyName': 'Назва компанії',
   'register.companyNamePlaceholder': 'Наприклад: БудСервіс ТОВ',
   'register.representativeName': 'Ім\'я представника',
+
+  // Register geo detect
+  'register.detectingLocation': 'Визначаємо вашу країну...',
+  'register.locationAutoDetected': 'Країну визначено автоматично. Змініть якщо потрібно.',
+
+  // Бракуючі ключі UK
+  'listing.backToListings': 'Назад до оголошень',
+  'ads.badge': 'Реклама',
+  'ads.openLink': 'Відкрити',
+  'common.comingSoon': 'Незабаром',
+  'header.openMenu': 'Відкрити меню',
+  'header.closeMenu': 'Закрити меню',
+  'header.mobileNavigation': 'Мобільна навігація',
 }
