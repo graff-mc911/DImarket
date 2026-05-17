@@ -967,4 +967,19 @@ export const roTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.status.rejected': 'Respinsă',
   'advertising.status.expired': 'Expirată',
   'advertising.geo.noneAvailable': 'Nu există opțiuni disponibile',
+
+  // Register — ролі з перекладами
+  'register.roleClient': 'Client',
+  'register.roleClientDesc': 'Caut un meșter sau serviciu',
+  'register.roleProfessional': 'Meșter',
+  'register.roleProfessionalDesc': 'Ofer servicii ca persoană fizică',
+  'register.roleCompany': 'Companie',
+  'register.roleCompanyDesc': 'Înregistrez o firmă sau afacere',
+  'register.roleAdvertiser': 'Advertiser',
+  'register.roleAdvertiserDesc': 'Plasez reclame pe platformă',
+  'register.whoAreYou': 'Cine ești?',
+  'register.hintClient': 'Ca client puteți crea anunțuri, găsi meșteri și lăsa recenzii.',
+  'register.hintProfessional': 'Ca meșter puteți crea un profil, adăuga portofoliu și primi comenzi.',
+  'register.hintCompany': 'Ca companie puteți posta un profil de firmă și atrage clienți.',
+  'register.hintAdvertiser': 'Ca advertiser puteți plasa reclame banner cu geo-targeting pe întreaga platformă.',
 }
