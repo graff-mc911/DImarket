@@ -307,8 +307,8 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.radius.global': 'Todos los usuarios',
 
   // Вхід у систему.
-  'login.title': 'Acceso para profesionales',
-  'login.subtitle': 'Inicia sesion para gestionar tu perfil y anuncios',
+  'login.title': 'Iniciar sesión',
+  'login.subtitle': 'Gestiona tu perfil',
   'login.email': 'Correo electronico',
   'login.emailPlaceholder': 'you@example.com',
   'login.password': 'Contrasena',
@@ -316,7 +316,7 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'login.signIn': 'Iniciar sesion',
   'login.signingIn': 'Iniciando sesion...',
   'login.noAccount': 'Todavia no tienes una cuenta?',
-  'login.registerLink': 'Registrarse como profesional',
+  'login.registerLink': 'Registrarse',
   'login.lookingToPost': 'Quieres publicar un anuncio?',
   'login.noRegistrationRequired': 'No se requiere registro',
 
@@ -328,7 +328,7 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'register.passwordMin': 'Minimo 6 caracteres',
   'register.phonePlaceholder': '+34 600 123 456',
   'register.locationPlaceholder': 'Ciudad, provincia',
-  'register.createAccount': 'Crear cuenta profesional',
+  'register.createAccount': 'Crear cuenta',
   'register.creating': 'Creando cuenta...',
   'register.success': 'Registro exitoso. Redirigiendo al panel...',
   'register.alreadyHave': 'Ya tienes una cuenta?',
@@ -951,4 +951,22 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'register.hintProfessional': 'Como profesional puedes crear un perfil, añadir portfolio y recibir pedidos.',
   'register.hintCompany': 'Como empresa puedes publicar un perfil empresarial y atraer clientes.',
   'register.hintAdvertiser': 'Como anunciante puedes colocar anuncios banner con geo-targeting en toda la plataforma.',
+
+  // Register — географія
+  'register.yourLocation': 'Tu ubicación',
+  'register.selectCountry': 'Seleccionar país',
+  'register.selectRegion': 'Seleccionar región (opcional)',
+  'register.selectCity': 'Seleccionar ciudad',
+  'register.cityNotInList': '¿Tu ciudad no está en la lista?',
+  'register.cityPlaceholder': 'Introducir nombre de ciudad manualmente',
+  'register.enterManually': 'Introducir manualmente',
+
+  // Register geo detect
+  'register.detectingLocation': 'Detectando tu país...',
+  'register.locationAutoDetected': 'País detectado automáticamente. Cambia si es necesario.',
+
+  // Register company
+  'register.companyName': 'Nombre de la empresa',
+  'register.companyNamePlaceholder': 'ej. ServiConstrucción S.L.',
+  'register.representativeName': 'Nombre del representante',
 }
