@@ -33,7 +33,7 @@ const GEO_DATA: Record<string, Record<string, string[]>> = {
   'Germany': {
     'Bavaria':             ['Munich','Nuremberg','Augsburg'],
     'Berlin':              ['Berlin'],
-    'Hesse':               ['Frankfurt','Wiesbaden','Darmstadt'],
+    'Hessen':               ['Frankfurt','Wiesbaden','Darmstadt'],
     'Hamburg':             ['Hamburg'],
     'Baden-Württemberg':   ['Stuttgart','Karlsruhe','Freiburg'],
     'North Rhine-Westphalia':['Cologne','Düsseldorf','Dortmund','Essen'],
