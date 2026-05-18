@@ -1,0 +1,36 @@
+DImarket → Vercel (замість Bolt)
+================================
+
+1) GitHub
+   Push цей репозиторій на graff-mc911/DImarket (гілка main).
+
+2) Vercel https://vercel.com/
+   Add New Project → Import graff-mc911/DImarket
+   Framework: Vite (автовизначення)
+   Root Directory: . (або DImarket-main якщо репо в підпапці)
+   Build: npm run build
+   Output: dist
+
+3) Environment Variables (Settings → Environment Variables)
+   Для Production + Preview:
+
+   VITE_DIMARKET_SUPABASE_URL = https://wjlfvajloxkevggwjgtk.supabase.co
+   VITE_DIMARKET_SUPABASE_ANON_KEY = (anon з Supabase wjlfv → Settings → API)
+
+   VITE_STRIPE_PUBLISHABLE_KEY = pk_test_...
+
+   (На Vercel НЕМАЄ замків як у Bolt — змінні редагуються вільно.)
+
+4) Deploy → отримаєте URL типу dimarket-xxx.vercel.app
+
+5) Домен dimarket.market
+   Vercel → Project → Settings → Domains → Add dimarket.market
+   У реєстратора домену вкажіть DNS з Vercel (A/CNAME як покаже Vercel).
+   Потім вимкніть старий хостинг Bolt, щоб не було двох версій сайту.
+
+6) Supabase (опційно)
+   Supabase → Integrations → Vercel → підключити проєкт wjlfvajloxkevggwjgtk
+
+7) Перевірка
+   F12 → Network → wjlfvajloxkevggwjgtk.supabase.co
+   Console → [DImarket] Supabase: wjlfvajloxkevggwjgtk
