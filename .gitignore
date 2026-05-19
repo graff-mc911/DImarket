@@ -3,3 +3,4 @@ dist/
 .env
 .env.local
 .env.*.local
+# .env.production is committed on purpose for Vercel build (VITE_* vars)
