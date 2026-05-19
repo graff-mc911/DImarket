@@ -37,7 +37,7 @@ export function AdBanner({ position, sticky = true }: AdBannerProps) {
       const { data, error } = await supabase
         .from('ad_campaigns')
         .select('*')
-        .eq('placement', 'sidebar')
+        .in('placement', ['sidebar', 'home', 'listings'])
         .eq('status', 'active')
         .order('created_at', { ascending: false })
         .limit(6)
