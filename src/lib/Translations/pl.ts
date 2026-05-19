@@ -6,7 +6,7 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   // Шапка сайту: навігація, акаунт, мова, валюта.
   'header.browse': 'Przegladaj',
   'header.findProfessionals': 'Znajdz fachowcow',
-  'header.professionalLogin': 'Logowanie dla fachowcow',
+  'header.professionalLogin': 'Zaloguj się',
   'header.createAd': 'Dodaj ogloszenie',
   'header.myProfile': 'Moj profil',
   'header.dashboard': 'Panel',
