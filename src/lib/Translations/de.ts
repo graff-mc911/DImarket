@@ -5,7 +5,7 @@ import type { TranslationKey } from './en'
 export const deTranslations: Partial<Record<TranslationKey, string>> = {
   // Шапка сайту: навігація, акаунт, мова, валюта.
   'header.browse': 'Entdecken',
-  'header.findProfessionals': 'Fachleute finden',
+  'header.findProfessionals': 'Anmelden',
   'header.professionalLogin': 'Login fuer Fachkraefte',
   'header.createAd': 'Anzeige erstellen',
   'header.myProfile': 'Mein Profil',
