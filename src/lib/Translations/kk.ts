@@ -4,7 +4,7 @@ export const kkTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': 'Шолу',
   'header.findProfessionals': 'Мамандарды табу',
-  'header.professionalLogin': 'Мамандарға кіру',
+  'header.professionalLogin': 'Кіру',
   'header.createAd': 'Жарнама жасау',
   'header.myProfile': 'Менің профилім',
   'header.dashboard': 'Басқару панелі',
