@@ -4,7 +4,7 @@ export const zhTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': '浏览',
   'header.findProfessionals': '查找专业人士',
-  'header.professionalLogin': '登录',
+  'header.professionalLogin': '专业人士登录',
   'header.createAd': '发布广告',
   'header.myProfile': '我的资料',
   'header.dashboard': '控制面板',

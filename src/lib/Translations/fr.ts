@@ -4,7 +4,7 @@ export const frTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': 'Parcourir',
   'header.findProfessionals': 'Trouver des professionnels',
-  'header.professionalLogin': 'Se connecter',
+  'header.professionalLogin': 'Connexion des professionnels',
   'header.createAd': 'Creer une annonce',
   'header.myProfile': 'Mon profil',
   'header.dashboard': 'Tableau de bord',

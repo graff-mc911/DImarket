@@ -4,7 +4,7 @@ export const roTranslations: Partial<Record<TranslationKey, string>> = {
   // Шапка сайту
   'header.browse': 'Exploreaza',
   'header.findProfessionals': 'Gaseste profesionisti',
-  'header.professionalLogin': 'Autentificare',
+  'header.professionalLogin': 'Autentificare profesionisti',
   'header.createAd': 'Creeaza anunt',
   'header.myProfile': 'Profilul meu',
   'header.dashboard': 'Panou',

@@ -4,7 +4,7 @@ export const hrTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': 'Pregledaj',
   'header.findProfessionals': 'Pronadi majstore',
-  'header.professionalLogin': 'Prijava',
+  'header.professionalLogin': 'Prijava za majstore',
   'header.createAd': 'Napravi oglas',
   'header.myProfile': 'Moj profil',
   'header.dashboard': 'Kontrolna ploca',

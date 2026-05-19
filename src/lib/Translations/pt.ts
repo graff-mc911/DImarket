@@ -4,7 +4,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   // Шапка сайту
   'header.browse': 'Explorar',
   'header.findProfessionals': 'Encontrar profissionais',
-  'header.professionalLogin': 'Entrar',
+  'header.professionalLogin': 'Login de profissionais',
   'header.createAd': 'Criar anuncio',
   'header.myProfile': 'O meu perfil',
   'header.dashboard': 'Painel',

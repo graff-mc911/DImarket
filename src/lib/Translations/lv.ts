@@ -4,7 +4,7 @@ export const lvTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': 'Parlukot',
   'header.findProfessionals': 'Atrast specialistus',
-  'header.professionalLogin': 'Pieteikties',
+  'header.professionalLogin': 'Specialistu pieslegsanas',
   'header.createAd': 'Izveidot sludinajumu',
   'header.myProfile': 'Mans profils',
   'header.dashboard': 'Vadibas panelis',
