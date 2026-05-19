@@ -4,7 +4,7 @@ export const etTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': 'Sirvi',
   'header.findProfessionals': 'Leia spetsialiste',
-  'header.professionalLogin': 'Spetsialistide sisselogimine',
+  'header.professionalLogin': 'Logi sisse',
   'header.createAd': 'Loo kuulutus',
   'header.myProfile': 'Minu profiil',
   'header.dashboard': 'Juhtpaneel',
