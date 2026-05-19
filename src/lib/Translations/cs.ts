@@ -4,7 +4,7 @@ export const csTranslations: Partial<Record<TranslationKey, string>> = {
   // Шапка сайту
   'header.browse': 'Prohlizet',
   'header.findProfessionals': 'Najit profesionaly',
-  'header.professionalLogin': 'Prihlaseni profesionalu',
+  'header.professionalLogin': 'Přihlásit se',
   'header.createAd': 'Vytvorit inzerat',
   'header.myProfile': 'Muj profil',
   'header.dashboard': 'Panel',

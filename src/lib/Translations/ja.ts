@@ -4,7 +4,7 @@ export const jaTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': '閲覧',
   'header.findProfessionals': '専門家を探す',
-  'header.professionalLogin': '専門家ログイン',
+  'header.professionalLogin': 'ログイン',
   'header.createAd': '広告を作成',
   'header.myProfile': 'マイプロフィール',
   'header.dashboard': 'ダッシュボード',

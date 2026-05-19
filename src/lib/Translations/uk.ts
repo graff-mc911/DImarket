@@ -4,7 +4,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': 'Огляд',
   'header.findProfessionals': 'Знайти майстрів',
-  'header.professionalLogin': 'Вхід для майстрів',
+  'header.professionalLogin': 'Увійти',
   'header.createAd': 'Створити оголошення',
   'header.myProfile': 'Мій профіль',
   'header.dashboard': 'Панель',

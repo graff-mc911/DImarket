@@ -4,7 +4,7 @@ export const bgTranslations: Partial<Record<TranslationKey, string>> = {
   // Шапка сайту
   'header.browse': 'Преглед',
   'header.findProfessionals': 'Намери майстори',
-  'header.professionalLogin': 'Вход за майстори',
+  'header.professionalLogin': 'Вход',
   'header.createAd': 'Създай обява',
   'header.myProfile': 'Моят профил',
   'header.dashboard': 'Панел',

@@ -4,7 +4,7 @@ export const trTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': 'Goz at',
   'header.findProfessionals': 'Usta bul',
-  'header.professionalLogin': 'Usta girisi',
+  'header.professionalLogin': 'Giriş yap',
   'header.createAd': 'Ilan olustur',
   'header.myProfile': 'Profilim',
   'header.dashboard': 'Panel',
