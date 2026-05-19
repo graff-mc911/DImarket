@@ -4,7 +4,7 @@ export const arTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': 'تصفح',
   'header.findProfessionals': 'ابحث عن محترفين',
-  'header.professionalLogin': 'دخول المحترفين',
+  'header.professionalLogin': 'تسجيل الدخول',
   'header.createAd': 'إنشاء إعلان',
   'header.myProfile': 'ملفي الشخصي',
   'header.dashboard': 'لوحة التحكم',
