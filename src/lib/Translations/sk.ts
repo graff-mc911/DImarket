@@ -4,7 +4,7 @@ export const skTranslations: Partial<Record<TranslationKey, string>> = {
   // Шапка сайту
   'header.browse': 'Prehliadat',
   'header.findProfessionals': 'Najst profesionalov',
-  'header.professionalLogin': 'Prihlasenie profesionalov',
+  'header.professionalLogin': 'Prihlásiť sa',
   'header.createAd': 'Vytvorit inzerat',
   'header.myProfile': 'Moj profil',
   'header.dashboard': 'Panel',
