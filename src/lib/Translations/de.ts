@@ -6,7 +6,7 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   // Шапка сайту: навігація, акаунт, мова, валюта.
   'header.browse': 'Entdecken',
   'header.findProfessionals': 'Anmelden',
-  'header.professionalLogin': 'Login fuer Fachkraefte',
+  'header.professionalLogin': 'Anmelden',
   'header.createAd': 'Anzeige erstellen',
   'header.myProfile': 'Mein Profil',
   'header.dashboard': 'Dashboard',
