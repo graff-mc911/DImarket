@@ -4,7 +4,7 @@ export const huTranslations: Partial<Record<TranslationKey, string>> = {
   // Шапка сайту
   'header.browse': 'Bongeszes',
   'header.findProfessionals': 'Szakemberek keresese',
-  'header.professionalLogin': 'Szakember belepes',
+  'header.professionalLogin': 'Bejelentkezés',
   'header.createAd': 'Hirdetes letrehozasa',
   'header.myProfile': 'Profilom',
   'header.dashboard': 'Vezerlopult',
