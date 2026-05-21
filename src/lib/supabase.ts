@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+// v2 - DImarket production Supabase
 import type { Database } from './types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://wjlfvajloxkevggwjgtk.supabase.co';
