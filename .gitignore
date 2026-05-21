@@ -1,5 +1,7 @@
 node_modules/
 dist/
+build.log
+install.log
 
 # Секрети та локальні env (не в git)
 .env
