@@ -40,18 +40,24 @@ nslookup www.dimarket.market
 
 ---
 
-## Варіант B: передати DNS на Vercel (простіше надалі)
+## Варіант B: передати DNS на Vercel (рекомендовано — домен на Name.com)
 
-У **реєстраторі домену** (де купили `dimarket.market`) змініть nameservers на:
+**Реєстратор:** [Name.com](https://www.name.com) → My Domains → `dimarket.market` → **Nameservers** → Custom:
 
 ```
 ns1.vercel-dns.com
 ns2.vercel-dns.com
 ```
 
-Потім у Vercel → Project **dimarket** → **Settings → Domains** — домен стане Valid (зелений).
+Або з терміналу (потрібен API token з https://www.name.com/account/settings/api ):
 
-Записи в Vercel для зони вже є (ALIAS / CAA).
+```powershell
+$env:NAMECOM_USERNAME = "ваш_логін_name.com"
+$env:NAMECOM_API_TOKEN = "токен_з_панелі"
+.\scripts\fix-dns-namecom.ps1
+```
+
+У Vercel DNS-записи вже додано (`A` + `CNAME www`). Після зміни NS — **Valid** у [Domains](https://vercel.com/ivan-sovban-s-projects/dimarket/settings/domains).
 
 ---
 
