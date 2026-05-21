@@ -61,10 +61,10 @@ npm install
 ```
 
 3. Set up environment variables
-Create a `.env` file in the root directory:
+Create `.env.local` in the root directory (see `.env.example`):
 ```
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_SUPABASE_URL=https://wjlfvajloxkevggwjgtk.supabase.co
+VITE_SUPABASE_ANON_KEY=<anon key from Supabase Dashboard → API>
 ```
 
 4. Run the development server

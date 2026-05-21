@@ -80,9 +80,7 @@ export function FooterStats() {
     setLoading(true)
 
     try {
-      // Перед читанням статистики просимо бекенд оновити агреговані дані.
-      await supabase.rpc('refresh_app_site_stats')
-
+      // refresh_app_site_stats доступна лише service_role — читаємо напряму
       const { data, error } = await supabase
         .from('app_site_stats')
         .select('*')

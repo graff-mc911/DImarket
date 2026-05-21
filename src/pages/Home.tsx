@@ -71,7 +71,6 @@ export function Home() {
             .select('*')
             .eq('is_professional', true)
             .order('rating', { ascending: false })
-            .order('total_reviews', { ascending: false })
             .limit(4),
 
           supabase
@@ -89,6 +88,11 @@ export function Home() {
             .eq('id', 1)
             .maybeSingle(),
         ])
+
+      if (categoriesResult.error) console.error('[Home] categories:', categoriesResult.error.message)
+      if (professionalsResult.error) console.error('[Home] profiles:', professionalsResult.error.message)
+      if (jobsResult.error) console.error('[Home] listings:', jobsResult.error.message)
+      if (statsResult.error) console.error('[Home] app_site_stats:', statsResult.error.message)
 
       setCategories(categoriesResult.data ?? [])
       setProfessionals(professionalsResult.data ?? [])
