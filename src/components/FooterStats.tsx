@@ -166,7 +166,7 @@ export function FooterStats() {
         {statCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-[16px] border border-white/38 bg-[rgba(255,252,248,0.92)] p-2.5 shadow-[0_6px_18px_rgba(89,63,48,0.04)] md:bg-[var(--bg-glass-top)] md:backdrop-blur-none"
+            className="rounded-[16px] border border-white/38 bg-[rgba(255,252,248,0.92)] p-2.5 shadow-[0_6px_18px_rgba(89,63,48,0.04)] md:border-[var(--glass-border)] md:bg-[var(--bg-glass-top)] md:shadow-[0_6px_18px_rgba(55,70,50,0.04)] md:backdrop-blur-none"
           >
             <div className="mb-1.5 flex items-center gap-2">
               <card.icon className={`h-3.5 w-3.5 ${card.color}`} />
@@ -180,7 +180,7 @@ export function FooterStats() {
         ))}
       </div>
 
-      <div className="rounded-[18px] border border-white/38 bg-[rgba(255,252,248,0.92)] p-3 shadow-[0_6px_18px_rgba(89,63,48,0.04)] md:bg-[var(--bg-glass-top)] md:backdrop-blur-none">
+      <div className="rounded-[18px] border border-white/38 bg-[rgba(255,252,248,0.92)] p-3 shadow-[0_6px_18px_rgba(89,63,48,0.04)] md:border-[var(--glass-border)] md:bg-[var(--bg-glass-top)] md:shadow-[0_6px_18px_rgba(55,70,50,0.04)] md:backdrop-blur-none">
         <div className="mb-2 flex flex-col gap-1.5 md:flex-row md:items-center md:justify-between">
           <div>
             <h4 className="text-sm font-extrabold text-[#2f2a24]">

@@ -404,11 +404,18 @@
    */
   @media (min-width: 768px) {
     :root {
-      --bg-canvas: #e4e8d8;
-      --bg-soft: #dce3d2;
-      --bg-glass-top: #f0f3ea;
-      --bg-glass-bottom: #e8ede0;
-      --glass-bg: rgba(240, 243, 234, 0.94);
+      /* Холодний світло-оливковий (більше зеленого, мінімум червоного — без рожевого) */
+      --bg-canvas: #d8e2d4;
+      --bg-soft: #ccd9c8;
+      --bg-glass-top: #e8efe4;
+      --bg-glass-bottom: #dde6d8;
+      --glass-bg: rgba(232, 239, 228, 0.96);
+      --line: rgba(120, 140, 108, 0.14);
+      --line-strong: rgba(100, 125, 95, 0.22);
+      --glass-border: rgba(115, 135, 105, 0.2);
+      --glass-border-strong: rgba(95, 118, 88, 0.3);
+      --glass-highlight: rgba(255, 255, 255, 0.82);
+      --accent-soft: rgba(111, 145, 125, 0.1);
     }
 
     html,
@@ -437,8 +444,16 @@
     .glass-panel,
     .hero-glass,
     .soft-card {
-      background: linear-gradient(180deg, var(--bg-glass-top), var(--bg-glass-bottom)) !important;
-      background-color: var(--bg-glass-top) !important;
+      background: var(--bg-glass-top) !important;
+      background-image: linear-gradient(
+        180deg,
+        var(--bg-glass-top),
+        var(--bg-glass-bottom)
+      ) !important;
+      border-color: var(--glass-border) !important;
+      box-shadow:
+        0 14px 30px rgba(55, 70, 50, 0.05),
+        inset 0 1px 0 var(--glass-highlight) !important;
     }
 
     .glass-panel::before,
@@ -448,13 +463,21 @@
 
     .eyebrow,
     .stat-chip {
-      background: rgba(244, 247, 238, 0.94) !important;
+      background: var(--bg-glass-top) !important;
+      border-color: var(--glass-border) !important;
     }
 
     .input-glass,
     .select-glass,
     .input-hero {
-      background: rgba(244, 247, 238, 0.94) !important;
+      background: var(--bg-glass-top) !important;
+      border-color: var(--glass-border) !important;
+    }
+
+    .surface-shell {
+      background-color: var(--bg-glass-top) !important;
+      background-image: none !important;
+      border-color: var(--glass-border) !important;
     }
   }
 }
