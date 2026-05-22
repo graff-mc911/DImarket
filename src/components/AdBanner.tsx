@@ -73,7 +73,7 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
   if (stackCount && stackCount >= 2) {
     return (
       <div className="hidden h-full min-h-full w-full flex-1 flex-col xl:flex">
-        <div className="grid h-1/2 min-h-0 w-full grid-rows-6 gap-1 py-0.5">
+        <div className="grid h-1/2 min-h-0 w-full grid-rows-6 gap-3 py-0.5">
           {loading
             ? Array.from({ length: stackCount }, (_, i) => (
                 <div
