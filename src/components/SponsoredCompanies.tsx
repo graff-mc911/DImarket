@@ -15,11 +15,11 @@ import { navigateTo } from '../lib/navigation'
 export function SponsoredCompanies() {
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
-  const campaigns = getForSlots(['home', 'sidebar', 'listings'], 8)
+  const campaigns = getForSlots(['home', 'sidebar', 'listings'], 3)
 
   useEffect(() => {
     if (loading || campaigns.length === 0) return
-    for (const c of campaigns.slice(0, 4)) {
+    for (const c of campaigns) {
       void trackAdImpression(c.id)
     }
   }, [loading, campaigns])
@@ -54,16 +54,16 @@ export function SponsoredCompanies() {
         </div>
 
         {loading ? (
-          <div className="flex gap-4 overflow-hidden">
+          <div className="grid gap-4 md:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-44 w-[min(100%,280px)] shrink-0 animate-pulse rounded-[24px] bg-[rgba(148,163,184,0.14)]"
+                className="h-52 animate-pulse rounded-[24px] bg-[rgba(148,163,184,0.14)]"
               />
             ))}
           </div>
         ) : (
-          <div className="-mx-1 flex gap-4 overflow-x-auto px-1 pb-2 snap-x snap-mandatory">
+          <div className="grid gap-4 md:grid-cols-3">
             {campaigns.map((campaign) => (
               <SponsorCard key={campaign.id} campaign={campaign} />
             ))}
@@ -89,7 +89,7 @@ function SponsorCard({ campaign }: { campaign: AdCampaignWithAdvertiser }) {
       target="_blank"
       rel="noreferrer sponsored"
       onClick={handleClick}
-      className="glass-card group w-[min(100%,300px)] shrink-0 snap-start overflow-hidden border border-[rgba(148,163,184,0.18)] transition duration-300 hover:-translate-y-0.5"
+      className="glass-card group w-full overflow-hidden border border-[rgba(148,163,184,0.18)] transition duration-300 hover:-translate-y-0.5"
     >
       <div className="relative h-32 overflow-hidden bg-[rgba(248,250,252,0.68)]">
         <img
