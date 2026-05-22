@@ -62,6 +62,10 @@ const enUiText = {
   'home.noBio': 'Construction professional profile is being completed.',
   'home.sponsoredPlacement':
     'Sponsored placement for tools, materials, logistics, or local construction partners.',
+  'home.sponsoredTitle': 'Partner companies',
+  'home.sponsoredSubtitle':
+    'Paid advertising from construction brands, suppliers, and service companies on DImarket.',
+  'home.sponsoredCta': 'Advertise your company',
   'home.sidebarAdOne': 'Place brand visibility next to live construction demand.',
   'home.sidebarAdTwo':
     'Reach professionals and clients while they search for work and services.',
@@ -265,6 +269,10 @@ const ukUiText: Record<string, string> = {
   'home.noBio': 'Профіль будівельного майстра ще наповнюється.',
   'home.sponsoredPlacement':
     'Спонсорське розміщення для інструментів, матеріалів, логістики або локальних будівельних партнерів.',
+  'home.sponsoredTitle': 'Партнерські компанії',
+  'home.sponsoredSubtitle':
+    'Платна реклама будівельних брендів, постачальників матеріалів та сервісних компаній на DImarket.',
+  'home.sponsoredCta': 'Розмістити рекламу компанії',
   'home.sidebarAdOne': 'Покажіть бренд поруч із живим будівельним попитом.',
   'home.sidebarAdTwo':
     'Охоплюйте майстрів і клієнтів саме тоді, коли вони шукають роботу та послуги.',

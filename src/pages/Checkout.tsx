@@ -115,11 +115,15 @@ export function Checkout() {
       // Активуємо рекламну кампанію
       case 'ad_campaign':
         if (referenceId) {
+          const amountEur =
+            parseFloat(metadata?.amount_total || '0') / 100
           await supabase
             .from('ad_campaigns')
             .update({
               status:            'active',
               stripe_payment_id: metadata?.session_id,
+              price_paid:        amountEur > 0 ? amountEur : null,
+              currency_paid:     metadata?.currency || 'eur',
             })
             .eq('id', referenceId)
             .eq('advertiser_id', user!.id)

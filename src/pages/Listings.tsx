@@ -407,7 +407,7 @@ export function Listings() {
               )}
             </section>
 
-            <MobileAdBanner variant="horizontal" />
+            <MobileAdBanner variant="horizontal" page="listings" />
 
             {/* Лічильник результатів */}
             <div className="mb-4 mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -439,7 +439,7 @@ export function Listings() {
                     <ListingCard listing={listing} />
                     {(index + 1) % 4 === 0 && index < filteredListings.length - 1 && (
                       <div className="md:col-span-2 2xl:col-span-3">
-                        <MobileAdBanner variant="inline" />
+                        <MobileAdBanner variant="inline" page="listings" />
                       </div>
                     )}
                   </Fragment>
@@ -473,7 +473,7 @@ export function Listings() {
             )}
 
             <div className="mt-6">
-              <MobileAdBanner variant="inline" />
+              <MobileAdBanner variant="inline" page="listings" />
             </div>
           </main>
 
@@ -484,7 +484,7 @@ export function Listings() {
         </div>
       </div>
 
-      <MobileAdBanner variant="sticky" />
+      <MobileAdBanner variant="sticky" page="listings" />
     </div>
   )
 }

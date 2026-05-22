@@ -23,6 +23,7 @@ import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { AdBanner } from '../components/AdBanner'
 import { MobileAdBanner } from '../components/MobileAdBanner'
+import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import type { Category, ListingWithImages, Profile } from '../lib/types'
 import type { TranslationKey } from '../lib/i18n'
 
@@ -279,7 +280,9 @@ export function Home() {
         </div>
       </section>
 
-      <MobileAdBanner variant="horizontal" />
+      <MobileAdBanner variant="horizontal" page="home" />
+
+      <SponsoredCompanies />
 
       <section className="py-6">
         <div className="mx-auto max-w-7xl">
@@ -356,7 +359,7 @@ export function Home() {
         </div>
       </section>
 
-      <MobileAdBanner variant="inline" />
+      <MobileAdBanner variant="inline" page="home" />
 
       <section className="py-6">
         <div className="mx-auto max-w-7xl">
@@ -433,7 +436,7 @@ export function Home() {
         </div>
       </div>
 
-      <MobileAdBanner variant="sticky" />
+      <MobileAdBanner variant="sticky" page="home" />
     </div>
   )
 }

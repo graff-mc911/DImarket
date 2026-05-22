@@ -154,6 +154,10 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'home.noBio': 'Профіль будівельного майстра ще наповнюється.',
   'home.sponsoredPlacement':
     'Спонсорське розміщення для інструментів, матеріалів, логістики або локальних будівельних партнерів.',
+  'home.sponsoredTitle': 'Партнерські компанії',
+  'home.sponsoredSubtitle':
+    'Платна реклама будівельних брендів, постачальників та сервісних компаній на DImarket.',
+  'home.sponsoredCta': 'Розмістити рекламу компанії',
   'home.sidebarAdOne': 'Покажіть бренд поруч із живим будівельним попитом.',
   'home.sidebarAdTwo':
     'Охоплюйте майстрів і клієнтів саме тоді, коли вони шукають роботу та послуги.',
@@ -421,6 +425,11 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'ads.contactRates': 'Зв’яжіться з нами щодо тарифів',
   'ads.stickyAdBlock': 'Фіксований рекламний блок',
   'ads.close': 'Закрити рекламу',
+  'ads.geo.global': 'Весь світ',
+  'ads.geo.countryFallback': 'Країна не вказана',
+  'ads.geo.regionFallback': 'Регіон',
+  'ads.geo.cityFallback': 'Місто',
+  'ads.geo.localFallback': 'Локальна реклама',
 
   // Common
   'common.loading': 'Завантаження...',
