@@ -170,6 +170,22 @@ export function Header() {
     { label: t('header.findProfessionals'), path: '/professionals', icon: Hammer },
   ]
 
+  /** Центр нижньої панелі шапки — посилання з футера (між «Знайти майстрів» і «Перегляд оголошень») */
+  const centerNavItems = useMemo(() => {
+    const items: Array<{ label: string; path: string }> = [
+      { label: t('footer.adsButton'), path: '/advertising' },
+      { label: t('footer.contactButton'), path: '/contact' },
+    ]
+    if (user) {
+      items.push({ label: t('header.myProfile'), path: '/settings' })
+    } else {
+      items.push({ label: t('footer.signIn'), path: '/login' })
+      items.push({ label: t('footer.register'), path: '/register' })
+    }
+    items.push({ label: t('footer.contactLink'), path: '/contact' })
+    return items
+  }, [user, t])
+
   const closeAllMenus = () => {
     setLanguageOpen(false)
     setCurrencyOpen(false)
@@ -243,8 +259,8 @@ export function Header() {
 
   const showAnnouncement = announcement && !bannerDismissed
   const headerSpacerClass = showAnnouncement
-    ? 'h-[11.5rem] xl:h-[11rem]'
-    : 'h-[8rem] xl:h-[9rem]'
+    ? 'h-[11.5rem] lg:h-[12rem] xl:h-[12.5rem]'
+    : 'h-[8rem] lg:h-[10rem] xl:h-[10.5rem]'
 
   const dropdownPanelClass =
     'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.94)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] backdrop-blur-xl'
@@ -524,8 +540,8 @@ export function Header() {
             </div>
 
             {/* Нижня навігаційна панель (десктоп) */}
-            <div className="mt-2 hidden items-end justify-between gap-4 border-t border-[var(--glass-border)] pt-2 xl:flex">
-              <nav className="flex items-center gap-7">
+            <div className="mt-2 hidden items-end justify-between gap-3 border-t border-[var(--glass-border)] pt-2 lg:flex">
+              <nav className="flex shrink-0 items-center gap-7">
                 {navItems.map(item => (
                   <button
                     key={item.path}
@@ -540,10 +556,25 @@ export function Header() {
                 ))}
               </nav>
 
+              <nav className="flex min-w-0 flex-1 flex-wrap items-center justify-center gap-x-5 gap-y-1 px-2">
+                {centerNavItems.map(item => (
+                  <button
+                    key={item.path + item.label}
+                    onClick={() => goTo(item.path)}
+                    type="button"
+                    className={navTextClass(isActiveRoute(item.path))}
+                  >
+                    <span>{item.label}</span>
+                    <span className={'absolute bottom-0 left-0 h-[2px] rounded-full bg-[var(--accent-700)] transition-all duration-300 ' +
+                      (isActiveRoute(item.path) ? 'w-full opacity-100' : 'w-0 opacity-0')} />
+                  </button>
+                ))}
+              </nav>
+
               <button
                 onClick={() => goTo('/listings')}
                 type="button"
-                className={textButtonClass(isActiveRoute('/listings'))}
+                className={textButtonClass(isActiveRoute('/listings')) + ' shrink-0'}
               >
                 {t('listings.title')}
               </button>
@@ -566,12 +597,23 @@ export function Header() {
 
           {/* Мобільне меню */}
           {mobileMenuOpen && (
-            <div className="border-t border-[var(--glass-border)] px-3 pb-4 pt-3 xl:hidden">
+            <div className="border-t border-[var(--glass-border)] px-3 pb-4 pt-3 lg:hidden">
               <div className={mobilePanelClass}>
                 <div className="grid gap-2">
                   {navItems.map(item => (
                     <button key={item.path} onClick={() => goTo(item.path)} type="button" className={mobileNavItemClass}>
                       <item.icon className="h-5 w-5" />
+                      <span>{item.label}</span>
+                    </button>
+                  ))}
+
+                  {centerNavItems.map(item => (
+                    <button
+                      key={item.path + item.label}
+                      onClick={() => goTo(item.path)}
+                      type="button"
+                      className={mobileNavItemClass}
+                    >
                       <span>{item.label}</span>
                     </button>
                   ))}
