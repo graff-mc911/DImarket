@@ -122,19 +122,19 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
   },
   'a1000001-0001-4001-8001-000000000001': {
     id: 'a1000001-0001-4001-8001-000000000001',
-    title: 'Rockwool — кам\'яна вата ROCKWOOL',
+    title: 'ROCKWOOL — енергоефективність і вогнестійкість',
     description:
-      'Негорюча теплоізоляція для фасадів, дахів і перегородок. Рішення ROCKWOOL для енергоефективності.',
-    ...img('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&h=560&fit=crop&q=85'),
+      'Кам\'яна вата для фасадів, дахів і акустики: негорюча теплоізоляція та комфорт у будинку. Дивіться на DImarket.app.',
+    ...brandBanner('rockwool'),
     link_url: 'https://www.rockwool.ua',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
   'a1000002-0002-4002-8002-000000000002': {
     id: 'a1000002-0002-4002-8002-000000000002',
-    title: 'Ceresit — плиткові клеї та затирки',
+    title: 'Ceresit — системи облицювання та фасадів',
     description:
-      'Системи Ceresit (Henkel) для облицювання, гідроізоляції та фасадів. Підтримка майстрів на об\'єкті.',
-    ...img('https://images.unsplash.com/photo-1625296316570-025e4c02e816?w=900&h=560&fit=crop&q=85'),
+      'Клеї, затирки, гідроізоляція та ETICS Ceresit (Henkel) для професійного ремонту й фасадів. Знайдіть на DImarket.app.',
+    ...brandBanner('ceresit'),
     link_url: 'https://www.ceresit.ua',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },
@@ -149,9 +149,10 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
   },
   'a1000004-0004-4004-8004-000000000004': {
     id: 'a1000004-0004-4004-8004-000000000004',
-    title: 'Sika — гідроізоляція та добавки в бетон',
-    description: 'Рішення Sika для фундаментів, підвалів, швів та промислових підлог.',
-    ...img('https://images.unsplash.com/photo-1541972664089-0221394fb162?w=900&h=560&fit=crop&q=85'),
+    title: 'Sika — надійні будівельні системи',
+    description:
+      'Гідроізоляція, добавки в бетон, герметики та рішення для фундаментів і промислових підлог. Деталі на DImarket.app.',
+    ...brandBanner('sika'),
     link_url: 'https://www.sika.com/ua',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },

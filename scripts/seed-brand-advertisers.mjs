@@ -153,11 +153,10 @@ const BRANDS = [
     email: 'rockwool.ads@advertisers.dimarket.app',
     fullName: 'ROCKWOOL Україна',
     website: 'https://www.rockwool.ua',
-    title: 'Rockwool — кам\'яна вата ROCKWOOL',
+    title: 'ROCKWOOL — енергоефективність і вогнестійкість',
     description:
-      'Негорюча теплоізоляція для фасадів, дахів і перегородок. Рішення ROCKWOOL для енергоефективності.',
-    image:
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&h=560&fit=crop&q=85',
+      'Кам\'яна вата для фасадів, дахів і акустики: негорюча теплоізоляція та комфорт у будинку. Дивіться на DImarket.app.',
+    image: brandImg('rockwool'),
     link: 'https://www.rockwool.ua',
     placement: 'sidebar',
   },
@@ -168,11 +167,10 @@ const BRANDS = [
     email: 'ceresit.ads@advertisers.dimarket.app',
     fullName: 'Ceresit (Henkel)',
     website: 'https://www.ceresit.ua',
-    title: 'Ceresit — плиткові клеї та затирки',
+    title: 'Ceresit — системи облицювання та фасадів',
     description:
-      'Системи Ceresit (Henkel) для облицювання, гідроізоляції та фасадів. Підтримка майстрів на об\'єкті.',
-    image:
-      'https://images.unsplash.com/photo-1625296316570-025e4c02e816?w=900&h=560&fit=crop&q=85',
+      'Клеї, затирки, гідроізоляція та ETICS Ceresit (Henkel) для професійного ремонту й фасадів. Знайдіть на DImarket.app.',
+    image: brandImg('ceresit'),
     link: 'https://www.ceresit.ua',
     placement: 'home',
   },
@@ -198,10 +196,10 @@ const BRANDS = [
     email: 'sika.ads@advertisers.dimarket.app',
     fullName: 'Sika Україна',
     website: 'https://www.sika.com/ua',
-    title: 'Sika — гідроізоляція та добавки в бетон',
-    description: 'Рішення Sika для фундаментів, підвалів, швів та промислових підлог.',
-    image:
-      'https://images.unsplash.com/photo-1541972664089-0221394fb162?w=900&h=560&fit=crop&q=85',
+    title: 'Sika — надійні будівельні системи',
+    description:
+      'Гідроізоляція, добавки в бетон, герметики та рішення для фундаментів і промислових підлог. Деталі на DImarket.app.',
+    image: brandImg('sika'),
     link: 'https://www.sika.com/ua',
     placement: 'home',
   },
