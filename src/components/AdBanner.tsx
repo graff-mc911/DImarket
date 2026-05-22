@@ -80,13 +80,8 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
 
   if (stackCount && stackCount >= 2) {
     return (
-      <aside
-        className={`hidden w-full xl:block ${sticky ? 'sticky top-20' : ''}`}
-      >
-        <div
-          className="flex min-h-0 flex-col justify-between gap-2 py-1"
-          style={{ height: sticky ? 'calc(100vh - 5rem)' : undefined }}
-        >
+      <div className="hidden h-full min-h-full w-full flex-1 flex-col xl:flex">
+        <div className="flex h-full min-h-0 flex-1 flex-col justify-between gap-2 py-1">
           {loading
             ? Array.from({ length: stackCount }, (_, i) => (
                 <div
@@ -108,7 +103,7 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
                   </div>
                 ))}
         </div>
-      </aside>
+      </div>
     )
   }
 

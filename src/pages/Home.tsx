@@ -162,10 +162,10 @@ export function Home() {
   return (
     <div className="page-bg min-h-screen pb-24 lg:pb-8">
       <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
-        <div className="flex gap-6">
+        <div className="flex items-stretch gap-6">
 
-          <aside className="hidden w-[260px] flex-shrink-0 xl:block 2xl:w-[300px]">
-            <AdBanner position="left" sticky={true} page="home" stackCount={6} />
+          <aside className="hidden w-[260px] shrink-0 self-stretch xl:flex xl:flex-col 2xl:w-[300px]">
+            <AdBanner position="left" sticky={false} page="home" stackCount={6} />
           </aside>
 
           <main className="min-w-0 flex-1">
@@ -430,8 +430,8 @@ export function Home() {
       </section>
           </main>
 
-          <aside className="hidden w-[260px] flex-shrink-0 xl:block 2xl:w-[300px]">
-            <AdBanner position="right" sticky={true} page="home" stackCount={6} />
+          <aside className="hidden w-[260px] shrink-0 self-stretch xl:flex xl:flex-col 2xl:w-[300px]">
+            <AdBanner position="right" sticky={false} page="home" stackCount={6} />
           </aside>
         </div>
       </div>
