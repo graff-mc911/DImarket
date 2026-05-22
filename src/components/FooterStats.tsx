@@ -152,44 +152,41 @@ export function FooterStats() {
   ]
 
   return (
-    <section className="mt-10 border-t border-[rgba(148,163,184,0.18)] pt-8">
-      {/* Заголовок секції статистики */}
-      <div className="mb-6">
-        <h3 className="text-xl font-extrabold text-[#2f2a24]">
+    <section className="mt-4 border-t border-[rgba(148,163,184,0.18)] pt-3">
+      <div className="mb-3">
+        <h3 className="text-sm font-extrabold text-[#2f2a24]">
           {t('footerStats.title')}
         </h3>
-        <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+        <p className="mt-1 text-xs leading-5 text-[#6f665d]">
           {t('footerStats.subtitle')}
         </p>
       </div>
 
-      {/* Верхній ряд карток з головними показниками */}
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-5">
         {statCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-[24px] border border-white/38 bg-[rgba(255,255,255,0.30)] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.04)] backdrop-blur-xl"
+            className="rounded-[16px] border border-white/38 bg-[rgba(255,255,255,0.30)] p-2.5 shadow-[0_6px_18px_rgba(15,23,42,0.04)] backdrop-blur-xl"
           >
-            <div className="mb-3 flex items-center gap-3">
-              <card.icon className={`h-5 w-5 ${card.color}`} />
-              <span className="text-sm font-medium text-[#6f665d]">{card.label}</span>
+            <div className="mb-1.5 flex items-center gap-2">
+              <card.icon className={`h-3.5 w-3.5 ${card.color}`} />
+              <span className="text-[11px] font-medium text-[#6f665d]">{card.label}</span>
             </div>
 
-            <div className="text-2xl font-extrabold text-[#2f2a24]">
+            <div className="text-lg font-extrabold text-[#2f2a24]">
               {loading ? '...' : formatNumber(card.value)}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Блок рейтингу країн */}
-      <div className="rounded-[28px] border border-white/38 bg-[rgba(255,255,255,0.30)] p-5 shadow-[0_10px_28px_rgba(15,23,42,0.04)] backdrop-blur-xl">
-        <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div className="rounded-[18px] border border-white/38 bg-[rgba(255,255,255,0.30)] p-3 shadow-[0_6px_18px_rgba(15,23,42,0.04)] backdrop-blur-xl">
+        <div className="mb-2 flex flex-col gap-1.5 md:flex-row md:items-center md:justify-between">
           <div>
-            <h4 className="text-lg font-extrabold text-[#2f2a24]">
+            <h4 className="text-sm font-extrabold text-[#2f2a24]">
               {t('footerStats.rankingTitle')}
             </h4>
-            <p className="mt-1 text-sm leading-6 text-[#6f665d]">
+            <p className="mt-0.5 text-xs leading-5 text-[#6f665d]">
               {t('footerStats.rankingSubtitle')}
             </p>
           </div>
@@ -210,30 +207,28 @@ export function FooterStats() {
           // Якщо даних немає — показуємо зрозуміле повідомлення замість порожнього контейнера.
           <div className="text-sm text-[#7a7168]">{t('footerStats.empty')}</div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {stats.country_ranking.map((item, index) => (
               <div
                 key={`${item.country}-${index}`}
-                className="flex flex-col gap-3 rounded-[22px] border border-[rgba(148,163,184,0.14)] bg-[rgba(248,250,252,0.54)] p-4 lg:flex-row lg:items-center lg:justify-between"
+                className="flex flex-col gap-1.5 rounded-[14px] border border-[rgba(148,163,184,0.14)] bg-[rgba(248,250,252,0.54)] p-2 lg:flex-row lg:items-center lg:justify-between"
               >
-                {/* Ліва частина рядка: позиція, країна, score */}
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[rgba(148,163,184,0.14)] text-sm font-bold text-[#475569]">
+                <div className="flex min-w-0 items-center gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(148,163,184,0.14)] text-[10px] font-bold text-[#475569]">
                     {index + 1}
                   </div>
 
                   <div className="min-w-0">
-                    <div className="truncate font-semibold text-[#2f2a24]">
+                    <div className="truncate text-xs font-semibold text-[#2f2a24]">
                       {item.country}
                     </div>
-                    <div className="text-xs text-[#7a7168]">
+                    <div className="text-[10px] text-[#7a7168]">
                       {t('footerStats.score')}: {formatNumber(item.score)}
                     </div>
                   </div>
                 </div>
 
-                {/* Права частина рядка: короткі числові метрики по країні */}
-                <div className="grid grid-cols-3 gap-4 text-sm">
+                <div className="grid grid-cols-3 gap-2 text-xs">
                   <RankingMetric
                     label={t('footerStats.prosShort')}
                     value={item.professionals}

@@ -185,59 +185,59 @@ export function Home() {
           </aside>
 
           <main className="min-w-0 flex-1">
-      <section className="pb-6 pt-4">
+      <section className="pb-3 pt-2">
         <div className="mx-auto max-w-7xl">
-          <div className="glass-panel fade-rise p-6 md:p-7 xl:p-8">
-            <div className="eyebrow">
-              <ShieldCheck className="h-4 w-4" />
+          <div className="glass-panel fade-rise rounded-[22px] p-3 md:p-4">
+            <div className="eyebrow gap-1.5 px-2.5 py-1 text-[11px]">
+              <ShieldCheck className="h-3 w-3" />
               <span>{t('home.globalEyebrow')}</span>
             </div>
 
-            <div className="mt-5 max-w-3xl">
-              <h1 className="font-[var(--font-display)] text-[1.72rem] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--ink-900)] md:text-[2.02rem] xl:text-[2.3rem]">
+            <div className="mt-2.5 max-w-3xl">
+              <h1 className="font-[var(--font-display)] text-[1.15rem] font-bold leading-[1.1] tracking-[-0.035em] text-[var(--ink-900)] md:text-[1.35rem] xl:text-[1.5rem]">
                 {t('home.heroSimpleTitle')}
               </h1>
-              <p className="muted-text mt-4 max-w-2xl text-[14px] md:text-[15px]">
+              <p className="muted-text mt-1.5 max-w-2xl text-[12px] leading-snug md:text-[13px]">
                 {t('home.heroSimpleDescription')}
               </p>
             </div>
 
             <form
               onSubmit={handleSearch}
-              className="mt-7 grid gap-3 xl:grid-cols-[minmax(0,1fr)_220px_166px]"
+              className="mt-3 grid gap-2 xl:grid-cols-[minmax(0,1fr)_200px_150px]"
             >
               <div className="relative">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
                 <input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('home.whatNeedsToBeDone')}
-                  className="input-glass h-[50px] pl-11"
+                  className="input-glass h-9 rounded-full pl-9 text-sm"
                 />
               </div>
 
               <div className="relative">
-                <MapPin className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
+                <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
                 <input
                   value={locationQuery}
                   onChange={(e) => setLocationQuery(e.target.value)}
                   placeholder={t('home.cityOrCountry')}
-                  className="input-glass h-[50px] pl-11"
+                  className="input-glass h-9 rounded-full pl-9 text-sm"
                 />
               </div>
 
-              <button type="submit" className="btn-primary h-[50px] rounded-full px-5 text-sm">
+              <button type="submit" className="btn-primary h-9 rounded-full px-4 text-sm">
                 {t('listings.findRequests')}
               </button>
             </form>
 
-            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2">
               <button
                 onClick={() => navigateTo('/create-ad')}
                 type="button"
-                className="btn-primary rounded-full px-5 text-sm"
+                className="btn-primary rounded-full px-3 py-1.5 text-xs"
               >
-                <PlusCircle className="h-4 w-4" />
+                <PlusCircle className="h-3.5 w-3.5" />
                 {t('header.createAd')}
               </button>
 
@@ -260,13 +260,13 @@ export function Home() {
               </button>
             </div>
 
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
               {categories.slice(0, 6).map((category) => (
                 <button
                   key={category.id}
                   onClick={() => navigateTo(`/listings?category=${category.slug}`)}
                   type="button"
-                  className="stat-chip text-[13px]"
+                  className="stat-chip px-2.5 py-1 text-[11px]"
                 >
                   {getCategoryName(category)}
                 </button>
@@ -274,7 +274,7 @@ export function Home() {
             </div>
 
             {!loading && (stats.professionals > 0 || stats.listings > 0) && (
-              <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3 border-t border-[var(--glass-border)] pt-5">
+              <div className="mt-2.5 flex flex-wrap gap-x-5 gap-y-2 border-t border-[var(--glass-border)] pt-2.5">
                 <StatPill
                   icon={<Users className="h-4 w-4" />}
                   value={stats.professionals}
@@ -453,12 +453,12 @@ function StatPill({
   label: string
 }) {
   return (
-    <div className="flex items-center gap-2" style={{ color: 'var(--ink-600)' }}>
-      <span style={{ color: 'var(--accent-600)' }}>{icon}</span>
-      <span className="text-lg font-extrabold" style={{ color: 'var(--ink-900)' }}>
+    <div className="flex items-center gap-1.5 text-[var(--ink-600)]">
+      <span className="text-[var(--accent-600)] [&_svg]:h-3.5 [&_svg]:w-3.5">{icon}</span>
+      <span className="text-sm font-extrabold text-[var(--ink-900)]">
         {value > 0 ? `${value.toLocaleString()}+` : '—'}
       </span>
-      <span className="text-sm">{label}</span>
+      <span className="text-xs">{label}</span>
     </div>
   )
 }
