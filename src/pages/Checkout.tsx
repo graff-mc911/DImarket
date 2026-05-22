@@ -179,7 +179,7 @@ export function Checkout() {
   }
 
   return (
-    <div className="page-bg min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="flex items-center justify-center py-12">
       <div className="w-full max-w-md">
         <div className="glass-panel p-8 text-center">
 

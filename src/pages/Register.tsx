@@ -424,7 +424,7 @@ export function Register() {
   }
 
   return (
-    <div className="page-bg min-h-screen px-4 py-10 md:px-6 xl:px-8">
+    <div className="py-10">
       <div className="mx-auto flex max-w-lg items-center justify-center">
         <div className="w-full space-y-6">
           <div className="glass-panel p-6 md:p-8">

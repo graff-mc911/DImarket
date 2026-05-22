@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { PlusCircle, FileText, Globe, Eye, CheckCircle, XCircle, Clock, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
-import { AdBanner } from '../components/AdBanner'
 
 interface MyListing {
   id: string
@@ -109,15 +108,8 @@ export function MyListings() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-6">
-
-          <div className="hidden lg:block w-1/5">
-            <AdBanner position="left" sticky={true} />
-          </div>
-
-          <div className="flex-1 lg:w-3/5">
+    <div className="py-8 pb-24 lg:pb-8">
+          <div>
 
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -249,13 +241,6 @@ export function MyListings() {
             )}
 
           </div>
-
-          <div className="hidden lg:block w-1/5">
-            <AdBanner position="right" sticky={true} />
-          </div>
-
-        </div>
-      </div>
     </div>
   )
 }

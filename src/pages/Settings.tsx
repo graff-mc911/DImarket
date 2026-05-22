@@ -12,7 +12,6 @@ import {
   Trash2,
   User,
 } from 'lucide-react'
-import { AdBanner } from '../components/AdBanner'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
@@ -338,8 +337,8 @@ export function Settings() {
 
   if (loading) {
     return (
-      <div className="page-bg min-h-screen py-10">
-        <div className="mx-auto max-w-4xl px-4 md:px-6 xl:px-8 2xl:px-10">
+      <div className="py-10">
+        <div className="mx-auto max-w-4xl">
           <div className="glass-panel p-10 text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[rgba(201,109,44,0.18)] border-t-[#c96d2c]" />
             <p className="mt-4 text-sm text-[#6f665d]">{t('common.loading')}</p>
@@ -350,14 +349,7 @@ export function Settings() {
   }
 
   return (
-    <div className="page-bg min-h-screen py-8">
-      <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
-        <div className="flex gap-6">
-          <aside className="hidden w-[220px] flex-shrink-0 xl:block 2xl:w-[260px]">
-            <AdBanner position="left" sticky={true} />
-          </aside>
-
-          <main className="min-w-0 flex-1">
+    <div className="py-8 pb-24 lg:pb-8">
             <section className="glass-panel p-5 md:p-6 xl:p-8">
               <div className="mb-6">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(233,202,177,0.7)] bg-[rgba(255,247,239,0.88)] px-4 py-2 text-sm font-semibold text-[#a26233]">
@@ -692,13 +684,6 @@ export function Settings() {
                 </section>
               </div>
             </section>
-          </main>
-
-          <aside className="hidden w-[220px] flex-shrink-0 xl:block 2xl:w-[260px]">
-            <AdBanner position="right" sticky={true} />
-          </aside>
-        </div>
-      </div>
     </div>
   )
 }

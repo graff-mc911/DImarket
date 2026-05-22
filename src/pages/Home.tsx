@@ -21,7 +21,6 @@ import {
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
-import { AdBanner } from '../components/AdBanner'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import type { Category, ListingWithImages, Profile } from '../lib/types'
@@ -176,15 +175,7 @@ export function Home() {
   }, [categories])
 
   return (
-    <div className="page-bg min-h-screen pb-24 lg:pb-8">
-      <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
-        <div className="flex items-stretch gap-6">
-
-          <aside className="hidden w-[216px] shrink-0 xl:flex xl:flex-col 2xl:w-[252px]">
-            <AdBanner position="left" sticky page="home" stackCount={4} />
-          </aside>
-
-          <main className="min-w-0 flex-1">
+    <>
       <section className="pb-3 pt-2">
         <div className="mx-auto max-w-7xl">
           <div className="glass-panel fade-rise rounded-[22px] p-3 md:p-4">
@@ -430,16 +421,9 @@ export function Home() {
           )}
         </div>
       </section>
-          </main>
-
-          <aside className="hidden w-[216px] shrink-0 xl:flex xl:flex-col 2xl:w-[252px]">
-            <AdBanner position="right" sticky page="home" stackCount={4} />
-          </aside>
-        </div>
-      </div>
 
       <MobileAdBanner variant="sticky" page="home" />
-    </div>
+    </>
   )
 }
 

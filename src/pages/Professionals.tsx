@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabase'
 import { Profile, Category } from '../lib/types'
 import { ProfessionalCard } from '../components/ProfessionalCard'
 import { MobileAdBanner } from '../components/MobileAdBanner'
-import { AdBanner } from '../components/AdBanner'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 
@@ -137,14 +136,7 @@ export function Professionals() {
   }
 
   return (
-    <div className="page-bg min-h-screen py-8">
-      <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
-        <div className="flex gap-6">
-          <aside className="hidden xl:block w-[240px] 2xl:w-[280px] flex-shrink-0">
-            <AdBanner position="left" sticky={true} />
-          </aside>
-
-          <main className="min-w-0 flex-1">
+    <div className="py-8 pb-24 lg:pb-8">
             <section className="glass-panel mb-6 p-5 md:p-6">
               <div className="inline-flex items-center rounded-full border border-[rgba(233,202,177,0.7)] bg-[rgba(255,247,239,0.88)] px-4 py-2 text-sm font-semibold text-[#a26233]">
                 {t('professionals.eyebrow')}
@@ -334,13 +326,6 @@ export function Professionals() {
             <div className="mt-8">
               <MobileAdBanner variant="inline" />
             </div>
-          </main>
-
-          <aside className="hidden xl:block w-[240px] 2xl:w-[280px] flex-shrink-0">
-            <AdBanner position="right" sticky={true} />
-          </aside>
-        </div>
-      </div>
     </div>
   )
 }

@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { Category, Listing } from '../lib/types'
 import { MobileAdBanner } from '../components/MobileAdBanner'
-import { AdBanner } from '../components/AdBanner'
 import { getCurrentLocation, searchLocations, LocationSuggestion } from '../lib/geocoding'
 import { navigateTo } from '../lib/navigation'
 
@@ -223,14 +222,7 @@ export function CreateAd() {
   const durationLabel = (days: number) => `${days} ${t('createAd.days')}`
 
   return (
-    <div className="page-bg min-h-screen py-8">
-      <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
-        <div className="flex gap-6">
-          <aside className="hidden xl:block w-[220px] 2xl:w-[260px] flex-shrink-0">
-            <AdBanner position="left" sticky={true} />
-          </aside>
-
-          <main className="min-w-0 flex-1">
+    <div className="py-8 pb-24 lg:pb-8">
             <section className="glass-panel p-5 md:p-6 xl:p-8">
               <div className="inline-flex items-center rounded-full border border-[rgba(233,202,177,0.7)] bg-[rgba(255,247,239,0.88)] px-4 py-2 text-sm font-semibold text-[#a26233]">
                 {t('createAd.eyebrow')}
@@ -575,13 +567,6 @@ export function CreateAd() {
                 </button>
               </form>
             </section>
-          </main>
-
-          <aside className="hidden xl:block w-[220px] 2xl:w-[260px] flex-shrink-0">
-            <AdBanner position="right" sticky={true} />
-          </aside>
-        </div>
-      </div>
     </div>
   )
 }

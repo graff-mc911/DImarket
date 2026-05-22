@@ -96,7 +96,7 @@ export function Contact() {
   }
 
   return (
-    <div className="page-bg min-h-screen px-4 py-8 md:px-6 xl:px-8 2xl:px-10">
+    <div className="py-8 pb-24 lg:pb-8">
       <div className="mx-auto max-w-6xl">
         {/* Верхній інформаційний блок сторінки. */}
         <section className="glass-panel p-6 md:p-8">

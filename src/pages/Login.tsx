@@ -41,7 +41,7 @@ export function Login() {
   }
 
   return (
-    <div className="page-bg min-h-screen px-4 py-10 md:px-6 xl:px-8">
+    <div className="py-10">
       <div className="mx-auto flex max-w-md items-center justify-center">
         <div className="w-full">
           <div className="glass-panel p-6 md:p-8">

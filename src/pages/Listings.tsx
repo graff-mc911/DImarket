@@ -21,7 +21,6 @@ import { supabase }            from '../lib/supabase'
 import { useApp }              from '../contexts/AppContext'
 import { navigateTo }          from '../lib/navigation'
 import { ListingCard }         from '../components/ListingCard'
-import { AdBanner }            from '../components/AdBanner'
 import { MobileAdBanner }      from '../components/MobileAdBanner'
 import type { Category, ListingWithImages } from '../lib/types'
 
@@ -207,17 +206,7 @@ export function Listings() {
   }
 
   return (
-    <div className="page-bg min-h-screen py-8 pb-24 lg:pb-8">
-      <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
-        <div className="flex items-stretch gap-6">
-
-          {/* Ліва рекламна колонка */}
-          <aside className="hidden w-[260px] shrink-0 xl:flex xl:flex-col 2xl:w-[300px]">
-            <AdBanner position="left" sticky={true} />
-          </aside>
-
-          <main className="min-w-0 flex-1">
-
+    <div className="py-8 pb-24 lg:pb-8">
             {/* Шапка з пошуком */}
             <section className="glass-panel mb-6 p-6 md:p-7 xl:p-8">
               <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
@@ -475,14 +464,6 @@ export function Listings() {
             <div className="mt-6">
               <MobileAdBanner variant="inline" page="listings" />
             </div>
-          </main>
-
-          {/* Права рекламна колонка */}
-          <aside className="hidden w-[260px] shrink-0 xl:flex xl:flex-col 2xl:w-[300px]">
-            <AdBanner position="right" sticky={true} />
-          </aside>
-        </div>
-      </div>
 
       <MobileAdBanner variant="sticky" page="listings" />
     </div>

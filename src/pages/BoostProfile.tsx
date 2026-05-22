@@ -12,7 +12,6 @@ import { useState } from 'react'
 import { ShieldCheck, Star, Zap, ArrowRight, Loader } from 'lucide-react'
 import { useApp }        from '../contexts/AppContext'
 import { navigateTo }    from '../lib/navigation'
-import { AdBanner }      from '../components/AdBanner'
 import { createCheckoutSession, eurosToCents, BOOST_PACKAGES } from '../lib/stripe'
 
 export function BoostProfile() {
@@ -53,15 +52,8 @@ export function BoostProfile() {
   const verifiedPackage  = BOOST_PACKAGES.find(p => p.type === 'verified_badge')
 
   return (
-    <div className="page-bg min-h-screen py-8">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-6">
-
-          <div className="hidden lg:block w-1/5">
-            <AdBanner position="left" sticky={true} />
-          </div>
-
-          <div className="flex-1 space-y-6">
+    <div className="py-8 pb-24 lg:pb-8">
+          <div className="space-y-6">
 
             {/* Заголовок */}
             <div className="glass-panel p-6 md:p-8">
@@ -234,12 +226,6 @@ export function BoostProfile() {
             </div>
 
           </div>
-
-          <div className="hidden lg:block w-1/5">
-            <AdBanner position="right" sticky={true} />
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

@@ -15,7 +15,6 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
-import { AdBanner } from '../components/AdBanner'
 import { navigateTo } from '../lib/navigation'
 import { AdCampaign, Announcement, FeedbackMessage, Message, Profile } from '../lib/types'
 
@@ -498,8 +497,8 @@ export function Dashboard() {
 
   if (loading) {
     return (
-      <div className="page-bg min-h-screen py-10">
-        <div className="mx-auto max-w-4xl px-4 md:px-6 xl:px-8 2xl:px-10">
+      <div className="py-10">
+        <div className="mx-auto max-w-4xl">
           <div className="glass-panel p-10 text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[rgba(148,163,184,0.18)] border-t-[#64748b]" />
             <p className="mt-4 text-sm text-[#6f665d]">
@@ -513,8 +512,8 @@ export function Dashboard() {
 
   if (!profile?.is_site_owner) {
     return (
-      <div className="page-bg min-h-screen py-10">
-        <div className="mx-auto max-w-3xl px-4 md:px-6 xl:px-8 2xl:px-10">
+      <div className="py-10">
+        <div className="mx-auto max-w-3xl">
           <div className="glass-panel p-8 text-center md:p-10">
             {/* Цей блок показуємо всім, хто зайшов на /dashboard без owner-ролі. */}
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[rgba(239,68,68,0.12)] text-[#b91c1c]">
@@ -581,14 +580,7 @@ export function Dashboard() {
   ]
 
   return (
-    <div className="page-bg min-h-screen py-8">
-      <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
-        <div className="flex gap-6">
-          <aside className="hidden xl:block w-[220px] 2xl:w-[260px] flex-shrink-0">
-            <AdBanner position="left" sticky={true} />
-          </aside>
-
-          <main className="min-w-0 flex-1">
+    <div className="py-8 pb-24 lg:pb-8">
             <section className="glass-panel p-5 md:p-6 xl:p-8">
               {/* Шапка owner-кабінету з коротким поясненням призначення сторінки. */}
               <div className="mb-6">
@@ -1068,13 +1060,6 @@ export function Dashboard() {
               <AnnouncementsManager />
 
             </section>
-          </main>
-
-          <aside className="hidden xl:block w-[220px] 2xl:w-[260px] flex-shrink-0">
-            <AdBanner position="right" sticky={true} />
-          </aside>
-        </div>
-      </div>
     </div>
   )
 }

@@ -24,7 +24,6 @@ import {
 import { supabase }       from '../lib/supabase'
 import { useApp }         from '../contexts/AppContext'
 import { navigateTo }     from '../lib/navigation'
-import { AdBanner }       from '../components/AdBanner'
 import type { Listing, Profile } from '../lib/types'
 
 // Тип збереженого елемента з деталями
@@ -175,7 +174,7 @@ export function Favorites() {
   // --- Екран завантаження ---
   if (loading) {
     return (
-      <div className="page-bg min-h-screen flex items-center justify-center">
+      <div className="py-10 flex items-center justify-center">
         <div className="glass-card p-10 text-center">
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-[var(--glass-border)] border-t-[var(--accent-700)]" />
           <p className="muted-text mt-4 text-sm">Завантаження збережених...</p>
@@ -187,7 +186,7 @@ export function Favorites() {
   // --- Якщо таблиця не створена в базі ---
   if (tableNotFound) {
     return (
-      <div className="page-bg min-h-screen px-4 py-10">
+      <div className="py-10">
         <div className="mx-auto max-w-2xl">
           <div className="glass-panel p-8 text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[rgba(242,171,116,0.18)]" style={{ color: 'var(--accent-700)' }}>
@@ -234,17 +233,8 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
   }
 
   return (
-    <div className="page-bg min-h-screen py-8">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-6">
-
-          {/* Ліва рекламна колонка */}
-          <div className="hidden lg:block w-1/5">
-            <AdBanner position="left" sticky={true} />
-          </div>
-
-          {/* Основний контент */}
-          <div className="flex-1 lg:w-3/5">
+    <div className="py-8 pb-24 lg:pb-8">
+          <div>
 
             {/* Заголовок */}
             <div className="mb-6">
@@ -504,14 +494,6 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
             )}
 
           </div>
-
-          {/* Права рекламна колонка */}
-          <div className="hidden lg:block w-1/5">
-            <AdBanner position="right" sticky={true} />
-          </div>
-
-        </div>
-      </div>
     </div>
   )
 }

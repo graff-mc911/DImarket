@@ -8,6 +8,7 @@ import { AppProvider }         from './contexts/AppContext'
 import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
+import { PageWithSideAds, adPageForPath } from './components/PageWithSideAds'
 
 // --- Публічні сторінки ---
 import { Home }               from './pages/Home'
@@ -71,15 +72,15 @@ function App() {
     }
   }
 
-  const hideHeaderFooter = ['/login', '/register'].includes(path)
-
   return (
     <AppProvider>
       <PaidAdsProvider>
         <div className="app-shell min-h-screen flex flex-col">
-          {!hideHeaderFooter && <Header />}
-          <main className="flex-1">{getPage()}</main>
-          {!hideHeaderFooter && <Footer />}
+          <Header />
+          <main className="flex-1">
+            <PageWithSideAds page={adPageForPath(path)}>{getPage()}</PageWithSideAds>
+          </main>
+          <Footer />
         </div>
       </PaidAdsProvider>
     </AppProvider>

@@ -21,7 +21,6 @@ import {
 import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
-import { AdBanner }    from '../components/AdBanner'
 import type { Message } from '../lib/types'
 
 // Тип розмови — групує повідомлення по conversation_id
@@ -272,7 +271,7 @@ export function Messages() {
   // --- Якщо таблиця не існує ---
   if (tableNotFound) {
     return (
-      <div className="page-bg min-h-screen px-4 py-10">
+      <div className="py-10">
         <div className="mx-auto max-w-2xl">
           <div className="glass-panel p-8 text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px]"
@@ -333,17 +332,8 @@ USING (auth.uid() = recipient_id);`}
   }
 
   return (
-    <div className="page-bg min-h-screen py-8">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-6">
-
-          {/* Ліва рекламна колонка */}
-          <div className="hidden lg:block w-1/5">
-            <AdBanner position="left" sticky={true} />
-          </div>
-
-          {/* Основний контент — чат */}
-          <div className="flex-1 lg:w-3/5">
+    <div className="py-8 pb-24 lg:pb-8">
+          <div>
 
             {/* Заголовок */}
             <div className="mb-5 flex items-center gap-3">
@@ -614,14 +604,6 @@ USING (auth.uid() = recipient_id);`}
 
             </div>
           </div>
-
-          {/* Права рекламна колонка */}
-          <div className="hidden lg:block w-1/5">
-            <AdBanner position="right" sticky={true} />
-          </div>
-
-        </div>
-      </div>
     </div>
   )
 }
