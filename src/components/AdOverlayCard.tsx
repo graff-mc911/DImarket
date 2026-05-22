@@ -10,6 +10,11 @@ import {
   trackAdClick,
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
+import {
+  isYoutubeMediaUrl,
+  parseYoutubeVideoId,
+  youtubeEmbedSrc,
+} from '../lib/youtubeMedia'
 
 export const adOverlayGlow =
   'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_2px_8px_rgba(67,44,26,0.07)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_3px_12px_rgba(67,44,26,0.1)]'
@@ -64,8 +69,8 @@ const variantStyles: Record<
     badge: 'text-[8px] px-1.5 py-0.5',
   },
   center: {
-    shell: 'min-h-[198px] w-[90%] max-w-full mx-auto md:min-h-[216px]',
-    image: 'h-[112px] w-full shrink-0 md:h-[122px]',
+    shell: 'min-h-[220px] w-full max-w-full mx-auto md:min-h-[248px]',
+    image: 'h-[140px] w-full shrink-0 md:h-[156px]',
     text: 'p-2.5',
     brand: 'text-[10px]',
     title: 'text-sm line-clamp-2',
@@ -94,10 +99,12 @@ const variantStyles: Record<
 
 function AdCampaignMedia({
   campaign,
+  variant,
   imageClass,
   badgeClass,
 }: {
   campaign: AdCampaignWithAdvertiser
+  variant: AdOverlayVariant
   imageClass: string
   badgeClass: string
 }) {
@@ -107,23 +114,42 @@ function AdCampaignMedia({
   const mediaSrc = getCampaignMediaUrl(campaign)
 
   if (mediaType === 'video') {
+    const youtubeId = isYoutubeMediaUrl(mediaSrc) ? parseYoutubeVideoId(mediaSrc) : null
+
     return (
       <div className={`relative overflow-hidden bg-black/5 ${imageClass}`}>
-        <video
-          src={mediaSrc}
-          poster={poster}
-          className="h-full w-full object-cover"
-          muted
-          playsInline
-          loop
-          autoPlay
-          preload="metadata"
-        />
+        {youtubeId ? (
+          <iframe
+            src={youtubeEmbedSrc(youtubeId)}
+            title={campaign.title}
+            className="pointer-events-none absolute inset-0 h-full w-full scale-[1.35] object-cover"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
+            loading="lazy"
+          />
+        ) : (
+          <video
+            src={mediaSrc}
+            poster={poster}
+            className="h-full w-full object-cover"
+            muted
+            playsInline
+            loop
+            autoPlay
+            preload="metadata"
+          />
+        )}
         <span
-          className={`absolute left-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/40 font-bold uppercase tracking-[0.08em] text-white/95 ${badgeClass}`}
+          className={`absolute left-1.5 top-1.5 z-[1] inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/40 font-bold uppercase tracking-[0.08em] text-white/95 ${badgeClass}`}
         >
-          <Play className="h-2.5 w-2.5 shrink-0 fill-current" />
-          {t('ads.videoBadge')}
+          {variant === 'center' ? (
+            t('ads.animBadge')
+          ) : (
+            <>
+              <Play className="h-2.5 w-2.5 shrink-0 fill-current" />
+              {t('ads.videoBadge')}
+            </>
+          )}
         </span>
       </div>
     )
@@ -262,7 +288,12 @@ export function AdOverlayCard({
       className={`group flex flex-col overflow-hidden ${adOverlayGlow} ${styles.shell} ${className}`}
       onClick={() => void trackAdClick(campaign.id)}
     >
-      <AdCampaignMedia campaign={campaign} imageClass={styles.image} badgeClass={styles.badge} />
+      <AdCampaignMedia
+        campaign={campaign}
+        variant={variant}
+        imageClass={styles.image}
+        badgeClass={styles.badge}
+      />
 
       <div
         className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-[rgba(255,252,248,0.98)] ${styles.text}`}

@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
-import { mergeExtraPartnerCampaigns } from './partnerAdMedia'
+import { CENTER_HERO_CAMPAIGN_ID, mergeExtraPartnerCampaigns } from './partnerAdMedia'
+import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './youtubeMedia'
 import type { AdCampaign } from './types'
 import type { TranslationKey } from './i18n'
 
@@ -114,12 +115,17 @@ export const AD_MEDIA_FALLBACK =
   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80'
 
 export function getCampaignMediaType(campaign: AdCampaign): 'image' | 'gif' | 'video' {
+  const mediaUrl = campaign.media_url || ''
+  if (isYoutubeMediaUrl(mediaUrl)) return 'video'
   const t = campaign.media_type
   if (t === 'video' || t === 'gif' || t === 'image') return t
   return 'image'
 }
 
 export function getCampaignPosterUrl(campaign: AdCampaign): string {
+  const mediaUrl = campaign.media_url || ''
+  const ytId = parseYoutubeVideoId(mediaUrl)
+  if (ytId) return youtubePosterUrl(ytId)
   return campaign.image_url || campaign.media_url || AD_MEDIA_FALLBACK
 }
 
@@ -178,20 +184,26 @@ export function pickCampaignsForSideStack(
   ]
 }
 
-/** Центральні картки — GIF / анімована реклама */
+/** Один центральний блок — анімована реклама Baumit (або інший GIF/відео бренд) */
+export function pickCenterHeroCampaign(
+  all: AdCampaignWithAdvertiser[],
+): AdCampaignWithAdvertiser | null {
+  if (all.length === 0) return null
+
+  const hero = all.find((c) => c.id === CENTER_HERO_CAMPAIGN_ID)
+  if (hero && (isAnimatedCampaign(hero) || isVideoCampaign(hero))) return hero
+
+  const animated = all.filter((c) => isAnimatedCampaign(c) || isVideoCampaign(c))
+  return animated[0] ?? all[0] ?? null
+}
+
+/** @deprecated використовуйте pickCenterHeroCampaign */
 export function pickCenterAnimatedCampaigns(
   all: AdCampaignWithAdvertiser[],
   limit: number,
 ): AdCampaignWithAdvertiser[] {
-  if (all.length === 0 || limit <= 0) return []
-  const animated = all.filter(isAnimatedCampaign)
-  const rest = all.filter((c) => !isAnimatedCampaign(c))
-  const pool = animated.length > 0 ? animated : rest
-  const picked: AdCampaignWithAdvertiser[] = []
-  for (let i = 0; i < limit; i++) {
-    picked.push(pool[i % pool.length])
-  }
-  return picked
+  const hero = pickCenterHeroCampaign(all)
+  return hero ? [hero].slice(0, limit) : []
 }
 
 export function pickCampaignByPlacement(

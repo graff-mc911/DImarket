@@ -1,25 +1,23 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Megaphone } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard, adOverlayGlow } from './AdOverlayCard'
-import { pickCenterAnimatedCampaigns, trackAdImpression } from '../lib/adCampaigns'
+import { pickCenterHeroCampaign, trackAdImpression } from '../lib/adCampaigns'
 import { navigateTo } from '../lib/navigation'
 
 export function SponsoredCompanies() {
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
   const pool = getForSlots(['home', 'sidebar', 'listings', 'footer'], 16)
-  const campaigns = pickCenterAnimatedCampaigns(pool, 3)
+  const campaign = useMemo(() => pickCenterHeroCampaign(pool), [pool])
 
   useEffect(() => {
-    if (loading || campaigns.length === 0) return
-    for (const c of campaigns) {
-      void trackAdImpression(c.id)
-    }
-  }, [loading, campaigns])
+    if (loading || !campaign) return
+    void trackAdImpression(campaign.id)
+  }, [loading, campaign])
 
-  if (!loading && campaigns.length === 0) {
+  if (!loading && !campaign) {
     return null
   }
 
@@ -48,27 +46,20 @@ export function SponsoredCompanies() {
           </button>
         </div>
 
-        {loading ? (
-          <div className="grid gap-4 md:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className={`mx-auto min-h-[198px] w-[90%] animate-pulse bg-[rgba(148,163,184,0.14)] md:min-h-[216px] ${adOverlayGlow}`}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-3">
-            {campaigns.map((campaign) => (
-              <AdOverlayCard
-                key={campaign.id}
-                campaign={campaign}
-                variant="center"
-                showDescription
-              />
-            ))}
-          </div>
-        )}
+        <div className="flex justify-center">
+          {loading ? (
+            <div
+              className={`mx-auto min-h-[220px] w-full max-w-xl animate-pulse bg-[rgba(148,163,184,0.14)] md:min-h-[240px] ${adOverlayGlow}`}
+            />
+          ) : campaign ? (
+            <AdOverlayCard
+              campaign={campaign}
+              variant="center"
+              className="w-full max-w-xl"
+              showDescription
+            />
+          ) : null}
+        </div>
       </div>
     </section>
   )

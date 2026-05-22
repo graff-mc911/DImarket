@@ -1,10 +1,22 @@
 import type { AdCampaign } from './types'
+import { youtubePosterUrl } from './youtubeMedia'
 
-/** Оновлення медіа партнерів — працює навіть якщо SQL-міграцію ще не виконали в Supabase */
+/** Центральний герой — одна анімована картка Baumit */
+export const CENTER_HERO_CAMPAIGN_ID = '28885e84-4be9-4ba7-8fa8-fac766c5f1f8'
+
+/** Оновлення медіа партнерів — офіційні ролики YouTube + фото за темою */
 export type PartnerMediaPatch = Pick<
   AdCampaign,
   'id' | 'title' | 'description' | 'image_url' | 'media_url' | 'media_type' | 'link_url' | 'placements'
 >
+
+function yt(id: string) {
+  return {
+    media_url: `youtube:${id}`,
+    image_url: youtubePosterUrl(id),
+    media_type: 'video' as const,
+  }
+}
 
 export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
   'f81e653d-ca9e-4081-a4ca-2a17395e9924': {
@@ -12,10 +24,7 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     title: 'Knauf — мінеральна вата та фасадні системи',
     description:
       'Теплоізоляція, гіпсокартон і ETICS для ремонту та новобудов. Офіційні системи Knauf для України.',
-    image_url:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://videos.pexels.com/video-files/3999009/3999009-uhd_2560_1440_25fps.mp4',
-    media_type: 'video',
+    ...yt('7_z3SATrJek'),
     link_url: 'https://www.knauf.ua',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
@@ -24,10 +33,7 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     title: 'Bosch Professional — акумуляторний інструмент',
     description:
       'Дрилі, шуруповерти, лазерні нівеліри та сервіс Bosch для монтажників на об\'єкті.',
-    image_url:
-      'https://images.unsplash.com/photo-1572981776447-47a21a0fbb7f?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://videos.pexels.com/video-files/3209624/3209624-uhd_2560_1440_25fps.mp4',
-    media_type: 'video',
+    ...yt('aLZKM7gMUgc'),
     link_url: 'https://www.bosch-professional.com/ua/uk',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
@@ -36,10 +42,7 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     title: 'Würth — кріплення та витратні матеріали',
     description:
       'Анкери, дюбелі, хімічні кріплення та доставка на будмайданчик одним постачальником.',
-    image_url:
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://videos.pexels.com/video-files/4485575/4485575-uhd_2560_1440_25fps.mp4',
-    media_type: 'video',
+    ...yt('Zu7Oq8EYX18'),
     link_url: 'https://www.wurth.ua',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
@@ -48,22 +51,16 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     title: 'Hilti — перфоратори та алмазне свердління',
     description:
       'Професійний інструмент, анкери та оренда обладнання Hilti для підрядників.',
-    image_url:
-      'https://images.unsplash.com/photo-1504148455328-c376907d0c8f?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://videos.pexels.com/video-files/2176904/2176904-uhd_2560_1440_30fps.mp4',
-    media_type: 'video',
+    ...yt('uDDY3NH903E'),
     link_url: 'https://www.hilti.ua',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
   '28885e84-4be9-4ba7-8fa8-fac766c5f1f8': {
-    id: '28885e84-4be9-4ba7-8fa8-fac766c5f1f8',
+    id: CENTER_HERO_CAMPAIGN_ID,
     title: 'Baumit — декоративні штукатурки та ETICS',
     description:
       'Фасадні системи, утеплення та фінішні покриття Baumit для житла і комерції.',
-    image_url:
-      'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://media.giphy.com/media/264upSWYOxr9S/giphy.gif',
-    media_type: 'gif',
+    ...yt('sDILnOsyei8'),
     link_url: 'https://www.baumit.ua',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },
@@ -73,8 +70,9 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     description: 'Системи водопостачання, теплої підлоги та монтажні комплекти Uponor.',
     image_url:
       'https://images.unsplash.com/photo-1585704032915-8ig20df24b8e?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://media.giphy.com/media/l46Cy8ZBn7JDzR6Uw/giphy.gif',
-    media_type: 'gif',
+    media_url:
+      'https://images.unsplash.com/photo-1585704032915-8ig20df24b8e?w=900&h=560&fit=crop&q=85',
+    media_type: 'image',
     link_url: 'https://www.uponor.com',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },
@@ -84,8 +82,9 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     description: 'Вікна, жалюзі та монтажні комплекти для дахів і мансард.',
     image_url:
       'https://images.unsplash.com/photo-1632776043539-6aedd71a6190?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://media.giphy.com/media/3o7TKqnN349PBUtRhi/giphy.gif',
-    media_type: 'gif',
+    media_url:
+      'https://images.unsplash.com/photo-1632776043539-6aedd71a6190?w=900&h=560&fit=crop&q=85',
+    media_type: 'image',
     link_url: 'https://www.velux.com',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },
@@ -102,6 +101,53 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     link_url: 'https://www.geberit.com',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
+  'a1000001-0001-4001-8001-000000000001': {
+    id: 'a1000001-0001-4001-8001-000000000001',
+    title: 'Rockwool — кам\'яна вата ROCKWOOL',
+    description:
+      'Негорюча теплоізоляція для фасадів, дахів і перегородок. Рішення ROCKWOOL для енергоефективності.',
+    ...yt('vWpigXOjDQc'),
+    link_url: 'https://www.rockwool.ua',
+    placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
+  },
+  'a1000002-0002-4002-8002-000000000002': {
+    id: 'a1000002-0002-4002-8002-000000000002',
+    title: 'Ceresit — плиткові клеї та затирки',
+    description:
+      'Системи Ceresit для облицювання, гідроізоляції та фасадів. Підтримка майстрів на об\'єкті.',
+    image_url:
+      'https://images.unsplash.com/photo-1625296316570-025e4c02e816?w=900&h=560&fit=crop&q=85',
+    media_url:
+      'https://images.unsplash.com/photo-1625296316570-025e4c02e816?w=900&h=560&fit=crop&q=85',
+    media_type: 'image',
+    link_url: 'https://www.ceresit.ua',
+    placements: ['home', 'sidebar', 'listings', 'footer'],
+  },
+  'a1000003-0003-4003-8003-000000000003': {
+    id: 'a1000003-0003-4003-8003-000000000003',
+    title: 'Weber — сухі будівельні суміші',
+    description:
+      'Штукатурки, клеї та фасадні рішення Weber (Saint-Gobain) для професійного будівництва.',
+    image_url:
+      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&h=560&fit=crop&q=85',
+    media_url:
+      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&h=560&fit=crop&q=85',
+    media_type: 'image',
+    link_url: 'https://www.weber.ua',
+    placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
+  },
+  'a1000004-0004-4004-8004-000000000004': {
+    id: 'a1000004-0004-4004-8004-000000000004',
+    title: 'Sika — гідроізоляція та добавки в бетон',
+    description: 'Рішення Sika для фундаментів, підвалів, швів та промислових підлог.',
+    image_url:
+      'https://images.unsplash.com/photo-1541972664089-0221394fb162?w=900&h=560&fit=crop&q=85',
+    media_url:
+      'https://images.unsplash.com/photo-1541972664089-0221394fb162?w=900&h=560&fit=crop&q=85',
+    media_type: 'image',
+    link_url: 'https://www.sika.com/ua',
+    placements: ['home', 'sidebar', 'listings', 'footer'],
+  },
 }
 
 const PARTNER_ADVERTISER_ID = 'b64a9350-4f7e-46bf-8697-d39c02491ad0'
@@ -111,16 +157,8 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
   {
     id: 'a1000001-0001-4001-8001-000000000001',
     advertiser_id: PARTNER_ADVERTISER_ID,
-    title: 'Rockwool — кам\'яна вата ROCKWOOL',
-    description:
-      'Негорюча теплоізоляція для фасадів, дахів і перегородок. Рішення ROCKWOOL для енергоефективності.',
-    image_url:
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://videos.pexels.com/video-files/3209828/3209828-uhd_2560_1440_25fps.mp4',
-    media_type: 'video',
-    link_url: 'https://www.rockwool.ua',
+    ...PARTNER_MEDIA_BY_ID['a1000001-0001-4001-8001-000000000001'],
     placement: 'sidebar',
-    placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
     geo_scope: 'global',
     country_code: 'UA',
     country_name: 'Україна',
@@ -144,16 +182,8 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
   {
     id: 'a1000002-0002-4002-8002-000000000002',
     advertiser_id: PARTNER_ADVERTISER_ID,
-    title: 'Ceresit — плиткові клеї та затирки',
-    description:
-      'Системи Ceresit для облицювання, гідроізоляції та фасадів. Підтримка майстрів на об\'єкті.',
-    image_url:
-      'https://images.unsplash.com/photo-1625296316570-025e4c02e816?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://media.giphy.com/media/26BRvYN2DmH7fVCaM/giphy.gif',
-    media_type: 'gif',
-    link_url: 'https://www.ceresit.ua',
+    ...PARTNER_MEDIA_BY_ID['a1000002-0002-4002-8002-000000000002'],
     placement: 'home',
-    placements: ['home', 'sidebar', 'listings', 'footer'],
     geo_scope: 'global',
     country_code: 'UA',
     country_name: 'Україна',
@@ -170,24 +200,15 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
     currency_paid: 'eur',
     approved_by: PARTNER_ADVERTISER_ID,
     approved_at: new Date().toISOString(),
-    review_note: 'Presence partner — animated center',
+    review_note: 'Presence partner',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   } as AdCampaign,
   {
     id: 'a1000003-0003-4003-8003-000000000003',
     advertiser_id: PARTNER_ADVERTISER_ID,
-    title: 'Weber — сухі будівельні суміші',
-    description:
-      'Штукатурки, клеї та фасадні рішення Weber (Saint-Gobain) для професійного будівництва.',
-    image_url:
-      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&h=560&fit=crop&q=85',
-    media_url:
-      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&h=560&fit=crop&q=85',
-    media_type: 'image',
-    link_url: 'https://www.weber.ua',
+    ...PARTNER_MEDIA_BY_ID['a1000003-0003-4003-8003-000000000003'],
     placement: 'listings',
-    placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
     geo_scope: 'global',
     country_code: 'UA',
     country_name: 'Україна',
@@ -204,22 +225,15 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
     currency_paid: 'eur',
     approved_by: PARTNER_ADVERTISER_ID,
     approved_at: new Date().toISOString(),
-    review_note: 'Presence partner — side image',
+    review_note: 'Presence partner',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   } as AdCampaign,
   {
     id: 'a1000004-0004-4004-8004-000000000004',
     advertiser_id: PARTNER_ADVERTISER_ID,
-    title: 'Sika — гідроізоляція та добавки в бетон',
-    description: 'Рішення Sika для фундаментів, підвалів, швів та промислових підлог.',
-    image_url:
-      'https://images.unsplash.com/photo-1541972664089-0221394fb162?w=900&h=560&fit=crop&q=85',
-    media_url: 'https://media.giphy.com/media/l0HlBO7YGa8Favfh8/giphy.gif',
-    media_type: 'gif',
-    link_url: 'https://www.sika.com/ua',
+    ...PARTNER_MEDIA_BY_ID['a1000004-0004-4004-8004-000000000004'],
     placement: 'home',
-    placements: ['home', 'sidebar', 'listings', 'footer'],
     geo_scope: 'global',
     country_code: 'UA',
     country_name: 'Україна',
@@ -236,7 +250,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
     currency_paid: 'eur',
     approved_by: PARTNER_ADVERTISER_ID,
     approved_at: new Date().toISOString(),
-    review_note: 'Presence partner — animated center',
+    review_note: 'Presence partner',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   } as AdCampaign,
@@ -256,5 +270,5 @@ export function applyPartnerMediaOverride<T extends AdCampaign>(campaign: T): T 
 export function mergeExtraPartnerCampaigns<T extends AdCampaign>(campaigns: T[]): T[] {
   const ids = new Set(campaigns.map((c) => c.id))
   const extras = EXTRA_PARTNER_CAMPAIGNS.filter((c) => !ids.has(c.id)) as T[]
-  return [...campaigns.map(applyPartnerMediaOverride), ...extras]
+  return [...campaigns.map(applyPartnerMediaOverride), ...extras.map(applyPartnerMediaOverride)]
 }

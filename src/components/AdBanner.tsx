@@ -101,7 +101,12 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
             : stackCampaigns.length > 0
               ? stackCampaigns.map((campaign, index) => (
                   <div key={`${campaign.id}-${index}`} className="min-h-0 overflow-hidden">
-                    <AdOverlayCard campaign={campaign} variant="stack" className="h-full min-h-0" />
+                    <AdOverlayCard
+                      campaign={campaign}
+                      variant="stack"
+                      className="h-full min-h-0"
+                      showDescription
+                    />
                   </div>
                 ))
               : Array.from({ length: stackCount }, (_, i) => (
