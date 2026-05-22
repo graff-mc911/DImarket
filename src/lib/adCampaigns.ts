@@ -203,26 +203,10 @@ export async function fetchPaidAdCampaigns(
 
   const rows = (data as AdCampaignWithAdvertiser[] | null) || []
 
-  if (rows.length > 0) {
-    const filteredCount = rows
-      .filter(isPaidCampaign)
-      .filter(isCampaignInSchedule)
-      .filter((c) => slots.some((slot) => campaignMatchesSlot(c, slot)))
-      .filter((c) => matchesViewerGeo(c, viewerCity, viewerCountry)).length
-    if (filteredCount === 0) {
-      console.warn('[ads] Raw rows from API:', rows.length, 'but none matched slots/filter', {
-        slots,
-        sample: rows[0]?.title,
-        placement: rows[0]?.placement,
-        paid: isPaidCampaign(rows[0]),
-        inSchedule: isCampaignInSchedule(rows[0]),
-      })
-    }
-  }
-
+  // Розклад уже відфільтровано RLS (starts_at / ends_at). Не дублюємо через Date.now()
+  // у браузері — інакше при розсинхроні годинника всі кампанії зникають з UI.
   return rows
     .filter(isPaidCampaign)
-    .filter(isCampaignInSchedule)
     .filter((c) => slots.some((slot) => campaignMatchesSlot(c, slot)))
     .filter((c) => matchesViewerGeo(c, viewerCity, viewerCountry))
     .sort(sortPaidCampaigns)
