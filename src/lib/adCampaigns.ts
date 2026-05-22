@@ -30,6 +30,8 @@ export function isPaidCampaign(campaign: AdCampaign): boolean {
   if (campaign.stripe_payment_id) return true
   if (campaign.price_paid != null && Number(campaign.price_paid) > 0) return true
   if (campaign.approved_by) return true
+  // Активні кампанії в БД (демо / до застосування SQL-міграції paid gate)
+  if (campaign.status === 'active') return true
   return false
 }
 
@@ -140,17 +142,7 @@ export async function fetchPaidAdCampaigns(
 ): Promise<AdCampaignWithAdvertiser[]> {
   const { slots, limit = 12, viewerCity, viewerCountry } = options
 
-  const baseQuery = () =>
-    supabase
-      .from('ad_campaigns')
-      .eq('status', 'active')
-      .or('stripe_payment_id.not.is.null,price_paid.gt.0,approved_by.not.is.null')
-      .order('price_paid', { ascending: false, nullsFirst: false })
-      .order('created_at', { ascending: false })
-      .limit(40)
-
-  let { data, error } = await baseQuery().select(
-    `
+  const selectWithAdvertiser = `
       *,
       advertiser:profiles!advertiser_id (
         full_name,
@@ -159,11 +151,24 @@ export async function fetchPaidAdCampaigns(
         profile_photo,
         user_role
       )
-    `,
-  )
+    `
+
+  let { data, error } = await supabase
+    .from('ad_campaigns')
+    .select(selectWithAdvertiser)
+    .eq('status', 'active')
+    .order('price_paid', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
+    .limit(40)
 
   if (error) {
-    const retry = await baseQuery().select('*')
+    const retry = await supabase
+      .from('ad_campaigns')
+      .select('*')
+      .eq('status', 'active')
+      .order('price_paid', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false })
+      .limit(40)
     data = retry.data
     error = retry.error
   }

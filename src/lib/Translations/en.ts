@@ -156,6 +156,10 @@ export const enTranslations = {
   'home.noBio': 'Construction professional profile is being completed.',
   'home.sponsoredPlacement':
     'Sponsored placement for tools, materials, logistics, or local construction partners.',
+  'home.sponsoredTitle': 'Partner companies',
+  'home.sponsoredSubtitle':
+    'Paid advertising from construction brands, suppliers, and service companies on DImarket.',
+  'home.sponsoredCta': 'Advertise your company',
   'home.sidebarAdOne': 'Place brand visibility next to live construction demand.',
   'home.sidebarAdTwo':
     'Reach professionals and clients while they search for work and services.',
