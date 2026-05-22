@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, type ReactNode } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard, AdOverlayPlaceholder, adOverlayGlow } from './AdOverlayCard'
@@ -36,29 +36,40 @@ function campaignsForSide(
   return picked
 }
 
-const FIXED_TOP = 'top-[8rem] xl:top-[9rem]'
-const STACK_FIXED_HEIGHT = 'h-[calc(100vh-8rem)] xl:h-[calc(100vh-9rem)]'
+const STICKY_TOP = 'top-[8rem] xl:top-[9rem]'
+const STICKY_VIEWPORT_H =
+  'h-[calc(100vh-8rem)] max-h-full min-h-0 xl:h-[calc(100vh-9rem)]'
 
-function fixedSideClasses(position: 'left' | 'right', rail: 'home' | 'default') {
-  const width =
-    rail === 'home' ? 'w-[240px] 2xl:w-[280px]' : 'w-[260px] 2xl:w-[300px]'
-  const offset =
-    position === 'left'
-      ? 'left-4 md:left-6 xl:left-8 2xl:left-10'
-      : 'right-4 md:right-6 xl:right-8 2xl:right-10'
-  return `${width} ${offset}`
+function SideRailFrame({
+  sticky,
+  children,
+  className = '',
+}: {
+  sticky: boolean
+  children: ReactNode
+  className?: string
+}) {
+  if (!sticky) {
+    return (
+      <aside className={`hidden h-full min-h-full w-full flex-1 flex-col xl:flex ${className}`}>
+        {children}
+      </aside>
+    )
+  }
+
+  return (
+    <aside className={`hidden h-full min-h-0 w-full xl:flex xl:flex-col ${className}`}>
+      <div className={`sticky z-20 w-full ${STICKY_TOP} ${STICKY_VIEWPORT_H}`}>{children}</div>
+    </aside>
+  )
 }
 
 export function AdBanner({ position, sticky = true, page, stackCount }: AdBannerProps) {
-  const rail = stackCount ? 'home' : 'default'
-  const fixedClasses = sticky
-    ? `fixed z-30 ${FIXED_TOP} ${fixedSideClasses(position, rail)}`
-    : ''
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
 
   const pool = useMemo(
-    () => getForSlots(slotsForPage(page), stackCount ? stackCount * 2 : 6),
+    () => getForSlots(slotsForPage(page), stackCount ? stackCount * 2 : 8),
     [getForSlots, page, stackCount],
   )
 
@@ -89,15 +100,9 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
 
   if (stackCount && stackCount >= 2) {
     return (
-      <aside
-        className={`hidden flex-col xl:flex ${
-          sticky
-            ? `${fixedClasses} ${STACK_FIXED_HEIGHT}`
-            : 'h-full min-h-full w-full flex-1'
-        }`}
-      >
+      <SideRailFrame sticky={sticky}>
         <div
-          className="grid min-h-0 w-full flex-1 gap-2 py-0.5 2xl:gap-3"
+          className="grid h-full min-h-0 w-full gap-2 py-0.5 2xl:gap-3"
           style={{ gridTemplateRows: `repeat(${stackCount}, minmax(0, 1fr))` }}
         >
           {loading
@@ -125,46 +130,45 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
                   </div>
                 ))}
         </div>
-      </aside>
+      </SideRailFrame>
     )
   }
 
   return (
-    <aside
-      className={`hidden h-fit xl:block ${sticky ? `${fixedClasses}` : 'w-full'}`}
-      style={{ maxHeight: sticky ? 'calc(100vh - 9rem)' : undefined }}
-    >
-      <div className="overflow-hidden">
-        {loading ? (
-          <div className={`min-h-[220px] animate-pulse bg-white/20 ${adOverlayGlow}`} />
-        ) : primaryCampaign ? (
-          <AdOverlayCard campaign={primaryCampaign} variant="legacy" />
-        ) : (
-          <AdOverlayPlaceholder
-            variant="legacy"
-            title={t('ads.adSpace')}
-            subtitle={t('ads.advertiseHere')}
-            onClick={() => navigateTo('/advertising')}
-          />
-        )}
-      </div>
-
-      {sticky && (
-        <div className="mt-3 overflow-hidden">
+    <SideRailFrame sticky={sticky} className={sticky ? '' : 'h-fit'}>
+      <div className={`flex min-h-0 flex-col overflow-hidden ${sticky ? 'max-h-full' : ''}`}>
+        <div className="overflow-hidden">
           {loading ? (
-            <div className={`min-h-[120px] animate-pulse bg-white/20 ${adOverlayGlow}`} />
-          ) : secondaryCampaign ? (
-            <AdOverlayCard campaign={secondaryCampaign} variant="legacy-compact" />
+            <div className={`min-h-[220px] animate-pulse bg-white/20 ${adOverlayGlow}`} />
+          ) : primaryCampaign ? (
+            <AdOverlayCard campaign={primaryCampaign} variant="legacy" />
           ) : (
             <AdOverlayPlaceholder
-              variant="legacy-compact"
-              title={t('ads.stickyAdBlock')}
-              subtitle={t('ads.premiumPlacement')}
+              variant="legacy"
+              title={t('ads.adSpace')}
+              subtitle={t('ads.advertiseHere')}
               onClick={() => navigateTo('/advertising')}
             />
           )}
         </div>
-      )}
-    </aside>
+
+        {sticky && (
+          <div className="mt-3 overflow-hidden">
+            {loading ? (
+              <div className={`min-h-[120px] animate-pulse bg-white/20 ${adOverlayGlow}`} />
+            ) : secondaryCampaign ? (
+              <AdOverlayCard campaign={secondaryCampaign} variant="legacy-compact" />
+            ) : (
+              <AdOverlayPlaceholder
+                variant="legacy-compact"
+                title={t('ads.stickyAdBlock')}
+                subtitle={t('ads.premiumPlacement')}
+                onClick={() => navigateTo('/advertising')}
+              />
+            )}
+          </div>
+        )}
+      </div>
+    </SideRailFrame>
   )
 }

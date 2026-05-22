@@ -209,10 +209,10 @@ export function Listings() {
   return (
     <div className="page-bg min-h-screen py-8 pb-24 lg:pb-8">
       <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
-        <div className="flex gap-6">
+        <div className="flex items-stretch gap-6">
 
           {/* Ліва рекламна колонка */}
-          <aside className="hidden w-[260px] flex-shrink-0 xl:block 2xl:w-[300px]">
+          <aside className="hidden w-[260px] shrink-0 xl:flex xl:flex-col 2xl:w-[300px]">
             <AdBanner position="left" sticky={true} />
           </aside>
 
@@ -478,7 +478,7 @@ export function Listings() {
           </main>
 
           {/* Права рекламна колонка */}
-          <aside className="hidden w-[260px] flex-shrink-0 xl:block 2xl:w-[300px]">
+          <aside className="hidden w-[260px] shrink-0 xl:flex xl:flex-col 2xl:w-[300px]">
             <AdBanner position="right" sticky={true} />
           </aside>
         </div>

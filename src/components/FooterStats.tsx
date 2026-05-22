@@ -56,7 +56,7 @@ const localeMap: Record<string, string> = {
   ja: 'ja-JP',
 }
 
-export function FooterStats() {
+export function FooterStats({ compact = false }: { compact?: boolean }) {
   const { t, language } = useApp()
 
   // Основний стан статистики, який показується у футері.
@@ -150,6 +150,27 @@ export function FooterStats() {
       color: 'text-indigo-600',
     },
   ]
+
+  if (compact) {
+    return (
+      <section className="mt-1.5 border-t border-[rgba(148,163,184,0.18)] pt-1.5">
+        <div className="flex flex-wrap gap-1.5">
+          {statCards.map((card) => (
+            <div
+              key={card.label}
+              className="inline-flex min-w-0 items-center gap-1 rounded-full border border-white/40 bg-[rgba(255,255,255,0.35)] px-2 py-0.5"
+            >
+              <card.icon className={`h-3 w-3 shrink-0 ${card.color}`} />
+              <span className="truncate text-[9px] text-[#6f665d]">{card.label}</span>
+              <span className="text-[10px] font-extrabold text-[#2f2a24]">
+                {loading ? '…' : formatNumber(card.value)}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="mt-4 border-t border-[rgba(148,163,184,0.18)] pt-3">
