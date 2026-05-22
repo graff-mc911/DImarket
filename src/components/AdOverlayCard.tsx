@@ -1,9 +1,11 @@
-import { ExternalLink, Megaphone } from 'lucide-react'
+import { ExternalLink, Megaphone, Play } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import {
   AD_MEDIA_FALLBACK,
   getAdvertiserLabel,
+  getCampaignMediaType,
   getCampaignMediaUrl,
+  getCampaignPosterUrl,
   getGeoTargetLabel,
   trackAdClick,
   type AdCampaignWithAdvertiser,
@@ -90,6 +92,82 @@ const variantStyles: Record<
   },
 }
 
+function AdCampaignMedia({
+  campaign,
+  imageClass,
+  badgeClass,
+}: {
+  campaign: AdCampaignWithAdvertiser
+  imageClass: string
+  badgeClass: string
+}) {
+  const { t } = useApp()
+  const mediaType = getCampaignMediaType(campaign)
+  const poster = getCampaignPosterUrl(campaign)
+  const mediaSrc = getCampaignMediaUrl(campaign)
+
+  if (mediaType === 'video') {
+    return (
+      <div className={`relative overflow-hidden bg-black/5 ${imageClass}`}>
+        <video
+          src={mediaSrc}
+          poster={poster}
+          className="h-full w-full object-cover"
+          muted
+          playsInline
+          loop
+          autoPlay
+          preload="metadata"
+        />
+        <span
+          className={`absolute left-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/40 font-bold uppercase tracking-[0.08em] text-white/95 ${badgeClass}`}
+        >
+          <Play className="h-2.5 w-2.5 shrink-0 fill-current" />
+          {t('ads.videoBadge')}
+        </span>
+      </div>
+    )
+  }
+
+  if (mediaType === 'gif') {
+    return (
+      <div className={`relative overflow-hidden bg-black/5 ${imageClass}`}>
+        <img
+          src={mediaSrc}
+          alt={campaign.title}
+          className="h-full w-full object-cover"
+          loading="lazy"
+        />
+        <span
+          className={`absolute left-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/35 font-bold uppercase tracking-[0.1em] text-white/95 ${badgeClass}`}
+        >
+          {t('ads.animBadge')}
+        </span>
+      </div>
+    )
+  }
+
+  return (
+    <div className={`relative overflow-hidden bg-[rgba(255,248,241,0.5)] ${imageClass}`}>
+      <img
+        src={poster}
+        alt={campaign.title}
+        className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+        loading="lazy"
+        onError={(e) => {
+          e.currentTarget.src = AD_MEDIA_FALLBACK
+        }}
+      />
+      <span
+        className={`absolute left-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/25 font-bold uppercase tracking-[0.1em] text-white/95 backdrop-blur-[2px] ${badgeClass}`}
+      >
+        <Megaphone className="h-2.5 w-2.5 shrink-0" />
+        {t('ads.badge')}
+      </span>
+    </div>
+  )
+}
+
 function AdTextContent({
   brand,
   title,
@@ -121,6 +199,9 @@ function AdTextContent({
             </p>
           )}
           <h3 className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</h3>
+          {description && (
+            <p className={`line-clamp-2 text-[var(--ink-700)] ${styles.meta}`}>{description}</p>
+          )}
         </div>
         {showVisit && (
           <span
@@ -169,9 +250,9 @@ export function AdOverlayCard({
 }: AdOverlayCardProps) {
   const { t } = useApp()
   const brand = getAdvertiserLabel(campaign)
-  const mediaUrl = getCampaignMediaUrl(campaign)
   const styles = variantStyles[variant]
   const isStack = variant === 'stack'
+  const showDesc = showDescription || isStack
 
   return (
     <a
@@ -181,28 +262,15 @@ export function AdOverlayCard({
       className={`group flex flex-col overflow-hidden ${adOverlayGlow} ${styles.shell} ${className}`}
       onClick={() => void trackAdClick(campaign.id)}
     >
-      <div className={`relative overflow-hidden bg-[rgba(255,248,241,0.5)] ${styles.image}`}>
-        <img
-          src={mediaUrl}
-          alt={campaign.title}
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
-          onError={(e) => {
-            e.currentTarget.src = AD_MEDIA_FALLBACK
-          }}
-        />
-        <span
-          className={`absolute left-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/25 font-bold uppercase tracking-[0.1em] text-white/95 backdrop-blur-[2px] ${styles.badge}`}
-        >
-          <Megaphone className="h-2.5 w-2.5 shrink-0" />
-          {t('ads.badge')}
-        </span>
-      </div>
+      <AdCampaignMedia campaign={campaign} imageClass={styles.image} badgeClass={styles.badge} />
 
-      <div className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-[rgba(255,252,248,0.98)] ${styles.text}`}>
+      <div
+        className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-[rgba(255,252,248,0.98)] ${styles.text}`}
+      >
         <AdTextContent
-          brand={brand}
+          brand={brand ?? ''}
           title={campaign.title}
-          description={showDescription ? campaign.description : null}
+          description={showDesc ? campaign.description : null}
           geo={showGeo ? getGeoTargetLabel(campaign, t) : null}
           showVisit={!isStack}
           visitLabel={t('ads.visit')}

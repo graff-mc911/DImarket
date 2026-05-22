@@ -771,6 +771,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   // Бракуючі ключі UK
   'listing.backToListings': 'Назад до оголошень',
   'ads.badge': 'Реклама',
+  'ads.videoBadge': 'Відео',
+  'ads.animBadge': 'Анімація',
   'ads.openLink': 'Відкрити',
   'common.comingSoon': 'Незабаром',
   'header.openMenu': 'Відкрити меню',

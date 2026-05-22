@@ -3,13 +3,14 @@ import { Megaphone } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard, adOverlayGlow } from './AdOverlayCard'
-import { trackAdImpression } from '../lib/adCampaigns'
+import { pickCenterAnimatedCampaigns, trackAdImpression } from '../lib/adCampaigns'
 import { navigateTo } from '../lib/navigation'
 
 export function SponsoredCompanies() {
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
-  const campaigns = getForSlots(['home', 'sidebar', 'listings'], 3)
+  const pool = getForSlots(['home', 'sidebar', 'listings', 'footer'], 16)
+  const campaigns = pickCenterAnimatedCampaigns(pool, 3)
 
   useEffect(() => {
     if (loading || campaigns.length === 0) return

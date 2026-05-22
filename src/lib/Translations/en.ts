@@ -761,6 +761,8 @@ export const enTranslations = {
   'register.representativeName': 'Representative\'s name',
   'listing.backToListings': 'Back to listings',
   'ads.badge': 'Ad',
+  'ads.videoBadge': 'Video',
+  'ads.animBadge': 'Anim',
   'ads.openLink': 'Open',
   'ads.geo.global': 'Worldwide',
   'ads.geo.countryFallback': 'Country not specified',

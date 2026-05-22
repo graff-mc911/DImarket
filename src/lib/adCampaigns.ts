@@ -109,12 +109,89 @@ export function sortPaidCampaigns(a: AdCampaign, b: AdCampaign): number {
   return tB - tA
 }
 
-export function getCampaignMediaUrl(campaign: AdCampaign): string {
-  return campaign.media_url || campaign.image_url
-}
-
 export const AD_MEDIA_FALLBACK =
   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80'
+
+export function getCampaignMediaType(campaign: AdCampaign): 'image' | 'gif' | 'video' {
+  const t = campaign.media_type
+  if (t === 'video' || t === 'gif' || t === 'image') return t
+  return 'image'
+}
+
+export function getCampaignPosterUrl(campaign: AdCampaign): string {
+  return campaign.image_url || campaign.media_url || AD_MEDIA_FALLBACK
+}
+
+export function getCampaignMediaUrl(campaign: AdCampaign): string {
+  const type = getCampaignMediaType(campaign)
+  if (type === 'video') {
+    return campaign.media_url || campaign.image_url || AD_MEDIA_FALLBACK
+  }
+  if (type === 'gif') {
+    return campaign.media_url || campaign.image_url || AD_MEDIA_FALLBACK
+  }
+  return campaign.image_url || campaign.media_url || AD_MEDIA_FALLBACK
+}
+
+export function isVideoCampaign(campaign: AdCampaign): boolean {
+  return getCampaignMediaType(campaign) === 'video'
+}
+
+export function isAnimatedCampaign(campaign: AdCampaign): boolean {
+  return getCampaignMediaType(campaign) === 'gif'
+}
+
+/** Верхні 2 слоти бокової колонки — відео; нижні 2 — статичні зображення */
+export function pickCampaignsForSideStack(
+  all: AdCampaignWithAdvertiser[],
+  position: 'left' | 'right',
+  count: number,
+): AdCampaignWithAdvertiser[] {
+  if (all.length === 0 || count <= 0) return []
+
+  const videos = all.filter(isVideoCampaign)
+  const stills = all.filter((c) => !isVideoCampaign(c))
+  const topSlots = Math.min(2, count)
+  const bottomSlots = count - topSlots
+  const videoOffset = position === 'right' ? 2 : 0
+  const stillOffset = position === 'right' ? 2 : 0
+
+  const pick = (
+    pool: AdCampaignWithAdvertiser[],
+    offset: number,
+    n: number,
+    fallback: AdCampaignWithAdvertiser[],
+  ) => {
+    const out: AdCampaignWithAdvertiser[] = []
+    for (let i = 0; i < n; i++) {
+      const primary = pool[(offset + i) % Math.max(pool.length, 1)]
+      const fb = fallback[(offset + i) % Math.max(fallback.length, 1)]
+      out.push(primary ?? fb ?? all[i % all.length])
+    }
+    return out
+  }
+
+  return [
+    ...pick(videos, videoOffset, topSlots, stills),
+    ...pick(stills, stillOffset, bottomSlots, videos),
+  ]
+}
+
+/** Центральні картки — GIF / анімована реклама */
+export function pickCenterAnimatedCampaigns(
+  all: AdCampaignWithAdvertiser[],
+  limit: number,
+): AdCampaignWithAdvertiser[] {
+  if (all.length === 0 || limit <= 0) return []
+  const animated = all.filter(isAnimatedCampaign)
+  const rest = all.filter((c) => !isAnimatedCampaign(c))
+  const pool = animated.length > 0 ? animated : rest
+  const picked: AdCampaignWithAdvertiser[] = []
+  for (let i = 0; i < limit; i++) {
+    picked.push(pool[i % pool.length])
+  }
+  return picked
+}
 
 export function pickCampaignByPlacement(
   campaigns: AdCampaign[],

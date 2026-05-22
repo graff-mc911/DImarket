@@ -3,8 +3,8 @@ import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard, AdOverlayPlaceholder, adOverlayGlow } from './AdOverlayCard'
 import {
+  pickCampaignsForSideStack,
   trackAdImpression,
-  type AdCampaignWithAdvertiser,
   type AdPlacement,
 } from '../lib/adCampaigns'
 import { navigateTo } from '../lib/navigation'
@@ -20,20 +20,6 @@ function slotsForPage(page?: 'home' | 'listings' | 'default'): AdPlacement[] {
   if (page === 'home') return ['home', 'sidebar', 'footer']
   if (page === 'listings') return ['listings', 'sidebar', 'home']
   return ['sidebar', 'home', 'listings', 'footer']
-}
-
-function campaignsForSide(
-  all: AdCampaignWithAdvertiser[],
-  position: 'left' | 'right',
-  count: number,
-): AdCampaignWithAdvertiser[] {
-  if (all.length === 0 || count <= 0) return []
-  const offset = position === 'right' ? count : 0
-  const picked: AdCampaignWithAdvertiser[] = []
-  for (let i = 0; i < count; i++) {
-    picked.push(all[(offset + i) % all.length])
-  }
-  return picked
 }
 
 const STICKY_TOP = 'top-[8rem] xl:top-[9rem]'
@@ -69,13 +55,13 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
   const { loading, getForSlots } = usePaidAds()
 
   const pool = useMemo(
-    () => getForSlots(slotsForPage(page), stackCount ? stackCount * 2 : 8),
+    () => getForSlots(slotsForPage(page), stackCount ? 24 : 8),
     [getForSlots, page, stackCount],
   )
 
   const stackCampaigns = useMemo(() => {
     if (!stackCount || stackCount < 2) return []
-    return campaignsForSide(pool, position, stackCount)
+    return pickCampaignsForSideStack(pool, position, stackCount)
   }, [pool, position, stackCount])
 
   const [primaryCampaign, secondaryCampaign] = useMemo(() => {
