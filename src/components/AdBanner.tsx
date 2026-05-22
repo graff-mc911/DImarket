@@ -105,7 +105,7 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
 
   return (
     <aside
-      className={`hidden h-fit w-full xl:block ${sticky ? 'sticky top-20' : ''}`}
+      className={`hidden h-fit w-full xl:block ${sticky ? 'sticky top-[6.75rem]' : ''}`}
       style={{ maxHeight: sticky ? 'calc(100vh - 6rem)' : undefined }}
     >
       <div className="overflow-hidden">

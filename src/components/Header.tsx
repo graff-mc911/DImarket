@@ -222,24 +222,29 @@ export function Header() {
     'transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_14px_rgba(196,122,61,0.18)]'
 
   const navTextClass = (active: boolean) =>
-    ['relative inline-flex items-center gap-2 pb-2 text-sm font-semibold transition-all duration-300',
+    ['relative inline-flex items-center gap-1.5 pb-1 text-sm font-semibold transition-all duration-300',
       active
         ? 'text-[var(--accent-700)] [text-shadow:0_0_14px_rgba(196,122,61,0.18)]'
         : 'text-[var(--ink-700)] ' + hoverGlowClass,
     ].join(' ')
 
   const textButtonClass = (active = false) =>
-    ['inline-flex items-center gap-2 rounded-full border-0 bg-transparent px-2 py-2 text-sm font-semibold shadow-none outline-none',
+    ['inline-flex items-center gap-1.5 rounded-full border-0 bg-transparent px-1.5 py-1 text-sm font-semibold shadow-none outline-none',
       active
         ? 'text-[var(--accent-700)] [text-shadow:0_0_14px_rgba(196,122,61,0.18)]'
         : 'text-[var(--ink-700)] ' + hoverGlowClass,
     ].join(' ')
 
   const createButtonClass =
-    'inline-flex items-center gap-2 rounded-full border-0 bg-transparent px-2 py-2 text-sm font-semibold text-[var(--ink-800)] shadow-none outline-none transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_16px_rgba(196,122,61,0.22)]'
+    'inline-flex items-center gap-1.5 rounded-full border-0 bg-transparent px-1.5 py-1 text-sm font-semibold text-[var(--ink-800)] shadow-none outline-none transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_16px_rgba(196,122,61,0.22)]'
 
   const mobileIconButtonClass =
-    'flex h-10 w-10 items-center justify-center rounded-full border-0 bg-transparent text-[var(--ink-700)] shadow-none outline-none transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_16px_rgba(196,122,61,0.22)] sm:h-11 sm:w-11'
+    'flex h-8 w-8 items-center justify-center rounded-full border-0 bg-transparent text-[var(--ink-700)] shadow-none outline-none transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_16px_rgba(196,122,61,0.22)] sm:h-9 sm:w-9'
+
+  const showAnnouncement = announcement && !bannerDismissed
+  const headerSpacerClass = showAnnouncement
+    ? 'h-[8.75rem] xl:h-[8.25rem]'
+    : 'h-[5.75rem] xl:h-[6.75rem]'
 
   const dropdownPanelClass =
     'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.94)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] backdrop-blur-xl'
@@ -255,19 +260,20 @@ export function Header() {
 
   return (
     <>
+      <div className="fixed inset-x-0 top-0 z-50 w-full">
       {/* ===== Глобальний банер від власника ===== */}
-      {announcement && !bannerDismissed && (() => {
-        const style = getBannerStyle(announcement.type)
+      {showAnnouncement && (() => {
+        const style = getBannerStyle(announcement!.type)
         return (
           <div
-            className="w-full px-4 py-2.5"
+            className="w-full px-3 py-1.5"
             style={{ background: style.bg, borderBottom: '1px solid ' + style.border }}
           >
             <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Bell className="h-4 w-4 shrink-0" style={{ color: style.color }} />
                 <p className="text-sm font-semibold" style={{ color: style.color }}>
-                  {announcement.message}
+                  {announcement!.message}
                 </p>
               </div>
               {/* Кнопка закрити банер */}
@@ -284,16 +290,16 @@ export function Header() {
         )
       })()}
 
-      {/* ===== Основна шапка ===== */}
-      <header className="sticky top-0 z-50 w-full px-3 pt-3 md:px-5 md:pt-5">
-        <div className="w-full rounded-[30px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.78)] shadow-[0_16px_36px_rgba(67,44,26,0.06)] backdrop-blur-xl">
-          <div className="px-4 py-4 md:px-6">
+      {/* ===== Основна шапка (фіксована) ===== */}
+      <header className="w-full px-2 pb-2 pt-2 md:px-3 md:pt-2">
+        <div className="w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl">
+          <div className="px-3 py-2 md:px-4 md:py-2.5">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
 
               {/* Логотип */}
               <button onClick={() => goTo('/')} type="button" className="min-w-0 flex-1 text-left">
-                <Logo size="sm" className="sm:hidden" />
-                <Logo size="md" className="hidden sm:block" />
+                <Logo size="header" className="sm:hidden" />
+                <Logo size="header" className="hidden sm:block" />
               </button>
 
               {/* Пошук (десктоп) */}
@@ -308,7 +314,7 @@ export function Header() {
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     placeholder={t('home.search')}
-                    className="input-glass h-12 rounded-full pl-11 pr-4"
+                    className="input-glass h-9 rounded-full pl-10 pr-3 text-sm"
                   />
                 </div>
               </form>
@@ -485,7 +491,7 @@ export function Header() {
                   <button
                     type="button"
                     onClick={() => goTo('/messages')}
-                    className="relative flex h-10 w-10 items-center justify-center rounded-full text-[var(--ink-700)]"
+                    className="relative flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-700)]"
                   >
                     <MessageSquare className="h-5 w-5" />
                     {unreadCount > 0 && (
@@ -500,7 +506,7 @@ export function Header() {
                 <button
                   onClick={() => goTo('/create-ad')}
                   type="button"
-                  className="inline-flex items-center gap-1 rounded-full border-0 bg-transparent px-2 py-2 text-xs font-semibold text-[var(--ink-800)] shadow-none outline-none sm:gap-2 sm:px-3 sm:text-sm"
+                  className="inline-flex items-center gap-1 rounded-full border-0 bg-transparent px-1.5 py-1 text-xs font-semibold text-[var(--ink-800)] shadow-none outline-none sm:gap-1.5 sm:px-2 sm:text-sm"
                 >
                   <PlusCircle className="h-5 w-5" />
                   <span className="hidden min-[430px]:inline">{t('header.createAd')}</span>
@@ -518,7 +524,7 @@ export function Header() {
             </div>
 
             {/* Нижня навігаційна панель (десктоп) */}
-            <div className="mt-4 hidden items-end justify-between gap-6 border-t border-[var(--glass-border)] pt-4 xl:flex">
+            <div className="mt-2 hidden items-end justify-between gap-4 border-t border-[var(--glass-border)] pt-2 xl:flex">
               <nav className="flex items-center gap-7">
                 {navItems.map(item => (
                   <button
@@ -544,7 +550,7 @@ export function Header() {
             </div>
 
             {/* Пошук (мобільний) */}
-            <form onSubmit={handleSearchSubmit} className="mt-4 xl:hidden">
+            <form onSubmit={handleSearchSubmit} className="mt-2.5 xl:hidden">
               <div className="relative">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
                 <input
@@ -680,6 +686,9 @@ export function Header() {
           )}
         </div>
       </header>
+      </div>
+
+      <div className={headerSpacerClass} aria-hidden />
     </>
   )
 }

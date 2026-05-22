@@ -1,11 +1,17 @@
 interface LogoProps {
   compact?: boolean
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'header' | 'lg' | 'xl'
   variant?: 'full' | 'icon' | 'text'
   className?: string
 }
 
 const sizes = {
+  header: {
+    gap: 'gap-1.5',
+    mark: 'h-8 w-8',
+    title: 'text-[1.1rem]',
+    subtitle: 'hidden',
+  },
   sm: {
     gap: 'gap-2',
     mark: 'h-9 w-9',
@@ -103,9 +109,11 @@ export function Logo({
       </div>
 
       {/* Підпис показуємо тільки в повному варіанті. */}
-      <div className={`${current.subtitle} mt-1.5 uppercase tracking-[0.22em] text-[#5C4D41]`}>
-        Build & Renovate
-      </div>
+      {current.subtitle !== 'hidden' && (
+        <div className={`${current.subtitle} mt-1.5 uppercase tracking-[0.22em] text-[#5C4D41]`}>
+          Build & Renovate
+        </div>
+      )}
     </div>
   )
 
