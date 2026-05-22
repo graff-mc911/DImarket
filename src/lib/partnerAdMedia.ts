@@ -4,6 +4,25 @@ import { youtubePosterUrl } from './youtubeMedia'
 /** Центральний герой — одна анімована картка Baumit */
 export const CENTER_HERO_CAMPAIGN_ID = '28885e84-4be9-4ba7-8fa8-fac766c5f1f8'
 
+/** Верхні 2 слоти бокової колонки — відеореклама інструмент/утеплення */
+export const SIDE_TOP_VIDEO_IDS = [
+  'f81e653d-ca9e-4081-a4ca-2a17395e9924', // Knauf
+  '89623059-83ca-4151-9f09-8fcfcb8ed889', // Bosch
+  '0431275c-451e-47ed-a7a7-44167a577a29', // Würth
+  '1ec41ada-4feb-4a36-b1a9-8494622ea30f', // Hilti
+  'a1000001-0001-4001-8001-000000000001', // Rockwool
+] as const
+
+/** Нижні 2 слоти — офіційна реклама сантехніки, вікон, плитки, фасадів */
+export const SIDE_BOTTOM_VIDEO_IDS = [
+  '807b9715-ddcd-4d1f-b651-711a880a2c77', // Uponor
+  '6097ef50-bb68-4041-b83f-32ecee542aad', // VELUX
+  '69df3b9f-c702-4028-b998-fc3734dc76ed', // Geberit
+  'a1000002-0002-4002-8002-000000000002', // Ceresit
+  'a1000003-0003-4003-8003-000000000003', // Weber
+  'a1000004-0004-4004-8004-000000000004', // Sika
+] as const
+
 /** Оновлення медіа партнерів — офіційні ролики YouTube + фото за темою */
 export type PartnerMediaPatch = Pick<
   AdCampaign,
@@ -68,11 +87,7 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     id: '807b9715-ddcd-4d1f-b651-711a880a2c77',
     title: 'Uponor — труби PEX та опалення',
     description: 'Системи водопостачання, теплої підлоги та монтажні комплекти Uponor.',
-    image_url:
-      'https://images.unsplash.com/photo-1585704032915-8ig20df24b8e?w=900&h=560&fit=crop&q=85',
-    media_url:
-      'https://images.unsplash.com/photo-1585704032915-8ig20df24b8e?w=900&h=560&fit=crop&q=85',
-    media_type: 'image',
+    ...yt('TJNCDVAaPzg'),
     link_url: 'https://www.uponor.com',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },
@@ -80,11 +95,7 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     id: '6097ef50-bb68-4041-b83f-32ecee542aad',
     title: 'VELUX — мансардні вікна та світлові тунелі',
     description: 'Вікна, жалюзі та монтажні комплекти для дахів і мансард.',
-    image_url:
-      'https://images.unsplash.com/photo-1632776043539-6aedd71a6190?w=900&h=560&fit=crop&q=85',
-    media_url:
-      'https://images.unsplash.com/photo-1632776043539-6aedd71a6190?w=900&h=560&fit=crop&q=85',
-    media_type: 'image',
+    ...yt('7qxe84cpz-A'),
     link_url: 'https://www.velux.com',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },
@@ -93,11 +104,7 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     title: 'Geberit — інсталяції та зливні системи',
     description:
       'Сховані інсталяції, зливні арматури та рішення для ванних кімнат у новобудовах.',
-    image_url:
-      'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=900&h=560&fit=crop&q=85',
-    media_url:
-      'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=900&h=560&fit=crop&q=85',
-    media_type: 'image',
+    ...yt('el3KSQi6YYo'),
     link_url: 'https://www.geberit.com',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
@@ -114,12 +121,8 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     id: 'a1000002-0002-4002-8002-000000000002',
     title: 'Ceresit — плиткові клеї та затирки',
     description:
-      'Системи Ceresit для облицювання, гідроізоляції та фасадів. Підтримка майстрів на об\'єкті.',
-    image_url:
-      'https://images.unsplash.com/photo-1625296316570-025e4c02e816?w=900&h=560&fit=crop&q=85',
-    media_url:
-      'https://images.unsplash.com/photo-1625296316570-025e4c02e816?w=900&h=560&fit=crop&q=85',
-    media_type: 'image',
+      'Системи Ceresit (Henkel) для облицювання, гідроізоляції та фасадів. Підтримка майстрів на об\'єкті.',
+    ...yt('nx5P6OOk4A8'),
     link_url: 'https://www.ceresit.ua',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },
@@ -128,11 +131,7 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     title: 'Weber — сухі будівельні суміші',
     description:
       'Штукатурки, клеї та фасадні рішення Weber (Saint-Gobain) для професійного будівництва.',
-    image_url:
-      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&h=560&fit=crop&q=85',
-    media_url:
-      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&h=560&fit=crop&q=85',
-    media_type: 'image',
+    ...yt('1EdI4XaJYUY'),
     link_url: 'https://www.weber.ua',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
@@ -140,11 +139,7 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     id: 'a1000004-0004-4004-8004-000000000004',
     title: 'Sika — гідроізоляція та добавки в бетон',
     description: 'Рішення Sika для фундаментів, підвалів, швів та промислових підлог.',
-    image_url:
-      'https://images.unsplash.com/photo-1541972664089-0221394fb162?w=900&h=560&fit=crop&q=85',
-    media_url:
-      'https://images.unsplash.com/photo-1541972664089-0221394fb162?w=900&h=560&fit=crop&q=85',
-    media_type: 'image',
+    ...yt('igG4GVejHGU'),
     link_url: 'https://www.sika.com/ua',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },

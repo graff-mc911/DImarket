@@ -1,5 +1,10 @@
 import { supabase } from './supabase'
-import { CENTER_HERO_CAMPAIGN_ID, mergeExtraPartnerCampaigns } from './partnerAdMedia'
+import {
+  CENTER_HERO_CAMPAIGN_ID,
+  mergeExtraPartnerCampaigns,
+  SIDE_BOTTOM_VIDEO_IDS,
+  SIDE_TOP_VIDEO_IDS,
+} from './partnerAdMedia'
 import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './youtubeMedia'
 import type { AdCampaign } from './types'
 import type { TranslationKey } from './i18n'
@@ -148,7 +153,7 @@ export function isAnimatedCampaign(campaign: AdCampaign): boolean {
   return getCampaignMediaType(campaign) === 'gif'
 }
 
-/** Верхні 2 слоти бокової колонки — відео; нижні 2 — статичні зображення */
+/** Верхні 2 слоти — брендові ролики інструмент/утеплення; нижні 2 — сантехніка, вікна, плитка, фасад */
 export function pickCampaignsForSideStack(
   all: AdCampaignWithAdvertiser[],
   position: 'left' | 'right',
@@ -156,12 +161,18 @@ export function pickCampaignsForSideStack(
 ): AdCampaignWithAdvertiser[] {
   if (all.length === 0 || count <= 0) return []
 
-  const videos = all.filter(isVideoCampaign)
-  const stills = all.filter((c) => !isVideoCampaign(c))
+  const topPool = SIDE_TOP_VIDEO_IDS.map((id) => all.find((c) => c.id === id)).filter(
+    (c): c is AdCampaignWithAdvertiser => !!c && isVideoCampaign(c),
+  )
+  const bottomPool = SIDE_BOTTOM_VIDEO_IDS.map((id) => all.find((c) => c.id === id)).filter(
+    (c): c is AdCampaignWithAdvertiser => !!c && isVideoCampaign(c),
+  )
+  const fallbackVideos = all.filter(isVideoCampaign)
+
   const topSlots = Math.min(2, count)
   const bottomSlots = count - topSlots
-  const videoOffset = position === 'right' ? 2 : 0
-  const stillOffset = position === 'right' ? 2 : 0
+  const topOffset = position === 'right' ? 2 : 0
+  const bottomOffset = position === 'right' ? 2 : 0
 
   const pick = (
     pool: AdCampaignWithAdvertiser[],
@@ -169,18 +180,17 @@ export function pickCampaignsForSideStack(
     n: number,
     fallback: AdCampaignWithAdvertiser[],
   ) => {
+    const source = pool.length > 0 ? pool : fallback
     const out: AdCampaignWithAdvertiser[] = []
     for (let i = 0; i < n; i++) {
-      const primary = pool[(offset + i) % Math.max(pool.length, 1)]
-      const fb = fallback[(offset + i) % Math.max(fallback.length, 1)]
-      out.push(primary ?? fb ?? all[i % all.length])
+      out.push(source[(offset + i) % Math.max(source.length, 1)] ?? all[i % all.length])
     }
     return out
   }
 
   return [
-    ...pick(videos, videoOffset, topSlots, stills),
-    ...pick(stills, stillOffset, bottomSlots, videos),
+    ...pick(topPool, topOffset, topSlots, fallbackVideos),
+    ...pick(bottomPool, bottomOffset, bottomSlots, fallbackVideos),
   ]
 }
 
