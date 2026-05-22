@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink, Globe as Globe2, MapPin, Megaphone, X } from 'lucide-react'
+import { useApp } from '../contexts/AppContext'
 import { supabase } from '../lib/supabase'
 import { AdCampaign } from '../lib/types'
 
@@ -8,6 +9,8 @@ interface MobileAdBannerProps {
 }
 
 export function MobileAdBanner({ variant }: MobileAdBannerProps) {
+  const { t } = useApp()
+
   // Даємо користувачу можливість закрити мобільний рекламний блок локально.
   const [adVisible, setAdVisible] = useState(true)
 
@@ -79,7 +82,7 @@ export function MobileAdBanner({ variant }: MobileAdBannerProps) {
             onClick={() => setAdVisible(false)}
             type="button"
             className="absolute right-3 top-3 rounded-full border border-white/70 bg-white/75 p-1 text-[#7a7168] transition hover:bg-white hover:text-[#2f2a24]"
-            aria-label="Закрити рекламу"
+            aria-label={t('ads.close')}
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -103,7 +106,7 @@ export function MobileAdBanner({ variant }: MobileAdBannerProps) {
           onClick={() => setAdVisible(false)}
           type="button"
           className="absolute right-3 top-3 rounded-full border border-white/70 bg-white/75 p-1 text-[#7a7168] transition hover:bg-white hover:text-[#2f2a24]"
-          aria-label="Закрити рекламу"
+          aria-label={t('ads.close')}
         >
           <X className="h-3.5 w-3.5" />
         </button>

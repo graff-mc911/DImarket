@@ -35,7 +35,7 @@ file_size_limit = "50MiB"
 [auth]
 enabled = true
 site_url = "http://localhost:5173"
-additional_redirect_urls = ["http://localhost:5173", "https://dimarket.market", "https://www.dimarket.market"]
+additional_redirect_urls = ["http://localhost:5173", "https://dimarket.app", "https://www.dimarket.app", "https://dimarket.market", "https://www.dimarket.market"]
 jwt_expiry = 3600
 enable_signup = true
 
