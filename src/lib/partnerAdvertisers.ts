@@ -122,6 +122,15 @@ export const BRAND_ADVERTISER_SEEDS: BrandAdvertiserSeed[] = [
     website: 'https://www.sika.com/ua',
     bio: '[demo_brand_advertiser] Sika — BUILD ON RELIABILITY. Гідроізоляція, бетон, герметики.',
   },
+  {
+    slug: 'philips',
+    profileId: 'e1000013-0013-4013-8013-000000000013',
+    campaignId: 'a1000005-0005-4005-8005-000000000005',
+    email: 'philips.ads@advertisers.dimarket.app',
+    fullName: 'Philips Lighting',
+    website: 'https://www.philips.ua',
+    bio: '[demo_brand_advertiser] Philips — Light that improves life. Освітлення для дому та об\'єкта.',
+  },
 ]
 
 export const BRAND_ADVERTISER_BY_CAMPAIGN_ID: Record<string, BrandAdvertiserSeed> = Object.fromEntries(

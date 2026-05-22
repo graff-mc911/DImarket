@@ -30,6 +30,8 @@ const MAP = {
   uponor: `${P}.__21_18_44-278f0377-598f-41cf-b0e5-12e97df4c35f.png`,
   velux: `${P}.__21_18_52-1a5515ce-d471-4ad5-b515-11dd1ba9028b.png`,
   geberit: `${P}.__21_18_37-873c0cb5-2464-4bed-8762-8c80efcc000e.png`,
+  philips:
+    'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_1e39f734-8ff3-4969-bd44-39946d2cb58b-4d99e20a-dd53-4934-b0e0-8404fc59d3b2.png',
 }
 
 mkdirSync(outDir, { recursive: true })

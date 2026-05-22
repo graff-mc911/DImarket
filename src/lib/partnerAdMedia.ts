@@ -12,11 +12,9 @@ export const SIDE_TOP_PARTNER_IDS = [
   '1ec41ada-4feb-4a36-b1a9-8494622ea30f', // Hilti
 ] as const
 
-/** Нижні бокові — ROCKWOOL, Ceresit, Sika (замість старих Unsplash-слотів; без чужих брендових PNG) */
+/** Нижні бокові слоти (3–4 у колонці) — Philips */
 export const SIDE_BOTTOM_PARTNER_IDS = [
-  'a1000001-0001-4001-8001-000000000001', // ROCKWOOL
-  'a1000002-0002-4002-8002-000000000002', // Ceresit
-  'a1000004-0004-4004-8004-000000000004', // Sika
+  'a1000005-0005-4005-8005-000000000005', // Philips
 ] as const
 
 /** @deprecated */
@@ -155,6 +153,16 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
     link_url: 'https://www.sika.com/ua',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
+  'a1000005-0005-4005-8005-000000000005': {
+    id: 'a1000005-0005-4005-8005-000000000005',
+    title: 'Philips — Light that improves life.',
+    description:
+      'Інноваційні рішення Philips для освітлення: комфорт, якість і надійність у кожному просторі та моменті. ' +
+      'Знайдіть на DImarket.app.',
+    ...brandBanner('philips'),
+    link_url: 'https://www.philips.ua',
+    placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
+  },
 }
 
 const FALLBACK_OWNER_ID = 'b64a9350-4f7e-46bf-8697-d39c02491ad0'
@@ -261,6 +269,31 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
     approved_by: FALLBACK_OWNER_ID,
     approved_at: new Date().toISOString(),
     review_note: 'Presence partner',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  } as AdCampaign,
+  {
+    id: 'a1000005-0005-4005-8005-000000000005',
+    advertiser_id: advertiserIdForCampaign('a1000005-0005-4005-8005-000000000005'),
+    ...PARTNER_MEDIA_BY_ID['a1000005-0005-4005-8005-000000000005'],
+    placement: 'sidebar',
+    geo_scope: 'global',
+    country_code: 'UA',
+    country_name: 'Україна',
+    city_name: null,
+    cities: null,
+    region_name: null,
+    starts_at: new Date(Date.now() - 5 * 86400000).toISOString(),
+    ends_at: new Date(Date.now() + 120 * 86400000).toISOString(),
+    status: 'active',
+    impressions: 1850,
+    clicks: 58,
+    stripe_payment_id: 'presence_free_a1000005',
+    price_paid: 128,
+    currency_paid: 'eur',
+    approved_by: FALLBACK_OWNER_ID,
+    approved_at: new Date().toISOString(),
+    review_note: 'Presence partner — Philips bottom rail',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   } as AdCampaign,

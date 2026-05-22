@@ -206,6 +206,20 @@ const BRANDS = [
     link: 'https://www.sika.com/ua',
     placement: 'home',
   },
+  {
+    slug: 'philips',
+    profileId: 'e1000013-0013-4013-8013-000000000013',
+    campaignId: 'a1000005-0005-4005-8005-000000000005',
+    email: 'philips.ads@advertisers.dimarket.app',
+    fullName: 'Philips Lighting',
+    website: 'https://www.philips.ua',
+    title: 'Philips — Light that improves life.',
+    description:
+      'Інноваційні рішення Philips для освітлення: комфорт, якість і надійність у кожному просторі. Знайдіть на DImarket.app.',
+    image: brandImg('philips'),
+    link: 'https://www.philips.ua',
+    placement: 'sidebar',
+  },
 ]
 
 const LEGACY_PLACEMENTS = ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer']
