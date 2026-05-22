@@ -73,25 +73,25 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
   if (stackCount && stackCount >= 2) {
     return (
       <div className="hidden h-full min-h-full w-full flex-1 flex-col xl:flex">
-        <div className="flex h-full min-h-0 flex-1 flex-col justify-between gap-2 py-1">
+        <div className="grid h-1/2 min-h-0 w-full grid-rows-6 gap-1 py-0.5">
           {loading
             ? Array.from({ length: stackCount }, (_, i) => (
                 <div
                   key={i}
-                  className={`min-h-0 flex-1 animate-pulse rounded-[18px] bg-white/20 ${adOverlayGlow}`}
+                  className={`min-h-0 overflow-hidden animate-pulse rounded-[14px] bg-white/20 ${adOverlayGlow}`}
                 />
               ))
             : stackCampaigns.length > 0
               ? stackCampaigns.map((campaign, index) => (
-                  <div key={`${campaign.id}-${index}`} className="min-h-0 flex-1">
-                    <AdOverlayCard campaign={campaign} variant="stack" className="h-full" />
+                  <div key={`${campaign.id}-${index}`} className="min-h-0 overflow-hidden">
+                    <AdOverlayCard campaign={campaign} variant="stack" className="h-full min-h-0" />
                   </div>
                 ))
               : Array.from({ length: stackCount }, (_, i) => (
-                  <div key={i} className="min-h-0 flex-1">
+                  <div key={i} className="min-h-0 overflow-hidden">
                     <AdOverlayPlaceholder
                       variant="stack"
-                      className="h-full"
+                      className="h-full min-h-0"
                       title={t('ads.adSpace')}
                       subtitle={t('ads.advertiseHere')}
                       onClick={() => navigateTo('/advertising')}

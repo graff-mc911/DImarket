@@ -27,11 +27,11 @@ const variantStyles: Record<
   { block: string; brand: string; title: string; meta: string; badge: string }
 > = {
   stack: {
-    block: 'h-full min-h-[72px]',
-    brand: 'text-[10px]',
-    title: 'text-[11px] line-clamp-2',
-    meta: 'text-[10px]',
-    badge: 'text-[9px] px-2 py-0.5',
+    block: 'h-full min-h-0',
+    brand: 'text-[9px]',
+    title: 'text-[10px] line-clamp-1',
+    meta: 'text-[9px]',
+    badge: 'text-[8px] px-1.5 py-0',
   },
   legacy: {
     block: 'min-h-[220px]',
@@ -81,7 +81,9 @@ export function AdOverlayCard({
   const brand = getAdvertiserLabel(campaign)
   const mediaUrl = getCampaignMediaUrl(campaign)
   const styles = variantStyles[variant]
-  const pad = variant === 'stack' ? 'p-2.5' : variant === 'mobile-sticky' ? 'p-3 pr-10' : 'p-4'
+  const pad =
+    variant === 'stack' ? 'p-1.5' : variant === 'mobile-sticky' ? 'p-3 pr-10' : 'p-4'
+  const isStack = variant === 'stack'
 
   return (
     <a
@@ -105,38 +107,65 @@ export function AdOverlayCard({
       />
 
       <div className={`relative z-[1] flex h-full min-h-[inherit] flex-col justify-between ${pad}`}>
-        <span
-          className={`inline-flex w-fit items-center gap-1 rounded-full bg-black/35 font-bold uppercase tracking-[0.12em] text-white/95 backdrop-blur-sm ${styles.badge}`}
-        >
-          <Megaphone className="h-3 w-3 shrink-0" />
-          {t('ads.badge')}
-        </span>
-
-        <div className="mt-auto space-y-0.5 pt-2">
-          {brand && (
-            <p className={`font-bold uppercase tracking-[0.1em] text-white/75 ${styles.brand}`}>
-              {brand}
-            </p>
-          )}
-          <h3 className={`font-extrabold leading-snug text-white ${styles.title}`}>
-            {campaign.title}
-          </h3>
-          {showDescription && campaign.description && (
-            <p className={`line-clamp-2 leading-5 text-white/85 ${styles.meta}`}>
-              {campaign.description}
-            </p>
-          )}
-          {showGeo && (
-            <p className={`line-clamp-1 text-white/75 ${styles.meta}`}>
-              {getGeoTargetLabel(campaign, t)}
-            </p>
-          )}
+        {!isStack && (
           <span
-            className={`inline-flex items-center gap-1 font-semibold text-white/95 ${styles.meta}`}
+            className={`inline-flex w-fit items-center gap-1 rounded-full bg-black/35 font-bold uppercase tracking-[0.12em] text-white/95 backdrop-blur-sm ${styles.badge}`}
           >
-            {t('ads.visit')}
-            <ExternalLink className="h-3.5 w-3.5" />
+            <Megaphone className="h-3 w-3 shrink-0" />
+            {t('ads.badge')}
           </span>
+        )}
+
+        <div className={`mt-auto ${isStack ? 'pt-0.5' : 'space-y-0.5 pt-2'}`}>
+          {isStack ? (
+            <div className="flex items-end justify-between gap-1">
+              <div className="min-w-0 flex-1">
+                {brand && (
+                  <p
+                    className={`truncate font-bold uppercase tracking-[0.08em] text-white/70 ${styles.brand}`}
+                  >
+                    {brand}
+                  </p>
+                )}
+                <h3 className={`font-extrabold leading-tight text-white ${styles.title}`}>
+                  {campaign.title}
+                </h3>
+              </div>
+              <span
+                className={`inline-flex shrink-0 items-center gap-0.5 font-semibold text-white/95 ${styles.meta}`}
+              >
+                <span className="sr-only">{t('ads.visit')}</span>
+                <ExternalLink className="h-3 w-3" />
+              </span>
+            </div>
+          ) : (
+            <>
+              {brand && (
+                <p className={`font-bold uppercase tracking-[0.1em] text-white/75 ${styles.brand}`}>
+                  {brand}
+                </p>
+              )}
+              <h3 className={`font-extrabold leading-snug text-white ${styles.title}`}>
+                {campaign.title}
+              </h3>
+              {showDescription && campaign.description && (
+                <p className={`line-clamp-2 leading-5 text-white/85 ${styles.meta}`}>
+                  {campaign.description}
+                </p>
+              )}
+              {showGeo && (
+                <p className={`line-clamp-1 text-white/75 ${styles.meta}`}>
+                  {getGeoTargetLabel(campaign, t)}
+                </p>
+              )}
+              <span
+                className={`inline-flex items-center gap-1 font-semibold text-white/95 ${styles.meta}`}
+              >
+                {t('ads.visit')}
+                <ExternalLink className="h-3.5 w-3.5" />
+              </span>
+            </>
+          )}
         </div>
       </div>
     </a>
@@ -160,7 +189,7 @@ export function AdOverlayPlaceholder({
 }: AdOverlayPlaceholderProps) {
   const { t } = useApp()
   const styles = variantStyles[variant]
-  const pad = variant === 'stack' ? 'p-2.5' : 'p-4'
+  const pad = variant === 'stack' ? 'p-1.5' : 'p-4'
 
   return (
     <button
@@ -169,18 +198,27 @@ export function AdOverlayPlaceholder({
       className={`relative block w-full overflow-hidden bg-[linear-gradient(135deg,rgba(71,85,105,0.55),rgba(51,65,85,0.72))] text-left ${adOverlayGlow} ${styles.block} ${className}`}
     >
       <div
-        className={`relative z-[1] flex h-full min-h-[inherit] flex-col justify-between ${pad}`}
+        className={`relative z-[1] flex h-full min-h-[inherit] flex-col justify-end ${pad}`}
       >
-        <span
-          className={`inline-flex w-fit items-center gap-1 rounded-full bg-black/30 font-bold uppercase tracking-[0.12em] text-white/90 ${styles.badge}`}
-        >
-          <Megaphone className="h-3 w-3" />
-          {t('ads.badge')}
-        </span>
-        <div className="mt-auto space-y-1 pt-2">
-          <p className={`font-extrabold text-white ${styles.title}`}>{title}</p>
-          <p className={`text-white/80 ${styles.meta}`}>{subtitle}</p>
-        </div>
+        {variant === 'stack' ? (
+          <div className="min-w-0">
+            <p className={`font-extrabold text-white ${styles.title}`}>{title}</p>
+            <p className={`truncate text-white/80 ${styles.meta}`}>{subtitle}</p>
+          </div>
+        ) : (
+          <>
+            <span
+              className={`mb-auto inline-flex w-fit items-center gap-1 rounded-full bg-black/30 font-bold uppercase tracking-[0.12em] text-white/90 ${styles.badge}`}
+            >
+              <Megaphone className="h-3 w-3" />
+              {t('ads.badge')}
+            </span>
+            <div className="mt-auto space-y-1 pt-2">
+              <p className={`font-extrabold text-white ${styles.title}`}>{title}</p>
+              <p className={`text-white/80 ${styles.meta}`}>{subtitle}</p>
+            </div>
+          </>
+        )}
       </div>
     </button>
   )
