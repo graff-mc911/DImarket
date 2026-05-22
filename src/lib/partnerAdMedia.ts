@@ -1,4 +1,5 @@
 import type { AdCampaign } from './types'
+import { BRAND_ADVERTISER_BY_CAMPAIGN_ID } from './partnerAdvertisers'
 
 /** Центральний герой — Baumit */
 export const CENTER_HERO_CAMPAIGN_ID = '28885e84-4be9-4ba7-8fa8-fac766c5f1f8'
@@ -149,12 +150,16 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
   },
 }
 
-const PARTNER_ADVERTISER_ID = 'b64a9350-4f7e-46bf-8697-d39c02491ad0'
+const FALLBACK_OWNER_ID = 'b64a9350-4f7e-46bf-8697-d39c02491ad0'
+
+function advertiserIdForCampaign(campaignId: string): string {
+  return BRAND_ADVERTISER_BY_CAMPAIGN_ID[campaignId]?.profileId ?? FALLBACK_OWNER_ID
+}
 
 export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
   {
     id: 'a1000001-0001-4001-8001-000000000001',
-    advertiser_id: PARTNER_ADVERTISER_ID,
+    advertiser_id: advertiserIdForCampaign('a1000001-0001-4001-8001-000000000001'),
     ...PARTNER_MEDIA_BY_ID['a1000001-0001-4001-8001-000000000001'],
     placement: 'sidebar',
     geo_scope: 'global',
@@ -171,7 +176,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
     stripe_payment_id: 'presence_free_a1000001',
     price_paid: 135,
     currency_paid: 'eur',
-    approved_by: PARTNER_ADVERTISER_ID,
+    approved_by: FALLBACK_OWNER_ID,
     approved_at: new Date().toISOString(),
     review_note: 'Presence partner — image',
     created_at: new Date().toISOString(),
@@ -179,7 +184,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
   } as AdCampaign,
   {
     id: 'a1000002-0002-4002-8002-000000000002',
-    advertiser_id: PARTNER_ADVERTISER_ID,
+    advertiser_id: advertiserIdForCampaign('a1000002-0002-4002-8002-000000000002'),
     ...PARTNER_MEDIA_BY_ID['a1000002-0002-4002-8002-000000000002'],
     placement: 'home',
     geo_scope: 'global',
@@ -196,7 +201,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
     stripe_payment_id: 'presence_free_a1000002',
     price_paid: 125,
     currency_paid: 'eur',
-    approved_by: PARTNER_ADVERTISER_ID,
+    approved_by: FALLBACK_OWNER_ID,
     approved_at: new Date().toISOString(),
     review_note: 'Presence partner',
     created_at: new Date().toISOString(),
@@ -204,7 +209,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
   } as AdCampaign,
   {
     id: 'a1000003-0003-4003-8003-000000000003',
-    advertiser_id: PARTNER_ADVERTISER_ID,
+    advertiser_id: advertiserIdForCampaign('a1000003-0003-4003-8003-000000000003'),
     ...PARTNER_MEDIA_BY_ID['a1000003-0003-4003-8003-000000000003'],
     placement: 'listings',
     geo_scope: 'global',
@@ -221,7 +226,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
     stripe_payment_id: 'presence_free_a1000003',
     price_paid: 115,
     currency_paid: 'eur',
-    approved_by: PARTNER_ADVERTISER_ID,
+    approved_by: FALLBACK_OWNER_ID,
     approved_at: new Date().toISOString(),
     review_note: 'Presence partner',
     created_at: new Date().toISOString(),
@@ -229,7 +234,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
   } as AdCampaign,
   {
     id: 'a1000004-0004-4004-8004-000000000004',
-    advertiser_id: PARTNER_ADVERTISER_ID,
+    advertiser_id: advertiserIdForCampaign('a1000004-0004-4004-8004-000000000004'),
     ...PARTNER_MEDIA_BY_ID['a1000004-0004-4004-8004-000000000004'],
     placement: 'home',
     geo_scope: 'global',
@@ -246,7 +251,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
     stripe_payment_id: 'presence_free_a1000004',
     price_paid: 105,
     currency_paid: 'eur',
-    approved_by: PARTNER_ADVERTISER_ID,
+    approved_by: FALLBACK_OWNER_ID,
     approved_at: new Date().toISOString(),
     review_note: 'Presence partner',
     created_at: new Date().toISOString(),
@@ -256,10 +261,12 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
 
 export function applyPartnerMediaOverride<T extends AdCampaign>(campaign: T): T {
   const patch = PARTNER_MEDIA_BY_ID[campaign.id]
+  const brandAdvertiser = BRAND_ADVERTISER_BY_CAMPAIGN_ID[campaign.id]
   if (!patch) return campaign
   return {
     ...campaign,
     ...patch,
+    advertiser_id: brandAdvertiser?.profileId ?? campaign.advertiser_id,
     placement: campaign.placement,
     placements: patch.placements ?? campaign.placements,
   }

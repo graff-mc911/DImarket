@@ -191,9 +191,9 @@ export function Dashboard() {
 
         supabase
           .from('ad_campaigns')
-          .select('*')
+          .select('*, advertiser:profiles!advertiser_id(full_name, bio, website)')
           .order('created_at', { ascending: false })
-          .limit(10),
+          .limit(24),
 
         supabase
           .from('feedback_messages')
@@ -772,6 +772,20 @@ export function Dashboard() {
                               {campaign.description && (
                                 <p className="mt-3 text-sm leading-6 text-[#6f665d]">
                                   {campaign.description}
+                                </p>
+                              )}
+
+                              {(campaign as { advertiser?: { full_name?: string | null } }).advertiser
+                                ?.full_name && (
+                                <p className="mt-2 text-sm font-semibold text-[#5f5a54]">
+                                  Рекламодавець:{' '}
+                                  {(campaign as { advertiser: { full_name: string } }).advertiser.full_name}
+                                </p>
+                              )}
+
+                              {campaign.review_note?.includes('[demo_brand_advertiser]') && (
+                                <p className="mt-2 rounded-[12px] bg-[rgba(99,102,241,0.08)] px-3 py-1.5 text-xs font-semibold text-[#4338ca]">
+                                  Демо-бренд на банерах — можна видалити кнопкою нижче
                                 </p>
                               )}
 
