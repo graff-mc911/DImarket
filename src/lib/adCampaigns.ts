@@ -8,6 +8,7 @@ import {
 } from './adPlacementSlots'
 import {
   CENTER_HERO_CAMPAIGN_ID,
+  FOOTER_BANNER_CAMPAIGN_ID,
   mergeExtraPartnerCampaigns,
   SIDE_BOTTOM_PARTNER_IDS,
   SIDE_TOP_PARTNER_IDS,
@@ -318,7 +319,9 @@ export function pickMobileCampaign(
     return pickCampaignByPlacement(campaigns, 'mobile_sticky', 0)
   }
   if (variant === 'horizontal') {
-    return pickCampaignByPlacement(campaigns, 'home', 1)
+    const footer = campaigns.find((c) => c.id === FOOTER_BANNER_CAMPAIGN_ID)
+    if (footer) return footer
+    return pickCampaignByPlacement(campaigns, 'footer', 0) || pickCampaignByPlacement(campaigns, 'home', 1)
   }
   return (
     pickCampaignByPlacement(campaigns, 'sidebar', inlineIndex - 1) ||

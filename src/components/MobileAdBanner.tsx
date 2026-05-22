@@ -79,8 +79,10 @@ export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBanne
     )
   }
 
+  const showOnDesktop = variant === 'horizontal'
+
   return (
-    <div className="my-4 lg:hidden">
+    <div className={showOnDesktop ? 'my-4' : 'my-4 lg:hidden'}>
       <div className="relative">
         <button
           onClick={() => setAdVisible(false)}
