@@ -1,20 +1,13 @@
-import { ExternalLink, Megaphone, Play } from 'lucide-react'
+import { ExternalLink, Megaphone } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import {
   AD_MEDIA_FALLBACK,
   getAdvertiserLabel,
-  getCampaignMediaType,
-  getCampaignMediaUrl,
-  getCampaignPosterUrl,
   getGeoTargetLabel,
+  getPublicBannerImageUrl,
   trackAdClick,
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
-import {
-  isYoutubeMediaUrl,
-  parseYoutubeVideoId,
-  youtubeEmbedSrc,
-} from '../lib/youtubeMedia'
 
 export const adOverlayGlow =
   'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_2px_8px_rgba(67,44,26,0.07)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_3px_12px_rgba(67,44,26,0.1)]'
@@ -109,74 +102,12 @@ function AdCampaignMedia({
   badgeClass: string
 }) {
   const { t } = useApp()
-  const mediaType = getCampaignMediaType(campaign)
-  const poster = getCampaignPosterUrl(campaign)
-  const mediaSrc = getCampaignMediaUrl(campaign)
-
-  if (mediaType === 'video') {
-    const youtubeId = isYoutubeMediaUrl(mediaSrc) ? parseYoutubeVideoId(mediaSrc) : null
-
-    return (
-      <div className={`relative overflow-hidden bg-black/5 ${imageClass}`}>
-        {youtubeId ? (
-          <iframe
-            src={youtubeEmbedSrc(youtubeId)}
-            title={campaign.title}
-            className="pointer-events-none absolute inset-0 h-full w-full scale-[1.35] object-cover"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            referrerPolicy="strict-origin-when-cross-origin"
-            loading="lazy"
-          />
-        ) : (
-          <video
-            src={mediaSrc}
-            poster={poster}
-            className="h-full w-full object-cover"
-            muted
-            playsInline
-            loop
-            autoPlay
-            preload="metadata"
-          />
-        )}
-        <span
-          className={`absolute left-1.5 top-1.5 z-[1] inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/40 font-bold uppercase tracking-[0.08em] text-white/95 ${badgeClass}`}
-        >
-          {variant === 'center' ? (
-            t('ads.animBadge')
-          ) : (
-            <>
-              <Play className="h-2.5 w-2.5 shrink-0 fill-current" />
-              {t('ads.videoBadge')}
-            </>
-          )}
-        </span>
-      </div>
-    )
-  }
-
-  if (mediaType === 'gif') {
-    return (
-      <div className={`relative overflow-hidden bg-black/5 ${imageClass}`}>
-        <img
-          src={mediaSrc}
-          alt={campaign.title}
-          className="h-full w-full object-cover"
-          loading="lazy"
-        />
-        <span
-          className={`absolute left-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/35 font-bold uppercase tracking-[0.1em] text-white/95 ${badgeClass}`}
-        >
-          {t('ads.animBadge')}
-        </span>
-      </div>
-    )
-  }
+  const imageSrc = getPublicBannerImageUrl(campaign)
 
   return (
     <div className={`relative overflow-hidden bg-[rgba(255,248,241,0.5)] ${imageClass}`}>
       <img
-        src={poster}
+        src={imageSrc}
         alt={campaign.title}
         className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
         loading="lazy"

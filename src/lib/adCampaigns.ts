@@ -9,8 +9,8 @@ import {
 import {
   CENTER_HERO_CAMPAIGN_ID,
   mergeExtraPartnerCampaigns,
-  SIDE_BOTTOM_VIDEO_IDS,
-  SIDE_TOP_VIDEO_IDS,
+  SIDE_BOTTOM_PARTNER_IDS,
+  SIDE_TOP_PARTNER_IDS,
 } from './partnerAdMedia'
 import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './youtubeMedia'
 import type { AdCampaign } from './types'
@@ -163,10 +163,19 @@ export function getCampaignMediaType(campaign: AdCampaign): 'image' | 'gif' | 'v
 }
 
 export function getCampaignPosterUrl(campaign: AdCampaign): string {
+  if (campaign.image_url?.trim()) return campaign.image_url.trim()
   const mediaUrl = campaign.media_url || ''
   const ytId = parseYoutubeVideoId(mediaUrl)
   if (ytId) return youtubePosterUrl(ytId)
-  return campaign.image_url || campaign.media_url || AD_MEDIA_FALLBACK
+  if (mediaUrl && !mediaUrl.includes('youtube') && !/\.(mp4|webm)(\?|$)/i.test(mediaUrl)) {
+    return mediaUrl
+  }
+  return AD_MEDIA_FALLBACK
+}
+
+/** У банерах на сайті — лише статичне зображення (без автовідео) */
+export function getPublicBannerImageUrl(campaign: AdCampaign): string {
+  return getCampaignPosterUrl(campaign)
 }
 
 export function getCampaignMediaUrl(campaign: AdCampaign): string {
@@ -200,13 +209,13 @@ export function pickCampaignsForSideStack(
   const pageKey = pageKeyFromSideAdsPage(page)
   const side = position === 'left' ? 'left' : 'right'
 
-  const topPool = SIDE_TOP_VIDEO_IDS.map((id) => all.find((c) => c.id === id)).filter(
-    (c): c is AdCampaignWithAdvertiser => !!c && isVideoCampaign(c),
+  const topPool = SIDE_TOP_PARTNER_IDS.map((id) => all.find((c) => c.id === id)).filter(
+    (c): c is AdCampaignWithAdvertiser => !!c,
   )
-  const bottomPool = SIDE_BOTTOM_VIDEO_IDS.map((id) => all.find((c) => c.id === id)).filter(
-    (c): c is AdCampaignWithAdvertiser => !!c && isVideoCampaign(c),
+  const bottomPool = SIDE_BOTTOM_PARTNER_IDS.map((id) => all.find((c) => c.id === id)).filter(
+    (c): c is AdCampaignWithAdvertiser => !!c,
   )
-  const fallbackVideos = all.filter(isVideoCampaign)
+  const fallbackPool = all
 
   const topSlots = Math.min(2, count)
   const bottomSlots = count - topSlots
@@ -227,8 +236,8 @@ export function pickCampaignsForSideStack(
     return out
   }
 
-  const partnerTop = pickPartner(topPool, topOffset, topSlots, fallbackVideos)
-  const partnerBottom = pickPartner(bottomPool, bottomOffset, bottomSlots, fallbackVideos)
+  const partnerTop = pickPartner(topPool, topOffset, topSlots, fallbackPool)
+  const partnerBottom = pickPartner(bottomPool, bottomOffset, bottomSlots, fallbackPool)
   const partnerByIndex = [...partnerTop, ...partnerBottom]
 
   const out: AdCampaignWithAdvertiser[] = []
@@ -261,10 +270,9 @@ export function pickCenterHeroCampaign(
   if (slotPick) return slotPick
 
   const hero = all.find((c) => c.id === CENTER_HERO_CAMPAIGN_ID)
-  if (hero && (isAnimatedCampaign(hero) || isVideoCampaign(hero))) return hero
+  if (hero) return hero
 
-  const animated = all.filter((c) => isAnimatedCampaign(c) || isVideoCampaign(c))
-  return animated[0] ?? all[0] ?? null
+  return all[0] ?? null
 }
 
 /** @deprecated використовуйте pickCenterHeroCampaign */
