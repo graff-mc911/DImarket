@@ -399,17 +399,24 @@
   }
 
   /*
-   * Desktop (Chrome/Edge на Windows): backdrop-filter змішує бежевий фон із
-   * холодними напівпрозорими шарами → рожевий відтінок. Вимикаємо blur і
-   * використовуємо непрозорі теплі кольори, як на мобільному.
+   * Desktop / Windows: світло-оливковий фон, без backdrop-filter (без рожевого відтінку).
+   * Мобільні пристрої лишають бежевий --bg-canvas з :root.
    */
   @media (min-width: 768px) {
+    :root {
+      --bg-canvas: #e4e8d8;
+      --bg-soft: #dce3d2;
+      --bg-glass-top: #f0f3ea;
+      --bg-glass-bottom: #e8ede0;
+      --glass-bg: rgba(240, 243, 234, 0.94);
+    }
+
     html,
     body,
     #root,
     .app-shell,
     .page-bg {
-      background-color: #e9dccb !important;
+      background-color: var(--bg-canvas) !important;
     }
 
     .glass-card,
@@ -441,13 +448,13 @@
 
     .eyebrow,
     .stat-chip {
-      background: rgba(255, 252, 248, 0.92) !important;
+      background: rgba(244, 247, 238, 0.94) !important;
     }
 
     .input-glass,
     .select-glass,
     .input-hero {
-      background: rgba(255, 252, 248, 0.92) !important;
+      background: rgba(244, 247, 238, 0.94) !important;
     }
   }
 }

@@ -292,7 +292,7 @@ export function Header() {
 
       {/* ===== Основна шапка (фіксована) ===== */}
       <header className="w-full px-2 pb-2 pt-2 md:px-3 md:pt-2">
-        <div className="w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.98)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] md:bg-[#faf6f0] md:backdrop-blur-none">
+        <div className="w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.98)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] md:bg-[var(--bg-glass-top)] md:backdrop-blur-none">
           <div className="px-3 py-2 md:px-4 md:py-2.5">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
 
