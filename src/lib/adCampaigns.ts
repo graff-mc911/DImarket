@@ -30,8 +30,6 @@ export function isPaidCampaign(campaign: AdCampaign): boolean {
   if (campaign.stripe_payment_id) return true
   if (campaign.price_paid != null && Number(campaign.price_paid) > 0) return true
   if (campaign.approved_by) return true
-  // Активні кампанії в БД (демо / до застосування SQL-міграції paid gate)
-  if (campaign.status === 'active') return true
   return false
 }
 
@@ -113,8 +111,18 @@ export function getCampaignMediaUrl(campaign: AdCampaign): string {
 
 export function getAdvertiserLabel(campaign: AdCampaignWithAdvertiser): string | null {
   const name = campaign.advertiser?.full_name?.trim()
-  if (name) return name
-  return null
+  const looksLikeAccountLogin =
+    !name ||
+    name.includes('@') ||
+    /^ivan\.sovban$/i.test(name) ||
+    /^[a-z0-9._-]+$/i.test(name)
+
+  if (name && !looksLikeAccountLogin) return name
+
+  const brandFromTitle = campaign.title.split('—')[0]?.trim()
+  if (brandFromTitle) return brandFromTitle
+
+  return name || null
 }
 
 export function getGeoTargetLabel(
