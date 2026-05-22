@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink, Megaphone, X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { usePaidAds } from '../contexts/PaidAdsContext'
 import {
-  fetchPaidAdCampaigns,
+  AD_MEDIA_FALLBACK,
   getCampaignMediaUrl,
   getGeoTargetLabel,
+  pickMobileCampaign,
   trackAdClick,
   trackAdImpression,
   type AdCampaignWithAdvertiser,
@@ -25,34 +27,23 @@ function mobileSlots(page?: 'home' | 'listings'): AdPlacement[] {
 
 export function MobileAdBanner({ variant, page }: MobileAdBannerProps) {
   const { t } = useApp()
+  const { loading, getForSlots } = usePaidAds()
   const [adVisible, setAdVisible] = useState(true)
-  const [campaigns, setCampaigns] = useState<AdCampaignWithAdvertiser[]>([])
-  const [loading, setLoading] = useState(true)
+
+  const mobileCampaigns = useMemo(
+    () => getForSlots(mobileSlots(page), 8),
+    [getForSlots, page],
+  )
+
+  const campaign = useMemo(
+    () => pickMobileCampaign(mobileCampaigns, variant),
+    [mobileCampaigns, variant],
+  )
 
   useEffect(() => {
-    void loadMobileCampaigns()
-  }, [page])
-
-  const loadMobileCampaigns = async () => {
-    setLoading(true)
-    try {
-      const paid = await fetchPaidAdCampaigns({
-        slots: mobileSlots(page),
-        limit: 6,
-      })
-      setCampaigns(paid)
-      if (paid[0]) void trackAdImpression(paid[0].id)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const campaign = useMemo(() => {
-    const stickyFirst = campaigns.find((c) =>
-      (c.placements || []).includes('mobile_sticky') || c.placement === 'mobile_sticky',
-    )
-    return stickyFirst || campaigns[0] || null
-  }, [campaigns])
+    if (loading || !campaign) return
+    void trackAdImpression(campaign.id)
+  }, [loading, campaign])
 
   if (!adVisible) return null
 
@@ -110,6 +101,7 @@ export function MobileAdBanner({ variant, page }: MobileAdBannerProps) {
 
 function MobileStickyCampaignCard({ campaign }: { campaign: AdCampaignWithAdvertiser }) {
   const { t } = useApp()
+  const mediaUrl = getCampaignMediaUrl(campaign)
 
   return (
     <a
@@ -124,16 +116,26 @@ function MobileStickyCampaignCard({ campaign }: { campaign: AdCampaignWithAdvert
         <span>{t('ads.badge')}</span>
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-3">
-        <div className="min-w-0">
+      <div className="mt-3 flex items-center gap-3">
+        <div className="h-12 w-16 shrink-0 overflow-hidden rounded-[12px] border border-[rgba(148,163,184,0.14)]">
+          <img
+            src={mediaUrl}
+            alt={campaign.title}
+            className="h-full w-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = AD_MEDIA_FALLBACK
+            }}
+          />
+        </div>
+        <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-extrabold text-[#2f2a24]">{campaign.title}</div>
-          <p className="mt-1 text-xs leading-5 text-[#6f665d]">
+          <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#6f665d]">
             {getGeoTargetLabel(campaign, t)}
           </p>
         </div>
-        <div className="rounded-full bg-[rgba(148,163,184,0.14)] px-3 py-2 text-xs font-semibold text-[#475569]">
-          320 x 50
-        </div>
+        <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-[#475569]">
+          <ExternalLink className="h-3.5 w-3.5" />
+        </span>
       </div>
     </a>
   )
@@ -173,7 +175,14 @@ function MobileInlineCampaignCard({
       <div
         className={`mt-4 overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.14)] bg-[rgba(248,250,252,0.68)] ${cardHeightClass}`}
       >
-        <img src={mediaUrl} alt={campaign.title} className="h-full w-full object-cover" />
+        <img
+          src={mediaUrl}
+          alt={campaign.title}
+          className="h-full w-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = AD_MEDIA_FALLBACK
+          }}
+        />
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-3">

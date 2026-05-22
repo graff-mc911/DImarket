@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from 'react'
 import { AppProvider }         from './contexts/AppContext'
+import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
 
@@ -74,11 +75,13 @@ function App() {
 
   return (
     <AppProvider>
-      <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-canvas)' }}>
-        {!hideHeaderFooter && <Header />}
-        <main className="flex-1">{getPage()}</main>
-        {!hideHeaderFooter && <Footer />}
-      </div>
+      <PaidAdsProvider>
+        <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-canvas)' }}>
+          {!hideHeaderFooter && <Header />}
+          <main className="flex-1">{getPage()}</main>
+          {!hideHeaderFooter && <Footer />}
+        </div>
+      </PaidAdsProvider>
     </AppProvider>
   )
 }

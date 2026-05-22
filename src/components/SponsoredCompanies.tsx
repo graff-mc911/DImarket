@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { ExternalLink, Megaphone } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { usePaidAds } from '../contexts/PaidAdsContext'
 import {
-  fetchPaidAdCampaigns,
+  AD_MEDIA_FALLBACK,
   getAdvertiserLabel,
   getCampaignMediaUrl,
   trackAdClick,
@@ -13,29 +14,15 @@ import { navigateTo } from '../lib/navigation'
 
 export function SponsoredCompanies() {
   const { t } = useApp()
-  const [campaigns, setCampaigns] = useState<AdCampaignWithAdvertiser[]>([])
-  const [loading, setLoading] = useState(true)
+  const { loading, getForSlots } = usePaidAds()
+  const campaigns = getForSlots(['home', 'sidebar', 'listings'], 8)
 
   useEffect(() => {
-    void loadSponsors()
-  }, [])
-
-  const loadSponsors = async () => {
-    setLoading(true)
-    try {
-      const paid = await fetchPaidAdCampaigns({
-        slots: ['home', 'sidebar', 'listings'],
-        limit: 8,
-      })
-      setCampaigns(paid)
-
-      for (const c of paid.slice(0, 4)) {
-        void trackAdImpression(c.id)
-      }
-    } finally {
-      setLoading(false)
+    if (loading || campaigns.length === 0) return
+    for (const c of campaigns.slice(0, 4)) {
+      void trackAdImpression(c.id)
     }
-  }
+  }, [loading, campaigns])
 
   if (!loading && campaigns.length === 0) {
     return null
@@ -109,6 +96,9 @@ function SponsorCard({ campaign }: { campaign: AdCampaignWithAdvertiser }) {
           src={mediaUrl}
           alt={campaign.title}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+          onError={(e) => {
+            e.currentTarget.src = AD_MEDIA_FALLBACK
+          }}
         />
         <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#64748b]">
           {t('ads.badge')}

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink, Globe2, MapPin, Megaphone, X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { usePaidAds } from '../contexts/PaidAdsContext'
 import {
-  fetchPaidAdCampaigns,
+  AD_MEDIA_FALLBACK,
   getCampaignMediaUrl,
   getGeoTargetLabel,
   trackAdClick,
@@ -26,29 +27,20 @@ function slotsForPage(page?: 'home' | 'listings'): AdPlacement[] {
 
 export function AdBanner({ position, sticky = true, page }: AdBannerProps) {
   const { t } = useApp()
+  const { loading, getForSlots } = usePaidAds()
   const [adVisible, setAdVisible] = useState(true)
-  const [campaigns, setCampaigns] = useState<AdCampaignWithAdvertiser[]>([])
-  const [loading, setLoading] = useState(true)
+
+  const campaigns = useMemo(
+    () => getForSlots(slotsForPage(page), 6),
+    [getForSlots, page],
+  )
 
   useEffect(() => {
-    void loadSidebarCampaigns()
-  }, [page])
-
-  const loadSidebarCampaigns = async () => {
-    setLoading(true)
-    try {
-      const paid = await fetchPaidAdCampaigns({
-        slots: slotsForPage(page),
-        limit: 6,
-      })
-      setCampaigns(paid)
-      for (const c of paid.slice(0, 2)) {
-        void trackAdImpression(c.id)
-      }
-    } finally {
-      setLoading(false)
+    if (loading || campaigns.length === 0) return
+    for (const c of campaigns.slice(0, 2)) {
+      void trackAdImpression(c.id)
     }
-  }
+  }, [loading, campaigns])
 
   const [primaryCampaign, secondaryCampaign] = useMemo(() => {
     if (campaigns.length === 0) return [null, null] as const
@@ -144,6 +136,9 @@ function CampaignCard({
               src={mediaUrl}
               alt={campaign.title}
               className="h-full w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = AD_MEDIA_FALLBACK
+              }}
             />
           </div>
 

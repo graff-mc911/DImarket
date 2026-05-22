@@ -39,16 +39,20 @@ export function getCampaignPlacements(campaign: AdCampaign): AdPlacement[] {
   return [campaign.placement]
 }
 
+const SLOT_FALLBACKS: Partial<Record<AdPlacement, AdPlacement[]>> = {
+  sidebar: ['sidebar', 'footer', 'home', 'listings'],
+  mobile_sticky: ['mobile_sticky', 'home', 'listings', 'sidebar', 'footer'],
+  home: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
+  listings: ['listings', 'home', 'sidebar', 'mobile_sticky', 'footer'],
+  footer: ['footer', 'sidebar', 'home', 'listings'],
+}
+
 export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement): boolean {
   const placements = getCampaignPlacements(campaign)
   if (placements.includes(slot)) return true
-  if (slot === 'sidebar') {
-    return placements.some((p) => p === 'sidebar' || p === 'footer' || p === 'home')
-  }
-  if (slot === 'mobile_sticky') {
-    return placements.some((p) =>
-      ['mobile_sticky', 'home', 'listings', 'sidebar'].includes(p),
-    )
+  const fallbacks = SLOT_FALLBACKS[slot]
+  if (fallbacks) {
+    return placements.some((p) => fallbacks.includes(p))
   }
   return false
 }
@@ -109,6 +113,38 @@ export function getCampaignMediaUrl(campaign: AdCampaign): string {
   return campaign.media_url || campaign.image_url
 }
 
+export const AD_MEDIA_FALLBACK =
+  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80'
+
+export function pickCampaignByPlacement(
+  campaigns: AdCampaign[],
+  preferred: AdPlacement,
+  fallbackIndex = 0,
+): AdCampaign | null {
+  const match = campaigns.find(
+    (c) =>
+      getCampaignPlacements(c).includes(preferred) || c.placement === preferred,
+  )
+  return match || campaigns[fallbackIndex] || campaigns[0] || null
+}
+
+export function pickMobileCampaign(
+  campaigns: AdCampaign[],
+  variant: 'inline' | 'sticky' | 'horizontal',
+): AdCampaign | null {
+  if (campaigns.length === 0) return null
+  if (variant === 'sticky') {
+    return pickCampaignByPlacement(campaigns, 'mobile_sticky', 0)
+  }
+  if (variant === 'horizontal') {
+    return pickCampaignByPlacement(campaigns, 'home', 1)
+  }
+  return (
+    pickCampaignByPlacement(campaigns, 'sidebar', 2) ||
+    pickCampaignByPlacement(campaigns, 'listings', 3)
+  )
+}
+
 export function getAdvertiserLabel(campaign: AdCampaignWithAdvertiser): string | null {
   const name = campaign.advertiser?.full_name?.trim()
   const looksLikeAccountLogin =
@@ -119,7 +155,7 @@ export function getAdvertiserLabel(campaign: AdCampaignWithAdvertiser): string |
 
   if (name && !looksLikeAccountLogin) return name
 
-  const brandFromTitle = campaign.title.split('—')[0]?.trim()
+  const brandFromTitle = campaign.title.split(/[—–-]/)[0]?.trim()
   if (brandFromTitle) return brandFromTitle
 
   return name || null
@@ -165,7 +201,7 @@ export async function fetchPaidAdCampaigns(
     .from('ad_campaigns')
     .select(selectWithAdvertiser)
     .eq('status', 'active')
-    .order('price_paid', { ascending: false, nullsFirst: false })
+    .order('price_paid', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(40)
 
@@ -174,7 +210,7 @@ export async function fetchPaidAdCampaigns(
       .from('ad_campaigns')
       .select('*')
       .eq('status', 'active')
-      .order('price_paid', { ascending: false, nullsFirst: false })
+      .order('price_paid', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(40)
     data = retry.data

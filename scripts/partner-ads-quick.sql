@@ -5,3 +5,9 @@ UPDATE ad_campaigns SET title='Uponor — інженерні мережі', desc
 UPDATE ad_campaigns SET title='VELUX — мансардні вікна', description='Світлові рішення для покрівлі та мансард.', image_url='https://images.unsplash.com/photo-1632776043539-6aedd71a6190?w=800&h=500&fit=crop', media_url='https://images.unsplash.com/photo-1632776043539-6aedd71a6190?w=800&h=500&fit=crop', link_url='https://www.velux.com', stripe_payment_id='presence_free_6097ef50', price_paid=99, approved_by='b64a9350-4f7e-46bf-8697-d39c02491ad0' WHERE id='6097ef50-bb68-4041-b83f-32ecee542aad';
 UPDATE ad_campaigns SET title='Geberit — сантехніка преміум', description='Інсталяції та рішення для ванних кімнат.', image_url='https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&h=500&fit=crop', media_url='https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&h=500&fit=crop', link_url='https://www.geberit.com', stripe_payment_id='presence_free_69df3b9f', price_paid=89, approved_by='b64a9350-4f7e-46bf-8697-d39c02491ad0' WHERE id='69df3b9f-c702-4028-b998-fc3734dc76ed';
 UPDATE ad_campaigns SET title='Hilti — інструмент для об''єктів', description='Перфоратори, анкери, оренда обладнання.', image_url='https://images.unsplash.com/photo-1541972664089-0221394fb162?w=800&h=500&fit=crop', media_url='https://images.unsplash.com/photo-1541972664089-0221394fb162?w=800&h=500&fit=crop', link_url='https://www.hilti.ua', stripe_payment_id='presence_free_1ec41ada', price_paid=79, approved_by='b64a9350-4f7e-46bf-8697-d39c02491ad0' WHERE id='1ec41ada-4feb-4a36-b1a9-8494622ea30f';
+
+-- Усі активні партнерські кампанії доступні на всіх слотах
+UPDATE ad_campaigns
+SET placements = ARRAY['home','sidebar','listings','mobile_sticky','footer']::text[]
+WHERE status = 'active'
+  AND stripe_payment_id LIKE 'presence_free_%';
