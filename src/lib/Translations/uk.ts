@@ -178,6 +178,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'category.materialsDesc': 'Будівельні матеріали',
   'category.tools': 'Інструменти',
   'category.toolsDesc': 'Інструменти та обладнання',
+  'category.cleaning': 'Прибирання / клінінг',
+  'category.cleaningDesc': 'Прибирання квартир, офісів та після ремонту',
   'category.name.construction': 'Будівництво',
   'category.name.renovation': 'Ремонт',
   'category.name.electrical': 'Електрика',
@@ -185,6 +187,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'category.name.handyman': 'Майстер на годину',
   'category.name.materials': 'Матеріали',
   'category.name.tools': 'Інструменти',
+  'category.name.cleaning': 'Прибирання / клінінг',
 
   // Listing Card
   'listing.serviceNeeded': 'Потрібна послуга',

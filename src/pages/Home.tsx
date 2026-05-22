@@ -3,7 +3,7 @@
 // Виправлено: всі видимі тексти винесені через t()
 // ============================================================
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
   Clock3,
@@ -67,7 +67,7 @@ export function Home() {
             .select('*')
             .is('parent_id', null)
             .order('name')
-            .limit(8),
+            .limit(12),
 
           supabase
             .from('profiles')
@@ -158,6 +158,22 @@ export function Home() {
     if (!job.category) return t('home.unknownCategory')
     return getCategoryName(job.category)
   }
+
+  const displayCategories = useMemo(() => {
+    const list = [...categories]
+    if (!list.some((c) => c.slug === 'cleaning')) {
+      list.push({
+        id: 'local-cleaning',
+        name: 'Cleaning',
+        slug: 'cleaning',
+        parent_id: null,
+        icon: '🧹',
+        description: null,
+        created_at: new Date(0).toISOString(),
+      })
+    }
+    return list
+  }, [categories])
 
   return (
     <div className="page-bg min-h-screen pb-24 lg:pb-8">
@@ -296,19 +312,19 @@ export function Home() {
           <div className="grid gap-4 md:grid-cols-3">
             <HowItWorksCard
               number="01"
-              icon={<UserRound className="h-6 w-6" />}
+              icon={<UserRound className="h-4 w-4" />}
               title={t('home.howStep1Title')}
               text={t('home.howStep1Text')}
             />
             <HowItWorksCard
               number="02"
-              icon={<Search className="h-6 w-6" />}
+              icon={<Search className="h-4 w-4" />}
               title={t('home.howStep2Title')}
               text={t('home.howStep2Text')}
             />
             <HowItWorksCard
               number="03"
-              icon={<MessageCircle className="h-6 w-6" />}
+              icon={<MessageCircle className="h-4 w-4" />}
               title={t('home.howStep3Title')}
               text={t('home.howStep3Text')}
             />
@@ -327,30 +343,16 @@ export function Home() {
 
           {loading ? (
             <LoadingBlock text={t('home.loading')} />
-          ) : categories.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {categories.map((category) => (
-                <button
+          ) : displayCategories.length > 0 ? (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {displayCategories.map((category) => (
+                <CategoryCard
                   key={category.id}
+                  name={getCategoryName(category)}
+                  description={getCategoryDescription(category)}
+                  icon={category.icon || '•'}
                   onClick={() => navigateTo(`/listings?category=${category.slug}`)}
-                  type="button"
-                  className="glass-card group p-5 text-left transition duration-300 hover:-translate-y-1"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-[18px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] text-xl text-[var(--accent-700)]">
-                      {category.icon || '•'}
-                    </div>
-                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-[var(--ink-500)] transition group-hover:text-[var(--accent-700)]" />
-                  </div>
-
-                  <h3 className="mt-4 text-[1rem] font-bold tracking-[-0.02em] text-[var(--ink-900)] transition group-hover:text-[var(--accent-700)]">
-                    {getCategoryName(category)}
-                  </h3>
-
-                  <p className="muted-text mt-3 text-[13px]">
-                    {getCategoryDescription(category)}
-                  </p>
-                </button>
+                />
               ))}
             </div>
           ) : (
@@ -473,35 +475,64 @@ function HowItWorksCard({
   text: string
 }) {
   return (
-    <div className="glass-card p-6">
-      <div className="mb-4 flex items-center gap-3">
-        <div
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px]"
-          style={{
-            background: 'rgba(199,138,96,0.14)',
-            color: 'var(--accent-700)',
-          }}
-        >
-          {icon}
-        </div>
+    <div className="glass-card flex items-start gap-3 p-3">
+      <div
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px]"
+        style={{
+          background: 'rgba(199,138,96,0.14)',
+          color: 'var(--accent-700)',
+        }}
+      >
+        {icon}
+      </div>
 
+      <div className="min-w-0">
         <span
-          className="text-xs font-bold uppercase tracking-[0.2em]"
+          className="text-[10px] font-bold uppercase tracking-[0.18em]"
           style={{ color: 'var(--ink-400)' }}
         >
           {number}
         </span>
+        <h3
+          className="mt-0.5 text-sm font-extrabold tracking-[-0.02em] leading-snug"
+          style={{ color: 'var(--ink-900)' }}
+        >
+          {title}
+        </h3>
+        <p className="muted-text mt-1 line-clamp-2 text-xs leading-relaxed">{text}</p>
       </div>
-
-      <h3
-        className="text-base font-extrabold tracking-[-0.02em]"
-        style={{ color: 'var(--ink-900)' }}
-      >
-        {title}
-      </h3>
-
-      <p className="muted-text mt-2 text-sm leading-relaxed">{text}</p>
     </div>
+  )
+}
+
+function CategoryCard({
+  name,
+  description,
+  icon,
+  onClick,
+}: {
+  name: string
+  description: string
+  icon: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="glass-card group flex w-full items-center gap-3 p-3 text-left transition duration-300 hover:-translate-y-0.5"
+    >
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] text-base text-[var(--accent-700)]">
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate text-sm font-bold tracking-[-0.02em] text-[var(--ink-900)] transition group-hover:text-[var(--accent-700)]">
+          {name}
+        </h3>
+        <p className="muted-text mt-0.5 line-clamp-1 text-[11px] leading-snug">{description}</p>
+      </div>
+      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[var(--ink-500)] transition group-hover:text-[var(--accent-700)]" />
+    </button>
   )
 }
 

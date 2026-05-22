@@ -180,6 +180,8 @@ export const enTranslations = {
   'category.materialsDesc': 'Building materials for sale',
   'category.tools': 'Tools',
   'category.toolsDesc': 'Tools and equipment',
+  'category.cleaning': 'Cleaning',
+  'category.cleaningDesc': 'Home, office, and post-renovation cleaning',
   'category.name.construction': 'Construction',
   'category.name.renovation': 'Renovation',
   'category.name.electrical': 'Electrical',
@@ -187,6 +189,7 @@ export const enTranslations = {
   'category.name.handyman': 'Handyman',
   'category.name.materials': 'Materials',
   'category.name.tools': 'Tools',
+  'category.name.cleaning': 'Cleaning',
 
   // Картка оголошення: тип, ціна, перегляди, статус premium.
   'listing.serviceNeeded': 'Service Needed',
