@@ -76,7 +76,7 @@ function App() {
   return (
     <AppProvider>
       <PaidAdsProvider>
-        <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-canvas)' }}>
+        <div className="app-shell min-h-screen flex flex-col">
           {!hideHeaderFooter && <Header />}
           <main className="flex-1">{getPage()}</main>
           {!hideHeaderFooter && <Footer />}

@@ -166,7 +166,7 @@ export function FooterStats() {
         {statCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-[16px] border border-white/38 bg-[rgba(255,255,255,0.30)] p-2.5 shadow-[0_6px_18px_rgba(15,23,42,0.04)] backdrop-blur-xl"
+            className="rounded-[16px] border border-white/38 bg-[rgba(255,252,248,0.92)] p-2.5 shadow-[0_6px_18px_rgba(89,63,48,0.04)] md:backdrop-blur-none"
           >
             <div className="mb-1.5 flex items-center gap-2">
               <card.icon className={`h-3.5 w-3.5 ${card.color}`} />
@@ -180,7 +180,7 @@ export function FooterStats() {
         ))}
       </div>
 
-      <div className="rounded-[18px] border border-white/38 bg-[rgba(255,255,255,0.30)] p-3 shadow-[0_6px_18px_rgba(15,23,42,0.04)] backdrop-blur-xl">
+      <div className="rounded-[18px] border border-white/38 bg-[rgba(255,252,248,0.92)] p-3 shadow-[0_6px_18px_rgba(89,63,48,0.04)] md:backdrop-blur-none">
         <div className="mb-2 flex flex-col gap-1.5 md:flex-row md:items-center md:justify-between">
           <div>
             <h4 className="text-sm font-extrabold text-[#2f2a24]">
@@ -211,7 +211,7 @@ export function FooterStats() {
             {stats.country_ranking.map((item, index) => (
               <div
                 key={`${item.country}-${index}`}
-                className="flex flex-col gap-1.5 rounded-[14px] border border-[rgba(148,163,184,0.14)] bg-[rgba(248,250,252,0.54)] p-2 lg:flex-row lg:items-center lg:justify-between"
+                className="flex flex-col gap-1.5 rounded-[14px] border border-[rgba(219,148,94,0.14)] bg-[rgba(250,244,236,0.88)] p-2 lg:flex-row lg:items-center lg:justify-between"
               >
                 <div className="flex min-w-0 items-center gap-2">
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(148,163,184,0.14)] text-[10px] font-bold text-[#475569]">

@@ -247,13 +247,13 @@ export function Header() {
     : 'h-[8rem] xl:h-[9rem]'
 
   const dropdownPanelClass =
-    'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.94)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] backdrop-blur-xl'
+    'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.98)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] md:backdrop-blur-none'
 
   const dropdownItemClass =
     'block w-full rounded-[18px] px-4 py-3 text-left text-sm font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
 
   const mobilePanelClass =
-    'max-h-[calc(100vh-8rem)] overflow-y-auto rounded-[26px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.92)] p-3 shadow-[0_18px_42px_rgba(67,44,26,0.08)] backdrop-blur-xl'
+    'max-h-[calc(100vh-8rem)] overflow-y-auto rounded-[26px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.98)] p-3 shadow-[0_18px_42px_rgba(67,44,26,0.08)] md:backdrop-blur-none'
 
   const mobileNavItemClass =
     'flex w-full items-center gap-3 rounded-[20px] px-4 py-3 text-left text-base font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
@@ -292,7 +292,7 @@ export function Header() {
 
       {/* ===== Основна шапка (фіксована) ===== */}
       <header className="w-full px-2 pb-2 pt-2 md:px-3 md:pt-2">
-        <div className="w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl">
+        <div className="w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.98)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] md:bg-[#faf6f0] md:backdrop-blur-none">
           <div className="px-3 py-2 md:px-4 md:py-2.5">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
 
