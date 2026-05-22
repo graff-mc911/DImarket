@@ -153,10 +153,11 @@ const BRANDS = [
     email: 'rockwool.ads@advertisers.dimarket.app',
     fullName: 'ROCKWOOL Україна',
     website: 'https://www.rockwool.ua',
-    title: 'ROCKWOOL — енергоефективність і вогнестійкість',
+    title: 'ROCKWOOL — більше комфорту. Краща ізоляція.',
     description:
-      'Кам\'яна вата для фасадів, дахів і акустики: негорюча теплоізоляція та комфорт у будинку. Дивіться на DImarket.app.',
-    image: brandImg('rockwool'),
+      'Кам\'яна вата ROCKWOOL для фасадів, дахів і перегородок: вогнестійкість, акустика та енергоефективність. Знайдіть на DImarket.app.',
+    image:
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&h=560&fit=crop&q=85',
     link: 'https://www.rockwool.ua',
     placement: 'sidebar',
   },
@@ -167,10 +168,11 @@ const BRANDS = [
     email: 'ceresit.ads@advertisers.dimarket.app',
     fullName: 'Ceresit (Henkel)',
     website: 'https://www.ceresit.ua',
-    title: 'Ceresit — системи облицювання та фасадів',
+    title: 'Ceresit — Build on quality',
     description:
-      'Клеї, затирки, гідроізоляція та ETICS Ceresit (Henkel) для професійного ремонту й фасадів. Знайдіть на DImarket.app.',
-    image: brandImg('ceresit'),
+      'Системи Ceresit (Henkel): плиткові клеї, затирки, гідроізоляція та ETICS. Надійні рішення для майстрів — DImarket.app.',
+    image:
+      'https://images.unsplash.com/photo-1625296316570-025e4c02e816?w=900&h=560&fit=crop&q=85',
     link: 'https://www.ceresit.ua',
     placement: 'home',
   },
@@ -196,10 +198,11 @@ const BRANDS = [
     email: 'sika.ads@advertisers.dimarket.app',
     fullName: 'Sika Україна',
     website: 'https://www.sika.com/ua',
-    title: 'Sika — надійні будівельні системи',
+    title: 'Sika — BUILD ON RELIABILITY',
     description:
-      'Гідроізоляція, добавки в бетон, герметики та рішення для фундаментів і промислових підлог. Деталі на DImarket.app.',
-    image: brandImg('sika'),
+      'Гідроізоляція, добавки в бетон, герметики та інженерні рішення Sika для фундаментів і промислових підлог. DImarket.app.',
+    image:
+      'https://images.unsplash.com/photo-1541972664089-0221394fb162?w=900&h=560&fit=crop&q=85',
     link: 'https://www.sika.com/ua',
     placement: 'home',
   },

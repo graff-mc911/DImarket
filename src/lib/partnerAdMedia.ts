@@ -4,22 +4,18 @@ import { BRAND_ADVERTISER_BY_CAMPAIGN_ID } from './partnerAdvertisers'
 /** Центральний герой — GREE */
 export const CENTER_HERO_CAMPAIGN_ID = '28885e84-4be9-4ba7-8fa8-fac766c5f1f8'
 
-/** Верхні бокові слоти — інструмент / матеріали */
+/** Верхні бокові слоти — 4 бренди з власними банерами */
 export const SIDE_TOP_PARTNER_IDS = [
   'f81e653d-ca9e-4081-a4ca-2a17395e9924', // Knauf
   '89623059-83ca-4151-9f09-8fcfcb8ed889', // DEWALT
   '0431275c-451e-47ed-a7a7-44167a577a29', // Festool
   '1ec41ada-4feb-4a36-b1a9-8494622ea30f', // Hilti
-  'a1000001-0001-4001-8001-000000000001', // Rockwool
 ] as const
 
-/** Нижні бокові слоти — сантехніка, вікна, плитка */
+/** Нижні бокові — ROCKWOOL, Ceresit, Sika (замість старих Unsplash-слотів; без чужих брендових PNG) */
 export const SIDE_BOTTOM_PARTNER_IDS = [
-  '807b9715-ddcd-4d1f-b651-711a880a2c77', // Uponor
-  '6097ef50-bb68-4041-b83f-32ecee542aad', // VELUX
-  '69df3b9f-c702-4028-b998-fc3734dc76ed', // Geberit
+  'a1000001-0001-4001-8001-000000000001', // ROCKWOOL
   'a1000002-0002-4002-8002-000000000002', // Ceresit
-  'a1000003-0003-4003-8003-000000000003', // Weber
   'a1000004-0004-4004-8004-000000000004', // Sika
 ] as const
 
@@ -122,39 +118,42 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
   },
   'a1000001-0001-4001-8001-000000000001': {
     id: 'a1000001-0001-4001-8001-000000000001',
-    title: 'ROCKWOOL — енергоефективність і вогнестійкість',
+    title: 'ROCKWOOL — більше комфорту. Краща ізоляція.',
     description:
-      'Кам\'яна вата для фасадів, дахів і акустики: негорюча теплоізоляція та комфорт у будинку. Дивіться на DImarket.app.',
-    ...brandBanner('rockwool'),
+      'Кам\'яна вата ROCKWOOL для фасадів, дахів і перегородок: вогнестійкість, акустика та енергоефективність. ' +
+      'Професійна теплоізоляція для ремонту й новобудов — знайдіть на DImarket.app.',
+    ...img('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&h=560&fit=crop&q=85'),
     link_url: 'https://www.rockwool.ua',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
   'a1000002-0002-4002-8002-000000000002': {
     id: 'a1000002-0002-4002-8002-000000000002',
-    title: 'Ceresit — системи облицювання та фасадів',
+    title: 'Ceresit — Build on quality',
     description:
-      'Клеї, затирки, гідроізоляція та ETICS Ceresit (Henkel) для професійного ремонту й фасадів. Знайдіть на DImarket.app.',
-    ...brandBanner('ceresit'),
+      'Системи Ceresit (Henkel): плиткові клеї, затирки, гідроізоляція та ETICS для облицювання й фасадів. ' +
+      'Надійні рішення для майстрів на об\'єкті — дивіться на DImarket.app.',
+    ...img('https://images.unsplash.com/photo-1625296316570-025e4c02e816?w=900&h=560&fit=crop&q=85'),
     link_url: 'https://www.ceresit.ua',
-    placements: ['home', 'sidebar', 'listings', 'footer'],
+    placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
   'a1000003-0003-4003-8003-000000000003': {
     id: 'a1000003-0003-4003-8003-000000000003',
     title: 'Weber — сухі будівельні суміші',
     description:
-      'Штукатурки, клеї та фасадні рішення Weber (Saint-Gobain) для професійного будівництва.',
+      'Штукатурки, клеї та фасадні системи Weber (Saint-Gobain) для професійного будівництва. Знайдіть на DImarket.app.',
     ...img('https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&h=560&fit=crop&q=85'),
     link_url: 'https://www.weber.ua',
-    placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
+    placements: ['home', 'listings', 'footer'],
   },
   'a1000004-0004-4004-8004-000000000004': {
     id: 'a1000004-0004-4004-8004-000000000004',
-    title: 'Sika — надійні будівельні системи',
+    title: 'Sika — BUILD ON RELIABILITY',
     description:
-      'Гідроізоляція, добавки в бетон, герметики та рішення для фундаментів і промислових підлог. Деталі на DImarket.app.',
-    ...brandBanner('sika'),
+      'Гідроізоляція, добавки в бетон, герметики та інженерні рішення Sika для фундаментів, швів і промислових підлог. ' +
+      'Надійність на об\'єкті — деталі на DImarket.app.',
+    ...img('https://images.unsplash.com/photo-1541972664089-0221394fb162?w=900&h=560&fit=crop&q=85'),
     link_url: 'https://www.sika.com/ua',
-    placements: ['home', 'sidebar', 'listings', 'footer'],
+    placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
 }
 

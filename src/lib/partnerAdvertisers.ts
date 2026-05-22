@@ -93,7 +93,7 @@ export const BRAND_ADVERTISER_SEEDS: BrandAdvertiserSeed[] = [
     email: 'rockwool.ads@advertisers.dimarket.app',
     fullName: 'ROCKWOOL Україна',
     website: 'https://www.rockwool.ua',
-    bio: '[demo_brand_advertiser] ROCKWOOL — негорюча теплоізоляція та енергоефективність.',
+    bio: '[demo_brand_advertiser] ROCKWOOL — більше комфорту. Краща ізоляція. Кам\'яна вата для фасадів і дахів.',
   },
   {
     slug: 'ceresit',
@@ -102,7 +102,7 @@ export const BRAND_ADVERTISER_SEEDS: BrandAdvertiserSeed[] = [
     email: 'ceresit.ads@advertisers.dimarket.app',
     fullName: 'Ceresit (Henkel)',
     website: 'https://www.ceresit.ua',
-    bio: '[demo_brand_advertiser] Ceresit (Henkel) — клеї, затирки, гідроізоляція, фасади.',
+    bio: '[demo_brand_advertiser] Ceresit (Henkel) — Build on quality. Клеї, затирки, ETICS, гідроізоляція.',
   },
   {
     slug: 'weber',
@@ -120,7 +120,7 @@ export const BRAND_ADVERTISER_SEEDS: BrandAdvertiserSeed[] = [
     email: 'sika.ads@advertisers.dimarket.app',
     fullName: 'Sika Україна',
     website: 'https://www.sika.com/ua',
-    bio: '[demo_brand_advertiser] Sika — гідроізоляція, бетон, герметики для об\'єкта.',
+    bio: '[demo_brand_advertiser] Sika — BUILD ON RELIABILITY. Гідроізоляція, бетон, герметики.',
   },
 ]
 
