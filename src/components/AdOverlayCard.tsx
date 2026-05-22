@@ -27,10 +27,10 @@ const variantStyles: Record<
   { block: string; brand: string; title: string; meta: string; badge: string }
 > = {
   stack: {
-    block: 'h-full min-h-0',
-    brand: 'text-[9px]',
-    title: 'text-[10px] line-clamp-1',
-    meta: 'text-[9px]',
+    block: 'h-full min-h-[4.5rem]',
+    brand: 'text-[10px]',
+    title: 'text-[11px] line-clamp-2 leading-snug',
+    meta: 'text-[10px]',
     badge: 'text-[8px] px-1.5 py-0',
   },
   legacy: {
@@ -82,7 +82,7 @@ export function AdOverlayCard({
   const mediaUrl = getCampaignMediaUrl(campaign)
   const styles = variantStyles[variant]
   const pad =
-    variant === 'stack' ? 'p-1.5' : variant === 'mobile-sticky' ? 'p-3 pr-10' : 'p-4'
+    variant === 'stack' ? 'p-2 sm:p-2.5' : variant === 'mobile-sticky' ? 'p-3 pr-10' : 'p-4'
   const isStack = variant === 'stack'
 
   return (

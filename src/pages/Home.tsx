@@ -180,8 +180,8 @@ export function Home() {
       <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
         <div className="flex items-stretch gap-6">
 
-          <aside className="hidden w-[260px] shrink-0 self-stretch xl:flex xl:flex-col 2xl:w-[300px]">
-            <AdBanner position="left" sticky={false} page="home" stackCount={6} />
+          <aside className="hidden w-[240px] shrink-0 self-start xl:flex xl:flex-col 2xl:w-[280px]">
+            <AdBanner position="left" sticky page="home" stackCount={4} />
           </aside>
 
           <main className="min-w-0 flex-1">
@@ -432,8 +432,8 @@ export function Home() {
       </section>
           </main>
 
-          <aside className="hidden w-[260px] shrink-0 self-stretch xl:flex xl:flex-col 2xl:w-[300px]">
-            <AdBanner position="right" sticky={false} page="home" stackCount={6} />
+          <aside className="hidden w-[240px] shrink-0 self-start xl:flex xl:flex-col 2xl:w-[280px]">
+            <AdBanner position="right" sticky page="home" stackCount={4} />
           </aside>
         </div>
       </div>

@@ -36,6 +36,9 @@ function campaignsForSide(
   return picked
 }
 
+const STACK_STICKY_TOP = 'top-[8rem] xl:top-[9rem]'
+const STACK_STICKY_HEIGHT = 'h-[calc(100vh-8rem)] xl:h-[calc(100vh-9rem)]'
+
 export function AdBanner({ position, sticky = true, page, stackCount }: AdBannerProps) {
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
@@ -72,8 +75,17 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
 
   if (stackCount && stackCount >= 2) {
     return (
-      <div className="hidden h-full min-h-full w-full flex-1 flex-col xl:flex">
-        <div className="grid h-1/2 min-h-0 w-full grid-rows-6 gap-9 py-0.5">
+      <aside
+        className={`hidden w-full flex-col xl:flex ${
+          sticky
+            ? `sticky ${STACK_STICKY_TOP} ${STACK_STICKY_HEIGHT}`
+            : 'h-full min-h-full flex-1'
+        }`}
+      >
+        <div
+          className="grid min-h-0 w-full flex-1 gap-2 py-0.5 2xl:gap-3"
+          style={{ gridTemplateRows: `repeat(${stackCount}, minmax(0, 1fr))` }}
+        >
           {loading
             ? Array.from({ length: stackCount }, (_, i) => (
                 <div
@@ -99,7 +111,7 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
                   </div>
                 ))}
         </div>
-      </div>
+      </aside>
     )
   }
 
