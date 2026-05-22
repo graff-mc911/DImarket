@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { mergeExtraPartnerCampaigns } from './partnerAdMedia'
 import type { AdCampaign } from './types'
 import type { TranslationKey } from './i18n'
 
@@ -282,7 +283,7 @@ export async function fetchPaidAdCampaigns(
 
   // Розклад уже відфільтровано RLS (starts_at / ends_at). Не дублюємо через Date.now()
   // у браузері — інакше при розсинхроні годинника всі кампанії зникають з UI.
-  return rows
+  return mergeExtraPartnerCampaigns(rows)
     .filter(isPaidCampaign)
     .filter((c) => slots.some((slot) => campaignMatchesSlot(c, slot)))
     .filter((c) => matchesViewerGeo(c, viewerCity, viewerCountry))

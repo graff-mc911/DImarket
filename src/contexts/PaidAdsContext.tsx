@@ -35,7 +35,7 @@ export function PaidAdsProvider({ children }: { children: ReactNode }) {
     try {
       const paid = await fetchPaidAdCampaigns({
         slots: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
-        limit: 20,
+        limit: 32,
       })
       setCampaigns(paid)
       if (paid.length === 0) {
