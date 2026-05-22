@@ -404,18 +404,18 @@
    */
   @media (min-width: 768px) {
     :root {
-      /* Холодний світло-оливковий (більше зеленого, мінімум червоного — без рожевого) */
-      --bg-canvas: #d8e2d4;
-      --bg-soft: #ccd9c8;
-      --bg-glass-top: #e8efe4;
-      --bg-glass-bottom: #dde6d8;
-      --glass-bg: rgba(232, 239, 228, 0.96);
-      --line: rgba(120, 140, 108, 0.14);
-      --line-strong: rgba(100, 125, 95, 0.22);
-      --glass-border: rgba(115, 135, 105, 0.2);
-      --glass-border-strong: rgba(95, 118, 88, 0.3);
-      --glass-highlight: rgba(255, 255, 255, 0.82);
-      --accent-soft: rgba(111, 145, 125, 0.1);
+      /* Майже сірий шалфей: дуже світлий, холодний, без рожевого */
+      --bg-canvas: #f0f2ef;
+      --bg-soft: #e8ebe8;
+      --bg-glass-top: #f8faf7;
+      --bg-glass-bottom: #f2f4f1;
+      --glass-bg: rgba(248, 250, 247, 0.98);
+      --line: rgba(135, 142, 135, 0.12);
+      --line-strong: rgba(118, 126, 118, 0.2);
+      --glass-border: rgba(130, 138, 130, 0.16);
+      --glass-border-strong: rgba(110, 118, 110, 0.24);
+      --glass-highlight: rgba(255, 255, 255, 0.9);
+      --accent-soft: rgba(120, 135, 120, 0.08);
     }
 
     html,
@@ -452,7 +452,7 @@
       ) !important;
       border-color: var(--glass-border) !important;
       box-shadow:
-        0 14px 30px rgba(55, 70, 50, 0.05),
+        0 14px 30px rgba(72, 78, 74, 0.035),
         inset 0 1px 0 var(--glass-highlight) !important;
     }
 
