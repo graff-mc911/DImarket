@@ -9,8 +9,8 @@ import { navigateTo } from '../lib/navigation'
 export function SponsoredCompanies() {
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
-  const pool = getForSlots(['home', 'sidebar', 'listings', 'footer'], 16)
-  const campaign = useMemo(() => pickCenterHeroCampaign(pool), [pool])
+  const pool = getForSlots(['home_center', 'footer', 'home'], 16)
+  const campaign = useMemo(() => pickCenterHeroCampaign(pool, 'home'), [pool])
 
   useEffect(() => {
     if (loading || !campaign) return

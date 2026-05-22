@@ -428,7 +428,11 @@ export function Listings() {
                     <ListingCard listing={listing} />
                     {(index + 1) % 4 === 0 && index < filteredListings.length - 1 && (
                       <div className="md:col-span-2 2xl:col-span-3">
-                        <MobileAdBanner variant="inline" page="listings" />
+                        <MobileAdBanner
+                          variant="inline"
+                          page="listings"
+                          inlineIndex={((((index + 1) / 4) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
+                        />
                       </div>
                     )}
                   </Fragment>
@@ -462,7 +466,7 @@ export function Listings() {
             )}
 
             <div className="mt-6">
-              <MobileAdBanner variant="inline" page="listings" />
+              <MobileAdBanner variant="inline" page="listings" inlineIndex={2} />
             </div>
 
       <MobileAdBanner variant="sticky" page="listings" />

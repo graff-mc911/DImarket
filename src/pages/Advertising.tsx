@@ -20,14 +20,10 @@ import {
   Film,
   Globe2,
   ImagePlus,
-  Layers3,
   Link2,
   LogIn,
   MapPin,
   Megaphone,
-  MonitorSmartphone,
-  Newspaper,
-  PanelsTopLeft,
   Play,
   Upload,
   X,
@@ -38,10 +34,14 @@ import { navigateTo }  from '../lib/navigation'
 import { useApp }      from '../contexts/AppContext'
 import { AdCampaign }  from '../lib/types'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
+import { AdPlacementPicker } from '../components/AdPlacementPicker'
+import {
+  formatSlotLabel,
+  sideSlotId,
+  slotToLegacyPlacement,
+} from '../lib/adPlacementSlots'
 
 // ── Типи ──────────────────────────────────────────────────────────────────────
-
-type PlacementValue = 'home' | 'listings' | 'sidebar' | 'footer' | 'mobile_sticky'
 type MediaType      = 'image' | 'gif' | 'video'
 type GeoMode        = 'global' | 'countries' | 'regions' | 'cities'
 
@@ -81,8 +81,8 @@ export function Advertising() {
   const [startsAt, setStartsAt]       = useState('')
   const [endsAt, setEndsAt]           = useState('')
 
-  // Позиції показу (мінімум одна)
-  const [selectedPlacements, setSelectedPlacements] = useState<PlacementValue[]>(['sidebar'])
+  // Гранульовані слоти показу (мінімум один)
+  const [selectedSlots, setSelectedSlots] = useState<string[]>([sideSlotId('home', 'right', 1)])
 
   // Геотаргетинг
   const [geoMode, setGeoMode]                   = useState<GeoMode>('global')
@@ -144,7 +144,7 @@ export function Advertising() {
   const selectedCitiesCount = calculatedCities.length
 
   // Автоматичний розрахунок ціни
-  const totalPrice = selectedCitiesCount * PRICE_PER_CITY_PER_WEEK * selectedPlacements.length * durationWeeks
+  const totalPrice = selectedCitiesCount * PRICE_PER_CITY_PER_WEEK * selectedSlots.length * durationWeeks
 
   // Завантажуємо географію з бази при старті
   useEffect(() => {
@@ -217,20 +217,6 @@ export function Advertising() {
     }
   }
 
-  // Перемикання позиції (мінімум одна завжди вибрана)
-  const togglePlacement = (value: PlacementValue) => {
-    setSelectedPlacements(prev =>
-      prev.includes(value)
-        ? prev.length > 1 ? prev.filter(p => p !== value) : prev
-        : [...prev, value]
-    )
-  }
-
-  const toggleAllPlacements = () => {
-    const allValues = placementOptions.map(p => p.value)
-    setSelectedPlacements(selectedPlacements.length === allValues.length ? [allValues[0]] : allValues)
-  }
-
   const handleGeoModeChange = (mode: GeoMode) => {
     setGeoMode(mode)
     setSelectedCountries([])
@@ -295,7 +281,7 @@ export function Advertising() {
 
   const resetForm = () => {
     setTitle(''); setDescription(''); setLinkUrl('')
-    setSelectedPlacements(['sidebar'])
+    setSelectedSlots([sideSlotId('home', 'right', 1)])
     setGeoMode('global'); setSelectedCountries([]); setSelectedRegions([]); setSelectedCities([])
     setDurationWeeks(1)
     setMediaType('image'); setMediaUrl('')
@@ -328,8 +314,8 @@ export function Advertising() {
         description:   description.trim() || null,
         image_url:     mediaUrl,
         link_url:      linkUrl.trim(),
-        placement:     selectedPlacements[0],
-        placements:    selectedPlacements,
+        placement:     slotToLegacyPlacement(selectedSlots[0]),
+        placements:    selectedSlots,
         geo_scope:     geoMode,
         countries:     selectedCountries,
         regions:       selectedRegions,
@@ -376,15 +362,6 @@ export function Advertising() {
       setSaving(false)
     }
   }
-
-  // Позиції реклами (локалізовані)
-  const placementOptions: Array<{ value: PlacementValue; title: string; text: string; icon: LucideIcon }> = [
-    { value: 'home',         title: t('advertising.placement.home.title'),     text: t('advertising.placement.home.text'),     icon: PanelsTopLeft },
-    { value: 'listings',     title: t('advertising.placement.listings.title'), text: t('advertising.placement.listings.text'), icon: Newspaper },
-    { value: 'sidebar',      title: t('advertising.placement.sidebar.title'),  text: t('advertising.placement.sidebar.text'),  icon: MonitorSmartphone },
-    { value: 'footer',       title: t('advertising.placement.footer.title'),   text: t('advertising.placement.footer.text'),   icon: Layers3 },
-    { value: 'mobile_sticky',title: t('advertising.placement.mobile.title'),   text: t('advertising.placement.mobile.text'),   icon: MonitorSmartphone },
-  ]
 
   // Зведений підпис географії
   const geoSummary = getGeoSummary(geoMode, selectedCountries, selectedRegions, calculatedCities, t)
@@ -454,54 +431,12 @@ export function Advertising() {
 
             {/* ===== Вибір позицій ===== */}
             <div className="glass-card p-6">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.placementsSection.title')}</h2>
-                  <p className="mt-1 text-sm text-[#6f665d]">{t('advertising.placementsSection.desc')}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={toggleAllPlacements}
-                  className="shrink-0 rounded-full border border-[rgba(148,163,184,0.28)] bg-[rgba(255,255,255,0.46)] px-3 py-1.5 text-xs font-semibold text-[#64748b] transition hover:bg-[rgba(255,255,255,0.7)]"
-                >
-                  {selectedPlacements.length === placementOptions.length
-                    ? t('advertising.placements.deselectAll')
-                    : t('advertising.placements.selectAll')}
-                </button>
+              <div>
+                <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.placementsSection.title')}</h2>
+                <p className="mt-1 text-sm leading-6 text-[#6f665d]">{t('advertising.placementsSection.desc')}</p>
               </div>
-
-              <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                {placementOptions.map((item) => {
-                  const isSelected = selectedPlacements.includes(item.value)
-                  return (
-                    <button
-                      key={item.value}
-                      type="button"
-                      onClick={() => togglePlacement(item.value)}
-                      aria-pressed={isSelected}
-                      className={'relative rounded-[22px] border p-4 text-left transition ' + (isSelected
-                        ? 'border-[rgba(99,102,241,0.35)] bg-[rgba(238,242,255,0.60)] shadow-[0_8px_20px_rgba(99,102,241,0.08)]'
-                        : 'border-white/38 bg-[rgba(255,255,255,0.28)] hover:bg-[rgba(255,255,255,0.40)]')}
-                    >
-                      <span className={'absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full border-2 transition ' + (isSelected ? 'border-[#6366f1] bg-[#6366f1]' : 'border-[rgba(148,163,184,0.4)] bg-white/60')}>
-                        {isSelected && (
-                          <svg className="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 10 10">
-                            <path d="M1.5 5L4 7.5L8.5 2.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        )}
-                      </span>
-                      <div className="flex items-start gap-3 pr-6">
-                        <div className={'flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] transition ' + (isSelected ? 'bg-[rgba(99,102,241,0.12)] text-[#6366f1]' : 'bg-[rgba(148,163,184,0.12)] text-[#64748b]')}>
-                          <item.icon className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold text-[#2f2a24]">{item.title}</div>
-                          <div className="mt-1 text-xs leading-5 text-[#6f665d]">{item.text}</div>
-                        </div>
-                      </div>
-                    </button>
-                  )
-                })}
+              <div className="mt-5">
+                <AdPlacementPicker selected={selectedSlots} onChange={setSelectedSlots} />
               </div>
             </div>
 
@@ -682,7 +617,7 @@ export function Advertising() {
                       <div className="mt-3 space-y-1 text-sm text-[#6f665d]">
                         <div>{t('advertising.price.geo')}: <b>{geoSummary}</b></div>
                         <div>{t('advertising.price.cities')}: <b>{selectedCitiesCount}</b></div>
-                        <div>{t('advertising.price.positions')}: <b>{selectedPlacements.length}</b></div>
+                        <div>{t('advertising.price.positions')}: <b>{selectedSlots.length}</b></div>
                         <div>{t('advertising.price.duration')}: <b>{durationWeeks} {t('advertising.price.week1').replace('1 ', '')}</b></div>
                         <div>{t('advertising.price.perCity')}: <b>{PRICE_PER_CITY_PER_WEEK}€</b></div>
                       </div>
@@ -764,9 +699,9 @@ export function Advertising() {
                       {t('advertising.preview.adLabel')}
                     </span>
                     <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[#9a8776] transition group-hover:text-[#6366f1]">
-                      {selectedPlacements.length > 1
-                        ? selectedPlacements.length + ' ' + t('advertising.preview.positions')
-                        : placementOptions.find(p => p.value === selectedPlacements[0])?.title ?? ''}
+                      {selectedSlots.length > 1
+                        ? selectedSlots.length + ' ' + t('advertising.preview.positions')
+                        : formatSlotLabel(selectedSlots[0], t)}
                     </span>
                   </div>
 
@@ -824,7 +759,7 @@ export function Advertising() {
               ) : campaigns.length > 0 ? (
                 <div className="mt-5 space-y-3">
                   {campaigns.map(campaign => (
-                    <CampaignCard key={campaign.id} campaign={campaign} formatter={createdAtFormatter} t={t} placementOptions={placementOptions} />
+                    <CampaignCard key={campaign.id} campaign={campaign} formatter={createdAtFormatter} t={t} />
                   ))}
                 </div>
               ) : (
@@ -887,14 +822,13 @@ function CheckboxDropdown({ title, options, selected, noneText, selectedText, on
   )
 }
 
-function CampaignCard({ campaign, formatter, t, placementOptions }: {
+function CampaignCard({ campaign, formatter, t }: {
   campaign:        AdCampaign
   formatter:       Intl.DateTimeFormat
   t:               (key: string) => string
-  placementOptions: Array<{ value: string; title: string }>
 }) {
   const data      = campaign as any
-  const placements = data.placements ?? [campaign.placement]
+  const displayPlacements = (data.placements?.length ? data.placements : [campaign.placement]) as string[]
   const countries  = data.countries  ?? (campaign.country_name ? [campaign.country_name] : [])
   const regions    = data.regions    ?? (campaign.region_name  ? [campaign.region_name]  : [])
   const cities     = data.cities     ?? (campaign.city_name    ? [campaign.city_name]    : [])
@@ -905,11 +839,16 @@ function CampaignCard({ campaign, formatter, t, placementOptions }: {
         <div className="min-w-0">
           <h3 className="truncate text-base font-bold text-[#2f2a24]">{campaign.title}</h3>
           <div className="mt-1 flex flex-wrap gap-1">
-            {placements.map((p: string) => (
+            {displayPlacements.slice(0, 6).map((p: string) => (
               <span key={p} className="rounded-full bg-[rgba(148,163,184,0.12)] px-2 py-0.5 text-xs text-[#64748b]">
-                {placementOptions.find(opt => opt.value === p)?.title ?? p}
+                {formatSlotLabel(p, t as (key: import('../lib/i18n').TranslationKey) => string)}
               </span>
             ))}
+            {displayPlacements.length > 6 && (
+              <span className="rounded-full bg-[rgba(148,163,184,0.12)] px-2 py-0.5 text-xs text-[#64748b]">
+                +{displayPlacements.length - 6}
+              </span>
+            )}
           </div>
         </div>
         <StatusBadge status={campaign.status} t={t} />

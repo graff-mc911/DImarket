@@ -287,7 +287,7 @@ export function Home() {
         </div>
       </section>
 
-      <MobileAdBanner variant="horizontal" page="home" />
+      <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
 
       <SponsoredCompanies />
 
@@ -352,7 +352,9 @@ export function Home() {
         </div>
       </section>
 
-      <MobileAdBanner variant="inline" page="home" />
+      <MobileAdBanner variant="inline" page="home" inlineIndex={2} />
+
+      <MobileAdBanner variant="inline" page="home" inlineIndex={3} />
 
       <section className="py-6">
         <div className="mx-auto max-w-7xl">
@@ -421,6 +423,8 @@ export function Home() {
           )}
         </div>
       </section>
+
+      <MobileAdBanner variant="inline" page="home" inlineIndex={4} />
 
       <MobileAdBanner variant="sticky" page="home" />
     </>

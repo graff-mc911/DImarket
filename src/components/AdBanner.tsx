@@ -61,8 +61,8 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
 
   const stackCampaigns = useMemo(() => {
     if (!stackCount || stackCount < 2) return []
-    return pickCampaignsForSideStack(pool, position, stackCount)
-  }, [pool, position, stackCount])
+    return pickCampaignsForSideStack(pool, position, stackCount, page)
+  }, [pool, position, stackCount, page])
 
   const [primaryCampaign, secondaryCampaign] = useMemo(() => {
     if (stackCount && stackCount >= 2) return [null, null] as const

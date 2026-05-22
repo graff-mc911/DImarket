@@ -1,5 +1,12 @@
 import { supabase } from './supabase'
 import {
+  centerSlotId,
+  pageKeyFromSideAdsPage,
+  sideSlotId,
+  type AdPageKey,
+  type SideIndex,
+} from './adPlacementSlots'
+import {
   CENTER_HERO_CAMPAIGN_ID,
   mergeExtraPartnerCampaigns,
   SIDE_BOTTOM_VIDEO_IDS,
@@ -7,6 +14,7 @@ import {
 } from './partnerAdMedia'
 import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './youtubeMedia'
 import type { AdCampaign } from './types'
+import { getSlotLegacyTags } from './adPlacementSlots'
 import type { TranslationKey } from './i18n'
 
 export type AdPlacement =
@@ -40,8 +48,8 @@ export function isPaidCampaign(campaign: AdCampaign): boolean {
   return false
 }
 
-export function getCampaignPlacements(campaign: AdCampaign): AdPlacement[] {
-  const fromArray = (campaign.placements || []).filter(Boolean) as AdPlacement[]
+export function getCampaignPlacements(campaign: AdCampaign): string[] {
+  const fromArray = (campaign.placements || []).filter(Boolean) as string[]
   if (fromArray.length > 0) return fromArray
   return [campaign.placement]
 }
@@ -54,14 +62,41 @@ const SLOT_FALLBACKS: Partial<Record<AdPlacement, AdPlacement[]>> = {
   footer: ['footer', 'sidebar', 'home', 'listings'],
 }
 
-export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement): boolean {
+export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement | string): boolean {
   const placements = getCampaignPlacements(campaign)
   if (placements.includes(slot)) return true
-  const fallbacks = SLOT_FALLBACKS[slot]
+
+  const granularLegacy = getSlotLegacyTags(slot)
+  if (slot.includes('_') && placements.some((p) => granularLegacy.includes(p as AdPlacement))) {
+    return true
+  }
+
+  const fallbacks = SLOT_FALLBACKS[slot as AdPlacement]
   if (fallbacks) {
-    return placements.some((p) => fallbacks.includes(p))
+    return placements.some((p) => fallbacks.includes(p as AdPlacement))
   }
   return false
+}
+
+function hashSlotId(slotId: string): number {
+  let h = 0
+  for (let i = 0; i < slotId.length; i++) h = (h * 31 + slotId.charCodeAt(i)) | 0
+  return Math.abs(h)
+}
+
+/** Кампанія для конкретного слота (точний ID або легасі-тег) */
+export function pickCampaignForSlot(
+  campaigns: AdCampaignWithAdvertiser[],
+  slotId: string,
+): AdCampaignWithAdvertiser | null {
+  if (campaigns.length === 0) return null
+
+  const exact = campaigns.find((c) => getCampaignPlacements(c).includes(slotId))
+  if (exact) return exact
+
+  const matching = campaigns.filter((c) => campaignMatchesSlot(c, slotId))
+  if (matching.length === 0) return null
+  return matching[hashSlotId(slotId) % matching.length] ?? null
 }
 
 export function isCampaignInSchedule(campaign: AdCampaign, now = Date.now()): boolean {
@@ -153,13 +188,17 @@ export function isAnimatedCampaign(campaign: AdCampaign): boolean {
   return getCampaignMediaType(campaign) === 'gif'
 }
 
-/** Верхні 2 слоти — брендові ролики інструмент/утеплення; нижні 2 — сантехніка, вікна, плитка, фасад */
+/** Бокова колонка: слот 1–4 зверху вниз (ліворуч / праворуч) */
 export function pickCampaignsForSideStack(
   all: AdCampaignWithAdvertiser[],
   position: 'left' | 'right',
   count: number,
+  page?: 'home' | 'listings' | 'default',
 ): AdCampaignWithAdvertiser[] {
   if (all.length === 0 || count <= 0) return []
+
+  const pageKey = pageKeyFromSideAdsPage(page)
+  const side = position === 'left' ? 'left' : 'right'
 
   const topPool = SIDE_TOP_VIDEO_IDS.map((id) => all.find((c) => c.id === id)).filter(
     (c): c is AdCampaignWithAdvertiser => !!c && isVideoCampaign(c),
@@ -174,7 +213,7 @@ export function pickCampaignsForSideStack(
   const topOffset = position === 'right' ? 2 : 0
   const bottomOffset = position === 'right' ? 2 : 0
 
-  const pick = (
+  const pickPartner = (
     pool: AdCampaignWithAdvertiser[],
     offset: number,
     n: number,
@@ -188,17 +227,38 @@ export function pickCampaignsForSideStack(
     return out
   }
 
-  return [
-    ...pick(topPool, topOffset, topSlots, fallbackVideos),
-    ...pick(bottomPool, bottomOffset, bottomSlots, fallbackVideos),
-  ]
+  const partnerTop = pickPartner(topPool, topOffset, topSlots, fallbackVideos)
+  const partnerBottom = pickPartner(bottomPool, bottomOffset, bottomSlots, fallbackVideos)
+  const partnerByIndex = [...partnerTop, ...partnerBottom]
+
+  const out: AdCampaignWithAdvertiser[] = []
+  for (let i = 0; i < count; i++) {
+    const slotId = sideSlotId(pageKey, side, (i + 1) as SideIndex)
+    const bought = pickCampaignForSlot(all, slotId)
+    if (bought) {
+      out.push(bought)
+      continue
+    }
+    const partner = partnerByIndex[i]
+    if (partner && !out.some((c) => c.id === partner.id)) {
+      out.push(partner)
+      continue
+    }
+    const any = pickCampaignForSlot(all, 'sidebar') ?? all[i % all.length]
+    if (any) out.push(any)
+  }
+  return out
 }
 
 /** Один центральний блок — анімована реклама Baumit (або інший GIF/відео бренд) */
 export function pickCenterHeroCampaign(
   all: AdCampaignWithAdvertiser[],
+  page: AdPageKey = 'home',
 ): AdCampaignWithAdvertiser | null {
   if (all.length === 0) return null
+
+  const slotPick = pickCampaignForSlot(all, centerSlotId(page))
+  if (slotPick) return slotPick
 
   const hero = all.find((c) => c.id === CENTER_HERO_CAMPAIGN_ID)
   if (hero && (isAnimatedCampaign(hero) || isVideoCampaign(hero))) return hero
@@ -231,8 +291,21 @@ export function pickCampaignByPlacement(
 export function pickMobileCampaign(
   campaigns: AdCampaign[],
   variant: 'inline' | 'sticky' | 'horizontal',
+  page: AdPageKey = 'home',
+  inlineIndex: 1 | 2 | 3 | 4 = 1,
 ): AdCampaign | null {
   if (campaigns.length === 0) return null
+
+  const slotId =
+    variant === 'sticky'
+      ? `${page}_mob_sticky`
+      : variant === 'horizontal'
+        ? `${page}_mob_inline_1`
+        : `${page}_mob_inline_${inlineIndex}`
+
+  const picked = pickCampaignForSlot(campaigns as AdCampaignWithAdvertiser[], slotId)
+  if (picked) return picked
+
   if (variant === 'sticky') {
     return pickCampaignByPlacement(campaigns, 'mobile_sticky', 0)
   }
@@ -240,8 +313,8 @@ export function pickMobileCampaign(
     return pickCampaignByPlacement(campaigns, 'home', 1)
   }
   return (
-    pickCampaignByPlacement(campaigns, 'sidebar', 2) ||
-    pickCampaignByPlacement(campaigns, 'listings', 3)
+    pickCampaignByPlacement(campaigns, 'sidebar', inlineIndex - 1) ||
+    pickCampaignByPlacement(campaigns, 'listings', inlineIndex)
   )
 }
 
@@ -305,9 +378,14 @@ export async function fetchPaidAdCampaigns(
 
   // Розклад уже відфільтровано RLS (starts_at / ends_at). Не дублюємо через Date.now()
   // у браузері — інакше при розсинхроні годинника всі кампанії зникають з UI.
-  return mergeExtraPartnerCampaigns(rows)
-    .filter(isPaidCampaign)
-    .filter((c) => slots.some((slot) => campaignMatchesSlot(c, slot)))
+  const merged = mergeExtraPartnerCampaigns(rows).filter(isPaidCampaign)
+
+  const filtered =
+    slots.length === 0
+      ? merged
+      : merged.filter((c) => slots.some((slot) => campaignMatchesSlot(c, slot)))
+
+  return filtered
     .filter((c) => matchesViewerGeo(c, viewerCity, viewerCountry))
     .sort(sortPaidCampaigns)
     .slice(0, limit)

@@ -19,7 +19,7 @@ type PaidAdsContextValue = {
   loading: boolean
   error: string | null
   refresh: () => Promise<void>
-  getForSlots: (slots: AdPlacement[], limit?: number) => AdCampaignWithAdvertiser[]
+  getForSlots: (slots: (AdPlacement | string)[], limit?: number) => AdCampaignWithAdvertiser[]
 }
 
 const PaidAdsContext = createContext<PaidAdsContextValue | null>(null)
@@ -34,8 +34,8 @@ export function PaidAdsProvider({ children }: { children: ReactNode }) {
     setError(null)
     try {
       const paid = await fetchPaidAdCampaigns({
-        slots: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
-        limit: 32,
+        slots: [],
+        limit: 48,
       })
       setCampaigns(paid)
       if (paid.length === 0) {
@@ -56,7 +56,7 @@ export function PaidAdsProvider({ children }: { children: ReactNode }) {
   }, [load])
 
   const getForSlots = useCallback(
-    (slots: AdPlacement[], limit = 12) =>
+    (slots: (AdPlacement | string)[], limit = 12) =>
       campaigns
         .filter((c) => slots.some((slot) => campaignMatchesSlot(c, slot)))
         .slice(0, limit),

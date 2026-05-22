@@ -3,16 +3,15 @@ import { X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard, AdOverlayPlaceholder } from './AdOverlayCard'
-import {
-  pickMobileCampaign,
-  trackAdImpression,
-  type AdPlacement,
-} from '../lib/adCampaigns'
+import { pageKeyFromMobilePage, type InlineIndex } from '../lib/adPlacementSlots'
+import { pickMobileCampaign, trackAdImpression, type AdPlacement } from '../lib/adCampaigns'
 import { navigateTo } from '../lib/navigation'
 
 interface MobileAdBannerProps {
   variant: 'inline' | 'sticky' | 'horizontal'
   page?: 'home' | 'listings'
+  /** Слот 1–4 між картками / секціями (лише inline) */
+  inlineIndex?: InlineIndex
 }
 
 function mobileSlots(page?: 'home' | 'listings'): AdPlacement[] {
@@ -21,22 +20,25 @@ function mobileSlots(page?: 'home' | 'listings'): AdPlacement[] {
   return ['mobile_sticky', 'home', 'listings', 'sidebar']
 }
 
-export function MobileAdBanner({ variant, page }: MobileAdBannerProps) {
+export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBannerProps) {
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
   const [adVisible, setAdVisible] = useState(true)
 
   const mobileCampaigns = useMemo(
-    () => getForSlots(mobileSlots(page), 8),
+    () => getForSlots(mobileSlots(page), 24),
     [getForSlots, page],
   )
 
+  const pageKey = pageKeyFromMobilePage(page)
+
   const campaign = useMemo(
-    () => pickMobileCampaign(mobileCampaigns, variant),
-    [mobileCampaigns, variant],
+    () => pickMobileCampaign(mobileCampaigns, variant, pageKey, inlineIndex),
+    [mobileCampaigns, variant, pageKey, inlineIndex],
   )
 
-  const inlineMinH = variant === 'horizontal' ? 'min-h-[90px]' : 'min-h-[108px]'
+  const inlineMinH =
+    variant === 'horizontal' ? 'min-h-[80px]' : variant === 'sticky' ? 'min-h-[68px]' : 'min-h-[88px]'
 
   useEffect(() => {
     if (loading || !campaign) return
@@ -47,7 +49,8 @@ export function MobileAdBanner({ variant, page }: MobileAdBannerProps) {
 
   if (variant === 'sticky') {
     return (
-      <div className="fixed bottom-3 left-3 right-3 z-40 lg:hidden">
+      <div className="pointer-events-none fixed bottom-3 left-3 right-3 z-40 lg:hidden">
+        <div className="pointer-events-auto">
         <div className="relative">
           <button
             onClick={() => setAdVisible(false)}
@@ -71,12 +74,13 @@ export function MobileAdBanner({ variant, page }: MobileAdBannerProps) {
             />
           )}
         </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="lg:hidden">
+    <div className="my-4 lg:hidden">
       <div className="relative">
         <button
           onClick={() => setAdVisible(false)}
