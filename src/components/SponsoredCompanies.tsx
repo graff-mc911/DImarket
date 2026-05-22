@@ -1,15 +1,9 @@
 import { useEffect } from 'react'
-import { ExternalLink, Megaphone } from 'lucide-react'
+import { Megaphone } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
-import {
-  AD_MEDIA_FALLBACK,
-  getAdvertiserLabel,
-  getCampaignMediaUrl,
-  trackAdClick,
-  trackAdImpression,
-  type AdCampaignWithAdvertiser,
-} from '../lib/adCampaigns'
+import { AdOverlayCard, adOverlayGlow } from './AdOverlayCard'
+import { trackAdImpression } from '../lib/adCampaigns'
 import { navigateTo } from '../lib/navigation'
 
 export function SponsoredCompanies() {
@@ -58,72 +52,23 @@ export function SponsoredCompanies() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-52 animate-pulse rounded-[24px] bg-[rgba(148,163,184,0.14)]"
+                className={`min-h-[220px] animate-pulse bg-[rgba(148,163,184,0.14)] md:min-h-[240px] ${adOverlayGlow}`}
               />
             ))}
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-3">
             {campaigns.map((campaign) => (
-              <SponsorCard key={campaign.id} campaign={campaign} />
+              <AdOverlayCard
+                key={campaign.id}
+                campaign={campaign}
+                variant="center"
+                showDescription
+              />
             ))}
           </div>
         )}
       </div>
     </section>
-  )
-}
-
-function SponsorCard({ campaign }: { campaign: AdCampaignWithAdvertiser }) {
-  const { t } = useApp()
-  const company = getAdvertiserLabel(campaign)
-  const mediaUrl = getCampaignMediaUrl(campaign)
-
-  const handleClick = () => {
-    void trackAdClick(campaign.id)
-  }
-
-  return (
-    <a
-      href={campaign.link_url}
-      target="_blank"
-      rel="noreferrer sponsored"
-      onClick={handleClick}
-      className="glass-card group w-full overflow-hidden border border-[rgba(148,163,184,0.18)] transition duration-300 hover:-translate-y-0.5"
-    >
-      <div className="relative h-32 overflow-hidden bg-[rgba(248,250,252,0.68)]">
-        <img
-          src={mediaUrl}
-          alt={campaign.title}
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-          onError={(e) => {
-            e.currentTarget.src = AD_MEDIA_FALLBACK
-          }}
-        />
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#64748b]">
-          {t('ads.badge')}
-        </span>
-      </div>
-
-      <div className="p-4">
-        {company && (
-          <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#94a3b8]">
-            {company}
-          </p>
-        )}
-        <h3 className="mt-1 line-clamp-2 text-base font-extrabold text-[#2f2a24]">
-          {campaign.title}
-        </h3>
-        {campaign.description && (
-          <p className="mt-2 line-clamp-2 text-xs leading-5 text-[#6f665d]">
-            {campaign.description}
-          </p>
-        )}
-        <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#475569]">
-          {t('ads.visit')}
-          <ExternalLink className="h-3.5 w-3.5" />
-        </span>
-      </div>
-    </a>
   )
 }
