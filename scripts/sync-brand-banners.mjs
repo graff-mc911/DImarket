@@ -18,21 +18,18 @@ const outDir = resolve(root, 'public/ads/brands')
 
 const ASSET_DIR = existsSync(assets) ? assets : altAssets
 
+const P = 'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_ChatGPT_Image_22_____._2026__'
+
 /** slug → файл у assets (оригінальні завантаження) */
 const MAP = {
-  knauf: 'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_ChatGPT_Image_22_____._2026__.__21_18_28-e864f8cf-5d9d-44c3-b4f3-b5c6a9f11802.png',
-  dewalt:
-    'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_ChatGPT_Image_22_____._2026__.__21_18_21-516e755d-acce-45f3-a7e6-f06e2b986f62.png',
-  festool:
-    'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_ChatGPT_Image_22_____._2026__.__21_17_59-62f81c21-f82d-4e1c-bb8f-f9f82404eb83.png',
-  hilti: 'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_ChatGPT_Image_22_____._2026__.__21_18_59-d82d643c-c68b-49f8-b675-0803a99e5cd1.png',
-  gree: 'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_ChatGPT_Image_22_____._2026__.__21_18_12-8183b52f-98ac-43e3-9e1d-5d85202d8e4f.png',
-  uponor:
-    'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_ChatGPT_Image_22_____._2026__.__21_18_44-33687af1-983d-451b-835b-fb67574d161d.png',
-  velux:
-    'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_ChatGPT_Image_22_____._2026__.__21_18_52-2512bef0-34ef-413e-a311-d641846d4eda.png',
-  geberit:
-    'c__Users_PC_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_ChatGPT_Image_22_____._2026__.__21_18_37-175fab36-2c83-4c5c-941e-69c15398c599.png',
+  knauf: `${P}.__21_18_28-83c94104-c2f5-4acc-a78d-f5f35f6f3e17.png`,
+  dewalt: `${P}.__21_18_21-af625bfd-a618-4985-be36-6c5649c264e6.png`,
+  festool: `${P}.__21_17_59-70e4a014-0d94-49b7-ab73-fa88b0fa412f.png`,
+  hilti: `${P}.__21_18_59-3632d221-ab6b-40ce-9ed1-93ae862efbc5.png`,
+  gree: `${P}.__21_18_12-afc6c3de-9a79-4b08-a3d6-5fb4b567c790.png`,
+  uponor: `${P}.__21_18_44-278f0377-598f-41cf-b0e5-12e97df4c35f.png`,
+  velux: `${P}.__21_18_52-1a5515ce-d471-4ad5-b515-11dd1ba9028b.png`,
+  geberit: `${P}.__21_18_37-873c0cb5-2464-4bed-8762-8c80efcc000e.png`,
 }
 
 mkdirSync(outDir, { recursive: true })
