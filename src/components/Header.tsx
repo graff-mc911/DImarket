@@ -237,12 +237,16 @@ export function Header() {
   const hoverGlowClass =
     'transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_14px_rgba(196,122,61,0.18)]'
 
-  const navTextClass = (active: boolean) =>
-    ['relative inline-flex items-center gap-1.5 pb-1 text-sm font-semibold transition-all duration-300',
+  const navTextClass = (active: boolean, nowrap = false) =>
+    [
+      'relative inline-flex items-center gap-1.5 pb-1 text-sm font-semibold transition-all duration-300',
+      nowrap ? 'shrink-0 whitespace-nowrap' : '',
       active
         ? 'text-[var(--accent-700)] [text-shadow:0_0_14px_rgba(196,122,61,0.18)]'
         : 'text-[var(--ink-700)] ' + hoverGlowClass,
     ].join(' ')
+
+  const bottomNavGapClass = 'gap-7'
 
   const textButtonClass = (active = false) =>
     ['inline-flex items-center gap-1.5 rounded-full border-0 bg-transparent px-1.5 py-1 text-sm font-semibold shadow-none outline-none',
@@ -539,46 +543,55 @@ export function Header() {
               </div>
             </div>
 
-            {/* Нижня навігаційна панель (десктоп) */}
-            <div className="mt-2 hidden items-end justify-between gap-3 border-t border-[var(--glass-border)] pt-2 lg:flex">
-              <nav className="flex shrink-0 items-center gap-7">
-                {navItems.map(item => (
-                  <button
-                    key={item.path}
-                    onClick={() => goTo(item.path)}
-                    type="button"
-                    className={navTextClass(isActiveRoute(item.path))}
-                  >
-                    <span>{item.label}</span>
-                    <span className={'absolute bottom-0 left-0 h-[2px] rounded-full bg-[var(--accent-700)] transition-all duration-300 ' +
-                      (isActiveRoute(item.path) ? 'w-full opacity-100' : 'w-0 opacity-0')} />
-                  </button>
-                ))}
-              </nav>
+            {/* Нижня навігаційна панель (десктоп) — однаковий gap між усіма пунктами */}
+            <nav
+              className={
+                'mt-2 hidden w-full flex-wrap items-end justify-center border-t border-[var(--glass-border)] pt-2 lg:flex ' +
+                bottomNavGapClass
+              }
+            >
+              {navItems.map(item => (
+                <button
+                  key={item.path}
+                  onClick={() => goTo(item.path)}
+                  type="button"
+                  className={navTextClass(isActiveRoute(item.path), true)}
+                >
+                  <span>{item.label}</span>
+                  <span
+                    className={
+                      'absolute bottom-0 left-0 h-[2px] rounded-full bg-[var(--accent-700)] transition-all duration-300 ' +
+                      (isActiveRoute(item.path) ? 'w-full opacity-100' : 'w-0 opacity-0')
+                    }
+                  />
+                </button>
+              ))}
 
-              <nav className="flex min-w-0 flex-1 flex-wrap items-center justify-center gap-x-5 gap-y-1 px-2">
-                {centerNavItems.map(item => (
-                  <button
-                    key={item.path + item.label}
-                    onClick={() => goTo(item.path)}
-                    type="button"
-                    className={navTextClass(isActiveRoute(item.path))}
-                  >
-                    <span>{item.label}</span>
-                    <span className={'absolute bottom-0 left-0 h-[2px] rounded-full bg-[var(--accent-700)] transition-all duration-300 ' +
-                      (isActiveRoute(item.path) ? 'w-full opacity-100' : 'w-0 opacity-0')} />
-                  </button>
-                ))}
-              </nav>
+              {centerNavItems.map(item => (
+                <button
+                  key={item.path + item.label}
+                  onClick={() => goTo(item.path)}
+                  type="button"
+                  className={navTextClass(isActiveRoute(item.path), true)}
+                >
+                  <span>{item.label}</span>
+                  <span
+                    className={
+                      'absolute bottom-0 left-0 h-[2px] rounded-full bg-[var(--accent-700)] transition-all duration-300 ' +
+                      (isActiveRoute(item.path) ? 'w-full opacity-100' : 'w-0 opacity-0')
+                    }
+                  />
+                </button>
+              ))}
 
               <button
                 onClick={() => goTo('/listings')}
                 type="button"
-                className={textButtonClass(isActiveRoute('/listings')) + ' shrink-0'}
+                className={textButtonClass(isActiveRoute('/listings')) + ' shrink-0 whitespace-nowrap'}
               >
                 {t('listings.title')}
               </button>
-            </div>
+            </nav>
 
             {/* Пошук (мобільний) */}
             <form onSubmit={handleSearchSubmit} className="mt-2.5 xl:hidden">
