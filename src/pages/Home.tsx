@@ -21,6 +21,8 @@ import {
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { AdBanner } from '../components/AdBanner'
+import { MobileAdBanner } from '../components/MobileAdBanner'
 import type { Category, ListingWithImages, Profile } from '../lib/types'
 import type { TranslationKey } from '../lib/i18n'
 
@@ -157,8 +159,16 @@ export function Home() {
   }
 
   return (
-    <div className="page-bg min-h-screen">
-      <section className="px-4 pb-6 pt-4 md:px-6 xl:px-8 2xl:px-10">
+    <div className="page-bg min-h-screen pb-24 lg:pb-8">
+      <div className="w-full px-4 md:px-6 xl:px-8 2xl:px-10">
+        <div className="flex gap-6">
+
+          <aside className="hidden w-[260px] flex-shrink-0 xl:block 2xl:w-[300px]">
+            <AdBanner position="left" sticky={true} page="home" />
+          </aside>
+
+          <main className="min-w-0 flex-1">
+      <section className="pb-6 pt-4">
         <div className="mx-auto max-w-7xl">
           <div className="glass-panel fade-rise p-6 md:p-7 xl:p-8">
             <div className="eyebrow">
@@ -269,7 +279,9 @@ export function Home() {
         </div>
       </section>
 
-      <section className="px-4 py-6 md:px-6 xl:px-8 2xl:px-10">
+      <MobileAdBanner variant="horizontal" />
+
+      <section className="py-6">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             title={t('home.howItWorksTitle')}
@@ -301,7 +313,7 @@ export function Home() {
         </div>
       </section>
 
-      <section className="px-4 py-6 md:px-6 xl:px-8 2xl:px-10">
+      <section className="py-6">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             title={t('home.popularCategoriesTitle')}
@@ -344,7 +356,9 @@ export function Home() {
         </div>
       </section>
 
-      <section className="px-4 py-6 md:px-6 xl:px-8 2xl:px-10">
+      <MobileAdBanner variant="inline" />
+
+      <section className="py-6">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             title={t('home.freshRequestsTitle')}
@@ -378,7 +392,7 @@ export function Home() {
         </div>
       </section>
 
-      <section className="px-4 pb-14 pt-6 md:px-6 xl:px-8 2xl:px-10">
+      <section className="pb-14 pt-6">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             title={t('home.popularProsTitle')}
@@ -411,6 +425,15 @@ export function Home() {
           )}
         </div>
       </section>
+          </main>
+
+          <aside className="hidden w-[260px] flex-shrink-0 xl:block 2xl:w-[300px]">
+            <AdBanner position="right" sticky={true} page="home" />
+          </aside>
+        </div>
+      </div>
+
+      <MobileAdBanner variant="sticky" />
     </div>
   )
 }

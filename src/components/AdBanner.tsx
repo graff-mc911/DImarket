@@ -7,9 +7,11 @@ import { AdCampaign } from '../lib/types'
 interface AdBannerProps {
   position: 'left' | 'right'
   sticky?: boolean
+  /** Які placement показувати (за замовчуванням — усі бокові) */
+  page?: 'home' | 'listings'
 }
 
-export function AdBanner({ position, sticky = true }: AdBannerProps) {
+export function AdBanner({ position, sticky = true, page }: AdBannerProps) {
   const { t } = useApp()
 
   // Даємо користувачу можливість локально сховати рекламний блок.
@@ -22,9 +24,8 @@ export function AdBanner({ position, sticky = true }: AdBannerProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // На десктопі підтягуємо активну рекламу із Supabase.
     void loadSidebarCampaigns()
-  }, [])
+  }, [page])
 
   const loadSidebarCampaigns = async () => {
     setLoading(true)
@@ -32,12 +33,17 @@ export function AdBanner({ position, sticky = true }: AdBannerProps) {
     try {
       const now = Date.now()
 
-      // На цьому етапі показуємо лише sidebar-кампанії.
-      // Географія вже збережена в базі, а автоматичний гео-відбір можна підключити наступним кроком.
+      const placements =
+        page === 'home'
+          ? ['home', 'sidebar']
+          : page === 'listings'
+            ? ['listings', 'sidebar', 'home']
+            : ['sidebar', 'home', 'listings']
+
       const { data, error } = await supabase
         .from('ad_campaigns')
         .select('*')
-        .in('placement', ['sidebar', 'home', 'listings'])
+        .in('placement', placements)
         .eq('status', 'active')
         .order('created_at', { ascending: false })
         .limit(6)
