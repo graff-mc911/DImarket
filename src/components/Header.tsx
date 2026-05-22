@@ -243,8 +243,8 @@ export function Header() {
 
   const showAnnouncement = announcement && !bannerDismissed
   const headerSpacerClass = showAnnouncement
-    ? 'h-[8.75rem] xl:h-[8.25rem]'
-    : 'h-[5.75rem] xl:h-[6.75rem]'
+    ? 'h-[11.5rem] xl:h-[11rem]'
+    : 'h-[8rem] xl:h-[9rem]'
 
   const dropdownPanelClass =
     'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.94)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] backdrop-blur-xl'
