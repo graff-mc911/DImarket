@@ -186,43 +186,39 @@ export async function fetchPaidAdCampaigns(
 ): Promise<AdCampaignWithAdvertiser[]> {
   const { slots, limit = 12, viewerCity, viewerCountry } = options
 
-  const selectWithAdvertiser = `
-      *,
-      advertiser:profiles!advertiser_id (
-        full_name,
-        website,
-        avatar_url,
-        profile_photo,
-        user_role
-      )
-    `
-
+  // Без join на profiles: RLS дозволяє читати лише is_professional=true,
+  // через що вбудований advertiser часто ламає публічний fetch у браузері.
   let { data, error } = await supabase
     .from('ad_campaigns')
-    .select(selectWithAdvertiser)
+    .select('*')
     .eq('status', 'active')
     .order('price_paid', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(40)
 
   if (error) {
-    const retry = await supabase
-      .from('ad_campaigns')
-      .select('*')
-      .eq('status', 'active')
-      .order('price_paid', { ascending: false })
-      .order('created_at', { ascending: false })
-      .limit(40)
-    data = retry.data
-    error = retry.error
-  }
-
-  if (error) {
-    console.error('[ads] fetchPaidAdCampaigns:', error.message)
+    console.error('[ads] fetchPaidAdCampaigns:', error.message, error)
     return []
   }
 
   const rows = (data as AdCampaignWithAdvertiser[] | null) || []
+
+  if (rows.length > 0) {
+    const filteredCount = rows
+      .filter(isPaidCampaign)
+      .filter(isCampaignInSchedule)
+      .filter((c) => slots.some((slot) => campaignMatchesSlot(c, slot)))
+      .filter((c) => matchesViewerGeo(c, viewerCity, viewerCountry)).length
+    if (filteredCount === 0) {
+      console.warn('[ads] Raw rows from API:', rows.length, 'but none matched slots/filter', {
+        slots,
+        sample: rows[0]?.title,
+        placement: rows[0]?.placement,
+        paid: isPaidCampaign(rows[0]),
+        inSchedule: isCampaignInSchedule(rows[0]),
+      })
+    }
+  }
 
   return rows
     .filter(isPaidCampaign)

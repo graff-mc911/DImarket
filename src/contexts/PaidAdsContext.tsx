@@ -39,7 +39,7 @@ export function PaidAdsProvider({ children }: { children: ReactNode }) {
       })
       setCampaigns(paid)
       if (paid.length === 0) {
-        console.warn('[ads] No paid campaigns returned for public display')
+        console.warn('[ads] No paid campaigns matched filters for public display')
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load ads'
