@@ -103,13 +103,18 @@ function AdCampaignMedia({
 }) {
   const { t } = useApp()
   const imageSrc = getPublicBannerImageUrl(campaign)
+  const isBrandBanner = imageSrc.includes('/ads/brands/')
 
   return (
     <div className={`relative overflow-hidden bg-[rgba(255,248,241,0.5)] ${imageClass}`}>
       <img
         src={imageSrc}
         alt={campaign.title}
-        className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+        className={
+          isBrandBanner
+            ? 'h-full w-full object-contain object-center bg-[#1c1917] transition duration-500 group-hover:scale-[1.01]'
+            : 'h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]'
+        }
         loading="lazy"
         onError={(e) => {
           e.currentTarget.src = AD_MEDIA_FALLBACK

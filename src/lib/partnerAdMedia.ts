@@ -1,14 +1,14 @@
 import type { AdCampaign } from './types'
 import { BRAND_ADVERTISER_BY_CAMPAIGN_ID } from './partnerAdvertisers'
 
-/** Центральний герой — Baumit */
+/** Центральний герой — GREE */
 export const CENTER_HERO_CAMPAIGN_ID = '28885e84-4be9-4ba7-8fa8-fac766c5f1f8'
 
-/** Верхні бокові слоти — інструмент / утеплення */
+/** Верхні бокові слоти — інструмент / матеріали */
 export const SIDE_TOP_PARTNER_IDS = [
   'f81e653d-ca9e-4081-a4ca-2a17395e9924', // Knauf
-  '89623059-83ca-4151-9f09-8fcfcb8ed889', // Bosch
-  '0431275c-451e-47ed-a7a7-44167a577a29', // Würth
+  '89623059-83ca-4151-9f09-8fcfcb8ed889', // DEWALT
+  '0431275c-451e-47ed-a7a7-44167a577a29', // Festool
   '1ec41ada-4feb-4a36-b1a9-8494622ea30f', // Hilti
   'a1000001-0001-4001-8001-000000000001', // Rockwool
 ] as const
@@ -33,7 +33,12 @@ export type PartnerMediaPatch = Pick<
   'id' | 'title' | 'description' | 'image_url' | 'media_url' | 'media_type' | 'link_url' | 'placements'
 >
 
-/** Статичне фото за темою бренду (без відео / YouTube) */
+/** Локальні банери брендів (public/ads/brands/*.png, ~16:9) */
+function brandBanner(slug: string) {
+  return img(`/ads/brands/${slug}.png`)
+}
+
+/** Статичне фото (без відео / YouTube) */
 function img(url: string) {
   return {
     image_url: url,
@@ -45,71 +50,73 @@ function img(url: string) {
 export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
   'f81e653d-ca9e-4081-a4ca-2a17395e9924': {
     id: 'f81e653d-ca9e-4081-a4ca-2a17395e9924',
-    title: 'Knauf — мінеральна вата та фасадні системи',
+    title: 'Knauf — BUILD ON US',
     description:
-      'Теплоізоляція, гіпсокартон і ETICS для ремонту та новобудов. Офіційні системи Knauf для України.',
-    ...img('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&h=560&fit=crop&q=85'),
+      'Системи гіпсокартону, утеплення та універсальна штукатурка MP 75 для будь-якого об\'єкта. Будуйте на надійних матеріалах Knauf — знайдіть на DImarket.app.',
+    ...brandBanner('knauf'),
     link_url: 'https://www.knauf.ua',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
   '89623059-83ca-4151-9f09-8fcfcb8ed889': {
     id: '89623059-83ca-4151-9f09-8fcfcb8ed889',
-    title: 'Bosch Professional — акумуляторний інструмент',
+    title: 'DEWALT — GUARANTEED TOUGH',
     description:
-      'Дрилі, шуруповерти, лазерні нівеліри та сервіс Bosch для монтажників на об\'єкті.',
-    ...img('https://images.unsplash.com/photo-1572981776447-47a21a0fbb7f?w=900&h=560&fit=crop&q=85'),
-    link_url: 'https://www.bosch-professional.com/ua/uk',
+      'Високопродуктивний акумуляторний інструмент XR для найважчих задач на об\'єкті: потужність, міцність і витривалість. Доступно на DImarket.app.',
+    ...brandBanner('dewalt'),
+    link_url: 'https://www.dewalt.com',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
   '0431275c-451e-47ed-a7a7-44167a577a29': {
     id: '0431275c-451e-47ed-a7a7-44167a577a29',
-    title: 'Würth — кріплення та витратні матеріали',
+    title: 'Festool — BUILT BETTER TO BUILD BETTER',
     description:
-      'Анкери, дюбелі, хімічні кріплення та доставка на будмайданчик одним постачальником.',
-    ...img('https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=900&h=560&fit=crop&q=85'),
-    link_url: 'https://www.wurth.ua',
+      'Преміальні інструменти та системи Systainer: точність, сумісність, довговічність і чиста робоча зона. Знайдіть на DImarket.app.',
+    ...brandBanner('festool'),
+    link_url: 'https://www.festool.com',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
   '1ec41ada-4feb-4a36-b1a9-8494622ea30f': {
     id: '1ec41ada-4feb-4a36-b1a9-8494622ea30f',
-    title: 'Hilti — перфоратори та алмазне свердління',
+    title: 'Hilti — OUTPERFORM. OUTLAST.',
     description:
-      'Професійний інструмент, анкери та оренда обладнання Hilti для підрядників.',
-    ...img('https://images.unsplash.com/photo-1504148455328-c376907d0c8f?w=900&h=560&fit=crop&q=85'),
+      'Інструмент і сервіс для професіоналів: перфоратори TE 6-22, анкери та інновації Hilti на будмайданчику. Дивіться пропозиції на DImarket.app.',
+    ...brandBanner('hilti'),
     link_url: 'https://www.hilti.ua',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },
   '28885e84-4be9-4ba7-8fa8-fac766c5f1f8': {
     id: CENTER_HERO_CAMPAIGN_ID,
-    title: 'Baumit — декоративні штукатурки та ETICS',
+    title: 'GREE — PERFECT CLIMATE',
     description:
-      'Фасадні системи, утеплення та фінішні покриття Baumit для житла і комерції.',
-    ...img('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=900&h=560&fit=crop&q=85'),
-    link_url: 'https://www.baumit.ua',
-    placements: ['home', 'sidebar', 'listings', 'footer'],
+      'Клімат-контроль нового рівня: енергозбереження, тиха робота, розумне керування Wi‑Fi та швидке охолодження. Комфорт цілий рік — на DImarket.app.',
+    ...brandBanner('gree'),
+    link_url: 'https://www.gree.com',
+    placements: ['home', 'home_center', 'sidebar', 'listings', 'footer'],
   },
   '807b9715-ddcd-4d1f-b651-711a880a2c77': {
     id: '807b9715-ddcd-4d1f-b651-711a880a2c77',
-    title: 'Uponor — труби PEX та опалення',
-    description: 'Системи водопостачання, теплої підлоги та монтажні комплекти Uponor.',
-    ...img('https://images.unsplash.com/photo-1585704032915-8ig20df24b8e?w=900&h=560&fit=crop&q=85'),
+    title: 'Uponor — BUILD ON RELIABILITY',
+    description:
+      'Інтелектуальні рішення для водопостачання, опалення та охолодження: колектори, труби та монтажні системи Uponor. Знайдіть на DImarket.app.',
+    ...brandBanner('uponor'),
     link_url: 'https://www.uponor.com',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },
   '6097ef50-bb68-4041-b83f-32ecee542aad': {
     id: '6097ef50-bb68-4041-b83f-32ecee542aad',
-    title: 'VELUX — мансардні вікна та світлові тунелі',
-    description: 'Вікна, жалюзі та монтажні комплекти для дахів і мансард.',
-    ...img('https://images.unsplash.com/photo-1632776043539-6aedd71a6190?w=900&h=560&fit=crop&q=85'),
+    title: 'VELUX — MORE DAYLIGHT. BETTER LIVING.',
+    description:
+      'Мансардні вікна та світлові рішення для більшого денного світла, комфорту та енергоефективності вдома. Обирайте на DImarket.app.',
+    ...brandBanner('velux'),
     link_url: 'https://www.velux.com',
     placements: ['home', 'sidebar', 'listings', 'footer'],
   },
   '69df3b9f-c702-4028-b998-fc3734dc76ed': {
     id: '69df3b9f-c702-4028-b998-fc3734dc76ed',
-    title: 'Geberit — інсталяції та зливні системи',
+    title: 'Geberit — THE ART OF BATHROOM PERFECTION',
     description:
-      'Сховані інсталяції, зливні арматури та рішення для ванних кімнат у новобудовах.',
-    ...img('https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=900&h=560&fit=crop&q=85'),
+      'Інноваційні інсталяції, зливні системи та дизайн ванних кімнат: функціональність, естетика та економія води. Деталі на DImarket.app.',
+    ...brandBanner('geberit'),
     link_url: 'https://www.geberit.com',
     placements: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
   },

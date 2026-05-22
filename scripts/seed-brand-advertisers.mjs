@@ -30,6 +30,9 @@ function loadEnvFile(name) {
 }
 
 /** Дані синхронізовані з src/lib/partnerAdvertisers.ts та partnerAdMedia.ts */
+const SITE = process.env.PUBLIC_SITE_URL || 'https://dimarket.app'
+const brandImg = (slug) => `${SITE}/ads/brands/${slug}.png`
+
 const BRANDS = [
   {
     slug: 'knauf',
@@ -38,42 +41,39 @@ const BRANDS = [
     email: 'knauf.ads@advertisers.dimarket.app',
     fullName: 'Knauf Україна',
     website: 'https://www.knauf.ua',
-    title: 'Knauf — мінеральна вата та фасадні системи',
+    title: 'Knauf — BUILD ON US',
     description:
-      'Теплоізоляція, гіпсокартон і ETICS для ремонту та новобудов. Офіційні системи Knauf для України.',
-    image:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&h=560&fit=crop&q=85',
+      'Системи гіпсокартону, утеплення та універсальна штукатурка MP 75 для будь-якого об\'єкта. Будуйте на надійних матеріалах Knauf — знайдіть на DImarket.app.',
+    image: brandImg('knauf'),
     link: 'https://www.knauf.ua',
     placement: 'sidebar',
   },
   {
-    slug: 'bosch',
+    slug: 'dewalt',
     profileId: 'e1000002-0002-4002-8002-000000000002',
     campaignId: '89623059-83ca-4151-9f09-8fcfcb8ed889',
-    email: 'bosch.ads@advertisers.dimarket.app',
-    fullName: 'Bosch Professional Україна',
-    website: 'https://www.bosch-professional.com/ua/uk',
-    title: 'Bosch Professional — акумуляторний інструмент',
+    email: 'dewalt.ads@advertisers.dimarket.app',
+    fullName: 'DEWALT Україна',
+    website: 'https://www.dewalt.com',
+    title: 'DEWALT — GUARANTEED TOUGH',
     description:
-      'Дрилі, шуруповерти, лазерні нівеліри та сервіс Bosch для монтажників на об\'єкті.',
-    image:
-      'https://images.unsplash.com/photo-1572981776447-47a21a0fbb7f?w=900&h=560&fit=crop&q=85',
-    link: 'https://www.bosch-professional.com/ua/uk',
+      'Високопродуктивний акумуляторний інструмент XR для найважчих задач на об\'єкті: потужність, міцність і витривалість. Доступно на DImarket.app.',
+    image: brandImg('dewalt'),
+    link: 'https://www.dewalt.com',
     placement: 'home',
   },
   {
-    slug: 'wurth',
+    slug: 'festool',
     profileId: 'e1000003-0003-4003-8003-000000000003',
     campaignId: '0431275c-451e-47ed-a7a7-44167a577a29',
-    email: 'wurth.ads@advertisers.dimarket.app',
-    fullName: 'Würth Україна',
-    website: 'https://www.wurth.ua',
-    title: 'Würth — кріплення та витратні матеріали',
+    email: 'festool.ads@advertisers.dimarket.app',
+    fullName: 'Festool',
+    website: 'https://www.festool.com',
+    title: 'Festool — BUILT BETTER TO BUILD BETTER',
     description:
-      'Анкери, дюбелі, хімічні кріплення та доставка на будмайданчик одним постачальником.',
-    image:
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=900&h=560&fit=crop&q=85',
-    link: 'https://www.wurth.ua',
+      'Преміальні інструменти та системи Systainer: точність, сумісність, довговічність і чиста робоча зона. Знайдіть на DImarket.app.',
+    image: brandImg('festool'),
+    link: 'https://www.festool.com',
     placement: 'sidebar',
   },
   {
@@ -83,27 +83,25 @@ const BRANDS = [
     email: 'hilti.ads@advertisers.dimarket.app',
     fullName: 'Hilti Україна',
     website: 'https://www.hilti.ua',
-    title: 'Hilti — перфоратори та алмазне свердління',
+    title: 'Hilti — OUTPERFORM. OUTLAST.',
     description:
-      'Професійний інструмент, анкери та оренда обладнання Hilti для підрядників.',
-    image:
-      'https://images.unsplash.com/photo-1504148455328-c376907d0c8f?w=900&h=560&fit=crop&q=85',
+      'Інструмент і сервіс для професіоналів: перфоратори TE 6-22, анкери та інновації Hilti на будмайданчику. Дивіться пропозиції на DImarket.app.',
+    image: brandImg('hilti'),
     link: 'https://www.hilti.ua',
     placement: 'sidebar',
   },
   {
-    slug: 'baumit',
+    slug: 'gree',
     profileId: 'e1000005-0005-4005-8005-000000000005',
     campaignId: '28885e84-4be9-4ba7-8fa8-fac766c5f1f8',
-    email: 'baumit.ads@advertisers.dimarket.app',
-    fullName: 'Baumit Україна',
-    website: 'https://www.baumit.ua',
-    title: 'Baumit — декоративні штукатурки та ETICS',
+    email: 'gree.ads@advertisers.dimarket.app',
+    fullName: 'GREE Climate',
+    website: 'https://www.gree.com',
+    title: 'GREE — PERFECT CLIMATE',
     description:
-      'Фасадні системи, утеплення та фінішні покриття Baumit для житла і комерції.',
-    image:
-      'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=900&h=560&fit=crop&q=85',
-    link: 'https://www.baumit.ua',
+      'Клімат-контроль нового рівня: енергозбереження, тиха робота, розумне керування Wi‑Fi та швидке охолодження. Комфорт цілий рік — на DImarket.app.',
+    image: brandImg('gree'),
+    link: 'https://www.gree.com',
     placement: 'footer',
   },
   {
@@ -113,10 +111,10 @@ const BRANDS = [
     email: 'uponor.ads@advertisers.dimarket.app',
     fullName: 'Uponor',
     website: 'https://www.uponor.com',
-    title: 'Uponor — труби PEX та опалення',
-    description: 'Системи водопостачання, теплої підлоги та монтажні комплекти Uponor.',
-    image:
-      'https://images.unsplash.com/photo-1585704032915-8ig20df24b8e?w=900&h=560&fit=crop&q=85',
+    title: 'Uponor — BUILD ON RELIABILITY',
+    description:
+      'Інтелектуальні рішення для водопостачання, опалення та охолодження: колектори, труби та монтажні системи Uponor. Знайдіть на DImarket.app.',
+    image: brandImg('uponor'),
     link: 'https://www.uponor.com',
     placement: 'sidebar',
   },
@@ -127,10 +125,10 @@ const BRANDS = [
     email: 'velux.ads@advertisers.dimarket.app',
     fullName: 'VELUX',
     website: 'https://www.velux.com',
-    title: 'VELUX — мансардні вікна та світлові тунелі',
-    description: 'Вікна, жалюзі та монтажні комплекти для дахів і мансард.',
-    image:
-      'https://images.unsplash.com/photo-1632776043539-6aedd71a6190?w=900&h=560&fit=crop&q=85',
+    title: 'VELUX — MORE DAYLIGHT. BETTER LIVING.',
+    description:
+      'Мансардні вікна та світлові рішення для більшого денного світла, комфорту та енергоефективності вдома. Обирайте на DImarket.app.',
+    image: brandImg('velux'),
     link: 'https://www.velux.com',
     placement: 'home',
   },
@@ -141,11 +139,10 @@ const BRANDS = [
     email: 'geberit.ads@advertisers.dimarket.app',
     fullName: 'Geberit',
     website: 'https://www.geberit.com',
-    title: 'Geberit — інсталяції та зливні системи',
+    title: 'Geberit — THE ART OF BATHROOM PERFECTION',
     description:
-      'Сховані інсталяції, зливні арматури та рішення для ванних кімнат у новобудовах.',
-    image:
-      'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=900&h=560&fit=crop&q=85',
+      'Інноваційні інсталяції, зливні системи та дизайн ванних кімнат: функціональність, естетика та економія води. Деталі на DImarket.app.',
+    image: brandImg('geberit'),
     link: 'https://www.geberit.com',
     placement: 'sidebar',
   },
