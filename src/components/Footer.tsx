@@ -26,7 +26,7 @@ export function Footer() {
 
   return (
     <footer className="mt-auto w-full px-4 pb-3 md:px-6 xl:px-8 2xl:px-10">
-      <div className="surface-shell w-full rounded-[22px] border border-white/70 bg-[rgba(252,246,240,0.96)] p-3 shadow-[0_12px_32px_rgba(89,63,48,0.06)] md:border-[var(--glass-border)] md:bg-[var(--bg-glass-top)] md:shadow-[0_12px_32px_rgba(55,70,50,0.06)] md:backdrop-blur-none md:p-4">
+      <div className="w-full rounded-[22px] border border-white/70 bg-[rgba(252,246,240,0.82)] p-3 shadow-[0_12px_32px_rgba(89,63,48,0.06)] backdrop-blur-xl md:p-4">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1.25fr_0.8fr_0.8fr_0.9fr_1fr]">
           <div>
             <button
