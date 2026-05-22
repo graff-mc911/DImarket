@@ -1,4 +1,4 @@
--- Philips — нижній боковий банер
+-- Philips — горизонтальний нижній банер (не бокова колонка)
 
 INSERT INTO ad_campaigns (
   id, advertiser_id, title, description, image_url, media_url, media_type, link_url,
@@ -14,13 +14,13 @@ INSERT INTO ad_campaigns (
   'https://dimarket.app/ads/brands/philips.png',
   'image',
   'https://www.philips.ua',
-  'sidebar',
-  ARRAY['home','sidebar','listings','mobile_sticky','footer']::text[],
+  'footer',
+  ARRAY['footer','home','listings']::text[],
   'global', 'UA', 'Україна',
   now() - interval '5 days', now() + interval '120 days', 'active', 1850, 58,
   'presence_free_a1000005', 128, 'eur',
   'b64a9350-4f7e-46bf-8697-d39c02491ad0', now(),
-  'Presence partner — Philips bottom rail'
+  'Presence partner — Philips footer banner'
 )
 ON CONFLICT (id) DO UPDATE SET
   title = EXCLUDED.title,
@@ -29,5 +29,6 @@ ON CONFLICT (id) DO UPDATE SET
   media_url = EXCLUDED.media_url,
   media_type = EXCLUDED.media_type,
   link_url = EXCLUDED.link_url,
+  placement = EXCLUDED.placement,
   placements = EXCLUDED.placements,
   updated_at = now();
