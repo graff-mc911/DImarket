@@ -36,10 +36,24 @@ function campaignsForSide(
   return picked
 }
 
-const STACK_STICKY_TOP = 'top-[8rem] xl:top-[9rem]'
-const STACK_STICKY_HEIGHT = 'h-[calc(100vh-8rem)] xl:h-[calc(100vh-9rem)]'
+const FIXED_TOP = 'top-[8rem] xl:top-[9rem]'
+const STACK_FIXED_HEIGHT = 'h-[calc(100vh-8rem)] xl:h-[calc(100vh-9rem)]'
+
+function fixedSideClasses(position: 'left' | 'right', rail: 'home' | 'default') {
+  const width =
+    rail === 'home' ? 'w-[240px] 2xl:w-[280px]' : 'w-[260px] 2xl:w-[300px]'
+  const offset =
+    position === 'left'
+      ? 'left-4 md:left-6 xl:left-8 2xl:left-10'
+      : 'right-4 md:right-6 xl:right-8 2xl:right-10'
+  return `${width} ${offset}`
+}
 
 export function AdBanner({ position, sticky = true, page, stackCount }: AdBannerProps) {
+  const rail = stackCount ? 'home' : 'default'
+  const fixedClasses = sticky
+    ? `fixed z-30 ${FIXED_TOP} ${fixedSideClasses(position, rail)}`
+    : ''
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
 
@@ -76,10 +90,10 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
   if (stackCount && stackCount >= 2) {
     return (
       <aside
-        className={`hidden w-full flex-col xl:flex ${
+        className={`hidden flex-col xl:flex ${
           sticky
-            ? `sticky ${STACK_STICKY_TOP} ${STACK_STICKY_HEIGHT}`
-            : 'h-full min-h-full flex-1'
+            ? `${fixedClasses} ${STACK_FIXED_HEIGHT}`
+            : 'h-full min-h-full w-full flex-1'
         }`}
       >
         <div
@@ -117,8 +131,8 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
 
   return (
     <aside
-      className={`hidden h-fit w-full xl:block ${sticky ? 'sticky top-[6.75rem]' : ''}`}
-      style={{ maxHeight: sticky ? 'calc(100vh - 6rem)' : undefined }}
+      className={`hidden h-fit xl:block ${sticky ? `${fixedClasses}` : 'w-full'}`}
+      style={{ maxHeight: sticky ? 'calc(100vh - 9rem)' : undefined }}
     >
       <div className="overflow-hidden">
         {loading ? (
