@@ -10,7 +10,7 @@ import {
 } from '../lib/adCampaigns'
 
 export const adOverlayGlow =
-  'rounded-[18px] shadow-[0_0_0_1px_rgba(255,255,255,0.42),0_6px_28px_rgba(15,23,42,0.05)] transition duration-300 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.58),0_10px_32px_rgba(199,138,96,0.1)]'
+  'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_2px_8px_rgba(67,44,26,0.07)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_3px_12px_rgba(67,44,26,0.1)]'
 
 type AdOverlayVariant = 'stack' | 'legacy' | 'legacy-compact' | 'center' | 'mobile-sticky' | 'mobile-inline'
 
@@ -24,50 +24,140 @@ interface AdOverlayCardProps {
 
 const variantStyles: Record<
   AdOverlayVariant,
-  { block: string; brand: string; title: string; meta: string; badge: string }
+  {
+    shell: string
+    image: string
+    text: string
+    brand: string
+    title: string
+    meta: string
+    badge: string
+  }
 > = {
   stack: {
-    block: 'h-full min-h-[4.5rem]',
-    brand: 'text-[10px]',
-    title: 'text-[11px] line-clamp-2 leading-snug',
-    meta: 'text-[10px]',
-    badge: 'text-[8px] px-1.5 py-0',
+    shell: 'h-[90%] w-[90%] max-h-full max-w-full min-h-[4rem] mx-auto my-auto',
+    image: 'min-h-[2.25rem] flex-1 w-full',
+    text: 'p-1.5',
+    brand: 'text-[9px]',
+    title: 'text-[10px] line-clamp-2 leading-snug',
+    meta: 'text-[9px]',
+    badge: 'text-[7px] px-1 py-0',
   },
   legacy: {
-    block: 'min-h-[220px]',
-    brand: 'text-[11px]',
-    title: 'text-lg line-clamp-3',
-    meta: 'text-sm',
-    badge: 'text-[10px] px-2.5 py-1',
+    shell: 'min-h-[198px] w-[90%] max-w-full mx-auto',
+    image: 'h-[112px] w-full shrink-0',
+    text: 'p-2.5',
+    brand: 'text-[10px]',
+    title: 'text-base line-clamp-2',
+    meta: 'text-xs',
+    badge: 'text-[9px] px-2 py-0.5',
   },
   'legacy-compact': {
-    block: 'min-h-[120px]',
-    brand: 'text-[10px]',
-    title: 'text-base line-clamp-2',
-    meta: 'text-xs',
-    badge: 'text-[9px] px-2 py-0.5',
+    shell: 'min-h-[108px] w-[90%] max-w-full mx-auto',
+    image: 'h-[60px] w-full shrink-0',
+    text: 'p-2',
+    brand: 'text-[9px]',
+    title: 'text-sm line-clamp-2',
+    meta: 'text-[10px]',
+    badge: 'text-[8px] px-1.5 py-0.5',
   },
   center: {
-    block: 'min-h-[220px] md:min-h-[240px]',
-    brand: 'text-[11px]',
-    title: 'text-base line-clamp-2',
-    meta: 'text-xs',
-    badge: 'text-[10px] px-2.5 py-1',
-  },
-  'mobile-sticky': {
-    block: 'min-h-[80px]',
-    brand: 'text-[10px]',
-    title: 'text-sm line-clamp-1',
-    meta: 'text-[10px]',
-    badge: 'text-[9px] px-2 py-0.5',
-  },
-  'mobile-inline': {
-    block: 'min-h-[120px]',
+    shell: 'min-h-[198px] w-[90%] max-w-full mx-auto md:min-h-[216px]',
+    image: 'h-[112px] w-full shrink-0 md:h-[122px]',
+    text: 'p-2.5',
     brand: 'text-[10px]',
     title: 'text-sm line-clamp-2',
     meta: 'text-xs',
     badge: 'text-[9px] px-2 py-0.5',
   },
+  'mobile-sticky': {
+    shell: 'min-h-[72px] w-full',
+    image: 'h-[44px] w-full shrink-0',
+    text: 'p-2 pr-8',
+    brand: 'text-[9px]',
+    title: 'text-xs line-clamp-1',
+    meta: 'text-[9px]',
+    badge: 'text-[8px] px-1.5 py-0.5',
+  },
+  'mobile-inline': {
+    shell: 'min-h-[108px] w-full',
+    image: 'h-[68px] w-full shrink-0',
+    text: 'p-2 pr-8',
+    brand: 'text-[9px]',
+    title: 'text-xs line-clamp-2',
+    meta: 'text-[10px]',
+    badge: 'text-[8px] px-1.5 py-0.5',
+  },
+}
+
+function AdTextContent({
+  brand,
+  title,
+  description,
+  geo,
+  showVisit,
+  visitLabel,
+  styles,
+  compactRow,
+}: {
+  brand: string
+  title: string
+  description?: string | null
+  geo?: string | null
+  showVisit: boolean
+  visitLabel: string
+  styles: (typeof variantStyles)[AdOverlayVariant]
+  compactRow?: boolean
+}) {
+  if (compactRow) {
+    return (
+      <div className="flex items-start justify-between gap-1">
+        <div className="min-w-0 flex-1">
+          {brand && (
+            <p
+              className={`truncate font-bold uppercase tracking-[0.08em] text-[var(--ink-500)] ${styles.brand}`}
+            >
+              {brand}
+            </p>
+          )}
+          <h3 className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</h3>
+        </div>
+        {showVisit && (
+          <span
+            className={`inline-flex shrink-0 items-center gap-0.5 font-semibold text-[var(--accent-700)] ${styles.meta}`}
+          >
+            <span className="sr-only">{visitLabel}</span>
+            <ExternalLink className="h-3 w-3" />
+          </span>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-0.5">
+      {brand && (
+        <p className={`font-bold uppercase tracking-[0.1em] text-[var(--ink-500)] ${styles.brand}`}>
+          {brand}
+        </p>
+      )}
+      <h3 className={`font-extrabold leading-snug text-[var(--ink-900)] ${styles.title}`}>{title}</h3>
+      {description && (
+        <p className={`line-clamp-2 leading-snug text-[var(--ink-700)] ${styles.meta}`}>
+          {description}
+        </p>
+      )}
+      {geo && <p className={`line-clamp-1 text-[var(--ink-500)] ${styles.meta}`}>{geo}</p>}
+      {showVisit && (
+        <span
+          className={`inline-flex items-center gap-1 font-semibold text-[var(--accent-700)] ${styles.meta}`}
+        >
+          {visitLabel}
+          <ExternalLink className="h-3 w-3" />
+        </span>
+      )}
+    </div>
+  )
 }
 
 export function AdOverlayCard({
@@ -81,8 +171,6 @@ export function AdOverlayCard({
   const brand = getAdvertiserLabel(campaign)
   const mediaUrl = getCampaignMediaUrl(campaign)
   const styles = variantStyles[variant]
-  const pad =
-    variant === 'stack' ? 'p-2 sm:p-2.5' : variant === 'mobile-sticky' ? 'p-3 pr-10' : 'p-4'
   const isStack = variant === 'stack'
 
   return (
@@ -90,83 +178,37 @@ export function AdOverlayCard({
       href={campaign.link_url}
       target="_blank"
       rel="noreferrer sponsored"
-      className={`group relative block overflow-hidden ${adOverlayGlow} ${styles.block} ${className}`}
+      className={`group flex flex-col overflow-hidden ${adOverlayGlow} ${styles.shell} ${className}`}
       onClick={() => void trackAdClick(campaign.id)}
     >
-      <img
-        src={mediaUrl}
-        alt={campaign.title}
-        className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-        onError={(e) => {
-          e.currentTarget.src = AD_MEDIA_FALLBACK
-        }}
-      />
-      <div
-        className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/45 to-black/20"
-        aria-hidden
-      />
+      <div className={`relative overflow-hidden bg-[rgba(255,248,241,0.5)] ${styles.image}`}>
+        <img
+          src={mediaUrl}
+          alt={campaign.title}
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+          onError={(e) => {
+            e.currentTarget.src = AD_MEDIA_FALLBACK
+          }}
+        />
+        <span
+          className={`absolute left-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/25 font-bold uppercase tracking-[0.1em] text-white/95 backdrop-blur-[2px] ${styles.badge}`}
+        >
+          <Megaphone className="h-2.5 w-2.5 shrink-0" />
+          {t('ads.badge')}
+        </span>
+      </div>
 
-      <div className={`relative z-[1] flex h-full min-h-[inherit] flex-col justify-between ${pad}`}>
-        {!isStack && (
-          <span
-            className={`inline-flex w-fit items-center gap-1 rounded-full bg-black/35 font-bold uppercase tracking-[0.12em] text-white/95 backdrop-blur-sm ${styles.badge}`}
-          >
-            <Megaphone className="h-3 w-3 shrink-0" />
-            {t('ads.badge')}
-          </span>
-        )}
-
-        <div className={`mt-auto ${isStack ? 'pt-0.5' : 'space-y-0.5 pt-2'}`}>
-          {isStack ? (
-            <div className="flex items-end justify-between gap-1">
-              <div className="min-w-0 flex-1">
-                {brand && (
-                  <p
-                    className={`truncate font-bold uppercase tracking-[0.08em] text-white/70 ${styles.brand}`}
-                  >
-                    {brand}
-                  </p>
-                )}
-                <h3 className={`font-extrabold leading-tight text-white ${styles.title}`}>
-                  {campaign.title}
-                </h3>
-              </div>
-              <span
-                className={`inline-flex shrink-0 items-center gap-0.5 font-semibold text-white/95 ${styles.meta}`}
-              >
-                <span className="sr-only">{t('ads.visit')}</span>
-                <ExternalLink className="h-3 w-3" />
-              </span>
-            </div>
-          ) : (
-            <>
-              {brand && (
-                <p className={`font-bold uppercase tracking-[0.1em] text-white/75 ${styles.brand}`}>
-                  {brand}
-                </p>
-              )}
-              <h3 className={`font-extrabold leading-snug text-white ${styles.title}`}>
-                {campaign.title}
-              </h3>
-              {showDescription && campaign.description && (
-                <p className={`line-clamp-2 leading-5 text-white/85 ${styles.meta}`}>
-                  {campaign.description}
-                </p>
-              )}
-              {showGeo && (
-                <p className={`line-clamp-1 text-white/75 ${styles.meta}`}>
-                  {getGeoTargetLabel(campaign, t)}
-                </p>
-              )}
-              <span
-                className={`inline-flex items-center gap-1 font-semibold text-white/95 ${styles.meta}`}
-              >
-                {t('ads.visit')}
-                <ExternalLink className="h-3.5 w-3.5" />
-              </span>
-            </>
-          )}
-        </div>
+      <div className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-[rgba(255,252,248,0.98)] ${styles.text}`}>
+        <AdTextContent
+          brand={brand}
+          title={campaign.title}
+          description={showDescription ? campaign.description : null}
+          geo={showGeo ? getGeoTargetLabel(campaign, t) : null}
+          showVisit={!isStack}
+          visitLabel={t('ads.visit')}
+          styles={styles}
+          compactRow={isStack}
+        />
       </div>
     </a>
   )
@@ -189,35 +231,37 @@ export function AdOverlayPlaceholder({
 }: AdOverlayPlaceholderProps) {
   const { t } = useApp()
   const styles = variantStyles[variant]
-  const pad = variant === 'stack' ? 'p-1.5' : 'p-4'
+  const isStack = variant === 'stack'
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`relative block w-full overflow-hidden bg-[linear-gradient(135deg,rgba(71,85,105,0.55),rgba(51,65,85,0.72))] text-left ${adOverlayGlow} ${styles.block} ${className}`}
+      className={`flex flex-col overflow-hidden text-left ${adOverlayGlow} ${styles.shell} ${className}`}
     >
       <div
-        className={`relative z-[1] flex h-full min-h-[inherit] flex-col justify-end ${pad}`}
+        className={`flex items-center justify-center bg-[linear-gradient(135deg,rgba(71,85,105,0.35),rgba(51,65,85,0.5))] ${styles.image}`}
       >
-        {variant === 'stack' ? (
+        <Megaphone className="h-5 w-5 text-white/70" />
+      </div>
+
+      <div className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] ${styles.text}`}>
+        {isStack ? (
           <div className="min-w-0">
-            <p className={`font-extrabold text-white ${styles.title}`}>{title}</p>
-            <p className={`truncate text-white/80 ${styles.meta}`}>{subtitle}</p>
+            <p className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</p>
+            <p className={`truncate text-[var(--ink-500)] ${styles.meta}`}>{subtitle}</p>
           </div>
         ) : (
-          <>
+          <div className="space-y-0.5">
             <span
-              className={`mb-auto inline-flex w-fit items-center gap-1 rounded-full bg-black/30 font-bold uppercase tracking-[0.12em] text-white/90 ${styles.badge}`}
+              className={`inline-flex items-center gap-1 rounded-full border border-[var(--glass-border)] bg-[rgba(255,252,248,0.9)] font-bold uppercase tracking-[0.1em] text-[var(--accent-700)] ${styles.badge}`}
             >
-              <Megaphone className="h-3 w-3" />
+              <Megaphone className="h-2.5 w-2.5" />
               {t('ads.badge')}
             </span>
-            <div className="mt-auto space-y-1 pt-2">
-              <p className={`font-extrabold text-white ${styles.title}`}>{title}</p>
-              <p className={`text-white/80 ${styles.meta}`}>{subtitle}</p>
-            </div>
-          </>
+            <p className={`mt-1 font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</p>
+            <p className={`text-[var(--ink-500)] ${styles.meta}`}>{subtitle}</p>
+          </div>
         )}
       </div>
     </button>

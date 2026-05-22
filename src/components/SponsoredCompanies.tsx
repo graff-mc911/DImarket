@@ -52,7 +52,7 @@ export function SponsoredCompanies() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className={`min-h-[220px] animate-pulse bg-[rgba(148,163,184,0.14)] md:min-h-[240px] ${adOverlayGlow}`}
+                className={`mx-auto min-h-[198px] w-[90%] animate-pulse bg-[rgba(148,163,184,0.14)] md:min-h-[216px] ${adOverlayGlow}`}
               />
             ))}
           </div>

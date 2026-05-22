@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
-import { AdOverlayCard, AdOverlayPlaceholder, adOverlayGlow } from './AdOverlayCard'
+import { AdOverlayCard, AdOverlayPlaceholder } from './AdOverlayCard'
 import {
   pickMobileCampaign,
   trackAdImpression,
@@ -36,7 +36,7 @@ export function MobileAdBanner({ variant, page }: MobileAdBannerProps) {
     [mobileCampaigns, variant],
   )
 
-  const inlineMinH = variant === 'horizontal' ? 'min-h-[100px]' : 'min-h-[120px]'
+  const inlineMinH = variant === 'horizontal' ? 'min-h-[90px]' : 'min-h-[108px]'
 
   useEffect(() => {
     if (loading || !campaign) return
@@ -48,7 +48,7 @@ export function MobileAdBanner({ variant, page }: MobileAdBannerProps) {
   if (variant === 'sticky') {
     return (
       <div className="fixed bottom-3 left-3 right-3 z-40 lg:hidden">
-        <div className={`relative overflow-hidden ${adOverlayGlow}`}>
+        <div className="relative">
           <button
             onClick={() => setAdVisible(false)}
             type="button"
@@ -59,7 +59,7 @@ export function MobileAdBanner({ variant, page }: MobileAdBannerProps) {
           </button>
 
           {loading ? (
-            <div className="min-h-[80px] animate-pulse bg-white/20" />
+            <div className="min-h-[72px] animate-pulse bg-white/20" />
           ) : campaign ? (
             <AdOverlayCard campaign={campaign} variant="mobile-sticky" showGeo />
           ) : (
@@ -77,7 +77,7 @@ export function MobileAdBanner({ variant, page }: MobileAdBannerProps) {
 
   return (
     <div className="lg:hidden">
-      <div className={`relative overflow-hidden ${adOverlayGlow}`}>
+      <div className="relative">
         <button
           onClick={() => setAdVisible(false)}
           type="button"

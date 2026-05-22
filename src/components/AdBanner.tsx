@@ -139,7 +139,7 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
       <div className={`flex min-h-0 flex-col overflow-hidden ${sticky ? 'max-h-full' : ''}`}>
         <div className="overflow-hidden">
           {loading ? (
-            <div className={`min-h-[220px] animate-pulse bg-white/20 ${adOverlayGlow}`} />
+            <div className={`mx-auto min-h-[198px] w-[90%] animate-pulse bg-white/20 ${adOverlayGlow}`} />
           ) : primaryCampaign ? (
             <AdOverlayCard campaign={primaryCampaign} variant="legacy" />
           ) : (
@@ -155,7 +155,7 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
         {sticky && (
           <div className="mt-3 overflow-hidden">
             {loading ? (
-              <div className={`min-h-[120px] animate-pulse bg-white/20 ${adOverlayGlow}`} />
+              <div className={`mx-auto min-h-[108px] w-[90%] animate-pulse bg-white/20 ${adOverlayGlow}`} />
             ) : secondaryCampaign ? (
               <AdOverlayCard campaign={secondaryCampaign} variant="legacy-compact" />
             ) : (
