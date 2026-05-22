@@ -165,7 +165,7 @@ export function Home() {
         <div className="flex gap-6">
 
           <aside className="hidden w-[260px] flex-shrink-0 xl:block 2xl:w-[300px]">
-            <AdBanner position="left" sticky={true} page="home" />
+            <AdBanner position="left" sticky={true} page="home" stackCount={6} />
           </aside>
 
           <main className="min-w-0 flex-1">
@@ -431,7 +431,7 @@ export function Home() {
           </main>
 
           <aside className="hidden w-[260px] flex-shrink-0 xl:block 2xl:w-[300px]">
-            <AdBanner position="right" sticky={true} page="home" />
+            <AdBanner position="right" sticky={true} page="home" stackCount={6} />
           </aside>
         </div>
       </div>
