@@ -460,6 +460,18 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'common.error': 'Помилка',
   'common.success': 'Успіх',
 
+  'auth.showPassword': 'Показати пароль',
+  'auth.hidePassword': 'Приховати пароль',
+  'auth.error.invalidCredentials': 'Невірний email або пароль',
+  'auth.error.emailNotConfirmed': 'Підтвердіть email — перевірте пошту',
+  'auth.error.alreadyRegistered': 'Цей email уже зареєстровано. Увійдіть або відновіть пароль',
+  'auth.error.passwordTooShort': 'Пароль має містити щонайменше 6 символів',
+  'auth.error.invalidEmail': 'Перевірте правильність email',
+  'auth.error.profileExists': 'Профіль уже існує — спробуйте увійти',
+  'auth.error.rateLimit': 'Забагато спроб. Зачекайте хвилину і спробуйте знову',
+  'register.confirmEmail':
+    'Акаунт створено. Перевірте пошту та підтвердіть email, потім увійдіть.',
+
   // Visibility
   'visibility.city': 'Місто',
   'visibility.district': 'Район',

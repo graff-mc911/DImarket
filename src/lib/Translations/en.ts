@@ -454,6 +454,18 @@ export const enTranslations = {
   'common.error': 'Error',
   'common.success': 'Success',
 
+  'auth.showPassword': 'Show password',
+  'auth.hidePassword': 'Hide password',
+  'auth.error.invalidCredentials': 'Invalid email or password',
+  'auth.error.emailNotConfirmed': 'Please confirm your email before signing in',
+  'auth.error.alreadyRegistered': 'This email is already registered. Sign in instead',
+  'auth.error.passwordTooShort': 'Password must be at least 6 characters',
+  'auth.error.invalidEmail': 'Please enter a valid email address',
+  'auth.error.profileExists': 'Profile already exists — try signing in',
+  'auth.error.rateLimit': 'Too many attempts. Please wait a minute and try again',
+  'register.confirmEmail':
+    'Account created. Check your email to confirm, then sign in.',
+
   // Радіус видимості оголошення.
   'visibility.city': 'City',
   'visibility.district': 'District',

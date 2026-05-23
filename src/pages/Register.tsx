@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Building2, ChevronDown, Eye, EyeOff, Globe, HardHat, Loader, Megaphone, User, UserPlus } from 'lucide-react'
+import { Building2, ChevronDown, Globe, HardHat, Loader, Megaphone, User, UserPlus } from 'lucide-react'
+import { PasswordField } from '../components/PasswordField'
+import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
 import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -333,8 +335,8 @@ export function Register() {
   const [selectedRole, setSelectedRole] = useState<UserRole>('client')
   const [loading,      setLoading]      = useState(false)
   const [error,        setError]        = useState('')
-  const [success,      setSuccess]      = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [confirmEmail, setConfirmEmail] = useState(false)
 
   const [country,    setCountry]    = useState('')
   const [region,     setRegion]     = useState('')
@@ -374,35 +376,75 @@ export function Register() {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
+    setConfirmEmail(false)
+
+    const trimmedEmail = email.trim().toLowerCase()
+    const displayName =
+      selectedRole === 'company' ? (companyName.trim() || fullName.trim()) : fullName.trim()
+
+    if (selectedRole === 'company' && !companyName.trim()) {
+      setError(t('register.companyName'))
+      return
+    }
+    if (!fullName.trim() && selectedRole !== 'company') {
+      setError(t('register.fullName'))
+      return
+    }
+    if (!trimmedEmail) {
+      setError(t('auth.error.invalidEmail'))
+      return
+    }
+    if (password.length < 6) {
+      setError(t('auth.error.passwordTooShort'))
+      return
+    }
+
     setLoading(true)
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({ email, password })
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: trimmedEmail,
+        password,
+        options: {
+          data: {
+            full_name: displayName,
+            user_role: selectedRole,
+          },
+        },
+      })
       if (authError) throw authError
-      if (authData.user) {
-        // Крок 1: вставляємо тільки базові поля без user_role (обхід кешу схеми)
-        const { error: profileError } = await supabase.from('profiles').insert({
-          id:        authData.user.id,
-          full_name: selectedRole === 'company' ? (companyName || fullName) : fullName,
-          phone:     phone || null,
-          location:  [city, region, country].filter(Boolean).join(', ') || null,
-        })
+      if (!authData.user) {
+        throw new Error(t('common.error'))
+      }
 
-        if (profileError) throw new Error(profileError.message)
+      const locationStr = [city, region, country].filter(Boolean).join(', ') || null
+      const isProfessional = selectedRole === 'professional' || selectedRole === 'company'
 
-        // Крок 2: оновлюємо user_role через UPDATE (обходить кеш схеми)
-        await supabase.from('profiles').update({
-          user_role:       selectedRole,
-          is_professional: selectedRole === 'professional' || selectedRole === 'company',
-        }).eq('id', authData.user.id)
+      if (authData.session) {
+        const { error: profileError } = await supabase.from('profiles').upsert(
+          {
+            id: authData.user.id,
+            full_name: displayName,
+            phone: phone.trim() || null,
+            location: locationStr,
+            user_role: selectedRole,
+            is_professional: isProfessional,
+          },
+          { onConflict: 'id' },
+        )
+
+        if (profileError) throw profileError
+
         setSuccess(true)
         setTimeout(() => {
-          if (selectedRole === 'client')          navigateTo('/listings')
-          else if (selectedRole === 'advertiser') navigateTo('/advertising')
-          else                                    navigateTo('/settings')
-        }, 1500)
+          navigateTo(getPostLoginPath({ user_role: selectedRole, is_site_owner: false }))
+        }, 1200)
+        return
       }
+
+      setConfirmEmail(true)
+      setSuccess(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('common.error'))
+      setError(getAuthErrorMessage(err, t))
     } finally {
       setLoading(false)
     }
@@ -467,7 +509,7 @@ export function Register() {
             )}
             {success && (
               <div className="mt-5 rounded-[20px] border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
-                {t('register.success')}
+                {confirmEmail ? t('register.confirmEmail') : t('register.success')}
               </div>
             )}
 
@@ -527,20 +569,16 @@ export function Register() {
                   className="input-glass" placeholder={t('login.emailPlaceholder')} />
               </div>
 
-              {/* Пароль */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">{t('login.password')} *</label>
-                <div className="relative">
-                  <input type={showPassword ? 'text' : 'password'} required minLength={6} value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="input-glass pr-11" placeholder={t('login.passwordPlaceholder')} />
-                  <button type="button" onClick={() => setShowPassword(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-400)] hover:text-[var(--ink-700)] transition">
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
-                <p className="mt-1.5 text-xs text-[#7a7168]">{t('register.passwordMin')}</p>
-              </div>
+              <PasswordField
+                label={t('login.password')}
+                value={password}
+                onChange={setPassword}
+                placeholder={t('login.passwordPlaceholder')}
+                required
+                minLength={6}
+                hint={t('register.passwordMin')}
+                autoComplete="new-password"
+              />
 
               {/* Телефон */}
               <div>
@@ -630,10 +668,23 @@ export function Register() {
                 {hintIcon()} {hintText()}
               </div>
 
-              <button type="submit" disabled={loading || success}
-                className="btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-50">
+              <button
+                type="submit"
+                disabled={loading || (success && !confirmEmail)}
+                className="btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+              >
                 {loading ? t('register.creating') : t('register.createAccount')}
               </button>
+
+              {confirmEmail && success && (
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/login')}
+                  className="btn-secondary w-full justify-center text-sm"
+                >
+                  {t('footer.signIn')}
+                </button>
+              )}
             </form>
 
             <div className="mt-6 text-center">

@@ -1,0 +1,49 @@
+import type { TranslationKey } from './i18n'
+
+export function getAuthErrorMessage(
+  err: unknown,
+  t: (key: TranslationKey) => string,
+): string {
+  const raw =
+    err instanceof Error
+      ? err.message
+      : typeof err === 'object' && err !== null && 'message' in err
+        ? String((err as { message: unknown }).message)
+        : String(err)
+
+  const msg = raw.toLowerCase()
+
+  if (msg.includes('invalid login credentials') || msg.includes('invalid credentials')) {
+    return t('auth.error.invalidCredentials')
+  }
+  if (msg.includes('email not confirmed')) {
+    return t('auth.error.emailNotConfirmed')
+  }
+  if (msg.includes('user already registered') || msg.includes('already been registered')) {
+    return t('auth.error.alreadyRegistered')
+  }
+  if (msg.includes('password') && (msg.includes('least') || msg.includes('short'))) {
+    return t('auth.error.passwordTooShort')
+  }
+  if (msg.includes('unable to validate email') || msg.includes('invalid email')) {
+    return t('auth.error.invalidEmail')
+  }
+  if (msg.includes('duplicate key') || msg.includes('profiles_pkey')) {
+    return t('auth.error.profileExists')
+  }
+  if (msg.includes('rate limit') || msg.includes('too many requests')) {
+    return t('auth.error.rateLimit')
+  }
+
+  return raw || t('common.error')
+}
+
+export function getPostLoginPath(profile: {
+  user_role?: string | null
+  is_site_owner?: boolean | null
+} | null): string {
+  if (profile?.is_site_owner) return '/dashboard'
+  if (profile?.user_role === 'advertiser') return '/advertising'
+  if (profile?.user_role === 'client') return '/listings'
+  return '/settings'
+}
