@@ -163,36 +163,70 @@ export function Home() {
     <>
       <section className="pb-3 pt-2">
         <div className="mx-auto max-w-7xl">
-          <div className="glass-panel fade-rise rounded-[22px] p-3 md:p-4">
-            <div className="eyebrow gap-1.5 px-2.5 py-1 text-[11px]">
-              <ShieldCheck className="h-3 w-3" />
-              <span>{t('home.globalEyebrow')}</span>
-            </div>
+          <div className="glass-panel fade-rise rounded-[22px] p-4 md:p-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="eyebrow gap-1.5 px-2.5 py-1 text-[11px]">
+                <ShieldCheck className="h-3 w-3" />
+                <span>{t('home.globalEyebrow')}</span>
+              </div>
 
-            <div className="mt-2.5 max-w-3xl">
-              <h1 className="font-[var(--font-display)] text-[1.15rem] font-bold leading-[1.1] tracking-[-0.035em] text-[var(--ink-900)] md:text-[1.35rem] xl:text-[1.5rem]">
-                {t('home.heroSimpleTitle')}
-              </h1>
-              <p className="muted-text mt-1.5 max-w-2xl text-[12px] leading-snug md:text-[13px]">
-                {t('home.heroSimpleDescription')}
-              </p>
-            </div>
+              <div className="mt-3 max-w-3xl">
+                <h1 className="font-[var(--font-display)] text-[1.15rem] font-bold leading-[1.1] tracking-[-0.035em] text-[var(--ink-900)] md:text-[1.35rem] xl:text-[1.5rem]">
+                  {t('home.heroSimpleTitle')}
+                </h1>
+                <p className="muted-text mx-auto mt-2 max-w-2xl text-[12px] leading-snug md:text-[13px]">
+                  {t('home.heroSimpleDescription')}
+                </p>
+              </div>
 
-            <div className="mt-2.5 flex flex-wrap gap-1.5">
-              {categories.slice(0, 6).map((category) => (
+              <nav
+                className="mt-4 flex w-full max-w-2xl flex-wrap justify-center gap-2"
+                aria-label={t('home.popularCategoriesTitle')}
+              >
+                {categories.slice(0, 6).map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => navigateTo(`/listings?category=${category.slug}`)}
+                    type="button"
+                    className="stat-chip px-2.5 py-1 text-[11px]"
+                  >
+                    {getCategoryName(category)}
+                  </button>
+                ))}
+              </nav>
+
+              <nav
+                className="mt-3 flex w-full max-w-xl flex-wrap justify-center gap-x-5 gap-y-2"
+                aria-label={t('footer.platformTitleSimple')}
+              >
                 <button
-                  key={category.id}
-                  onClick={() => navigateTo(`/listings?category=${category.slug}`)}
+                  onClick={() => navigateTo('/professionals')}
                   type="button"
-                  className="stat-chip px-2.5 py-1 text-[11px]"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--accent-700)] transition hover:text-[var(--ink-900)]"
                 >
-                  {getCategoryName(category)}
+                  <span>{t('home.findProfessionals')}</span>
+                  <ArrowRight className="h-4 w-4" />
                 </button>
-              ))}
-            </div>
+                <button
+                  onClick={() => navigateTo('/listings')}
+                  type="button"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--ink-700)] transition hover:text-[var(--accent-700)]"
+                >
+                  <span>{t('home.browseRequests')}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => navigateTo('/create-ad')}
+                  type="button"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--ink-700)] transition hover:text-[var(--accent-700)]"
+                >
+                  <span>{t('header.createAd')}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </nav>
 
             {!loading && (stats.professionals > 0 || stats.listings > 0) && (
-              <div className="mt-2.5 flex flex-wrap gap-x-5 gap-y-2 border-t border-[var(--glass-border)] pt-2.5">
+              <div className="mt-4 flex w-full flex-wrap justify-center gap-x-5 gap-y-2 border-t border-[var(--glass-border)] pt-4">
                 <StatPill
                   icon={<Users className="h-4 w-4" />}
                   value={stats.professionals}
@@ -210,6 +244,7 @@ export function Home() {
                 />
               </div>
             )}
+            </div>
           </div>
         </div>
       </section>
