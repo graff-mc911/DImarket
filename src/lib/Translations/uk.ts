@@ -11,7 +11,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'header.myListings': 'Мої оголошення',
   'header.signOut': 'Вийти',
   'header.account': 'Акаунт',
-  'header.language': 'Мова',h
+  'header.language': 'Мова',
   'header.currency': 'Валюта',
   'header.jobRequests': 'Запити на роботу',
   'header.favorites': 'Обране',
