@@ -1,13 +1,13 @@
-import { ExternalLink, Megaphone } from 'lucide-react'
-import { useApp } from '../contexts/AppContext'
+import { Megaphone } from 'lucide-react'
 import {
   AD_MEDIA_FALLBACK,
-  getAdvertiserLabel,
   getGeoTargetLabel,
   getPublicBannerImageUrl,
+  resolveAdDisplayCopy,
   trackAdClick,
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
+import { useApp } from '../contexts/AppContext'
 
 export const adOverlayGlow =
   'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_2px_8px_rgba(67,44,26,0.07)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_3px_12px_rgba(67,44,26,0.1)]'
@@ -31,7 +31,6 @@ const variantStyles: Record<
     brand: string
     title: string
     meta: string
-    badge: string
   }
 > = {
   stack: {
@@ -41,7 +40,6 @@ const variantStyles: Record<
     brand: 'text-[9px]',
     title: 'text-[10px] line-clamp-2 leading-snug',
     meta: 'text-[9px]',
-    badge: 'text-[7px] px-1 py-0',
   },
   legacy: {
     shell: 'min-h-[198px] w-[90%] max-w-full mx-auto',
@@ -50,7 +48,6 @@ const variantStyles: Record<
     brand: 'text-[10px]',
     title: 'text-base line-clamp-2',
     meta: 'text-xs',
-    badge: 'text-[9px] px-2 py-0.5',
   },
   'legacy-compact': {
     shell: 'min-h-[108px] w-[90%] max-w-full mx-auto',
@@ -59,7 +56,6 @@ const variantStyles: Record<
     brand: 'text-[9px]',
     title: 'text-sm line-clamp-2',
     meta: 'text-[10px]',
-    badge: 'text-[8px] px-1.5 py-0.5',
   },
   center: {
     shell: 'min-h-[220px] w-full max-w-full mx-auto md:min-h-[248px]',
@@ -68,40 +64,32 @@ const variantStyles: Record<
     brand: 'text-[10px]',
     title: 'text-sm line-clamp-2',
     meta: 'text-xs',
-    badge: 'text-[9px] px-2 py-0.5',
   },
   'mobile-sticky': {
     shell: 'min-h-[72px] w-full',
     image: 'h-[44px] w-full shrink-0',
-    text: 'p-2 pr-8',
+    text: 'p-2',
     brand: 'text-[9px]',
     title: 'text-xs line-clamp-1',
     meta: 'text-[9px]',
-    badge: 'text-[8px] px-1.5 py-0.5',
   },
   'mobile-inline': {
     shell: 'min-h-[108px] w-full',
     image: 'h-[68px] w-full shrink-0',
-    text: 'p-2 pr-8',
+    text: 'p-2',
     brand: 'text-[9px]',
     title: 'text-xs line-clamp-2',
     meta: 'text-[10px]',
-    badge: 'text-[8px] px-1.5 py-0.5',
   },
 }
 
 function AdCampaignMedia({
   campaign,
-  variant,
   imageClass,
-  badgeClass,
 }: {
   campaign: AdCampaignWithAdvertiser
-  variant: AdOverlayVariant
   imageClass: string
-  badgeClass: string
 }) {
-  const { t } = useApp()
   const imageSrc = getPublicBannerImageUrl(campaign)
   const isBrandBanner = imageSrc.includes('/ads/brands/')
 
@@ -120,12 +108,6 @@ function AdCampaignMedia({
           e.currentTarget.src = AD_MEDIA_FALLBACK
         }}
       />
-      <span
-        className={`absolute left-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full border border-white/50 bg-black/25 font-bold uppercase tracking-[0.1em] text-white/95 backdrop-blur-[2px] ${badgeClass}`}
-      >
-        <Megaphone className="h-2.5 w-2.5 shrink-0" />
-        {t('ads.badge')}
-      </span>
     </div>
   )
 }
@@ -135,48 +117,14 @@ function AdTextContent({
   title,
   description,
   geo,
-  showVisit,
-  visitLabel,
   styles,
-  compactRow,
 }: {
   brand: string
   title: string
   description?: string | null
   geo?: string | null
-  showVisit: boolean
-  visitLabel: string
   styles: (typeof variantStyles)[AdOverlayVariant]
-  compactRow?: boolean
 }) {
-  if (compactRow) {
-    return (
-      <div className="flex items-start justify-between gap-1">
-        <div className="min-w-0 flex-1">
-          {brand && (
-            <p
-              className={`truncate font-bold uppercase tracking-[0.08em] text-[var(--ink-500)] ${styles.brand}`}
-            >
-              {brand}
-            </p>
-          )}
-          <h3 className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</h3>
-          {description && (
-            <p className={`line-clamp-2 text-[var(--ink-700)] ${styles.meta}`}>{description}</p>
-          )}
-        </div>
-        {showVisit && (
-          <span
-            className={`inline-flex shrink-0 items-center gap-0.5 font-semibold text-[var(--accent-700)] ${styles.meta}`}
-          >
-            <span className="sr-only">{visitLabel}</span>
-            <ExternalLink className="h-3 w-3" />
-          </span>
-        )}
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-0.5">
       {brand && (
@@ -184,21 +132,15 @@ function AdTextContent({
           {brand}
         </p>
       )}
-      <h3 className={`font-extrabold leading-snug text-[var(--ink-900)] ${styles.title}`}>{title}</h3>
+      {title && (
+        <h3 className={`font-extrabold leading-snug text-[var(--ink-900)] ${styles.title}`}>{title}</h3>
+      )}
       {description && (
         <p className={`line-clamp-2 leading-snug text-[var(--ink-700)] ${styles.meta}`}>
           {description}
         </p>
       )}
       {geo && <p className={`line-clamp-1 text-[var(--ink-500)] ${styles.meta}`}>{geo}</p>}
-      {showVisit && (
-        <span
-          className={`inline-flex items-center gap-1 font-semibold text-[var(--accent-700)] ${styles.meta}`}
-        >
-          {visitLabel}
-          <ExternalLink className="h-3 w-3" />
-        </span>
-      )}
     </div>
   )
 }
@@ -211,7 +153,7 @@ export function AdOverlayCard({
   showGeo = false,
 }: AdOverlayCardProps) {
   const { t } = useApp()
-  const brand = getAdvertiserLabel(campaign)
+  const { brand, title } = resolveAdDisplayCopy(campaign)
   const styles = variantStyles[variant]
   const isStack = variant === 'stack'
   const showDesc = showDescription || isStack
@@ -224,25 +166,17 @@ export function AdOverlayCard({
       className={`group flex flex-col overflow-hidden ${adOverlayGlow} ${styles.shell} ${className}`}
       onClick={() => void trackAdClick(campaign.id)}
     >
-      <AdCampaignMedia
-        campaign={campaign}
-        variant={variant}
-        imageClass={styles.image}
-        badgeClass={styles.badge}
-      />
+      <AdCampaignMedia campaign={campaign} imageClass={styles.image} />
 
       <div
         className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-[rgba(255,252,248,0.98)] ${styles.text}`}
       >
         <AdTextContent
-          brand={brand ?? ''}
-          title={campaign.title}
+          brand={brand}
+          title={title}
           description={showDesc ? campaign.description : null}
           geo={showGeo ? getGeoTargetLabel(campaign, t) : null}
-          showVisit={!isStack}
-          visitLabel={t('ads.visit')}
           styles={styles}
-          compactRow={isStack}
         />
       </div>
     </a>
@@ -264,7 +198,6 @@ export function AdOverlayPlaceholder({
   className = '',
   onClick,
 }: AdOverlayPlaceholderProps) {
-  const { t } = useApp()
   const styles = variantStyles[variant]
   const isStack = variant === 'stack'
 
@@ -288,13 +221,7 @@ export function AdOverlayPlaceholder({
           </div>
         ) : (
           <div className="space-y-0.5">
-            <span
-              className={`inline-flex items-center gap-1 rounded-full border border-[var(--glass-border)] bg-[rgba(255,252,248,0.9)] font-bold uppercase tracking-[0.1em] text-[var(--accent-700)] ${styles.badge}`}
-            >
-              <Megaphone className="h-2.5 w-2.5" />
-              {t('ads.badge')}
-            </span>
-            <p className={`mt-1 font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</p>
+            <p className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</p>
             <p className={`text-[var(--ink-500)] ${styles.meta}`}>{subtitle}</p>
           </div>
         )}

@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from 'react'
-import { Megaphone } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard, adOverlayGlow } from './AdOverlayCard'
@@ -26,11 +25,7 @@ export function SponsoredCompanies() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <div className="eyebrow">
-              <Megaphone className="h-4 w-4" />
-              <span>{t('ads.badge')}</span>
-            </div>
-            <h2 className="mt-2 text-xl font-extrabold tracking-[-0.02em] text-[var(--ink-900)] md:text-2xl">
+            <h2 className="text-xl font-extrabold tracking-[-0.02em] text-[var(--ink-900)] md:text-2xl">
               {t('home.sponsoredTitle')}
             </h2>
             <p className="muted-text mt-2 max-w-2xl text-sm">

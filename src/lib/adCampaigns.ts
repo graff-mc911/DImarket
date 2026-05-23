@@ -340,6 +340,32 @@ export function getAdvertiserLabel(campaign: AdCampaignWithAdvertiser): string |
   return name || null
 }
 
+/** Текст у картці реклами без дублювання бренду в заголовку (GREE + GREE — …). */
+export function resolveAdDisplayCopy(campaign: AdCampaignWithAdvertiser): {
+  brand: string
+  title: string
+} {
+  const brand = (getAdvertiserLabel(campaign) ?? '').trim()
+  const title = campaign.title.trim()
+
+  if (!brand || !title) {
+    return { brand, title }
+  }
+
+  const brandLower = brand.toLowerCase()
+  const titleLower = title.toLowerCase()
+
+  if (titleLower === brandLower) {
+    return { brand: '', title }
+  }
+
+  if (titleLower.startsWith(brandLower)) {
+    return { brand: '', title }
+  }
+
+  return { brand, title }
+}
+
 export function getGeoTargetLabel(
   campaign: AdCampaign,
   t: (key: TranslationKey) => string,
