@@ -12,7 +12,14 @@ import { useApp } from '../contexts/AppContext'
 export const adOverlayGlow =
   'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_2px_8px_rgba(67,44,26,0.07)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_3px_12px_rgba(67,44,26,0.1)]'
 
-type AdOverlayVariant = 'stack' | 'legacy' | 'legacy-compact' | 'center' | 'mobile-sticky' | 'mobile-inline'
+type AdOverlayVariant =
+  | 'stack'
+  | 'legacy'
+  | 'legacy-compact'
+  | 'center'
+  | 'mobile-sticky'
+  | 'mobile-inline'
+  | 'leaderboard'
 
 interface AdOverlayCardProps {
   campaign: AdCampaignWithAdvertiser
@@ -20,6 +27,8 @@ interface AdOverlayCardProps {
   className?: string
   showDescription?: boolean
   showGeo?: boolean
+  /** Лише зображення на весь банер (leaderboard 4:1) */
+  imageOnly?: boolean
 }
 
 const variantStyles: Record<
@@ -81,27 +90,39 @@ const variantStyles: Record<
     title: 'text-xs line-clamp-2',
     meta: 'text-[10px]',
   },
+  leaderboard: {
+    shell: 'w-full',
+    image: 'aspect-[4/1] w-full max-h-[300px]',
+    text: 'hidden',
+    brand: 'hidden',
+    title: 'hidden',
+    meta: 'hidden',
+  },
 }
 
 function AdCampaignMedia({
   campaign,
   imageClass,
+  fillBanner = false,
 }: {
   campaign: AdCampaignWithAdvertiser
   imageClass: string
+  fillBanner?: boolean
 }) {
   const imageSrc = getPublicBannerImageUrl(campaign)
-  const isBrandBanner = imageSrc.includes('/ads/brands/')
+  const isBrandBanner = !fillBanner && imageSrc.includes('/ads/brands/')
 
   return (
-    <div className={`relative overflow-hidden bg-[rgba(255,248,241,0.5)] ${imageClass}`}>
+    <div className={`relative overflow-hidden bg-[#1a1816] ${imageClass}`}>
       <img
         src={imageSrc}
         alt={campaign.title}
         className={
-          isBrandBanner
-            ? 'h-full w-full object-contain object-center bg-[#1c1917] transition duration-500 group-hover:scale-[1.01]'
-            : 'h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]'
+          fillBanner || imageSrc.includes('/ads/banners/')
+            ? 'h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.01]'
+            : isBrandBanner
+              ? 'h-full w-full object-contain object-center bg-[#1c1917] transition duration-500 group-hover:scale-[1.01]'
+              : 'h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]'
         }
         loading="lazy"
         onError={(e) => {
@@ -151,11 +172,13 @@ export function AdOverlayCard({
   className = '',
   showDescription = false,
   showGeo = false,
+  imageOnly = false,
 }: AdOverlayCardProps) {
   const { t } = useApp()
   const { brand, title } = resolveAdDisplayCopy(campaign)
   const styles = variantStyles[variant]
   const isStack = variant === 'stack'
+  const isLeaderboard = variant === 'leaderboard' || imageOnly
   const showDesc = showDescription || isStack
 
   return (
@@ -166,19 +189,25 @@ export function AdOverlayCard({
       className={`group flex flex-col overflow-hidden ${adOverlayGlow} ${styles.shell} ${className}`}
       onClick={() => void trackAdClick(campaign.id)}
     >
-      <AdCampaignMedia campaign={campaign} imageClass={styles.image} />
+      <AdCampaignMedia
+        campaign={campaign}
+        imageClass={styles.image}
+        fillBanner={isLeaderboard}
+      />
 
-      <div
-        className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-[rgba(255,252,248,0.98)] ${styles.text}`}
-      >
-        <AdTextContent
-          brand={brand}
-          title={title}
-          description={showDesc ? campaign.description : null}
-          geo={showGeo ? getGeoTargetLabel(campaign, t) : null}
-          styles={styles}
-        />
-      </div>
+      {!isLeaderboard && (
+        <div
+          className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-[rgba(255,252,248,0.98)] ${styles.text}`}
+        >
+          <AdTextContent
+            brand={brand}
+            title={title}
+            description={showDesc ? campaign.description : null}
+            geo={showGeo ? getGeoTargetLabel(campaign, t) : null}
+            styles={styles}
+          />
+        </div>
+      )}
     </a>
   )
 }
@@ -200,6 +229,7 @@ export function AdOverlayPlaceholder({
 }: AdOverlayPlaceholderProps) {
   const styles = variantStyles[variant]
   const isStack = variant === 'stack'
+  const isLeaderboard = variant === 'leaderboard'
 
   return (
     <button
@@ -213,19 +243,21 @@ export function AdOverlayPlaceholder({
         <Megaphone className="h-5 w-5 text-white/70" />
       </div>
 
-      <div className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] ${styles.text}`}>
-        {isStack ? (
-          <div className="min-w-0">
-            <p className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</p>
-            <p className={`truncate text-[var(--ink-500)] ${styles.meta}`}>{subtitle}</p>
-          </div>
-        ) : (
-          <div className="space-y-0.5">
-            <p className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</p>
-            <p className={`text-[var(--ink-500)] ${styles.meta}`}>{subtitle}</p>
-          </div>
-        )}
-      </div>
+      {!isLeaderboard && (
+        <div className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] ${styles.text}`}>
+          {isStack ? (
+            <div className="min-w-0">
+              <p className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</p>
+              <p className={`truncate text-[var(--ink-500)] ${styles.meta}`}>{subtitle}</p>
+            </div>
+          ) : (
+            <div className="space-y-0.5">
+              <p className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</p>
+              <p className={`text-[var(--ink-500)] ${styles.meta}`}>{subtitle}</p>
+            </div>
+          )}
+        </div>
+      )}
     </button>
   )
 }

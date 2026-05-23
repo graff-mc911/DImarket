@@ -37,7 +37,7 @@ export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBanne
     [mobileCampaigns, variant, pageKey, inlineIndex],
   )
 
-  const inlineMinH = variant === 'horizontal' ? 'min-h-[80px]' : 'min-h-[88px]'
+  const isHorizontal = variant === 'horizontal'
 
   useEffect(() => {
     if (loading || !campaign) return
@@ -61,18 +61,25 @@ export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBanne
         </button>
 
         {loading ? (
-          <div className={`${inlineMinH} animate-pulse bg-white/20`} />
+          <div
+            className={
+              isHorizontal
+                ? 'aspect-[4/1] w-full max-h-[300px] animate-pulse bg-white/20'
+                : 'min-h-[88px] animate-pulse bg-white/20'
+            }
+          />
         ) : campaign ? (
           <AdOverlayCard
             campaign={campaign}
-            variant="mobile-inline"
-            className={inlineMinH}
-            showGeo
+            variant={isHorizontal ? 'leaderboard' : 'mobile-inline'}
+            className={isHorizontal ? 'w-full' : 'min-h-[88px]'}
+            showGeo={!isHorizontal}
+            imageOnly={isHorizontal}
           />
         ) : (
           <AdOverlayPlaceholder
-            variant="mobile-inline"
-            className={inlineMinH}
+            variant={isHorizontal ? 'leaderboard' : 'mobile-inline'}
+            className={isHorizontal ? 'w-full' : 'min-h-[88px]'}
             title={t('ads.adSpace')}
             subtitle={t('ads.advertiseHere')}
             onClick={() => navigateTo('/advertising')}

@@ -122,13 +122,11 @@ export const PARTNER_MEDIA_BY_ID: Record<string, PartnerMediaPatch> = {
   },
   'a1000005-0005-4005-8005-000000000005': {
     id: FOOTER_BANNER_CAMPAIGN_ID,
-    title: 'Philips — Light that improves life.',
-    description:
-      'Інноваційні рішення Philips для освітлення: комфорт, якість і надійність у кожному просторі та моменті. ' +
-      'Знайдіть на DImarket.app.',
-    ...brandBanner('philips'),
-    link_url: 'https://www.philips.ua',
-    placements: ['footer', 'home', 'listings'],
+    title: 'STRAUSS — професійний одяг та взуття',
+    description: 'Професійний одяг і взуття для роботи без компромісів. Доступно на DImarket.app.',
+    ...img('/ads/banners/strauss-leaderboard-1200x300.png'),
+    link_url: 'https://dimarket.app',
+    placements: ['footer', 'home', 'listings', 'home_leaderboard'],
   },
 }
 
@@ -160,7 +158,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
     currency_paid: 'eur',
     approved_by: FALLBACK_OWNER_ID,
     approved_at: new Date().toISOString(),
-    review_note: 'Presence partner — Philips footer banner',
+    review_note: 'Presence partner — Strauss home leaderboard 1200×300',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   } as AdCampaign,
