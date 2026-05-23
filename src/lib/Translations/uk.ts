@@ -17,6 +17,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'header.favorites': 'Обране',
   'header.messages': 'Повідомлення',
   'header.postJob': 'Опублікувати запит',
+  'header.categories': 'Категорії',
+  'header.onlineVisitors': 'Відвідувачі онлайн',
   'header.brandTagline': 'Безкоштовна будівельна платформа',
 
   // Footer

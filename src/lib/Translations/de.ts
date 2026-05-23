@@ -19,6 +19,8 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'header.favorites': 'Favoriten',
   'header.messages': 'Nachrichten',
   'header.postJob': 'Anfrage veroeffentlichen',
+  'header.categories': 'Kategorien',
+  'header.onlineVisitors': 'Besucher online',
   'header.brandTagline': 'Kostenlose Bauplattform',
 
   // Футер: основні посилання, підтримка, реклама і правовий текст.

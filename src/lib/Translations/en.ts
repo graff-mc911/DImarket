@@ -17,6 +17,8 @@ export const enTranslations = {
   'header.favorites': 'Favorites',
   'header.messages': 'Messages',
   'header.postJob': 'Post job',
+  'header.categories': 'Categories',
+  'header.onlineVisitors': 'Visitors online',
   'header.brandTagline': 'Free construction platform',
 
   // Футер: основні посилання, підтримка, реклама і правовий текст.

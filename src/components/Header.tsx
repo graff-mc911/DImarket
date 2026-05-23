@@ -31,6 +31,7 @@ import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
+import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
 import { Logo }        from './Logo'
 
 interface NavItem {
@@ -73,6 +74,7 @@ export function Header() {
 
   // Лічильник непрочитаних повідомлень
   const [unreadCount, setUnreadCount]     = useState(0)
+  const onlineVisitors = useOnlineVisitors()
 
   const languageRef = useRef<HTMLDivElement | null>(null)
   const currencyRef = useRef<HTMLDivElement | null>(null)
@@ -173,6 +175,7 @@ export function Header() {
   /** Центр нижньої панелі шапки — посилання з футера (між «Знайти майстрів» і «Перегляд оголошень») */
   const centerNavItems = useMemo(() => {
     const items: Array<{ label: string; path: string }> = [
+      { label: t('header.categories'), path: '/listings' },
       { label: t('footer.adsButton'), path: '/advertising' },
       { label: t('footer.contactButton'), path: '/contact' },
     ]
@@ -501,6 +504,7 @@ export function Header() {
 
               {/* Мобільні кнопки */}
               <div className="flex shrink-0 items-center gap-1.5 xl:hidden">
+                <OnlineVisitorsPill count={onlineVisitors} className="hidden min-[400px]:inline-flex" />
 
                 {/* Повідомлення (мобільний) */}
                 {user && (
@@ -542,7 +546,7 @@ export function Header() {
             {/* Нижня навігаційна панель (десктоп) — однаковий gap між усіма пунктами */}
             <nav
               className={
-                'mt-2 hidden w-full flex-wrap items-end justify-center border-t border-[var(--glass-border)] pt-2 lg:flex ' +
+                'mt-2 hidden w-full flex-wrap items-center justify-center border-t border-[var(--glass-border)] pt-2 lg:flex ' +
                 bottomNavGapClass
               }
             >
@@ -587,6 +591,8 @@ export function Header() {
               >
                 {t('listings.title')}
               </button>
+
+              <OnlineVisitorsPill count={onlineVisitors} />
             </nav>
 
             {/* Пошук (мобільний) */}
@@ -608,6 +614,9 @@ export function Header() {
           {mobileMenuOpen && (
             <div className="border-t border-[var(--glass-border)] px-3 pb-4 pt-3 lg:hidden">
               <div className={mobilePanelClass}>
+                <div className="mb-3 flex justify-center">
+                  <OnlineVisitorsPill count={onlineVisitors} />
+                </div>
                 <div className="grid gap-2">
                   {navItems.map(item => (
                     <button key={item.path} onClick={() => goTo(item.path)} type="button" className={mobileNavItemClass}>
@@ -741,5 +750,32 @@ export function Header() {
 
       <div className={headerSpacerClass} aria-hidden />
     </>
+  )
+}
+
+function OnlineVisitorsPill({
+  count,
+  className = '',
+}: {
+  count: number
+  className?: string
+}) {
+  const { t, language } = useApp()
+  const locale =
+    language.code === 'uk' ? 'uk-UA' : language.code === 'de' ? 'de-DE' : 'en-US'
+  const formatted = new Intl.NumberFormat(locale).format(Math.max(1, count))
+
+  return (
+    <div
+      className={
+        'inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--glass-border)] bg-[rgba(255,255,255,0.45)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ink-700)] sm:text-xs ' +
+        className
+      }
+      aria-live="polite"
+    >
+      <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-500" aria-hidden />
+      <span className="whitespace-nowrap">{t('header.onlineVisitors')}</span>
+      <span className="tabular-nums font-extrabold text-[var(--accent-700)]">{formatted}</span>
+    </div>
   )
 }
