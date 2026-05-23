@@ -23,6 +23,11 @@ import { navigateTo }          from '../lib/navigation'
 import { ListingCard }         from '../components/ListingCard'
 import { MobileAdBanner }      from '../components/MobileAdBanner'
 import type { Category, ListingWithImages } from '../lib/types'
+import {
+  SITE_CATEGORY_CONFIG,
+  categoryPagePath,
+  type SiteCategorySlug,
+} from '../lib/siteCategories'
 
 // Типи оголошень для фільтру
 const LISTING_TYPES = [
@@ -42,7 +47,12 @@ const SORT_OPTIONS = [
   { value: 'views',     label: 'Популярні' },
 ]
 
-export function Listings() {
+type ListingsProps = {
+  /** Фіксована категорія для окремих сторінок (/vacancies, /sell-rent). */
+  fixedCategorySlug?: SiteCategorySlug
+}
+
+export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
   const { t } = useApp()
 
   const [allListings, setAllListings]   = useState<ListingWithImages[]>([])
@@ -64,14 +74,24 @@ export function Listings() {
       const params = new URLSearchParams(window.location.search)
       setSearchQuery(params.get('search') || '')
       setLocationQuery(params.get('location') || '')
-      setSelectedCategory(params.get('category') || '')
+      setSelectedCategory(fixedCategorySlug || params.get('category') || '')
       setSelectedType(params.get('type') || '')
     }
 
     syncFiltersFromUrl()
     window.addEventListener('popstate', syncFiltersFromUrl)
     return () => window.removeEventListener('popstate', syncFiltersFromUrl)
-  }, [])
+  }, [fixedCategorySlug])
+
+  const categoryPageMeta = useMemo(() => {
+    if (!fixedCategorySlug) return null
+    const cfg = SITE_CATEGORY_CONFIG[fixedCategorySlug]
+    if (!cfg.pageTitleKey) return null
+    return {
+      title: t(cfg.pageTitleKey),
+      description: cfg.pageDescriptionKey ? t(cfg.pageDescriptionKey) : '',
+    }
+  }, [fixedCategorySlug, t])
 
   useEffect(() => {
     void loadInitialData()
@@ -180,29 +200,38 @@ export function Listings() {
 
   // Кількість активних фільтрів для індикатора
   const activeFiltersCount = [
-    searchQuery, locationQuery, selectedCategory, selectedType, maxPrice,
+    searchQuery,
+    locationQuery,
+    fixedCategorySlug ? '' : selectedCategory,
+    selectedType,
+    maxPrice,
   ].filter(Boolean).length
+
+  const listingsBasePath = fixedCategorySlug
+    ? categoryPagePath(fixedCategorySlug)
+    : '/listings'
 
   // Застосовуємо фільтри до URL
   const applyFiltersToUrl = () => {
     const params = new URLSearchParams()
     if (searchQuery.trim())   params.set('search',   searchQuery.trim())
     if (locationQuery.trim()) params.set('location', locationQuery.trim())
-    if (selectedCategory)     params.set('category', selectedCategory)
+    if (selectedCategory && !fixedCategorySlug) params.set('category', selectedCategory)
     if (selectedType)         params.set('type',     selectedType)
     const query = params.toString()
-    navigateTo(query ? '/listings?' + query : '/listings')
+    const base = listingsBasePath.split('?')[0]
+    navigateTo(query ? `${base}?${query}` : base)
   }
 
   // Скидаємо всі фільтри
   const resetFilters = () => {
     setSearchQuery('')
     setLocationQuery('')
-    setSelectedCategory('')
+    setSelectedCategory(fixedCategorySlug || '')
     setSelectedType('')
     setMaxPrice('')
     setSortBy('newest')
-    navigateTo('/listings')
+    navigateTo(listingsBasePath.split('?')[0])
   }
 
   return (
@@ -213,10 +242,10 @@ export function Listings() {
                 <div className="max-w-3xl">
                   <div className="eyebrow">{t('listings.eyebrow')}</div>
                   <h1 className="mt-5 font-[var(--font-display)] text-[1.72rem] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--ink-900)] md:text-[2rem] xl:text-[2.2rem]">
-                    {t('listings.simpleTitle')}
+                    {categoryPageMeta?.title ?? t('listings.simpleTitle')}
                   </h1>
                   <p className="muted-text mt-4 max-w-2xl text-[14px] md:text-[15px]">
-                    {t('listings.simpleDescription')}
+                    {categoryPageMeta?.description ?? t('listings.simpleDescription')}
                   </p>
                 </div>
                 <button
@@ -274,24 +303,25 @@ export function Listings() {
                 <div className="mt-4 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.34)] p-4 backdrop-blur-md">
                   <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
-                    {/* Категорія */}
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
-                        {t('listings.categoryLabel')}
-                      </label>
-                      <select
-                        value={selectedCategory}
-                        onChange={e => setSelectedCategory(e.target.value)}
-                        className="select-glass"
-                      >
-                        <option value="">{t('listings.allCategoriesSimple')}</option>
-                        {categories.map(cat => (
-                          <option key={cat.id} value={cat.slug}>
-                            {translateCategory(cat)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    {!fixedCategorySlug && (
+                      <div>
+                        <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
+                          {t('listings.categoryLabel')}
+                        </label>
+                        <select
+                          value={selectedCategory}
+                          onChange={e => setSelectedCategory(e.target.value)}
+                          className="select-glass"
+                        >
+                          <option value="">{t('listings.allCategoriesSimple')}</option>
+                          {categories.map(cat => (
+                            <option key={cat.id} value={cat.slug}>
+                              {translateCategory(cat)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
 
                     {/* Тип оголошення */}
                     <div>
@@ -374,7 +404,7 @@ export function Listings() {
                       onRemove={() => setLocationQuery('')}
                     />
                   )}
-                  {selectedCategory && (
+                  {selectedCategory && !fixedCategorySlug && (
                     <FilterTag
                       label={'Категорія: ' + (categories.find(c => c.slug === selectedCategory)?.name || selectedCategory)}
                       onRemove={() => setSelectedCategory('')}

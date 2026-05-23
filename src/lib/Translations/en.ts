@@ -190,8 +190,17 @@ export const enTranslations = {
   'category.name.plumbing': 'Plumbing',
   'category.name.handyman': 'Handyman',
   'category.name.materials': 'Materials',
+  'category.name.furniture': 'Furniture',
   'category.name.tools': 'Tools',
   'category.name.cleaning': 'Cleaning',
+  'category.furniture': 'Furniture',
+  'category.furnitureDesc': 'Furniture and home furnishings for sale',
+  'category.page.vacancies.title': 'Vacancies',
+  'category.page.vacancies.description':
+    'Job openings and hiring requests from employers and contractors.',
+  'category.page.sellRent.title': 'For sale / Rent',
+  'category.page.sellRent.description':
+    'Listings to sell or rent property, equipment, and other items.',
   'category.vacancies': 'Vacancies',
   'category.vacanciesDesc': 'Job vacancies and hiring',
   'category.sell-rent': 'For sale / Rent',

@@ -21,8 +21,8 @@ SELECT 'Handyman', 'handyman', '🛠️', 'General handyman services'
 WHERE NOT EXISTS (SELECT 1 FROM categories WHERE slug = 'handyman');
 
 INSERT INTO categories (name, slug, icon, description)
-SELECT 'Materials', 'materials', '🧱', 'Building materials for sale'
-WHERE NOT EXISTS (SELECT 1 FROM categories WHERE slug = 'materials');
+SELECT 'Furniture', 'furniture', '🪑', 'Furniture and home furnishings for sale'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE slug = 'furniture');
 
 INSERT INTO categories (name, slug, icon, description)
 SELECT 'Vacancies', 'vacancies', '💼', 'Job vacancies and hiring'

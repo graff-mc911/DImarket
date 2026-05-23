@@ -192,8 +192,17 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'category.name.plumbing': 'Сантехніка',
   'category.name.handyman': 'Майстер на годину',
   'category.name.materials': 'Матеріали',
+  'category.name.furniture': 'Меблі',
   'category.name.tools': 'Інструменти',
   'category.name.cleaning': 'Прибирання / клінінг',
+  'category.furniture': 'Меблі',
+  'category.furnitureDesc': 'Меблі та товари для дому',
+  'category.page.vacancies.title': 'Вакансії',
+  'category.page.vacancies.description':
+    'Вакансії та пошук працівників від роботодавців і підрядників.',
+  'category.page.sellRent.title': 'Продам/Оренда',
+  'category.page.sellRent.description':
+    'Оголошення про продаж або оренду майна, техніки та речей.',
   'category.vacancies': 'Вакансії',
   'category.vacanciesDesc': 'Вакансії та пошук працівників',
   'category.sell-rent': 'Продам/Оренда',

@@ -33,10 +33,10 @@ import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
 import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
 import {
-  HEADER_CATEGORY_SLUGS,
+  SITE_CATEGORY_SLUGS,
+  categoryPagePath,
   headerCategoryLabel,
-  listingsCategoryPath,
-} from '../lib/headerCategories'
+} from '../lib/siteCategories'
 import { Logo }        from './Logo'
 
 interface NavItem {
@@ -602,12 +602,12 @@ export function Header() {
                 </button>
                 {categoriesOpen && (
                   <div className={categoriesDropdownClass} role="menu">
-                    {HEADER_CATEGORY_SLUGS.map((slug) => (
+                    {SITE_CATEGORY_SLUGS.map((slug) => (
                       <button
                         key={slug}
                         type="button"
                         role="menuitem"
-                        onClick={() => goTo(listingsCategoryPath(slug))}
+                        onClick={() => goTo(categoryPagePath(slug))}
                         className={dropdownItemClass}
                       >
                         {headerCategoryLabel(slug, t)}
@@ -690,11 +690,11 @@ export function Header() {
                     {t('header.categories')}
                   </p>
                   <div className="grid gap-1 px-1 pb-2">
-                    {HEADER_CATEGORY_SLUGS.map((slug) => (
+                    {SITE_CATEGORY_SLUGS.map((slug) => (
                       <button
                         key={slug}
                         type="button"
-                        onClick={() => goTo(listingsCategoryPath(slug))}
+                        onClick={() => goTo(categoryPagePath(slug))}
                         className="rounded-[16px] px-4 py-2.5 text-left text-sm font-semibold text-[var(--ink-700)] transition hover:bg-white/50 hover:text-[var(--accent-700)]"
                       >
                         {headerCategoryLabel(slug, t)}

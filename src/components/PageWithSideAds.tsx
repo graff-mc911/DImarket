@@ -7,7 +7,7 @@ const SIDE_STACK_COUNT = 4
 
 export function adPageForPath(path: string): SideAdsPage {
   if (path === '/') return 'home'
-  if (path === '/listings') return 'listings'
+  if (path === '/listings' || path === '/vacancies' || path === '/sell-rent') return 'listings'
   return 'default'
 }
 

@@ -24,6 +24,7 @@ import { MobileAdBanner } from '../components/MobileAdBanner'
 import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import type { Category, ListingWithImages, Profile } from '../lib/types'
 import type { TranslationKey } from '../lib/i18n'
+import { buildDisplayCategories, categoryPagePath } from '../lib/siteCategories'
 
 interface PlatformStats {
   professionals: number
@@ -143,21 +144,10 @@ export function Home() {
     return getCategoryName(job.category)
   }
 
-  const displayCategories = useMemo(() => {
-    const list = [...categories]
-    if (!list.some((c) => c.slug === 'cleaning')) {
-      list.push({
-        id: 'local-cleaning',
-        name: 'Cleaning',
-        slug: 'cleaning',
-        parent_id: null,
-        icon: '🧹',
-        description: null,
-        created_at: new Date(0).toISOString(),
-      })
-    }
-    return list
-  }, [categories])
+  const displayCategories = useMemo(
+    () => buildDisplayCategories(categories, tr),
+    [categories, language, t],
+  )
 
   return (
     <>
@@ -183,10 +173,10 @@ export function Home() {
                 className="mt-4 flex w-full max-w-2xl flex-wrap justify-center gap-2"
                 aria-label={t('home.popularCategoriesTitle')}
               >
-                {categories.slice(0, 6).map((category) => (
+                {displayCategories.map((category) => (
                   <button
                     key={category.id}
-                    onClick={() => navigateTo(`/listings?category=${category.slug}`)}
+                    onClick={() => navigateTo(categoryPagePath(category.slug))}
                     type="button"
                     className="stat-chip px-2.5 py-1 text-[11px]"
                   >
@@ -304,7 +294,7 @@ export function Home() {
                   name={getCategoryName(category)}
                   description={getCategoryDescription(category)}
                   icon={category.icon || '•'}
-                  onClick={() => navigateTo(`/listings?category=${category.slug}`)}
+                  onClick={() => navigateTo(categoryPagePath(category.slug))}
                 />
               ))}
             </div>
