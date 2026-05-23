@@ -317,9 +317,8 @@ export function Header() {
             <div className="flex items-center justify-between gap-2 sm:gap-3">
 
               {/* Логотип */}
-              <button onClick={() => goTo('/')} type="button" className="min-w-0 flex-1 text-left">
-                <Logo size="header" className="sm:hidden" />
-                <Logo size="header" className="hidden sm:block" />
+              <button onClick={() => goTo('/')} type="button" className="shrink-0 text-left">
+                <Logo variant="text" size="header" />
               </button>
 
               {/* Пошук (десктоп) */}

@@ -6,10 +6,11 @@ interface LogoProps {
 }
 
 const sizes = {
+  /** Шапка / футер — текстовий знак ~3× від попереднього header (1.1rem → 3.3rem) */
   header: {
-    gap: 'gap-1.5',
-    mark: 'h-8 w-8',
-    title: 'text-[1.1rem]',
+    gap: 'gap-0',
+    mark: 'h-0 w-0',
+    title: 'text-[2.25rem] leading-none sm:text-[3.3rem]',
     subtitle: 'hidden',
   },
   sm: {
@@ -38,10 +39,12 @@ const sizes = {
   },
 } as const
 
+const wordmarkFont = "Georgia, 'Times New Roman', Times, serif"
+
 export function Logo({
   compact = false,
   size = 'md',
-  variant = 'full',
+  variant = 'text',
   className = '',
 }: LogoProps) {
   const current = sizes[size]
@@ -51,13 +54,9 @@ export function Logo({
       viewBox="0 0 160 160"
       xmlns="http://www.w3.org/2000/svg"
       className={`${current.mark} shrink-0 ${className}`}
-      aria-label="DImarket logo"
-      role="img"
+      aria-hidden
     >
-      {/* Теплий світлий фон, щоб знак читався стабільно всюди. */}
       <rect width="160" height="160" rx="28" fill="#FAF3E8" />
-
-      {/* Дах і димар лишаємо мідними, як у затвердженому стилі. */}
       <path
         d="M34 58 L80 24 L126 58"
         fill="none"
@@ -67,18 +66,14 @@ export function Logo({
         strokeLinejoin="round"
       />
       <rect x="108" y="29" width="13" height="25" rx="1.5" fill="#C47A3D" />
-
-      {/* Маленьке вікно під дахом. */}
       <rect x="70" y="48" width="9" height="9" fill="#C47A3D" />
       <rect x="82" y="48" width="9" height="9" fill="#C47A3D" />
       <rect x="70" y="60" width="9" height="9" fill="#C47A3D" />
       <rect x="82" y="60" width="9" height="9" fill="#C47A3D" />
-
-      {/* Основна пара літер DI. */}
       <text
         x="32"
         y="125"
-        fontFamily="Georgia, 'Times New Roman', serif"
+        fontFamily={wordmarkFont}
         fontSize="88"
         fontWeight="500"
         fill="#241B14"
@@ -88,7 +83,7 @@ export function Logo({
       <text
         x="92"
         y="125"
-        fontFamily="Georgia, 'Times New Roman', serif"
+        fontFamily={wordmarkFont}
         fontSize="88"
         fontWeight="500"
         fill="#C47A3D"
@@ -99,16 +94,18 @@ export function Logo({
   )
 
   const wordmark = (
-    <div className="leading-none">
-      <div
-        className={`${current.title} tracking-[-0.04em]`}
-        style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-      >
-        <span className="text-[#C47A3D]">DI</span>
-        <span className="text-[#241B14]">market</span>
-      </div>
+    <div
+      className={`${current.title} font-medium tracking-[-0.03em] ${className}`}
+      style={{ fontFamily: wordmarkFont }}
+    >
+      <span className="text-[#C47A3D]">DI</span>
+      <span className="text-[#241B14]">market</span>
+    </div>
+  )
 
-      {/* Підпис показуємо тільки в повному варіанті. */}
+  const wordmarkWithSubtitle = (
+    <div className="leading-none">
+      {wordmark}
       {current.subtitle !== 'hidden' && (
         <div className={`${current.subtitle} mt-1.5 uppercase tracking-[0.22em] text-[#5C4D41]`}>
           Build & Renovate
@@ -118,17 +115,60 @@ export function Logo({
   )
 
   if (variant === 'text') {
-    return <div className={className}>{wordmark}</div>
+    return (
+      <div role="img" aria-label="DImarket logo" className={className}>
+        {wordmark}
+      </div>
+    )
   }
 
   if (compact || variant === 'icon') {
-    return mark
+    return (
+      <svg
+        viewBox="0 0 160 160"
+        xmlns="http://www.w3.org/2000/svg"
+        className={`${sizes.md.mark} shrink-0 ${className}`}
+        aria-label="DImarket logo"
+        role="img"
+      >
+        <rect width="160" height="160" rx="28" fill="#FAF3E8" />
+        <path
+          d="M34 58 L80 24 L126 58"
+          fill="none"
+          stroke="#C47A3D"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <rect x="108" y="29" width="13" height="25" rx="1.5" fill="#C47A3D" />
+        <text
+          x="32"
+          y="125"
+          fontFamily={wordmarkFont}
+          fontSize="88"
+          fontWeight="500"
+          fill="#241B14"
+        >
+          D
+        </text>
+        <text
+          x="92"
+          y="125"
+          fontFamily={wordmarkFont}
+          fontSize="88"
+          fontWeight="500"
+          fill="#C47A3D"
+        >
+          I
+        </text>
+      </svg>
+    )
   }
 
   return (
-    <div className={`flex items-center ${current.gap} ${className}`}>
+    <div className={`flex items-center ${current.gap} ${className}`} role="img" aria-label="DImarket logo">
       {mark}
-      {wordmark}
+      {wordmarkWithSubtitle}
     </div>
   )
 }
