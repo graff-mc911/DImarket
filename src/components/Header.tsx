@@ -176,13 +176,10 @@ export function Header() {
       { label: t('footer.adsButton'), path: '/advertising' },
       { label: t('footer.contactButton'), path: '/contact' },
     ]
-    if (user) {
-      items.push({ label: t('header.myProfile'), path: '/settings' })
-    } else {
+    if (!user) {
       items.push({ label: t('footer.signIn'), path: '/login' })
       items.push({ label: t('footer.register'), path: '/register' })
     }
-    items.push({ label: t('footer.contactLink'), path: '/contact' })
     return items
   }, [user, t])
 
