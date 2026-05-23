@@ -11,7 +11,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'header.myListings': 'Мої оголошення',
   'header.signOut': 'Вийти',
   'header.account': 'Акаунт',
-  'header.language': 'Мова',
+  'header.language': 'Мова',h
   'header.currency': 'Валюта',
   'header.jobRequests': 'Запити на роботу',
   'header.favorites': 'Обране',
@@ -84,8 +84,12 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'contact.useCaseComplaints': 'Скарги на контент або користувачів',
 
   // Home old keys
-  'home.heroTitle': 'Знайдіть перевірених майстрів',
-  'home.heroSubtitle': 'Збудуйте свої мрії',
+    'home.heroTitle': 'Все для будівництва та ремонту в одному місці',
+    'home.heroSubtitle': 'Знайдіть майстрів, замовлення, будматеріали та бізнес-партнерів',
+        'home.findMaster': 'Знайти майстра',
+        'home.contractorSignup': 'Я майстер — зареєструватися',
+        'home.advertise': 'Розмістити рекламу',
+        'home.onlineVisitors': 'онлайн зараз',
   'home.heroDescription':
     'Платформа будівництва, ремонту та домашніх послуг, що з’єднує клієнтів із перевіреними професіоналами',
   'home.searchPlaceholder': 'Пошук послуг, матеріалів або майстрів...',
