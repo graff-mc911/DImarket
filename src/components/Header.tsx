@@ -279,7 +279,7 @@ export function Header() {
     'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.94)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] backdrop-blur-xl'
 
   const categoriesDropdownClass =
-    'absolute bottom-full left-1/2 z-50 mb-2 w-72 max-h-[min(22rem,60vh)] -translate-x-1/2 overflow-y-auto rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.96)] p-2 shadow-[0_18px_42px_rgba(67,44,26,0.12)] backdrop-blur-xl'
+    'absolute left-1/2 top-full z-50 mt-2 w-72 max-h-[min(22rem,60vh)] -translate-x-1/2 overflow-y-auto rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.96)] p-2 shadow-[0_18px_42px_rgba(67,44,26,0.12)] backdrop-blur-xl'
 
   const dropdownItemClass =
     'block w-full rounded-[18px] px-4 py-3 text-left text-sm font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
@@ -558,7 +558,7 @@ export function Header() {
             {/* Нижня навігаційна панель (десктоп) — однаковий gap між усіма пунктами */}
             <nav
               className={
-                'mt-2 hidden w-full flex-wrap items-center justify-center border-t border-[var(--glass-border)] pt-2 lg:flex ' +
+                'mt-2 hidden w-full flex-wrap items-center justify-center overflow-visible border-t border-[var(--glass-border)] pt-2 lg:flex ' +
                 bottomNavGapClass
               }
             >
