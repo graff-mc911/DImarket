@@ -299,25 +299,20 @@ export function pickCampaignByPlacement(
 
 export function pickMobileCampaign(
   campaigns: AdCampaign[],
-  variant: 'inline' | 'sticky' | 'horizontal',
+  variant: 'inline' | 'horizontal',
   page: AdPageKey = 'home',
   inlineIndex: 1 | 2 | 3 | 4 = 1,
 ): AdCampaign | null {
   if (campaigns.length === 0) return null
 
   const slotId =
-    variant === 'sticky'
-      ? `${page}_mob_sticky`
-      : variant === 'horizontal'
-        ? `${page}_mob_inline_1`
-        : `${page}_mob_inline_${inlineIndex}`
+    variant === 'horizontal'
+      ? `${page}_mob_inline_1`
+      : `${page}_mob_inline_${inlineIndex}`
 
   const picked = pickCampaignForSlot(campaigns as AdCampaignWithAdvertiser[], slotId)
   if (picked) return picked
 
-  if (variant === 'sticky') {
-    return pickCampaignByPlacement(campaigns, 'mobile_sticky', 0)
-  }
   if (variant === 'horizontal') {
     const footer = campaigns.find((c) => c.id === FOOTER_BANNER_CAMPAIGN_ID)
     if (footer) return footer

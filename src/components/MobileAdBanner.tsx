@@ -8,16 +8,16 @@ import { pickMobileCampaign, trackAdImpression, type AdPlacement } from '../lib/
 import { navigateTo } from '../lib/navigation'
 
 interface MobileAdBannerProps {
-  variant: 'inline' | 'sticky' | 'horizontal'
+  variant: 'inline' | 'horizontal'
   page?: 'home' | 'listings'
   /** Слот 1–4 між картками / секціями (лише inline) */
   inlineIndex?: InlineIndex
 }
 
 function mobileSlots(page?: 'home' | 'listings'): AdPlacement[] {
-  if (page === 'home') return ['mobile_sticky', 'home', 'sidebar']
-  if (page === 'listings') return ['mobile_sticky', 'listings', 'home']
-  return ['mobile_sticky', 'home', 'listings', 'sidebar']
+  if (page === 'home') return ['home', 'sidebar', 'listings']
+  if (page === 'listings') return ['listings', 'home', 'sidebar']
+  return ['home', 'listings', 'sidebar']
 }
 
 export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBannerProps) {
@@ -37,8 +37,7 @@ export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBanne
     [mobileCampaigns, variant, pageKey, inlineIndex],
   )
 
-  const inlineMinH =
-    variant === 'horizontal' ? 'min-h-[80px]' : variant === 'sticky' ? 'min-h-[68px]' : 'min-h-[88px]'
+  const inlineMinH = variant === 'horizontal' ? 'min-h-[80px]' : 'min-h-[88px]'
 
   useEffect(() => {
     if (loading || !campaign) return
@@ -46,38 +45,6 @@ export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBanne
   }, [loading, campaign])
 
   if (!adVisible) return null
-
-  if (variant === 'sticky') {
-    return (
-      <div className="pointer-events-none fixed bottom-3 left-3 right-3 z-40 lg:hidden">
-        <div className="pointer-events-auto">
-        <div className="relative">
-          <button
-            onClick={() => setAdVisible(false)}
-            type="button"
-            className="absolute right-2 top-2 z-10 rounded-full bg-black/40 p-1 text-white/90 backdrop-blur-sm transition hover:bg-black/55"
-            aria-label={t('ads.close')}
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-
-          {loading ? (
-            <div className="min-h-[72px] animate-pulse bg-white/20" />
-          ) : campaign ? (
-            <AdOverlayCard campaign={campaign} variant="mobile-sticky" showGeo />
-          ) : (
-            <AdOverlayPlaceholder
-              variant="mobile-sticky"
-              title={t('ads.adSpace')}
-              subtitle={t('ads.advertiseHere')}
-              onClick={() => navigateTo('/advertising')}
-            />
-          )}
-        </div>
-        </div>
-      </div>
-    )
-  }
 
   const showOnDesktop = variant === 'horizontal'
 

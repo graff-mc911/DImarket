@@ -468,8 +468,6 @@ export function Listings() {
             <div className="mt-6">
               <MobileAdBanner variant="inline" page="listings" inlineIndex={2} />
             </div>
-
-      <MobileAdBanner variant="sticky" page="listings" />
     </div>
   )
 }

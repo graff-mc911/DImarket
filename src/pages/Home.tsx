@@ -425,8 +425,6 @@ export function Home() {
       </section>
 
       <MobileAdBanner variant="inline" page="home" inlineIndex={4} />
-
-      <MobileAdBanner variant="sticky" page="home" />
     </>
   )
 }
