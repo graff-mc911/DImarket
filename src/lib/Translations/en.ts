@@ -192,6 +192,12 @@ export const enTranslations = {
   'category.name.materials': 'Materials',
   'category.name.tools': 'Tools',
   'category.name.cleaning': 'Cleaning',
+  'category.vacancies': 'Vacancies',
+  'category.vacanciesDesc': 'Job vacancies and hiring',
+  'category.sell-rent': 'For sale / Rent',
+  'category.sell-rentDesc': 'Items and property for sale or rent',
+  'category.name.vacancies': 'Vacancies',
+  'category.name.sell-rent': 'For sale / Rent',
 
   // Картка оголошення: тип, ціна, перегляди, статус premium.
   'listing.serviceNeeded': 'Service Needed',

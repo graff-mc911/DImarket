@@ -189,6 +189,9 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'category.name.handyman': 'Handwerker',
   'category.name.materials': 'Materialien',
   'category.name.tools': 'Werkzeuge',
+  'category.name.cleaning': 'Reinigung',
+  'category.name.vacancies': 'Stellenangebote',
+  'category.name.sell-rent': 'Verkauf / Miete',
 
   // Картка оголошення: тип, ціна, перегляди, статус premium.
   'listing.serviceNeeded': 'Service gesucht',

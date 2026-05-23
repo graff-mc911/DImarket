@@ -194,6 +194,12 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'category.name.materials': 'Матеріали',
   'category.name.tools': 'Інструменти',
   'category.name.cleaning': 'Прибирання / клінінг',
+  'category.vacancies': 'Вакансії',
+  'category.vacanciesDesc': 'Вакансії та пошук працівників',
+  'category.sell-rent': 'Продам/Оренда',
+  'category.sell-rentDesc': 'Продаж та оренда майна й речей',
+  'category.name.vacancies': 'Вакансії',
+  'category.name.sell-rent': 'Продам/Оренда',
 
   // Listing Card
   'listing.serviceNeeded': 'Потрібна послуга',

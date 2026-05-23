@@ -32,6 +32,11 @@ import { useApp }      from '../contexts/AppContext'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
 import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
+import {
+  HEADER_CATEGORY_SLUGS,
+  headerCategoryLabel,
+  listingsCategoryPath,
+} from '../lib/headerCategories'
 import { Logo }        from './Logo'
 
 interface NavItem {
@@ -67,6 +72,7 @@ export function Header() {
   const [currencyOpen, setCurrencyOpen]   = useState(false)
   const [languageOpen, setLanguageOpen]   = useState(false)
   const [accountOpen, setAccountOpen]     = useState(false)
+  const [categoriesOpen, setCategoriesOpen] = useState(false)
 
   // Глобальний банер від власника
   const [announcement, setAnnouncement]   = useState<Announcement | null>(null)
@@ -79,6 +85,7 @@ export function Header() {
   const languageRef = useRef<HTMLDivElement | null>(null)
   const currencyRef = useRef<HTMLDivElement | null>(null)
   const accountRef  = useRef<HTMLDivElement | null>(null)
+  const categoriesRef = useRef<HTMLDivElement | null>(null)
 
   // Слухаємо popstate для оновлення активного маршруту
   useEffect(() => {
@@ -113,6 +120,7 @@ export function Header() {
       if (languageRef.current && !languageRef.current.contains(target)) setLanguageOpen(false)
       if (currencyRef.current && !currencyRef.current.contains(target)) setCurrencyOpen(false)
       if (accountRef.current  && !accountRef.current.contains(target))  setAccountOpen(false)
+      if (categoriesRef.current && !categoriesRef.current.contains(target)) setCategoriesOpen(false)
     }
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeAllMenus()
@@ -175,7 +183,6 @@ export function Header() {
   /** Центр нижньої панелі шапки — посилання з футера (між «Знайти майстрів» і «Перегляд оголошень») */
   const centerNavItems = useMemo(() => {
     const items: Array<{ label: string; path: string }> = [
-      { label: t('header.categories'), path: '/listings' },
       { label: t('footer.adsButton'), path: '/advertising' },
       { label: t('footer.contactButton'), path: '/contact' },
     ]
@@ -190,6 +197,7 @@ export function Header() {
     setLanguageOpen(false)
     setCurrencyOpen(false)
     setAccountOpen(false)
+    setCategoriesOpen(false)
     setMobileMenuOpen(false)
   }
 
@@ -197,6 +205,7 @@ export function Header() {
     setLanguageOpen(false)
     setCurrencyOpen(false)
     setAccountOpen(false)
+    setCategoriesOpen(false)
   }
 
   const goTo = (path: string) => {
@@ -268,6 +277,9 @@ export function Header() {
 
   const dropdownPanelClass =
     'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.94)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] backdrop-blur-xl'
+
+  const categoriesDropdownClass =
+    'absolute bottom-full left-1/2 z-50 mb-2 w-72 max-h-[min(22rem,60vh)] -translate-x-1/2 overflow-y-auto rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.96)] p-2 shadow-[0_18px_42px_rgba(67,44,26,0.12)] backdrop-blur-xl'
 
   const dropdownItemClass =
     'block w-full rounded-[18px] px-4 py-3 text-left text-sm font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
@@ -344,7 +356,7 @@ export function Header() {
                 {/* Вибір мови */}
                 <div ref={languageRef} className="relative">
                   <button
-                    onClick={() => { setLanguageOpen(o => !o); setCurrencyOpen(false); setAccountOpen(false) }}
+                    onClick={() => { setLanguageOpen(o => !o); setCurrencyOpen(false); setAccountOpen(false); setCategoriesOpen(false) }}
                     type="button"
                     className={textButtonClass(languageOpen)}
                   >
@@ -373,7 +385,7 @@ export function Header() {
                 {/* Вибір валюти */}
                 <div ref={currencyRef} className="relative">
                   <button
-                    onClick={() => { setCurrencyOpen(o => !o); setLanguageOpen(false); setAccountOpen(false) }}
+                    onClick={() => { setCurrencyOpen(o => !o); setLanguageOpen(false); setAccountOpen(false); setCategoriesOpen(false) }}
                     type="button"
                     className={textButtonClass(currencyOpen)}
                   >
@@ -435,7 +447,7 @@ export function Header() {
                 {user && profile ? (
                   <div ref={accountRef} className="relative">
                     <button
-                      onClick={() => { setAccountOpen(o => !o); setLanguageOpen(false); setCurrencyOpen(false) }}
+                      onClick={() => { setAccountOpen(o => !o); setLanguageOpen(false); setCurrencyOpen(false); setCategoriesOpen(false) }}
                       type="button"
                       className={textButtonClass(accountOpen) + ' max-w-[240px]'}
                     >
@@ -567,6 +579,44 @@ export function Header() {
                 </button>
               ))}
 
+              <div ref={categoriesRef} className="relative shrink-0">
+                <button
+                  onClick={() => {
+                    setCategoriesOpen((o) => !o)
+                    setLanguageOpen(false)
+                    setCurrencyOpen(false)
+                    setAccountOpen(false)
+                  }}
+                  type="button"
+                  aria-expanded={categoriesOpen}
+                  aria-haspopup="menu"
+                  className={navTextClass(categoriesOpen, true)}
+                >
+                  <span>{t('header.categories')}</span>
+                  <ChevronDown
+                    className={
+                      'h-4 w-4 transition-transform duration-200 ' +
+                      (categoriesOpen ? 'rotate-180' : '')
+                    }
+                  />
+                </button>
+                {categoriesOpen && (
+                  <div className={categoriesDropdownClass} role="menu">
+                    {HEADER_CATEGORY_SLUGS.map((slug) => (
+                      <button
+                        key={slug}
+                        type="button"
+                        role="menuitem"
+                        onClick={() => goTo(listingsCategoryPath(slug))}
+                        className={dropdownItemClass}
+                      >
+                        {headerCategoryLabel(slug, t)}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {centerNavItems.map(item => (
                 <button
                   key={item.path + item.label}
@@ -635,6 +685,22 @@ export function Header() {
                       <span>{item.label}</span>
                     </button>
                   ))}
+
+                  <p className="px-4 pt-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[var(--ink-500)]">
+                    {t('header.categories')}
+                  </p>
+                  <div className="grid gap-1 px-1 pb-2">
+                    {HEADER_CATEGORY_SLUGS.map((slug) => (
+                      <button
+                        key={slug}
+                        type="button"
+                        onClick={() => goTo(listingsCategoryPath(slug))}
+                        className="rounded-[16px] px-4 py-2.5 text-left text-sm font-semibold text-[var(--ink-700)] transition hover:bg-white/50 hover:text-[var(--accent-700)]"
+                      >
+                        {headerCategoryLabel(slug, t)}
+                      </button>
+                    ))}
+                  </div>
 
                   <button onClick={() => goTo('/listings')} type="button" className={mobileNavItemClass}>
                     <Search className="h-5 w-5" />
