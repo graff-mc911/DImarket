@@ -19,7 +19,7 @@ export function Footer() {
         <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-[1.2fr_1fr] xl:gap-3">
           <div className="min-w-0">
             <button onClick={() => navigateTo('/')} type="button" className="rounded-full">
-              <Logo variant="text" size="header" />
+              <Logo variant="brand" size="header" />
             </button>
             <p className="mt-1 line-clamp-2 text-[10px] leading-4 text-[#6f665d]">
               {t('footer.brandText')}

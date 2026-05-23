@@ -71,6 +71,17 @@ async function main() {
   const ico = await pngToIco(icoBuffers)
   await fs.promises.writeFile(path.join(publicDir, 'favicon.ico'), ico)
   console.log('wrote favicon.ico')
+
+  // Горизонтальний знак для мобільної шапки
+  const headerH = 80
+  const meta = await sharp(source).metadata()
+  const scale = headerH / (meta.height || headerH)
+  const headerW = Math.round((meta.width || headerH) * scale)
+  await sharp(source)
+    .resize(headerW, headerH, { fit: 'contain', background: BG })
+    .png()
+    .toFile(path.join(publicDir, 'logo-header.png'))
+  console.log('wrote logo-header.png')
 }
 
 main().catch((err) => {
