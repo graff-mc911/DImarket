@@ -10,7 +10,6 @@ import {
   ClipboardList,
   MapPin,
   MessageCircle,
-  PlusCircle,
   Search,
   ShieldCheck,
   Star,
@@ -43,8 +42,6 @@ export function Home() {
     listings: 0,
     countries: 0,
   })
-  const [searchQuery, setSearchQuery] = useState('')
-  const [locationQuery, setLocationQuery] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -120,18 +117,6 @@ export function Home() {
     }
   }
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    const params = new URLSearchParams()
-
-    if (searchQuery.trim()) params.set('search', searchQuery.trim())
-    if (locationQuery.trim()) params.set('location', locationQuery.trim())
-
-    const query = params.toString()
-    navigateTo(query ? `/listings?${query}` : '/listings')
-  }
-
   const getCategoryName = (category: Category) => {
     const newKey = `category.name.${category.slug}`
     const newValue = tr(newKey)
@@ -191,64 +176,6 @@ export function Home() {
               <p className="muted-text mt-1.5 max-w-2xl text-[12px] leading-snug md:text-[13px]">
                 {t('home.heroSimpleDescription')}
               </p>
-            </div>
-
-            <form
-              onSubmit={handleSearch}
-              className="mt-3 grid gap-2 xl:grid-cols-[minmax(0,1fr)_200px_150px]"
-            >
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
-                <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t('home.whatNeedsToBeDone')}
-                  className="input-glass h-9 rounded-full pl-9 text-sm"
-                />
-              </div>
-
-              <div className="relative">
-                <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
-                <input
-                  value={locationQuery}
-                  onChange={(e) => setLocationQuery(e.target.value)}
-                  placeholder={t('home.cityOrCountry')}
-                  className="input-glass h-9 rounded-full pl-9 text-sm"
-                />
-              </div>
-
-              <button type="submit" className="btn-primary h-9 rounded-full px-4 text-sm">
-                {t('listings.findRequests')}
-              </button>
-            </form>
-
-            <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2">
-              <button
-                onClick={() => navigateTo('/create-ad')}
-                type="button"
-                className="btn-primary rounded-full px-3 py-1.5 text-xs"
-              >
-                <PlusCircle className="h-3.5 w-3.5" />
-                {t('header.createAd')}
-              </button>
-
-              <button
-                onClick={() => navigateTo('/professionals')}
-                type="button"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-700)] transition hover:text-[var(--ink-900)]"
-              >
-                <span>{t('home.findProfessionals')}</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
-
-              <button
-                onClick={() => navigateTo('/listings')}
-                type="button"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--ink-700)] transition hover:text-[var(--accent-700)]"
-              >
-                <span>{t('home.browseRequests')}</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
             </div>
 
             <div className="mt-2.5 flex flex-wrap gap-1.5">
