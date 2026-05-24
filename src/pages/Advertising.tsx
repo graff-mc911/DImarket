@@ -45,6 +45,7 @@ import {
   type GeoMode,
 } from '../lib/adGeoCatalog'
 import { isSiteOwner } from '../lib/siteOwner'
+import { formatSupabaseError } from '../lib/supabaseErrors'
 import {
   formatSlotLabel,
   sideSlotId,
@@ -233,7 +234,11 @@ export function Advertising() {
       setUploadState({ status: 'done', progress: 100 })
     } catch (err) {
       console.error('Помилка завантаження:', err)
-      setUploadState({ status: 'error', progress: 0, error: 'Upload failed. Try again.' })
+      setUploadState({
+        status: 'error',
+        progress: 0,
+        error: formatSupabaseError(err, t('advertising.error.upload')),
+      })
     }
   }, [])
 
@@ -260,6 +265,36 @@ export function Advertising() {
     setStartsAt(''); setEndsAt('')
   }
 
+  const ensureAdvertiserProfile = async () => {
+    if (!user) return
+    const { error } = await supabase.from('profiles').upsert(
+      {
+        id: user.id,
+        full_name:
+          profile?.full_name ??
+          (user.user_metadata?.full_name as string | undefined) ??
+          user.email?.split('@')[0] ??
+          'Advertiser',
+      },
+      { onConflict: 'id' },
+    )
+    if (error) throw error
+  }
+
+  const applyBannerUrl = (raw: string) => {
+    const url = raw.trim()
+    if (!url) {
+      setMediaUrl('')
+      setUploadState({ status: 'idle', progress: 0 })
+      return
+    }
+    setMediaUrl(url)
+    if (url.match(/\.(mp4|webm)(\?|$)/i)) setMediaType('video')
+    else if (url.match(/\.gif(\?|$)/i)) setMediaType('gif')
+    else setMediaType('image')
+    setUploadState({ status: 'done', progress: 100 })
+  }
+
   const handleCreateCampaign = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!user)          { setFeedback({ type: 'error', text: t('advertising.error.noAuth') }); return }
@@ -276,6 +311,8 @@ export function Advertising() {
     setSaving(true); setFeedback(null)
 
     try {
+      await ensureAdvertiserProfile()
+
       const now       = new Date()
       const startDate = startsAt ? new Date(startsAt) : now
       const endDate   = endsAt
@@ -295,12 +332,11 @@ export function Advertising() {
         placements:    selectedSlots,
         geo_scope:     geoMode,
         countries:     selectedCountries,
-        regions:       selectedRegions,
         cities:        targetCities,
         country_name:  selectedCountries[0] ?? null,
         city_name:     targetCities[0] ?? null,
         country_code:  null,
-        region_name:   selectedRegions[0] ?? null,
+        region_name:   selectedRegions.length > 0 ? selectedRegions.join(', ') : null,
         media_type:    mediaType,
         media_url:     mediaUrl,
         starts_at:     startDate.toISOString(),
@@ -349,7 +385,10 @@ export function Advertising() {
 
     } catch (err) {
       console.error('Помилка:', err)
-      setFeedback({ type: 'error', text: t('advertising.error.save') })
+      setFeedback({
+        type: 'error',
+        text: formatSupabaseError(err, t('advertising.error.save')),
+      })
       setSaving(false)
     }
   }
@@ -528,6 +567,22 @@ export function Advertising() {
                       )}
                     </div>
                     <input ref={fileInputRef} type="file" accept={ACCEPTED_MIME[mediaType].join(',')} onChange={handleFileChange} className="hidden" />
+
+                    <div className="mt-3">
+                      <AdCopyField
+                        icon={<Link2 className="h-4 w-4" />}
+                        label={t('advertising.form.mediaUrlLabel')}
+                      >
+                        <input
+                          type="url"
+                          value={mediaUrl}
+                          onChange={(e) => applyBannerUrl(e.target.value)}
+                          className="input-glass"
+                          placeholder={t('advertising.form.mediaUrlPlaceholder')}
+                        />
+                        <p className="mt-1 text-xs text-[#9a8776]">{t('advertising.form.mediaUrlHint')}</p>
+                      </AdCopyField>
+                    </div>
                   </div>
 
                   {/* Назва, опис, посилання — у стилі карток застосунку */}
