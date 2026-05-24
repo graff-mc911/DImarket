@@ -6,13 +6,7 @@ import {
   type AdPageKey,
   type SideIndex,
 } from './adPlacementSlots'
-import {
-  CENTER_HERO_CAMPAIGN_ID,
-  FOOTER_BANNER_CAMPAIGN_ID,
-  mergeExtraPartnerCampaigns,
-  SIDE_BOTTOM_PARTNER_IDS,
-  SIDE_TOP_PARTNER_IDS,
-} from './partnerAdMedia'
+import { isDemoAdCampaign } from './demoAdCampaigns'
 import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './youtubeMedia'
 import type { AdCampaign } from './types'
 import { getSlotLegacyTags } from './adPlacementSlots'
@@ -240,62 +234,37 @@ export function pickCampaignsForSideStack(
 
   const pageKey = pageKeyFromSideAdsPage(page)
   const side = position === 'left' ? 'left' : 'right'
-
-  const topPool = SIDE_TOP_PARTNER_IDS.map((id) => all.find((c) => c.id === id)).filter(
-    (c): c is AdCampaignWithAdvertiser => !!c,
-  )
-  const bottomPool = SIDE_BOTTOM_PARTNER_IDS.map((id) => all.find((c) => c.id === id)).filter(
-    (c): c is AdCampaignWithAdvertiser => !!c,
-  )
-  const fallbackPool = all
-
-  const topSlots = Math.min(2, count)
-  const bottomSlots = count - topSlots
-  const topOffset = position === 'right' ? 2 : 0
-  const bottomOffset = position === 'right' ? 2 : 0
-
-  const pickPartner = (
-    pool: AdCampaignWithAdvertiser[],
-    offset: number,
-    n: number,
-    fallback: AdCampaignWithAdvertiser[],
-  ) => {
-    const source = pool.length > 0 ? pool : fallback
-    const out: AdCampaignWithAdvertiser[] = []
-    for (let i = 0; i < n; i++) {
-      out.push(source[(offset + i) % Math.max(source.length, 1)] ?? all[i % all.length])
-    }
-    return out
-  }
-
-  const partnerTop = pickPartner(topPool, topOffset, topSlots, fallbackPool)
-  const partnerBottom = pickPartner(bottomPool, bottomOffset, bottomSlots, fallbackPool)
-  const partnerByIndex = [...partnerTop, ...partnerBottom]
-
+  const used = new Set<string>()
   const out: AdCampaignWithAdvertiser[] = []
+
+  const pool = () => all.filter((c) => !used.has(c.id))
+
   for (let i = 0; i < count; i++) {
     const slotId = sideSlotId(pageKey, side, (i + 1) as SideIndex)
-    let bought = pickCampaignForSlot(all, slotId)
-    if (!bought && i === 0) {
-      bought =
-        all.find(
+    let picked = pickCampaignForSlot(pool(), slotId)
+
+    if (!picked && i === 0) {
+      picked =
+        pool().find(
           (c) =>
             isOwnerManagedCampaign(c) &&
             getCampaignPlacements(c).includes(ownerMobileSlotForPage(pageKey)),
         ) ?? null
     }
-    if (bought) {
-      out.push(bought)
-      continue
+
+    if (!picked) {
+      picked =
+        pool().find((c) => campaignMatchesSlot(c, 'sidebar')) ??
+        pool()[i % Math.max(pool().length, 1)] ??
+        null
     }
-    const partner = partnerByIndex[i]
-    if (partner && !out.some((c) => c.id === partner.id)) {
-      out.push(partner)
-      continue
+
+    if (picked) {
+      out.push(picked)
+      used.add(picked.id)
     }
-    const any = pickCampaignForSlot(all, 'sidebar') ?? all[i % all.length]
-    if (any) out.push(any)
   }
+
   return out
 }
 
@@ -321,9 +290,6 @@ export function pickCenterHeroCampaign(
 
   const slotPick = pickCampaignForSlot(all, centerId)
   if (slotPick) return slotPick
-
-  const hero = all.find((c) => c.id === CENTER_HERO_CAMPAIGN_ID)
-  if (hero) return hero
 
   return all[0] ?? null
 }
@@ -370,9 +336,6 @@ export function pickMobileCampaign(
   if (variant === 'horizontal') {
     const leaderboard = list.find((c) => getCampaignPlacements(c).includes('home_leaderboard'))
     if (leaderboard) return leaderboard
-
-    const footer = list.find((c) => c.id === FOOTER_BANNER_CAMPAIGN_ID)
-    if (footer) return footer
   }
 
   const picked = pickCampaignForSlot(list, slotId)
@@ -469,16 +432,16 @@ export async function fetchPaidAdCampaigns(
     return []
   }
 
-  const rows = (data as AdCampaignWithAdvertiser[] | null) || []
+  const rows = ((data as AdCampaignWithAdvertiser[] | null) || []).filter(
+    (c) => !isDemoAdCampaign(c),
+  )
 
-  // Розклад уже відфільтровано RLS (starts_at / ends_at). Не дублюємо через Date.now()
-  // у браузері — інакше при розсинхроні годинника всі кампанії зникають з UI.
-  const merged = mergeExtraPartnerCampaigns(rows).filter(isPaidCampaign)
+  const visible = rows.filter(isPaidCampaign)
 
   const filtered =
     slots.length === 0
-      ? merged
-      : merged.filter((c) => slots.some((slot) => campaignMatchesSlot(c, slot)))
+      ? visible
+      : visible.filter((c) => slots.some((slot) => campaignMatchesSlot(c, slot)))
 
   return filtered
     .filter((c) => matchesViewerGeo(c, viewerCity, viewerCountry))

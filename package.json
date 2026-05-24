@@ -20,8 +20,8 @@
     "db:apply-self-serve-ads": "node scripts/apply-prod-ad-self-serve.mjs",
     "db:apply-self-serve-ads:ps1": "powershell -ExecutionPolicy Bypass -File scripts/apply-prod-ad-self-serve.ps1",
     "db:verify-prod-ads": "node scripts/verify-prod-ad-schema.mjs",
+    "db:delete-demo-ads": "node scripts/apply-delete-demo-ads.mjs",
     "db:deploy-checkout-functions": "npx supabase functions deploy create-checkout-session verify-checkout-session --project-ref wjlfvajloxkevggwjgtk",
-    "db:seed-partner-ads": "node scripts/apply-seed-partner-ads.mjs",
     "icons:generate": "node scripts/generate-favicons.mjs"
   },
   "dependencies": {

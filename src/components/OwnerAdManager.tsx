@@ -22,6 +22,7 @@ import {
 } from '../lib/ownerAdCampaign'
 import type { AdCampaign } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
+import { isDemoAdCampaign } from '../lib/demoAdCampaigns'
 
 const ACCEPTED_MIME = [
   'image/jpeg',
@@ -103,9 +104,15 @@ export function OwnerAdManager({
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
 
+  const ownerCampaigns = useMemo(
+    () => campaigns.filter((c) => !isDemoAdCampaign(c)),
+    [campaigns],
+  )
+  const demoCampaigns = useMemo(() => campaigns.filter(isDemoAdCampaign), [campaigns])
+
   const editingCampaign = useMemo(
-    () => campaigns.find((c) => c.id === editingId) ?? null,
-    [campaigns, editingId],
+    () => ownerCampaigns.find((c) => c.id === editingId) ?? null,
+    [ownerCampaigns, editingId],
   )
 
   const openCreate = () => {
@@ -267,6 +274,35 @@ export function OwnerAdManager({
     }
   }
 
+  const handleDeleteAllDemo = async () => {
+    if (demoCampaigns.length === 0) {
+      onNotice('Демо-реклами не знайдено.')
+      return
+    }
+    if (
+      !window.confirm(
+        `Видалити ${demoCampaigns.length} демо-кампаній (Knauf, DEWALT, GREE тощо)? Цю дію не можна скасувати.`,
+      )
+    ) {
+      return
+    }
+
+    setCampaignActionId('demo-bulk')
+    try {
+      const ids = demoCampaigns.map((c) => c.id)
+      const { error } = await supabase.from('ad_campaigns').delete().in('id', ids)
+      if (error) throw error
+      onNotice(`Видалено ${ids.length} демо-кампаній.`)
+      if (editingId && ids.includes(editingId)) closeForm()
+      await onRefresh()
+      await refreshPublicAds()
+    } catch (err) {
+      onError(formatSupabaseError(err, 'Не вдалося видалити демо-рекламу'))
+    } finally {
+      setCampaignActionId(null)
+    }
+  }
+
   return (
     <section className="glass-card mt-6 p-5 md:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -278,8 +314,19 @@ export function OwnerAdManager({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-[rgba(148,163,184,0.14)] px-4 py-2 text-sm font-semibold text-[#475569]">
-            Усього: {campaigns.length}
+            Усього: {ownerCampaigns.length}
           </span>
+          {demoCampaigns.length > 0 && (
+            <button
+              type="button"
+              onClick={() => void handleDeleteAllDemo()}
+              disabled={campaignActionId === 'demo-bulk'}
+              className="inline-flex items-center gap-2 rounded-full border border-[rgba(239,68,68,0.35)] bg-[rgba(239,68,68,0.08)] px-4 py-2 text-sm font-semibold text-[#b91c1c] disabled:opacity-50"
+            >
+              <Trash2 className="h-4 w-4" />
+              Видалити демо ({demoCampaigns.length})
+            </button>
+          )}
           <button
             type="button"
             onClick={openCreate}
@@ -479,10 +526,10 @@ export function OwnerAdManager({
       )}
 
       <div className="mt-5 space-y-4">
-        {campaigns.length === 0 ? (
+        {ownerCampaigns.length === 0 ? (
           <p className="text-sm text-[#7a7168]">Рекламних кампаній ще немає.</p>
         ) : (
-          campaigns.map((campaign) => (
+          ownerCampaigns.map((campaign) => (
             <CampaignRow
               key={campaign.id}
               campaign={campaign}
