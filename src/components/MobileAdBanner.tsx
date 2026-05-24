@@ -4,6 +4,7 @@ import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard } from './AdOverlayCard'
 import { mobileInlineSlotId, pageKeyFromMobilePage, type InlineIndex } from '../lib/adPlacementSlots'
+import { adSlotTailwind } from '../lib/adSlotLayout'
 import { pickMobileCampaign, trackAdImpression } from '../lib/adCampaigns'
 
 interface MobileAdBannerProps {
@@ -70,7 +71,7 @@ export function MobileAdBanner({
         <AdOverlayCard
           campaign={campaign}
           variant={isHorizontal ? 'leaderboard' : 'mobile-inline'}
-          className={isHorizontal ? 'w-full' : 'min-h-[88px]'}
+          className={isHorizontal ? adSlotTailwind.leaderboard : adSlotTailwind.mobileInline}
           showGeo={!isHorizontal}
           imageOnly={isHorizontal}
         />

@@ -220,19 +220,19 @@ export function isAnimatedCampaign(campaign: AdCampaign): boolean {
   return getCampaignMediaType(campaign) === 'gif'
 }
 
-/** Бокова колонка: слот 1–4 зверху вниз (ліворуч / праворуч) */
+/** Бокова колонка: слот 1–4 зверху вниз; null — порожній ряд (фіксована сітка) */
 export function pickCampaignsForSideStack(
   all: AdCampaignWithAdvertiser[],
   position: 'left' | 'right',
   count: number,
   page?: 'home' | 'listings' | 'professionals' | 'default',
-): AdCampaignWithAdvertiser[] {
+): (AdCampaignWithAdvertiser | null)[] {
   if (all.length === 0 || count <= 0) return []
 
   const pageKey = pageKeyFromSideAdsPage(page)
   const side = position === 'left' ? 'left' : 'right'
   const used = new Set<string>()
-  const out: AdCampaignWithAdvertiser[] = []
+  const out: (AdCampaignWithAdvertiser | null)[] = []
 
   const pool = () => all.filter((c) => !used.has(c.id))
 
@@ -243,6 +243,8 @@ export function pickCampaignsForSideStack(
     if (picked) {
       out.push(picked)
       used.add(picked.id)
+    } else {
+      out.push(null)
     }
   }
 

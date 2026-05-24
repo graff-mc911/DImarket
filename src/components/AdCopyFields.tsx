@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { AD_MEDIA_FALLBACK, resolveAdDisplayCopy, type AdCampaignWithAdvertiser } from '../lib/adCampaigns'
 import { adOverlayGlow } from './AdOverlayCard'
+import { adSlotTailwind } from '../lib/adSlotLayout'
 
 type DraftMediaType = 'image' | 'gif' | 'video'
 
@@ -72,7 +73,7 @@ export function AdCampaignDraftPreview({
 
   const body = (
     <>
-      <div className="relative h-[140px] w-full shrink-0 overflow-hidden bg-[rgba(255,248,241,0.5)] md:h-[156px]">
+      <div className="relative h-[8.75rem] w-full shrink-0 overflow-hidden bg-[rgba(255,248,241,0.5)] md:h-[9.75rem]">
         {showMedia ? (
           mediaType === 'video' ? (
             <video
@@ -122,7 +123,7 @@ export function AdCampaignDraftPreview({
     </>
   )
 
-  const shell = `group flex flex-col overflow-hidden ${adOverlayGlow} min-h-[220px] w-full max-w-xl md:min-h-[248px] ${className}`
+  const shell = `group flex flex-col overflow-hidden ${adOverlayGlow} ${adSlotTailwind.center} max-w-xl ${className}`
 
   if (href) {
     return (

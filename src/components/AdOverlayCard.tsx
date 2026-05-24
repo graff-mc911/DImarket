@@ -8,6 +8,7 @@ import {
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
 import { useApp } from '../contexts/AppContext'
+import { adSlotTailwind } from '../lib/adSlotLayout'
 
 export const adOverlayGlow =
   'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_2px_8px_rgba(67,44,26,0.07)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_3px_12px_rgba(67,44,26,0.1)]'
@@ -43,32 +44,32 @@ const variantStyles: Record<
   }
 > = {
   stack: {
-    shell: 'h-[90%] w-[90%] max-h-full max-w-full min-h-[4rem] mx-auto my-auto',
-    image: 'min-h-[2.25rem] flex-1 w-full',
+    shell: 'flex h-full w-full max-h-full min-h-0 flex-col overflow-hidden',
+    image: 'h-[4.25rem] w-full shrink-0',
     text: 'p-1.5',
     brand: 'text-[9px]',
     title: 'text-[10px] line-clamp-2 leading-snug',
     meta: 'text-[9px]',
   },
   legacy: {
-    shell: 'min-h-[198px] w-[90%] max-w-full mx-auto',
-    image: 'h-[112px] w-full shrink-0',
+    shell: adSlotTailwind.sideLegacy,
+    image: 'h-[7rem] w-full shrink-0',
     text: 'p-2.5',
     brand: 'text-[10px]',
     title: 'text-base line-clamp-2',
     meta: 'text-xs',
   },
   'legacy-compact': {
-    shell: 'min-h-[108px] w-[90%] max-w-full mx-auto',
-    image: 'h-[60px] w-full shrink-0',
+    shell: adSlotTailwind.sideLegacyCompact,
+    image: 'h-[3.75rem] w-full shrink-0',
     text: 'p-2',
     brand: 'text-[9px]',
     title: 'text-sm line-clamp-2',
     meta: 'text-[10px]',
   },
   center: {
-    shell: 'min-h-[220px] w-full max-w-full mx-auto md:min-h-[248px]',
-    image: 'h-[140px] w-full shrink-0 md:h-[156px]',
+    shell: adSlotTailwind.center,
+    image: 'h-[8.75rem] w-full shrink-0 md:h-[9.75rem]',
     text: 'p-2.5',
     brand: 'text-[10px]',
     title: 'text-sm line-clamp-2',
@@ -83,16 +84,16 @@ const variantStyles: Record<
     meta: 'text-[9px]',
   },
   'mobile-inline': {
-    shell: 'min-h-[108px] w-full',
-    image: 'h-[68px] w-full shrink-0',
+    shell: adSlotTailwind.mobileInline,
+    image: 'h-[4.25rem] w-full shrink-0',
     text: 'p-2',
     brand: 'text-[9px]',
     title: 'text-xs line-clamp-2',
     meta: 'text-[10px]',
   },
   leaderboard: {
-    shell: 'w-full',
-    image: 'aspect-[4/1] w-full max-h-[300px]',
+    shell: adSlotTailwind.leaderboard,
+    image: 'aspect-[4/1] h-auto w-full max-h-[300px] min-h-[4.5rem]',
     text: 'hidden',
     brand: 'hidden',
     title: 'hidden',
