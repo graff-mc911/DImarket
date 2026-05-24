@@ -265,9 +265,7 @@ export function Professionals() {
               )}
             </section>
 
-            <div className="mb-4">
-              <MobileAdBanner variant="horizontal" page="professionals" />
-            </div>
+            <MobileAdBanner variant="horizontal" page="professionals" outerClassName="mb-4" />
 
             <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-[#6f665d]">
               <Star className="h-4 w-4 text-[#c3912c]" />
@@ -289,9 +287,12 @@ export function Professionals() {
                     <ProfessionalCard professional={professional} />
 
                     {(index + 1) % 6 === 0 && index < filteredProfessionals.length - 1 && (
-                      <div className="mt-6">
-                        <MobileAdBanner variant="inline" page="professionals" inlineIndex={1} />
-                      </div>
+                      <MobileAdBanner
+                        variant="inline"
+                        page="professionals"
+                        inlineIndex={1}
+                        outerClassName="mt-6"
+                      />
                     )}
                   </div>
                 ))}
@@ -323,9 +324,7 @@ export function Professionals() {
               </div>
             )}
 
-            <div className="mt-8">
-              <MobileAdBanner variant="inline" page="professionals" inlineIndex={2} />
-            </div>
+            <MobileAdBanner variant="inline" page="professionals" inlineIndex={2} outerClassName="mt-8" />
     </div>
   )
 }

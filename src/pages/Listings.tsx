@@ -457,13 +457,12 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                   <Fragment key={listing.id}>
                     <ListingCard listing={listing} />
                     {(index + 1) % 4 === 0 && index < filteredListings.length - 1 && (
-                      <div className="md:col-span-2 2xl:col-span-3">
-                        <MobileAdBanner
-                          variant="inline"
-                          page="listings"
-                          inlineIndex={((((index + 1) / 4) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
-                        />
-                      </div>
+                      <MobileAdBanner
+                        variant="inline"
+                        page="listings"
+                        inlineIndex={((((index + 1) / 4) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
+                        outerClassName="md:col-span-2 2xl:col-span-3"
+                      />
                     )}
                   </Fragment>
                 ))}
@@ -495,9 +494,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
               </div>
             )}
 
-            <div className="mt-6">
-              <MobileAdBanner variant="inline" page="listings" inlineIndex={2} />
-            </div>
+            <MobileAdBanner variant="inline" page="listings" inlineIndex={2} outerClassName="mt-6" />
     </div>
   )
 }

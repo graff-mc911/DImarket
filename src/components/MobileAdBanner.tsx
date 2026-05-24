@@ -2,19 +2,25 @@ import { useEffect, useMemo, useState } from 'react'
 import { X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
-import { AdOverlayCard, AdOverlayPlaceholder } from './AdOverlayCard'
+import { AdOverlayCard } from './AdOverlayCard'
 import { mobileInlineSlotId, pageKeyFromMobilePage, type InlineIndex } from '../lib/adPlacementSlots'
 import { pickMobileCampaign, trackAdImpression } from '../lib/adCampaigns'
-import { navigateTo } from '../lib/navigation'
 
 interface MobileAdBannerProps {
   variant: 'inline' | 'horizontal'
   page?: 'home' | 'listings' | 'professionals' | 'default'
   /** Слот 1–4 між картками / секціями (лише inline) */
   inlineIndex?: InlineIndex
+  /** Обгортка лише коли є реклама (без порожніх відступів у сітці) */
+  outerClassName?: string
 }
 
-export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBannerProps) {
+export function MobileAdBanner({
+  variant,
+  page,
+  inlineIndex = 1,
+  outerClassName,
+}: MobileAdBannerProps) {
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
   const [adVisible, setAdVisible] = useState(true)
@@ -45,11 +51,11 @@ export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBanne
     void trackAdImpression(campaign.id)
   }, [loading, campaign])
 
-  if (!adVisible) return null
+  if (!adVisible || loading || !campaign) return null
 
   const showOnDesktop = variant === 'horizontal'
 
-  return (
+  const block = (
     <div className={showOnDesktop ? 'my-4' : 'my-4 xl:hidden'}>
       <div className="relative">
         <button
@@ -61,32 +67,20 @@ export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBanne
           <X className="h-3.5 w-3.5" />
         </button>
 
-        {loading ? (
-          <div
-            className={
-              isHorizontal
-                ? 'aspect-[4/1] w-full max-h-[300px] animate-pulse bg-white/20'
-                : 'min-h-[88px] animate-pulse bg-white/20'
-            }
-          />
-        ) : campaign ? (
-          <AdOverlayCard
-            campaign={campaign}
-            variant={isHorizontal ? 'leaderboard' : 'mobile-inline'}
-            className={isHorizontal ? 'w-full' : 'min-h-[88px]'}
-            showGeo={!isHorizontal}
-            imageOnly={isHorizontal}
-          />
-        ) : (
-          <AdOverlayPlaceholder
-            variant={isHorizontal ? 'leaderboard' : 'mobile-inline'}
-            className={isHorizontal ? 'w-full' : 'min-h-[88px]'}
-            title={t('ads.adSpace')}
-            subtitle={t('ads.advertiseHere')}
-            onClick={() => navigateTo('/advertising')}
-          />
-        )}
+        <AdOverlayCard
+          campaign={campaign}
+          variant={isHorizontal ? 'leaderboard' : 'mobile-inline'}
+          className={isHorizontal ? 'w-full' : 'min-h-[88px]'}
+          showGeo={!isHorizontal}
+          imageOnly={isHorizontal}
+        />
       </div>
     </div>
   )
+
+  if (outerClassName) {
+    return <div className={outerClassName}>{block}</div>
+  }
+
+  return block
 }

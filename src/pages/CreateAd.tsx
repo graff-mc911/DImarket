@@ -251,9 +251,7 @@ export function CreateAd() {
                 </div>
               </div>
 
-              <div className="mt-6">
-                <MobileAdBanner variant="horizontal" page="default" />
-              </div>
+              <MobileAdBanner variant="horizontal" page="default" outerClassName="mt-6" />
 
               {error && (
                 <div className="mt-6 rounded-[22px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
@@ -554,9 +552,7 @@ export function CreateAd() {
                   <p className="text-xs text-[#7a7168]">{t('createAd.imageHelp')}</p>
                 </section>
 
-                <div>
-                  <MobileAdBanner variant="inline" page="default" inlineIndex={2} />
-                </div>
+                <MobileAdBanner variant="inline" page="default" inlineIndex={2} />
 
                 <button
                   type="submit"
