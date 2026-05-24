@@ -22,7 +22,7 @@ export function SponsoredCompanies() {
 
   return (
     <section className="py-6">
-      <div className="mx-auto max-w-7xl">
+      <div className="layout-page-content">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-xl font-extrabold tracking-[-0.02em] text-[var(--ink-900)] md:text-2xl">

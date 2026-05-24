@@ -244,7 +244,7 @@ export function Home() {
       <SponsoredCompanies />
 
       <section className="py-6">
-        <div className="mx-auto max-w-7xl">
+        <div className="layout-page-content">
           <SectionHeader
             title={t('home.howItWorksTitle')}
             text={t('home.howItWorksText')}
@@ -276,7 +276,7 @@ export function Home() {
       </section>
 
       <section className="py-6">
-        <div className="mx-auto max-w-7xl">
+        <div className="layout-page-content">
           <SectionHeader
             title={t('home.popularCategoriesTitle')}
             text={t('home.popularCategoriesText')}
@@ -309,7 +309,7 @@ export function Home() {
       <MobileAdBanner variant="inline" page="home" inlineIndex={3} />
 
       <section className="py-6">
-        <div className="mx-auto max-w-7xl">
+        <div className="layout-page-content">
           <SectionHeader
             title={t('home.freshRequestsTitle')}
             text={t('home.freshRequestsText')}
@@ -343,7 +343,7 @@ export function Home() {
       </section>
 
       <section className="pb-14 pt-6">
-        <div className="mx-auto max-w-7xl">
+        <div className="layout-page-content">
           <SectionHeader
             title={t('home.popularProsTitle')}
             text={t('home.popularProsText')}

@@ -38,6 +38,7 @@ import {
   headerCategoryLabel,
 } from '../lib/siteCategories'
 import { Logo }        from './Logo'
+import { LayoutChrome } from './PageWithSideAds'
 
 interface NavItem {
   label: string
@@ -298,10 +299,11 @@ export function Header() {
         const style = getBannerStyle(announcement!.type)
         return (
           <div
-            className="w-full px-3 py-1.5"
+            className="w-full py-1.5"
             style={{ background: style.bg, borderBottom: '1px solid ' + style.border }}
           >
-            <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
+            <LayoutChrome path={currentPath}>
+              <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Bell className="h-4 w-4 shrink-0" style={{ color: style.color }} />
                 <p className="text-sm font-semibold" style={{ color: style.color }}>
@@ -317,13 +319,15 @@ export function Header() {
               >
                 <X className="h-3.5 w-3.5" style={{ color: style.color }} />
               </button>
-            </div>
+              </div>
+            </LayoutChrome>
           </div>
         )
       })()}
 
       {/* ===== Основна шапка (фіксована) ===== */}
-      <header className="w-full px-2 pb-2 pt-2 md:px-3 md:pt-2">
+      <header className="w-full pb-2 pt-2">
+        <LayoutChrome path={currentPath}>
         <div className="w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl">
           <div className="px-3 py-2 md:px-4 md:py-2.5">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
@@ -811,6 +815,7 @@ export function Header() {
             </div>
           )}
         </div>
+        </LayoutChrome>
       </header>
       </div>
 

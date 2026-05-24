@@ -166,6 +166,25 @@
     width: 100%;
   }
 
+  /** Повна ширина центральної колонки (замість max-w-7xl на сторінках з боковими рейками) */
+  .layout-page-content {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /** Порожній стовпець під ширину бокової реклами — шапка/футер вирівнюються з контентом */
+  .layout-side-rail-spacer {
+    display: none;
+    min-width: 0;
+    width: 100%;
+  }
+
+  @media (min-width: 1024px) {
+    .layout-side-rail-spacer {
+      display: block;
+    }
+  }
+
   .layout-page-gutter {
     box-sizing: border-box;
     padding-inline: var(--layout-gutter);

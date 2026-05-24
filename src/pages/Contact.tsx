@@ -97,7 +97,7 @@ export function Contact() {
 
   return (
     <div className="py-8 pb-24 lg:pb-8">
-      <div className="mx-auto max-w-6xl">
+      <div className="layout-page-content">
         {/* Верхній інформаційний блок сторінки. */}
         <section className="glass-panel p-6 md:p-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[#64748b]">
