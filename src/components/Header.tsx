@@ -133,11 +133,28 @@ export function Header() {
     }
   }, [])
 
-  // Блокуємо скрол при відкритому мобільному меню
+  // Блокуємо скрол сторінки при відкритому меню (iOS: position fixed надійніше за overflow:hidden)
   useEffect(() => {
-    const prev = document.body.style.overflow
-    if (mobileMenuOpen) document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = prev }
+    if (!mobileMenuOpen) return
+
+    const scrollY = window.scrollY
+    const prevOverflow = document.body.style.overflow
+    const prevPosition = document.body.style.position
+    const prevTop = document.body.style.top
+    const prevWidth = document.body.style.width
+
+    document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
+
+    return () => {
+      document.body.style.overflow = prevOverflow
+      document.body.style.position = prevPosition
+      document.body.style.top = prevTop
+      document.body.style.width = prevWidth
+      window.scrollTo(0, scrollY)
+    }
   }, [mobileMenuOpen])
 
   // Завантаження активного банера від власника
@@ -284,9 +301,6 @@ export function Header() {
   const dropdownItemClass =
     'block w-full rounded-[18px] px-4 py-3 text-left text-sm font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
 
-  const mobilePanelClass =
-    'max-h-[calc(100vh-8rem)] overflow-y-auto rounded-[26px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.92)] p-3 shadow-[0_18px_42px_rgba(67,44,26,0.08)] backdrop-blur-xl'
-
   const mobileNavItemClass =
     'flex w-full items-center gap-3 rounded-[20px] px-4 py-3 text-left text-base font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
 
@@ -325,8 +339,13 @@ export function Header() {
 
       {/* ===== Основна шапка (фіксована) ===== */}
       <header className="layout-page-gutter w-full pb-2 pt-2">
-        <div className="w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl">
-          <div className="px-3 py-2 md:px-4 md:py-2.5">
+        <div
+          className={
+            'w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl ' +
+            (mobileMenuOpen ? 'lg:overflow-visible max-lg:flex max-lg:max-h-[100dvh] max-lg:flex-col max-lg:overflow-hidden' : '')
+          }
+        >
+          <div className="shrink-0 px-3 py-2 md:px-4 md:py-2.5">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
 
               {/* Логотип */}
@@ -663,8 +682,9 @@ export function Header() {
 
           {/* Мобільне меню */}
           {mobileMenuOpen && (
-            <div className="border-t border-[var(--glass-border)] px-3 pb-4 pt-3 lg:hidden">
-              <div className={mobilePanelClass}>
+            <div className="min-h-0 shrink-0 px-3 pb-2 pt-3 lg:hidden">
+              <div className="mobile-nav-menu">
+                <div className="mobile-nav-menu__scroll">
                 <div className="mb-3 flex justify-center">
                   <OnlineVisitorsPill count={onlineVisitors} />
                 </div>
@@ -676,7 +696,9 @@ export function Header() {
                     </button>
                   ))}
 
-                  {centerNavItems.map(item => (
+                  {centerNavItems
+                    .filter(item => item.path !== '/login' && item.path !== '/register')
+                    .map(item => (
                     <button
                       key={item.path + item.label}
                       onClick={() => goTo(item.path)}
@@ -754,60 +776,67 @@ export function Header() {
                   </div>
                 </div>
 
-                <div className="mt-3 grid gap-2">
-                  {user && profile ? (
-                    <>
-                      <button onClick={() => goTo('/settings')} type="button" className={mobileNavItemClass}>
-                        <User className="h-5 w-5" />
-                        <span>{t('header.myProfile')}</span>
-                      </button>
+                {user && profile ? (
+                  <div className="mt-3 grid gap-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]">
+                    <button onClick={() => goTo('/settings')} type="button" className={mobileNavItemClass}>
+                      <User className="h-5 w-5" />
+                      <span>{t('header.myProfile')}</span>
+                    </button>
 
-                      <button onClick={() => goTo('/my-listings')} type="button" className={mobileNavItemClass}>
-                        <FileText className="h-5 w-5" />
-                        <span>{t('header.myListings') || 'Мої оголошення'}</span>
-                      </button>
+                    <button onClick={() => goTo('/my-listings')} type="button" className={mobileNavItemClass}>
+                      <FileText className="h-5 w-5" />
+                      <span>{t('header.myListings') || 'Мої оголошення'}</span>
+                    </button>
 
-                      <button onClick={() => goTo('/favorites')} type="button" className={mobileNavItemClass}>
-                        <Bookmark className="h-5 w-5" />
-                        <span>{t('header.favorites')}</span>
-                      </button>
+                    <button onClick={() => goTo('/favorites')} type="button" className={mobileNavItemClass}>
+                      <Bookmark className="h-5 w-5" />
+                      <span>{t('header.favorites')}</span>
+                    </button>
 
-                      <button onClick={() => goTo('/messages')} type="button" className={mobileNavItemClass}>
-                        <MessageSquare className="h-5 w-5" />
-                        <div className="flex flex-1 items-center justify-between">
-                          <span>{t('header.messages')}</span>
-                          {unreadCount > 0 && (
-                            <span className="rounded-full px-2 py-0.5 text-xs font-bold text-white"
-                              style={{ background: 'var(--accent-700)' }}>
-                              {unreadCount}
-                            </span>
-                          )}
-                        </div>
-                      </button>
+                    <button onClick={() => goTo('/messages')} type="button" className={mobileNavItemClass}>
+                      <MessageSquare className="h-5 w-5" />
+                      <div className="flex flex-1 items-center justify-between">
+                        <span>{t('header.messages')}</span>
+                        {unreadCount > 0 && (
+                          <span className="rounded-full px-2 py-0.5 text-xs font-bold text-white"
+                            style={{ background: 'var(--accent-700)' }}>
+                            {unreadCount}
+                          </span>
+                        )}
+                      </div>
+                    </button>
 
-                      {isSiteOwner && (
-                        <button onClick={() => goTo('/dashboard')} type="button" className={mobileNavItemClass}>
-                          <ClipboardList className="h-5 w-5" />
-                          <span>{t('header.dashboard')}</span>
-                        </button>
-                      )}
-
-                      <button
-                        onClick={handleSignOut}
-                        type="button"
-                        className="flex w-full items-center gap-3 rounded-[20px] px-4 py-3 text-left text-base font-semibold text-[#a04b39] transition-all hover:text-[#c2614a]"
-                      >
-                        <LogOut className="h-5 w-5" />
-                        <span>{t('header.signOut')}</span>
+                    {isSiteOwner && (
+                      <button onClick={() => goTo('/dashboard')} type="button" className={mobileNavItemClass}>
+                        <ClipboardList className="h-5 w-5" />
+                        <span>{t('header.dashboard')}</span>
                       </button>
-                    </>
-                  ) : (
+                    )}
+
+                    <button
+                      onClick={handleSignOut}
+                      type="button"
+                      className="flex w-full items-center gap-3 rounded-[20px] px-4 py-3 text-left text-base font-semibold text-[#a04b39] transition-all hover:text-[#c2614a]"
+                    >
+                      <LogOut className="h-5 w-5" />
+                      <span>{t('header.signOut')}</span>
+                    </button>
+                  </div>
+                ) : null}
+                </div>
+
+                {!user ? (
+                  <div className="mobile-nav-menu__footer">
                     <button onClick={() => goTo('/login')} type="button" className={mobileNavItemClass}>
                       <User className="h-5 w-5" />
                       <span>{t('header.professionalLogin')}</span>
                     </button>
-                  )}
-                </div>
+                    <button onClick={() => goTo('/register')} type="button" className={mobileNavItemClass}>
+                      <User className="h-5 w-5" />
+                      <span>{t('footer.register')}</span>
+                    </button>
+                  </div>
+                ) : null}
               </div>
             </div>
           )}
