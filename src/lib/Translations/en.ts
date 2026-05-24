@@ -463,6 +463,10 @@ export const enTranslations = {
   'auth.error.invalidEmail': 'Please enter a valid email address',
   'auth.error.profileExists': 'Profile already exists — try signing in',
   'auth.error.rateLimit': 'Too many attempts. Please wait a minute and try again',
+  'auth.oauthOr': 'or continue with',
+  'auth.continueGoogle': 'Continue with Google',
+  'auth.continueApple': 'Continue with Apple',
+  'auth.oauthLoading': 'Redirecting…',
   'register.confirmEmail':
     'Account created. Check your email to confirm, then sign in.',
 

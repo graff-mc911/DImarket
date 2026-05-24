@@ -1,12 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Building2, ChevronDown, Globe, HardHat, Loader, Megaphone, User, UserPlus } from 'lucide-react'
 import { PasswordField } from '../components/PasswordField'
 import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
+import {
+  ensureUserProfile,
+  normalizeProfileRole,
+  savePendingRegistration,
+  type RegistrationRole,
+} from '../lib/profileSync'
+import { AuthSocialButtons } from '../components/AuthSocialButtons'
 import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { LANGUAGES }  from '../lib/types'
-import type { UserRole } from '../lib/types'
 
 // ── Географічні дані (ключі англійською) ──────────────────
 const GEO_DATA: Record<string, Record<string, string[]>> = {
@@ -320,11 +326,16 @@ const IP_COUNTRY_MAP: Record<string, string> = {
 export function Register() {
   const { t, language, setLanguage } = useApp()
 
-  const ROLE_OPTIONS = [
-    { role: 'client'      as UserRole, icon: <User      className="h-6 w-6" />, title: t('register.roleClient'),       description: t('register.roleClientDesc') },
-    { role: 'professional'as UserRole, icon: <HardHat   className="h-6 w-6" />, title: t('register.roleProfessional'), description: t('register.roleProfessionalDesc') },
-    { role: 'company'     as UserRole, icon: <Building2 className="h-6 w-6" />, title: t('register.roleCompany'),      description: t('register.roleCompanyDesc') },
-    { role: 'advertiser'  as UserRole, icon: <Megaphone className="h-6 w-6" />, title: t('register.roleAdvertiser'),   description: t('register.roleAdvertiserDesc') },
+  const ROLE_OPTIONS: {
+    role: RegistrationRole
+    icon: ReactNode
+    title: string
+    description: string
+  }[] = [
+    { role: 'client', icon: <User className="h-6 w-6" />, title: t('register.roleClient'), description: t('register.roleClientDesc') },
+    { role: 'professional', icon: <HardHat className="h-6 w-6" />, title: t('register.roleProfessional'), description: t('register.roleProfessionalDesc') },
+    { role: 'company', icon: <Building2 className="h-6 w-6" />, title: t('register.roleCompany'), description: t('register.roleCompanyDesc') },
+    { role: 'advertiser', icon: <Megaphone className="h-6 w-6" />, title: t('register.roleAdvertiser'), description: t('register.roleAdvertiserDesc') },
   ]
 
   const [fullName,     setFullName]     = useState('')
@@ -332,7 +343,7 @@ export function Register() {
   const [password,     setPassword]     = useState('')
   const [phone,        setPhone]        = useState('')
   const [companyName,  setCompanyName]  = useState('')
-  const [selectedRole, setSelectedRole] = useState<UserRole>('client')
+  const [selectedRole, setSelectedRole] = useState<RegistrationRole>('client')
   const [loading,      setLoading]      = useState(false)
   const [error,        setError]        = useState('')
   const [success, setSuccess] = useState(false)
@@ -365,6 +376,18 @@ export function Register() {
     }
     void detect()
   }, [])
+
+  const buildPendingRegistration = () => {
+    const displayName =
+      selectedRole === 'company' ? (companyName.trim() || fullName.trim()) : fullName.trim()
+    return {
+      role: selectedRole,
+      full_name: displayName || undefined,
+      phone: phone.trim() || undefined,
+      location: [city, region, country].filter(Boolean).join(', ') || undefined,
+      company_name: companyName.trim() || undefined,
+    }
+  }
 
   const handleCountryChange = (val: string) => {
     setCountry(val); setRegion(''); setCity(''); setManualCity(false); setAutoDetected(false)
@@ -417,26 +440,39 @@ export function Register() {
       }
 
       const locationStr = [city, region, country].filter(Boolean).join(', ') || null
-      const isProfessional = selectedRole === 'professional' || selectedRole === 'company'
+      const { user_role, is_professional } = normalizeProfileRole(selectedRole)
 
       if (authData.session) {
-        const { error: profileError } = await supabase.from('profiles').upsert(
-          {
-            id: authData.user.id,
-            full_name: displayName,
-            phone: phone.trim() || null,
-            location: locationStr,
-            user_role: selectedRole,
-            is_professional: isProfessional,
-          },
-          { onConflict: 'id' },
-        )
+        const profile = await ensureUserProfile(authData.user, {
+          role: selectedRole,
+          full_name: displayName,
+          phone: phone.trim() || undefined,
+          location: locationStr ?? undefined,
+          company_name: companyName.trim() || undefined,
+        })
 
-        if (profileError) throw profileError
+        if (!profile) {
+          const { error: profileError } = await supabase.from('profiles').upsert(
+            {
+              id: authData.user.id,
+              full_name: displayName,
+              phone: phone.trim() || null,
+              location: locationStr,
+              user_role,
+              is_professional,
+            },
+            { onConflict: 'id' },
+          )
+          if (profileError) throw profileError
+        }
 
         setSuccess(true)
         setTimeout(() => {
-          navigateTo(getPostLoginPath({ user_role: selectedRole, is_site_owner: false }))
+          navigateTo(
+            getPostLoginPath(profile ?? { user_role, is_site_owner: false }, {
+              intendedRole: selectedRole,
+            }),
+          )
         }, 1200)
         return
       }
@@ -512,6 +548,11 @@ export function Register() {
                 {confirmEmail ? t('register.confirmEmail') : t('register.success')}
               </div>
             )}
+
+            <AuthSocialButtons
+              disabled={loading || success}
+              onBeforeOAuth={() => savePendingRegistration(buildPendingRegistration())}
+            />
 
             <form onSubmit={handleRegister} className="mt-6 space-y-5 text-left">
 

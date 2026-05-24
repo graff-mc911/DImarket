@@ -38,12 +38,16 @@ export function getAuthErrorMessage(
   return raw || t('common.error')
 }
 
-export function getPostLoginPath(profile: {
-  user_role?: string | null
-  is_site_owner?: boolean | null
-} | null): string {
+export function getPostLoginPath(
+  profile: {
+    user_role?: string | null
+    is_site_owner?: boolean | null
+  } | null,
+  options?: { intendedRole?: string | null },
+): string {
   if (profile?.is_site_owner) return '/dashboard'
-  if (profile?.user_role === 'advertiser') return '/advertising'
-  if (profile?.user_role === 'client') return '/listings'
+  const role = options?.intendedRole ?? profile?.user_role
+  if (role === 'advertiser') return '/advertising'
+  if (role === 'client') return '/listings'
   return '/settings'
 }

@@ -7,6 +7,10 @@ import { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { Profile, CURRENCIES, LANGUAGES } from '../lib/types'
 import { getTranslation, TranslationKey, LanguageCode } from '../lib/i18n'
+import { getPostLoginPath } from '../lib/authMessages'
+import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
+import { isOAuthCallbackUrl } from '../lib/oauth'
+import { navigateTo } from '../lib/navigation'
 
 interface AppContextType {
   user: User | null
@@ -50,18 +54,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setUser(session?.user ?? null)
 
       if (session?.user) {
-        void loadProfile(session.user.id)
+        void syncProfile(session.user, false)
       }
     })
 
     // Слухаємо зміни авторизації
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
 
       if (session?.user) {
-        void loadProfile(session.user.id)
+        void syncProfile(session.user, event === 'SIGNED_IN' && isOAuthCallbackUrl())
       } else {
         setProfile(null)
       }
@@ -91,14 +95,27 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const loadProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle()
+  const syncProfile = async (authUser: User, redirectAfterOAuth: boolean) => {
+    let resolved = await ensureUserProfile(authUser)
 
-    if (data) setProfile(data)
+    if (!resolved) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authUser.id)
+        .maybeSingle()
+      resolved = data ?? null
+    }
+
+    if (resolved) setProfile(resolved)
+
+    if (redirectAfterOAuth && resolved) {
+      const path = getPostLoginPath(resolved, {
+        intendedRole: getIntendedRole(resolved, authUser),
+      })
+      window.history.replaceState({}, '', path)
+      navigateTo(path)
+    }
   }
 
   const handleSetCurrency = (newCurrency: typeof CURRENCIES[number]) => {

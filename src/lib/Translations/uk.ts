@@ -469,6 +469,10 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'auth.error.invalidEmail': 'Перевірте правильність email',
   'auth.error.profileExists': 'Профіль уже існує — спробуйте увійти',
   'auth.error.rateLimit': 'Забагато спроб. Зачекайте хвилину і спробуйте знову',
+  'auth.oauthOr': 'або увійти через',
+  'auth.continueGoogle': 'Продовжити з Google',
+  'auth.continueApple': 'Продовжити з Apple',
+  'auth.oauthLoading': 'Перенаправлення…',
   'register.confirmEmail':
     'Акаунт створено. Перевірте пошту та підтвердіть email, потім увійдіть.',
 

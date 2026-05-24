@@ -6,6 +6,8 @@ import { navigateTo } from '../lib/navigation'
 import { LANGUAGES } from '../lib/types'
 import { PasswordField } from '../components/PasswordField'
 import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
+import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
+import { AuthSocialButtons } from '../components/AuthSocialButtons'
 
 export function Login() {
   const { t, language, setLanguage } = useApp()
@@ -39,17 +41,13 @@ export function Login() {
         throw new Error(t('auth.error.invalidCredentials'))
       }
 
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('user_role, is_site_owner')
-        .eq('id', data.user.id)
-        .maybeSingle()
+      const profile = await ensureUserProfile(data.user)
 
-      if (profileError) {
-        console.error('[Login] profile:', profileError.message)
-      }
-
-      navigateTo(getPostLoginPath(profile))
+      navigateTo(
+        getPostLoginPath(profile, {
+          intendedRole: getIntendedRole(profile, data.user),
+        }),
+      )
     } catch (err) {
       setError(getAuthErrorMessage(err, t))
     } finally {
@@ -96,6 +94,8 @@ export function Login() {
                 {error}
               </div>
             )}
+
+            <AuthSocialButtons disabled={loading} />
 
             <form onSubmit={handleLogin} className="mt-6 space-y-5">
               <div>

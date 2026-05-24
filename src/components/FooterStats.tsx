@@ -87,21 +87,33 @@ export function FooterStats({ compact = false }: { compact?: boolean }) {
         .eq('id', 1)
         .maybeSingle()
 
+      const { count: liveProfessionals, error: profCountError } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_professional', true)
+
+      if (profCountError) {
+        console.error('Помилка підрахунку майстрів:', profCountError)
+      }
+
       if (error || !data) {
         if (error) {
           console.error('Помилка завантаження статистики:', error)
         }
 
-        setStats(EMPTY_STATS)
+        setStats({
+          ...EMPTY_STATS,
+          total_professionals: liveProfessionals ?? 0,
+        })
         return
       }
 
-      // Нормалізуємо відповідь, щоб компонент не падав на порожніх значеннях.
+      // Нормалізуємо відповідь; майстрів — з profiles (кеш app_site_stats часто застарілий).
       setStats({
         total_visits: data.total_visits || 0,
         total_listings_created: data.total_listings_created || 0,
         total_successful_listings: data.total_successful_listings || 0,
-        total_professionals: data.total_professionals || 0,
+        total_professionals: liveProfessionals ?? data.total_professionals ?? 0,
         country_ranking: Array.isArray(data.country_ranking) ? data.country_ranking : [],
         updated_at: data.updated_at || null,
       })
