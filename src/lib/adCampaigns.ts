@@ -9,6 +9,7 @@ import {
 import { isDemoAdCampaign } from './demoAdCampaigns'
 import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './youtubeMedia'
 import type { AdCampaign } from './types'
+import { isGranularSlotId } from './adPlacementCatalog'
 import { getSlotLegacyTags } from './adPlacementSlots'
 import { isOwnerManagedCampaign } from './ownerAdCampaign'
 import type { TranslationKey } from './i18n'
@@ -44,10 +45,20 @@ export function isPaidCampaign(campaign: AdCampaign): boolean {
   return false
 }
 
+function normalizePlacementId(id: string): string {
+  const sticky = id.match(/^(home|listings|professionals|default)_mob_sticky$/)
+  if (sticky) return `${sticky[1]}_mob_inline_1`
+  return id
+}
+
 export function getCampaignPlacements(campaign: AdCampaign): string[] {
-  const fromArray = (campaign.placements || []).filter(Boolean) as string[]
+  const fromArray = (campaign.placements || []).filter(Boolean).map(normalizePlacementId) as string[]
   if (fromArray.length > 0) return fromArray
-  return [campaign.placement]
+  return [normalizePlacementId(campaign.placement)]
+}
+
+export function campaignUsesGranularPlacements(campaign: AdCampaign): boolean {
+  return getCampaignPlacements(campaign).some(isGranularSlotId)
 }
 
 const SLOT_FALLBACKS: Partial<Record<AdPlacement, AdPlacement[]>> = {
@@ -82,12 +93,28 @@ export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement | st
   const placements = getCampaignPlacements(campaign)
   if (placements.includes(slot)) return true
 
+  const slotIsGranular = typeof slot === 'string' && isGranularSlotId(slot)
+  const campaignGranular = campaignUsesGranularPlacements(campaign)
+
+  if (typeof slot === 'string' && slot.includes('_')) {
+    const pageKey = (['home', 'listings', 'professionals', 'default'] as AdPageKey[]).find((p) =>
+      slot.startsWith(`${p}_`),
+    )
+    if (pageKey && campaignMatchesOwnerMobileOnDesktop(campaign, slot, pageKey)) {
+      return true
+    }
+  }
+
+  /** Кампанія з точними слотами — лише exact match (і owner-bridge вище) */
+  if (campaignGranular) {
+    return false
+  }
+
   const granularLegacy = getSlotLegacyTags(slot)
   if (slot.includes('_') && placements.some((p) => granularLegacy.includes(p as AdPlacement))) {
     return true
   }
 
-  // Легасі-слот (home, sidebar): кампанія з гранульованим ID (home_side_r1 …)
   if (!slot.includes('_')) {
     if (placements.some((p) => getSlotLegacyTags(p).includes(slot as AdPlacement))) {
       return true
@@ -99,14 +126,7 @@ export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement | st
     return placements.some((p) => fallbacks.includes(p as AdPlacement))
   }
 
-  if (typeof slot === 'string' && slot.includes('_')) {
-    const pageKey = (['home', 'listings', 'professionals', 'default'] as AdPageKey[]).find((p) =>
-      slot.startsWith(`${p}_`),
-    )
-    if (pageKey && campaignMatchesOwnerMobileOnDesktop(campaign, slot, pageKey)) {
-      return true
-    }
-  }
+  if (slotIsGranular) return false
 
   return false
 }
@@ -259,13 +279,6 @@ export function pickCampaignsForSideStack(
         ) ?? null
     }
 
-    if (!picked) {
-      picked =
-        pool().find((c) => campaignMatchesSlot(c, 'sidebar')) ??
-        pool()[i % Math.max(pool().length, 1)] ??
-        null
-    }
-
     if (picked) {
       out.push(picked)
       used.add(picked.id)
@@ -298,7 +311,12 @@ export function pickCenterHeroCampaign(
   const slotPick = pickCampaignForSlot(all, centerId)
   if (slotPick) return slotPick
 
-  return all[0] ?? null
+  const legacyCenter = all.find(
+    (c) =>
+      !campaignUsesGranularPlacements(c) &&
+      (getCampaignPlacements(c).includes('footer') || campaignMatchesSlot(c, centerId)),
+  )
+  return legacyCenter ?? null
 }
 
 /** @deprecated використовуйте pickCenterHeroCampaign */
@@ -348,12 +366,15 @@ export function pickMobileCampaign(
   const picked = pickCampaignForSlot(list, slotId)
   if (picked) return picked
 
+  const legacyOnly = list.filter((c) => !campaignUsesGranularPlacements(c))
+  if (legacyOnly.length === 0) return null
+
   if (variant === 'horizontal') {
-    return pickCampaignByPlacement(campaigns, 'footer', 0) || pickCampaignByPlacement(campaigns, 'home', 1)
+    return pickCampaignByPlacement(legacyOnly, 'footer', 0) || pickCampaignByPlacement(legacyOnly, 'home', 1)
   }
   return (
-    pickCampaignByPlacement(campaigns, 'sidebar', inlineIndex - 1) ||
-    pickCampaignByPlacement(campaigns, 'listings', inlineIndex)
+    pickCampaignByPlacement(legacyOnly, 'sidebar', inlineIndex - 1) ||
+    pickCampaignByPlacement(legacyOnly, 'listings', inlineIndex)
   )
 }
 

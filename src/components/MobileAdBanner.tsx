@@ -3,8 +3,8 @@ import { X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard, AdOverlayPlaceholder } from './AdOverlayCard'
-import { pageKeyFromMobilePage, type InlineIndex } from '../lib/adPlacementSlots'
-import { pickMobileCampaign, trackAdImpression, type AdPlacement } from '../lib/adCampaigns'
+import { mobileInlineSlotId, pageKeyFromMobilePage, type InlineIndex } from '../lib/adPlacementSlots'
+import { pickMobileCampaign, trackAdImpression } from '../lib/adCampaigns'
 import { navigateTo } from '../lib/navigation'
 
 interface MobileAdBannerProps {
@@ -14,24 +14,24 @@ interface MobileAdBannerProps {
   inlineIndex?: InlineIndex
 }
 
-function mobileSlots(page?: 'home' | 'listings' | 'professionals' | 'default'): AdPlacement[] {
-  if (page === 'home') return ['home', 'sidebar', 'listings']
-  if (page === 'listings') return ['listings', 'home', 'sidebar']
-  if (page === 'professionals') return ['listings', 'sidebar', 'home']
-  return ['sidebar', 'home', 'listings']
-}
-
 export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBannerProps) {
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
   const [adVisible, setAdVisible] = useState(true)
 
-  const mobileCampaigns = useMemo(
-    () => getForSlots(mobileSlots(page), 24),
-    [getForSlots, page],
+  const pageKey = pageKeyFromMobilePage(page)
+  const slotId = useMemo(
+    () =>
+      variant === 'horizontal'
+        ? mobileInlineSlotId(pageKey, 1)
+        : mobileInlineSlotId(pageKey, inlineIndex),
+    [pageKey, variant, inlineIndex],
   )
 
-  const pageKey = pageKeyFromMobilePage(page)
+  const mobileCampaigns = useMemo(
+    () => getForSlots([slotId], 16),
+    [getForSlots, slotId],
+  )
 
   const campaign = useMemo(
     () => pickMobileCampaign(mobileCampaigns, variant, pageKey, inlineIndex),

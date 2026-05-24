@@ -743,7 +743,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.slots.desktopTitle': 'Компʼютер / планшет',
   'advertising.slots.mobileTitle': 'Смартфон',
   'advertising.slots.mobileHint':
-    'Один нижній банер (не перекриває кнопки) і до чотирьох блоків між оголошеннями або секціями.',
+    '№1 — широкий банер під hero або над списком. №2–4 — між секціями або картками (без фіксованого sticky знизу).',
   'advertising.catalog.previewTitle': 'Схема розміщення на сайті',
   'advertising.catalog.previewDesc': 'Те, що підсвічено фіолетовим, відповідає обраним слотам на реальній сторінці DImarket.',
   'advertising.catalog.desktopWire': 'Desktop (екран ≥1024px)',

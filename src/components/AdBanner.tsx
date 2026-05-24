@@ -2,11 +2,9 @@ import { useEffect, useMemo, type ReactNode } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard, AdOverlayPlaceholder, adOverlayGlow } from './AdOverlayCard'
-import {
-  pickCampaignsForSideStack,
-  trackAdImpression,
-  type AdPlacement,
-} from '../lib/adCampaigns'
+import { sideSlotIdsForPage } from '../lib/adPlacementCatalog'
+import { pickCampaignsForSideStack, trackAdImpression } from '../lib/adCampaigns'
+import { pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
 import { navigateTo } from '../lib/navigation'
 
 interface AdBannerProps {
@@ -14,12 +12,6 @@ interface AdBannerProps {
   sticky?: boolean
   page?: 'home' | 'listings' | 'professionals' | 'default'
   stackCount?: number
-}
-
-function slotsForPage(page?: 'home' | 'listings' | 'professionals' | 'default'): AdPlacement[] {
-  if (page === 'home') return ['home', 'sidebar', 'footer']
-  if (page === 'listings') return ['listings', 'sidebar', 'home']
-  return ['sidebar', 'home', 'listings', 'footer']
 }
 
 const STICKY_TOP = 'top-[8rem] xl:top-[9rem]'
@@ -54,9 +46,12 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
   const { t } = useApp()
   const { loading, getForSlots } = usePaidAds()
 
+  const pageKey = pageKeyFromSideAdsPage(page)
+  const sideSlots = useMemo(() => sideSlotIdsForPage(pageKey), [pageKey])
+
   const pool = useMemo(
-    () => getForSlots(slotsForPage(page), stackCount ? 24 : 8),
-    [getForSlots, page, stackCount],
+    () => getForSlots(sideSlots, stackCount ? 24 : 8),
+    [getForSlots, sideSlots, stackCount],
   )
 
   const stackCampaigns = useMemo(() => {

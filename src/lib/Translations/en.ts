@@ -651,7 +651,7 @@ export const enTranslations = {
   'advertising.slots.desktopTitle': 'Desktop / tablet',
   'advertising.slots.mobileTitle': 'Mobile',
   'advertising.slots.mobileHint':
-    'One bottom banner (non-blocking) and up to four blocks between listings or sections.',
+    '#1 — wide banner under hero or above the list. #2–4 — between sections or cards (no fixed bottom sticky).',
   'advertising.catalog.previewTitle': 'Placement map on the site',
   'advertising.catalog.previewDesc': 'Purple highlights match the slots you selected on the real DImarket page.',
   'advertising.catalog.desktopWire': 'Desktop (≥1024px)',

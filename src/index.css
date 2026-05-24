@@ -7,11 +7,11 @@
     color-scheme: light;
     --font-sans: "Aptos", "Segoe UI Variable Text", "Segoe UI", sans-serif;
     --font-display: "Segoe UI Variable Display", "Aptos", "Segoe UI", sans-serif;
-    --bg-canvas: #e9dccb;
-    --bg-soft: #f0e6d8;
-    --bg-glass-top: #faf6f0;
-    --bg-glass-bottom: #f3ebe1;
-    --glass-bg: rgba(250, 244, 236, 0.94);
+    --bg-canvas: #f5efe6;
+    --bg-soft: #faf5ee;
+    --bg-glass-top: #fdfbf8;
+    --bg-glass-bottom: #f9f3eb;
+    --glass-bg: rgba(252, 248, 242, 0.94);
     --panel: rgba(255, 255, 255, 0.5);
     --panel-strong: rgba(255, 255, 255, 0.68);
     --line: rgba(219, 148, 94, 0.16);
@@ -153,8 +153,8 @@
     inset: 0;
     pointer-events: none;
     background:
-      radial-gradient(circle at top left, rgba(233, 220, 203, 0.16), transparent 26%),
-      radial-gradient(circle at bottom right, rgba(233, 220, 203, 0.12), transparent 24%);
+      radial-gradient(circle at top left, rgba(245, 239, 230, 0.16), transparent 26%),
+      radial-gradient(circle at bottom right, rgba(245, 239, 230, 0.12), transparent 24%);
   }
 
   .glass-panel > * {

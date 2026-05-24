@@ -153,3 +153,23 @@ export function sanitizeSlotsForPurchase(selected: string[]): string[] {
   const valid = selected.filter((id) => allowed.has(id))
   return valid.length > 0 ? valid : [sideSlotId('home', 'right', 1)]
 }
+
+export function isGranularSlotId(id: string): boolean {
+  return id.includes('_side_') || id.includes('_center') || id.includes('_mob_')
+}
+
+export function sideSlotIdsForPage(page: AdPageKey): string[] {
+  return AD_PLACEMENT_CATALOG.filter((s) => s.page === page && (s.zone === 'side_left' || s.zone === 'side_right')).map(
+    (s) => s.id,
+  )
+}
+
+export function mobileSlotIdsForPage(page: AdPageKey): string[] {
+  return AD_PLACEMENT_CATALOG.filter(
+    (s) => s.page === page && (s.zone === 'mob_leaderboard' || s.zone === 'mob_inline'),
+  ).map((s) => s.id)
+}
+
+export function centerSlotIdsForPage(page: AdPageKey): string[] {
+  return AD_PLACEMENT_CATALOG.filter((s) => s.page === page && s.zone === 'center').map((s) => s.id)
+}

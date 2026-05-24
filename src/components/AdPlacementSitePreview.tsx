@@ -1,13 +1,8 @@
 import { useMemo } from 'react'
 import { Monitor, Smartphone } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
-import {
-  formatSlotLabel,
-  PAGE_LABEL_KEYS,
-  slotGroupsForPurchasePicker,
-  type AdPageKey,
-} from '../lib/adPlacementSlots'
-import { getSlotDefinition } from '../lib/adPlacementCatalog'
+import { formatSlotLabel, PAGE_LABEL_KEYS, type AdPageKey } from '../lib/adPlacementSlots'
+import { getSlotDefinition, slotGroupsForPurchasePicker } from '../lib/adPlacementCatalog'
 import type { TranslationKey } from '../lib/i18n'
 
 type AdPlacementSitePreviewProps = {
