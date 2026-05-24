@@ -431,6 +431,8 @@ export function Register() {
           data: {
             full_name: displayName,
             user_role: selectedRole,
+            phone: phone.trim() || null,
+            location: [city, region, country].filter(Boolean).join(', ') || null,
           },
         },
       })

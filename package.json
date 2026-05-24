@@ -16,7 +16,7 @@
     "test:e2e:report": "playwright show-report",
     "test:e2e:codegen": "playwright codegen http://127.0.0.1:4173",
     "test:e2e:install": "playwright install chromium",
-    "db:apply-paid-ads": "powershell -ExecutionPolicy Bypass -File scripts/apply-paid-ads-sql.ps1",
+    "db:apply-auth-profile": "node scripts/apply-auth-profile-migration.mjs",
     "db:apply-self-serve-ads": "node scripts/apply-prod-ad-self-serve.mjs",
     "db:apply-self-serve-ads:ps1": "powershell -ExecutionPolicy Bypass -File scripts/apply-prod-ad-self-serve.ps1",
     "db:verify-prod-ads": "node scripts/verify-prod-ad-schema.mjs",

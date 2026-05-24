@@ -80,7 +80,36 @@ export function FooterStats({ compact = false }: { compact?: boolean }) {
     setLoading(true)
 
     try {
-      // refresh_app_site_stats доступна лише service_role — читаємо напряму
+      const { data: publicStats, error: rpcError } = await supabase.rpc(
+        'get_public_footer_stats',
+      )
+
+      if (!rpcError && publicStats && typeof publicStats === 'object') {
+        const row = publicStats as Record<string, unknown>
+        const { data: cached } = await supabase
+          .from('app_site_stats')
+          .select('country_ranking, updated_at')
+          .eq('id', 1)
+          .maybeSingle()
+
+        setStats({
+          total_visits: Number(row.total_visits ?? 0),
+          total_listings_created: Number(row.total_listings_created ?? 0),
+          total_successful_listings: Number(row.total_successful_listings ?? 0),
+          total_professionals: Number(row.total_professionals ?? 0),
+          country_ranking: Array.isArray(cached?.country_ranking)
+            ? cached.country_ranking
+            : [],
+          updated_at: cached?.updated_at ?? null,
+        })
+        return
+      }
+
+      if (rpcError) {
+        console.warn('[FooterStats] RPC fallback:', rpcError.message)
+      }
+
+      // Fallback: кеш + RLS-обмежений підрахунок
       const { data, error } = await supabase
         .from('app_site_stats')
         .select('*')
@@ -108,7 +137,6 @@ export function FooterStats({ compact = false }: { compact?: boolean }) {
         return
       }
 
-      // Нормалізуємо відповідь; майстрів — з profiles (кеш app_site_stats часто застарілий).
       setStats({
         total_visits: data.total_visits || 0,
         total_listings_created: data.total_listings_created || 0,
