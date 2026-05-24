@@ -66,6 +66,10 @@ export function Favorites() {
     }
   }, [user])
 
+  if (!user) {
+    return null
+  }
+
   // Завантаження збережених елементів з Supabase
   const loadFavorites = async () => {
     setLoading(true)

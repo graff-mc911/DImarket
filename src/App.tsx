@@ -3,12 +3,13 @@
 // Відповідає за маршрутизацію між усіма сторінками.
 // ============================================================
 
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { AppProvider }         from './contexts/AppContext'
 import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
 import { PageWithSideAds, adPageForPath, pathUsesSideAdRails } from './components/PageWithSideAds'
+import { bindPathListener }    from './lib/navigation'
 
 // --- Публічні сторінки ---
 import { Home }               from './pages/Home'
@@ -36,6 +37,12 @@ import { BoostProfile } from './pages/BoostProfile'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
+
+  useLayoutEffect(() => {
+    const syncPath = () => setPath(window.location.pathname)
+    bindPathListener(syncPath)
+    return () => bindPathListener(null)
+  }, [])
 
   useEffect(() => {
     const handlePopState = () => setPath(window.location.pathname)

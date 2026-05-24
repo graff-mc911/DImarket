@@ -63,6 +63,55 @@ export async function clickHeaderNavButton(
 
 export async function gotoPath(page: Page, path: string) {
   await page.goto(path)
-  await expect(page).toHaveURL(new RegExp(`${path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`))
+  await expect(page).toHaveURL(new RegExp(`${path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\?.*)?$`))
   await expectAppShell(page)
+}
+
+/** Немає горизонтального скролу (layout не «поплив»). */
+export async function expectNoHorizontalOverflow(page: Page) {
+  const overflow = await page.evaluate(() => {
+    const doc = document.documentElement
+    return doc.scrollWidth - doc.clientWidth
+  })
+  expect(overflow).toBeLessThanOrEqual(2)
+}
+
+export function mainContent(page: Page) {
+  return page.locator('main').first()
+}
+
+/** Сторінки з боковими рейками — grid у main; без рейок — layout-page-gutter. */
+export async function expectMainLayout(
+  page: Page,
+  mode: 'side-rails' | 'gutter-only',
+) {
+  const main = mainContent(page)
+  if (mode === 'side-rails') {
+    await expect(main.locator('.layout-with-side-ads')).toBeVisible()
+  } else {
+    await expect(main.locator('.layout-page-gutter')).toBeVisible()
+  }
+}
+
+export async function fetchSampleEntityIds(request: import('@playwright/test').APIRequestContext) {
+  const base = process.env.VITE_SUPABASE_URL
+  const key = process.env.VITE_SUPABASE_ANON_KEY
+  if (!base || !key) {
+    return { listingId: null as string | null, profileId: null as string | null }
+  }
+
+  const headers = { apikey: key, Authorization: `Bearer ${key}` }
+
+  const [listingRes, profileRes] = await Promise.all([
+    request.get(`${base}/rest/v1/listings?status=eq.active&select=id&limit=1`, { headers }),
+    request.get(`${base}/rest/v1/profiles?is_professional=eq.true&select=id&limit=1`, { headers }),
+  ])
+
+  const listingJson = listingRes.ok() ? ((await listingRes.json()) as { id: string }[]) : []
+  const profileJson = profileRes.ok() ? ((await profileRes.json()) as { id: string }[]) : []
+
+  return {
+    listingId: listingJson[0]?.id ?? null,
+    profileId: profileJson[0]?.id ?? null,
+  }
 }

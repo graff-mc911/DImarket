@@ -1,23 +1,30 @@
 /**
  * Внутрішня навігація без повного перезавантаження сторінки (SPA-підхід).
  *
- * Важливо: після pushState ми штучно викликаємо подію `popstate`, бо деякі браузери
- * не роблять цього автоматично. Компоненти (наприклад, App) слухають `popstate`
- * і оновлюють відображувану сторінку.
+ * Синхронний pathListener потрібен, бо дочірні useEffect можуть викликати navigateTo
+ * раніше, ніж App встигне підписатися на popstate.
  */
+type PathListener = (path: string) => void
+
+let pathListener: PathListener | null = null
+
+export function bindPathListener(listener: PathListener | null): void {
+  pathListener = listener
+}
+
 export function navigateTo(path: string): void {
   const currentPath = `${window.location.pathname}${window.location.search}`
 
-  // Якщо користувач уже на цій адресі — не оновлюємо історію зайвий раз
   if (currentPath === path) {
+    pathListener?.(window.location.pathname)
     return
   }
 
   window.history.pushState({}, '', path)
+  pathListener?.(window.location.pathname)
 
-  // Повідомляємо додаток про зміну маршруту (той самий механізм, що й «Назад» у браузері)
+  // Для зовнішніх слухачів (Header, Footer) та кнопки «Назад»
   window.dispatchEvent(new PopStateEvent('popstate'))
 
-  // На мобільних зручно одразу повертати користувача на початок нового екрана
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }

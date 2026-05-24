@@ -40,6 +40,10 @@ export function Profile() {
     }
   }, [user])
 
+  if (!user) {
+    return null
+  }
+
   const loadProfileData = async () => {
     try {
       const { data: profileData } = await supabase

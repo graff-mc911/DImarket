@@ -71,6 +71,10 @@ export function Messages() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  if (!user) {
+    return null
+  }
+
   // Завантаження списку розмов поточного користувача
   const loadConversations = async () => {
     setLoadingConversations(true)
