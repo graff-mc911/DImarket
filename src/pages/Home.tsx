@@ -152,7 +152,7 @@ export function Home() {
   return (
     <>
       <section className="pb-3 pt-2">
-        <div className="mx-auto max-w-7xl">
+        <div className="w-full">
           <div className="glass-panel fade-rise rounded-[22px] p-4 md:p-6">
             <div className="flex flex-col items-center text-center">
               <div className="eyebrow gap-1.5 px-2.5 py-1 text-[11px]">

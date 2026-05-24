@@ -4,6 +4,13 @@
  */
 export const AD_SIDE_STACK_ROWS = 4
 
+/** Ширина бокової колонки (px), +15% від 200 / 216 / 252 */
+export const AD_SIDE_RAIL_WIDTH_PX = {
+  lg: 230,
+  xl: 248,
+  '2xl': 290,
+} as const
+
 /** Відступ між 4 боковими блоками = відступ від країв колонки (px) */
 export const AD_SIDE_STACK_GAP_PX = 8
 

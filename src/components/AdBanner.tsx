@@ -20,8 +20,7 @@ interface AdBannerProps {
 
 const STICKY_TOP = 'top-[8rem] xl:top-[9rem]'
 
-const SIDE_RAIL_WIDTH =
-  'hidden w-[200px] shrink-0 lg:flex lg:flex-col xl:w-[216px] 2xl:w-[252px]'
+const SIDE_RAIL_CLASS = 'ad-side-rail shrink-0'
 
 function SideRailFrame({
   sticky,
@@ -37,14 +36,14 @@ function SideRailFrame({
 }) {
   if (!sticky) {
     return (
-      <aside className={`${SIDE_RAIL_WIDTH} h-full min-h-full ${className}`}>
+      <aside className={`${SIDE_RAIL_CLASS} h-full min-h-full ${className}`}>
         {children}
       </aside>
     )
   }
 
   return (
-    <aside className={`${SIDE_RAIL_WIDTH} h-full min-h-0 ${className}`}>
+    <aside className={`${SIDE_RAIL_CLASS} h-full min-h-0 ${className}`}>
       <div
         className={
           `sticky z-20 w-full ${STICKY_TOP} ` +

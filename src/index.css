@@ -27,6 +27,27 @@
     --accent-500: #c78a60;
     --accent-soft: rgba(169, 105, 66, 0.08);
     --mint-soft: rgba(111, 145, 125, 0.1);
+    /* бокові реклами: +15% до колишніх 200/216/252px; gutter = відступ від краю екрана = між колонками */
+    --ad-side-rail-width: 14.375rem;
+    --layout-gutter: 1rem;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --layout-gutter: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    :root {
+      --ad-side-rail-width: 15.5rem;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    :root {
+      --ad-side-rail-width: 18.125rem;
+    }
   }
 
   html {
@@ -120,6 +141,49 @@
 
   .page-bg {
     background-color: var(--bg-canvas);
+  }
+
+  /** Контент + бокові реклами: однаковий відступ gutter до краю екрана і між колонками */
+  .layout-with-side-ads {
+    display: grid;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-inline: var(--layout-gutter);
+    column-gap: var(--layout-gutter);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  @media (min-width: 1024px) {
+    .layout-with-side-ads {
+      grid-template-columns: var(--ad-side-rail-width) minmax(0, 1fr) var(--ad-side-rail-width);
+    }
+  }
+
+  .layout-with-side-ads__main {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .layout-page-gutter {
+    box-sizing: border-box;
+    padding-inline: var(--layout-gutter);
+    width: 100%;
+  }
+
+  .ad-side-rail {
+    display: none;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .ad-side-rail {
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   .glass-card {
