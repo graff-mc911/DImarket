@@ -40,7 +40,7 @@ test.describe('Smoke — публічні сторінки', () => {
       await expect(page.getByRole('heading', { level: 1 }).first()).toHaveText(route.heading)
       await expect(headerLogo(page)).toBeVisible()
       if ('extra' in route && route.extra) {
-        await expect(page.getByText(route.extra)).toBeVisible()
+        await expect(page.getByRole('heading', { name: route.extra }).first()).toBeVisible()
       }
     }
   })
