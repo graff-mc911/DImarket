@@ -565,7 +565,8 @@ export function Register() {
                 </label>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {ROLE_OPTIONS.map(option => (
-                    <button key={option.role} type="button" onClick={() => setSelectedRole(option.role)}
+                    <button key={option.role} type="button" data-testid={`register-role-${option.role}`}
+                      onClick={() => setSelectedRole(option.role)}
                       className="flex flex-col items-center gap-2 rounded-[20px] border p-3 text-center transition-all"
                       style={{
                         borderColor: selectedRole === option.role ? 'var(--accent-700)' : 'var(--glass-border)',
