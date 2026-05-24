@@ -37,14 +37,14 @@ function SideRailFrame({
 }) {
   if (!sticky) {
     return (
-      <aside className={`hidden h-full min-h-full w-full flex-1 flex-col xl:flex ${className}`}>
+      <aside className={`hidden h-full min-h-full w-full flex-1 flex-col lg:flex ${className}`}>
         {children}
       </aside>
     )
   }
 
   return (
-    <aside className={`hidden h-full min-h-0 w-full xl:flex xl:flex-col ${className}`}>
+    <aside className={`hidden h-full min-h-0 w-full lg:flex lg:flex-col ${className}`}>
       <div className={`sticky z-20 w-full ${STICKY_TOP} ${STICKY_VIEWPORT_H}`}>{children}</div>
     </aside>
   )

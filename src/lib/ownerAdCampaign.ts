@@ -75,11 +75,17 @@ export function buildOwnerCampaignPayload(
 }
 
 export const OWNER_SLOT_PRESETS: { label: string; slots: string[] }[] = [
-  { label: 'Головна — горизонтальний банер (після hero)', slots: ['home_mob_inline_1'] },
-  { label: 'Головна — центральний блок', slots: ['home_center'] },
+  {
+    label: 'Головна — горизонтальний банер (після hero)',
+    slots: ['home_mob_inline_1', 'home_center', 'home_side_r1'],
+  },
+  { label: 'Головна — центральний блок', slots: ['home_center', 'home_mob_inline_1'] },
   { label: 'Головна — бокова колонка зліва (1-й)', slots: ['home_side_l1'] },
   { label: 'Головна — бокова колонка справа (1-й)', slots: ['home_side_r1'] },
   { label: 'Головна — мобільний sticky', slots: ['home_mob_sticky'] },
-  { label: 'Оголошення — горизонтальний банер', slots: ['listings_mob_inline_1'] },
+  {
+    label: 'Оголошення — горизонтальний банер',
+    slots: ['listings_mob_inline_1', 'listings_side_r1'],
+  },
   { label: 'Оголошення — бокова колонка', slots: ['listings_side_r1'] },
 ]

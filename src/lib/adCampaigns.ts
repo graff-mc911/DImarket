@@ -16,6 +16,7 @@ import {
 import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './youtubeMedia'
 import type { AdCampaign } from './types'
 import { getSlotLegacyTags } from './adPlacementSlots'
+import { isOwnerManagedCampaign } from './ownerAdCampaign'
 import type { TranslationKey } from './i18n'
 
 export type AdPlacement =
@@ -63,6 +64,26 @@ const SLOT_FALLBACKS: Partial<Record<AdPlacement, AdPlacement[]>> = {
   footer: ['footer', 'sidebar', 'home', 'listings'],
 }
 
+/** Мобільний inline-слот на тій самій сторінці (для показу в бокових колонках на desktop) */
+function ownerMobileSlotForPage(pageKey: AdPageKey): string {
+  return `${pageKey}_mob_inline_1`
+}
+
+function campaignMatchesOwnerMobileOnDesktop(
+  campaign: AdCampaign,
+  slot: string,
+  pageKey: AdPageKey,
+): boolean {
+  if (!isOwnerManagedCampaign(campaign)) return false
+  const placements = getCampaignPlacements(campaign)
+  const mobileLeader = ownerMobileSlotForPage(pageKey)
+  if (!placements.includes(mobileLeader)) return false
+  if (slot === mobileLeader || slot === centerSlotId(pageKey)) return true
+  if (slot.includes('_side_') && slot.startsWith(`${pageKey}_`)) return true
+  if (placements.includes('home_leaderboard') && slot.includes('_mob_inline_')) return true
+  return false
+}
+
 export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement | string): boolean {
   const placements = getCampaignPlacements(campaign)
   if (placements.includes(slot)) return true
@@ -76,6 +97,16 @@ export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement | st
   if (fallbacks) {
     return placements.some((p) => fallbacks.includes(p as AdPlacement))
   }
+
+  if (typeof slot === 'string' && slot.includes('_')) {
+    const pageKey = (['home', 'listings', 'professionals', 'default'] as AdPageKey[]).find((p) =>
+      slot.startsWith(`${p}_`),
+    )
+    if (pageKey && campaignMatchesOwnerMobileOnDesktop(campaign, slot, pageKey)) {
+      return true
+    }
+  }
+
   return false
 }
 
@@ -244,7 +275,15 @@ export function pickCampaignsForSideStack(
   const out: AdCampaignWithAdvertiser[] = []
   for (let i = 0; i < count; i++) {
     const slotId = sideSlotId(pageKey, side, (i + 1) as SideIndex)
-    const bought = pickCampaignForSlot(all, slotId)
+    let bought = pickCampaignForSlot(all, slotId)
+    if (!bought && i === 0) {
+      bought =
+        all.find(
+          (c) =>
+            isOwnerManagedCampaign(c) &&
+            getCampaignPlacements(c).includes(ownerMobileSlotForPage(pageKey)),
+        ) ?? null
+    }
     if (bought) {
       out.push(bought)
       continue
@@ -267,7 +306,20 @@ export function pickCenterHeroCampaign(
 ): AdCampaignWithAdvertiser | null {
   if (all.length === 0) return null
 
-  const slotPick = pickCampaignForSlot(all, centerSlotId(page))
+  const centerId = centerSlotId(page)
+  const ownerCenter = all.find(
+    (c) => isOwnerManagedCampaign(c) && getCampaignPlacements(c).includes(centerId),
+  )
+  if (ownerCenter) return ownerCenter
+
+  const ownerMobileLeader = all.find(
+    (c) =>
+      isOwnerManagedCampaign(c) &&
+      getCampaignPlacements(c).includes(ownerMobileSlotForPage(page)),
+  )
+  if (ownerMobileLeader) return ownerMobileLeader
+
+  const slotPick = pickCampaignForSlot(all, centerId)
   if (slotPick) return slotPick
 
   const hero = all.find((c) => c.id === CENTER_HERO_CAMPAIGN_ID)
