@@ -44,9 +44,9 @@ const variantStyles: Record<
   }
 > = {
   stack: {
-    shell: 'flex h-auto max-h-full w-full min-h-0 flex-col overflow-hidden',
-    image: 'h-[4.25rem] w-full shrink-0',
-    text: 'px-1.5 py-1',
+    shell: 'flex h-full w-full min-h-0 flex-col overflow-hidden',
+    image: 'min-h-0 w-full flex-1 basis-0',
+    text: 'shrink-0 px-1.5 py-0.5',
     brand: 'text-[9px]',
     title: 'text-[10px] line-clamp-1 leading-tight',
     meta: 'text-[9px] line-clamp-1 leading-tight',

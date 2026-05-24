@@ -3,7 +3,12 @@ import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard } from './AdOverlayCard'
 import { sideSlotIdsForPage } from '../lib/adPlacementCatalog'
 import { pickCampaignsForSideStack, trackAdImpression } from '../lib/adCampaigns'
-import { adSlotTailwind } from '../lib/adSlotLayout'
+import {
+  AD_SIDE_STACK_CELL_CLASS,
+  AD_SIDE_STACK_GRID_CLASS,
+  AD_SIDE_STACK_STICKY_HEIGHT_CLASS,
+  adSlotTailwind,
+} from '../lib/adSlotLayout'
 import { pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
 
 interface AdBannerProps {
@@ -22,10 +27,13 @@ function SideRailFrame({
   sticky,
   children,
   className = '',
+  fillViewport = false,
 }: {
   sticky: boolean
   children: ReactNode
   className?: string
+  /** 4 бокові слоти — колонка на всю доступну висоту вікна */
+  fillViewport?: boolean
 }) {
   if (!sticky) {
     return (
@@ -37,7 +45,14 @@ function SideRailFrame({
 
   return (
     <aside className={`${SIDE_RAIL_WIDTH} h-full min-h-0 ${className}`}>
-      <div className={`sticky z-20 h-fit w-full ${STICKY_TOP}`}>{children}</div>
+      <div
+        className={
+          `sticky z-20 w-full ${STICKY_TOP} ` +
+          (fillViewport ? AD_SIDE_STACK_STICKY_HEIGHT_CLASS : 'h-fit')
+        }
+      >
+        {children}
+      </div>
     </aside>
   )
 }
@@ -84,23 +99,23 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
     if (!stackCampaigns.some(Boolean)) return null
 
     return (
-      <SideRailFrame sticky={sticky}>
-        <div className="flex w-full flex-col gap-2 py-0.5 2xl:gap-3">
-          {stackCampaigns.map((campaign, index) =>
-            campaign ? (
-              <div
-                key={`${campaign.id}-${index}`}
-                className={`${adSlotTailwind.sideStackSlot} flex flex-col items-stretch justify-start overflow-hidden`}
-              >
+      <SideRailFrame sticky={sticky} fillViewport>
+        <div className={AD_SIDE_STACK_GRID_CLASS}>
+          {stackCampaigns.map((campaign, index) => (
+            <div
+              key={campaign ? `${campaign.id}-${index}` : `empty-${index}`}
+              className={AD_SIDE_STACK_CELL_CLASS}
+            >
+              {campaign ? (
                 <AdOverlayCard
                   campaign={campaign}
                   variant="stack"
-                  className="h-auto w-full max-h-full"
+                  className={adSlotTailwind.sideStackSlot}
                   showDescription
                 />
-              </div>
-            ) : null,
-          )}
+              ) : null}
+            </div>
+          ))}
         </div>
       </SideRailFrame>
     )

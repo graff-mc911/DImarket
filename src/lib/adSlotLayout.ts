@@ -4,8 +4,19 @@
  */
 export const AD_SIDE_STACK_ROWS = 4
 
-/** Боковий слот 1–4 (stack) */
-export const AD_SIDE_STACK_SLOT_PX = 148
+/** Відступ між 4 боковими блоками = відступ від країв колонки (px) */
+export const AD_SIDE_STACK_GAP_PX = 8
+
+/** Висота sticky-колонки (під шапку) */
+export const AD_SIDE_STACK_STICKY_HEIGHT_CLASS =
+  'h-[calc(100vh-8rem)] xl:h-[calc(100vh-9rem)]'
+
+/** 4 рівні ряди + однаковий gap і padding */
+export const AD_SIDE_STACK_GRID_CLASS =
+  'box-border grid h-full w-full grid-rows-4 gap-2 p-2'
+
+/** Комірка сітки */
+export const AD_SIDE_STACK_CELL_CLASS = 'min-h-0 min-w-0 w-full overflow-hidden'
 
 /** Класичний боковий банер (legacy) */
 export const AD_SIDE_LEGACY_MIN_PX = 198
@@ -30,7 +41,7 @@ export const AD_TEXT_PANEL_CLASS =
   'shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-transparent'
 
 export const adSlotTailwind = {
-  sideStackSlot: 'h-[9.25rem] w-full shrink-0',
+  sideStackSlot: 'h-full w-full',
   sideLegacy: 'h-auto w-[90%] max-w-full mx-auto',
   sideLegacyCompact: 'h-auto w-[90%] max-w-full mx-auto',
   center: 'h-auto w-full max-w-full',
