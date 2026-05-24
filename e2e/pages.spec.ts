@@ -5,6 +5,7 @@ import {
   expectMainInCenterGridColumn,
   expectMainLayout,
   expectNoHorizontalOverflow,
+  expectTabletSingleColumnLayout,
   fetchSampleEntityIds,
   gotoPath,
 } from './helpers'
@@ -72,7 +73,7 @@ const AUTH_REDIRECT_PATHS = [
   '/favorites',
 ]
 
-test.describe('Усі сторінки — desktop layout', () => {
+test.describe('Усі сторінки — wide desktop (≥1280px)', () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 })
   })
@@ -129,6 +130,38 @@ test.describe('Усі сторінки — desktop layout', () => {
     await expectAppShell(page)
     await expect(page.getByRole('heading', { level: 1 }).first()).toHaveText(HOME_HERO)
   })
+})
+
+const TABLET_VIEWPORTS = [
+  { name: 'Android tablet landscape', width: 1024, height: 768 },
+  { name: 'iPad portrait', width: 834, height: 1194 },
+] as const
+
+test.describe('Усі сторінки — планшети (одна колонка, без бокових рейок)', () => {
+  for (const viewport of TABLET_VIEWPORTS) {
+    test.describe(viewport.name, () => {
+      test.beforeEach(async ({ page }) => {
+        await page.setViewportSize({ width: viewport.width, height: viewport.height })
+      })
+
+      for (const route of PUBLIC_WITH_RAILS) {
+        test(`${route.path} — без overflow, контент по центру`, async ({ page }) => {
+          await gotoPath(page, route.path)
+          await expect(page.getByRole('heading', { level: 1 }).first()).toHaveText(route.heading)
+          await expectTabletSingleColumnLayout(page)
+          await expectNoHorizontalOverflow(page)
+        })
+      }
+
+      for (const route of PUBLIC_GUTTER_ONLY) {
+        test(`${route.path} — без overflow`, async ({ page }) => {
+          await gotoPath(page, route.path)
+          await expect(page.getByRole('heading', { level: 1 }).first()).toHaveText(route.heading)
+          await expectNoHorizontalOverflow(page)
+        })
+      }
+    })
+  }
 })
 
 test.describe('Усі сторінки — mobile', () => {

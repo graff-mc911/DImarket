@@ -57,7 +57,7 @@ export function MobileAdBanner({
   const showOnDesktop = variant === 'horizontal'
 
   const block = (
-    <div className={showOnDesktop ? 'my-4' : 'my-4 xl:hidden'}>
+    <div className={showOnDesktop ? 'my-4' : 'ad-slot-mobile-inline'}>
       <div className="relative">
         <button
           onClick={() => setAdVisible(false)}

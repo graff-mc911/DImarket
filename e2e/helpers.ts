@@ -93,12 +93,29 @@ export async function expectMainLayout(
   }
 }
 
-/** На lg+ центральна колонка завжди в 2-й сітці (навіть без бокових банерів). */
+/** На широкому десктопі (≥1280px) центральна колонка в 2-й сітці. */
 export async function expectMainInCenterGridColumn(page: Page) {
   const column = await page.locator('main .layout-with-side-ads__main').evaluate((main) => {
     return getComputedStyle(main).gridColumnStart
   })
   expect(column).toBe('2')
+}
+
+/** Планшет / телефон: одна колонка, бокові рейки приховані. */
+export async function expectTabletSingleColumnLayout(page: Page) {
+  const state = await page.locator('main .layout-with-side-ads').evaluate((grid) => {
+    const main = grid.querySelector('.layout-with-side-ads__main')
+    if (!main) return null
+    const cols = getComputedStyle(grid).gridTemplateColumns
+    const mainCol = getComputedStyle(main).gridColumnStart
+    const rail = grid.querySelector('.ad-side-rail') as HTMLElement | null
+    const railDisplay = rail ? getComputedStyle(rail).display : 'none'
+    return { cols, mainCol, railDisplay }
+  })
+  expect(state).not.toBeNull()
+  expect(state!.mainCol).toBe('1')
+  expect(state!.cols.trim().split(/\s+/).length).toBe(1)
+  expect(state!.railDisplay).toBe('none')
 }
 
 export async function fetchSampleEntityIds(request: import('@playwright/test').APIRequestContext) {
