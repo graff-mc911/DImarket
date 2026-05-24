@@ -35,6 +35,16 @@ import { useApp }      from '../contexts/AppContext'
 import { AdCampaign }  from '../lib/types'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
 import { AdPlacementPicker } from '../components/AdPlacementPicker'
+import { AdCampaignDraftPreview, AdCopyField } from '../components/AdCopyFields'
+import {
+  billingCityUnits,
+  fetchAdGeoCatalog,
+  isGeoSelectionValid,
+  resolveTargetCities,
+  type AdGeoCountry,
+  type GeoMode,
+} from '../lib/adGeoCatalog'
+import { isSiteOwner } from '../lib/siteOwner'
 import {
   formatSlotLabel,
   sideSlotId,
@@ -43,15 +53,8 @@ import {
 
 // ── Типи ──────────────────────────────────────────────────────────────────────
 type MediaType      = 'image' | 'gif' | 'video'
-type GeoMode        = 'global' | 'countries' | 'regions' | 'cities'
-
 type FeedbackState = { type: 'success' | 'error'; text: string }
 type UploadState   = { status: 'idle' | 'uploading' | 'done' | 'error'; progress: number; error?: string }
-
-type GeoCountry = {
-  name: string
-  regions: Array<{ name: string; cities: string[] }>
-}
 
 // ── Константи ──────────────────────────────────────────────────────────────────
 
@@ -65,14 +68,10 @@ const MAX_FILE_MB    = 20
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024
 const PRICE_PER_CITY_PER_WEEK = 25
 
-// GEO_DATA завантажується динамічно з бази даних
-// Заповнюється автоматично коли користувачі реєструються з різних міст
-const GEO_DATA: GeoCountry[] = []
-
 // ── Головний компонент ─────────────────────────────────────────────────────────
 
 export function Advertising() {
-  const { user, t } = useApp()
+  const { user, profile, t } = useApp()
 
   // Поля форми
   const [title, setTitle]             = useState('')
@@ -98,7 +97,7 @@ export function Advertising() {
   const [isDragOver, setIsDragOver] = useState(false)
 
   // Географія з бази — завантажується автоматично
-  const [geoData, setGeoData] = useState<GeoCountry[]>([])
+  const [geoData, setGeoData] = useState<AdGeoCountry[]>([])
   const [geoLoading, setGeoLoading] = useState(true)
 
   // Кампанії
@@ -111,10 +110,6 @@ export function Advertising() {
 
   const createdAtFormatter = useMemo(() =>
     new Intl.DateTimeFormat('uk-UA', { dateStyle: 'medium', timeStyle: 'short' }), [])
-
-  // Всі міста в GEO_DATA
-  const allCities = useMemo(() =>
-    geoData.flatMap(c => c.regions.flatMap(r => r.cities)), [geoData])
 
   // Доступні регіони для вибраних країн
   const availableRegions = useMemo(() =>
@@ -133,18 +128,22 @@ export function Advertising() {
     return availableRegions.flatMap(r => r.cities)
   }, [availableRegions, selectedRegions])
 
-  // Міста що потраплять в таргетинг
-  const calculatedCities = useMemo(() => {
-    if (geoMode === 'global')    return allCities
-    if (geoMode === 'countries') return geoData.filter(c => selectedCountries.includes(c.name)).flatMap(c => c.regions.flatMap(r => r.cities))
-    if (geoMode === 'regions')   return availableRegions.filter(r => selectedRegions.includes(r.name)).flatMap(r => r.cities)
-    return selectedCities
-  }, [geoMode, allCities, selectedCountries, availableRegions, selectedRegions, selectedCities])
+  const targetCities = useMemo(
+    () => resolveTargetCities(geoMode, geoData, selectedCountries, selectedRegions, selectedCities),
+    [geoMode, geoData, selectedCountries, selectedRegions, selectedCities],
+  )
 
-  const selectedCitiesCount = calculatedCities.length
+  const billingUnits = useMemo(
+    () => billingCityUnits(geoMode, geoData, targetCities),
+    [geoMode, geoData, targetCities],
+  )
 
-  // Автоматичний розрахунок ціни
-  const totalPrice = selectedCitiesCount * PRICE_PER_CITY_PER_WEEK * selectedSlots.length * durationWeeks
+  const totalPrice = billingUnits * PRICE_PER_CITY_PER_WEEK * selectedSlots.length * durationWeeks
+
+  const ownerAccount = useMemo(
+    () => isSiteOwner(profile, user?.email),
+    [profile, user?.email],
+  )
 
   // Завантажуємо географію з бази при старті
   useEffect(() => {
@@ -157,42 +156,14 @@ export function Advertising() {
     else setCampaigns([])
   }, [user])
 
-  // Завантаження унікальних країн/регіонів/міст з бази
   const loadGeoData = async () => {
     setGeoLoading(true)
     try {
-      const { data, error } = await supabase
-        .from('active_geo')
-        .select('country, region, city, user_count')
-        .order('country')
-
-      if (error || !data) return
-
-      // Групуємо по країнах і регіонах
-      const grouped: Record<string, Record<string, string[]>> = {}
-
-      for (const row of data) {
-        if (!row.country || !row.city) continue
-        if (!grouped[row.country]) grouped[row.country] = {}
-        const reg = row.region || 'Інші'
-        if (!grouped[row.country][reg]) grouped[row.country][reg] = []
-        if (!grouped[row.country][reg].includes(row.city)) {
-          grouped[row.country][reg].push(row.city)
-        }
-      }
-
-      // Перетворюємо в масив GeoCountry
-      const result: GeoCountry[] = Object.entries(grouped).map(([country, regions]) => ({
-        name: country,
-        regions: Object.entries(regions).map(([region, cities]) => ({
-          name: region,
-          cities,
-        })),
-      }))
-
+      const result = await fetchAdGeoCatalog()
       setGeoData(result)
     } catch (e) {
       console.error('Помилка завантаження географії:', e)
+      setGeoData([])
     } finally {
       setGeoLoading(false)
     }
@@ -294,7 +265,10 @@ export function Advertising() {
     if (!user)          { setFeedback({ type: 'error', text: t('advertising.error.noAuth') }); return }
     if (!mediaUrl)      { setFeedback({ type: 'error', text: t('advertising.error.noMedia') }); return }
     if (!linkUrl.trim()){ setFeedback({ type: 'error', text: t('advertising.error.noLink') }); return }
-    if (selectedCitiesCount === 0) { setFeedback({ type: 'error', text: t('advertising.error.noGeo') }); return }
+    if (!isGeoSelectionValid(geoMode, selectedCountries, selectedRegions, selectedCities)) {
+      setFeedback({ type: 'error', text: t('advertising.error.noGeo') })
+      return
+    }
     if (startsAt && endsAt && new Date(endsAt) < new Date(startsAt)) {
       setFeedback({ type: 'error', text: t('advertising.dates.error') }); return
     }
@@ -308,6 +282,9 @@ export function Advertising() {
         ? new Date(endsAt)
         : new Date(startDate.getTime() + durationWeeks * 7 * 24 * 60 * 60 * 1000)
 
+      const campaignStatus = ownerAccount ? 'active' : 'pending_payment'
+      const nowIso = now.toISOString()
+
       const { error } = await supabase.from('ad_campaigns').insert({
         advertiser_id: user.id,
         title:         title.trim(),
@@ -319,21 +296,37 @@ export function Advertising() {
         geo_scope:     geoMode,
         countries:     selectedCountries,
         regions:       selectedRegions,
-        cities:        calculatedCities,
+        cities:        targetCities,
         country_name:  selectedCountries[0] ?? null,
-        city_name:     calculatedCities[0]  ?? null,
+        city_name:     targetCities[0] ?? null,
         country_code:  null,
-        region_name:   selectedRegions[0]   ?? null,
+        region_name:   selectedRegions[0] ?? null,
         media_type:    mediaType,
         media_url:     mediaUrl,
         starts_at:     startDate.toISOString(),
         ends_at:       endDate.toISOString(),
-        status:        'pending_payment',
+        status:        campaignStatus,
+        ...(ownerAccount
+          ? {
+              approved_by: user.id,
+              approved_at: nowIso,
+              price_paid: 0,
+              currency_paid: 'eur',
+              review_note: 'Owner self-publish from /advertising',
+            }
+          : {}),
       })
 
       if (error) throw error
 
-      // Отримуємо ID щойно створеної кампанії
+      if (ownerAccount) {
+        setFeedback({ type: 'success', text: t('advertising.successOwner') })
+        resetForm()
+        await loadOwnCampaigns()
+        setSaving(false)
+        return
+      }
+
       const { data: newCampaign } = await supabase
         .from('ad_campaigns')
         .select('id')
@@ -343,7 +336,6 @@ export function Advertising() {
         .limit(1)
         .single()
 
-      // Перенаправляємо на Stripe Checkout для оплати
       const stripeResult = await createCheckoutSession({
         payment_type: 'ad_campaign',
         reference_id: newCampaign?.id || '',
@@ -353,7 +345,6 @@ export function Advertising() {
         description:  'DImarket реклама: ' + title.trim(),
       })
 
-      // Відкриваємо сторінку оплати Stripe
       window.location.href = stripeResult.url
 
     } catch (err) {
@@ -363,8 +354,7 @@ export function Advertising() {
     }
   }
 
-  // Зведений підпис географії
-  const geoSummary = getGeoSummary(geoMode, selectedCountries, selectedRegions, calculatedCities, t)
+  const geoSummary = getGeoSummary(geoMode, selectedCountries, selectedRegions, targetCities, billingUnits, t)
 
   return (
     <div className="py-8 pb-24 lg:pb-8">
@@ -540,25 +530,50 @@ export function Advertising() {
                     <input ref={fileInputRef} type="file" accept={ACCEPTED_MIME[mediaType].join(',')} onChange={handleFileChange} className="hidden" />
                   </div>
 
-                  {/* Назва, опис, посилання */}
-                  <div className="grid gap-4">
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                        {t('advertising.form.nameLabel')} <span className="text-[#ef4444]">*</span>
-                      </label>
-                      <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="input-glass" placeholder={t('advertising.form.namePlaceholder')} />
-                    </div>
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">{t('advertising.form.descLabel')}</label>
-                      <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} className="input-glass resize-y" placeholder={t('advertising.form.descPlaceholder')} />
-                    </div>
-                    <div>
-                      <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-[#5f5a54]">
-                        <Link2 className="h-4 w-4" />
-                        {t('advertising.form.linkLabel')} <span className="text-[#ef4444]">*</span>
-                      </label>
-                      <input type="url" required value={linkUrl} onChange={e => setLinkUrl(e.target.value)} className="input-glass" placeholder={t('advertising.form.linkPlaceholder')} />
-                    </div>
+                  {/* Назва, опис, посилання — у стилі карток застосунку */}
+                  <div className="grid gap-3">
+                    <AdCopyField
+                      icon={<Megaphone className="h-4 w-4" />}
+                      label={t('advertising.form.nameLabel')}
+                      required
+                    >
+                      <input
+                        type="text"
+                        required
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        className="input-glass"
+                        placeholder={t('advertising.form.namePlaceholder')}
+                      />
+                    </AdCopyField>
+
+                    <AdCopyField
+                      icon={<Building2 className="h-4 w-4" />}
+                      label={t('advertising.form.descLabel')}
+                    >
+                      <textarea
+                        value={description}
+                        onChange={e => setDescription(e.target.value)}
+                        rows={4}
+                        className="input-glass min-h-[5.5rem] resize-y"
+                        placeholder={t('advertising.form.descPlaceholder')}
+                      />
+                    </AdCopyField>
+
+                    <AdCopyField
+                      icon={<Link2 className="h-4 w-4" />}
+                      label={t('advertising.form.linkLabel')}
+                      required
+                    >
+                      <input
+                        type="url"
+                        required
+                        value={linkUrl}
+                        onChange={e => setLinkUrl(e.target.value)}
+                        className="input-glass"
+                        placeholder={t('advertising.form.linkPlaceholder')}
+                      />
+                    </AdCopyField>
                   </div>
 
                   {/* Геотаргетинг */}
@@ -577,6 +592,20 @@ export function Advertising() {
                         </button>
                       ))}
                     </div>
+
+                    {geoLoading ? (
+                      <p className="mt-3 text-sm text-[#6f665d]">{t('advertising.geo.loading')}</p>
+                    ) : geoData.length === 0 ? (
+                      <p className="mt-3 text-sm text-[#b45309]">{t('advertising.geo.loadFailed')}</p>
+                    ) : (
+                      <p className="mt-3 text-xs text-[#9a8776]">
+                        {t('advertising.geo.catalogHint').replace('{countries}', String(geoData.length)).replace('{cities}', String(billingUnits))}
+                      </p>
+                    )}
+
+                    {geoMode === 'global' && !geoLoading && geoData.length > 0 && (
+                      <p className="mt-3 text-sm text-[#6f665d]">{t('advertising.geo.globalHint')}</p>
+                    )}
 
                     {geoMode !== 'global' && (
                       <div className="mt-5 space-y-4">
@@ -616,7 +645,7 @@ export function Advertising() {
                       <div className="text-sm font-bold text-[#2f2a24]">{t('advertising.price.title')}</div>
                       <div className="mt-3 space-y-1 text-sm text-[#6f665d]">
                         <div>{t('advertising.price.geo')}: <b>{geoSummary}</b></div>
-                        <div>{t('advertising.price.cities')}: <b>{selectedCitiesCount}</b></div>
+                        <div>{t('advertising.price.cities')}: <b>{billingUnits}</b></div>
                         <div>{t('advertising.price.positions')}: <b>{selectedSlots.length}</b></div>
                         <div>{t('advertising.price.duration')}: <b>{durationWeeks} {t('advertising.price.week1').replace('1 ', '')}</b></div>
                         <div>{t('advertising.price.perCity')}: <b>{PRICE_PER_CITY_PER_WEEK}€</b></div>
@@ -659,7 +688,11 @@ export function Advertising() {
                   <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
                     <button type="submit" disabled={saving || uploadState.status === 'uploading'}
                       className="btn-primary rounded-full disabled:cursor-not-allowed disabled:opacity-60">
-                      {saving ? t('advertising.submitting') : t('advertising.submit') + ' — ' + totalPrice + '€'}
+                      {saving
+                        ? t('advertising.submitting')
+                        : ownerAccount
+                          ? t('advertising.submitOwner')
+                          : t('advertising.submit') + ' — ' + totalPrice + '€'}
                     </button>
                   </div>
                 </form>
@@ -675,63 +708,43 @@ export function Advertising() {
               <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.preview.title')}</h2>
               <p className="mt-2 text-sm leading-6 text-[#6f665d]">{t('advertising.preview.desc')}</p>
 
-              <a href={linkUrl || '#'} target="_blank" rel="noopener noreferrer"
-                onClick={e => !linkUrl && e.preventDefault()}
-                className="group mt-5 block overflow-hidden rounded-[24px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.36)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(15,23,42,0.10)]">
-                {mediaUrl && uploadState.status === 'done' ? (
-                  mediaType === 'video'
-                    ? <video src={mediaUrl} className="h-48 w-full object-cover" muted playsInline loop autoPlay />
-                    : <img src={mediaUrl} alt={title || 'Banner'} className="h-48 w-full object-cover" />
-                ) : (
-                  <div className="flex h-48 items-center justify-center bg-[linear-gradient(135deg,rgba(248,250,252,0.92),rgba(255,247,240,0.92))]">
-                    <div className="text-center text-[#8b7e72]">
-                      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[18px] bg-[rgba(148,163,184,0.14)]">
-                        <ImagePlus className="h-6 w-6" />
-                      </div>
-                      <div className="mt-3 text-sm font-semibold">{t('advertising.preview.placeholder')}</div>
-                    </div>
-                  </div>
-                )}
+              <div className="mt-5 flex flex-col items-center gap-4">
+                <AdCampaignDraftPreview
+                  title={title}
+                  description={description}
+                  linkUrl={linkUrl}
+                  mediaUrl={mediaUrl}
+                  mediaType={mediaType}
+                  mediaReady={uploadState.status === 'done'}
+                  placeholderTitle={t('advertising.preview.placeholder')}
+                />
 
-                <div className="p-5">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex rounded-full bg-[rgba(148,163,184,0.12)] px-3 py-1 text-xs font-semibold text-[#64748b]">
-                      {t('advertising.preview.adLabel')}
-                    </span>
-                    <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[#9a8776] transition group-hover:text-[#6366f1]">
-                      {selectedSlots.length > 1
-                        ? selectedSlots.length + ' ' + t('advertising.preview.positions')
-                        : formatSlotLabel(selectedSlots[0], t)}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-3 text-lg font-extrabold text-[#2f2a24]">
-                    {title.trim() || t('advertising.form.namePlaceholder')}
-                  </h3>
-
-                  {description.trim() && (
-                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">{description.trim()}</p>
-                  )}
-
-                  <div className="mt-4 grid gap-2">
-                    <PreviewRow label={t('advertising.preview.link')}    value={linkUrl.trim() || 'https://your-site.com'} />
+                <div className="glass-card w-full max-w-xl p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--ink-500)]">
+                    {selectedSlots.length > 1
+                      ? selectedSlots.length + ' ' + t('advertising.preview.positions')
+                      : formatSlotLabel(selectedSlots[0], t)}
+                  </p>
+                  <div className="mt-3 grid gap-2">
+                    <PreviewRow label={t('advertising.preview.link')} value={linkUrl.trim() || 'https://your-site.com'} />
                     <PreviewRow label={t('advertising.preview.geoLabel')} value={geoSummary} />
-                    <PreviewRow label={t('advertising.preview.cost')}    value={totalPrice + '€ / ' + durationWeeks + ' wk'} />
-                    <PreviewRow label={t('advertising.preview.media')}   value={
-                      mediaType === 'image' ? t('advertising.preview.mediaImage') :
-                      mediaType === 'gif'   ? t('advertising.preview.mediaGif')   :
-                                              t('advertising.preview.mediaVideo')
-                    } />
+                    <PreviewRow label={t('advertising.preview.cost')} value={totalPrice + '€ / ' + durationWeeks + ' wk'} />
+                    <PreviewRow
+                      label={t('advertising.preview.media')}
+                      value={
+                        mediaType === 'image'
+                          ? t('advertising.preview.mediaImage')
+                          : mediaType === 'gif'
+                            ? t('advertising.preview.mediaGif')
+                            : t('advertising.preview.mediaVideo')
+                      }
+                    />
                   </div>
-
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-xs text-[#9a8776]">{selectedCitiesCount} {t('advertising.preview.citiesCount')}</span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#6366f1] px-3 py-1.5 text-xs font-bold text-white">
-                      {t('advertising.preview.goBtn')}
-                    </span>
-                  </div>
+                  <p className="muted-text mt-3 text-[11px]">
+                    {billingUnits} {t('advertising.preview.citiesCount')}
+                  </p>
                 </div>
-              </a>
+              </div>
             </div>
 
             {/* Поточний стан */}
@@ -834,10 +847,13 @@ function CampaignCard({ campaign, formatter, t }: {
   const cities     = data.cities     ?? (campaign.city_name    ? [campaign.city_name]    : [])
 
   return (
-    <div className="rounded-[22px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4">
+    <div className="glass-card p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h3 className="truncate text-base font-bold text-[#2f2a24]">{campaign.title}</h3>
+          <h3 className="truncate text-sm font-bold tracking-[-0.02em] text-[var(--ink-900)]">{campaign.title}</h3>
+          {campaign.description?.trim() && (
+            <p className="muted-text mt-1 line-clamp-2 text-[11px] leading-snug">{campaign.description}</p>
+          )}
           <div className="mt-1 flex flex-wrap gap-1">
             {displayPlacements.slice(0, 6).map((p: string) => (
               <span key={p} className="rounded-full bg-[rgba(148,163,184,0.12)] px-2 py-0.5 text-xs text-[#64748b]">
@@ -855,7 +871,7 @@ function CampaignCard({ campaign, formatter, t }: {
       </div>
       <div className="mt-3 space-y-1.5 text-sm text-[#6f665d]">
         <p><span className="font-medium text-[#5f5a54]">{t('advertising.myCampaigns.geo')}: </span>
-          {getGeoSummary((data.geo_scope ?? 'global') as GeoMode, countries, regions, cities, t)}
+          {getGeoSummary((data.geo_scope ?? 'global') as GeoMode, countries, regions, cities, undefined, t)}
         </p>
         <p><span className="font-medium text-[#5f5a54]">{t('advertising.myCampaigns.amount')}: </span>
           {data.price_total ? data.price_total + ' ' + (data.currency ?? 'EUR') : '—'}
@@ -919,9 +935,9 @@ function StepRow({
 
 function PreviewRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[16px] border border-[rgba(148,163,184,0.14)] bg-[rgba(255,255,255,0.42)] px-3 py-2">
-      <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9a8776]">{label}</div>
-      <div className="mt-0.5 truncate text-sm font-semibold text-[#2f2a24]">{value}</div>
+    <div className="flex items-start justify-between gap-3 rounded-[14px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] px-3 py-2">
+      <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--ink-500)]">{label}</span>
+      <span className="truncate text-right text-xs font-semibold text-[var(--ink-900)]">{value}</span>
     </div>
   )
 }
@@ -955,9 +971,17 @@ function StatusBadge({ status, t }: { status: string | null | undefined; t: (k: 
 }
 
 // Зведений підпис географії (локалізований)
-function getGeoSummary(geoMode: GeoMode, countries: string[], regions: string[], cities: string[], t: (k: string) => string): string {
-  if (geoMode === 'global')    return t('advertising.geo.worldwide') + ' · ' + cities.length + ' ' + t('advertising.geo.citiesCount')
-  if (geoMode === 'countries') return countries.length === 0 ? t('advertising.geo.noCountries') : countries.join(', ') + ' · ' + cities.length + ' ' + t('advertising.geo.citiesCount')
-  if (geoMode === 'regions')   return regions.length  === 0 ? t('advertising.geo.noRegions')   : regions.join(', ')  + ' · ' + cities.length + ' ' + t('advertising.geo.citiesCount')
+function getGeoSummary(
+  geoMode: GeoMode,
+  countries: string[],
+  regions: string[],
+  cities: string[],
+  billingUnits: number | undefined,
+  t: (k: string) => string,
+): string {
+  const cityCount = geoMode === 'global' ? (billingUnits ?? Math.max(cities.length, 1)) : cities.length
+  if (geoMode === 'global') return t('advertising.geo.worldwide') + ' · ' + cityCount + ' ' + t('advertising.geo.citiesCount')
+  if (geoMode === 'countries') return countries.length === 0 ? t('advertising.geo.noCountries') : countries.join(', ') + ' · ' + cityCount + ' ' + t('advertising.geo.citiesCount')
+  if (geoMode === 'regions')   return regions.length  === 0 ? t('advertising.geo.noRegions')   : regions.join(', ')  + ' · ' + cityCount + ' ' + t('advertising.geo.citiesCount')
   return cities.length === 0 ? t('advertising.geo.noCities') : cities.join(', ')
 }
