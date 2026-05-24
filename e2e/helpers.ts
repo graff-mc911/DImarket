@@ -93,6 +93,14 @@ export async function expectMainLayout(
   }
 }
 
+/** На lg+ центральна колонка завжди в 2-й сітці (навіть без бокових банерів). */
+export async function expectMainInCenterGridColumn(page: Page) {
+  const column = await page.locator('main .layout-with-side-ads__main').evaluate((main) => {
+    return getComputedStyle(main).gridColumnStart
+  })
+  expect(column).toBe('2')
+}
+
 export async function fetchSampleEntityIds(request: import('@playwright/test').APIRequestContext) {
   const base = process.env.VITE_SUPABASE_URL
   const key = process.env.VITE_SUPABASE_ANON_KEY

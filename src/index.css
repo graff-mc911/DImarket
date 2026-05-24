@@ -164,6 +164,23 @@
   .layout-with-side-ads__main {
     min-width: 0;
     width: 100%;
+    grid-column: 1;
+  }
+
+  @media (min-width: 1024px) {
+    .layout-with-side-ads > .ad-side-rail:first-of-type,
+    .layout-with-side-ads > .layout-side-rail-spacer:first-child {
+      grid-column: 1;
+    }
+
+    .layout-with-side-ads__main {
+      grid-column: 2;
+    }
+
+    .layout-with-side-ads > .ad-side-rail:last-of-type,
+    .layout-with-side-ads > .layout-side-rail-spacer:last-child {
+      grid-column: 3;
+    }
   }
 
   /** Повна ширина центральної колонки (замість max-w-7xl на сторінках з боковими рейками) */
