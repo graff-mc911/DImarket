@@ -87,6 +87,13 @@ export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement | st
     return true
   }
 
+  // Легасі-слот (home, sidebar): кампанія з гранульованим ID (home_side_r1 …)
+  if (!slot.includes('_')) {
+    if (placements.some((p) => getSlotLegacyTags(p).includes(slot as AdPlacement))) {
+      return true
+    }
+  }
+
   const fallbacks = SLOT_FALLBACKS[slot as AdPlacement]
   if (fallbacks) {
     return placements.some((p) => fallbacks.includes(p as AdPlacement))
