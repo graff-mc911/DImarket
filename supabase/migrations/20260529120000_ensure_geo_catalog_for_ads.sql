@@ -38,8 +38,10 @@ ON CONFLICT (country, region, city) DO NOTHING;
 
 GRANT SELECT ON geo_catalog TO anon, authenticated;
 
--- Recreate active_geo so the ad form can fall back to this view
-CREATE OR REPLACE VIEW active_geo AS
+-- Recreate active_geo (DROP required: cannot change bigint → integer via REPLACE)
+DROP VIEW IF EXISTS active_geo;
+
+CREATE VIEW active_geo AS
 WITH profile_geo AS (
   SELECT
     NULLIF(trim(split_part(p.location, ', ', 3)), '') AS country,
@@ -57,7 +59,7 @@ listing_geo AS (
   WHERE l.location IS NOT NULL AND length(trim(l.location)) > 0
 ),
 aggregated AS (
-  SELECT country, region, city, count(*)::int AS user_count
+  SELECT country, region, city, count(*)::bigint AS user_count
   FROM (
     SELECT * FROM profile_geo
     UNION ALL
@@ -70,12 +72,12 @@ SELECT
   COALESCE(a.country, g.country) AS country,
   COALESCE(a.region, g.region) AS region,
   COALESCE(a.city, g.city) AS city,
-  GREATEST(COALESCE(a.user_count, 0), 1) AS user_count
+  GREATEST(COALESCE(a.user_count, 0::bigint), 1::bigint) AS user_count
 FROM geo_catalog g
 LEFT JOIN aggregated a
   ON a.country = g.country AND a.region = g.region AND a.city = g.city
 UNION
-SELECT a.country, a.region, a.city, a.user_count
+SELECT a.country, a.region, a.city, a.user_count::bigint
 FROM aggregated a
 WHERE NOT EXISTS (
   SELECT 1 FROM geo_catalog g

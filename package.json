@@ -17,6 +17,10 @@
     "test:e2e:codegen": "playwright codegen http://127.0.0.1:4173",
     "test:e2e:install": "playwright install chromium",
     "db:apply-paid-ads": "powershell -ExecutionPolicy Bypass -File scripts/apply-paid-ads-sql.ps1",
+    "db:apply-self-serve-ads": "node scripts/apply-prod-ad-self-serve.mjs",
+    "db:apply-self-serve-ads:ps1": "powershell -ExecutionPolicy Bypass -File scripts/apply-prod-ad-self-serve.ps1",
+    "db:verify-prod-ads": "node scripts/verify-prod-ad-schema.mjs",
+    "db:deploy-checkout-functions": "npx supabase functions deploy create-checkout-session verify-checkout-session --project-ref wjlfvajloxkevggwjgtk",
     "db:seed-partner-ads": "node scripts/apply-seed-partner-ads.mjs",
     "icons:generate": "node scripts/generate-favicons.mjs"
   },

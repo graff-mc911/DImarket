@@ -1,7 +1,7 @@
--- DImarket self-serve ads
+-- Залишок prod-міграції (geo_catalog + active_geo + bucket/regions)
+-- Запустіть у Supabase → SQL Editor, якщо verify-prod-ad-schema показує FAIL
 
--- Ensure geo_catalog exists and is readable for ad targeting UI
-
+-- === 1. geo_catalog + active_geo ===
 CREATE TABLE IF NOT EXISTS geo_catalog (
   id serial PRIMARY KEY,
   country text NOT NULL,
@@ -86,8 +86,8 @@ WHERE NOT EXISTS (
 );
 
 GRANT SELECT ON active_geo TO anon, authenticated;
--- Production fix: self-serve ads (upload bucket, regions column, status, geo)
 
+-- === 2. ad-media bucket + regions column ===
 ALTER TABLE ad_campaigns ADD COLUMN IF NOT EXISTS regions text[] DEFAULT '{}';
 
 DO $$

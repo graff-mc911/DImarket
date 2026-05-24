@@ -1,7 +1,5 @@
-# Застосувати SQL для self-serve реклами на prod Supabase (wjlfvajloxkevggwjgtk)
-# Потрібно: SUPABASE_ACCESS_TOKEN у .env.local
-# Dashboard → SQL Editor: можна вставити вміст supabase/migrations/20260529120000_ensure_geo_catalog_for_ads.sql
-# та 20260529140000_production_self_serve_ads.sql
+# Застосовує scripts/prod-ad-self-serve-remaining.sql на prod
+# Потрібно: SUPABASE_ACCESS_TOKEN (sbp_...) у .env.local
 
 param(
   [string]$ProjectRef = 'wjlfvajloxkevggwjgtk'
@@ -9,10 +7,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$files = @(
-  'supabase\migrations\20260529120000_ensure_geo_catalog_for_ads.sql',
-  'supabase\migrations\20260529140000_production_self_serve_ads.sql'
-)
+$sqlPath = Join-Path $root 'scripts\prod-ad-self-serve-remaining.sql'
+$sql = Get-Content $sqlPath -Raw
 
 $token = $env:SUPABASE_ACCESS_TOKEN
 if (-not $token) {
@@ -27,21 +23,19 @@ if (-not $token) {
 }
 
 if (-not $token) {
-  Write-Host 'Додайте SUPABASE_ACCESS_TOKEN у .env.local або виконайте SQL вручну в Supabase Dashboard.' -ForegroundColor Yellow
+  Write-Host 'Додайте SUPABASE_ACCESS_TOKEN у .env.local (https://supabase.com/dashboard/account/tokens)' -ForegroundColor Red
+  Write-Host 'Або вставте scripts/prod-ad-self-serve-remaining.sql у Supabase SQL Editor вручну.' -ForegroundColor Yellow
   exit 1
 }
 
 $uri = "https://api.supabase.com/v1/projects/$ProjectRef/database/query"
+$body = @{ query = $sql } | ConvertTo-Json -Depth 3
 
-foreach ($rel in $files) {
-  $sqlPath = Join-Path $root $rel
-  $sql = Get-Content $sqlPath -Raw
-  Write-Host "Applying $rel ..." -ForegroundColor Cyan
-  $body = @{ query = $sql } | ConvertTo-Json -Depth 3
-  Invoke-RestMethod -Uri $uri -Method POST -Headers @{
-    Authorization = "Bearer $token"
-    'Content-Type' = 'application/json'
-  } -Body $body | Out-Null
-}
+Invoke-RestMethod -Uri $uri -Method POST -Headers @{
+  Authorization = "Bearer $token"
+  'Content-Type' = 'application/json'
+} -Body $body | Out-Null
 
-Write-Host 'Done. Deploy edge functions: npx supabase functions deploy create-checkout-session verify-checkout-session' -ForegroundColor Green
+Write-Host 'SQL застосовано. Перевірка:' -ForegroundColor Green
+Set-Location $root
+node scripts/verify-prod-ad-schema.mjs

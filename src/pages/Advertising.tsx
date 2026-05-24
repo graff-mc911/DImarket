@@ -45,6 +45,7 @@ import {
   type GeoMode,
 } from '../lib/adGeoCatalog'
 import { isSiteOwner } from '../lib/siteOwner'
+import { ownerManagedReviewNote } from '../lib/ownerAdCampaign'
 import { formatSupabaseError } from '../lib/supabaseErrors'
 import {
   formatSlotLabel,
@@ -348,7 +349,7 @@ export function Advertising() {
               approved_at: nowIso,
               price_paid: 0,
               currency_paid: 'eur',
-              review_note: 'Owner self-publish from /advertising',
+              review_note: ownerManagedReviewNote('from /advertising'),
             }
           : {}),
       })

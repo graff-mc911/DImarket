@@ -35,8 +35,7 @@ if (!token) {
 }
 
 const files = [
-  'supabase/migrations/20260529120000_ensure_geo_catalog_for_ads.sql',
-  'supabase/migrations/20260529140000_production_self_serve_ads.sql',
+  'scripts/prod-ad-self-serve-remaining.sql',
 ]
 
 for (const rel of files) {

@@ -1,4 +1,5 @@
 import type { AdCampaign } from './types'
+import { isOwnerManagedCampaign } from './ownerAdCampaign'
 import { BRAND_ADVERTISER_BY_CAMPAIGN_ID } from './partnerAdvertisers'
 
 /** Центральний герой — GREE */
@@ -165,6 +166,7 @@ export const EXTRA_PARTNER_CAMPAIGNS: AdCampaign[] = [
 ]
 
 export function applyPartnerMediaOverride<T extends AdCampaign>(campaign: T): T {
+  if (isOwnerManagedCampaign(campaign)) return campaign
   const patch = PARTNER_MEDIA_BY_ID[campaign.id]
   const brandAdvertiser = BRAND_ADVERTISER_BY_CAMPAIGN_ID[campaign.id]
   if (!patch) return campaign

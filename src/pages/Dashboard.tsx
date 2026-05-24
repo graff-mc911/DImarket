@@ -17,6 +17,8 @@ import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { AdCampaign, Announcement, FeedbackMessage, Message, Profile } from '../lib/types'
+import { isSiteOwner } from '../lib/siteOwner'
+import { OwnerAdManager } from '../components/OwnerAdManager'
 
 interface OwnerStats {
   totalVisits: number
@@ -44,14 +46,6 @@ const EMPTY_STATS: OwnerStats = {
   pendingAds: 0,
   feedbackMessages: 0,
   internalMessages: 0,
-}
-
-const OWNER_EMAIL = 'ivan.sovban@gmail.com'
-
-function isOwnerEmail(email: string | null | undefined) {
-  // Тимчасово визначаємо власника сайту по email,
-  // щоб не залежати від прапорця is_site_owner у базі.
-  return (email || '').trim().toLowerCase() === OWNER_EMAIL.trim().toLowerCase()
 }
 
 export function Dashboard() {
@@ -123,7 +117,7 @@ export function Dashboard() {
         ...profileData,
         // Якщо прапорець у базі ще не спрацював,
         // даємо доступ owner-кабінету по точному email.
-        is_site_owner: profileData.is_site_owner || isOwnerEmail(activeUser.email),
+        is_site_owner: profileData.is_site_owner || isSiteOwner(profileData, activeUser.email),
       }
 
       setProfile(resolvedProfile)
@@ -193,7 +187,7 @@ export function Dashboard() {
           .from('ad_campaigns')
           .select('*, advertiser:profiles!advertiser_id(full_name, bio, website)')
           .order('created_at', { ascending: false })
-          .limit(24),
+          .limit(100),
 
         supabase
           .from('feedback_messages')
@@ -228,106 +222,6 @@ export function Dashboard() {
       setError('Не вдалося завантажити особистий кабінет власника сайту.')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleApproveCampaign = async (campaignId: string) => {
-    if (!profile) {
-      return
-    }
-
-    setCampaignActionId(campaignId)
-    setNotice('')
-    setError('')
-
-    try {
-      // Під час підтвердження переводимо рекламу в active
-      // і фіксуємо, хто саме її схвалив.
-      const { error: updateError } = await supabase
-        .from('ad_campaigns')
-        .update({
-          status: 'active',
-          approved_by: profile.id,
-          approved_at: new Date().toISOString(),
-          review_note: null,
-        })
-        .eq('id', campaignId)
-
-      if (updateError) {
-        throw updateError
-      }
-
-      setNotice('Рекламну кампанію підтверджено.')
-      await loadOwnerDashboard()
-    } catch (actionError) {
-      console.error('Помилка підтвердження кампанії:', actionError)
-      setError('Не вдалося підтвердити рекламну кампанію.')
-    } finally {
-      setCampaignActionId(null)
-    }
-  }
-
-  const handleRejectCampaign = async (campaignId: string) => {
-    setCampaignActionId(campaignId)
-    setNotice('')
-    setError('')
-
-    try {
-      // Відхилену рекламу залишаємо в базі зі статусом rejected,
-      // щоб рекламодавець бачив результат модерації.
-      const { error: updateError } = await supabase
-        .from('ad_campaigns')
-        .update({
-          status: 'rejected',
-          review_note: 'Відхилено власником сайту під час модерації.',
-        })
-        .eq('id', campaignId)
-
-      if (updateError) {
-        throw updateError
-      }
-
-      setNotice('Рекламну кампанію відхилено.')
-      await loadOwnerDashboard()
-    } catch (actionError) {
-      console.error('Помилка відхилення кампанії:', actionError)
-      setError('Не вдалося відхилити рекламну кампанію.')
-    } finally {
-      setCampaignActionId(null)
-    }
-  }
-
-  const handleDeleteCampaign = async (campaignId: string) => {
-    const confirmed = window.confirm(
-      'Ви впевнені, що хочете видалити цю рекламну кампанію?'
-    )
-
-    if (!confirmed) {
-      return
-    }
-
-    setCampaignActionId(campaignId)
-    setNotice('')
-    setError('')
-
-    try {
-      // Видаляємо кампанію повністю, якщо вона більше не потрібна.
-      const { error: deleteError } = await supabase
-        .from('ad_campaigns')
-        .delete()
-        .eq('id', campaignId)
-
-      if (deleteError) {
-        throw deleteError
-      }
-
-      setNotice('Рекламну кампанію видалено.')
-      await loadOwnerDashboard()
-    } catch (actionError) {
-      console.error('Помилка видалення кампанії:', actionError)
-      setError('Не вдалося видалити рекламну кампанію.')
-    } finally {
-      setCampaignActionId(null)
     }
   }
 
@@ -732,132 +626,15 @@ export function Dashboard() {
                 </section>
               </div>
 
-              {/* Окремий блок модерації реклами дозволяє owner швидко підтверджувати,
-                  відхиляти або видаляти кампанії без переходу в інші сторінки. */}
-              <section className="glass-card mt-6 p-5 md:p-6">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h2 className="text-xl font-extrabold text-[#2f2a24]">
-                      Керування рекламою
-                    </h2>
-                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
-                      Тут ви можете підтверджувати, відхиляти або видаляти рекламні кампанії.
-                    </p>
-                  </div>
-
-                  <div className="rounded-full bg-[rgba(148,163,184,0.14)] px-4 py-2 text-sm font-semibold text-[#475569]">
-                    На модерації: {stats.pendingAds}
-                  </div>
-                </div>
-
-                <div className="mt-5 space-y-4">
-                  {adCampaigns.length > 0 ? (
-                    adCampaigns.map((campaign) => {
-                      const isBusy = campaignActionId === campaign.id
-
-                      return (
-                        <div
-                          key={campaign.id}
-                          className="rounded-[24px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4"
-                        >
-                          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                            <div className="min-w-0 flex-1">
-                              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                                <h3 className="truncate text-lg font-extrabold text-[#2f2a24]">
-                                  {campaign.title}
-                                </h3>
-                                <StatusBadge status={campaign.status} />
-                              </div>
-
-                              {campaign.description && (
-                                <p className="mt-3 text-sm leading-6 text-[#6f665d]">
-                                  {campaign.description}
-                                </p>
-                              )}
-
-                              {(campaign as { advertiser?: { full_name?: string | null } }).advertiser
-                                ?.full_name && (
-                                <p className="mt-2 text-sm font-semibold text-[#5f5a54]">
-                                  Рекламодавець:{' '}
-                                  {(campaign as { advertiser: { full_name: string } }).advertiser.full_name}
-                                </p>
-                              )}
-
-                              {campaign.review_note?.includes('[demo_brand_advertiser]') && (
-                                <p className="mt-2 rounded-[12px] bg-[rgba(99,102,241,0.08)] px-3 py-1.5 text-xs font-semibold text-[#4338ca]">
-                                  Демо-бренд на банерах — можна видалити кнопкою нижче
-                                </p>
-                              )}
-
-                              <div className="mt-4 grid gap-2 text-sm text-[#6f665d] md:grid-cols-2">
-                                <div>
-                                  <span className="font-semibold text-[#2f2a24]">Розміщення:</span>{' '}
-                                  {getPlacementLabel(campaign.placement)}
-                                </div>
-                                <div>
-                                  <span className="font-semibold text-[#2f2a24]">Географія:</span>{' '}
-                                  {getGeoTargetLabel(campaign)}
-                                </div>
-                                <div>
-                                  <span className="font-semibold text-[#2f2a24]">Період:</span>{' '}
-                                  {getCampaignPeriodLabel(campaign)}
-                                </div>
-                                <div>
-                                  <span className="font-semibold text-[#2f2a24]">Створено:</span>{' '}
-                                  {campaign.created_at
-                                    ? new Date(campaign.created_at).toLocaleString()
-                                    : '—'}
-                                </div>
-                              </div>
-
-                              <div className="mt-3 break-all text-xs text-[#7a7168]">
-                                {campaign.link_url}
-                              </div>
-                            </div>
-
-                            {/* Кнопки дій owner по конкретній рекламній кампанії. */}
-                            <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
-                              <button
-                                onClick={() => handleApproveCampaign(campaign.id)}
-                                type="button"
-                                disabled={isBusy || campaign.status === 'active'}
-                                className="inline-flex items-center justify-center gap-2 rounded-full bg-[rgba(34,197,94,0.14)] px-4 py-2 text-sm font-semibold text-[#15803d] transition hover:bg-[rgba(34,197,94,0.22)] disabled:cursor-not-allowed disabled:opacity-50"
-                              >
-                                <CheckCircle2 className="h-4 w-4" />
-                                Підтвердити
-                              </button>
-
-                              <button
-                                onClick={() => handleRejectCampaign(campaign.id)}
-                                type="button"
-                                disabled={isBusy || campaign.status === 'rejected'}
-                                className="inline-flex items-center justify-center gap-2 rounded-full bg-[rgba(239,68,68,0.12)] px-4 py-2 text-sm font-semibold text-[#b91c1c] transition hover:bg-[rgba(239,68,68,0.18)] disabled:cursor-not-allowed disabled:opacity-50"
-                              >
-                                <XCircle className="h-4 w-4" />
-                                Відхилити
-                              </button>
-
-                              <button
-                                onClick={() => handleDeleteCampaign(campaign.id)}
-                                type="button"
-                                disabled={isBusy}
-                                className="inline-flex items-center justify-center gap-2 rounded-full bg-[rgba(100,116,139,0.14)] px-4 py-2 text-sm font-semibold text-[#475569] transition hover:bg-[rgba(100,116,139,0.22)] disabled:cursor-not-allowed disabled:opacity-50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                Видалити
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })
-                  ) : (
-                    <p className="text-sm text-[#7a7168]">
-                      Поки що немає рекламних кампаній для модерації.
-                    </p>
-                  )}
-                </div>
-              </section>
+              <OwnerAdManager
+                ownerId={profile.id}
+                campaigns={adCampaigns}
+                onRefresh={loadOwnerDashboard}
+                onNotice={setNotice}
+                onError={setError}
+                campaignActionId={campaignActionId}
+                setCampaignActionId={setCampaignActionId}
+              />
 
               {/* Тут показуємо всі повідомлення із форми зворотного зв'язку,
                   щоб owner міг читати і обробляти їх прямо в кабінеті. */}
@@ -1406,35 +1183,6 @@ function OwnerFeatureRow({ text }: { text: string }) {
   )
 }
 
-function StatusBadge({ status }: { status: AdCampaign['status'] }) {
-  const styles: Record<AdCampaign['status'], string> = {
-    draft: 'bg-[rgba(148,163,184,0.14)] text-[#475569]',
-    pending_review: 'bg-[rgba(245,158,11,0.14)] text-[#b45309]',
-    active: 'bg-[rgba(34,197,94,0.14)] text-[#15803d]',
-    paused: 'bg-[rgba(100,116,139,0.14)] text-[#475569]',
-    rejected: 'bg-[rgba(239,68,68,0.14)] text-[#b91c1c]',
-    expired: 'bg-[rgba(148,163,184,0.14)] text-[#64748b]',
-    deleted: 'bg-[rgba(148,163,184,0.14)] text-[#64748b]',
-  }
-
-  const labels: Record<AdCampaign['status'], string> = {
-    draft: 'Чернетка',
-    pending_review: 'На модерації',
-    active: 'Активна',
-    paused: 'Призупинена',
-    rejected: 'Відхилена',
-    expired: 'Завершена',
-    deleted: 'Видалена',
-  }
-
-  return (
-    // Бейдж статусу допомагає owner швидко читати стан реклами.
-    <span className={`inline-flex self-start rounded-full px-3 py-1 text-xs font-semibold ${styles[status]}`}>
-      {labels[status]}
-    </span>
-  )
-}
-
 function FeedbackStatusBadge({ status }: { status: FeedbackMessage['status'] }) {
   const styles: Record<FeedbackMessage['status'], string> = {
     new: 'bg-[rgba(245,158,11,0.14)] text-[#b45309]',
@@ -1456,52 +1204,6 @@ function FeedbackStatusBadge({ status }: { status: FeedbackMessage['status'] }) 
       {labels[status]}
     </span>
   )
-}
-
-function getPlacementLabel(placement: AdCampaign['placement']) {
-  const labels: Record<AdCampaign['placement'], string> = {
-    home: 'Головна сторінка',
-    listings: 'Сторінка оголошень',
-    sidebar: 'Боковий блок',
-    footer: 'Нижній блок',
-    mobile_sticky: 'Мобільний sticky-блок',
-  }
-
-  return labels[placement]
-}
-
-function getGeoTargetLabel(campaign: AdCampaign) {
-  // Перетворюємо структуру гео-полів у короткий і зрозумілий підпис.
-  if (campaign.geo_scope === 'global') {
-    return 'Весь світ'
-  }
-
-  if (campaign.geo_scope === 'country') {
-    return campaign.country_name || 'Одна країна'
-  }
-
-  if (campaign.geo_scope === 'region') {
-    return `${campaign.region_name || 'Регіон'} / ${campaign.country_name || 'Країна'}`
-  }
-
-  return `${campaign.city_name || 'Місто'} / ${campaign.country_name || 'Країна'}`
-}
-
-function getCampaignPeriodLabel(campaign: AdCampaign) {
-  // Акуратно формуємо людський підпис періоду кампанії.
-  if (!campaign.starts_at && !campaign.ends_at) {
-    return 'Без обмеження'
-  }
-
-  if (campaign.starts_at && !campaign.ends_at) {
-    return `з ${new Date(campaign.starts_at).toLocaleString()}`
-  }
-
-  if (!campaign.starts_at && campaign.ends_at) {
-    return `до ${new Date(campaign.ends_at).toLocaleString()}`
-  }
-
-  return `${new Date(campaign.starts_at as string).toLocaleString()} - ${new Date(campaign.ends_at as string).toLocaleString()}`
 }
 
 function getListingStatusLabel(status: RecentListing['status']) {

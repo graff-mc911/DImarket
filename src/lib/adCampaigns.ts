@@ -310,12 +310,23 @@ export function pickMobileCampaign(
       ? `${page}_mob_inline_1`
       : `${page}_mob_inline_${inlineIndex}`
 
-  const picked = pickCampaignForSlot(campaigns as AdCampaignWithAdvertiser[], slotId)
+  const list = campaigns as AdCampaignWithAdvertiser[]
+
+  const exact = list.find((c) => getCampaignPlacements(c).includes(slotId))
+  if (exact) return exact
+
+  if (variant === 'horizontal') {
+    const leaderboard = list.find((c) => getCampaignPlacements(c).includes('home_leaderboard'))
+    if (leaderboard) return leaderboard
+
+    const footer = list.find((c) => c.id === FOOTER_BANNER_CAMPAIGN_ID)
+    if (footer) return footer
+  }
+
+  const picked = pickCampaignForSlot(list, slotId)
   if (picked) return picked
 
   if (variant === 'horizontal') {
-    const footer = campaigns.find((c) => c.id === FOOTER_BANNER_CAMPAIGN_ID)
-    if (footer) return footer
     return pickCampaignByPlacement(campaigns, 'footer', 0) || pickCampaignByPlacement(campaigns, 'home', 1)
   }
   return (
