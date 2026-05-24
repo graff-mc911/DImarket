@@ -1,5 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server'
-
 const OG: Record<string, { title: string; description: string }> = {
   uk: {
     title: 'DImarket — Маркетплейс для будівництва та ремонту',
@@ -97,7 +95,7 @@ const OG: Record<string, { title: string; description: string }> = {
 
 const FALLBACK = 'en'
 
-function getLang(req: NextRequest): string {
+function getLang(req: Request): string {
   const al = req.headers.get('accept-language') || ''
   const codes = al
     .split(',')
@@ -124,9 +122,9 @@ function buildMeta(lang: string): string {
 <title>${title}</title>`
 }
 
-export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl
-  if (pathname !== '/') return NextResponse.next()
+export default async function middleware(req: Request) {
+  const { pathname } = new URL(req.url)
+  if (pathname !== '/') return
 
   const ua = (req.headers.get('user-agent') || '').toLowerCase()
   const isCrawler =
@@ -146,11 +144,11 @@ export async function middleware(req: NextRequest) {
     ua.includes('prerender') ||
     !ua.includes('mozilla')
 
-  if (!isCrawler) return NextResponse.next()
+  if (!isCrawler) return
 
   const indexUrl = new URL('/index.html', req.url)
   const res = await fetch(indexUrl.toString())
-  if (!res.ok) return NextResponse.next()
+  if (!res.ok) return
 
   let html = await res.text()
   const lang = getLang(req)
@@ -168,7 +166,7 @@ export async function middleware(req: NextRequest) {
     headers: {
       'content-type': 'text/html; charset=utf-8',
       'cache-control': 'public, s-maxage=300, stale-while-revalidate=600',
-      'vary': 'Accept-Language',
+      vary: 'Accept-Language',
     },
   })
 }
