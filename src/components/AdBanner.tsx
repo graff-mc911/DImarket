@@ -90,12 +90,12 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
             campaign ? (
               <div
                 key={`${campaign.id}-${index}`}
-                className={`${adSlotTailwind.sideStackSlot} overflow-hidden`}
+                className={`${adSlotTailwind.sideStackSlot} flex flex-col items-stretch justify-start overflow-hidden`}
               >
                 <AdOverlayCard
                   campaign={campaign}
                   variant="stack"
-                  className="h-full w-full"
+                  className="h-auto w-full max-h-full"
                   showDescription
                 />
               </div>

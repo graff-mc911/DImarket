@@ -8,7 +8,7 @@ import {
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
 import { useApp } from '../contexts/AppContext'
-import { adSlotTailwind } from '../lib/adSlotLayout'
+import { AD_TEXT_PANEL_CLASS, adSlotTailwind } from '../lib/adSlotLayout'
 
 export const adOverlayGlow =
   'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_2px_8px_rgba(67,44,26,0.07)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_3px_12px_rgba(67,44,26,0.1)]'
@@ -44,36 +44,36 @@ const variantStyles: Record<
   }
 > = {
   stack: {
-    shell: 'flex h-full w-full max-h-full min-h-0 flex-col overflow-hidden',
+    shell: 'flex h-auto max-h-full w-full min-h-0 flex-col overflow-hidden',
     image: 'h-[4.25rem] w-full shrink-0',
-    text: 'p-1.5',
+    text: 'px-1.5 py-1',
     brand: 'text-[9px]',
-    title: 'text-[10px] line-clamp-2 leading-snug',
-    meta: 'text-[9px]',
+    title: 'text-[10px] line-clamp-1 leading-tight',
+    meta: 'text-[9px] line-clamp-1 leading-tight',
   },
   legacy: {
     shell: adSlotTailwind.sideLegacy,
     image: 'h-[7rem] w-full shrink-0',
-    text: 'p-2.5',
+    text: 'px-2 py-1',
     brand: 'text-[10px]',
-    title: 'text-base line-clamp-2',
-    meta: 'text-xs',
+    title: 'text-sm line-clamp-2 leading-tight',
+    meta: 'text-[10px] line-clamp-1 leading-tight',
   },
   'legacy-compact': {
     shell: adSlotTailwind.sideLegacyCompact,
     image: 'h-[3.75rem] w-full shrink-0',
-    text: 'p-2',
+    text: 'px-2 py-1',
     brand: 'text-[9px]',
-    title: 'text-sm line-clamp-2',
-    meta: 'text-[10px]',
+    title: 'text-xs line-clamp-2 leading-tight',
+    meta: 'text-[9px] line-clamp-1 leading-tight',
   },
   center: {
     shell: adSlotTailwind.center,
     image: 'h-[8.75rem] w-full shrink-0 md:h-[9.75rem]',
-    text: 'p-2.5',
+    text: 'px-2.5 py-1',
     brand: 'text-[10px]',
-    title: 'text-sm line-clamp-2',
-    meta: 'text-xs',
+    title: 'text-sm line-clamp-2 leading-tight',
+    meta: 'text-xs line-clamp-2 leading-tight',
   },
   'mobile-sticky': {
     shell: 'min-h-[72px] w-full',
@@ -86,10 +86,10 @@ const variantStyles: Record<
   'mobile-inline': {
     shell: adSlotTailwind.mobileInline,
     image: 'h-[4.25rem] w-full shrink-0',
-    text: 'p-2',
+    text: 'px-2 py-1',
     brand: 'text-[9px]',
-    title: 'text-xs line-clamp-2',
-    meta: 'text-[10px]',
+    title: 'text-xs line-clamp-2 leading-tight',
+    meta: 'text-[10px] line-clamp-1 leading-tight',
   },
   leaderboard: {
     shell: adSlotTailwind.leaderboard,
@@ -147,24 +147,31 @@ function AdTextContent({
   geo?: string | null
   styles: (typeof variantStyles)[AdOverlayVariant]
 }) {
+  const desc = description?.trim()
+
   return (
-    <div className="space-y-0.5">
+    <div className="space-y-0.5 leading-tight">
       {brand && (
-        <p className={`font-bold uppercase tracking-[0.1em] text-[var(--ink-500)] ${styles.brand}`}>
+        <p className={`font-bold uppercase tracking-[0.08em] text-[var(--ink-500)] ${styles.brand}`}>
           {brand}
         </p>
       )}
       {title && (
-        <h3 className={`font-extrabold leading-snug text-[var(--ink-900)] ${styles.title}`}>{title}</h3>
+        <h3 className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</h3>
       )}
-      {description && (
-        <p className={`line-clamp-2 leading-snug text-[var(--ink-700)] ${styles.meta}`}>
-          {description}
-        </p>
-      )}
-      {geo && <p className={`line-clamp-1 text-[var(--ink-500)] ${styles.meta}`}>{geo}</p>}
+      {desc && <p className={`text-[var(--ink-700)] ${styles.meta}`}>{desc}</p>}
+      {geo && <p className={`text-[var(--ink-500)] ${styles.meta}`}>{geo}</p>}
     </div>
   )
+}
+
+function hasAdTextBlock(
+  brand: string,
+  title: string,
+  description: string | null | undefined,
+  geo: string | null | undefined,
+): boolean {
+  return Boolean(brand || title || description?.trim() || geo)
 }
 
 export function AdOverlayCard({
@@ -178,9 +185,10 @@ export function AdOverlayCard({
   const { t } = useApp()
   const { brand, title } = resolveAdDisplayCopy(campaign)
   const styles = variantStyles[variant]
-  const isStack = variant === 'stack'
   const isLeaderboard = variant === 'leaderboard' || imageOnly
-  const showDesc = showDescription || isStack
+  const showDesc = showDescription && Boolean(campaign.description?.trim())
+  const geoLabel = showGeo ? getGeoTargetLabel(campaign, t) : null
+  const showText = hasAdTextBlock(brand, title, showDesc ? campaign.description : null, geoLabel)
 
   return (
     <a
@@ -196,15 +204,13 @@ export function AdOverlayCard({
         fillBanner={isLeaderboard}
       />
 
-      {!isLeaderboard && (
-        <div
-          className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-[rgba(255,252,248,0.98)] ${styles.text}`}
-        >
+      {!isLeaderboard && showText && (
+        <div className={`${AD_TEXT_PANEL_CLASS} ${styles.text}`}>
           <AdTextContent
             brand={brand}
             title={title}
             description={showDesc ? campaign.description : null}
-            geo={showGeo ? getGeoTargetLabel(campaign, t) : null}
+            geo={geoLabel}
             styles={styles}
           />
         </div>
@@ -245,7 +251,7 @@ export function AdOverlayPlaceholder({
       </div>
 
       {!isLeaderboard && (
-        <div className={`shrink-0 border-t border-[rgba(219,148,94,0.12)] ${styles.text}`}>
+        <div className={`${AD_TEXT_PANEL_CLASS} ${styles.text}`}>
           {isStack ? (
             <div className="min-w-0">
               <p className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</p>

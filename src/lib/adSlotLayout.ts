@@ -25,11 +25,15 @@ export const AD_MOBILE_INLINE_IMAGE_PX = 68
 export const AD_LEADERBOARD_MAX_PX = 300
 export const AD_LEADERBOARD_ASPECT = '4 / 1' as const
 
+/** Прозора панель тексту під зображенням — висота лише за вмістом */
+export const AD_TEXT_PANEL_CLASS =
+  'shrink-0 border-t border-[rgba(219,148,94,0.12)] bg-transparent'
+
 export const adSlotTailwind = {
   sideStackSlot: 'h-[9.25rem] w-full shrink-0',
-  sideLegacy: 'min-h-[12.375rem] w-[90%] max-w-full mx-auto',
-  sideLegacyCompact: 'min-h-[6.75rem] w-[90%] max-w-full mx-auto',
-  center: 'min-h-[13.75rem] w-full max-w-full md:min-h-[15.5rem]',
-  mobileInline: 'min-h-[6.75rem] w-full',
+  sideLegacy: 'h-auto w-[90%] max-w-full mx-auto',
+  sideLegacyCompact: 'h-auto w-[90%] max-w-full mx-auto',
+  center: 'h-auto w-full max-w-full',
+  mobileInline: 'h-auto w-full',
   leaderboard: 'aspect-[4/1] w-full max-h-[300px] min-h-[4.5rem]',
 } as const
