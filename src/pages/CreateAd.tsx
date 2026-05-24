@@ -252,7 +252,7 @@ export function CreateAd() {
               </div>
 
               <div className="mt-6">
-                <MobileAdBanner variant="horizontal" />
+                <MobileAdBanner variant="horizontal" page="default" />
               </div>
 
               {error && (
@@ -555,7 +555,7 @@ export function CreateAd() {
                 </section>
 
                 <div>
-                  <MobileAdBanner variant="inline" />
+                  <MobileAdBanner variant="inline" page="default" inlineIndex={2} />
                 </div>
 
                 <button

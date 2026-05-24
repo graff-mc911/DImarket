@@ -1,13 +1,14 @@
 import type { ReactNode } from 'react'
 import { AdBanner } from './AdBanner'
 
-export type SideAdsPage = 'home' | 'listings' | 'default'
+export type SideAdsPage = 'home' | 'listings' | 'professionals' | 'default'
 
 const SIDE_STACK_COUNT = 4
 
 export function adPageForPath(path: string): SideAdsPage {
   if (path === '/') return 'home'
   if (path === '/listings' || path === '/vacancies' || path === '/sell-rent') return 'listings'
+  if (path === '/professionals') return 'professionals'
   return 'default'
 }
 

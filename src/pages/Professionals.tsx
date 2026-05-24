@@ -266,7 +266,7 @@ export function Professionals() {
             </section>
 
             <div className="mb-4">
-              <MobileAdBanner variant="horizontal" />
+              <MobileAdBanner variant="horizontal" page="professionals" />
             </div>
 
             <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-[#6f665d]">
@@ -290,7 +290,7 @@ export function Professionals() {
 
                     {(index + 1) % 6 === 0 && index < filteredProfessionals.length - 1 && (
                       <div className="mt-6">
-                        <MobileAdBanner variant="inline" />
+                        <MobileAdBanner variant="inline" page="professionals" inlineIndex={1} />
                       </div>
                     )}
                   </div>
@@ -324,7 +324,7 @@ export function Professionals() {
             )}
 
             <div className="mt-8">
-              <MobileAdBanner variant="inline" />
+              <MobileAdBanner variant="inline" page="professionals" inlineIndex={2} />
             </div>
     </div>
   )

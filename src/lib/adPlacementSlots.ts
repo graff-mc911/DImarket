@@ -35,15 +35,19 @@ export function mobileInlineSlotId(page: AdPageKey, index: InlineIndex): string 
   return `${page}_mob_inline_${index}`
 }
 
-export function pageKeyFromSideAdsPage(page?: 'home' | 'listings' | 'default'): AdPageKey {
+export function pageKeyFromSideAdsPage(
+  page?: 'home' | 'listings' | 'professionals' | 'default',
+): AdPageKey {
   if (page === 'home') return 'home'
   if (page === 'listings') return 'listings'
+  if (page === 'professionals') return 'professionals'
   return 'default'
 }
 
-export function pageKeyFromMobilePage(page?: 'home' | 'listings'): AdPageKey {
+export function pageKeyFromMobilePage(page?: 'home' | 'listings' | 'professionals' | 'default'): AdPageKey {
   if (page === 'home') return 'home'
   if (page === 'listings') return 'listings'
+  if (page === 'professionals') return 'professionals'
   return 'default'
 }
 
@@ -177,7 +181,7 @@ export function expandLegacyPlacements(legacy: string[]): string[] {
         out.add(centerSlotId(page))
       }
       if (tag === 'mobile_sticky') {
-        out.add(mobileStickySlotId(page))
+        out.add(mobileInlineSlotId(page, 1))
         for (const i of INLINE_INDEXES) out.add(mobileInlineSlotId(page, i))
       }
     }

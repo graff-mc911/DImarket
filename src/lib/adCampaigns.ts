@@ -235,7 +235,7 @@ export function pickCampaignsForSideStack(
   all: AdCampaignWithAdvertiser[],
   position: 'left' | 'right',
   count: number,
-  page?: 'home' | 'listings' | 'default',
+  page?: 'home' | 'listings' | 'professionals' | 'default',
 ): AdCampaignWithAdvertiser[] {
   if (all.length === 0 || count <= 0) return []
 

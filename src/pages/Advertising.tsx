@@ -35,6 +35,8 @@ import { useApp }      from '../contexts/AppContext'
 import { AdCampaign }  from '../lib/types'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
 import { AdPlacementPicker } from '../components/AdPlacementPicker'
+import { AdPlacementSitePreview } from '../components/AdPlacementSitePreview'
+import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
 import { AdCampaignDraftPreview, AdCopyField } from '../components/AdCopyFields'
 import {
   billingCityUnits,
@@ -51,6 +53,7 @@ import {
   formatSlotLabel,
   sideSlotId,
   slotToLegacyPlacement,
+  type AdPageKey,
 } from '../lib/adPlacementSlots'
 
 // ── Типи ──────────────────────────────────────────────────────────────────────
@@ -84,6 +87,11 @@ export function Advertising() {
 
   // Гранульовані слоти показу (мінімум один)
   const [selectedSlots, setSelectedSlots] = useState<string[]>([sideSlotId('home', 'right', 1)])
+  const [placementPreviewPage, setPlacementPreviewPage] = useState<AdPageKey>('home')
+
+  const handleSlotsChange = useCallback((slots: string[]) => {
+    setSelectedSlots(sanitizeSlotsForPurchase(slots))
+  }, [])
 
   // Геотаргетинг
   const [geoMode, setGeoMode]                   = useState<GeoMode>('global')
@@ -465,8 +473,24 @@ export function Advertising() {
                 <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.placementsSection.title')}</h2>
                 <p className="mt-1 text-sm leading-6 text-[#6f665d]">{t('advertising.placementsSection.desc')}</p>
               </div>
-              <div className="mt-5">
-                <AdPlacementPicker selected={selectedSlots} onChange={setSelectedSlots} />
+              <div className="mt-5 space-y-6">
+                <div className="rounded-[22px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-4 md:p-5">
+                  <h3 className="text-sm font-extrabold text-[#2f2a24]">{t('advertising.catalog.previewTitle')}</h3>
+                  <p className="mt-1 text-xs leading-5 text-[#6f665d]">{t('advertising.catalog.previewDesc')}</p>
+                  <div className="mt-4">
+                    <AdPlacementSitePreview
+                      selected={selectedSlots}
+                      page={placementPreviewPage}
+                      onPageChange={setPlacementPreviewPage}
+                    />
+                  </div>
+                </div>
+                <AdPlacementPicker
+                  selected={selectedSlots}
+                  onChange={handleSlotsChange}
+                  previewPage={placementPreviewPage}
+                  onPreviewPageChange={setPlacementPreviewPage}
+                />
               </div>
             </div>
 

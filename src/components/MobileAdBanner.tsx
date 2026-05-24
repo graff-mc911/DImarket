@@ -9,15 +9,16 @@ import { navigateTo } from '../lib/navigation'
 
 interface MobileAdBannerProps {
   variant: 'inline' | 'horizontal'
-  page?: 'home' | 'listings'
+  page?: 'home' | 'listings' | 'professionals' | 'default'
   /** Слот 1–4 між картками / секціями (лише inline) */
   inlineIndex?: InlineIndex
 }
 
-function mobileSlots(page?: 'home' | 'listings'): AdPlacement[] {
+function mobileSlots(page?: 'home' | 'listings' | 'professionals' | 'default'): AdPlacement[] {
   if (page === 'home') return ['home', 'sidebar', 'listings']
   if (page === 'listings') return ['listings', 'home', 'sidebar']
-  return ['home', 'listings', 'sidebar']
+  if (page === 'professionals') return ['listings', 'sidebar', 'home']
+  return ['sidebar', 'home', 'listings']
 }
 
 export function MobileAdBanner({ variant, page, inlineIndex = 1 }: MobileAdBannerProps) {

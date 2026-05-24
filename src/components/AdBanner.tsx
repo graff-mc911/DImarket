@@ -12,11 +12,11 @@ import { navigateTo } from '../lib/navigation'
 interface AdBannerProps {
   position: 'left' | 'right'
   sticky?: boolean
-  page?: 'home' | 'listings' | 'default'
+  page?: 'home' | 'listings' | 'professionals' | 'default'
   stackCount?: number
 }
 
-function slotsForPage(page?: 'home' | 'listings' | 'default'): AdPlacement[] {
+function slotsForPage(page?: 'home' | 'listings' | 'professionals' | 'default'): AdPlacement[] {
   if (page === 'home') return ['home', 'sidebar', 'footer']
   if (page === 'listings') return ['listings', 'sidebar', 'home']
   return ['sidebar', 'home', 'listings', 'footer']
