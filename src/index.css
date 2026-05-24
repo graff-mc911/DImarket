@@ -168,8 +168,7 @@
   }
 
   @media (min-width: 1024px) {
-    .layout-with-side-ads > .ad-side-rail:first-of-type,
-    .layout-with-side-ads > .layout-side-rail-spacer:first-child {
+    .layout-with-side-ads > .ad-side-rail:first-of-type {
       grid-column: 1;
     }
 
@@ -177,8 +176,7 @@
       grid-column: 2;
     }
 
-    .layout-with-side-ads > .ad-side-rail:last-of-type,
-    .layout-with-side-ads > .layout-side-rail-spacer:last-child {
+    .layout-with-side-ads > .ad-side-rail:last-of-type {
       grid-column: 3;
     }
   }
@@ -187,19 +185,6 @@
   .layout-page-content {
     min-width: 0;
     width: 100%;
-  }
-
-  /** Порожній стовпець під ширину бокової реклами — шапка/футер вирівнюються з контентом */
-  .layout-side-rail-spacer {
-    display: none;
-    min-width: 0;
-    width: 100%;
-  }
-
-  @media (min-width: 1024px) {
-    .layout-side-rail-spacer {
-      display: block;
-    }
   }
 
   .layout-page-gutter {

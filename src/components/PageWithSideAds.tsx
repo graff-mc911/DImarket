@@ -37,31 +37,6 @@ interface PageWithSideAdsProps {
   showSideAds?: boolean
 }
 
-/** Шапка/футер: та сама сітка gutter + центр, без рекламних блоків */
-export function LayoutChrome({
-  children,
-  path,
-  className = '',
-}: {
-  children: ReactNode
-  path: string
-  className?: string
-}) {
-  const withRails = pathUsesSideAdRails(path)
-
-  if (!withRails) {
-    return <div className={`layout-page-gutter min-w-0 ${className}`.trim()}>{children}</div>
-  }
-
-  return (
-    <div className={`layout-with-side-ads ${className}`.trim()}>
-      <div aria-hidden className="layout-side-rail-spacer" />
-      <div className="layout-with-side-ads__main">{children}</div>
-      <div aria-hidden className="layout-side-rail-spacer" />
-    </div>
-  )
-}
-
 export function PageWithSideAds({
   children,
   page = 'default',

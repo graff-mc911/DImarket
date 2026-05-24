@@ -38,7 +38,6 @@ import {
   headerCategoryLabel,
 } from '../lib/siteCategories'
 import { Logo }        from './Logo'
-import { LayoutChrome } from './PageWithSideAds'
 
 interface NavItem {
   label: string
@@ -302,32 +301,30 @@ export function Header() {
             className="w-full py-1.5"
             style={{ background: style.bg, borderBottom: '1px solid ' + style.border }}
           >
-            <LayoutChrome path={currentPath}>
+            <div className="layout-page-gutter">
               <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <Bell className="h-4 w-4 shrink-0" style={{ color: style.color }} />
-                <p className="text-sm font-semibold" style={{ color: style.color }}>
-                  {announcement!.message}
-                </p>
+                <div className="flex items-center gap-2">
+                  <Bell className="h-4 w-4 shrink-0" style={{ color: style.color }} />
+                  <p className="text-sm font-semibold" style={{ color: style.color }}>
+                    {announcement!.message}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setBannerDismissed(true)}
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition hover:scale-110"
+                  style={{ background: 'rgba(0,0,0,0.08)' }}
+                >
+                  <X className="h-3.5 w-3.5" style={{ color: style.color }} />
+                </button>
               </div>
-              {/* Кнопка закрити банер */}
-              <button
-                type="button"
-                onClick={() => setBannerDismissed(true)}
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition hover:scale-110"
-                style={{ background: 'rgba(0,0,0,0.08)' }}
-              >
-                <X className="h-3.5 w-3.5" style={{ color: style.color }} />
-              </button>
-              </div>
-            </LayoutChrome>
+            </div>
           </div>
         )
       })()}
 
       {/* ===== Основна шапка (фіксована) ===== */}
-      <header className="w-full pb-2 pt-2">
-        <LayoutChrome path={currentPath}>
+      <header className="layout-page-gutter w-full pb-2 pt-2">
         <div className="w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl">
           <div className="px-3 py-2 md:px-4 md:py-2.5">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
@@ -815,7 +812,6 @@ export function Header() {
             </div>
           )}
         </div>
-        </LayoutChrome>
       </header>
       </div>
 
