@@ -8,7 +8,7 @@ import { AppProvider }         from './contexts/AppContext'
 import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
-import { PageWithSideAds, adPageForPath } from './components/PageWithSideAds'
+import { PageWithSideAds, adPageForPath, pathUsesSideAdRails } from './components/PageWithSideAds'
 
 // --- Публічні сторінки ---
 import { Home }               from './pages/Home'
@@ -80,7 +80,9 @@ function App() {
         <div className="app-shell min-h-screen flex flex-col">
           <Header />
           <main className="flex-1">
-            <PageWithSideAds page={adPageForPath(path)}>{getPage()}</PageWithSideAds>
+            <PageWithSideAds page={adPageForPath(path)} showSideAds={pathUsesSideAdRails(path)}>
+              {getPage()}
+            </PageWithSideAds>
           </main>
           <Footer />
         </div>

@@ -11,7 +11,6 @@ import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './yout
 import type { AdCampaign } from './types'
 import { isGranularSlotId } from './adPlacementCatalog'
 import { getSlotLegacyTags } from './adPlacementSlots'
-import { isOwnerManagedCampaign } from './ownerAdCampaign'
 import type { TranslationKey } from './i18n'
 
 export type AdPlacement =
@@ -69,26 +68,6 @@ const SLOT_FALLBACKS: Partial<Record<AdPlacement, AdPlacement[]>> = {
   footer: ['footer', 'sidebar', 'home', 'listings'],
 }
 
-/** Мобільний inline-слот на тій самій сторінці (для показу в бокових колонках на desktop) */
-function ownerMobileSlotForPage(pageKey: AdPageKey): string {
-  return `${pageKey}_mob_inline_1`
-}
-
-function campaignMatchesOwnerMobileOnDesktop(
-  campaign: AdCampaign,
-  slot: string,
-  pageKey: AdPageKey,
-): boolean {
-  if (!isOwnerManagedCampaign(campaign)) return false
-  const placements = getCampaignPlacements(campaign)
-  const mobileLeader = ownerMobileSlotForPage(pageKey)
-  if (!placements.includes(mobileLeader)) return false
-  if (slot === mobileLeader || slot === centerSlotId(pageKey)) return true
-  if (slot.includes('_side_') && slot.startsWith(`${pageKey}_`)) return true
-  if (placements.includes('home_leaderboard') && slot.includes('_mob_inline_')) return true
-  return false
-}
-
 export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement | string): boolean {
   const placements = getCampaignPlacements(campaign)
   if (placements.includes(slot)) return true
@@ -96,16 +75,7 @@ export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement | st
   const slotIsGranular = typeof slot === 'string' && isGranularSlotId(slot)
   const campaignGranular = campaignUsesGranularPlacements(campaign)
 
-  if (typeof slot === 'string' && slot.includes('_')) {
-    const pageKey = (['home', 'listings', 'professionals', 'default'] as AdPageKey[]).find((p) =>
-      slot.startsWith(`${p}_`),
-    )
-    if (pageKey && campaignMatchesOwnerMobileOnDesktop(campaign, slot, pageKey)) {
-      return true
-    }
-  }
-
-  /** Кампанія з точними слотами — лише exact match (і owner-bridge вище) */
+  /** Кампанія з точними слотами — лише exact match */
   if (campaignGranular) {
     return false
   }
@@ -268,16 +238,7 @@ export function pickCampaignsForSideStack(
 
   for (let i = 0; i < count; i++) {
     const slotId = sideSlotId(pageKey, side, (i + 1) as SideIndex)
-    let picked = pickCampaignForSlot(pool(), slotId)
-
-    if (!picked && i === 0) {
-      picked =
-        pool().find(
-          (c) =>
-            isOwnerManagedCampaign(c) &&
-            getCampaignPlacements(c).includes(ownerMobileSlotForPage(pageKey)),
-        ) ?? null
-    }
+    const picked = pickCampaignForSlot(pool(), slotId)
 
     if (picked) {
       out.push(picked)
@@ -296,18 +257,6 @@ export function pickCenterHeroCampaign(
   if (all.length === 0) return null
 
   const centerId = centerSlotId(page)
-  const ownerCenter = all.find(
-    (c) => isOwnerManagedCampaign(c) && getCampaignPlacements(c).includes(centerId),
-  )
-  if (ownerCenter) return ownerCenter
-
-  const ownerMobileLeader = all.find(
-    (c) =>
-      isOwnerManagedCampaign(c) &&
-      getCampaignPlacements(c).includes(ownerMobileSlotForPage(page)),
-  )
-  if (ownerMobileLeader) return ownerMobileLeader
-
   const slotPick = pickCampaignForSlot(all, centerId)
   if (slotPick) return slotPick
 

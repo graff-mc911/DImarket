@@ -482,6 +482,9 @@ export function Advertising() {
                       selected={selectedSlots}
                       page={placementPreviewPage}
                       onPageChange={setPlacementPreviewPage}
+                      draftMediaUrl={
+                        uploadState.status === 'done' && mediaUrl.trim() ? mediaUrl.trim() : null
+                      }
                     />
                   </div>
                 </div>

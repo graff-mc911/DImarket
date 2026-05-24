@@ -9,22 +9,28 @@ type AdPlacementSitePreviewProps = {
   selected: string[]
   page?: AdPageKey
   onPageChange?: (page: AdPageKey) => void
+  /** Мініатюра чернетки в обраних слотах (сторінка /advertising) */
+  draftMediaUrl?: string | null
 }
 
 function SlotBox({
   active,
   label,
   className = '',
+  draftMediaUrl,
 }: {
   active: boolean
   label: string
   className?: string
+  draftMediaUrl?: string | null
 }) {
+  const showDraft = active && draftMediaUrl
+
   return (
     <div
       title={label}
       className={
-        'flex min-h-[28px] items-center justify-center rounded-md border px-1 text-center text-[9px] font-bold leading-tight transition ' +
+        'relative flex min-h-[28px] items-center justify-center overflow-hidden rounded-md border px-1 text-center text-[9px] font-bold leading-tight transition ' +
         (active
           ? 'border-[rgba(99,102,241,0.55)] bg-[rgba(99,102,241,0.22)] text-[#312e81] shadow-[0_0_0_1px_rgba(99,102,241,0.2)]'
           : 'border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.45)] text-[#7a7168]') +
@@ -32,7 +38,14 @@ function SlotBox({
         className
       }
     >
-      {label}
+      {showDraft ? (
+        <>
+          <img src={draftMediaUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-90" />
+          <span className="relative z-[1] rounded bg-black/45 px-1 py-0.5 text-[8px] text-white">{label}</span>
+        </>
+      ) : (
+        label
+      )}
     </div>
   )
 }
@@ -41,10 +54,12 @@ function DesktopWireframe({
   page,
   selected,
   t,
+  draftMediaUrl,
 }: {
   page: AdPageKey
   selected: string[]
   t: (key: TranslationKey) => string
+  draftMediaUrl?: string | null
 }) {
   const group = slotGroupsForPurchasePicker().find((g) => g.page === page)!
   const isActive = (id: string) => selected.includes(id)
@@ -62,7 +77,7 @@ function DesktopWireframe({
       <div className="grid grid-cols-[52px_1fr_52px] gap-1.5">
         <div className="grid grid-rows-4 gap-1">
           {group.desktop.left.map((id) => (
-            <SlotBox key={id} active={isActive(id)} label={`L${short(id)}`} />
+            <SlotBox key={id} active={isActive(id)} label={`L${short(id)}`} draftMediaUrl={draftMediaUrl} />
           ))}
         </div>
         <div className="flex min-h-[140px] flex-col gap-1.5">
@@ -74,12 +89,13 @@ function DesktopWireframe({
               active={isActive(group.desktop.center)}
               label={t('advertising.slots.centerShort')}
               className="min-h-[36px]"
+              draftMediaUrl={draftMediaUrl}
             />
           )}
         </div>
         <div className="grid grid-rows-4 gap-1">
           {group.desktop.right.map((id) => (
-            <SlotBox key={id} active={isActive(id)} label={`R${short(id)}`} />
+            <SlotBox key={id} active={isActive(id)} label={`R${short(id)}`} draftMediaUrl={draftMediaUrl} />
           ))}
         </div>
       </div>
@@ -92,10 +108,12 @@ function MobileWireframe({
   page,
   selected,
   t,
+  draftMediaUrl,
 }: {
   page: AdPageKey
   selected: string[]
   t: (key: TranslationKey) => string
+  draftMediaUrl?: string | null
 }) {
   const group = slotGroupsForPurchasePicker().find((g) => g.page === page)!
   const isActive = (id: string) => selected.includes(id)
@@ -118,6 +136,7 @@ function MobileWireframe({
                 active={isActive(id)}
                 label={isLeader ? t('advertising.catalog.leaderboard') : `#${def?.row ?? i + 1}`}
                 className={isLeader ? 'min-h-[32px]' : 'min-h-[24px]'}
+                draftMediaUrl={draftMediaUrl}
               />
               {!isLeader && i < group.mobile.inline.length - 1 && (
                 <div className="my-0.5 rounded bg-[rgba(148,163,184,0.15)] px-1 py-1.5 text-center text-[8px] text-[#9a8776]">
@@ -136,6 +155,7 @@ export function AdPlacementSitePreview({
   selected,
   page: pageProp,
   onPageChange,
+  draftMediaUrl,
 }: AdPlacementSitePreviewProps) {
   const { t } = useApp()
   const groups = slotGroupsForPurchasePicker()
@@ -173,14 +193,14 @@ export function AdPlacementSitePreview({
             <Monitor className="h-4 w-4" />
             {t('advertising.slots.desktopTitle')}
           </div>
-          <DesktopWireframe page={page} selected={selected} t={t} />
+          <DesktopWireframe page={page} selected={selected} t={t} draftMediaUrl={draftMediaUrl} />
         </div>
         <div>
           <div className="mb-2 flex items-center gap-2 text-xs font-bold text-[#5f5a54]">
             <Smartphone className="h-4 w-4" />
             {t('advertising.slots.mobileTitle')}
           </div>
-          <MobileWireframe page={page} selected={selected} t={t} />
+          <MobileWireframe page={page} selected={selected} t={t} draftMediaUrl={draftMediaUrl} />
         </div>
       </div>
 
