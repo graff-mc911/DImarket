@@ -324,6 +324,46 @@ const GROUPS = [
       ['gazebos', 'Альтанки', 'Беседки', 'Gazebos'],
     ],
   },
+  {
+    slug: 'pools',
+    label: { uk: 'Басейни', ru: 'Бассейны', en: 'Pools' },
+    items: [
+      ['construction', 'Будівництво басейнів', 'Строительство бассейнов', 'Pool construction'],
+      ['repair', 'Ремонт басейнів', 'Ремонт бассейнов', 'Pool repair'],
+      ['maintenance', 'Обслуговування', 'Обслуживание', 'Pool maintenance'],
+    ],
+  },
+  {
+    slug: 'solar',
+    label: { uk: 'Сонячні системи', ru: 'Солнечные системы', en: 'Solar systems' },
+    items: [
+      ['panels', 'Сонячні панелі', 'Солнечные панели', 'Solar panels'],
+      ['inverters', 'Інвертори', 'Инверторы', 'Inverters'],
+      ['battery', 'Акумулятори', 'Аккумуляторы', 'Battery storage'],
+      ['installation', 'Монтаж', 'Монтаж', 'Installation'],
+    ],
+  },
+  {
+    slug: 'smart-home',
+    label: { uk: 'Розумний дім', ru: 'Умный дом', en: 'Smart home' },
+    items: [
+      ['systems', 'Розумний дім', 'Умный дом', 'Smart home'],
+      ['automation', 'Автоматизація', 'Автоматизация', 'Home automation'],
+      ['lighting', 'Контроль освітлення', 'Контроль освещения', 'Lighting control'],
+      ['security', 'Безпека', 'Безопасность', 'Smart security'],
+    ],
+  },
+  {
+    slug: 'design-engineering',
+    label: { uk: "Проектування / інженерія", ru: 'Проектирование / инженерия', en: 'Design / engineering' },
+    items: [
+      ['architect', 'Архітектор', 'Архитектор', 'Architect'],
+      ['structural', 'Статик', 'Статик', 'Structural engineer'],
+      ['interior', "Дизайн інтер'єру", 'Дизайн интерьера', 'Interior design'],
+      ['3d', '3D візуалізація', '3D визуализация', '3D visualization'],
+      ['engineering', 'Інженерія', 'Инженерия', 'Engineering'],
+    ],
+  },
 ]
 
 function esc(s) {

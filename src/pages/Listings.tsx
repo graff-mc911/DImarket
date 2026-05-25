@@ -29,6 +29,7 @@ import {
   type SiteCategorySlug,
 } from '../lib/siteCategories'
 import { ConstructionWorkTypesPanel } from '../components/ConstructionWorkTypesPanel'
+import { subcategorySlugsForGroup } from '../lib/categoryCatalog'
 
 // Типи оголошень для фільтру
 const LISTING_TYPES = [
@@ -78,6 +79,15 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
       setLocationQuery(params.get('location') || '')
       setSelectedCategory(fixedCategorySlug || params.get('category') || '')
       setSelectedType(params.get('type') || '')
+      const workGroup = params.get('work')
+      if (workGroup) {
+        const cat = fixedCategorySlug || params.get('category') || 'construction'
+        if (!fixedCategorySlug) setSelectedCategory(cat)
+        setSelectedSubcategories(subcategorySlugsForGroup(cat, workGroup))
+      } else {
+        const subs = params.getAll('sub').filter(Boolean)
+        setSelectedSubcategories(subs)
+      }
     }
 
     syncFiltersFromUrl()

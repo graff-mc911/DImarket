@@ -320,4 +320,44 @@ export const CONSTRUCTION_WORK_GROUPS: SubcategoryGroupDef[] = [
       { slug: 'landscaping-gazebos', label: { uk: 'Альтанки', ru: 'Беседки', en: 'Gazebos' } },
     ],
   },
+  {
+    slug: 'pools',
+    label: { uk: 'Басейни', ru: 'Бассейны', en: 'Pools' },
+    subcategories: [
+      { slug: 'pools-construction', label: { uk: 'Будівництво басейнів', ru: 'Строительство бассейнов', en: 'Pool construction' } },
+      { slug: 'pools-repair', label: { uk: 'Ремонт басейнів', ru: 'Ремонт бассейнов', en: 'Pool repair' } },
+      { slug: 'pools-maintenance', label: { uk: 'Обслуговування', ru: 'Обслуживание', en: 'Pool maintenance' } },
+    ],
+  },
+  {
+    slug: 'solar',
+    label: { uk: 'Сонячні системи', ru: 'Солнечные системы', en: 'Solar systems' },
+    subcategories: [
+      { slug: 'solar-panels', label: { uk: 'Сонячні панелі', ru: 'Солнечные панели', en: 'Solar panels' } },
+      { slug: 'solar-inverters', label: { uk: 'Інвертори', ru: 'Инверторы', en: 'Inverters' } },
+      { slug: 'solar-battery', label: { uk: 'Акумулятори', ru: 'Аккумуляторы', en: 'Battery storage' } },
+      { slug: 'solar-installation', label: { uk: 'Монтаж', ru: 'Монтаж', en: 'Installation' } },
+    ],
+  },
+  {
+    slug: 'smart-home',
+    label: { uk: 'Розумний дім', ru: 'Умный дом', en: 'Smart home' },
+    subcategories: [
+      { slug: 'smart-home-systems', label: { uk: 'Розумний дім', ru: 'Умный дом', en: 'Smart home' } },
+      { slug: 'smart-home-automation', label: { uk: 'Автоматизація', ru: 'Автоматизация', en: 'Home automation' } },
+      { slug: 'smart-home-lighting', label: { uk: 'Контроль освітлення', ru: 'Контроль освещения', en: 'Lighting control' } },
+      { slug: 'smart-home-security', label: { uk: 'Безпека', ru: 'Безопасность', en: 'Smart security' } },
+    ],
+  },
+  {
+    slug: 'design-engineering',
+    label: { uk: 'Проектування / інженерія', ru: 'Проектирование / инженерия', en: 'Design / engineering' },
+    subcategories: [
+      { slug: 'design-engineering-architect', label: { uk: 'Архітектор', ru: 'Архитектор', en: 'Architect' } },
+      { slug: 'design-engineering-structural', label: { uk: 'Статик', ru: 'Статик', en: 'Structural engineer' } },
+      { slug: 'design-engineering-interior', label: { uk: 'Дизайн інтер\'єру', ru: 'Дизайн интерьера', en: 'Interior design' } },
+      { slug: 'design-engineering-3d', label: { uk: '3D візуалізація', ru: '3D визуализация', en: '3D visualization' } },
+      { slug: 'design-engineering-engineering', label: { uk: 'Інженерія', ru: 'Инженерия', en: 'Engineering' } },
+    ],
+  },
 ]

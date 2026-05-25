@@ -25,6 +25,11 @@ import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import type { Category, ListingWithImages, Profile } from '../lib/types'
 import type { TranslationKey } from '../lib/i18n'
 import { buildDisplayCategories, categoryPagePath } from '../lib/siteCategories'
+import { groupLabel } from '../lib/categoryCatalog'
+import {
+  HOME_FEATURED_WORK_GROUPS,
+  homeFeaturedWorkPath,
+} from '../lib/homeFeaturedWorkTypes'
 
 interface PlatformStats {
   professionals: number
@@ -183,6 +188,16 @@ export function Home() {
                     {getCategoryName(category)}
                   </button>
                 ))}
+                {HOME_FEATURED_WORK_GROUPS.map((feat) => (
+                  <button
+                    key={feat.groupSlug}
+                    onClick={() => navigateTo(homeFeaturedWorkPath(feat.groupSlug))}
+                    type="button"
+                    className="rounded-full border border-[rgba(99,102,241,0.28)] bg-[rgba(99,102,241,0.08)] px-2.5 py-1 text-[11px] font-semibold text-[#4338ca] transition hover:bg-[rgba(99,102,241,0.14)]"
+                  >
+                    {groupLabel('construction', feat.groupSlug, language.code)}
+                  </button>
+                ))}
               </nav>
 
               <nav
@@ -303,6 +318,16 @@ export function Home() {
                   description={getCategoryDescription(category)}
                   icon={category.icon || '•'}
                   onClick={() => navigateTo(categoryPagePath(category.slug))}
+                />
+              ))}
+              {HOME_FEATURED_WORK_GROUPS.map((feat) => (
+                <CategoryCard
+                  key={feat.groupSlug}
+                  name={groupLabel('construction', feat.groupSlug, language.code)}
+                  description={t(feat.descriptionKey)}
+                  icon={feat.icon}
+                  onClick={() => navigateTo(homeFeaturedWorkPath(feat.groupSlug))}
+                  accent="indigo"
                 />
               ))}
             </div>
@@ -456,19 +481,28 @@ function CategoryCard({
   description,
   icon,
   onClick,
+  accent = 'default',
 }: {
   name: string
   description: string
   icon: string
   onClick: () => void
+  accent?: 'default' | 'indigo'
 }) {
+  const iconWrapClass =
+    accent === 'indigo'
+      ? 'border border-[rgba(99,102,241,0.22)] bg-[rgba(99,102,241,0.08)] text-[#4338ca]'
+      : 'border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] text-[var(--accent-700)]'
+
   return (
     <button
       type="button"
       onClick={onClick}
       className="glass-card group flex w-full items-center gap-3 p-3 text-left transition duration-300 hover:-translate-y-0.5"
     >
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] text-base text-[var(--accent-700)]">
+      <div
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px] text-base ${iconWrapClass}`}
+      >
         {icon}
       </div>
       <div className="min-w-0 flex-1">

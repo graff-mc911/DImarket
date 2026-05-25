@@ -229,6 +229,11 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.workSubcategoriesHint':
     'Допомагає клієнтам знайти вас. Можна обрати одну або кілька підкатегорій.',
 
+  'home.featuredWork.poolsDesc': 'Будівництво, ремонт і обслуговування басейнів',
+  'home.featuredWork.solarDesc': 'Сонячні панелі, інвертори, акумулятори, монтаж',
+  'home.featuredWork.smartHomeDesc': 'Автоматизація, освітлення та безпека',
+  'home.featuredWork.designDesc': 'Архітектура, статика, інтерʼєр, 3D, інженерія',
+
   // Listing Card
   'listing.serviceNeeded': 'Потрібна послуга',
   'listing.serviceOffered': 'Пропоную послугу',

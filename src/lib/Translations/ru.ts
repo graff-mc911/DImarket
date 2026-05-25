@@ -231,6 +231,11 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.workSubcategoriesHint':
     'Помогает клиентам найти вас. Можно выбрать одну или несколько подкатегорий.',
 
+  'home.featuredWork.poolsDesc': 'Строительство, ремонт и обслуживание бассейнов',
+  'home.featuredWork.solarDesc': 'Солнечные панели, инверторы, аккумуляторы, монтаж',
+  'home.featuredWork.smartHomeDesc': 'Автоматизация, освещение и безопасность',
+  'home.featuredWork.designDesc': 'Архитектура, статика, интерьер, 3D, инженерия',
+
   // Listing Card
   'listing.serviceNeeded': 'Потрибна послуга',
   'listing.serviceOffered': 'Пропоную послугу',

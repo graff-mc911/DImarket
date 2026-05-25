@@ -227,6 +227,11 @@ export const enTranslations = {
   'settings.workSubcategoriesHint':
     'Helps clients find you. You can pick one or several subcategories.',
 
+  'home.featuredWork.poolsDesc': 'Pool construction, repair, and maintenance',
+  'home.featuredWork.solarDesc': 'Solar panels, inverters, batteries, installation',
+  'home.featuredWork.smartHomeDesc': 'Automation, lighting, and smart security',
+  'home.featuredWork.designDesc': 'Architecture, structural design, interiors, 3D',
+
   // Картка оголошення: тип, ціна, перегляди, статус premium.
   'listing.serviceNeeded': 'Service Needed',
   'listing.serviceOffered': 'Service Offered',
