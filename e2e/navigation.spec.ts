@@ -24,8 +24,8 @@ test.describe('Навігація з шапки', () => {
 
   test('центральне меню (desktop) — реклама та контакт', async ({ page, viewport }) => {
     test.skip(
-      (viewport?.width ?? 0) < 1024,
-      'Центральне меню видно лише на lg+',
+      (viewport?.width ?? 0) < 1280,
+      'Центральне меню видно лише на xl+',
     )
 
     const header = page.locator('header')

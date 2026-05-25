@@ -16,6 +16,7 @@ import {
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { VerificationAdminPanel } from '../components/verification/VerificationAdminPanel'
 import { AdCampaign, Announcement, FeedbackMessage, Message, Profile } from '../lib/types'
 import { isSiteOwner } from '../lib/siteOwner'
 import { OwnerAdManager } from '../components/OwnerAdManager'
@@ -504,6 +505,14 @@ export function Dashboard() {
                   {notice}
                 </div>
               )}
+
+              <div className="mb-8 rounded-[22px] border border-[var(--glass-border)] bg-white/50 p-5">
+                <h2 className="text-lg font-extrabold text-[#2f2a24]">Верифікація підрядників</h2>
+                <p className="mt-1 text-sm text-[#6f665d]">Заявки на перевірку документів</p>
+                <div className="mt-4">
+                  <VerificationAdminPanel />
+                </div>
+              </div>
 
               {/* Верхній рядок ключових owner-метрик. */}
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

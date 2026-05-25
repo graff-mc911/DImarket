@@ -51,3 +51,9 @@ verify_jwt = true
 
 [functions.delete-account]
 verify_jwt = true
+
+[functions.ai-job-lead]
+verify_jwt = false
+
+[functions.marketplace-matching]
+verify_jwt = true

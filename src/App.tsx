@@ -38,6 +38,7 @@ import { AiAdmin } from './pages/AiAdmin'
 import { AiChatWidget } from './components/ai/AiChatWidget'
 import { Checkout }     from './pages/Checkout'
 import { BoostProfile } from './pages/BoostProfile'
+import { Verification } from './pages/Verification'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -84,6 +85,7 @@ function App() {
       case '/admin/ai':        return <AiAdmin />
       case '/checkout':      return <Checkout />      // 🆕 Після оплати Stripe
       case '/boost':         return <BoostProfile />  // 🆕 Просування профілю
+      case '/verification':  return <Verification />
       default:               return <Home />
     }
   }

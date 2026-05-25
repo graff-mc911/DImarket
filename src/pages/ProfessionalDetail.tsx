@@ -32,6 +32,7 @@ import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
 import type { Profile, Review } from '../lib/types'
+import { ReviewFormV2 } from '../components/reviews/ReviewFormV2'
 
 interface ProfessionalDetailProps {
   profileId: string
@@ -202,12 +203,9 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
   // Початок розмови з майстром
   const startConversation = () => {
     if (!user) { navigateTo('/login'); return }
-    // Генеруємо conversation_id на основі обох учасників
-    const convId = [user.id, profileId].sort().join('-')
-    navigateTo('/messages')
-    // Зберігаємо conversation_id щоб Messages відкрив потрібну розмову
-    sessionStorage.setItem('open_conversation', convId)
     sessionStorage.setItem('conversation_with', profileId)
+    sessionStorage.removeItem('open_conversation')
+    navigateTo('/messages')
   }
 
   // Рендер зірочок рейтингу
@@ -584,65 +582,24 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
                   )}
                 </div>
 
-                {/* Форма для відгуку (тільки для авторизованих) */}
-                {user && user.id !== profileId && (
+                {user && user.id !== profileId && !reviewSuccess && (
+                  <ReviewFormV2
+                    professionalId={profileId}
+                    onSuccess={() => {
+                      setReviewSuccess(true)
+                      void supabase
+                        .from('reviews')
+                        .select('*')
+                        .eq('professional_id', profileId)
+                        .order('created_at', { ascending: false })
+                        .then(({ data }) => setReviews(data || []))
+                    }}
+                  />
+                )}
+
+                {user && user.id !== profileId && reviewSuccess && (
                   <div className="glass-card p-6">
-                    <h2 className="mb-4 text-lg font-extrabold" style={{ color: 'var(--ink-900)' }}>
-                      Залишити відгук
-                    </h2>
-
-                    {reviewSuccess && (
-                      <div className="mb-4 rounded-[16px] p-3 text-sm font-semibold"
-                        style={{ background: 'rgba(34,197,94,0.12)', color: '#15803d' }}>
-                        Дякуємо! Ваш відгук збережено.
-                      </div>
-                    )}
-
-                    {reviewError && (
-                      <div className="mb-4 rounded-[16px] p-3 text-sm font-semibold"
-                        style={{ background: 'rgba(239,68,68,0.10)', color: '#b91c1c' }}>
-                        {reviewError}
-                      </div>
-                    )}
-
-                    <form onSubmit={submitReview} className="space-y-4">
-                      {/* Оцінка зірками */}
-                      <div>
-                        <label className="mb-2 block text-sm font-semibold" style={{ color: 'var(--ink-700)' }}>
-                          Ваша оцінка
-                        </label>
-                        {renderStars(reviewForm.rating, true, (r) =>
-                          setReviewForm(prev => ({ ...prev, rating: r }))
-                        )}
-                      </div>
-
-                      {/* Коментар */}
-                      <div>
-                        <label className="mb-2 block text-sm font-semibold" style={{ color: 'var(--ink-700)' }}>
-                          Коментар
-                        </label>
-                        <textarea
-                          value={reviewForm.comment}
-                          onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
-                          rows={4}
-                          placeholder="Розкажіть про ваш досвід роботи з цим майстром..."
-                          className="input-glass w-full resize-none"
-                          maxLength={1000}
-                        />
-                        <p className="mt-1 text-right text-xs" style={{ color: 'var(--ink-400)' }}>
-                          {reviewForm.comment.length}/1000
-                        </p>
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={submittingReview}
-                        className="btn-primary rounded-full disabled:opacity-50"
-                      >
-                        <Send className="h-4 w-4" />
-                        {submittingReview ? 'Збереження...' : 'Надіслати відгук'}
-                      </button>
-                    </form>
+                    <p className="text-sm font-semibold text-emerald-700">Дякуємо! Ваш відгук збережено.</p>
                   </div>
                 )}
 

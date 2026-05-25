@@ -1,6 +1,7 @@
 import { supabase } from '../supabase'
 import type { Listing } from '../types'
 import { buildDraftTitle, type JobRequestDraft } from './jobRequestDraft'
+import { runMatchingForListing } from '../matching/persistMatches'
 
 export type PublishJobRequestInput = {
   draft: JobRequestDraft
@@ -77,6 +78,13 @@ export async function publishJobRequestFromDraft(
     const { error: imagesError } = await supabase.from('listing_images').insert(imageInserts)
     if (imagesError) console.error('listing_images insert:', imagesError)
   }
+
+  const city = draft.location?.split(',')[0]?.trim()
+  void runMatchingForListing(listing.id, {
+    categorySlug: draft.categorySlug,
+    city,
+    language: undefined,
+  })
 
   return { ok: true, listing }
 }

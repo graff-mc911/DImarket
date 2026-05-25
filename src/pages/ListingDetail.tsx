@@ -31,6 +31,7 @@ import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
 import type { ListingWithImages, Profile } from '../lib/types'
+import { ContractorMatches } from '../components/matching/ContractorMatches'
 
 interface ListingDetailProps {
   listingId: string
@@ -141,11 +142,9 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
     if (!user) { navigateTo('/login'); return }
     if (!listing?.author_id) return
 
-    // Зберігаємо дані для сторінки Messages
-    const convId = [user.id, listing.author_id].sort().join('-')
-    sessionStorage.setItem('open_conversation', convId)
     sessionStorage.setItem('conversation_with', listing.author_id)
     sessionStorage.setItem('conversation_listing', listingId)
+    sessionStorage.removeItem('open_conversation')
     navigateTo('/messages')
   }
 
@@ -373,6 +372,11 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
                   <p className="muted-text whitespace-pre-wrap leading-relaxed text-sm">
                     {listing.description}
                   </p>
+
+                  {listing.listing_type === 'service_request' &&
+                    user?.id === listing.author_id && (
+                      <ContractorMatches listingId={listing.id} />
+                    )}
 
                   {/* Термін і перегляди */}
                   <div

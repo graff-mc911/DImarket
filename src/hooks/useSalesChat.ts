@@ -8,6 +8,13 @@ import {
   type SalesBotStep,
 } from '../lib/ai/jobRequestDraft'
 import { publishJobRequestFromDraft, validateJobRequestDraft } from '../lib/ai/publishJobRequest'
+import {
+  appendJobLeadMessage,
+  createJobLeadSession,
+  recordPublishedJob,
+  updateJobLeadDraft,
+} from '../lib/ai/jobLeadSession'
+import { buildDraftTitle } from '../lib/ai/jobRequestDraft'
 import { getInitialTurn, type SalesBotMessage } from '../lib/ai/salesBotEngine'
 import { runSalesChatTurn } from '../lib/ai/salesBotApi'
 import type { Category } from '../lib/types'
@@ -53,6 +60,7 @@ export function useSalesChat() {
   const [listingId, setListingId] = useState<string | null>(null)
   const [quickReplies, setQuickReplies] = useState<string[]>([])
   const initialized = useRef(false)
+  const sessionIdRef = useRef<string | null>(null)
 
   const salesCategories = useMemo(
     () => categories.filter((c) => !JOB_CATEGORY_BLOCKLIST.has(c.slug)),
@@ -141,6 +149,13 @@ export function useSalesChat() {
       setLoading(true)
       setQuickReplies([])
 
+      if (user && !sessionIdRef.current) {
+        sessionIdRef.current = await createJobLeadSession(user.id, language.code)
+      }
+      if (sessionIdRef.current) {
+        await appendJobLeadMessage(sessionIdRef.current, 'user', trimmed)
+      }
+
       try {
         const turn = await runSalesChatTurn({
           message: trimmed,
@@ -184,6 +199,17 @@ export function useSalesChat() {
           }
 
           setListingId(result.listing.id)
+          if (sessionIdRef.current) {
+            const title = buildDraftTitle(turn.draft, catLabel)
+            await recordPublishedJob(
+              sessionIdRef.current,
+              user?.id ?? null,
+              result.listing.id,
+              turn.draft,
+              title,
+              turn.draft.description?.trim() || title,
+            )
+          }
           const doneTurn = {
             ...turn,
             replyKey: 'salesBot.published' as const,
@@ -199,6 +225,13 @@ export function useSalesChat() {
         }
 
         appendAssistant(turn)
+        if (sessionIdRef.current) {
+          await updateJobLeadDraft(sessionIdRef.current, turn.draft)
+          const botMsg = assistantMessage(turn, t)
+          await appendJobLeadMessage(sessionIdRef.current, 'assistant', botMsg.content, {
+            step: turn.step,
+          })
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : t('salesBot.errorGeneric'))
       } finally {

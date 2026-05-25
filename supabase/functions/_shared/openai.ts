@@ -20,7 +20,11 @@ export async function chatCompletion(
       temperature: 0.3,
     }),
   })
-  if (!res.ok) return null
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => '')
+    console.error('OpenAI error', res.status, errBody.slice(0, 200))
+    return null
+  }
   const data = await res.json()
   return data?.choices?.[0]?.message?.content?.trim() ?? null
 }

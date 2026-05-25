@@ -25,6 +25,7 @@ import {
   PlusCircle,
   Search,
   Settings,
+  Shield,
   User,
   X,
   type LucideIcon,
@@ -40,6 +41,7 @@ import {
   headerCategoryLabel,
 } from '../lib/siteCategories'
 import { Logo }        from './Logo'
+import { NotificationCenter } from './notifications/NotificationCenter'
 
 interface NavItem {
   label: string
@@ -443,6 +445,8 @@ export function Header() {
                   )}
                 </div>
 
+                {user && <NotificationCenter />}
+
                 {/* Іконка повідомлень з лічильником */}
                 {user && (
                   <button
@@ -498,6 +502,12 @@ export function Header() {
                           <Settings className="mr-2 inline h-4 w-4" />
                           {t('header.settings')}
                         </button>
+                        {(profile?.user_role === 'professional' || profile?.user_role === 'company') && (
+                          <button onClick={() => goTo('/verification')} type="button" className={dropdownItemClass}>
+                            <Shield className="mr-2 inline h-4 w-4" />
+                            {t('verification.menu')}
+                          </button>
+                        )}
                         <button onClick={() => goTo('/my-listings')} type="button" className={dropdownItemClass}>
                           <FileText className="mr-2 inline h-4 w-4" />
                           {t('header.myListings') || 'Мої оголошення'}
