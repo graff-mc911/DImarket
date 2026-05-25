@@ -11,7 +11,11 @@ import {
   Trash2,
   User,
 } from 'lucide-react'
+import { PasswordField } from '../components/PasswordField'
+import { ProfileMediaPicker } from '../components/ProfileMediaPicker'
 import { useApp } from '../contexts/AppContext'
+import { getAuthErrorMessage, getChangePasswordMessage } from '../lib/authMessages'
+import { changeUserPassword, userHasEmailPassword } from '../lib/changePassword'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
@@ -65,6 +69,10 @@ export function Settings() {
 
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [reauthNonce, setReauthNonce] = useState('')
+  const [passwordNeedsNonce, setPasswordNeedsNonce] = useState(false)
+  const [canChangePassword, setCanChangePassword] = useState(true)
 
   useEffect(() => {
     void bootstrapSettings()
@@ -85,6 +93,9 @@ export function Settings() {
     setPreferredCurrency(currency.code)
     setNewPassword('')
     setConfirmPassword('')
+    setCurrentPassword('')
+    setReauthNonce('')
+    setPasswordNeedsNonce(false)
   }
 
   const bootstrapSettings = async () => {
@@ -114,6 +125,8 @@ export function Settings() {
       }
 
       setCurrentUserId(activeUser.id)
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      setCanChangePassword(authUser ? userHasEmailPassword(authUser) : false)
       await loadProfile(activeUser.id)
     } catch (error) {
       console.error('Помилка ініціалізації сторінки налаштувань:', error)
@@ -276,7 +289,15 @@ export function Settings() {
     event.preventDefault()
     setFeedback(null)
 
-    if (newPassword !== confirmPassword) {
+    const trimmedNew = newPassword.trim()
+    const trimmedConfirm = confirmPassword.trim()
+
+    if (trimmedNew.length < 6) {
+      setFeedback({ type: 'error', text: t('auth.error.passwordTooShort') })
+      return
+    }
+
+    if (trimmedNew !== trimmedConfirm) {
       setFeedback({
         type: 'error',
         text: t('settings.error.passwordMismatch'),
@@ -284,15 +305,45 @@ export function Settings() {
       return
     }
 
+    if (passwordNeedsNonce && !reauthNonce.trim()) {
+      setFeedback({ type: 'error', text: t('settings.error.reauthRequired') })
+      return
+    }
+
+    if (!passwordNeedsNonce && !currentPassword.trim()) {
+      setFeedback({ type: 'error', text: t('settings.error.wrongCurrentPassword') })
+      return
+    }
+
     setSavingPassword(true)
 
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
+      const result = await changeUserPassword({
+        newPassword: trimmedNew,
+        currentPassword: passwordNeedsNonce ? undefined : currentPassword,
+        nonce: passwordNeedsNonce ? reauthNonce : undefined,
       })
 
-      if (error) {
-        throw error
+      if (!result.ok) {
+        if (result.needsNonce) {
+          setPasswordNeedsNonce(true)
+          setFeedback({
+            type: 'success',
+            text: getChangePasswordMessage(result.message, t),
+          })
+          return
+        }
+        setFeedback({
+          type: 'error',
+          text:
+            result.message === 'password_too_short' ||
+            result.message === 'oauth_only' ||
+            result.message === 'no_email' ||
+            result.message === 'reauth_email_sent'
+              ? getChangePasswordMessage(result.message, t)
+              : `${t('settings.error.changePassword')} ${getAuthErrorMessage({ message: result.message }, t)}`,
+        })
+        return
       }
 
       setFeedback({
@@ -302,11 +353,14 @@ export function Settings() {
 
       setNewPassword('')
       setConfirmPassword('')
+      setCurrentPassword('')
+      setReauthNonce('')
+      setPasswordNeedsNonce(false)
     } catch (error) {
       console.error('Помилка зміни пароля:', error)
       setFeedback({
         type: 'error',
-        text: t('settings.error.changePassword'),
+        text: `${t('settings.error.changePassword')} ${getAuthErrorMessage(error, t)}`,
       })
     } finally {
       setSavingPassword(false)
@@ -357,22 +411,6 @@ export function Settings() {
         text: t('settings.error.deleteAccount'),
       })
     }
-  }
-
-  const addPortfolioImage = () => {
-    setPortfolioImages((current) => [...current, ''])
-  }
-
-  const updatePortfolioImage = (index: number, value: string) => {
-    setPortfolioImages((current) => {
-      const next = [...current]
-      next[index] = value
-      return next
-    })
-  }
-
-  const removePortfolioImage = (index: number) => {
-    setPortfolioImages((current) => current.filter((_, itemIndex) => itemIndex !== index))
   }
 
   if (loading) {
@@ -516,28 +554,14 @@ export function Settings() {
                       </div>
                     )}
 
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                        {t('settings.profilePhotoLabel')}
-                      </label>
-                      <input
-                        type="url"
-                        value={profilePhoto}
-                        onChange={(event) => setProfilePhoto(event.target.value)}
-                        className="input-glass"
-                        placeholder="https://example.com/photo.jpg"
-                      />
-
-                      {profilePhoto && (
-                        <div className="mt-3">
-                          <img
-                            src={profilePhoto}
-                            alt={t('settings.profilePhotoAlt')}
-                            className="h-24 w-24 rounded-full object-cover ring-4 ring-white/70"
-                          />
-                        </div>
-                      )}
-                    </div>
+                    <ProfileMediaPicker
+                      userId={currentUserId}
+                      label={t('settings.profilePhotoLabel')}
+                      hint={t('settings.profilePhotoHint')}
+                      single
+                      photoUrl={profilePhoto}
+                      onPhotoUrlChange={setProfilePhoto}
+                    />
                   </div>
 
                   <div className="mt-8 border-t border-[rgba(190,168,150,0.28)] pt-6">
@@ -548,35 +572,14 @@ export function Settings() {
                       </h3>
                     </div>
 
-                    <div className="mt-4 space-y-3">
-                      {portfolioImages.map((url, index) => (
-                        <div key={index} className="flex flex-col gap-2 sm:flex-row">
-                          <input
-                            type="url"
-                            value={url}
-                            onChange={(event) => updatePortfolioImage(index, event.target.value)}
-                            className="input-glass flex-1"
-                            placeholder="https://example.com/work-image.jpg"
-                          />
-
-                          <button
-                            type="button"
-                            onClick={() => removePortfolioImage(index)}
-                            aria-label={t('settings.removePortfolioImage')}
-                            className="flex h-12 w-full items-center justify-center rounded-[18px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a] transition hover:bg-[rgba(255,230,223,0.96)] sm:w-12"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      ))}
-
-                      <button
-                        type="button"
-                        onClick={addPortfolioImage}
-                        className="btn-ghost justify-start rounded-full px-0"
-                      >
-                        + {t('settings.addPortfolioImage')}
-                      </button>
+                    <div className="mt-4">
+                      <ProfileMediaPicker
+                        userId={currentUserId}
+                        label={t('settings.addPortfolioImage')}
+                        hint={t('settings.profilePhotoHint')}
+                        portfolioUrls={portfolioImages}
+                        onPortfolioChange={setPortfolioImages}
+                      />
                     </div>
                   </div>
 
@@ -668,54 +671,102 @@ export function Settings() {
                   </div>
                 </form>
 
-                <form onSubmit={handleChangePassword} className="glass-card p-5 md:p-6">
-                  <div className="flex items-center gap-3">
-                    <Lock className="h-6 w-6 text-[#c96d2c]" />
-                    <h2 className="text-xl font-extrabold text-[#2f2a24]">
-                      {t('settings.changePasswordTitle')}
-                    </h2>
-                  </div>
-
-                  <div className="mt-6 grid gap-4 md:grid-cols-2">
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                        {t('settings.newPasswordLabel')}
-                      </label>
-                      <input
-                        type="password"
-                        minLength={6}
-                        value={newPassword}
-                        onChange={(event) => setNewPassword(event.target.value)}
-                        className="input-glass"
-                        placeholder="••••••••"
-                      />
+                {canChangePassword ? (
+                  <form onSubmit={handleChangePassword} className="glass-card p-5 md:p-6">
+                    <div className="flex items-center gap-3">
+                      <Lock className="h-6 w-6 text-[#c96d2c]" />
+                      <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                        {t('settings.changePasswordTitle')}
+                      </h2>
                     </div>
 
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                        {t('settings.confirmNewPasswordLabel')}
-                      </label>
-                      <input
-                        type="password"
-                        minLength={6}
-                        value={confirmPassword}
-                        onChange={(event) => setConfirmPassword(event.target.value)}
-                        className="input-glass"
-                        placeholder="••••••••"
-                      />
-                    </div>
-                  </div>
+                    <p className="mt-2 text-xs leading-5 text-[#7a7168]">
+                      {t('settings.passwordHint')}
+                    </p>
 
-                  <div className="mt-6 flex justify-end">
-                    <button
-                      type="submit"
-                      disabled={!newPassword || !confirmPassword || savingPassword}
-                      className="btn-secondary w-full justify-center rounded-full sm:w-auto disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {savingPassword ? t('settings.saving') : t('settings.changePasswordButton')}
-                    </button>
+                    {passwordNeedsNonce && (
+                      <p className="mt-3 rounded-[14px] border border-[rgba(99,102,241,0.25)] bg-[rgba(99,102,241,0.08)] px-3 py-2 text-xs text-[#4338ca]">
+                        {t('settings.reauthEmailSent')}
+                      </p>
+                    )}
+
+                    <div className="mt-6 space-y-4">
+                      {!passwordNeedsNonce && (
+                        <PasswordField
+                          label={t('settings.currentPasswordLabel')}
+                          value={currentPassword}
+                          onChange={setCurrentPassword}
+                          required
+                          autoComplete="current-password"
+                        />
+                      )}
+
+                      {passwordNeedsNonce && (
+                        <div>
+                          <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                            {t('settings.reauthNonceLabel')}
+                          </label>
+                          <input
+                            type="text"
+                            value={reauthNonce}
+                            onChange={(event) => setReauthNonce(event.target.value)}
+                            className="input-glass"
+                            placeholder={t('settings.reauthNoncePlaceholder')}
+                            autoComplete="one-time-code"
+                          />
+                        </div>
+                      )}
+
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <PasswordField
+                          label={t('settings.newPasswordLabel')}
+                          value={newPassword}
+                          onChange={setNewPassword}
+                          required
+                          minLength={6}
+                          hint={t('register.passwordMin')}
+                          autoComplete="new-password"
+                        />
+                        <PasswordField
+                          label={t('settings.confirmNewPasswordLabel')}
+                          value={confirmPassword}
+                          onChange={setConfirmPassword}
+                          required
+                          minLength={6}
+                          autoComplete="new-password"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={
+                          !newPassword ||
+                          !confirmPassword ||
+                          savingPassword ||
+                          (!passwordNeedsNonce && !currentPassword) ||
+                          (passwordNeedsNonce && !reauthNonce.trim())
+                        }
+                        className="btn-secondary w-full justify-center rounded-full sm:w-auto disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {savingPassword ? t('settings.saving') : t('settings.changePasswordButton')}
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="glass-card p-5 md:p-6">
+                    <div className="flex items-center gap-3">
+                      <Lock className="h-6 w-6 text-[#c96d2c]" />
+                      <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                        {t('settings.changePasswordTitle')}
+                      </h2>
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-[#6f665d]">
+                      {t('settings.error.oauthPasswordOnly')}
+                    </p>
                   </div>
-                </form>
+                )}
 
                 <section className="glass-card border border-[rgba(221,138,120,0.28)] p-5 md:p-6">
                   <div className="flex items-center gap-3">

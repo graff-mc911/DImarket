@@ -6,8 +6,11 @@ export function formatSupabaseError(err: unknown, fallback: string): string {
   const msg = e.message?.trim()
   if (!msg) return fallback
 
-  if (msg.includes('Bucket not found') || msg.includes('bucket') && msg.includes('not found')) {
+  if (msg.includes('Bucket not found') || (msg.includes('bucket') && msg.includes('not found'))) {
     return 'Сховище для банерів (ad-media) не налаштовано на сервері. Вставте URL зображення вручну або зверніться до підтримки.'
+  }
+  if (msg.includes('row-level security') || msg.includes('policy')) {
+    return 'Немає прав на завантаження файлу. Спробуйте вставити URL зображення або зверніться до підтримки.'
   }
   if (msg.includes('regions') && msg.includes('does not exist')) {
     return 'База даних потребує оновлення (колонка regions). Застосуйте міграцію Supabase або спробуйте пізніше.'

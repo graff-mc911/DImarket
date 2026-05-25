@@ -44,8 +44,35 @@ export function getAuthErrorMessage(
   if (msg.includes('oauth') && msg.includes('session')) {
     return t('auth.error.oauthNoSession')
   }
+  if (msg.includes('reauthentication') || msg.includes('reauth')) {
+    return t('settings.error.reauthRequired')
+  }
+  if (msg.includes('same password') || msg.includes('different from')) {
+    return t('settings.error.samePassword')
+  }
+  if (msg.includes('invalid login credentials') || msg.includes('invalid credentials')) {
+    return t('settings.error.wrongCurrentPassword')
+  }
 
   return raw || t('common.error')
+}
+
+export function getChangePasswordMessage(
+  code: string,
+  t: (key: TranslationKey) => string,
+): string {
+  switch (code) {
+    case 'password_too_short':
+      return t('auth.error.passwordTooShort')
+    case 'no_email':
+      return t('settings.error.noEmailForPassword')
+    case 'oauth_only':
+      return t('settings.error.oauthPasswordOnly')
+    case 'reauth_email_sent':
+      return t('settings.reauthEmailSent')
+    default:
+      return getAuthErrorMessage({ message: code }, t)
+  }
 }
 
 export function getPostLoginPath(
