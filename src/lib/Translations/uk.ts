@@ -608,6 +608,9 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'auth.oauthOr': 'або увійти через',
   'auth.continueGoogle': 'Продовжити з Google',
   'auth.continueApple': 'Продовжити з Apple',
+  'auth.error.oauthNoSession': 'Вхід не завершено. Спробуйте ще раз.',
+  'auth.error.oauthNotConfigured':
+    'Вхід через Google/Apple ще не налаштований. Увійдіть email і паролем.',
   'auth.oauthLoading': 'Перенаправлення…',
   'register.confirmEmail':
     'Акаунт створено. Перевірте пошту та підтвердіть email, потім увійдіть.',

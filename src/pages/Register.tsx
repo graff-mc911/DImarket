@@ -169,6 +169,7 @@ export function Register() {
         email: trimmedEmail,
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             full_name: displayName,
             user_role: selectedRole,

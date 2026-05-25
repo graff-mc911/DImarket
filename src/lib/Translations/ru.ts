@@ -610,6 +610,9 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'auth.oauthOr': 'або войти через',
   'auth.continueGoogle': 'Продовжити з Google',
   'auth.continueApple': 'Продовжити з Apple',
+  'auth.error.oauthNoSession': 'Вход не завершён. Попробуйте снова.',
+  'auth.error.oauthNotConfigured':
+    'Вход через Google/Apple ещё не настроен. Войдите по email и паролю.',
   'auth.oauthLoading': 'Перенаправлення…',
   'register.confirmEmail':
     'Акаунт создано. Перевирте пошту и пидтвердить email, потим войдите.',

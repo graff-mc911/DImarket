@@ -602,6 +602,9 @@ export const enTranslations = {
   'auth.oauthOr': 'or continue with',
   'auth.continueGoogle': 'Continue with Google',
   'auth.continueApple': 'Continue with Apple',
+  'auth.error.oauthNoSession': 'Sign-in was not completed. Try again.',
+  'auth.error.oauthNotConfigured':
+    'Google/Apple sign-in is not configured yet. Use email and password, or contact support.',
   'auth.oauthLoading': 'Redirecting…',
   'register.confirmEmail':
     'Account created. Check your email to confirm, then sign in.',

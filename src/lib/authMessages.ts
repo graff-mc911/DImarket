@@ -34,6 +34,16 @@ export function getAuthErrorMessage(
   if (msg.includes('rate limit') || msg.includes('too many requests')) {
     return t('auth.error.rateLimit')
   }
+  if (
+    msg.includes('provider is not enabled') ||
+    msg.includes('unsupported provider') ||
+    msg.includes('oauth')
+  ) {
+    return t('auth.error.oauthNotConfigured')
+  }
+  if (msg.includes('oauth') && msg.includes('session')) {
+    return t('auth.error.oauthNoSession')
+  }
 
   return raw || t('common.error')
 }

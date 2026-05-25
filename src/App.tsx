@@ -23,6 +23,7 @@ import { Advertising }        from './pages/Advertising'
 // --- Авторизація ---
 import { Login }    from './pages/Login'
 import { Register } from './pages/Register'
+import { AuthCallback } from './pages/AuthCallback'
 
 // --- Приватні сторінки ---
 import { Dashboard }    from './pages/Dashboard'
@@ -71,6 +72,7 @@ function App() {
       case '/advertising':   return <Advertising />
       case '/login':         return <Login />
       case '/register':      return <Register />
+      case '/auth/callback': return <AuthCallback />
       case '/dashboard':     return <Dashboard />
       case '/settings':      return <Settings />
       case '/profile':       return <Profile />

@@ -22,6 +22,13 @@ import {
   type CategoryPickerValue,
 } from '../lib/categoryCatalog'
 
+function profileSaveErrorMessage(err: unknown): string {
+  if (err && typeof err === 'object' && 'message' in err) {
+    return String((err as { message: unknown }).message)
+  }
+  return String(err)
+}
+
 type FeedbackState = {
   type: 'success' | 'error'
   text: string
@@ -152,8 +159,12 @@ export function Settings() {
       const workSlugs = Array.isArray(data.work_subcategory_slugs)
         ? data.work_subcategory_slugs
         : []
+      const catSlug =
+        workSlugs.length > 0 ?
+          categorySlugForSubcategory(workSlugs[0]) ?? 'construction'
+        : ''
       setWorkSubcategories({
-        categorySlug: 'construction',
+        categorySlug: catSlug,
         subcategorySlugs: workSlugs,
       })
       setNotificationsEnabled(data.notifications_enabled !== false)
@@ -194,30 +205,37 @@ export function Settings() {
       .filter(Boolean)
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .upsert(
-          {
-            id: currentUserId,
-            full_name: normalizedFullName,
-            bio: normalizedBio || null,
-            phone: normalizedPhone || null,
-            location: normalizedLocation || null,
-            website: normalizedWebsite || null,
-            profile_photo: normalizedProfilePhoto || null,
-            portfolio_images: normalizedPortfolioImages,
-            notifications_enabled: notificationsEnabled,
-            preferred_language: preferredLanguage,
-            preferred_currency: preferredCurrency,
-            work_subcategory_slugs: isProfessional
-              ? workSubcategories.subcategorySlugs
-              : [],
-          },
-          { onConflict: 'id' }
-        )
+      const payload: Record<string, unknown> = {
+        full_name: normalizedFullName,
+        bio: normalizedBio || null,
+        phone: normalizedPhone || null,
+        location: normalizedLocation || null,
+        website: normalizedWebsite || null,
+        profile_photo: normalizedProfilePhoto || null,
+        portfolio_images: normalizedPortfolioImages,
+        notifications_enabled: notificationsEnabled,
+        preferred_language: preferredLanguage,
+        preferred_currency: preferredCurrency,
+        work_subcategory_slugs: isProfessional ? workSubcategories.subcategorySlugs : [],
+      }
 
-      if (error) {
-        throw error
+      const { data: updated, error } = await supabase
+        .from('profiles')
+        .update(payload)
+        .eq('id', currentUserId)
+        .select('id')
+        .maybeSingle()
+
+      if (error) throw error
+
+      if (!updated) {
+        const { error: insertError } = await supabase.from('profiles').insert({
+          id: currentUserId,
+          ...payload,
+          user_role: 'client',
+          is_professional: isProfessional,
+        })
+        if (insertError) throw insertError
       }
 
       setFullName(normalizedFullName)
@@ -244,10 +262,10 @@ export function Settings() {
         text: t('settings.success.profileSaved'),
       })
     } catch (error) {
-      console.error('Помилка оновлення профілю:', error)
+      console.error('Помилка оновлення профілю:', error, profileSaveErrorMessage(error))
       setFeedback({
         type: 'error',
-        text: t('settings.error.saveProfile'),
+        text: `${t('settings.error.saveProfile')} ${profileSaveErrorMessage(error)}`.trim(),
       })
     } finally {
       setSavingProfile(false)
