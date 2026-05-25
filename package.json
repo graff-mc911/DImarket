@@ -27,7 +27,8 @@
     "geo:sync:one": "node scripts/sync-geo-catalog-dump.mjs --country=Germany",
     "geo:sync:api": "node scripts/sync-geo-catalog-geonames.mjs",
     "db:deploy-checkout-functions": "npx supabase functions deploy create-checkout-session verify-checkout-session --project-ref wjlfvajloxkevggwjgtk",
-    "icons:generate": "node scripts/generate-favicons.mjs"
+    "icons:generate": "node scripts/generate-favicons.mjs",
+    "deploy:prod": "npx vercel deploy --prod --yes"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

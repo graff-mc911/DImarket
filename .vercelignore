@@ -1,0 +1,15 @@
+node_modules
+.geonames-cache
+dist
+test-results
+playwright-report
+blob-report
+playwright/.cache
+e2e
+scripts
+supabase
+.git
+*.txt
+!public/**
+.env*
+tsconfig.*.tsbuildinfo
