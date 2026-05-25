@@ -20,6 +20,7 @@ export function extractInvoiceFromText(text: string): OcrExtracted {
 
   let currency: string | undefined
   if (/€|eur/i.test(joined)) currency = 'EUR'
+  if (/₽|руб|rub/i.test(joined)) currency = 'RUB'
   else if (/\$|usd/i.test(joined)) currency = 'USD'
   else if (/₴|uah|грн/i.test(joined)) currency = 'UAH'
 

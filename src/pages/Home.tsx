@@ -111,7 +111,7 @@ export function Home() {
       setStats({
         professionals: profCount || statsResult.data?.total_professionals || 0,
         listings: listCount || statsResult.data?.total_listings_created || 0,
-        countries: 24,
+        countries: 25,
       })
     } finally {
       setLoading(false)

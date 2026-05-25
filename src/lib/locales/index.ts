@@ -23,6 +23,7 @@ import { trTranslations } from '../Translations/tr'
 import { arTranslations } from '../Translations/ar'
 import { zhTranslations } from '../Translations/zh'
 import { jaTranslations } from '../Translations/ja'
+import { ruTranslations } from '../Translations/ru'
 
 const withEnglishFallback = (
   localeTranslations: Partial<Record<TranslationKey, string>>,
@@ -34,6 +35,7 @@ const withEnglishFallback = (
 export const translations = {
   en: enTranslations,
   uk: withEnglishFallback(ukTranslations),
+  ru: withEnglishFallback(ruTranslations),
   kk: withEnglishFallback(kkTranslations),
   pl: withEnglishFallback(plTranslations),
   es: withEnglishFallback(esTranslations),

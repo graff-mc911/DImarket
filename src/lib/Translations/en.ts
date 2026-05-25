@@ -977,6 +977,8 @@ export const enTranslations = {
   'home.statsProfessionals': 'professionals',
   'home.statsListings': 'active listings',
   'home.statsLanguages': 'interface languages',
+  'language.ru': 'Russian',
+  'currency.rub': 'Russian Ruble',
   'professional.featured': 'Featured',
   'professional.verified': 'Verified',
 

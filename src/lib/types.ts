@@ -876,6 +876,7 @@ export const CURRENCIES = [
   { code: 'CHF', symbol: '₣',  name: 'Swiss Franc' },
   { code: 'PLN', symbol: 'zł', name: 'Polish Zloty' },
   { code: 'UAH', symbol: '₴',  name: 'Ukrainian Hryvnia' },
+  { code: 'RUB', symbol: '₽',  name: 'Russian Ruble' },
   { code: 'CZK', symbol: 'Kč', name: 'Czech Koruna' },
   { code: 'RON', symbol: 'lei',name: 'Romanian Leu' },
   { code: 'HUF', symbol: 'Ft', name: 'Hungarian Forint' },
@@ -888,10 +889,11 @@ export const CURRENCIES = [
   { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
 ] as const
 
-// 24 мови інтерфейсу
+// 25 мов інтерфейсу
 export const LANGUAGES = [
   { code: 'en', name: 'English' },
   { code: 'uk', name: 'Українська' },
+  { code: 'ru', name: 'Русский' },
   { code: 'pl', name: 'Polski' },
   { code: 'de', name: 'Deutsch' },
   { code: 'fr', name: 'Français' },

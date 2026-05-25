@@ -9,7 +9,11 @@ export type AiProviderStatus = {
 
 /** Клієнт не бачить ключів — лише статус з edge або env preview */
 export function aiNotConfiguredMessage(locale: string): string {
-  return locale === 'uk'
-    ? 'AI-сервіс тимчасово недоступний. Використовується локальний режим.'
-    : 'AI service is unavailable. Using local fallback mode.'
+  if (locale === 'uk') {
+    return 'AI-сервіс тимчасово недоступний. Використовується локальний режим.'
+  }
+  if (locale === 'ru') {
+    return 'AI-сервис временно недоступен. Используется локальный режим.'
+  }
+  return 'AI service is unavailable. Using local fallback mode.'
 }
