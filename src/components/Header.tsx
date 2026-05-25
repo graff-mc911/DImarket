@@ -24,6 +24,7 @@ import {
   MessageSquare,
   PlusCircle,
   Search,
+  Settings,
   User,
   X,
   type LucideIcon,
@@ -489,9 +490,13 @@ export function Header() {
 
                     {accountOpen && (
                       <div className={dropdownPanelClass}>
-                        <button onClick={() => goTo('/settings')} type="button" className={dropdownItemClass}>
+                        <button onClick={() => goTo('/profile')} type="button" className={dropdownItemClass}>
                           <User className="mr-2 inline h-4 w-4" />
                           {t('header.myProfile')}
+                        </button>
+                        <button onClick={() => goTo('/settings')} type="button" className={dropdownItemClass}>
+                          <Settings className="mr-2 inline h-4 w-4" />
+                          {t('header.settings')}
                         </button>
                         <button onClick={() => goTo('/my-listings')} type="button" className={dropdownItemClass}>
                           <FileText className="mr-2 inline h-4 w-4" />
@@ -804,9 +809,14 @@ export function Header() {
 
                 {user && profile ? (
                   <div className="mt-3 grid gap-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]">
-                    <button onClick={() => goTo('/settings')} type="button" className={mobileNavItemClass}>
+                    <button onClick={() => goTo('/profile')} type="button" className={mobileNavItemClass}>
                       <User className="h-5 w-5" />
                       <span>{t('header.myProfile')}</span>
+                    </button>
+
+                    <button onClick={() => goTo('/settings')} type="button" className={mobileNavItemClass}>
+                      <Settings className="h-5 w-5" />
+                      <span>{t('header.settings')}</span>
                     </button>
 
                     <button onClick={() => goTo('/my-listings')} type="button" className={mobileNavItemClass}>

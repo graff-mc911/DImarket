@@ -7,6 +7,7 @@ export const enTranslations = {
   'header.professionalLogin': 'Professional Login',
   'header.createAd': 'Create Ad',
   'header.myProfile': 'My Profile',
+  'header.settings': 'Settings',
   'header.dashboard': 'Dashboard',
   'header.myListings': 'My Listings',
   'header.signOut': 'Sign Out',
@@ -720,6 +721,10 @@ export const enTranslations = {
   'profile.memberSince':        'Member since',
   'profile.activeAds':          'active listings',
   'profile.viewAllListings':    'View all my listings',
+  'profile.loading':            'Loading profile…',
+  'profile.reviewsCount':       'reviews',
+  'profile.emptyHint':          'Complete your profile in Settings — use the Edit button.',
+  'common.retry':               'Try again',
 
   // Settings
   'settings.description':           'Manage your profile and preferences',

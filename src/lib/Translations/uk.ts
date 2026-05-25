@@ -7,6 +7,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'header.professionalLogin': 'Увійти',
   'header.createAd': 'Створити оголошення',
   'header.myProfile': 'Мій профіль',
+  'header.settings': 'Налаштування',
   'header.dashboard': 'Панель',
   'header.myListings': 'Мої оголошення',
   'header.signOut': 'Вийти',
@@ -726,6 +727,10 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'profile.memberSince':        'На сайті з',
   'profile.activeAds':          'активних оголошень',
   'profile.viewAllListings':    'Всі мої оголошення',
+  'profile.loading':            'Завантаження профілю…',
+  'profile.reviewsCount':       'відгуків',
+  'profile.emptyHint':          'Заповніть профіль у налаштуваннях — кнопка «Редагувати».',
+  'common.retry':               'Спробувати знову',
 
   // Settings
   'settings.description':           'Керуйте своїм профілем та налаштуваннями',
