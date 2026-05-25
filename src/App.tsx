@@ -31,7 +31,8 @@ import { Profile }      from './pages/Profile'
 import { MyListings }   from './pages/MyListings'
 import { Messages }     from './pages/Messages'
 import { Favorites }    from './pages/Favorites'
-import { CreateAd }     from './pages/CreateAd'
+import { CreateAd }       from './pages/CreateAd'
+import { JobRequestChat } from './pages/JobRequestChat'
 import { Checkout }     from './pages/Checkout'
 import { BoostProfile } from './pages/BoostProfile'
 
@@ -75,6 +76,7 @@ function App() {
       case '/messages':      return <Messages />
       case '/favorites':     return <Favorites />
       case '/create-ad':     return <CreateAd />
+      case '/assistant/job': return <JobRequestChat />
       case '/checkout':      return <Checkout />      // 🆕 Після оплати Stripe
       case '/boost':         return <BoostProfile />  // 🆕 Просування профілю
       default:               return <Home />

@@ -324,6 +324,49 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.radius.land': 'Земля (DE)',
   'createAd.radius.global': 'Усі користувачі',
 
+  'salesBot.eyebrow': 'AI-помічник',
+  'salesBot.title': 'Помічник із заявки',
+  'salesBot.subtitle': 'Перетворимо діалог на опублікований запит',
+  'salesBot.pageTitle': 'Створити заявку в чаті',
+  'salesBot.pageDesc':
+    'Розкажіть категорію, місто, бюджет, термін, опис і фото — ми сформуємо структуроване оголошення для майстрів.',
+  'salesBot.classicForm': 'Звичайна форма',
+  'salesBot.reset': 'Спочатку',
+  'salesBot.inputPlaceholder': 'Ваша відповідь…',
+  'salesBot.thinking': 'Думаю…',
+  'salesBot.publishing': 'Публікую заявку…',
+  'salesBot.draftLabel': 'Чернетка',
+  'salesBot.viewListing': 'Переглянути заявку',
+  'salesBot.allListings': 'Усі запити',
+  'salesBot.quickYes': 'Так, опублікувати',
+  'salesBot.quickNo': 'Змінити опис',
+  'salesBot.quickSkip': 'Пропустити',
+  'salesBot.errorGeneric': 'Щось пішло не так. Спробуйте ще раз.',
+  'salesBot.errorDescription': 'Опис занадто короткий.',
+  'salesBot.errorLocation': 'Потрібно вказати місто.',
+  'salesBot.welcome':
+    'Вітаю! Допоможу опублікувати заявку на Dimarket.\n\nОберіть категорію (номер або назва):\n{{categories}}',
+  'salesBot.categoryUnknown':
+    'Не розпізнав категорію. Оберіть зі списку:\n{{categories}}',
+  'salesBot.askCity': 'Чудово — {{category}}. У якому місті або районі потрібна робота?',
+  'salesBot.cityTooShort': 'Введіть місто або район (мінімум 2 символи).',
+  'salesBot.askBudget': 'Який орієнтовний бюджет? (число або «пропустити»)',
+  'salesBot.budgetInvalid': 'Вкажіть число для бюджету або напишіть «пропустити».',
+  'salesBot.askDeadline': 'Коли потрібно виконати? (дні: 7, 14, 30 або «2 тижні»)',
+  'salesBot.askDescription':
+    'Опишіть роботу: обсяг, розміри, матеріали, терміни — кілька речень.',
+  'salesBot.descriptionTooShort': 'Додайте більше деталей (мінімум 15 символів).',
+  'salesBot.askPhotos':
+    'Посилання на фото (https://…) через пробіл або «пропустити».',
+  'salesBot.photosNeedUrl': 'Вставте URL зображень (https://…) або «пропустити».',
+  'salesBot.askContact': 'Телефон і/або email, щоб майстри могли звʼязатися.',
+  'salesBot.contactRequired': 'Потрібен телефон або email.',
+  'salesBot.confirm':
+    'Підсумок:\n• Категорія: {{category}}\n• Місто: {{city}}\n• Бюджет: {{budget}}\n• Днів у стрічці: {{deadline}}\n• Фото: {{photos}}\n• Опис: {{description}}\n\nОпублікувати? (так / ні)',
+  'salesBot.confirmHint': 'Напишіть «так» для публікації або «ні», щоб змінити опис.',
+  'salesBot.published': 'Готово! Заявку опубліковано. ID: {{id}}',
+  'header.aiAssistant': 'AI-помічник',
+
   // Login
   'login.title': 'Вхід до DImarket',
   'login.subtitle': 'Керуйте профілем та оголошеннями',

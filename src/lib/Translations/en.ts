@@ -322,6 +322,49 @@ export const enTranslations = {
   'createAd.radius.land': 'Land (DE)',
   'createAd.radius.global': 'All Users',
 
+  'salesBot.eyebrow': 'AI assistant',
+  'salesBot.title': 'Job request assistant',
+  'salesBot.subtitle': 'We will turn the chat into a published request',
+  'salesBot.pageTitle': 'Create a job request in chat',
+  'salesBot.pageDesc':
+    'Tell us the category, city, budget, deadline, description, and photos — we will prepare a structured listing for professionals.',
+  'salesBot.classicForm': 'Classic form instead',
+  'salesBot.reset': 'Start over',
+  'salesBot.inputPlaceholder': 'Your answer…',
+  'salesBot.thinking': 'Thinking…',
+  'salesBot.publishing': 'Publishing your request…',
+  'salesBot.draftLabel': 'Draft',
+  'salesBot.viewListing': 'View published request',
+  'salesBot.allListings': 'All job requests',
+  'salesBot.quickYes': 'Yes, publish',
+  'salesBot.quickNo': 'Edit description',
+  'salesBot.quickSkip': 'Skip',
+  'salesBot.errorGeneric': 'Something went wrong. Try again.',
+  'salesBot.errorDescription': 'Description is too short.',
+  'salesBot.errorLocation': 'City is required.',
+  'salesBot.welcome':
+    'Hi! I will help you post a job request on Dimarket.\n\nPick a category (number or name):\n{{categories}}',
+  'salesBot.categoryUnknown':
+    'I did not recognize the category. Choose one:\n{{categories}}',
+  'salesBot.askCity': 'Great — {{category}}. Which city or area is the job in?',
+  'salesBot.cityTooShort': 'Please enter a city or district (at least 2 characters).',
+  'salesBot.askBudget': 'What is your approximate budget? (number, or write "skip")',
+  'salesBot.budgetInvalid': 'Enter a number for budget, or write "skip".',
+  'salesBot.askDeadline': 'When should the work be done? (days: 7, 14, 30, or "2 weeks")',
+  'salesBot.askDescription':
+    'Describe the job: scope, size, materials, timing — at least a few sentences.',
+  'salesBot.descriptionTooShort': 'Please add more detail (at least 15 characters).',
+  'salesBot.askPhotos':
+    'Add photo links (https://…) separated by spaces, or write "skip".',
+  'salesBot.photosNeedUrl': 'Paste image URLs (https://…) or write "skip".',
+  'salesBot.askContact': 'Phone and/or email for professionals to reach you.',
+  'salesBot.contactRequired': 'Please provide a phone number or email.',
+  'salesBot.confirm':
+    'Summary:\n• Category: {{category}}\n• City: {{city}}\n• Budget: {{budget}}\n• Days visible: {{deadline}}\n• Photos: {{photos}}\n• Description: {{description}}\n\nPublish now? (yes / no)',
+  'salesBot.confirmHint': 'Reply "yes" to publish or "no" to edit the description.',
+  'salesBot.published': 'Done! Your job request is live. ID: {{id}}',
+  'header.aiAssistant': 'AI assistant',
+
   // Вхід у систему.
   'login.title': 'Sign In',
   'login.subtitle': 'Sign in to manage your profile',

@@ -213,6 +213,14 @@ export function Home() {
                   <span>{t('header.createAd')}</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
+                <button
+                  onClick={() => navigateTo('/assistant/job')}
+                  type="button"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6366f1] transition hover:text-[var(--accent-700)]"
+                >
+                  <span>{t('header.aiAssistant')}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               </nav>
 
             {!loading && (stats.professionals > 0 || stats.listings > 0) && (

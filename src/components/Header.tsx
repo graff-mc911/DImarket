@@ -13,6 +13,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Bell,
   Bookmark,
+  Bot,
   ChevronDown,
   ClipboardList,
   FileText,
@@ -526,6 +527,15 @@ export function Header() {
                     {t('header.professionalLogin')}
                   </button>
                 )}
+
+                <button
+                  onClick={() => goTo('/assistant/job')}
+                  type="button"
+                  className="hidden items-center gap-1.5 rounded-full border border-[rgba(99,102,241,0.35)] bg-white/60 px-3 py-2 text-xs font-semibold text-[#6366f1] xl:inline-flex"
+                >
+                  <Bot className="h-4 w-4" />
+                  {t('header.aiAssistant')}
+                </button>
 
                 {/* Кнопка "Подати оголошення" */}
                 <button onClick={() => goTo('/create-ad')} type="button" className={createButtonClass}>
