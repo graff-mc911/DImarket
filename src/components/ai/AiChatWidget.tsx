@@ -1,22 +1,23 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Bot, X } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { BOT_IDS, type BotId } from '../../lib/bots'
-import { bindPathListener, navigateTo } from '../../lib/navigation'
+import { bindPathListener } from '../../lib/navigation'
 import { SalesChatbot } from '../SalesChatbot'
 import { AiBotPanel } from './AiBotPanel'
 
-/** Затримка після відкриття — iOS/Android інколи надсилають другий «ghost» click на ту саму кнопку. */
-const FAB_CLOSE_GUARD_MS = 500
+/** Після відкриття блокуємо «ghost click» (iOS/Android) на overlay. */
+const OVERLAY_CLICK_GUARD_MS = 700
 
 /** Плаваючий віджет AI — вибір бота та швидкий доступ */
 export function AiChatWidget() {
   const { t } = useApp()
   const [open, setOpen] = useState(false)
+  const [overlayReady, setOverlayReady] = useState(false)
   const [bot, setBot] = useState<BotId>('sales')
   const [path, setPath] = useState(() => window.location.pathname)
-  const ignoreFabCloseUntil = useRef(0)
-  const panelRef = useRef<HTMLDivElement>(null)
+  const blockOutsideUntil = useRef(0)
 
   useLayoutEffect(() => {
     const sync = (p: string) => setPath(p)
@@ -25,28 +26,54 @@ export function AiChatWidget() {
   }, [])
 
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      setOverlayReady(false)
+      return
+    }
+
+    blockOutsideUntil.current = Date.now() + OVERLAY_CLICK_GUARD_MS
+    const timer = window.setTimeout(() => setOverlayReady(true), OVERLAY_CLICK_GUARD_MS)
+
+    const blockGhostClick = (e: Event) => {
+      if (Date.now() < blockOutsideUntil.current) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+    }
+    document.addEventListener('click', blockGhostClick, true)
+    document.addEventListener('touchend', blockGhostClick, true)
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
     }
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('click', blockGhostClick, true)
+      document.removeEventListener('touchend', blockGhostClick, true)
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
   }, [open])
 
-  // На повній сторінці чату FAB не потрібен
   if (path === '/assistant/job') return null
 
   const openPanel = () => {
     setOpen(true)
-    ignoreFabCloseUntil.current = Date.now() + FAB_CLOSE_GUARD_MS
+    blockOutsideUntil.current = Date.now() + OVERLAY_CLICK_GUARD_MS
   }
 
   const closePanel = () => setOpen(false)
 
   const handleFabClick = (e: React.MouseEvent) => {
+    e.preventDefault()
     e.stopPropagation()
     if (open) {
-      if (Date.now() < ignoreFabCloseUntil.current) return
+      if (Date.now() < blockOutsideUntil.current) return
       closePanel()
       return
     }
@@ -54,39 +81,34 @@ export function AiChatWidget() {
   }
 
   const handleBotSelect = (id: BotId) => {
-    if (id === 'sales') {
-      setBot('sales')
-      // На вузьких екранах лишаємо чат у віджеті; на desktop — повна сторінка
-      if (window.matchMedia('(min-width: 768px)').matches) {
-        navigateTo('/assistant/job')
-        closePanel()
-      }
-      return
-    }
     setBot(id)
   }
 
   const selectableBots = BOT_IDS.filter((id) => id !== 'messaging' && id !== 'ad_image')
 
-  return (
-    <>
+  const layer = (
+    <div className="ai-chat-widget-layer pointer-events-none fixed inset-0 z-[200]">
       {open && (
         <button
           type="button"
           tabIndex={-1}
           aria-hidden
-          className="fixed inset-0 z-[55] touch-manipulation bg-black/30 md:bg-black/20"
-          onClick={closePanel}
+          className={`pointer-events-auto fixed inset-0 bg-black/35 transition-opacity ${
+            overlayReady ? 'cursor-pointer' : 'pointer-events-none'
+          }`}
+          onClick={() => {
+            if (!overlayReady) return
+            closePanel()
+          }}
         />
       )}
 
       {open && (
         <div
-          ref={panelRef}
           role="dialog"
           aria-modal="true"
           aria-label={t('ai.widget.open')}
-          className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] left-3 right-3 z-[60] flex max-h-[min(32rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom,0px)))] flex-col overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.25)] bg-white/95 shadow-2xl backdrop-blur-md sm:left-auto sm:right-4 sm:w-[min(100vw-2rem,24rem)]"
+          className="pointer-events-auto fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] left-3 right-3 flex min-h-[18rem] max-h-[min(32rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom,0px)))] flex-col overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.25)] bg-white shadow-2xl sm:left-auto sm:right-4 sm:w-[min(100vw-2rem,24rem)]"
           onClick={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
         >
@@ -106,7 +128,7 @@ export function AiChatWidget() {
           </div>
 
           {bot === 'sales' ? (
-            <SalesChatbot compact className="min-h-0 flex-1 border-0 shadow-none" />
+            <SalesChatbot compact className="min-h-[14rem] flex-1 border-0 shadow-none" />
           ) : (
             <AiBotPanel botId={bot} />
           )}
@@ -118,11 +140,13 @@ export function AiChatWidget() {
         onClick={handleFabClick}
         aria-expanded={open}
         aria-haspopup="dialog"
-        className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))] z-[61] flex h-14 w-14 touch-manipulation items-center justify-center rounded-full bg-[#6366f1] text-white shadow-lg transition hover:scale-105 active:scale-95"
+        className="pointer-events-auto fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))] flex h-14 w-14 touch-manipulation items-center justify-center rounded-full bg-[#6366f1] text-white shadow-lg transition hover:scale-105 active:scale-95"
         aria-label={t('ai.widget.open')}
       >
         {open ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
       </button>
-    </>
+    </div>
   )
+
+  return createPortal(layer, document.body)
 }

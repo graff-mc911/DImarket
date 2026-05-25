@@ -52,6 +52,7 @@ export function useSalesChat() {
   const [error, setError] = useState<string | null>(null)
   const [listingId, setListingId] = useState<string | null>(null)
   const [quickReplies, setQuickReplies] = useState<string[]>([])
+  const initialized = useRef(false)
 
   const salesCategories = useMemo(
     () => categories.filter((c) => !JOB_CATEGORY_BLOCKLIST.has(c.slug)),
