@@ -71,6 +71,18 @@ cp .env.example .env.local
 - **announcements** — банери в шапці
 - **saved_items** — обране
 - **geo_catalog** + view **active_geo** — геотаргетинг реклами
+- **register_geo_location** — RPC: додати локацію з реєстрації
+
+### Наповнення geo_catalog з GeoNames (повний каталог)
+
+1. Зареєструй безкоштовний логін: https://www.geonames.org/login  
+2. У `.env.local`: `GEONAMES_USERNAME=твій_логін`, `SUPABASE_SERVICE_ROLE_KEY=...`, `VITE_SUPABASE_URL=...`  
+3. Тест однієї країни без БД: `node scripts/sync-geo-catalog-geonames.mjs --dry-run --country=Germany`  
+4. Одна країна в БД: `npm run geo:sync:one`  
+5. Усі ~60 країн (довго, багато запитів): `npm run geo:sync`  
+
+Скрипт `scripts/sync-geo-catalog-geonames.mjs`: регіони ADM1 (області/землі) + **усі** населені пункти GeoNames (`featureClass=P`) з пагінацією. Реєстрації користувачів далі доповнюють каталог.
+
 - **storage** bucket `ad-media` — завантаження банерів
 
 ## Stripe Checkout (потік)

@@ -1,8 +1,14 @@
 import { supabase } from './supabase'
 import {
+  canonicalCountryName,
+  canonicalRegionName,
+  countryQueryNames,
+} from './geoAliases'
+import {
   parseRegistrationLocation,
   REGISTRATION_COUNTRIES,
 } from './registrationGeoData'
+import { referenceGeoToRows } from './referenceGeoSeed'
 
 export type AdGeoCountry = {
   name: string
@@ -15,13 +21,9 @@ export type GeoRow = {
   city: string
 }
 
-/** Мінімальний seed, поки в БД ще немає реєстрацій */
-const FALLBACK_GEO_ROWS: GeoRow[] = [
-  { country: 'Ukraine', region: 'Київська', city: 'Київ' },
-  { country: 'Ukraine', region: 'Львівська', city: 'Львів' },
-  { country: 'Poland', region: 'Mazowieckie', city: 'Warsaw' },
-  { country: 'Germany', region: 'Hessen', city: 'Frankfurt' },
-]
+export function referenceGeoCatalog(): AdGeoCountry[] {
+  return groupGeoRows(referenceGeoToRows())
+}
 
 export function groupGeoRows(rows: GeoRow[]): AdGeoCountry[] {
   const grouped: Record<string, Record<string, string[]>> = {}
@@ -52,7 +54,7 @@ export function groupGeoRows(rows: GeoRow[]): AdGeoCountry[] {
 }
 
 export function fallbackAdGeoCatalog(): AdGeoCountry[] {
-  return groupGeoRows(FALLBACK_GEO_ROWS)
+  return referenceGeoCatalog()
 }
 
 export function allCitiesFromCatalog(catalog: AdGeoCountry[]): string[] {
@@ -67,9 +69,11 @@ function dedupeGeoRows(rows: GeoRow[]): GeoRow[] {
     const key = `${row.country.trim()}|${row.region?.trim() || 'Інші'}|${row.city.trim()}`
     if (seen.has(key)) continue
     seen.add(key)
+    const country = canonicalCountryName(row.country.trim())
+    const region = canonicalRegionName(country, row.region?.trim() || 'Інші')
     out.push({
-      country: row.country.trim(),
-      region: row.region?.trim() || 'Інші',
+      country,
+      region,
       city: row.city.trim(),
     })
   }
@@ -116,7 +120,8 @@ async function loadGeoRowsFromTable(
 ): Promise<GeoRow[]> {
   let query = supabase.from(table).select('country, region, city').order('country')
   if (country) {
-    query = query.eq('country', country)
+    const names = countryQueryNames(canonicalCountryName(country))
+    query = names.length === 1 ? query.eq('country', names[0]) : query.in('country', names)
   }
   const { data, error } = await query
   if (error || !data?.length) return []
@@ -130,34 +135,42 @@ async function loadAllGeoRows(): Promise<GeoRow[]> {
   ])
 }
 
-/** Повний каталог для реклами — лише з БД (+ мінімальний seed) */
+/** Повний каталог: довідник + БД (реєстрації доповнюють) */
 export async function fetchAdGeoCatalog(): Promise<AdGeoCountry[]> {
+  const reference = referenceGeoCatalog()
   try {
     const dbRows = await loadAllGeoRows()
-    const fromDb = dbRows.length > 0 ? groupGeoRows(dbRows) : fallbackAdGeoCatalog()
-    return catalogWithAllCountries(fromDb)
+    const merged = dbRows.length > 0 ? mergeGeoCatalogs(reference, groupGeoRows(dbRows)) : reference
+    return catalogWithAllCountries(merged)
   } catch (err) {
     console.error('Помилка завантаження geo_catalog:', err)
-    return catalogWithAllCountries(fallbackAdGeoCatalog())
+    return catalogWithAllCountries(reference)
   }
 }
 
 /** Регіони/міста однієї країни (реєстрація, форми) */
 export async function fetchGeoCatalogForCountry(country: string): Promise<AdGeoCountry | null> {
-  if (!country.trim()) return null
+  const canonical = canonicalCountryName(country.trim())
+  if (!canonical) return null
+
+  const refSlice = referenceGeoCatalog().find((c) => c.name === canonical) ?? {
+    name: canonical,
+    regions: [],
+  }
+
   try {
     const rows = dedupeGeoRows([
-      ...(await loadGeoRowsFromTable('geo_catalog', country)),
-      ...(await loadGeoRowsFromTable('active_geo', country)),
+      ...(await loadGeoRowsFromTable('geo_catalog', canonical)),
+      ...(await loadGeoRowsFromTable('active_geo', canonical)),
     ])
-    if (rows.length === 0) {
-      return { name: country, regions: [] }
-    }
-    const grouped = groupGeoRows(rows)
-    return grouped.find((c) => c.name === country) ?? grouped[0] ?? { name: country, regions: [] }
+    const merged =
+      rows.length > 0
+        ? mergeGeoCatalogs([refSlice], groupGeoRows(rows))
+        : [refSlice]
+    return merged.find((c) => c.name === canonical) ?? refSlice
   } catch (err) {
     console.warn('fetchGeoCatalogForCountry:', err)
-    return { name: country, regions: [] }
+    return refSlice
   }
 }
 
