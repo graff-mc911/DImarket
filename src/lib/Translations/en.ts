@@ -792,10 +792,23 @@ export const enTranslations = {
   'advertising.slots.mobileHint':
     '#1 — wide banner under hero or above the list. #2–4 — between sections or cards (no fixed bottom sticky).',
   'advertising.catalog.previewTitle': 'Placement map on the site',
-  'advertising.catalog.previewDesc': 'Click slots on the map — purple highlights are the positions you selected on the real DImarket page.',
+  'advertising.catalog.previewDesc':
+    'Click slots on the map — purple highlights are your positions. Each slot shows its on-site container size; upload at the recommended size to avoid cropping and empty space.',
+  'advertising.catalog.slotSizeShort': '{w}×{h}',
+  'advertising.catalog.slotSizeTooltip':
+    'On-site container: {cw}×{ch} px. Image area: ~{iw}×{ih} px. Recommended file: {uw}×{uh} px, ratio {aspect}. The site fits the full image (object-contain).',
+  'advertising.catalog.sizesLegendTitle': 'Container sizes (layout reference)',
+  'advertising.catalog.sizesLegendSide':
+    'Side L/R 1–4 (desktop ≥1280px): container {cw}×{ch} px, file {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendCenter':
+    'Center (home): image ~{iw}×{ih} px in the content column, file {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendLeaderboard':
+    'Wide #1: up to {cw} px wide, up to {ch} px tall, file {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendInline':
+    'Mobile #2–4: container ~{cw}×{ch} px, photo area ~{iw}×{ih} px, file {uw}×{uh} px ({aspect}).',
   'advertising.catalog.tapToSelect': 'Click L1–L4, R1–R4, Center, or mobile blocks to select or clear a position.',
   'advertising.catalog.selectedOnPage': 'On this page',
-  'advertising.catalog.desktopWire': 'Desktop (≥1024px)',
+  'advertising.catalog.desktopWire': 'Desktop (≥1280px)',
   'advertising.catalog.mobileWire': 'Mobile',
   'advertising.catalog.contentArea': 'Page content',
   'advertising.catalog.mobileHero': 'Header / hero',

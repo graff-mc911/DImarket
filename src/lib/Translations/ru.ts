@@ -864,10 +864,23 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.slots.mobileHint':
     '№1 — широкий баннер под hero или над списком. №2–4 — между секциями или карточками (без фиксованого sticky снизу).',
   'advertising.catalog.previewTitle': 'Схема размещение на сайте',
-  'advertising.catalog.previewDesc': 'Нажмите слоты на схеме — фиолетовым подсвечены выбранные позиции на реальный странице DImarket.',
+  'advertising.catalog.previewDesc':
+    'Нажмите слоты на схеме — фиолетовым подсвечены выбранные позиции. Под каждым слотом — размер контейнера; готовьте файл по рекомендации, чтобы избежать обрезки и пустых полей.',
+  'advertising.catalog.slotSizeShort': '{w}×{h}',
+  'advertising.catalog.slotSizeTooltip':
+    'Контейнер на сайте: {cw}×{ch} px. Зона изображения: ~{iw}×{ih} px. Рекомендуемый файл: {uw}×{uh} px, соотношение {aspect}. На сайте изображение вмещается целиком (object-contain).',
+  'advertising.catalog.sizesLegendTitle': 'Размеры контейнеров (ориентир для макета)',
+  'advertising.catalog.sizesLegendSide':
+    'Боковые L/R 1–4 (desktop ≥1280px): контейнер {cw}×{ch} px, файл {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendCenter':
+    'По центру (главная): изображение ~{iw}×{ih} px, файл {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendLeaderboard':
+    'Широкий №1: до {cw} px по ширине, до {ch} px по высоте, файл {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendInline':
+    'Мобильные №2–4: контейнер ~{cw}×{ch} px, фото ~{iw}×{ih} px, файл {uw}×{uh} px ({aspect}).',
   'advertising.catalog.tapToSelect': 'Кликнетте L1–L4, R1–R4, «По центру» или мобильнет блоки, чтобы выбрать или снять позицию.',
   'advertising.catalog.selectedOnPage': 'На этой странице',
-  'advertising.catalog.desktopWire': 'Desktop (экран ≥1024px)',
+  'advertising.catalog.desktopWire': 'Desktop (экран ≥1280px)',
   'advertising.catalog.mobileWire': 'Смартфон',
   'advertising.catalog.contentArea': 'Контент страницы',
   'advertising.catalog.mobileHero': 'Шапка / hero',

@@ -3,7 +3,21 @@ import { Monitor, Smartphone } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { formatSlotLabel, PAGE_LABEL_KEYS, type AdPageKey } from '../lib/adPlacementSlots'
 import { getSlotDefinition, slotGroupsForPurchasePicker } from '../lib/adPlacementCatalog'
+import {
+  AD_SLOT_CONTAINER_SPECS,
+  containerSpecForZone,
+  type AdSlotContainerSpec,
+} from '../lib/adSlotContainerSpecs'
 import type { TranslationKey } from '../lib/i18n'
+
+function interpolateTranslation(
+  template: string,
+  params: Record<string, string | number>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (_, key: string) =>
+    params[key] !== undefined ? String(params[key]) : `{${key}}`,
+  )
+}
 
 type AdPlacementSitePreviewProps = {
   selected: string[]
@@ -14,10 +28,32 @@ type AdPlacementSitePreviewProps = {
   draftMediaUrl?: string | null
 }
 
+function slotSizeLabels(
+  spec: AdSlotContainerSpec,
+  t: (key: TranslationKey) => string,
+): { short: string; title: string } {
+  const params = {
+    w: spec.containerW,
+    h: spec.containerH,
+    cw: spec.containerW,
+    ch: spec.containerH,
+    iw: spec.imageW,
+    ih: spec.imageH,
+    uw: spec.uploadW,
+    uh: spec.uploadH,
+    aspect: spec.aspect,
+  }
+  return {
+    short: interpolateTranslation(t('advertising.catalog.slotSizeShort'), params),
+    title: interpolateTranslation(t('advertising.catalog.slotSizeTooltip'), params),
+  }
+}
+
 function SlotBox({
   active,
   label,
   title,
+  sizeShort,
   className = '',
   draftMediaUrl,
   interactive,
@@ -26,6 +62,7 @@ function SlotBox({
   active: boolean
   label: string
   title: string
+  sizeShort?: string
   className?: string
   draftMediaUrl?: string | null
   interactive: boolean
@@ -33,8 +70,17 @@ function SlotBox({
 }) {
   const showDraft = active && draftMediaUrl
 
+  const labelBlock = (
+    <span className="flex flex-col items-center gap-0.5 leading-tight">
+      <span>{label}</span>
+      {sizeShort ? (
+        <span className="text-[7px] font-semibold tabular-nums opacity-90">{sizeShort}</span>
+      ) : null}
+    </span>
+  )
+
   const baseClass =
-    'relative flex min-h-[28px] w-full items-center justify-center overflow-hidden rounded-md border px-1 text-center text-[9px] font-bold leading-tight transition ' +
+    'relative flex min-h-[28px] w-full items-center justify-center overflow-hidden rounded-md border px-0.5 py-1 text-center text-[9px] font-bold leading-tight transition ' +
     (active
       ? 'border-[rgba(99,102,241,0.55)] bg-[rgba(99,102,241,0.22)] text-[#312e81] shadow-[0_0_0_1px_rgba(99,102,241,0.2)]'
       : 'border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.45)] text-[#7a7168]') +
@@ -51,11 +97,17 @@ function SlotBox({
       <div title={title} className={baseClass}>
         {showDraft ? (
           <>
-            <img src={draftMediaUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-90" />
-            <span className="relative z-[1] rounded bg-black/45 px-1 py-0.5 text-[8px] text-white">{label}</span>
+            <img
+              src={draftMediaUrl}
+              alt=""
+              className="absolute inset-0 h-full w-full object-contain bg-[#1a1816]/80 p-0.5 opacity-95"
+            />
+            <span className="relative z-[1] rounded bg-black/55 px-1 py-0.5 text-[8px] text-white">
+              {labelBlock}
+            </span>
           </>
         ) : (
-          label
+          labelBlock
         )}
       </div>
     )
@@ -71,11 +123,17 @@ function SlotBox({
     >
       {showDraft ? (
         <>
-          <img src={draftMediaUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-90" />
-          <span className="relative z-[1] rounded bg-black/45 px-1 py-0.5 text-[8px] text-white">{label}</span>
+          <img
+            src={draftMediaUrl}
+            alt=""
+            className="absolute inset-0 h-full w-full object-contain bg-[#1a1816]/80 p-0.5 opacity-95"
+          />
+          <span className="relative z-[1] rounded bg-black/55 px-1 py-0.5 text-[8px] text-white">
+            {labelBlock}
+          </span>
         </>
       ) : (
-        label
+        labelBlock
       )}
     </button>
   )
@@ -104,21 +162,29 @@ function DesktopWireframe({
     return String(def.row)
   }
 
-  const slotProps = (id: string, label: string) => ({
-    active: isActive(id),
-    label,
-    title: formatSlotLabel(id, t),
-    draftMediaUrl,
-    interactive,
-    onToggle: () => onToggle(id),
-  })
+  const slotProps = (id: string, label: string) => {
+    const def = getSlotDefinition(id)
+    const spec = def ? containerSpecForZone(def.zone) : null
+    const sizes = spec ? slotSizeLabels(spec, t) : null
+    return {
+      active: isActive(id),
+      label,
+      sizeShort: sizes?.short,
+      title: sizes
+        ? `${formatSlotLabel(id, t)}\n${sizes.title}`
+        : formatSlotLabel(id, t),
+      draftMediaUrl,
+      interactive,
+      onToggle: () => onToggle(id),
+    }
+  }
 
   return (
     <div className="rounded-[18px] border border-white/45 bg-[rgba(248,250,252,0.65)] p-3">
       <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#9a8776]">
         {t('advertising.catalog.desktopWire')} · {t(PAGE_LABEL_KEYS[page])}
       </p>
-      <div className="grid grid-cols-[52px_1fr_52px] gap-1.5">
+      <div className="grid grid-cols-[minmax(58px,72px)_1fr_minmax(58px,72px)] gap-1.5">
         <div className="grid grid-rows-4 gap-1">
           {group.desktop.left.map((id) => (
             <SlotBox key={id} {...slotProps(id, `L${short(id)}`)} />
@@ -177,13 +243,20 @@ function MobileWireframe({
           const def = getSlotDefinition(id)
           const isLeader = def?.zone === 'mob_leaderboard'
           const label = isLeader ? t('advertising.catalog.leaderboard') : `#${def?.row ?? i + 1}`
+          const spec = def ? containerSpecForZone(def.zone) : null
+          const sizes = spec ? slotSizeLabels(spec, t) : null
           return (
             <div key={id}>
               <SlotBox
                 active={isActive(id)}
                 label={label}
-                title={formatSlotLabel(id, t)}
-                className={isLeader ? 'min-h-[32px]' : 'min-h-[24px]'}
+                sizeShort={sizes?.short}
+                title={
+                  sizes
+                    ? `${formatSlotLabel(id, t)}\n${sizes.title}`
+                    : formatSlotLabel(id, t)
+                }
+                className={isLeader ? 'min-h-[36px]' : 'min-h-[28px]'}
                 draftMediaUrl={draftMediaUrl}
                 interactive={interactive}
                 onToggle={() => onToggle(id)}
@@ -334,6 +407,52 @@ export function AdPlacementSitePreview({
           {t('advertising.slots.selectedCount')}: {selected.length}
         </p>
       )}
+
+      <div className="rounded-[14px] border border-white/35 bg-white/25 px-3 py-2.5 text-[11px] leading-relaxed text-[#5f5a54]">
+        <p className="font-bold text-[#2f2a24]">{t('advertising.catalog.sizesLegendTitle')}</p>
+        <ul className="mt-1.5 list-inside list-disc space-y-1">
+          <li>
+            {interpolateTranslation(t('advertising.catalog.sizesLegendSide'), {
+              cw: AD_SLOT_CONTAINER_SPECS.side_left.containerW,
+              ch: AD_SLOT_CONTAINER_SPECS.side_left.containerH,
+              uw: AD_SLOT_CONTAINER_SPECS.side_left.uploadW,
+              uh: AD_SLOT_CONTAINER_SPECS.side_left.uploadH,
+              aspect: AD_SLOT_CONTAINER_SPECS.side_left.aspect,
+            })}
+          </li>
+          {page === 'home' && (
+            <li>
+              {interpolateTranslation(t('advertising.catalog.sizesLegendCenter'), {
+                iw: AD_SLOT_CONTAINER_SPECS.center.imageW,
+                ih: AD_SLOT_CONTAINER_SPECS.center.imageH,
+                uw: AD_SLOT_CONTAINER_SPECS.center.uploadW,
+                uh: AD_SLOT_CONTAINER_SPECS.center.uploadH,
+                aspect: AD_SLOT_CONTAINER_SPECS.center.aspect,
+              })}
+            </li>
+          )}
+          <li>
+            {interpolateTranslation(t('advertising.catalog.sizesLegendLeaderboard'), {
+              cw: AD_SLOT_CONTAINER_SPECS.mob_leaderboard.containerW,
+              ch: AD_SLOT_CONTAINER_SPECS.mob_leaderboard.containerH,
+              uw: AD_SLOT_CONTAINER_SPECS.mob_leaderboard.uploadW,
+              uh: AD_SLOT_CONTAINER_SPECS.mob_leaderboard.uploadH,
+              aspect: AD_SLOT_CONTAINER_SPECS.mob_leaderboard.aspect,
+            })}
+          </li>
+          <li>
+            {interpolateTranslation(t('advertising.catalog.sizesLegendInline'), {
+              cw: AD_SLOT_CONTAINER_SPECS.mob_inline.containerW,
+              ch: AD_SLOT_CONTAINER_SPECS.mob_inline.containerH,
+              iw: AD_SLOT_CONTAINER_SPECS.mob_inline.imageW,
+              ih: AD_SLOT_CONTAINER_SPECS.mob_inline.imageH,
+              uw: AD_SLOT_CONTAINER_SPECS.mob_inline.uploadW,
+              uh: AD_SLOT_CONTAINER_SPECS.mob_inline.uploadH,
+              aspect: AD_SLOT_CONTAINER_SPECS.mob_inline.aspect,
+            })}
+          </li>
+        </ul>
+      </div>
 
       {selectedOnPage.length > 0 ? (
         <details className="rounded-[14px] border border-white/35 bg-white/25 px-3 py-2 text-xs text-[#5f5a54]">
