@@ -26,8 +26,8 @@ type SiteCategoryConfig = {
 export const SITE_CATEGORY_CONFIG: Record<SiteCategorySlug, SiteCategoryConfig> = {
   cleaning: { icon: '🧹' },
   construction: { icon: '🏗️' },
-  electrical: { icon: '⚡' },
-  tools: { icon: '🔧' },
+  electrical: { icon: '🚗' },
+  tools: { icon: '🚚' },
   handyman: { icon: '🛠️' },
   furniture: { icon: '🪑' },
   vacancies: {

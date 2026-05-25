@@ -107,6 +107,9 @@ Deno.serve(async (req: Request) => {
             targetLang,
             fallbackUsed,
             provider,
+            ...(fallbackUsed && openaiKey
+              ? { warning: 'openai_unavailable_check_billing' }
+              : {}),
           },
         })
       }
@@ -170,7 +173,8 @@ Deno.serve(async (req: Request) => {
         const qty = Number(payload.quantity ?? 1) || 1
         const ranges: Record<string, [number, number]> = {
           construction: [500, 15000],
-          electrical: [80, 350],
+          electrical: [50, 800],
+          tools: [30, 2000],
           handyman: [40, 120],
           cleaning: [60, 200],
           default: [100, 2000],

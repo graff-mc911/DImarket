@@ -3,10 +3,10 @@ import type { QuoteEstimate } from '../types'
 /** Базові діапазони цін (EUR) за категорією — оновлюються через AI на edge */
 const BASE_RANGES: Record<string, { min: number; max: number; unit: string }> = {
   construction: { min: 500, max: 15000, unit: 'project' },
-  electrical: { min: 80, max: 350, unit: 'hour' },
+  electrical: { min: 50, max: 800, unit: 'service' },
   handyman: { min: 40, max: 120, unit: 'hour' },
   cleaning: { min: 60, max: 200, unit: 'visit' },
-  tools: { min: 20, max: 500, unit: 'item' },
+  tools: { min: 30, max: 2000, unit: 'trip' },
   furniture: { min: 100, max: 3000, unit: 'project' },
   default: { min: 100, max: 2000, unit: 'project' },
 }
