@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../contexts/AppContext'
 import type { AdGeoCountry, GeoMode } from '../lib/adGeoCatalog'
 import {
@@ -75,6 +75,43 @@ export function AdGeoTargeting({
   const [activeCountry, setActiveCountry] = useState('')
   const [activeRegion, setActiveRegion] = useState('')
 
+  const countriesForPicker = useMemo(() => {
+    const withRegions = countriesWithRegions.map((c) => c.name)
+    if (selectedCountries.length === 0) return withRegions
+    const picked = selectedCountries.filter((c) => withRegions.includes(c))
+    return picked.length > 0 ? picked : withRegions
+  }, [countriesWithRegions, selectedCountries])
+
+  useEffect(() => {
+    if (geoMode !== 'regions' && geoMode !== 'cities') return
+
+    if (selectedCountries.length > 0) {
+      const stillValid = activeCountry && selectedCountries.includes(activeCountry)
+      if (!stillValid) {
+        const next =
+          geoMode === 'regions'
+            ? selectedCountries.find((c) =>
+                geoData.some((g) => g.name === c && g.regions.length > 0),
+              )
+            : selectedCountries[0]
+        if (next) setActiveCountry(next)
+      }
+    } else if (!activeCountry && geoMode === 'regions' && countriesForPicker.length === 1) {
+      setActiveCountry(countriesForPicker[0])
+    }
+
+    if (geoMode === 'cities' && selectedRegions.length > 0 && !activeRegion) {
+      const owner = geoData.find((c) =>
+        c.regions.some((r) => selectedRegions.includes(r.name)),
+      )
+      if (owner) {
+        setActiveCountry(owner.name)
+        const region = owner.regions.find((r) => selectedRegions.includes(r.name))?.name
+        if (region) setActiveRegion(region)
+      }
+    }
+  }, [geoMode, selectedCountries, selectedRegions, geoData, activeCountry, activeRegion, countriesForPicker])
+
   const regionsForCountry = activeCountry ? catalogRegionsForCountry(geoData, activeCountry) : []
   const regionNames = regionsForCountry.map((r) => r.name)
   const citiesForRegion =
@@ -90,6 +127,11 @@ export function AdGeoTargeting({
   const handleCountryFocus = (country: string) => {
     setActiveCountry(country)
     setActiveRegion('')
+    if (country && (geoMode === 'regions' || geoMode === 'cities')) {
+      if (!selectedCountries.includes(country)) {
+        onCountriesChange([...selectedCountries, country])
+      }
+    }
     if (geoMode === 'cities') onCitiesChange([])
   }
 
@@ -98,6 +140,13 @@ export function AdGeoTargeting({
       ? selectedCountries.filter((c) => c !== name)
       : [...selectedCountries, name]
     onCountriesChange(next)
+    if (geoMode === 'regions' || geoMode === 'cities') {
+      if (next.includes(name)) setActiveCountry(name)
+      else if (activeCountry === name) {
+        setActiveCountry(next[0] ?? '')
+        setActiveRegion('')
+      }
+    }
     if (geoMode !== 'countries') {
       onRegionsChange(selectedRegions.filter((r) => {
         const owner = geoData.find((c) => c.regions.some((reg) => reg.name === r))
@@ -163,9 +212,9 @@ export function AdGeoTargeting({
             className="select-glass w-full"
           >
             <option value="">{t('register.selectCountry')}</option>
-            {countriesWithRegions.map((c) => (
-              <option key={c.name} value={c.name}>
-                {c.name}
+            {countriesForPicker.map((name) => (
+              <option key={name} value={name}>
+                {name}
               </option>
             ))}
           </select>
@@ -208,7 +257,10 @@ export function AdGeoTargeting({
             className="select-glass w-full"
           >
             <option value="">{t('register.selectCountry')}</option>
-            {countries.map((c) => (
+            {(selectedCountries.length > 0
+              ? countries.filter((c) => selectedCountries.includes(c))
+              : countries
+            ).map((c) => (
               <option key={c} value={c}>
                 {c}
               </option>

@@ -186,9 +186,22 @@ export function Advertising() {
 
   const handleGeoModeChange = (mode: GeoMode) => {
     setGeoMode(mode)
-    setSelectedCountries([])
-    setSelectedRegions([])
-    setSelectedCities([])
+    if (mode === 'global') {
+      setSelectedCountries([])
+      setSelectedRegions([])
+      setSelectedCities([])
+      return
+    }
+    if (mode === 'countries') {
+      setSelectedRegions([])
+      setSelectedCities([])
+      return
+    }
+    if (mode === 'regions') {
+      setSelectedCities([])
+      return
+    }
+    // cities: зберегти країни та регіони
   }
 
   // Завантаження файлу в Supabase Storage
@@ -681,8 +694,10 @@ export function Advertising() {
                           selectedCities={selectedCities}
                           onCountriesChange={(values) => {
                             setSelectedCountries(values)
-                            setSelectedRegions([])
-                            setSelectedCities([])
+                            if (geoMode === 'countries') {
+                              setSelectedRegions([])
+                              setSelectedCities([])
+                            }
                           }}
                           onRegionsChange={setSelectedRegions}
                           onCitiesChange={setSelectedCities}
