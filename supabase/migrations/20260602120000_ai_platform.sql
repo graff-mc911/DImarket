@@ -259,10 +259,12 @@ RETURNS boolean AS $$
 $$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 
 -- Conversations: own data
+DROP POLICY IF EXISTS ai_conversations_own ON ai_conversations;
 CREATE POLICY ai_conversations_own ON ai_conversations FOR ALL
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS ai_messages_own ON ai_messages;
 CREATE POLICY ai_messages_own ON ai_messages FOR ALL
   USING (
     EXISTS (SELECT 1 FROM ai_conversations c WHERE c.id = conversation_id AND c.user_id = auth.uid())
@@ -271,53 +273,65 @@ CREATE POLICY ai_messages_own ON ai_messages FOR ALL
     EXISTS (SELECT 1 FROM ai_conversations c WHERE c.id = conversation_id AND c.user_id = auth.uid())
   );
 
+DROP POLICY IF EXISTS ai_bot_tasks_own ON ai_bot_tasks;
 CREATE POLICY ai_bot_tasks_own ON ai_bot_tasks FOR ALL
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS ai_leads_own ON ai_leads;
 CREATE POLICY ai_leads_own ON ai_leads FOR ALL
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS ai_matches_own ON ai_matches;
 CREATE POLICY ai_matches_own ON ai_matches FOR ALL
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS ai_quote_own ON ai_quote_estimates;
 CREATE POLICY ai_quote_own ON ai_quote_estimates FOR ALL
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS ai_ocr_own ON ai_ocr_documents;
 CREATE POLICY ai_ocr_own ON ai_ocr_documents FOR ALL
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS ai_voice_own ON ai_voice_transcripts;
 CREATE POLICY ai_voice_own ON ai_voice_transcripts FOR ALL
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS ai_channels_own ON ai_messaging_channels;
 CREATE POLICY ai_channels_own ON ai_messaging_channels FOR ALL
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
 -- Translations: readable by authenticated (for UI), insert own
+DROP POLICY IF EXISTS ai_translations_read ON ai_translations;
 CREATE POLICY ai_translations_read ON ai_translations FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS ai_translations_insert ON ai_translations;
 CREATE POLICY ai_translations_insert ON ai_translations FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
 -- Profile suggestions: profile owner
+DROP POLICY IF EXISTS ai_profile_suggestions_own ON ai_profile_suggestions;
 CREATE POLICY ai_profile_suggestions_own ON ai_profile_suggestions FOR ALL
   USING (profile_id = auth.uid())
   WITH CHECK (profile_id = auth.uid());
 
 -- Ad images: advertiser owns
+DROP POLICY IF EXISTS ad_image_assets_own ON ad_image_assets;
 CREATE POLICY ad_image_assets_own ON ad_image_assets FOR ALL
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS ad_image_variants_own ON ad_image_variants;
 CREATE POLICY ad_image_variants_own ON ad_image_variants FOR ALL
   USING (
     EXISTS (SELECT 1 FROM ad_image_assets a WHERE a.id = asset_id AND a.user_id = auth.uid())
@@ -327,18 +341,23 @@ CREATE POLICY ad_image_variants_own ON ad_image_variants FOR ALL
   );
 
 -- Fraud + review analysis: admin read, users can insert reports on own submissions
+DROP POLICY IF EXISTS ai_fraud_admin_read ON ai_fraud_reports;
 CREATE POLICY ai_fraud_admin_read ON ai_fraud_reports FOR SELECT
   USING (public.is_ai_admin() OR reporter_id = auth.uid());
 
+DROP POLICY IF EXISTS ai_fraud_insert ON ai_fraud_reports;
 CREATE POLICY ai_fraud_insert ON ai_fraud_reports FOR INSERT
   WITH CHECK (reporter_id = auth.uid() OR reporter_id IS NULL);
 
+DROP POLICY IF EXISTS ai_fraud_admin_update ON ai_fraud_reports;
 CREATE POLICY ai_fraud_admin_update ON ai_fraud_reports FOR UPDATE
   USING (public.is_ai_admin());
 
+DROP POLICY IF EXISTS ai_review_admin_read ON ai_review_analysis;
 CREATE POLICY ai_review_admin_read ON ai_review_analysis FOR SELECT
   USING (public.is_ai_admin());
 
+DROP POLICY IF EXISTS ai_review_insert ON ai_review_analysis;
 CREATE POLICY ai_review_insert ON ai_review_analysis FOR INSERT
   TO authenticated
   WITH CHECK (true);
