@@ -35,9 +35,11 @@ import { useApp }      from '../contexts/AppContext'
 import { AdCampaign }  from '../lib/types'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
 import { AdPlacementSitePreview } from '../components/AdPlacementSitePreview'
+import { AdGeoTargeting } from '../components/AdGeoTargeting'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
 import { AdCampaignDraftPreview, AdCopyField } from '../components/AdCopyFields'
 import {
+  allCitiesFromCatalog,
   billingCityUnits,
   fetchAdGeoCatalog,
   isGeoSelectionValid,
@@ -120,23 +122,6 @@ export function Advertising() {
   const createdAtFormatter = useMemo(() =>
     new Intl.DateTimeFormat('uk-UA', { dateStyle: 'medium', timeStyle: 'short' }), [])
 
-  // Доступні регіони для вибраних країн
-  const availableRegions = useMemo(() =>
-    geoData
-      .filter(c => selectedCountries.includes(c.name))
-      .flatMap(c => c.regions.map(r => ({ country: c.name, name: r.name, cities: r.cities }))),
-    [selectedCountries, geoData])
-
-  // Доступні міста для вибраних регіонів
-  const availableCities = useMemo(() => {
-    if (selectedRegions.length > 0) {
-      return availableRegions
-        .filter(r => selectedRegions.includes(r.name))
-        .flatMap(r => r.cities)
-    }
-    return availableRegions.flatMap(r => r.cities)
-  }, [availableRegions, selectedRegions])
-
   const targetCities = useMemo(
     () => resolveTargetCities(geoMode, geoData, selectedCountries, selectedRegions, selectedCities),
     [geoMode, geoData, selectedCountries, selectedRegions, selectedCities],
@@ -146,6 +131,8 @@ export function Advertising() {
     () => billingCityUnits(geoMode, geoData, targetCities),
     [geoMode, geoData, targetCities],
   )
+
+  const catalogCityCount = useMemo(() => allCitiesFromCatalog(geoData).length, [geoData])
 
   const totalPrice = billingUnits * PRICE_PER_CITY_PER_WEEK * selectedSlots.length * durationWeeks
 
@@ -676,7 +663,7 @@ export function Advertising() {
                       <p className="mt-3 text-sm text-[#b45309]">{t('advertising.geo.loadFailed')}</p>
                     ) : (
                       <p className="mt-3 text-xs text-[#9a8776]">
-                        {t('advertising.geo.catalogHint').replace('{countries}', String(geoData.length)).replace('{cities}', String(billingUnits))}
+                        {t('advertising.geo.catalogHint').replace('{countries}', String(geoData.length)).replace('{cities}', String(catalogCityCount))}
                       </p>
                     )}
 
@@ -685,35 +672,21 @@ export function Advertising() {
                     )}
 
                     {geoMode !== 'global' && (
-                      <div className="mt-5 space-y-4">
-                        <CheckboxDropdown
-                          title={t('advertising.geo.selectCountries')}
-                          options={geoData.map(c => c.name)}
-                          selected={selectedCountries}
-                          noneText={t('advertising.geo.noneAvailable')}
-                          selectedText={t('advertising.geo.selected')}
-                          onChange={values => { setSelectedCountries(values); setSelectedRegions([]); setSelectedCities([]) }}
+                      <div className="mt-5">
+                        <AdGeoTargeting
+                          geoMode={geoMode}
+                          geoData={geoData}
+                          selectedCountries={selectedCountries}
+                          selectedRegions={selectedRegions}
+                          selectedCities={selectedCities}
+                          onCountriesChange={(values) => {
+                            setSelectedCountries(values)
+                            setSelectedRegions([])
+                            setSelectedCities([])
+                          }}
+                          onRegionsChange={setSelectedRegions}
+                          onCitiesChange={setSelectedCities}
                         />
-                        {(geoMode === 'regions' || geoMode === 'cities') && selectedCountries.length > 0 && (
-                          <CheckboxDropdown
-                            title={t('advertising.geo.selectRegions')}
-                            options={availableRegions.map(r => r.name)}
-                            selected={selectedRegions}
-                            noneText={t('advertising.geo.noneAvailable')}
-                            selectedText={t('advertising.geo.selected')}
-                            onChange={values => { setSelectedRegions(values); setSelectedCities([]) }}
-                          />
-                        )}
-                        {geoMode === 'cities' && selectedCountries.length > 0 && (
-                          <CheckboxDropdown
-                            title={t('advertising.geo.selectCities')}
-                            options={availableCities}
-                            selected={selectedCities}
-                            noneText={t('advertising.geo.noneAvailable')}
-                            selectedText={t('advertising.geo.selected')}
-                            onChange={setSelectedCities}
-                          />
-                        )}
                       </div>
                     )}
 
@@ -875,42 +848,6 @@ export function Advertising() {
 }
 
 // ── Підкомпоненти ──────────────────────────────────────────────────────────────
-
-function CheckboxDropdown({ title, options, selected, noneText, selectedText, onChange }: {
-  title:        string
-  options:      string[]
-  selected:     string[]
-  noneText:     string
-  selectedText: string
-  onChange:     (value: string[]) => void
-}) {
-  const [open, setOpen] = useState(false)
-
-  const toggle = (value: string) => {
-    onChange(selected.includes(value) ? selected.filter(i => i !== value) : [...selected, value])
-  }
-
-  return (
-    <div className="relative">
-      <button type="button" onClick={() => setOpen(v => !v)} className="input-glass flex items-center justify-between text-left">
-        <span>{selected.length > 0 ? title + ': ' + selected.length + ' ' + selectedText : title}</span>
-        <ChevronDown className={'h-4 w-4 transition ' + (open ? 'rotate-180' : '')} />
-      </button>
-      {open && (
-        <div className="absolute z-30 mt-2 max-h-72 w-full overflow-auto rounded-[18px] border border-[rgba(148,163,184,0.2)] bg-white p-2 shadow-xl">
-          {options.length > 0 ? options.map(option => (
-            <label key={option} className="flex cursor-pointer items-center gap-3 rounded-[14px] px-3 py-2 text-sm text-[#2f2a24] hover:bg-[rgba(99,102,241,0.08)]">
-              <input type="checkbox" checked={selected.includes(option)} onChange={() => toggle(option)} />
-              {option}
-            </label>
-          )) : (
-            <div className="px-3 py-2 text-sm text-[#9a8776]">{noneText}</div>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
 
 function CampaignCard({ campaign, formatter, t }: {
   campaign:        AdCampaign

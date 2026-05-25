@@ -1,4 +1,5 @@
 import type { User } from '@supabase/supabase-js'
+import { upsertGeoCatalogFromLocation } from './adGeoCatalog'
 import { supabase } from './supabase'
 import type { Profile, UserRole } from './types'
 
@@ -126,6 +127,9 @@ export async function ensureUserProfile(
       })
     }
 
+    const savedLocation = (data as Profile).location || location
+    if (savedLocation) void upsertGeoCatalogFromLocation(savedLocation)
+
     return data as Profile
   }
 
@@ -155,6 +159,8 @@ export async function ensureUserProfile(
       data: { user_role: 'advertiser', intended_role: 'advertiser' },
     })
   }
+
+  if (location) void upsertGeoCatalogFromLocation(location)
 
   return data as Profile
 }
