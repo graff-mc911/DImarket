@@ -1,4 +1,5 @@
 import type { AdCampaign } from './types'
+import { buildCampaignMediaFields, type AdCampaignMediaState } from './adCampaignMedia'
 import { slotToLegacyPlacement } from './adPlacementSlots'
 
 export const OWNER_MANAGED_PREFIX = 'owner_managed'
@@ -29,6 +30,7 @@ export function buildOwnerCampaignPayload(
   values: OwnerAdFormValues,
   ownerId: string,
   editing?: AdCampaign | null,
+  media?: AdCampaignMediaState,
 ) {
   const now = new Date()
   const startDate = values.startsAt ? new Date(values.startsAt) : now
@@ -43,9 +45,13 @@ export function buildOwnerCampaignPayload(
     advertiser_id: editing?.advertiser_id ?? ownerId,
     title: values.title.trim(),
     description: values.description.trim() || null,
-    image_url: values.mediaUrl.trim(),
-    media_url: values.mediaUrl.trim(),
-    media_type: values.mediaType,
+    ...(media
+      ? buildCampaignMediaFields(media)
+      : {
+          image_url: values.mediaUrl.trim(),
+          media_url: values.mediaUrl.trim(),
+          media_type: values.mediaType,
+        }),
     link_url: values.linkUrl.trim(),
     placement: slotToLegacyPlacement(values.selectedSlots[0] || 'home_side_r1'),
     placements: values.selectedSlots,

@@ -56,9 +56,7 @@ export function AdMediaEditor({
   const hasMedia = Boolean(displayUrl.trim())
   const previewAspectClass = AD_BANNER_LAYOUT_META[activeLayout].aspectClass
   const slideCount = slideUrls.filter(Boolean).length
-  const layoutPrefs = resolveLayoutPrefs(style, activeLayout)
-  const displayMode = resolveDisplayMode(style, activeLayout, slideCount)
-  const transition = resolveLayoutTransition(style, activeLayout)
+  const activeDisplayMode = resolveDisplayMode(style, activeLayout, slideCount)
 
   const patchSlideshow = (patch: Partial<NonNullable<AdMediaStyle['slideshow']>>) => {
     onStyleChange({
@@ -72,13 +70,9 @@ export function AdMediaEditor({
     })
   }
 
-  const patchLayout = (patch: Partial<typeof layoutPrefs>) => {
-    onStyleChange(
-      setLayoutPrefs(style, activeLayout, {
-        ...layoutPrefs,
-        ...patch,
-      }),
-    )
+  const patchLayout = (layout: AdBannerLayoutKey, patch: Partial<ReturnType<typeof resolveLayoutPrefs>>) => {
+    const prefs = resolveLayoutPrefs(style, layout)
+    onStyleChange(setLayoutPrefs(style, layout, { ...prefs, ...patch }))
   }
 
   const removeSlide = (index: number) => {
@@ -97,17 +91,15 @@ export function AdMediaEditor({
   const transitionLabel = (tr: AdSlideshowTransition) =>
     t(`advertising.mediaEditor.transition.${tr}`)
 
-  const transitionsForLayout =
-    TRANSITIONS_FOR_LAYOUT[activeLayout].filter((tr) => AD_SLIDESHOW_TRANSITIONS.includes(tr))
+  const anyRotate =
+    slideCount >= 2 &&
+    AD_BANNER_LAYOUT_KEYS.some((k) => resolveDisplayMode(style, k, slideCount) === 'rotate')
 
   return (
     <div className="space-y-4 rounded-[20px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-4">
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#6f665d]">
-          {t('advertising.mediaEditor.bannerTypes')}
-        </p>
-        <p className="mt-1 text-[11px] leading-snug text-[#9a8776]">
-          {t('advertising.mediaEditor.bannerTypesHint')}
+          {t('advertising.mediaEditor.previewFrame')}
         </p>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {AD_BANNER_LAYOUT_KEYS.map((key) => (
@@ -122,29 +114,8 @@ export function AdMediaEditor({
               }`}
             >
               {layoutLabel(key)}
-              {layoutHasPrefs(style, key) && (
-                <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-[#f59e0b]" />
-              )}
             </button>
           ))}
-        </div>
-      </div>
-
-      <div>
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#6f665d]">
-            {t('advertising.mediaEditor.previewFrame')} — {layoutLabel(activeLayout)}
-          </p>
-          {layoutHasPrefs(style, activeLayout) && (
-            <button
-              type="button"
-              onClick={() => onStyleChange(clearLayoutPrefs(style, activeLayout))}
-              className="flex items-center gap-1 text-[10px] font-semibold text-[#6366f1]"
-            >
-              <RotateCcw className="h-3 w-3" />
-              {t('advertising.mediaEditor.resetLayout')}
-            </button>
-          )}
         </div>
         <p className="mt-1 text-[11px] leading-snug text-[#9a8776]">
           {t('advertising.mediaEditor.autoFitHint')}
@@ -160,7 +131,7 @@ export function AdMediaEditor({
               layoutKey={activeLayout}
               className="h-full w-full"
               imageClassName="h-full w-full"
-              animateSlides={displayMode === 'rotate'}
+              animateSlides={activeDisplayMode === 'rotate'}
             />
           ) : (
             <div className="flex h-full min-h-[7.5rem] items-center justify-center bg-[#1a1816] text-xs text-white/60">
@@ -219,80 +190,120 @@ export function AdMediaEditor({
         </div>
       )}
 
-      {hasMedia && canMulti && slideCount >= 1 && (
+      {hasMedia && canMulti && (
         <div className="border-t border-[rgba(148,163,184,0.15)] pt-4">
-          <p className="text-xs font-bold text-[#5f5a54]">
-            {t('advertising.mediaEditor.displayFor')} {layoutLabel(activeLayout)}
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#6f665d]">
+            {t('advertising.mediaEditor.perLayoutTitle')}
           </p>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {DISPLAY_MODES.map((mode) => {
-              const disabled =
-                (mode === 'rotate' || mode === 'collage') && slideCount < 2
-              return (
-                <button
-                  key={mode}
-                  type="button"
-                  disabled={disabled}
-                  onClick={() => patchLayout({ displayMode: mode })}
-                  className={`rounded-full px-3 py-1 text-[11px] font-semibold transition disabled:opacity-40 ${
-                    displayMode === mode
-                      ? 'bg-[#6366f1] text-white'
-                      : 'border border-[rgba(99,102,241,0.25)] bg-white/60 text-[#5f5a54]'
-                  }`}
-                >
-                  {modeLabel(mode)}
-                </button>
-              )
-            })}
-          </div>
+          <p className="mt-1 text-[11px] leading-snug text-[#9a8776]">
+            {t('advertising.mediaEditor.perLayoutHint')}
+          </p>
+
           {slideCount < 2 && (
             <p className="mt-2 text-[10px] text-[#9a8776]">
               {t('advertising.mediaEditor.slideshowNeedTwo')}
             </p>
           )}
 
-          {displayMode === 'rotate' && slideCount >= 2 && (
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <label className="block text-xs font-semibold text-[#6f665d]">
-                {t('advertising.mediaEditor.interval')} ({(style.slideshow?.intervalMs ?? 3500) / 1000}s)
-                <input
-                  type="range"
-                  min={1500}
-                  max={8000}
-                  step={500}
-                  value={style.slideshow?.intervalMs ?? 3500}
-                  onChange={(e) => patchSlideshow({ intervalMs: Number(e.target.value) })}
-                  className="mt-2 w-full"
-                />
-              </label>
-              <label className="block text-xs font-semibold text-[#6f665d]">
-                {t('advertising.mediaEditor.transition')}
-                <select
-                  value={transition}
-                  onChange={(e) =>
-                    patchLayout({ transition: e.target.value as AdSlideshowTransition })
-                  }
-                  className="input-glass mt-1 w-full"
+          <div className="mt-3 space-y-3">
+            {AD_BANNER_LAYOUT_KEYS.map((layoutKey) => {
+              const mode = resolveDisplayMode(style, layoutKey, slideCount)
+              const transition = resolveLayoutTransition(style, layoutKey)
+              const transitions = TRANSITIONS_FOR_LAYOUT[layoutKey].filter((tr) =>
+                AD_SLIDESHOW_TRANSITIONS.includes(tr),
+              )
+
+              return (
+                <div
+                  key={layoutKey}
+                  className="rounded-[14px] border border-[rgba(148,163,184,0.18)] bg-white/40 p-3"
                 >
-                  {transitionsForLayout.map((tr) => (
-                    <option key={tr} value={tr}>
-                      {transitionLabel(tr)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <p className="text-[10px] text-[#9a8776] sm:col-span-2">
-                {t('advertising.mediaEditor.transitionDefault')}:{' '}
-                {transitionLabel(LAYOUT_DEFAULT_TRANSITION[activeLayout])}
-              </p>
-            </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-[#2f2a24]">
+                      {layoutLabel(layoutKey)}
+                      {layoutHasPrefs(style, layoutKey) && (
+                        <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-[#f59e0b]" />
+                      )}
+                    </span>
+                    {layoutHasPrefs(style, layoutKey) && (
+                      <button
+                        type="button"
+                        onClick={() => onStyleChange(clearLayoutPrefs(style, layoutKey))}
+                        className="text-[10px] font-semibold text-[#6366f1]"
+                      >
+                        {t('advertising.mediaEditor.resetLayout')}
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {DISPLAY_MODES.map((m) => {
+                      const disabled = (m === 'rotate' || m === 'collage') && slideCount < 2
+                      return (
+                        <button
+                          key={m}
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => patchLayout(layoutKey, { displayMode: m })}
+                          className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold disabled:opacity-40 ${
+                            mode === m
+                              ? 'bg-[#6366f1] text-white'
+                              : 'border border-[rgba(99,102,241,0.2)] text-[#5f5a54]'
+                          }`}
+                        >
+                          {modeLabel(m)}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  <label className="mt-2 block text-[10px] font-semibold text-[#6f665d]">
+                    {t('advertising.mediaEditor.effectForLayout')}
+                    <select
+                      value={transition}
+                      disabled={mode !== 'rotate' || slideCount < 2}
+                      onChange={(e) =>
+                        patchLayout(layoutKey, {
+                          transition: e.target.value as AdSlideshowTransition,
+                        })
+                      }
+                      className="input-glass mt-1 w-full text-xs disabled:opacity-50"
+                    >
+                      {transitions.map((tr) => (
+                        <option key={tr} value={tr}>
+                          {transitionLabel(tr)}
+                        </option>
+                      ))}
+                    </select>
+                    {mode !== 'rotate' && slideCount >= 2 && (
+                      <span className="mt-0.5 block text-[9px] font-normal text-[#9a8776]">
+                        {t('advertising.mediaEditor.effectRotateOnly')}
+                      </span>
+                    )}
+                  </label>
+                </div>
+              )
+            })}
+          </div>
+
+          {anyRotate && slideCount >= 2 && (
+            <label className="mt-4 block text-xs font-semibold text-[#6f665d]">
+              {t('advertising.mediaEditor.interval')} ({(style.slideshow?.intervalMs ?? 3500) / 1000}s)
+              <input
+                type="range"
+                min={1500}
+                max={8000}
+                step={500}
+                value={style.slideshow?.intervalMs ?? 3500}
+                onChange={(e) => patchSlideshow({ intervalMs: Number(e.target.value) })}
+                className="mt-2 w-full"
+              />
+            </label>
           )}
 
-          {displayMode === 'collage' && slideCount >= 2 && (
-            <p className="mt-2 text-[11px] text-[#9a8776]">
-              {t('advertising.mediaEditor.collageHint')}
-            </p>
-          )}
+          <p className="mt-3 text-[10px] text-[#9a8776]">
+            {t('advertising.mediaEditor.collageHint')}
+          </p>
         </div>
       )}
 

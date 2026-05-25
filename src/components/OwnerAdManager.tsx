@@ -1,18 +1,23 @@
-import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import {
   CheckCircle2,
-  ImagePlus,
   Pencil,
   Plus,
   Trash2,
-  Upload,
   X,
   XCircle,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { usePaidAds } from '../contexts/PaidAdsContext'
+import { AdBannerMediaForm } from './AdBannerMediaForm'
 import { AdPlacementSitePreview } from './AdPlacementSitePreview'
 import { AdCampaignDraftPreview } from './AdCopyFields'
+import {
+  emptyCampaignMediaState,
+  mediaStateFromCampaign,
+  type AdCampaignMediaState,
+} from '../lib/adCampaignMedia'
+import { DEFAULT_AD_MEDIA_STYLE, type AdMediaStyle } from '../lib/adMediaStyle'
 import { formatSlotLabel, sideSlotId } from '../lib/adPlacementSlots'
 import { formatSupabaseError } from '../lib/supabaseErrors'
 import {
@@ -23,16 +28,6 @@ import {
 import type { AdCampaign } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { isDemoAdCampaign } from '../lib/demoAdCampaigns'
-
-const ACCEPTED_MIME = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/gif',
-  'video/mp4',
-  'video/webm',
-]
-const MAX_FILE_MB = 20
 
 type OwnerAdManagerProps = {
   ownerId: string
@@ -96,13 +91,14 @@ export function OwnerAdManager({
 }: OwnerAdManagerProps) {
   const { t } = useApp()
   const { refresh: refreshPublicAds } = usePaidAds()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
   const [formOpen, setFormOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<OwnerAdFormValues>(EMPTY_FORM)
+  const [mediaUrl, setMediaUrl] = useState('')
+  const [slideUrls, setSlideUrls] = useState<string[]>([])
+  const [mediaStyle, setMediaStyle] = useState<AdMediaStyle>(DEFAULT_AD_MEDIA_STYLE)
+  const [bannerMediaType, setBannerMediaType] = useState<AdCampaignMediaState['mediaType']>('image')
   const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState(false)
 
   const ownerCampaigns = useMemo(
     () => campaigns.filter((c) => !isDemoAdCampaign(c)),
@@ -115,15 +111,30 @@ export function OwnerAdManager({
     [ownerCampaigns, editingId],
   )
 
+  const applyMediaState = (state: AdCampaignMediaState) => {
+    setMediaUrl(state.mediaUrl)
+    setSlideUrls(state.slideUrls)
+    setMediaStyle(state.mediaStyle)
+    setBannerMediaType(state.mediaType)
+    setForm((prev) => ({
+      ...prev,
+      mediaUrl: state.mediaUrl,
+      mediaType: state.mediaType,
+    }))
+  }
+
   const openCreate = () => {
     setEditingId(null)
     setForm({ ...EMPTY_FORM, startsAt: toLocalInput(new Date().toISOString()) })
+    applyMediaState(emptyCampaignMediaState())
     setFormOpen(true)
   }
 
   const openEdit = (campaign: AdCampaign) => {
     setEditingId(campaign.id)
-    setForm(campaignToForm(campaign))
+    const nextForm = campaignToForm(campaign)
+    setForm(nextForm)
+    applyMediaState(mediaStateFromCampaign(campaign))
     setFormOpen(true)
   }
 
@@ -131,44 +142,8 @@ export function OwnerAdManager({
     setFormOpen(false)
     setEditingId(null)
     setForm(EMPTY_FORM)
+    applyMediaState(emptyCampaignMediaState())
   }
-
-  const uploadFile = useCallback(
-    async (file: File) => {
-      if (!ACCEPTED_MIME.includes(file.type)) {
-        onError('Дозволені формати: JPG, PNG, WebP, GIF, MP4, WebM')
-        return
-      }
-      if (file.size > MAX_FILE_MB * 1024 * 1024) {
-        onError(`Максимальний розмір файлу — ${MAX_FILE_MB} MB`)
-        return
-      }
-
-      const mediaType: OwnerAdFormValues['mediaType'] = file.type.startsWith('video/')
-        ? 'video'
-        : file.type === 'image/gif'
-          ? 'gif'
-          : 'image'
-
-      setUploading(true)
-      try {
-        const ext = file.name.split('.').pop() ?? 'bin'
-        const path = `campaigns/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-        const { error: uploadError } = await supabase.storage
-          .from('ad-media')
-          .upload(path, file, { cacheControl: '3600', upsert: false })
-        if (uploadError) throw uploadError
-
-        const { data: urlData } = supabase.storage.from('ad-media').getPublicUrl(path)
-        setForm((prev) => ({ ...prev, mediaUrl: urlData.publicUrl, mediaType }))
-      } catch (err) {
-        onError(formatSupabaseError(err, 'Не вдалося завантажити файл'))
-      } finally {
-        setUploading(false)
-      }
-    },
-    [onError],
-  )
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -176,7 +151,7 @@ export function OwnerAdManager({
       onError('Вкажіть назву реклами')
       return
     }
-    if (!form.mediaUrl.trim()) {
+    if (!mediaUrl.trim() && slideUrls.length === 0) {
       onError('Додайте зображення або URL банера')
       return
     }
@@ -191,7 +166,13 @@ export function OwnerAdManager({
 
     setSaving(true)
     try {
-      const payload = buildOwnerCampaignPayload(form, ownerId, editingCampaign)
+      const mediaState: AdCampaignMediaState = {
+        mediaUrl,
+        slideUrls,
+        mediaStyle,
+        mediaType: bannerMediaType,
+      }
+      const payload = buildOwnerCampaignPayload(form, ownerId, editingCampaign, mediaState)
 
       if (editingId) {
         const { error } = await supabase.from('ad_campaigns').update(payload).eq('id', editingId)
@@ -449,43 +430,23 @@ export function OwnerAdManager({
 
           <div className="mt-4 rounded-[20px] border border-white/40 bg-[rgba(255,255,255,0.25)] p-4">
             <p className="text-sm font-semibold text-[#2f2a24]">Зображення / банер *</p>
-            <label className="mt-3 block text-sm">
-              <span className="text-[#6f665d]">URL банера</span>
-              <input
-                className="input-glass mt-1.5 w-full"
-                value={form.mediaUrl}
-                onChange={(e) => setForm((p) => ({ ...p, mediaUrl: e.target.value }))}
-                placeholder="https://… або завантажте файл"
-              />
-            </label>
-            <div className="mt-3 flex flex-wrap items-center gap-3">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept={ACCEPTED_MIME.join(',')}
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  if (file) void uploadFile(file)
-                  e.target.value = ''
+            <div className="mt-3">
+              <AdBannerMediaForm
+                mediaType={bannerMediaType}
+                setMediaType={(type) => {
+                  setBannerMediaType(type)
+                  setForm((p) => ({ ...p, mediaType: type }))
                 }}
+                mediaUrl={mediaUrl}
+                setMediaUrl={(url) => {
+                  setMediaUrl(url)
+                  setForm((p) => ({ ...p, mediaUrl: url }))
+                }}
+                slideUrls={slideUrls}
+                setSlideUrls={setSlideUrls}
+                mediaStyle={mediaStyle}
+                setMediaStyle={setMediaStyle}
               />
-              <button
-                type="button"
-                disabled={uploading}
-                onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-2 rounded-full bg-[rgba(99,102,241,0.12)] px-4 py-2 text-sm font-semibold text-[#4338ca] disabled:opacity-50"
-              >
-                {uploading ? (
-                  <Upload className="h-4 w-4 animate-pulse" />
-                ) : (
-                  <ImagePlus className="h-4 w-4" />
-                )}
-                {uploading ? 'Завантаження…' : 'Завантажити файл'}
-              </button>
-              {form.mediaUrl && (
-                <img src={form.mediaUrl} alt="" className="h-14 max-w-[200px] rounded-lg object-cover" />
-              )}
             </div>
           </div>
 
@@ -497,7 +458,7 @@ export function OwnerAdManager({
             />
           </div>
 
-          {form.mediaUrl && form.title && (
+          {(mediaUrl || slideUrls.length) && form.title && (
             <div className="mt-5">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#9a8776]">
                 Попередній перегляд
@@ -505,9 +466,11 @@ export function OwnerAdManager({
               <AdCampaignDraftPreview
                 title={form.title}
                 description={form.description}
-                mediaUrl={form.mediaUrl}
+                mediaUrl={slideUrls[0] || mediaUrl}
                 linkUrl={form.linkUrl}
-                mediaType={form.mediaType}
+                mediaType={bannerMediaType}
+                mediaStyle={mediaStyle}
+                slideUrls={slideUrls}
                 mediaReady
                 placeholderTitle="Реклама"
               />
@@ -515,7 +478,7 @@ export function OwnerAdManager({
           )}
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <button type="submit" disabled={saving || uploading} className="btn-primary rounded-full">
+            <button type="submit" disabled={saving} className="btn-primary rounded-full">
               {saving ? 'Збереження…' : editingId ? 'Зберегти зміни' : 'Опублікувати рекламу'}
             </button>
             <button type="button" onClick={closeForm} className="btn-secondary rounded-full">
