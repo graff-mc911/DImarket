@@ -183,7 +183,8 @@ export const enTranslations = {
   'category.tools': 'Transport / logistics',
   'category.toolsDesc': 'Material delivery, movers, relocation, transport',
   'category.cleaning': 'Cleaning',
-  'category.cleaningDesc': 'Home, office, and post-renovation cleaning',
+  'category.cleaningDesc':
+    'Post-renovation cleaning, general cleaning, deep cleaning, construction cleaning',
   'category.name.construction': 'Construction',
   'category.name.renovation': 'Renovation',
   'category.name.electrical': 'Auto repair shop',

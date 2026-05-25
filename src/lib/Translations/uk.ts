@@ -185,7 +185,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'category.tools': 'Перевезення / логістика',
   'category.toolsDesc': 'Доставка матеріалів, вантажники, переїзди, transport',
   'category.cleaning': 'Прибирання / клінінг',
-  'category.cleaningDesc': 'Прибирання квартир, офісів та після ремонту',
+  'category.cleaningDesc':
+    'Прибирання після ремонту, cleaning, deep cleaning, construction cleaning',
   'category.name.construction': 'Будівництво',
   'category.name.renovation': 'Ремонт',
   'category.name.electrical': 'Електрика',

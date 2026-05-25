@@ -4,6 +4,7 @@
 
 import { CONSTRUCTION_WORK_GROUPS } from './constructionWorkGroups'
 import { TRANSPORT_WORK_GROUPS } from './transportWorkGroups'
+import { CLEANING_WORK_GROUPS } from './cleaningWorkGroups'
 
 export type LocalizedLabel = {
   uk: string
@@ -57,7 +58,22 @@ export const SERVICE_CATEGORY_CATALOG: CategoryWithSubcategoriesDef[] = [
     groups: TRANSPORT_WORK_GROUPS,
     subcategories: flattenGroups(TRANSPORT_WORK_GROUPS),
   },
+  {
+    slug: 'cleaning',
+    label: {
+      uk: 'Прибирання / клінінг',
+      ru: 'Уборка / клининг',
+      en: 'Cleaning',
+    },
+    groups: CLEANING_WORK_GROUPS,
+    subcategories: flattenGroups(CLEANING_WORK_GROUPS),
+  },
 ]
+
+/** Чи є у категорії підкатегорії для фільтра «вид робіт». */
+export function categoryHasWorkSubcategories(categorySlug: string): boolean {
+  return (getCategoryDef(categorySlug)?.subcategories.length ?? 0) > 0
+}
 
 /** Категорія (construction, tools, …) для slug підкатегорії. */
 export function categorySlugForSubcategory(subSlug: string): string | undefined {

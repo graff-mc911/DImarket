@@ -29,7 +29,10 @@ import {
   type SiteCategorySlug,
 } from '../lib/siteCategories'
 import { ConstructionWorkTypesPanel } from '../components/ConstructionWorkTypesPanel'
-import { subcategorySlugsForGroup } from '../lib/categoryCatalog'
+import {
+  categoryHasWorkSubcategories,
+  subcategorySlugsForGroup,
+} from '../lib/categoryCatalog'
 
 // Типи оголошень для фільтру
 const LISTING_TYPES = [
@@ -320,7 +323,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
 
               {(() => {
                 const cat = fixedCategorySlug || selectedCategory
-                if (cat !== 'construction' && cat !== 'tools') return null
+                if (!cat || !categoryHasWorkSubcategories(cat)) return null
                 return (
                   <ConstructionWorkTypesPanel
                     categorySlug={cat}
