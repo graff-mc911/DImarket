@@ -1,12 +1,13 @@
 import { Megaphone } from 'lucide-react'
 import {
-  AD_MEDIA_FALLBACK,
   getGeoTargetLabel,
   getPublicBannerImageUrl,
   resolveAdDisplayCopy,
   trackAdClick,
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
+import { parseAdMediaStyle } from '../lib/adMediaStyle'
+import { AdMediaDisplay } from './AdMediaDisplay'
 import { useApp } from '../contexts/AppContext'
 import { AD_TEXT_PANEL_CLASS, adSlotTailwind } from '../lib/adSlotLayout'
 
@@ -111,26 +112,28 @@ function AdCampaignMedia({
   fillBanner?: boolean
 }) {
   const imageSrc = getPublicBannerImageUrl(campaign)
-  const isBrandBanner = !fillBanner && imageSrc.includes('/ads/brands/')
+  const mediaStyle = parseAdMediaStyle(
+    (campaign as AdCampaignWithAdvertiser & { media_style?: unknown }).media_style,
+  )
+  const mediaType =
+    campaign.media_type === 'video' || campaign.media_type === 'gif'
+      ? campaign.media_type
+      : 'image'
 
   return (
-    <div className={`relative overflow-hidden bg-[#1a1816] ${imageClass}`}>
-      <img
-        src={imageSrc}
-        alt={campaign.title}
-        className={
-          fillBanner || imageSrc.includes('/ads/banners/')
-            ? 'h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.01]'
-            : isBrandBanner
-              ? 'h-full w-full object-contain object-center bg-[#1c1917] transition duration-500 group-hover:scale-[1.01]'
-              : 'h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]'
-        }
-        loading="lazy"
-        onError={(e) => {
-          e.currentTarget.src = AD_MEDIA_FALLBACK
-        }}
-      />
-    </div>
+    <AdMediaDisplay
+      src={imageSrc}
+      alt={campaign.title}
+      mediaType={mediaType}
+      style={mediaStyle}
+      className={imageClass}
+      imageClassName={
+        fillBanner || imageSrc.includes('/ads/banners/')
+          ? 'h-full w-full'
+          : 'h-full w-full transition duration-500 group-hover:scale-[1.02]'
+      }
+      animateSlides
+    />
   )
 }
 

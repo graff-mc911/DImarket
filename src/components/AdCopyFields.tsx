@@ -1,5 +1,10 @@
 import type { ReactNode } from 'react'
 import type { AdCampaignWithAdvertiser } from '../lib/adCampaigns'
+import {
+  buildMediaStylePayload,
+  DEFAULT_AD_MEDIA_STYLE,
+  type AdMediaStyle,
+} from '../lib/adMediaStyle'
 import { AdOverlayCard } from './AdOverlayCard'
 
 type DraftMediaType = 'image' | 'gif' | 'video'
@@ -41,6 +46,8 @@ interface AdCampaignDraftPreviewProps {
   mediaType: DraftMediaType
   mediaReady: boolean
   placeholderTitle: string
+  mediaStyle?: AdMediaStyle
+  slideUrls?: string[]
   className?: string
 }
 
@@ -53,16 +60,25 @@ export function AdCampaignDraftPreview({
   mediaType,
   mediaReady,
   placeholderTitle,
+  mediaStyle,
+  slideUrls = [],
   className = '',
 }: AdCampaignDraftPreviewProps) {
+  const primary = slideUrls[0] || mediaUrl
   const draft: AdCampaignWithAdvertiser = {
     id: 'draft-preview',
     title: title.trim() || placeholderTitle,
     description: description.trim() || null,
     link_url: linkUrl.trim() || '#',
-    image_url: mediaType !== 'video' ? mediaUrl || null : null,
-    media_url: mediaUrl || null,
+    image_url: mediaType !== 'video' ? primary || null : null,
+    media_url: primary || null,
     media_type: mediaType,
+    media_style: mediaReady
+      ? buildMediaStylePayload(
+          mediaStyle ?? DEFAULT_AD_MEDIA_STYLE,
+          slideUrls.length ? slideUrls : primary ? [primary] : [],
+        )
+      : null,
     advertiser: null,
   } as AdCampaignWithAdvertiser
 

@@ -37,7 +37,14 @@ import { createCheckoutSession, eurosToCents } from '../lib/stripe'
 import { AdPlacementSitePreview } from '../components/AdPlacementSitePreview'
 import { AdGeoTargeting } from '../components/AdGeoTargeting'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
+import { AdMediaEditor } from '../components/AdMediaEditor'
+import { AdMediaDisplay } from '../components/AdMediaDisplay'
 import { AdCampaignDraftPreview, AdCopyField } from '../components/AdCopyFields'
+import {
+  buildMediaStylePayload,
+  DEFAULT_AD_MEDIA_STYLE,
+  type AdMediaStyle,
+} from '../lib/adMediaStyle'
 import {
   allCitiesFromCatalog,
   billingCityUnits,
@@ -104,6 +111,8 @@ export function Advertising() {
   // Медіа
   const [mediaType, setMediaType]   = useState<MediaType>('image')
   const [mediaUrl, setMediaUrl]     = useState('')
+  const [slideUrls, setSlideUrls]   = useState<string[]>([])
+  const [mediaStyle, setMediaStyle] = useState<AdMediaStyle>(DEFAULT_AD_MEDIA_STYLE)
   const [uploadState, setUploadState] = useState<UploadState>({ status: 'idle', progress: 0 })
   const [isDragOver, setIsDragOver] = useState(false)
 
@@ -205,50 +214,64 @@ export function Advertising() {
   }
 
   // Завантаження файлу в Supabase Storage
-  const uploadFile = useCallback(async (file: File) => {
-    const allAccepted = Object.values(ACCEPTED_MIME).flat()
-    if (!allAccepted.includes(file.type)) {
-      setUploadState({ status: 'error', progress: 0, error: 'JPG, PNG, WebP, GIF, MP4, WebM' })
-      return
-    }
-    if (file.size > MAX_FILE_BYTES) {
-      setUploadState({ status: 'error', progress: 0, error: `Max ${MAX_FILE_MB} MB` })
-      return
-    }
+  const uploadFile = useCallback(
+    async (file: File, options?: { append?: boolean }) => {
+      const allAccepted = Object.values(ACCEPTED_MIME).flat()
+      if (!allAccepted.includes(file.type)) {
+        setUploadState({ status: 'error', progress: 0, error: 'JPG, PNG, WebP, GIF, MP4, WebM' })
+        return
+      }
+      if (file.size > MAX_FILE_BYTES) {
+        setUploadState({ status: 'error', progress: 0, error: `Max ${MAX_FILE_MB} MB` })
+        return
+      }
 
-    if (ACCEPTED_MIME.video.includes(file.type)) setMediaType('video')
-    else if (file.type === 'image/gif') setMediaType('gif')
-    else setMediaType('image')
+      const append = options?.append === true
+      if (!append) {
+        if (ACCEPTED_MIME.video.includes(file.type)) setMediaType('video')
+        else if (file.type === 'image/gif') setMediaType('gif')
+        else setMediaType('image')
+        setMediaUrl('')
+        setSlideUrls([])
+      }
 
-    setUploadState({ status: 'uploading', progress: 10 })
-    setMediaUrl('')
+      setUploadState({ status: 'uploading', progress: 10 })
 
-    try {
-      const ext      = file.name.split('.').pop() ?? 'bin'
-      const fileName = Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext
-      const path     = 'campaigns/' + fileName
+      try {
+        const ext = file.name.split('.').pop() ?? 'bin'
+        const fileName = Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext
+        const path = 'campaigns/' + fileName
 
-      setUploadState({ status: 'uploading', progress: 40 })
+        setUploadState({ status: 'uploading', progress: 40 })
 
-      const { error: uploadError } = await supabase.storage
-        .from('ad-media')
-        .upload(path, file, { cacheControl: '3600', upsert: false })
+        const { error: uploadError } = await supabase.storage
+          .from('ad-media')
+          .upload(path, file, { cacheControl: '3600', upsert: false })
 
-      if (uploadError) throw uploadError
-      setUploadState({ status: 'uploading', progress: 80 })
+        if (uploadError) throw uploadError
+        setUploadState({ status: 'uploading', progress: 80 })
 
-      const { data: urlData } = supabase.storage.from('ad-media').getPublicUrl(path)
-      setMediaUrl(urlData.publicUrl)
-      setUploadState({ status: 'done', progress: 100 })
-    } catch (err) {
-      console.error('Помилка завантаження:', err)
-      setUploadState({
-        status: 'error',
-        progress: 0,
-        error: formatSupabaseError(err, t('advertising.error.upload')),
-      })
-    }
-  }, [])
+        const { data: urlData } = supabase.storage.from('ad-media').getPublicUrl(path)
+        const url = urlData.publicUrl
+        if (append) {
+          setSlideUrls((prev) => [...prev, url])
+          setMediaUrl((prev) => prev || url)
+        } else {
+          setMediaUrl(url)
+          setSlideUrls([url])
+        }
+        setUploadState({ status: 'done', progress: 100 })
+      } catch (err) {
+        console.error('Помилка завантаження:', err)
+        setUploadState({
+          status: 'error',
+          progress: 0,
+          error: formatSupabaseError(err, t('advertising.error.upload')),
+        })
+      }
+    },
+    [t],
+  )
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
@@ -268,7 +291,10 @@ export function Advertising() {
     setSelectedSlots([sideSlotId('home', 'right', 1)])
     setGeoMode('global'); setSelectedCountries([]); setSelectedRegions([]); setSelectedCities([])
     setDurationWeeks(1)
-    setMediaType('image'); setMediaUrl('')
+    setMediaType('image')
+    setMediaUrl('')
+    setSlideUrls([])
+    setMediaStyle(DEFAULT_AD_MEDIA_STYLE)
     setUploadState({ status: 'idle', progress: 0 })
     setStartsAt(''); setEndsAt('')
   }
@@ -297,6 +323,7 @@ export function Advertising() {
       return
     }
     setMediaUrl(url)
+    setSlideUrls(url.trim() ? [url.trim()] : [])
     if (url.match(/\.(mp4|webm)(\?|$)/i)) setMediaType('video')
     else if (url.match(/\.gif(\?|$)/i)) setMediaType('gif')
     else setMediaType('image')
@@ -334,7 +361,7 @@ export function Advertising() {
         advertiser_id: user.id,
         title:         title.trim(),
         description:   description.trim() || null,
-        image_url:     mediaUrl,
+        image_url:     slideUrls[0] || mediaUrl,
         link_url:      linkUrl.trim(),
         placement:     slotToLegacyPlacement(selectedSlots[0]),
         placements:    selectedSlots,
@@ -346,7 +373,8 @@ export function Advertising() {
         country_code:  null,
         region_name:   selectedRegions.length > 0 ? selectedRegions.join(', ') : null,
         media_type:    mediaType,
-        media_url:     mediaUrl,
+        media_url:     slideUrls[0] || mediaUrl,
+        media_style:   buildMediaStylePayload(mediaStyle, slideUrls.length ? slideUrls : [mediaUrl]),
         starts_at:     startDate.toISOString(),
         ends_at:       endDate.toISOString(),
         status:        campaignStatus,
@@ -550,10 +578,15 @@ export function Advertising() {
                     >
                       {mediaUrl && uploadState.status === 'done' ? (
                         <div className="relative">
-                          {mediaType === 'video'
-                            ? <video src={mediaUrl} className="h-48 w-full rounded-[20px] object-cover" muted playsInline loop autoPlay />
-                            : <img src={mediaUrl} alt="Banner" className="h-48 w-full rounded-[20px] object-cover" />}
-                          <button type="button" onClick={(e) => { e.stopPropagation(); setMediaUrl(''); setUploadState({ status: 'idle', progress: 0 }) }}
+                          <AdMediaDisplay
+                            src={slideUrls[0] || mediaUrl}
+                            mediaType={mediaType}
+                            style={mediaStyle}
+                            className="h-48 w-full rounded-[20px]"
+                            imageClassName="h-full w-full rounded-[20px]"
+                            animateSlides={slideUrls.length > 1}
+                          />
+                          <button type="button" onClick={(e) => { e.stopPropagation(); setMediaUrl(''); setSlideUrls([]); setMediaStyle(DEFAULT_AD_MEDIA_STYLE); setUploadState({ status: 'idle', progress: 0 }) }}
                             className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white">
                             <X className="h-4 w-4" />
                           </button>
@@ -774,6 +807,24 @@ export function Advertising() {
               <p className="mt-2 text-sm leading-6 text-[#6f665d]">{t('advertising.preview.desc')}</p>
 
               <div className="mt-5 flex flex-col items-center gap-4">
+                {uploadState.status === 'done' && mediaUrl && (
+                  <AdMediaEditor
+                    mediaType={mediaType}
+                    primaryUrl={mediaUrl}
+                    slideUrls={slideUrls}
+                    style={mediaStyle}
+                    onStyleChange={setMediaStyle}
+                    onSlideUrlsChange={(urls) => {
+                      setSlideUrls(urls)
+                      setMediaUrl(urls[0] ?? '')
+                    }}
+                    onPrimaryUrlChange={(url) => {
+                      setMediaUrl(url)
+                      if (!slideUrls.length) setSlideUrls(url ? [url] : [])
+                    }}
+                    onUploadFile={(file) => uploadFile(file, { append: true })}
+                  />
+                )}
                 <AdCampaignDraftPreview
                   title={title}
                   description={description}
@@ -782,6 +833,8 @@ export function Advertising() {
                   mediaType={mediaType}
                   mediaReady={uploadState.status === 'done'}
                   placeholderTitle={t('advertising.preview.placeholder')}
+                  mediaStyle={mediaStyle}
+                  slideUrls={slideUrls}
                 />
 
                 <div className="glass-card w-full max-w-xl p-4">
