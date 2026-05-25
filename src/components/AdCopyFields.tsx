@@ -1,10 +1,16 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import type { AdCampaignWithAdvertiser } from '../lib/adCampaigns'
+import {
+  AD_BANNER_LAYOUT_KEYS,
+  AD_BANNER_LAYOUT_META,
+  type AdBannerLayoutKey,
+} from '../lib/adBannerLayouts'
 import {
   buildMediaStylePayload,
   DEFAULT_AD_MEDIA_STYLE,
   type AdMediaStyle,
 } from '../lib/adMediaStyle'
+import { useApp } from '../contexts/AppContext'
 import { AdOverlayCard } from './AdOverlayCard'
 
 type DraftMediaType = 'image' | 'gif' | 'video'
@@ -64,6 +70,8 @@ export function AdCampaignDraftPreview({
   slideUrls = [],
   className = '',
 }: AdCampaignDraftPreviewProps) {
+  const { t } = useApp()
+  const [previewLayout, setPreviewLayout] = useState<AdBannerLayoutKey>('center')
   const primary = slideUrls[0] || mediaUrl
   const draft: AdCampaignWithAdvertiser = {
     id: 'draft-preview',
@@ -82,12 +90,33 @@ export function AdCampaignDraftPreview({
     advertiser: null,
   } as AdCampaignWithAdvertiser
 
+  const overlayVariant = AD_BANNER_LAYOUT_META[previewLayout].overlayVariant
+
   return (
-    <AdOverlayCard
-      campaign={draft}
-      variant="center"
-      className={`max-w-xl ${className}`}
-      showDescription={Boolean(description.trim())}
-    />
+    <div className={className}>
+      <div className="mb-2 flex flex-wrap justify-center gap-1.5">
+        {AD_BANNER_LAYOUT_KEYS.map((key) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setPreviewLayout(key)}
+            className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+              previewLayout === key
+                ? 'bg-[#6366f1] text-white'
+                : 'border border-[rgba(99,102,241,0.2)] text-[#6f665d]'
+            }`}
+          >
+            {t(`advertising.mediaEditor.layout.${key}`)}
+          </button>
+        ))}
+      </div>
+      <AdOverlayCard
+        campaign={draft}
+        variant={overlayVariant}
+        className="max-w-xl mx-auto"
+        showDescription={Boolean(description.trim())}
+        imageOnly={previewLayout === 'leaderboard'}
+      />
+    </div>
   )
 }

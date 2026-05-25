@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import type { AdBannerLayoutKey } from '../lib/adBannerLayouts'
 import {
   DEFAULT_AD_MEDIA_STYLE,
   mediaStyleObjectPosition,
   mediaStyleToCssFilter,
+  resolveDisplayStyle,
   resolveSlideUrls,
+  slideshowLayerClass,
   type AdMediaStyle,
 } from '../lib/adMediaStyle'
 import { AD_MEDIA_FALLBACK } from '../lib/adCampaigns'
@@ -13,6 +16,8 @@ type AdMediaDisplayProps = {
   alt?: string
   mediaType: 'image' | 'gif' | 'video'
   style?: AdMediaStyle
+  /** Кадрування для конкретного типу банера */
+  layoutKey?: AdBannerLayoutKey
   className?: string
   imageClassName?: string
   /** Автослайд для 2+ зображень */
@@ -24,11 +29,16 @@ export function AdMediaDisplay({
   alt = '',
   mediaType,
   style = DEFAULT_AD_MEDIA_STYLE,
+  layoutKey,
   className = '',
   imageClassName = '',
   animateSlides = true,
 }: AdMediaDisplayProps) {
-  const slides = useMemo(() => resolveSlideUrls(src, style), [src, style])
+  const displayStyle = useMemo(
+    () => (layoutKey ? resolveDisplayStyle(style, layoutKey) : style),
+    [style, layoutKey],
+  )
+  const slides = useMemo(() => resolveSlideUrls(src, displayStyle), [src, displayStyle])
   const [slideIndex, setSlideIndex] = useState(0)
 
   useEffect(() => {
@@ -37,17 +47,17 @@ export function AdMediaDisplay({
 
   useEffect(() => {
     if (!animateSlides || slides.length < 2 || mediaType === 'video') return
-    const ms = style.slideshow?.intervalMs ?? 3500
+    const ms = displayStyle.slideshow?.intervalMs ?? 3500
     const id = window.setInterval(() => {
       setSlideIndex((i) => (i + 1) % slides.length)
     }, ms)
     return () => window.clearInterval(id)
-  }, [animateSlides, slides, mediaType, style.slideshow?.intervalMs])
+  }, [animateSlides, slides, mediaType, displayStyle.slideshow?.intervalMs])
 
-  const filter = mediaStyleToCssFilter(style)
-  const objectPosition = mediaStyleObjectPosition(style)
-  const objectFit = style.fit
-  const scale = style.scale / 100
+  const filter = mediaStyleToCssFilter(displayStyle)
+  const objectPosition = mediaStyleObjectPosition(displayStyle)
+  const objectFit = displayStyle.fit
+  const scale = displayStyle.scale / 100
 
   const imgStyle: React.CSSProperties = {
     objectFit,
@@ -81,7 +91,25 @@ export function AdMediaDisplay({
     )
   }
 
-  const transition = style.slideshow?.transition ?? 'fade'
+  const transition = displayStyle.slideshow?.transition ?? 'fade'
+  const multi = slides.length > 1 && animateSlides
+
+  if (!multi) {
+    return (
+      <div className={`relative overflow-hidden bg-[#1a1816] ${className}`}>
+        <img
+          src={slides[0]}
+          alt={alt}
+          className={`h-full w-full ${imageClassName}`}
+          style={imgStyle}
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.src = AD_MEDIA_FALLBACK
+          }}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className={`relative overflow-hidden bg-[#1a1816] ${className}`}>
@@ -92,15 +120,7 @@ export function AdMediaDisplay({
             key={`${url}-${i}`}
             src={url}
             alt={alt}
-            className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${imageClassName} ${
-              transition === 'fade'
-                ? active
-                  ? 'opacity-100'
-                  : 'opacity-0'
-                : active
-                  ? 'opacity-100 translate-x-0'
-                  : 'opacity-0 translate-x-full'
-            }`}
+            className={`${slideshowLayerClass(active, transition)} ${imageClassName}`}
             style={imgStyle}
             loading="lazy"
             onError={(e) => {
@@ -109,16 +129,14 @@ export function AdMediaDisplay({
           />
         )
       })}
-      {slides.length > 1 && (
-        <div className="pointer-events-none absolute bottom-1.5 right-1.5 flex gap-1">
-          {slides.map((_, i) => (
-            <span
-              key={i}
-              className={`h-1.5 w-1.5 rounded-full ${i === slideIndex ? 'bg-white' : 'bg-white/40'}`}
-            />
-          ))}
-        </div>
-      )}
+      <div className="pointer-events-none absolute bottom-1.5 right-1.5 z-[2] flex gap-1">
+        {slides.map((_, i) => (
+          <span
+            key={i}
+            className={`h-1.5 w-1.5 rounded-full ${i === slideIndex ? 'bg-white' : 'bg-white/40'}`}
+          />
+        ))}
+      </div>
     </div>
   )
 }

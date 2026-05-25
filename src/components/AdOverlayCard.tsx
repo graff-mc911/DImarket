@@ -6,6 +6,7 @@ import {
   trackAdClick,
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
+import { layoutKeyFromOverlayVariant } from '../lib/adBannerLayouts'
 import { parseAdMediaStyle } from '../lib/adMediaStyle'
 import { AdMediaDisplay } from './AdMediaDisplay'
 import { useApp } from '../contexts/AppContext'
@@ -106,15 +107,18 @@ function AdCampaignMedia({
   campaign,
   imageClass,
   fillBanner = false,
+  variant,
 }: {
   campaign: AdCampaignWithAdvertiser
   imageClass: string
   fillBanner?: boolean
+  variant: AdOverlayVariant
 }) {
   const imageSrc = getPublicBannerImageUrl(campaign)
   const mediaStyle = parseAdMediaStyle(
     (campaign as AdCampaignWithAdvertiser & { media_style?: unknown }).media_style,
   )
+  const layoutKey = layoutKeyFromOverlayVariant(variant)
   const mediaType =
     campaign.media_type === 'video' || campaign.media_type === 'gif'
       ? campaign.media_type
@@ -126,6 +130,7 @@ function AdCampaignMedia({
       alt={campaign.title}
       mediaType={mediaType}
       style={mediaStyle}
+      layoutKey={layoutKey}
       className={imageClass}
       imageClassName={
         fillBanner || imageSrc.includes('/ads/banners/')
@@ -203,6 +208,7 @@ export function AdOverlayCard({
     >
       <AdCampaignMedia
         campaign={campaign}
+        variant={variant}
         imageClass={styles.image}
         fillBanner={isLeaderboard}
       />
