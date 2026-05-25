@@ -316,7 +316,6 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.ensure_conversation(uuid, uuid) TO authenticated;
-GRANT EXECUTE ON FUNCTION public.refresh_profile_rating(uuid) TO authenticated;
 
 -- Notify participant on new message
 CREATE OR REPLACE FUNCTION public.notify_new_message()
@@ -380,6 +379,8 @@ BEGIN
   WHERE id = p_profile_id;
 END;
 $$;
+
+GRANT EXECUTE ON FUNCTION public.refresh_profile_rating(uuid) TO authenticated;
 
 -- =============================================================================
 -- RLS

@@ -30,6 +30,9 @@
     "icons:generate": "node scripts/generate-favicons.mjs",
     "deploy:prod": "npx vercel deploy --prod --yes",
     "db:apply-ai-platform": "node scripts/apply-ai-platform-migration.mjs",
+    "db:apply-phase1": "node scripts/apply-phase1-migration.mjs",
+    "deploy:phase1-functions": "node scripts/deploy-phase1-functions.mjs",
+    "deploy:phase1": "node scripts/apply-phase1-migration.mjs && node scripts/deploy-phase1-functions.mjs",
     "secrets:ai": "node scripts/set-ai-edge-secrets.mjs"
   },
   "dependencies": {
