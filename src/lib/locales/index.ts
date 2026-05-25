@@ -1,5 +1,7 @@
 import { enTranslations } from '../Translations/en'
 import type { TranslationKey } from '../Translations/en'
+import { allAiAssistantTranslations } from '../Translations/aiAssistant'
+import type { AiAssistantLocaleCode } from '../Translations/aiAssistant'
 import { ukTranslations } from '../Translations/uk'
 import { kkTranslations } from '../Translations/kk'
 import { plTranslations } from '../Translations/pl'
@@ -27,37 +29,46 @@ import { ruTranslations } from '../Translations/ru'
 
 const withEnglishFallback = (
   localeTranslations: Partial<Record<TranslationKey, string>>,
-): Record<TranslationKey, string> => ({
-  ...enTranslations,
-  ...localeTranslations,
-})
+  languageCode?: LanguageCode,
+): Record<TranslationKey, string> => {
+  const ai =
+    languageCode && languageCode in allAiAssistantTranslations
+      ? allAiAssistantTranslations[languageCode as AiAssistantLocaleCode]
+      : undefined
+
+  return {
+    ...enTranslations,
+    ...localeTranslations,
+    ...(ai ?? {}),
+  }
+}
 
 export const translations = {
   en: enTranslations,
-  uk: withEnglishFallback(ukTranslations),
-  ru: withEnglishFallback(ruTranslations),
-  kk: withEnglishFallback(kkTranslations),
-  pl: withEnglishFallback(plTranslations),
-  es: withEnglishFallback(esTranslations),
-  de: withEnglishFallback(deTranslations),
-  fr: withEnglishFallback(frTranslations),
-  it: withEnglishFallback(itTranslations),
-  pt: withEnglishFallback(ptTranslations),
-  ro: withEnglishFallback(roTranslations),
-  cs: withEnglishFallback(csTranslations),
-  sk: withEnglishFallback(skTranslations),
-  hu: withEnglishFallback(huTranslations),
-  bg: withEnglishFallback(bgTranslations),
-  sr: withEnglishFallback(srTranslations),
-  hr: withEnglishFallback(hrTranslations),
-  sl: withEnglishFallback(slTranslations),
-  lt: withEnglishFallback(ltTranslations),
-  lv: withEnglishFallback(lvTranslations),
-  et: withEnglishFallback(etTranslations),
-  tr: withEnglishFallback(trTranslations),
-  ar: withEnglishFallback(arTranslations),
-  zh: withEnglishFallback(zhTranslations),
-  ja: withEnglishFallback(jaTranslations),
+  uk: withEnglishFallback(ukTranslations, 'uk'),
+  ru: withEnglishFallback(ruTranslations, 'ru'),
+  kk: withEnglishFallback(kkTranslations, 'kk'),
+  pl: withEnglishFallback(plTranslations, 'pl'),
+  es: withEnglishFallback(esTranslations, 'es'),
+  de: withEnglishFallback(deTranslations, 'de'),
+  fr: withEnglishFallback(frTranslations, 'fr'),
+  it: withEnglishFallback(itTranslations, 'it'),
+  pt: withEnglishFallback(ptTranslations, 'pt'),
+  ro: withEnglishFallback(roTranslations, 'ro'),
+  cs: withEnglishFallback(csTranslations, 'cs'),
+  sk: withEnglishFallback(skTranslations, 'sk'),
+  hu: withEnglishFallback(huTranslations, 'hu'),
+  bg: withEnglishFallback(bgTranslations, 'bg'),
+  sr: withEnglishFallback(srTranslations, 'sr'),
+  hr: withEnglishFallback(hrTranslations, 'hr'),
+  sl: withEnglishFallback(slTranslations, 'sl'),
+  lt: withEnglishFallback(ltTranslations, 'lt'),
+  lv: withEnglishFallback(lvTranslations, 'lv'),
+  et: withEnglishFallback(etTranslations, 'et'),
+  tr: withEnglishFallback(trTranslations, 'tr'),
+  ar: withEnglishFallback(arTranslations, 'ar'),
+  zh: withEnglishFallback(zhTranslations, 'zh'),
+  ja: withEnglishFallback(jaTranslations, 'ja'),
 } as const
 
 export type { TranslationKey }
