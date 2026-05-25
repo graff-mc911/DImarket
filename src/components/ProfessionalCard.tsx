@@ -2,7 +2,10 @@ import { ArrowRight, MapPin, Star } from 'lucide-react'
 import { Category, Profile } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
-import { formatSubcategoriesSummary } from '../lib/categoryCatalog'
+import {
+  categorySlugForSubcategory,
+  formatSubcategoriesSummary,
+} from '../lib/categoryCatalog'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -55,9 +58,14 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
     .filter(Boolean)
     .slice(0, 3) as string[]
 
+  const workSlugs = professional.work_subcategory_slugs ?? []
+  const workCatSlug =
+    workSlugs.length > 0 ?
+      categorySlugForSubcategory(workSlugs[0]) ?? 'construction'
+    : 'construction'
   const workTypesSummary = formatSubcategoriesSummary(
-    'construction',
-    professional.work_subcategory_slugs ?? [],
+    workCatSlug,
+    workSlugs,
     language.code,
     4,
   )

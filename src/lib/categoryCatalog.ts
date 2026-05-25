@@ -3,6 +3,7 @@
  */
 
 import { CONSTRUCTION_WORK_GROUPS } from './constructionWorkGroups'
+import { TRANSPORT_WORK_GROUPS } from './transportWorkGroups'
 
 export type LocalizedLabel = {
   uk: string
@@ -46,7 +47,25 @@ export const SERVICE_CATEGORY_CATALOG: CategoryWithSubcategoriesDef[] = [
     groups: CONSTRUCTION_WORK_GROUPS,
     subcategories: flattenGroups(CONSTRUCTION_WORK_GROUPS),
   },
+  {
+    slug: 'tools',
+    label: {
+      uk: 'Перевезення / логістика',
+      ru: 'Перевозка / логистика',
+      en: 'Transport / logistics',
+    },
+    groups: TRANSPORT_WORK_GROUPS,
+    subcategories: flattenGroups(TRANSPORT_WORK_GROUPS),
+  },
 ]
+
+/** Категорія (construction, tools, …) для slug підкатегорії. */
+export function categorySlugForSubcategory(subSlug: string): string | undefined {
+  for (const cat of SERVICE_CATEGORY_CATALOG) {
+    if (cat.subcategories.some((s) => s.slug === subSlug)) return cat.slug
+  }
+  return undefined
+}
 
 export type CategoryPickerMode = 'single' | 'multiple'
 
@@ -133,8 +152,12 @@ export function formatSubcategoriesSummary(
   max = 3,
 ): string {
   if (!slugs.length) return ''
-  const names = slugs.map((s) => subcategoryLabel(categorySlug, s, locale))
+  const resolvedSlug =
+    slugs.every((s) => getSubcategoryDef(categorySlug, s)) ?
+      categorySlug
+    : categorySlugForSubcategory(slugs[0]) ?? categorySlug
+  const names = slugs.map((s) => subcategoryLabel(resolvedSlug, s, locale))
   if (names.length <= max) return names.join(', ')
   return `${names.slice(0, max).join(', ')} +${names.length - max}`
 }
-
+

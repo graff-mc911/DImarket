@@ -318,13 +318,17 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                 </button>
               </form>
 
-              {(fixedCategorySlug === 'construction' || selectedCategory === 'construction') && (
-                <ConstructionWorkTypesPanel
-                  categorySlug="construction"
-                  selected={selectedSubcategories}
-                  onChange={setSelectedSubcategories}
-                />
-              )}
+              {(() => {
+                const cat = fixedCategorySlug || selectedCategory
+                if (cat !== 'construction' && cat !== 'tools') return null
+                return (
+                  <ConstructionWorkTypesPanel
+                    categorySlug={cat}
+                    selected={selectedSubcategories}
+                    onChange={setSelectedSubcategories}
+                  />
+                )
+              })()}
 
               {/* Розширені фільтри */}
               {showFilters && (

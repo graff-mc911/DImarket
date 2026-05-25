@@ -16,7 +16,11 @@ import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { CategorySubcategoryPicker } from '../components/CategorySubcategoryPicker'
-import { emptyPickerValue, type CategoryPickerValue } from '../lib/categoryCatalog'
+import {
+  categorySlugForSubcategory,
+  emptyPickerValue,
+  type CategoryPickerValue,
+} from '../lib/categoryCatalog'
 
 type FeedbackState = {
   type: 'success' | 'error'
@@ -489,7 +493,6 @@ export function Settings() {
                           className="mt-4"
                           value={workSubcategories}
                           onChange={setWorkSubcategories}
-                          fixedCategorySlug="construction"
                           allowMultiple
                         />
                       </div>
