@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { Bot, Loader2, RotateCcw, Send } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { messageDisplayContent } from '../lib/ai/formatBotReply'
 import { useSalesChat } from '../hooks/useSalesChat'
 import { navigateTo } from '../lib/navigation'
 
@@ -83,7 +84,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
                   : 'border border-[rgba(148,163,184,0.2)] bg-white/80 text-[#2f2a24]'
               }`}
             >
-              {msg.content}
+              {messageDisplayContent(msg, t)}
             </div>
           </div>
         ))}

@@ -28,7 +28,8 @@ export async function runSalesChatTurn(req: SalesChatRequest): Promise<SalesChat
         locale: req.locale,
       },
     })
-    if (!error && data?.step && !('error' in data)) {
+    // Лише відповіді з replyKey — текст з LLM (replyText) не підтримує i18n UI
+    if (!error && data?.step && data.replyKey && !('error' in data)) {
       return { ...data, draft: data.draft ?? req.draft }
     }
   } catch {

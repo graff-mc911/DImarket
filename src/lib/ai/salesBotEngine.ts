@@ -8,9 +8,18 @@ import {
   type SalesCategoryOption,
 } from './jobRequestDraft'
 
+/** Збережений хід бота — для перекладу при зміні мови інтерфейсу. */
+export type SalesBotMessageTurn = {
+  replyKey: TranslationKey
+  replyParams?: Record<string, string>
+  replyText?: string
+}
+
 export type SalesBotMessage = {
   role: 'user' | 'assistant'
+  /** Кешований текст (оновлюється при зміні мови, якщо є turn). */
   content: string
+  turn?: SalesBotMessageTurn
 }
 
 export type SalesBotTurnResult = {
@@ -81,7 +90,7 @@ function matchCategory(
   return null
 }
 
-function categoryListText(categories: SalesCategoryOption[], labels: Record<string, string>): string {
+export function categoryListText(categories: SalesCategoryOption[], labels: Record<string, string>): string {
   return categories
     .map((c, i) => `${i + 1}. ${labels[c.slug] || c.name}`)
     .join('\n')
@@ -255,12 +264,4 @@ function buildConfirmTurn(draft: JobRequestDraft, ctx: SalesBotContext): SalesBo
     quickReplies: ['yes', 'no'],
     canPublish: false,
   }
-}
-
-export function formatBotReply(
-  turn: SalesBotTurnResult,
-  t: (key: TranslationKey, params?: Record<string, string>) => string,
-): string {
-  if (turn.replyText) return turn.replyText
-  return t(turn.replyKey, turn.replyParams)
 }

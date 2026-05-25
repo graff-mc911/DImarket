@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { categoryLabel } from '../lib/siteCategories'
-import { formatBotReply } from '../lib/ai/formatBotReply'
+import { assistantMessage, remapAssistantMessages } from '../lib/ai/formatBotReply'
 import {
   emptyJobRequestDraft,
   type JobRequestDraft,
@@ -13,7 +13,7 @@ import { runSalesChatTurn } from '../lib/ai/salesBotApi'
 import type { Category } from '../lib/types'
 import { supabase } from '../lib/supabase'
 
-const STORAGE_KEY = 'dimarket_ai_sales_chat_v1'
+const STORAGE_KEY = 'dimarket_ai_sales_chat_v2'
 
 type StoredChat = {
   step: SalesBotStep
@@ -80,13 +80,15 @@ export function useSalesChat() {
     [salesCategories, categoryLabels, language.code, profile, user, currency.code],
   )
 
-  const appendAssistant = useCallback((turn: ReturnType<typeof getInitialTurn>) => {
-    const content = formatBotReply(turn, t)
-    setMessages((prev) => [...prev, { role: 'assistant', content }])
-    setStep(turn.step)
-    setDraft(turn.draft)
-    setQuickReplies(turn.quickReplies ?? [])
-  }, [t])
+  const appendAssistant = useCallback(
+    (turn: ReturnType<typeof getInitialTurn>) => {
+      setMessages((prev) => [...prev, assistantMessage(turn, t)])
+      setStep(turn.step)
+      setDraft(turn.draft)
+      setQuickReplies(turn.quickReplies ?? [])
+    },
+    [t],
+  )
 
   useEffect(() => {
     void (async () => {
@@ -102,15 +104,27 @@ export function useSalesChat() {
     if (stored?.messages?.length) {
       setStep(stored.step)
       setDraft(stored.draft)
-      setMessages(stored.messages)
+      setMessages(remapAssistantMessages(stored.messages, t, stored.draft, botContext))
       return
     }
     const initial = getInitialTurn(botContext)
-    setMessages([{ role: 'assistant', content: formatBotReply(initial, t) }])
+    setMessages([assistantMessage(initial, t)])
     setStep(initial.step)
     setDraft(initial.draft)
     setQuickReplies(initial.quickReplies ?? [])
   }, [salesCategories.length, botContext, t])
+
+  /** Переклад повідомлень бота та підказок категорій при зміні мови. */
+  useEffect(() => {
+    setMessages((prev) => remapAssistantMessages(prev, t))
+    if (step === 'category' && salesCategories.length) {
+      setQuickReplies(
+        salesCategories
+          .slice(0, 6)
+          .map((c) => categoryLabels[c.slug] || c.name),
+      )
+    }
+  }, [language.code, t, categoryLabels, salesCategories, step, draft, botContext])
 
   useEffect(() => {
     if (!messages.length) return
@@ -211,7 +225,7 @@ export function useSalesChat() {
     setListingId(null)
     setError(null)
     const initial = getInitialTurn(botContext)
-    setMessages([{ role: 'assistant', content: formatBotReply(initial, t) }])
+    setMessages([assistantMessage(initial, t)])
     setStep(initial.step)
     setDraft(initial.draft)
     setQuickReplies(initial.quickReplies ?? [])

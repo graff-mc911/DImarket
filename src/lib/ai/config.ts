@@ -7,13 +7,11 @@ export type AiProviderStatus = {
   whatsapp: boolean
 }
 
+import { getTranslation, type LanguageCode } from '../i18n'
+
 /** Клієнт не бачить ключів — лише статус з edge або env preview */
 export function aiNotConfiguredMessage(locale: string): string {
-  if (locale === 'uk') {
-    return 'AI-сервіс тимчасово недоступний. Використовується локальний режим.'
-  }
-  if (locale === 'ru') {
-    return 'AI-сервис временно недоступен. Используется локальный режим.'
-  }
-  return 'AI service is unavailable. Using local fallback mode.'
+  const key = 'ai.fallback' as const
+  const text = getTranslation(locale as LanguageCode, key)
+  return text !== key ? text : getTranslation('en', key)
 }

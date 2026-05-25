@@ -1,6 +1,39 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
 
+const LOCALE_NAMES: Record<string, string> = {
+  en: 'English',
+  uk: 'Ukrainian',
+  ru: 'Russian',
+  pl: 'Polish',
+  de: 'German',
+  fr: 'French',
+  es: 'Spanish',
+  it: 'Italian',
+  pt: 'Portuguese',
+  ro: 'Romanian',
+  cs: 'Czech',
+  sk: 'Slovak',
+  hu: 'Hungarian',
+  bg: 'Bulgarian',
+  sr: 'Serbian',
+  hr: 'Croatian',
+  sl: 'Slovenian',
+  lt: 'Lithuanian',
+  lv: 'Latvian',
+  et: 'Estonian',
+  tr: 'Turkish',
+  kk: 'Kazakh',
+  ar: 'Arabic',
+  zh: 'Chinese',
+  ja: 'Japanese',
+}
+
+function localeLanguage(code?: string): string {
+  if (!code) return 'English'
+  return LOCALE_NAMES[code] ?? 'English'
+}
+
 type Draft = Record<string, unknown>
 type Step =
   | 'welcome'
@@ -36,7 +69,7 @@ Deno.serve(async (req: Request) => {
 
     if (openaiKey && body.message?.trim()) {
       const system = `You are Dimarket sales assistant. Help user post a construction job request. 
-Respond in ${body.locale === 'uk' ? 'Ukrainian' : 'English'}. 
+Respond in ${localeLanguage(body.locale)}. 
 Keep answers short. Current step: ${body.step ?? 'welcome'}. 
 Extract structured fields into JSON when possible: category, city, budget, deadline_days, description, photo_urls.`
 
