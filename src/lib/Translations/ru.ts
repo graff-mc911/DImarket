@@ -209,7 +209,8 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'category.vacancies': 'Вакансии',
   'category.vacanciesDesc': 'Вакансии и пошук працивникив',
   'category.sell-rent': 'Продам/Оренда',
-  'category.sell-rentDesc': 'Продаж и оренда майна й речей',
+  'category.sell-rentDesc':
+    'Аренда техники: экскаваторы, леса, подъёмники, генераторы, инструмент',
   'category.name.vacancies': 'Вакансии',
   'category.name.sell-rent': 'Продам/Оренда',
 

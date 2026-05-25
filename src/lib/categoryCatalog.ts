@@ -5,6 +5,7 @@
 import { CONSTRUCTION_WORK_GROUPS } from './constructionWorkGroups'
 import { TRANSPORT_WORK_GROUPS } from './transportWorkGroups'
 import { CLEANING_WORK_GROUPS } from './cleaningWorkGroups'
+import { SELL_RENT_WORK_GROUPS } from './sellRentWorkGroups'
 
 export type LocalizedLabel = {
   uk: string
@@ -67,6 +68,16 @@ export const SERVICE_CATEGORY_CATALOG: CategoryWithSubcategoriesDef[] = [
     },
     groups: CLEANING_WORK_GROUPS,
     subcategories: flattenGroups(CLEANING_WORK_GROUPS),
+  },
+  {
+    slug: 'sell-rent',
+    label: {
+      uk: 'Продам / Оренда',
+      ru: 'Продам / Аренда',
+      en: 'For sale / Rent',
+    },
+    groups: SELL_RENT_WORK_GROUPS,
+    subcategories: flattenGroups(SELL_RENT_WORK_GROUPS),
   },
 ]
 

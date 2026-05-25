@@ -205,7 +205,8 @@ export const enTranslations = {
   'category.vacancies': 'Vacancies',
   'category.vacanciesDesc': 'Job vacancies and hiring',
   'category.sell-rent': 'For sale / Rent',
-  'category.sell-rentDesc': 'Items and property for sale or rent',
+  'category.sell-rentDesc':
+    'Equipment rental: excavators, scaffolding, lifts, generators, tools',
   'category.name.vacancies': 'Vacancies',
   'category.name.sell-rent': 'For sale / Rent',
 
