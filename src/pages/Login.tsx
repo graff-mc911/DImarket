@@ -7,8 +7,6 @@ import { LANGUAGES } from '../lib/types'
 import { PasswordField } from '../components/PasswordField'
 import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
 import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
-import { AuthSocialButtons } from '../components/AuthSocialButtons'
-
 export function Login() {
   const { t, language, setLanguage } = useApp()
   const [email, setEmail] = useState('')
@@ -94,8 +92,6 @@ export function Login() {
                 {error}
               </div>
             )}
-
-            <AuthSocialButtons disabled={loading} />
 
             <form onSubmit={handleLogin} className="mt-6 space-y-5">
               <div>

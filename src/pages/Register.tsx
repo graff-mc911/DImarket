@@ -8,7 +8,6 @@ import {
   savePendingRegistration,
   type RegistrationRole,
 } from '../lib/profileSync'
-import { AuthSocialButtons } from '../components/AuthSocialButtons'
 import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -295,11 +294,6 @@ export function Register() {
                 {confirmEmail ? t('register.confirmEmail') : t('register.success')}
               </div>
             )}
-
-            <AuthSocialButtons
-              disabled={loading || success}
-              onBeforeOAuth={() => savePendingRegistration(buildPendingRegistration())}
-            />
 
             <form onSubmit={handleRegister} className="mt-6 space-y-5 text-left">
 
