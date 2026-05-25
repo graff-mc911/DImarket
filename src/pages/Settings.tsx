@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
   Bell,
-  Briefcase,
   DollarSign,
   Globe,
   Image,
@@ -16,6 +15,8 @@ import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
+import { CategorySubcategoryPicker } from '../components/CategorySubcategoryPicker'
+import { emptyPickerValue, type CategoryPickerValue } from '../lib/categoryCatalog'
 
 type FeedbackState = {
   type: 'success' | 'error'
@@ -42,6 +43,10 @@ export function Settings() {
   const [website, setWebsite] = useState('')
   const [profilePhoto, setProfilePhoto] = useState('')
   const [portfolioImages, setPortfolioImages] = useState<string[]>([])
+  const [isProfessional, setIsProfessional] = useState(false)
+  const [workSubcategories, setWorkSubcategories] = useState<CategoryPickerValue>(
+    emptyPickerValue(),
+  )
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [preferredLanguage, setPreferredLanguage] = useState<LanguageOption['code']>(language.code)
@@ -62,6 +67,8 @@ export function Settings() {
     setWebsite('')
     setProfilePhoto('')
     setPortfolioImages([])
+    setIsProfessional(false)
+    setWorkSubcategories(emptyPickerValue())
     setNotificationsEnabled(true)
     setPreferredLanguage(language.code)
     setPreferredCurrency(currency.code)
@@ -137,6 +144,14 @@ export function Settings() {
       setWebsite(data.website ?? '')
       setProfilePhoto(data.profile_photo ?? '')
       setPortfolioImages(Array.isArray(data.portfolio_images) ? data.portfolio_images : [])
+      setIsProfessional(Boolean(data.is_professional))
+      const workSlugs = Array.isArray(data.work_subcategory_slugs)
+        ? data.work_subcategory_slugs
+        : []
+      setWorkSubcategories({
+        categorySlug: 'construction',
+        subcategorySlugs: workSlugs,
+      })
       setNotificationsEnabled(data.notifications_enabled !== false)
       setPreferredLanguage(nextLanguage)
       setPreferredCurrency(nextCurrency)
@@ -190,6 +205,9 @@ export function Settings() {
             notifications_enabled: notificationsEnabled,
             preferred_language: preferredLanguage,
             preferred_currency: preferredCurrency,
+            work_subcategory_slugs: isProfessional
+              ? workSubcategories.subcategorySlugs
+              : [],
           },
           { onConflict: 'id' }
         )
@@ -448,7 +466,6 @@ export function Settings() {
 
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                        <Briefcase className="mr-1 inline h-4 w-4" />
                         {t('settings.websiteLabel')}
                       </label>
                       <input
@@ -459,6 +476,24 @@ export function Settings() {
                         placeholder="https://yourwebsite.com"
                       />
                     </div>
+
+                    {isProfessional && (
+                      <div className="rounded-[20px] border border-[rgba(99,102,241,0.12)] bg-white/30 p-4">
+                        <p className="text-sm font-bold text-[#2f2a24]">
+                          {t('settings.workSubcategoriesTitle')}
+                        </p>
+                        <p className="mt-1 text-xs text-[#6f665d]">
+                          {t('settings.workSubcategoriesHint')}
+                        </p>
+                        <CategorySubcategoryPicker
+                          className="mt-4"
+                          value={workSubcategories}
+                          onChange={setWorkSubcategories}
+                          fixedCategorySlug="construction"
+                          allowMultiple
+                        />
+                      </div>
+                    )}
 
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">

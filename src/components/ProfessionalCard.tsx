@@ -2,6 +2,7 @@ import { ArrowRight, MapPin, Star } from 'lucide-react'
 import { Category, Profile } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { formatSubcategoriesSummary } from '../lib/categoryCatalog'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -17,7 +18,7 @@ interface ProfessionalCardProps {
 }
 
 export function ProfessionalCard({ professional }: ProfessionalCardProps) {
-  const { t } = useApp()
+  const { t, language } = useApp()
 
   const avatarUrl = professional.profile_photo || professional.avatar_url || null
   const ratingLabel =
@@ -53,6 +54,13 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
     })
     .filter(Boolean)
     .slice(0, 3) as string[]
+
+  const workTypesSummary = formatSubcategoriesSummary(
+    'construction',
+    professional.work_subcategory_slugs ?? [],
+    language.code,
+    4,
+  )
 
   return (
     <div className="glass-card flex h-full flex-col overflow-hidden p-5">
@@ -92,7 +100,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
         </div>
       </div>
 
-      {skills.length > 0 && (
+      {(skills.length > 0 || workTypesSummary) && (
         <div className="mt-4 flex flex-wrap gap-2">
           {skills.map((skill) => (
             <span
@@ -102,6 +110,11 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
               {skill}
             </span>
           ))}
+          {workTypesSummary && (
+            <span className="rounded-full bg-[rgba(99,102,241,0.12)] px-3 py-1 text-xs font-semibold text-[#4338ca]">
+              {workTypesSummary}
+            </span>
+          )}
         </div>
       )}
 

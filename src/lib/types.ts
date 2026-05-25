@@ -121,6 +121,8 @@ export interface Database {
           preferred_language: string | null
           preferred_currency: string | null
 
+          work_subcategory_slugs: string[]
+
           created_at: string
           updated_at: string
         }
@@ -152,6 +154,7 @@ export interface Database {
           notifications_enabled?: boolean | null
           preferred_language?: string | null
           preferred_currency?: string | null
+          work_subcategory_slugs?: string[]
           created_at?: string
           updated_at?: string
         }
@@ -183,6 +186,7 @@ export interface Database {
           notifications_enabled?: boolean | null
           preferred_language?: string | null
           preferred_currency?: string | null
+          work_subcategory_slugs?: string[]
           created_at?: string
           updated_at?: string
         }
@@ -227,6 +231,7 @@ export interface Database {
             | 'land'
             | 'global'
             | null
+          subcategory_slugs: string[]
         }
         Insert: {
           id?: string
@@ -259,6 +264,7 @@ export interface Database {
             | 'land'
             | 'global'
             | null
+          subcategory_slugs?: string[]
         }
         Update: {
           id?: string
@@ -291,6 +297,7 @@ export interface Database {
             | 'land'
             | 'global'
             | null
+          subcategory_slugs?: string[]
         }
       }
 

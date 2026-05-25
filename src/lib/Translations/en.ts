@@ -208,6 +208,25 @@ export const enTranslations = {
   'category.name.vacancies': 'Vacancies',
   'category.name.sell-rent': 'For sale / Rent',
 
+  'categoryPicker.modeSingle': 'One subcategory',
+  'categoryPicker.modeMultiple': 'Several subcategories',
+  'categoryPicker.mainCategory': 'Category',
+  'categoryPicker.selectMain': 'Select category',
+  'categoryPicker.subcategoryOne': 'Subcategory',
+  'categoryPicker.subcategoryMany': 'Subcategories',
+  'categoryPicker.selectSub': 'Select subcategory',
+  'categoryPicker.selected': 'Selected',
+  'categoryPicker.noSubsYet': 'No subcategories for this category yet.',
+  'categoryPicker.catalogEmpty': 'Category catalog is not configured yet.',
+  'categoryPicker.workTypesTitle': 'Type of work',
+  'categoryPicker.workTypesHint': 'Select one or more — listings will be filtered.',
+  'categoryPicker.clearSubs': 'Clear',
+  'categoryPicker.filterActive': 'Filter',
+  'categoryPicker.searchWorkTypes': 'Search type of work…',
+  'settings.workSubcategoriesTitle': 'Types of work you perform',
+  'settings.workSubcategoriesHint':
+    'Helps clients find you. You can pick one or several subcategories.',
+
   // Картка оголошення: тип, ціна, перегляди, статус premium.
   'listing.serviceNeeded': 'Service Needed',
   'listing.serviceOffered': 'Service Offered',

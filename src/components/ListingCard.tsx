@@ -14,13 +14,14 @@ import { supabase }          from '../lib/supabase'
 import { useApp }            from '../contexts/AppContext'
 import { navigateTo }        from '../lib/navigation'
 import type { ListingWithImages } from '../lib/types'
+import { formatSubcategoriesSummary } from '../lib/categoryCatalog'
 
 interface ListingCardProps {
   listing: ListingWithImages
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
-  const { user, currency, t } = useApp()
+  const { user, currency, t, language } = useApp()
 
   // Чи збережено це оголошення поточним користувачем
   const [isSaved, setIsSaved]         = useState(false)
@@ -267,13 +268,24 @@ export function ListingCard({ listing }: ListingCardProps) {
           )}
         </div>
 
-        {/* Категорія */}
+        {/* Категорія та види робіт */}
         {listing.category && (
-          <div
-            className="mb-2 inline-block rounded-lg px-2 py-0.5 text-xs font-semibold"
-            style={{ background: 'rgba(199,138,96,0.12)', color: 'var(--accent-700)' }}
-          >
-            {listing.category.name}
+          <div className="mb-2 space-y-1">
+            <div
+              className="inline-block rounded-lg px-2 py-0.5 text-xs font-semibold"
+              style={{ background: 'rgba(199,138,96,0.12)', color: 'var(--accent-700)' }}
+            >
+              {listing.category.name}
+            </div>
+            {listing.subcategory_slugs?.length > 0 && (
+              <p className="text-[11px] leading-snug" style={{ color: 'var(--ink-500)' }}>
+                {formatSubcategoriesSummary(
+                  listing.category.slug,
+                  listing.subcategory_slugs,
+                  language.code,
+                )}
+              </p>
+            )}
           </div>
         )}
 

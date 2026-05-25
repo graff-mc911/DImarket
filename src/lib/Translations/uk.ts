@@ -210,6 +210,25 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'category.name.vacancies': 'Вакансії',
   'category.name.sell-rent': 'Продам/Оренда',
 
+  'categoryPicker.modeSingle': 'Одна підкатегорія',
+  'categoryPicker.modeMultiple': 'Кілька підкатегорій',
+  'categoryPicker.mainCategory': 'Категорія',
+  'categoryPicker.selectMain': 'Оберіть категорію',
+  'categoryPicker.subcategoryOne': 'Підкатегорія',
+  'categoryPicker.subcategoryMany': 'Підкатегорії',
+  'categoryPicker.selectSub': 'Оберіть підкатегорію',
+  'categoryPicker.selected': 'Обрано',
+  'categoryPicker.noSubsYet': 'Для цієї категорії ще немає підкатегорій.',
+  'categoryPicker.catalogEmpty': 'Каталог категорій ще не налаштований.',
+  'categoryPicker.workTypesTitle': 'Вид робіт',
+  'categoryPicker.workTypesHint': 'Оберіть один або кілька — оголошення будуть відфільтровані.',
+  'categoryPicker.clearSubs': 'Скинути',
+  'categoryPicker.filterActive': 'Фільтр',
+  'categoryPicker.searchWorkTypes': 'Пошук виду робіт…',
+  'settings.workSubcategoriesTitle': 'Види робіт, які виконуєте',
+  'settings.workSubcategoriesHint':
+    'Допомагає клієнтам знайти вас. Можна обрати одну або кілька підкатегорій.',
+
   // Listing Card
   'listing.serviceNeeded': 'Потрібна послуга',
   'listing.serviceOffered': 'Пропоную послугу',

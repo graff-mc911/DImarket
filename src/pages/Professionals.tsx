@@ -6,6 +6,7 @@ import { ProfessionalCard } from '../components/ProfessionalCard'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { ConstructionWorkTypesPanel } from '../components/ConstructionWorkTypesPanel'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -29,6 +30,7 @@ export function Professionals() {
   const [showFilters, setShowFilters] = useState(false)
   const [minRating, setMinRating] = useState(0)
   const [locationFilter, setLocationFilter] = useState('')
+  const [selectedWorkTypes, setSelectedWorkTypes] = useState<string[]>([])
 
   useEffect(() => {
     void loadCategories()
@@ -110,7 +112,18 @@ export function Professionals() {
             return slug === selectedCategory || item.category_id === selectedCategory
           })
 
-        return matchesSearch && matchesRating && matchesLocation && matchesCategory
+        const workSubs = professional.work_subcategory_slugs ?? []
+        const matchesWorkTypes =
+          selectedWorkTypes.length === 0 ||
+          selectedWorkTypes.some((s) => workSubs.includes(s))
+
+        return (
+          matchesSearch &&
+          matchesRating &&
+          matchesLocation &&
+          matchesCategory &&
+          matchesWorkTypes
+        )
       })
       .sort((a, b) => {
         switch (sortBy) {
@@ -123,15 +136,29 @@ export function Professionals() {
             return (b.rating || 0) - (a.rating || 0)
         }
       })
-  }, [locationFilter, minRating, professionals, searchQuery, selectedCategory, sortBy])
+  }, [
+    locationFilter,
+    minRating,
+    professionals,
+    searchQuery,
+    selectedCategory,
+    selectedWorkTypes,
+    sortBy,
+  ])
 
-  const activeFiltersCount = [selectedCategory, minRating > 0 ? 'rating' : '', locationFilter].filter(Boolean).length
+  const activeFiltersCount = [
+    selectedCategory,
+    selectedWorkTypes.length > 0 ? 'work' : '',
+    minRating > 0 ? 'rating' : '',
+    locationFilter,
+  ].filter(Boolean).length
 
   const resetFilters = () => {
     setMinRating(0)
     setLocationFilter('')
     setSortBy('rating')
     setSelectedCategory('')
+    setSelectedWorkTypes([])
     setSearchQuery('')
   }
 
@@ -261,6 +288,12 @@ export function Professionals() {
                       </button>
                     </div>
                   </div>
+
+                  <ConstructionWorkTypesPanel
+                    categorySlug="construction"
+                    selected={selectedWorkTypes}
+                    onChange={setSelectedWorkTypes}
+                  />
                 </div>
               )}
             </section>

@@ -6,6 +6,15 @@ import { Category, Listing } from '../lib/types'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { getCurrentLocation, searchLocations, LocationSuggestion } from '../lib/geocoding'
 import { navigateTo } from '../lib/navigation'
+import {
+  CategorySubcategoryPicker,
+  syncPickerWithCategoryId,
+} from '../components/CategorySubcategoryPicker'
+import {
+  emptyPickerValue,
+  getCategoryDef,
+  type CategoryPickerValue,
+} from '../lib/categoryCatalog'
 
 type VisibilityRadius =
   | 'city'
@@ -26,6 +35,7 @@ export function CreateAd() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [categoryId, setCategoryId] = useState('')
+  const [categoryPicker, setCategoryPicker] = useState<CategoryPickerValue>(emptyPickerValue())
   const [price, setPrice] = useState('')
   const [location, setLocation] = useState('')
   const [contactName, setContactName] = useState('')
@@ -154,6 +164,7 @@ export function CreateAd() {
         title: title.trim(),
         description: description.trim(),
         category_id: categoryId || null,
+        subcategory_slugs: categoryPicker.subcategorySlugs,
         listing_type: 'service_request' as const,
         price: price ? parseFloat(price) : null,
         currency: currency.code,
@@ -312,17 +323,38 @@ export function CreateAd() {
                       </label>
                       <select
                         value={categoryId}
-                        onChange={(event) => setCategoryId(event.target.value)}
+                        onChange={(event) => {
+                          const id = event.target.value
+                          setCategoryId(id)
+                          setCategoryPicker(syncPickerWithCategoryId(categories, id, emptyPickerValue()))
+                        }}
                         className="select-glass bg-white/80"
                       >
                         <option value="">{t('createAd.selectCategory')}</option>
-
                         {categories.map((category) => (
                           <option key={category.id} value={category.id}>
                             {getCategoryTranslation(category)}
                           </option>
                         ))}
                       </select>
+                      {(() => {
+                        const slug = categories.find((c) => c.id === categoryId)?.slug ?? ''
+                        const subs = getCategoryDef(slug)?.subcategories.length ?? 0
+                        if (!slug || subs === 0) return null
+                        return (
+                          <div className="mt-4">
+                            <CategorySubcategoryPicker
+                              value={{
+                                categorySlug: slug,
+                                subcategorySlugs: categoryPicker.subcategorySlugs,
+                              }}
+                              onChange={(next) => setCategoryPicker(next)}
+                              fixedCategorySlug={slug}
+                              allowMultiple
+                            />
+                          </div>
+                        )
+                      })()}
                     </div>
 
                     <div>

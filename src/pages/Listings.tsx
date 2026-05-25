@@ -28,6 +28,7 @@ import {
   categoryPagePath,
   type SiteCategorySlug,
 } from '../lib/siteCategories'
+import { ConstructionWorkTypesPanel } from '../components/ConstructionWorkTypesPanel'
 
 // Типи оголошень для фільтру
 const LISTING_TYPES = [
@@ -67,6 +68,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
   const [maxPrice, setMaxPrice]               = useState('')
   const [sortBy, setSortBy]                   = useState('newest')
   const [showFilters, setShowFilters]         = useState(false)
+  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([])
 
   // Синхронізація фільтрів з URL при навігації
   useEffect(() => {
@@ -149,6 +151,13 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
       )
     }
 
+    if (selectedSubcategories.length > 0) {
+      result = result.filter((l) => {
+        const subs = (l as ListingWithImages & { subcategory_slugs?: string[] }).subcategory_slugs ?? []
+        return selectedSubcategories.some((s) => subs.includes(s))
+      })
+    }
+
     // Фільтр типу оголошення
     if (selectedType) {
       result = result.filter(l => l.listing_type === selectedType)
@@ -196,7 +205,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     }
 
     return [...promoted, ...regular.sort(sortFn)]
-  }, [allListings, searchQuery, locationQuery, selectedCategory, selectedType, maxPrice, sortBy])
+  }, [allListings, searchQuery, locationQuery, selectedCategory, selectedSubcategories, selectedType, maxPrice, sortBy])
 
   // Кількість активних фільтрів для індикатора
   const activeFiltersCount = [
@@ -231,6 +240,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     setSelectedType('')
     setMaxPrice('')
     setSortBy('newest')
+    setSelectedSubcategories([])
     navigateTo(listingsBasePath.split('?')[0])
   }
 
@@ -297,6 +307,14 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                     : t('listings.filtersButton')}
                 </button>
               </form>
+
+              {(fixedCategorySlug === 'construction' || selectedCategory === 'construction') && (
+                <ConstructionWorkTypesPanel
+                  categorySlug="construction"
+                  selected={selectedSubcategories}
+                  onChange={setSelectedSubcategories}
+                />
+              )}
 
               {/* Розширені фільтри */}
               {showFilters && (

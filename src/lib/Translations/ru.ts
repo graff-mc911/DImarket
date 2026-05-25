@@ -212,6 +212,25 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'category.name.vacancies': 'Вакансии',
   'category.name.sell-rent': 'Продам/Оренда',
 
+  'categoryPicker.modeSingle': 'Одна подкатегория',
+  'categoryPicker.modeMultiple': 'Несколько подкатегорий',
+  'categoryPicker.mainCategory': 'Категория',
+  'categoryPicker.selectMain': 'Выберите категорию',
+  'categoryPicker.subcategoryOne': 'Подкатегория',
+  'categoryPicker.subcategoryMany': 'Подкатегории',
+  'categoryPicker.selectSub': 'Выберите подкатегорию',
+  'categoryPicker.selected': 'Выбрано',
+  'categoryPicker.noSubsYet': 'Для этой категории пока нет подкатегорий.',
+  'categoryPicker.catalogEmpty': 'Каталог категорий ещё не настроен.',
+  'categoryPicker.workTypesTitle': 'Вид работ',
+  'categoryPicker.workTypesHint': 'Выберите один или несколько — объявления будут отфильтрованы.',
+  'categoryPicker.clearSubs': 'Сбросить',
+  'categoryPicker.filterActive': 'Фильтр',
+  'categoryPicker.searchWorkTypes': 'Поиск вида работ…',
+  'settings.workSubcategoriesTitle': 'Виды работ, которые выполняете',
+  'settings.workSubcategoriesHint':
+    'Помогает клиентам найти вас. Можно выбрать одну или несколько подкатегорий.',
+
   // Listing Card
   'listing.serviceNeeded': 'Потрибна послуга',
   'listing.serviceOffered': 'Пропоную послугу',
