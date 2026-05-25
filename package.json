@@ -23,8 +23,9 @@
     "db:apply-self-serve-ads:ps1": "powershell -ExecutionPolicy Bypass -File scripts/apply-prod-ad-self-serve.ps1",
     "db:verify-prod-ads": "node scripts/verify-prod-ad-schema.mjs",
     "db:delete-demo-ads": "node scripts/apply-delete-demo-ads.mjs",
-    "geo:sync": "node scripts/sync-geo-catalog-geonames.mjs",
-    "geo:sync:one": "node scripts/sync-geo-catalog-geonames.mjs --country=Germany",
+    "geo:sync": "node scripts/sync-geo-catalog-dump.mjs",
+    "geo:sync:one": "node scripts/sync-geo-catalog-dump.mjs --country=Germany",
+    "geo:sync:api": "node scripts/sync-geo-catalog-geonames.mjs",
     "db:deploy-checkout-functions": "npx supabase functions deploy create-checkout-session verify-checkout-session --project-ref wjlfvajloxkevggwjgtk",
     "icons:generate": "node scripts/generate-favicons.mjs"
   },
