@@ -28,7 +28,8 @@ type AdMediaEditorProps = {
   onStyleChange: (style: AdMediaStyle) => void
   onSlideUrlsChange: (urls: string[]) => void
   onPrimaryUrlChange: (url: string) => void
-  onUploadFile: (file: File) => Promise<void>
+  onUploadFiles: (files: File[]) => Promise<void>
+  isUploading?: boolean
 }
 
 export function AdMediaEditor({
@@ -39,7 +40,8 @@ export function AdMediaEditor({
   onStyleChange,
   onSlideUrlsChange,
   onPrimaryUrlChange,
-  onUploadFile,
+  onUploadFiles,
+  isUploading = false,
 }: AdMediaEditorProps) {
   const { t } = useApp()
   const frameRef = useRef<HTMLDivElement>(null)
@@ -110,9 +112,7 @@ export function AdMediaEditor({
   }
 
   const addSlidesFromFiles = async (files: FileList | File[]) => {
-    for (const file of Array.from(files)) {
-      await onUploadFile(file)
-    }
+    await onUploadFiles(Array.from(files))
   }
 
   const layoutLabel = (key: AdBannerLayoutKey) => t(`advertising.mediaEditor.layout.${key}`)
@@ -296,11 +296,14 @@ export function AdMediaEditor({
             {slideUrls.length < 6 && (
               <button
                 type="button"
+                disabled={isUploading}
                 onClick={() => extraInputRef.current?.click()}
-                className="flex h-14 w-20 flex-col items-center justify-center rounded-lg border border-dashed border-[rgba(99,102,241,0.35)] text-[#6366f1]"
+                className="flex h-14 w-20 flex-col items-center justify-center rounded-lg border border-dashed border-[rgba(99,102,241,0.35)] text-[#6366f1] disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
-                <span className="mt-0.5 text-[9px] font-semibold">{t('advertising.mediaEditor.addImage')}</span>
+                <span className="mt-0.5 text-[9px] font-semibold">
+                  {isUploading ? '…' : t('advertising.mediaEditor.addImage')}
+                </span>
               </button>
             )}
           </div>

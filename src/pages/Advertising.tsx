@@ -114,7 +114,11 @@ export function Advertising() {
   const [slideUrls, setSlideUrls]   = useState<string[]>([])
   const [mediaStyle, setMediaStyle] = useState<AdMediaStyle>(DEFAULT_AD_MEDIA_STYLE)
   const [uploadState, setUploadState] = useState<UploadState>({ status: 'idle', progress: 0 })
+  const [pendingUploads, setPendingUploads] = useState(0)
   const [isDragOver, setIsDragOver] = useState(false)
+
+  const hasBannerMedia = Boolean(mediaUrl.trim() || slideUrls.length)
+  const canMultiImage = mediaType === 'image' || mediaType === 'gif'
 
   // Географія з бази — завантажується автоматично
   const [geoData, setGeoData] = useState<AdGeoCountry[]>([])
@@ -213,76 +217,120 @@ export function Advertising() {
     // cities: зберегти країни та регіони
   }
 
-  // Завантаження файлу в Supabase Storage
-  const uploadFile = useCallback(
-    async (file: File, options?: { append?: boolean }) => {
-      const allAccepted = Object.values(ACCEPTED_MIME).flat()
-      if (!allAccepted.includes(file.type)) {
-        setUploadState({ status: 'error', progress: 0, error: 'JPG, PNG, WebP, GIF, MP4, WebM' })
-        return
-      }
-      if (file.size > MAX_FILE_BYTES) {
-        setUploadState({ status: 'error', progress: 0, error: `Max ${MAX_FILE_MB} MB` })
-        return
-      }
+  const uploadOneFile = useCallback(async (file: File): Promise<string> => {
+    const allAccepted = Object.values(ACCEPTED_MIME).flat()
+    if (!allAccepted.includes(file.type)) {
+      throw new Error('JPG, PNG, WebP, GIF, MP4, WebM')
+    }
+    if (file.size > MAX_FILE_BYTES) {
+      throw new Error(`Max ${MAX_FILE_MB} MB`)
+    }
 
-      const append = options?.append === true
+    const ext = file.name.split('.').pop() ?? 'bin'
+    const fileName = Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext
+    const path = 'campaigns/' + fileName
+
+    const { error: uploadError } = await supabase.storage
+      .from('ad-media')
+      .upload(path, file, { cacheControl: '3600', upsert: false })
+
+    if (uploadError) throw uploadError
+
+    const { data: urlData } = supabase.storage.from('ad-media').getPublicUrl(path)
+    return urlData.publicUrl
+  }, [])
+
+  const uploadFiles = useCallback(
+    async (files: File[], options?: { append?: boolean }) => {
+      const list = files.filter((f) => f.size > 0)
+      if (!list.length) return
+
+      const append =
+        options?.append === true ||
+        (Boolean(mediaUrl.trim() || slideUrls.length) && canMultiImage)
+
       if (!append) {
-        if (ACCEPTED_MIME.video.includes(file.type)) setMediaType('video')
-        else if (file.type === 'image/gif') setMediaType('gif')
+        const first = list[0]
+        if (ACCEPTED_MIME.video.includes(first.type)) setMediaType('video')
+        else if (first.type === 'image/gif') setMediaType('gif')
         else setMediaType('image')
         setMediaUrl('')
         setSlideUrls([])
       }
 
-      setUploadState({ status: 'uploading', progress: 10 })
+      const isFirstBatch = !append
+      if (isFirstBatch && !hasBannerMedia) {
+        setUploadState({ status: 'uploading', progress: 10 })
+      }
+      setPendingUploads((n) => n + list.length)
 
+      const uploaded: string[] = []
       try {
-        const ext = file.name.split('.').pop() ?? 'bin'
-        const fileName = Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext
-        const path = 'campaigns/' + fileName
+        for (let i = 0; i < list.length; i++) {
+          const url = await uploadOneFile(list[i])
+          uploaded.push(url)
+          if (isFirstBatch && list.length === 1) {
+            setUploadState({ status: 'uploading', progress: 40 + Math.round((i + 1) / list.length * 50) })
+          }
+        }
 
-        setUploadState({ status: 'uploading', progress: 40 })
-
-        const { error: uploadError } = await supabase.storage
-          .from('ad-media')
-          .upload(path, file, { cacheControl: '3600', upsert: false })
-
-        if (uploadError) throw uploadError
-        setUploadState({ status: 'uploading', progress: 80 })
-
-        const { data: urlData } = supabase.storage.from('ad-media').getPublicUrl(path)
-        const url = urlData.publicUrl
         if (append) {
-          setSlideUrls((prev) => [...prev, url])
-          setMediaUrl((prev) => prev || url)
+          setSlideUrls((prev) => {
+            const next = [...prev, ...uploaded]
+            return next.length ? next : uploaded
+          })
+          setMediaUrl((prev) => prev || uploaded[0])
         } else {
-          setMediaUrl(url)
-          setSlideUrls([url])
+          setMediaUrl(uploaded[0])
+          setSlideUrls(uploaded)
         }
         setUploadState({ status: 'done', progress: 100 })
       } catch (err) {
         console.error('Помилка завантаження:', err)
+        const message = err instanceof Error ? err.message : ''
         setUploadState({
           status: 'error',
           progress: 0,
-          error: formatSupabaseError(err, t('advertising.error.upload')),
+          error: message.startsWith('Max') || message.includes('JPG')
+            ? message
+            : formatSupabaseError(err, t('advertising.error.upload')),
         })
+      } finally {
+        setPendingUploads((n) => Math.max(0, n - list.length))
       }
     },
-    [t],
+    [canMultiImage, hasBannerMedia, mediaUrl, slideUrls.length, t, uploadOneFile],
   )
+
+  const uploadFile = useCallback(
+    async (file: File, options?: { append?: boolean }) => {
+      await uploadFiles([file], options)
+    },
+    [uploadFiles],
+  )
+
+  const openFilePicker = (append = false) => {
+    const input = fileInputRef.current
+    if (!input) return
+    input.multiple = append || (canMultiImage && hasBannerMedia)
+    input.click()
+  }
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragOver(false)
-    const file = e.dataTransfer.files[0]
-    if (file) void uploadFile(file)
+    const files = Array.from(e.dataTransfer.files)
+    if (!files.length) return
+    const append = hasBannerMedia && canMultiImage
+    void uploadFiles(files, { append })
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) void uploadFile(file)
+    const files = e.target.files ? Array.from(e.target.files) : []
+    if (files.length) {
+      const append = hasBannerMedia && canMultiImage
+      void uploadFiles(files, { append })
+    }
     e.target.value = ''
   }
 
@@ -568,33 +616,70 @@ export function Advertising() {
                       onDragOver={(e) => { e.preventDefault(); setIsDragOver(true) }}
                       onDragLeave={() => setIsDragOver(false)}
                       onDrop={handleDrop}
-                      onClick={() => fileInputRef.current?.click()}
-                      className={'relative cursor-pointer rounded-[22px] border-2 border-dashed transition ' + (
+                      className={'relative rounded-[22px] border-2 border-dashed transition ' + (
                         isDragOver ? 'border-[#6366f1] bg-[rgba(99,102,241,0.05)]' :
-                        uploadState.status === 'done'  ? 'border-[rgba(34,197,94,0.4)] bg-[rgba(236,250,240,0.6)]' :
+                        hasBannerMedia ? 'border-[rgba(34,197,94,0.4)] bg-[rgba(236,250,240,0.6)]' :
                         uploadState.status === 'error' ? 'border-[rgba(239,68,68,0.4)] bg-[rgba(255,237,232,0.6)]' :
-                        'border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.3)] hover:border-[rgba(99,102,241,0.4)]'
+                        'border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.3)]'
                       )}
                     >
-                      {mediaUrl && uploadState.status === 'done' ? (
-                        <div className="relative">
-                          <AdMediaDisplay
-                            src={slideUrls[0] || mediaUrl}
-                            mediaType={mediaType}
-                            style={mediaStyle}
-                            className="h-48 w-full rounded-[20px]"
-                            imageClassName="h-full w-full rounded-[20px]"
-                            animateSlides={slideUrls.length > 1}
-                          />
-                          <button type="button" onClick={(e) => { e.stopPropagation(); setMediaUrl(''); setSlideUrls([]); setMediaStyle(DEFAULT_AD_MEDIA_STYLE); setUploadState({ status: 'idle', progress: 0 }) }}
-                            className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white">
-                            <X className="h-4 w-4" />
-                          </button>
-                          <div className="absolute bottom-3 left-3 rounded-full bg-black/50 px-2.5 py-1 text-xs font-semibold text-white">
-                            {mediaType.toUpperCase()} • {t('advertising.form.mediaReady')}
+                      {hasBannerMedia && uploadState.status !== 'uploading' ? (
+                        <div className="p-3">
+                          <div className="relative overflow-hidden rounded-[16px]">
+                            <AdMediaDisplay
+                              src={slideUrls[0] || mediaUrl}
+                              mediaType={mediaType}
+                              style={mediaStyle}
+                              className="h-48 w-full"
+                              imageClassName="h-full w-full"
+                              animateSlides={slideUrls.length > 1}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setMediaUrl('')
+                                setSlideUrls([])
+                                setMediaStyle(DEFAULT_AD_MEDIA_STYLE)
+                                setUploadState({ status: 'idle', progress: 0 })
+                              }}
+                              className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                            <div className="absolute bottom-2 left-2 rounded-full bg-black/50 px-2.5 py-1 text-xs font-semibold text-white">
+                              {mediaType.toUpperCase()}
+                              {slideUrls.length > 1 && ` • ${slideUrls.length} ${t('advertising.form.imagesCount')}`}
+                              {slideUrls.length <= 1 && ` • ${t('advertising.form.mediaReady')}`}
+                            </div>
                           </div>
+                          {canMultiImage && (
+                            <div className="mt-3 flex flex-wrap items-center gap-2">
+                              {slideUrls.map((url, i) => (
+                                <div
+                                  key={`${url}-${i}`}
+                                  className="relative h-12 w-16 overflow-hidden rounded-lg border border-[rgba(148,163,184,0.35)]"
+                                >
+                                  <img src={url} alt="" className="h-full w-full object-cover" />
+                                </div>
+                              ))}
+                              {slideUrls.length < 6 && (
+                                <button
+                                  type="button"
+                                  disabled={pendingUploads > 0}
+                                  onClick={() => openFilePicker(true)}
+                                  className="flex h-12 items-center gap-1.5 rounded-full border border-dashed border-[rgba(99,102,241,0.45)] px-3 text-xs font-semibold text-[#6366f1] disabled:opacity-50"
+                                >
+                                  <ImagePlus className="h-3.5 w-3.5" />
+                                  {pendingUploads > 0
+                                    ? t('advertising.form.uploadingMore')
+                                    : t('advertising.form.addMoreImages')}
+                                </button>
+                              )}
+                            </div>
+                          )}
+                          <p className="mt-2 text-[11px] text-[#9a8776]">{t('advertising.form.mediaMultiHint')}</p>
                         </div>
-                      ) : uploadState.status === 'uploading' ? (
+                      ) : uploadState.status === 'uploading' && !hasBannerMedia ? (
                         <div className="flex flex-col items-center justify-center gap-3 p-10">
                           <div className="h-10 w-10 animate-spin rounded-full border-4 border-[rgba(99,102,241,0.2)] border-t-[#6366f1]" />
                           <div className="text-sm font-semibold text-[#6f665d]">{t('advertising.form.uploading')} {uploadState.progress}%</div>
@@ -603,7 +688,11 @@ export function Advertising() {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center gap-3 p-10">
+                        <button
+                          type="button"
+                          onClick={() => openFilePicker(false)}
+                          className="flex w-full cursor-pointer flex-col items-center justify-center gap-3 p-10 hover:bg-[rgba(99,102,241,0.04)]"
+                        >
                           <div className={'flex h-14 w-14 items-center justify-center rounded-[20px] ' + (uploadState.status === 'error' ? 'bg-[rgba(239,68,68,0.10)] text-[#ef4444]' : 'bg-[rgba(99,102,241,0.10)] text-[#6366f1]')}>
                             <Upload className="h-6 w-6" />
                           </div>
@@ -614,14 +703,46 @@ export function Advertising() {
                               {mediaType === 'gif'   && t('advertising.form.mediaGif')}
                               {mediaType === 'video' && t('advertising.form.mediaVideo')}
                             </div>
+                            {canMultiImage && (
+                              <div className="mt-1 text-[11px] text-[#6366f1]">{t('advertising.form.mediaMultiPick')}</div>
+                            )}
                             {uploadState.status === 'error' && (
                               <div className="mt-2 text-xs font-semibold text-[#ef4444]">{uploadState.error}</div>
                             )}
                           </div>
-                        </div>
+                        </button>
                       )}
                     </div>
-                    <input ref={fileInputRef} type="file" accept={ACCEPTED_MIME[mediaType].join(',')} onChange={handleFileChange} className="hidden" />
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept={ACCEPTED_MIME[mediaType].join(',')}
+                      multiple={canMultiImage}
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+
+                    {hasBannerMedia && (
+                      <div id="banner-media-editor" className="mt-4">
+                        <AdMediaEditor
+                          mediaType={mediaType}
+                          primaryUrl={mediaUrl}
+                          slideUrls={slideUrls.length ? slideUrls : [mediaUrl]}
+                          style={mediaStyle}
+                          onStyleChange={setMediaStyle}
+                          onSlideUrlsChange={(urls) => {
+                            setSlideUrls(urls)
+                            setMediaUrl(urls[0] ?? '')
+                          }}
+                          onPrimaryUrlChange={(url) => {
+                            setMediaUrl(url)
+                            if (!slideUrls.length) setSlideUrls(url ? [url] : [])
+                          }}
+                          onUploadFiles={(files) => uploadFiles(files, { append: true })}
+                          isUploading={pendingUploads > 0}
+                        />
+                      </div>
+                    )}
 
                     <div className="mt-3">
                       <AdCopyField
@@ -807,24 +928,6 @@ export function Advertising() {
               <p className="mt-2 text-sm leading-6 text-[#6f665d]">{t('advertising.preview.desc')}</p>
 
               <div className="mt-5 flex flex-col items-center gap-4">
-                {uploadState.status === 'done' && mediaUrl && (
-                  <AdMediaEditor
-                    mediaType={mediaType}
-                    primaryUrl={mediaUrl}
-                    slideUrls={slideUrls}
-                    style={mediaStyle}
-                    onStyleChange={setMediaStyle}
-                    onSlideUrlsChange={(urls) => {
-                      setSlideUrls(urls)
-                      setMediaUrl(urls[0] ?? '')
-                    }}
-                    onPrimaryUrlChange={(url) => {
-                      setMediaUrl(url)
-                      if (!slideUrls.length) setSlideUrls(url ? [url] : [])
-                    }}
-                    onUploadFile={(file) => uploadFile(file, { append: true })}
-                  />
-                )}
                 <AdCampaignDraftPreview
                   title={title}
                   description={description}
