@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { AdBannerLayoutKey } from '../lib/adBannerLayouts'
 import {
-  DEFAULT_AD_MEDIA_STYLE,
-  mediaStyleObjectPosition,
-  mediaStyleToCssFilter,
-  resolveDisplayStyle,
+  COLLAGE_MAX_BY_LAYOUT,
+  collageGridClass,
+  resolveDisplayMode,
+  resolveLayoutTransition,
   resolveSlideUrls,
   slideshowLayerClass,
   type AdMediaStyle,
@@ -16,64 +16,93 @@ type AdMediaDisplayProps = {
   alt?: string
   mediaType: 'image' | 'gif' | 'video'
   style?: AdMediaStyle
-  /** Кадрування для конкретного типу банера */
   layoutKey?: AdBannerLayoutKey
   className?: string
   imageClassName?: string
-  /** Автослайд для 2+ зображень */
   animateSlides?: boolean
+}
+
+/** Повне зображення в контейнері без обрізання; фон заповнюється розмитою копією. */
+function AdMediaImageFill({
+  src,
+  alt,
+  className = '',
+  imageClassName = '',
+}: {
+  src: string
+  alt: string
+  className?: string
+  imageClassName?: string
+}) {
+  return (
+    <div className={`relative h-full w-full overflow-hidden bg-[#1a1816] ${className}`}>
+      <img
+        src={src}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full scale-110 object-cover opacity-45 blur-md"
+        loading="lazy"
+        onError={(e) => {
+          e.currentTarget.src = AD_MEDIA_FALLBACK
+        }}
+      />
+      <img
+        src={src}
+        alt={alt}
+        className={`relative z-[1] mx-auto h-full w-full object-contain ${imageClassName}`}
+        loading="lazy"
+        onError={(e) => {
+          e.currentTarget.src = AD_MEDIA_FALLBACK
+        }}
+      />
+    </div>
+  )
 }
 
 export function AdMediaDisplay({
   src,
   alt = '',
   mediaType,
-  style = DEFAULT_AD_MEDIA_STYLE,
+  style,
   layoutKey,
   className = '',
   imageClassName = '',
   animateSlides = true,
 }: AdMediaDisplayProps) {
-  const displayStyle = useMemo(
-    () => (layoutKey ? resolveDisplayStyle(style, layoutKey) : style),
-    [style, layoutKey],
-  )
-  const slides = useMemo(() => resolveSlideUrls(src, displayStyle), [src, displayStyle])
+  const resolvedStyle = style ?? { slideshow: null }
+  const slides = useMemo(() => resolveSlideUrls(src, resolvedStyle), [src, resolvedStyle])
   const [slideIndex, setSlideIndex] = useState(0)
+
+  const displayMode = useMemo(
+    () => resolveDisplayMode(resolvedStyle, layoutKey, slides.length),
+    [resolvedStyle, layoutKey, slides.length],
+  )
+  const transition = useMemo(
+    () => resolveLayoutTransition(resolvedStyle, layoutKey),
+    [resolvedStyle, layoutKey],
+  )
 
   useEffect(() => {
     setSlideIndex(0)
-  }, [slides.join('|')])
+  }, [slides.join('|'), displayMode])
 
   useEffect(() => {
-    if (!animateSlides || slides.length < 2 || mediaType === 'video') return
-    const ms = displayStyle.slideshow?.intervalMs ?? 3500
+    if (!animateSlides || displayMode !== 'rotate' || slides.length < 2 || mediaType === 'video') {
+      return
+    }
+    const ms = resolvedStyle.slideshow?.intervalMs ?? 3500
     const id = window.setInterval(() => {
       setSlideIndex((i) => (i + 1) % slides.length)
     }, ms)
     return () => window.clearInterval(id)
-  }, [animateSlides, slides, mediaType, displayStyle.slideshow?.intervalMs])
-
-  const filter = mediaStyleToCssFilter(displayStyle)
-  const objectPosition = mediaStyleObjectPosition(displayStyle)
-  const objectFit = displayStyle.fit
-  const scale = displayStyle.scale / 100
-
-  const imgStyle: React.CSSProperties = {
-    objectFit,
-    objectPosition,
-    filter,
-    transform: scale !== 1 ? `scale(${scale})` : undefined,
-    transformOrigin: objectPosition,
-  }
+  }, [animateSlides, displayMode, slides, mediaType, resolvedStyle.slideshow?.intervalMs])
 
   if (mediaType === 'video' && src) {
     return (
       <div className={`relative overflow-hidden bg-[#1a1816] ${className}`}>
         <video
           src={src}
-          className={`h-full w-full ${imageClassName}`}
-          style={{ objectFit, objectPosition, filter }}
+          className={`h-full w-full object-contain ${imageClassName}`}
           muted
           playsInline
           loop
@@ -86,28 +115,45 @@ export function AdMediaDisplay({
   if (slides.length === 0) {
     return (
       <div className={`relative overflow-hidden bg-[#1a1816] ${className}`}>
-        <img src={AD_MEDIA_FALLBACK} alt={alt} className={`h-full w-full object-cover ${imageClassName}`} />
+        <img
+          src={AD_MEDIA_FALLBACK}
+          alt={alt}
+          className={`h-full w-full object-contain ${imageClassName}`}
+        />
       </div>
     )
   }
 
-  const transition = displayStyle.slideshow?.transition ?? 'fade'
-  const multi = slides.length > 1 && animateSlides
+  if (displayMode === 'collage' && slides.length >= 2 && layoutKey) {
+    const max = COLLAGE_MAX_BY_LAYOUT[layoutKey]
+    const collageSlides = slides.slice(0, max)
+    return (
+      <div className={`relative h-full w-full overflow-hidden bg-[#1a1816] ${className}`}>
+        <div className={`grid h-full w-full gap-px ${collageGridClass(layoutKey, collageSlides.length)}`}>
+          {collageSlides.map((url, i) => (
+            <AdMediaImageFill
+              key={`${url}-${i}`}
+              src={url}
+              alt={alt}
+              className="min-h-0 min-w-0"
+              imageClassName={imageClassName}
+            />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  const multi = displayMode === 'rotate' && slides.length > 1 && animateSlides
 
   if (!multi) {
     return (
-      <div className={`relative overflow-hidden bg-[#1a1816] ${className}`}>
-        <img
-          src={slides[0]}
-          alt={alt}
-          className={`h-full w-full ${imageClassName}`}
-          style={imgStyle}
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = AD_MEDIA_FALLBACK
-          }}
-        />
-      </div>
+      <AdMediaImageFill
+        src={slides[0]}
+        alt={alt}
+        className={className}
+        imageClassName={imageClassName}
+      />
     )
   }
 
@@ -116,17 +162,12 @@ export function AdMediaDisplay({
       {slides.map((url, i) => {
         const active = i === slideIndex
         return (
-          <img
+          <div
             key={`${url}-${i}`}
-            src={url}
-            alt={alt}
-            className={`${slideshowLayerClass(active, transition)} ${imageClassName}`}
-            style={imgStyle}
-            loading="lazy"
-            onError={(e) => {
-              e.currentTarget.src = AD_MEDIA_FALLBACK
-            }}
-          />
+            className={slideshowLayerClass(active, transition)}
+          >
+            <AdMediaImageFill src={url} alt={alt} imageClassName={imageClassName} />
+          </div>
         )
       })}
       <div className="pointer-events-none absolute bottom-1.5 right-1.5 z-[2] flex gap-1">

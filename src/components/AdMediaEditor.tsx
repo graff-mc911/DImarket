@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
-import { GripHorizontal, ImagePlus, Plus, RotateCcw, Sun, X } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { ImagePlus, Plus, RotateCcw, X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import {
   AD_BANNER_LAYOUT_KEYS,
@@ -8,13 +8,15 @@ import {
 } from '../lib/adBannerLayouts'
 import {
   AD_SLIDESHOW_TRANSITIONS,
-  clampPercent,
-  clearLayoutFrame,
-  layoutHasCustomFrame,
-  resolveFrameStyle,
-  setLayoutFrame,
-  type AdFrameStyle,
-  type AdMediaFit,
+  clearLayoutPrefs,
+  layoutHasPrefs,
+  LAYOUT_DEFAULT_TRANSITION,
+  resolveDisplayMode,
+  resolveLayoutPrefs,
+  resolveLayoutTransition,
+  setLayoutPrefs,
+  TRANSITIONS_FOR_LAYOUT,
+  type AdDisplayMode,
   type AdMediaStyle,
   type AdSlideshowTransition,
 } from '../lib/adMediaStyle'
@@ -32,6 +34,8 @@ type AdMediaEditorProps = {
   isUploading?: boolean
 }
 
+const DISPLAY_MODES: AdDisplayMode[] = ['single', 'rotate', 'collage']
+
 export function AdMediaEditor({
   mediaType,
   primaryUrl,
@@ -44,49 +48,17 @@ export function AdMediaEditor({
   isUploading = false,
 }: AdMediaEditorProps) {
   const { t } = useApp()
-  const frameRef = useRef<HTMLDivElement>(null)
   const extraInputRef = useRef<HTMLInputElement>(null)
-  const [dragging, setDragging] = useState(false)
   const [activeLayout, setActiveLayout] = useState<AdBannerLayoutKey>('center')
 
   const displayUrl = slideUrls[0] || primaryUrl
   const canMulti = mediaType === 'image' || mediaType === 'gif'
   const hasMedia = Boolean(displayUrl.trim())
-  const layoutFrame = resolveFrameStyle(style, activeLayout)
   const previewAspectClass = AD_BANNER_LAYOUT_META[activeLayout].aspectClass
-  const hasCustomLayout = layoutHasCustomFrame(style, activeLayout)
-
-  const patchLayoutFrame = (patch: Partial<AdFrameStyle>) => {
-    const next = { ...layoutFrame, ...patch }
-    onStyleChange(setLayoutFrame(style, activeLayout, next))
-  }
-
-  const movePosition = useCallback(
-    (clientX: number, clientY: number) => {
-      const el = frameRef.current
-      if (!el) return
-      const rect = el.getBoundingClientRect()
-      const x = ((clientX - rect.left) / rect.width) * 100
-      const y = ((clientY - rect.top) / rect.height) * 100
-      patchLayoutFrame({ positionX: clampPercent(x), positionY: clampPercent(y) })
-    },
-    [layoutFrame, style, activeLayout],
-  )
-
-  const onPointerDown = (e: React.PointerEvent) => {
-    if (!hasMedia || mediaType === 'video') return
-    e.preventDefault()
-    setDragging(true)
-    ;(e.target as HTMLElement).setPointerCapture?.(e.pointerId)
-    movePosition(e.clientX, e.clientY)
-  }
-
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragging) return
-    movePosition(e.clientX, e.clientY)
-  }
-
-  const onPointerUp = () => setDragging(false)
+  const slideCount = slideUrls.filter(Boolean).length
+  const layoutPrefs = resolveLayoutPrefs(style, activeLayout)
+  const displayMode = resolveDisplayMode(style, activeLayout, slideCount)
+  const transition = resolveLayoutTransition(style, activeLayout)
 
   const patchSlideshow = (patch: Partial<NonNullable<AdMediaStyle['slideshow']>>) => {
     onStyleChange({
@@ -100,6 +72,15 @@ export function AdMediaEditor({
     })
   }
 
+  const patchLayout = (patch: Partial<typeof layoutPrefs>) => {
+    onStyleChange(
+      setLayoutPrefs(style, activeLayout, {
+        ...layoutPrefs,
+        ...patch,
+      }),
+    )
+  }
+
   const removeSlide = (index: number) => {
     const next = slideUrls.filter((_, i) => i !== index)
     onSlideUrlsChange(next)
@@ -111,14 +92,13 @@ export function AdMediaEditor({
     }
   }
 
-  const addSlidesFromFiles = async (files: FileList | File[]) => {
-    await onUploadFiles(Array.from(files))
-  }
-
   const layoutLabel = (key: AdBannerLayoutKey) => t(`advertising.mediaEditor.layout.${key}`)
-
+  const modeLabel = (mode: AdDisplayMode) => t(`advertising.mediaEditor.mode.${mode}`)
   const transitionLabel = (tr: AdSlideshowTransition) =>
     t(`advertising.mediaEditor.transition.${tr}`)
+
+  const transitionsForLayout =
+    TRANSITIONS_FOR_LAYOUT[activeLayout].filter((tr) => AD_SLIDESHOW_TRANSITIONS.includes(tr))
 
   return (
     <div className="space-y-4 rounded-[20px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-4">
@@ -142,8 +122,8 @@ export function AdMediaEditor({
               }`}
             >
               {layoutLabel(key)}
-              {layoutHasCustomFrame(style, key) && (
-                <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-[#f59e0b]" title="" />
+              {layoutHasPrefs(style, key) && (
+                <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-[#f59e0b]" />
               )}
             </button>
           ))}
@@ -155,10 +135,10 @@ export function AdMediaEditor({
           <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#6f665d]">
             {t('advertising.mediaEditor.previewFrame')} — {layoutLabel(activeLayout)}
           </p>
-          {hasCustomLayout && (
+          {layoutHasPrefs(style, activeLayout) && (
             <button
               type="button"
-              onClick={() => onStyleChange(clearLayoutFrame(style, activeLayout))}
+              onClick={() => onStyleChange(clearLayoutPrefs(style, activeLayout))}
               className="flex items-center gap-1 text-[10px] font-semibold text-[#6366f1]"
             >
               <RotateCcw className="h-3 w-3" />
@@ -167,15 +147,10 @@ export function AdMediaEditor({
           )}
         </div>
         <p className="mt-1 text-[11px] leading-snug text-[#9a8776]">
-          {t('advertising.mediaEditor.dragHint')}
+          {t('advertising.mediaEditor.autoFitHint')}
         </p>
         <div
-          ref={frameRef}
-          className={`relative mt-3 w-full cursor-crosshair overflow-hidden rounded-[16px] border border-[rgba(99,102,241,0.25)] ${previewAspectClass}`}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerLeave={onPointerUp}
+          className={`relative mt-3 w-full overflow-hidden rounded-[16px] border border-[rgba(99,102,241,0.25)] ${previewAspectClass}`}
         >
           {hasMedia ? (
             <AdMediaDisplay
@@ -185,98 +160,20 @@ export function AdMediaEditor({
               layoutKey={activeLayout}
               className="h-full w-full"
               imageClassName="h-full w-full"
-              animateSlides={slideUrls.length > 1}
+              animateSlides={displayMode === 'rotate'}
             />
           ) : (
             <div className="flex h-full min-h-[7.5rem] items-center justify-center bg-[#1a1816] text-xs text-white/60">
               {t('advertising.preview.placeholder')}
             </div>
           )}
-          {hasMedia && mediaType !== 'video' && (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <GripHorizontal className="h-6 w-6 text-white/50 drop-shadow" />
-            </div>
-          )}
         </div>
       </div>
 
-      {hasMedia && (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <label className="block text-xs font-semibold text-[#6f665d]">
-            {t('advertising.mediaEditor.fit')}
-            <select
-              value={layoutFrame.fit}
-              onChange={(e) => patchLayoutFrame({ fit: e.target.value as AdMediaFit })}
-              className="input-glass mt-1 w-full"
-            >
-              <option value="cover">{t('advertising.mediaEditor.fitCover')}</option>
-              <option value="contain">{t('advertising.mediaEditor.fitContain')}</option>
-            </select>
-          </label>
-          <label className="block text-xs font-semibold text-[#6f665d]">
-            {t('advertising.mediaEditor.scale')} ({layoutFrame.scale}%)
-            <input
-              type="range"
-              min={80}
-              max={160}
-              value={layoutFrame.scale}
-              onChange={(e) => patchLayoutFrame({ scale: Number(e.target.value) })}
-              className="mt-2 w-full"
-            />
-          </label>
-          <label className="flex items-center gap-2 text-xs font-semibold text-[#6f665d] sm:col-span-2">
-            <Sun className="h-3.5 w-3.5 shrink-0" />
-            {t('advertising.mediaEditor.brightness')} ({layoutFrame.brightness}%)
-            <input
-              type="range"
-              min={60}
-              max={140}
-              value={layoutFrame.brightness}
-              onChange={(e) => patchLayoutFrame({ brightness: Number(e.target.value) })}
-              className="min-w-0 flex-1"
-            />
-          </label>
-          <label className="block text-xs font-semibold text-[#6f665d]">
-            {t('advertising.mediaEditor.contrast')} ({layoutFrame.contrast}%)
-            <input
-              type="range"
-              min={60}
-              max={140}
-              value={layoutFrame.contrast}
-              onChange={(e) => patchLayoutFrame({ contrast: Number(e.target.value) })}
-              className="mt-2 w-full"
-            />
-          </label>
-          <label className="block text-xs font-semibold text-[#6f665d]">
-            {t('advertising.mediaEditor.positionX')} ({layoutFrame.positionX}%)
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={layoutFrame.positionX}
-              onChange={(e) => patchLayoutFrame({ positionX: Number(e.target.value) })}
-              className="mt-2 w-full"
-            />
-          </label>
-          <label className="block text-xs font-semibold text-[#6f665d]">
-            {t('advertising.mediaEditor.positionY')} ({layoutFrame.positionY}%)
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={layoutFrame.positionY}
-              onChange={(e) => patchLayoutFrame({ positionY: Number(e.target.value) })}
-              className="mt-2 w-full"
-            />
-          </label>
-        </div>
-      )}
-
-      {canMulti && hasMedia && (
-        <div className="border-t border-[rgba(148,163,184,0.15)] pt-4">
-          <p className="text-xs font-bold text-[#5f5a54]">{t('advertising.mediaEditor.slideshow')}</p>
-          <p className="mt-1 text-[11px] text-[#9a8776]">{t('advertising.mediaEditor.slideshowHint')}</p>
-
+      {hasMedia && canMulti && (
+        <div>
+          <p className="text-xs font-bold text-[#5f5a54]">{t('advertising.mediaEditor.images')}</p>
+          <p className="mt-1 text-[11px] text-[#9a8776]">{t('advertising.mediaEditor.imagesHint')}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {slideUrls.map((url, i) => (
               <div
@@ -307,12 +204,54 @@ export function AdMediaEditor({
               </button>
             )}
           </div>
+          <input
+            ref={extraInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              const files = e.target.files
+              if (files?.length) void onUploadFiles(Array.from(files))
+              e.target.value = ''
+            }}
+          />
+        </div>
+      )}
 
-          {slideUrls.length === 1 && (
-            <p className="mt-2 text-[10px] text-[#9a8776]">{t('advertising.mediaEditor.slideshowNeedTwo')}</p>
+      {hasMedia && canMulti && slideCount >= 1 && (
+        <div className="border-t border-[rgba(148,163,184,0.15)] pt-4">
+          <p className="text-xs font-bold text-[#5f5a54]">
+            {t('advertising.mediaEditor.displayFor')} {layoutLabel(activeLayout)}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {DISPLAY_MODES.map((mode) => {
+              const disabled =
+                (mode === 'rotate' || mode === 'collage') && slideCount < 2
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => patchLayout({ displayMode: mode })}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold transition disabled:opacity-40 ${
+                    displayMode === mode
+                      ? 'bg-[#6366f1] text-white'
+                      : 'border border-[rgba(99,102,241,0.25)] bg-white/60 text-[#5f5a54]'
+                  }`}
+                >
+                  {modeLabel(mode)}
+                </button>
+              )
+            })}
+          </div>
+          {slideCount < 2 && (
+            <p className="mt-2 text-[10px] text-[#9a8776]">
+              {t('advertising.mediaEditor.slideshowNeedTwo')}
+            </p>
           )}
 
-          {slideUrls.length > 1 && (
+          {displayMode === 'rotate' && slideCount >= 2 && (
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <label className="block text-xs font-semibold text-[#6f665d]">
                 {t('advertising.mediaEditor.interval')} ({(style.slideshow?.intervalMs ?? 3500) / 1000}s)
@@ -329,34 +268,31 @@ export function AdMediaEditor({
               <label className="block text-xs font-semibold text-[#6f665d]">
                 {t('advertising.mediaEditor.transition')}
                 <select
-                  value={style.slideshow?.transition ?? 'fade'}
+                  value={transition}
                   onChange={(e) =>
-                    patchSlideshow({ transition: e.target.value as AdSlideshowTransition })
+                    patchLayout({ transition: e.target.value as AdSlideshowTransition })
                   }
                   className="input-glass mt-1 w-full"
                 >
-                  {AD_SLIDESHOW_TRANSITIONS.map((tr) => (
+                  {transitionsForLayout.map((tr) => (
                     <option key={tr} value={tr}>
                       {transitionLabel(tr)}
                     </option>
                   ))}
                 </select>
               </label>
+              <p className="text-[10px] text-[#9a8776] sm:col-span-2">
+                {t('advertising.mediaEditor.transitionDefault')}:{' '}
+                {transitionLabel(LAYOUT_DEFAULT_TRANSITION[activeLayout])}
+              </p>
             </div>
           )}
 
-          <input
-            ref={extraInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-            multiple
-            className="hidden"
-            onChange={(e) => {
-              const files = e.target.files
-              if (files?.length) void addSlidesFromFiles(files)
-              e.target.value = ''
-            }}
-          />
+          {displayMode === 'collage' && slideCount >= 2 && (
+            <p className="mt-2 text-[11px] text-[#9a8776]">
+              {t('advertising.mediaEditor.collageHint')}
+            </p>
+          )}
         </div>
       )}
 

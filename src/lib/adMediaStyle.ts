@@ -2,7 +2,7 @@
 
 import type { AdBannerLayoutKey } from './adBannerLayouts'
 
-export type AdMediaFit = 'cover' | 'contain'
+export type AdDisplayMode = 'single' | 'rotate' | 'collage'
 
 export type AdSlideshowTransition =
   | 'fade'
@@ -19,35 +19,29 @@ export type AdMediaSlideshow = {
   transition: AdSlideshowTransition
 }
 
-/** Кадрування одного зображення (позиція, фільтри). */
-export type AdFrameStyle = {
-  fit: AdMediaFit
-  positionX: number
-  positionY: number
-  scale: number
-  brightness: number
-  contrast: number
-  saturate: number
+/** Режим показу для типу банера (без ручного кадрування). */
+export type AdLayoutPrefs = {
+  displayMode?: AdDisplayMode
+  transition?: AdSlideshowTransition
 }
 
-export type AdMediaStyle = AdFrameStyle & {
-  /** Окремі налаштування для типів банера (повний кадр на ключ). */
-  byLayout?: Partial<Record<AdBannerLayoutKey, AdFrameStyle>>
+/** @deprecated Лише для зворотної сумісності в БД — на рендері не використовується. */
+export type AdFrameStyle = {
+  fit?: 'cover' | 'contain'
+  positionX?: number
+  positionY?: number
+  scale?: number
+  brightness?: number
+  contrast?: number
+  saturate?: number
+}
+
+export type AdMediaStyle = {
+  byLayout?: Partial<Record<AdBannerLayoutKey, AdLayoutPrefs>>
   slideshow?: AdMediaSlideshow | null
 }
 
-export const DEFAULT_AD_FRAME: AdFrameStyle = {
-  fit: 'cover',
-  positionX: 50,
-  positionY: 50,
-  scale: 100,
-  brightness: 100,
-  contrast: 100,
-  saturate: 100,
-}
-
 export const DEFAULT_AD_MEDIA_STYLE: AdMediaStyle = {
-  ...DEFAULT_AD_FRAME,
   slideshow: null,
 }
 
@@ -61,20 +55,25 @@ export const AD_SLIDESHOW_TRANSITIONS: AdSlideshowTransition[] = [
   'instant',
 ]
 
-export function clampPercent(n: number): number {
-  return Math.min(100, Math.max(0, Math.round(n)))
+export const LAYOUT_DEFAULT_TRANSITION: Record<AdBannerLayoutKey, AdSlideshowTransition> = {
+  side: 'slide-left',
+  center: 'fade',
+  leaderboard: 'crossfade',
+  mobile: 'fade',
 }
 
-function pickFrame(o: Record<string, unknown>): AdFrameStyle {
-  return {
-    fit: o.fit === 'contain' ? 'contain' : 'cover',
-    positionX: clampPercent(Number(o.positionX ?? 50)),
-    positionY: clampPercent(Number(o.positionY ?? 50)),
-    scale: Math.min(200, Math.max(80, Number(o.scale ?? 100) || 100)),
-    brightness: Math.min(150, Math.max(50, Number(o.brightness ?? 100) || 100)),
-    contrast: Math.min(150, Math.max(50, Number(o.contrast ?? 100) || 100)),
-    saturate: Math.min(150, Math.max(0, Number(o.saturate ?? 100) || 100)),
-  }
+export const COLLAGE_MAX_BY_LAYOUT: Record<AdBannerLayoutKey, number> = {
+  side: 2,
+  center: 3,
+  leaderboard: 4,
+  mobile: 2,
+}
+
+export const TRANSITIONS_FOR_LAYOUT: Record<AdBannerLayoutKey, AdSlideshowTransition[]> = {
+  side: ['slide-left', 'slide-right', 'slide-up', 'fade', 'crossfade', 'zoom-fade', 'instant'],
+  center: ['fade', 'crossfade', 'slide-left', 'slide-right', 'zoom-fade', 'instant'],
+  leaderboard: ['fade', 'crossfade', 'slide-left', 'slide-right', 'instant'],
+  mobile: ['fade', 'crossfade', 'slide-left', 'slide-right', 'instant'],
 }
 
 function normalizeTransition(raw: unknown): AdSlideshowTransition {
@@ -87,15 +86,34 @@ function normalizeTransition(raw: unknown): AdSlideshowTransition {
   return 'fade'
 }
 
+function normalizeDisplayMode(raw: unknown): AdDisplayMode | undefined {
+  if (raw === 'rotate' || raw === 'slideshow') return 'rotate'
+  if (raw === 'collage' || raw === 'grid' || raw === 'multi') return 'collage'
+  if (raw === 'single' || raw === 'one') return 'single'
+  return undefined
+}
+
+function parseLayoutPrefs(entry: Record<string, unknown>): AdLayoutPrefs | undefined {
+  const displayMode = normalizeDisplayMode(entry.displayMode)
+  const transition = entry.transition
+    ? normalizeTransition(entry.transition)
+    : undefined
+  if (displayMode || transition) {
+    return { ...(displayMode ? { displayMode } : {}), ...(transition ? { transition } : {}) }
+  }
+  return undefined
+}
+
 function parseByLayout(raw: unknown): AdMediaStyle['byLayout'] {
   if (!raw || typeof raw !== 'object') return undefined
   const o = raw as Record<string, unknown>
   const keys: AdBannerLayoutKey[] = ['side', 'center', 'leaderboard', 'mobile']
-  const out: Partial<Record<AdBannerLayoutKey, AdFrameStyle>> = {}
+  const out: Partial<Record<AdBannerLayoutKey, AdLayoutPrefs>> = {}
   for (const key of keys) {
     const entry = o[key]
     if (entry && typeof entry === 'object') {
-      out[key] = pickFrame(entry as Record<string, unknown>)
+      const prefs = parseLayoutPrefs(entry as Record<string, unknown>)
+      if (prefs) out[key] = prefs
     }
   }
   return Object.keys(out).length > 0 ? out : undefined
@@ -124,46 +142,60 @@ export function parseAdMediaStyle(raw: unknown): AdMediaStyle {
   }
 
   return {
-    ...pickFrame(o),
     byLayout: parseByLayout(o.byLayout),
     slideshow,
   }
 }
 
-export function resolveFrameStyle(
+export function resolveLayoutPrefs(
   style: AdMediaStyle,
   layout: AdBannerLayoutKey,
-): AdFrameStyle {
-  return style.byLayout?.[layout] ?? pickFrame(style as unknown as Record<string, unknown>)
+): AdLayoutPrefs {
+  return style.byLayout?.[layout] ?? {}
 }
 
-/** Стиль для рендеру конкретного банера (кадр + спільне слайдшоу). */
-export function resolveDisplayStyle(
+export function resolveDisplayMode(
   style: AdMediaStyle,
-  layout: AdBannerLayoutKey,
-): AdMediaStyle {
-  return {
-    ...resolveFrameStyle(style, layout),
-    slideshow: style.slideshow ?? null,
+  layout: AdBannerLayoutKey | undefined,
+  slideCount: number,
+): AdDisplayMode {
+  if (layout) {
+    const mode = style.byLayout?.[layout]?.displayMode
+    if (mode) return mode
   }
+  if (slideCount >= 2) return 'rotate'
+  return 'single'
 }
 
-export function layoutHasCustomFrame(style: AdMediaStyle, layout: AdBannerLayoutKey): boolean {
+export function resolveLayoutTransition(
+  style: AdMediaStyle,
+  layout: AdBannerLayoutKey | undefined,
+): AdSlideshowTransition {
+  if (layout) {
+    const tr = style.byLayout?.[layout]?.transition
+    if (tr) return tr
+  }
+  if (style.slideshow?.transition) return style.slideshow.transition
+  if (layout) return LAYOUT_DEFAULT_TRANSITION[layout]
+  return 'fade'
+}
+
+export function layoutHasPrefs(style: AdMediaStyle, layout: AdBannerLayoutKey): boolean {
   return Boolean(style.byLayout?.[layout])
 }
 
-export function setLayoutFrame(
+export function setLayoutPrefs(
   style: AdMediaStyle,
   layout: AdBannerLayoutKey,
-  frame: AdFrameStyle,
+  prefs: AdLayoutPrefs,
 ): AdMediaStyle {
   return {
     ...style,
-    byLayout: { ...style.byLayout, [layout]: frame },
+    byLayout: { ...style.byLayout, [layout]: prefs },
   }
 }
 
-export function clearLayoutFrame(style: AdMediaStyle, layout: AdBannerLayoutKey): AdMediaStyle {
+export function clearLayoutPrefs(style: AdMediaStyle, layout: AdBannerLayoutKey): AdMediaStyle {
   if (!style.byLayout?.[layout]) return style
   const next = { ...style.byLayout }
   delete next[layout]
@@ -171,17 +203,6 @@ export function clearLayoutFrame(style: AdMediaStyle, layout: AdBannerLayoutKey)
     ...style,
     byLayout: Object.keys(next).length > 0 ? next : undefined,
   }
-}
-
-export function mediaStyleToCssFilter(style: AdFrameStyle): string {
-  const b = style.brightness / 100
-  const c = style.contrast / 100
-  const s = style.saturate / 100
-  return `brightness(${b}) contrast(${c}) saturate(${s})`
-}
-
-export function mediaStyleObjectPosition(style: AdFrameStyle): string {
-  return `${style.positionX}% ${style.positionY}%`
 }
 
 export function resolveSlideUrls(primaryUrl: string, style: AdMediaStyle): string[] {
@@ -195,7 +216,7 @@ export function buildMediaStylePayload(
   slideUrls: string[],
 ): AdMediaStyle {
   const urls = slideUrls.filter(Boolean)
-  const base = { ...style }
+  const base: AdMediaStyle = { byLayout: style.byLayout }
   if (urls.length > 1) {
     base.slideshow = {
       urls,
@@ -206,6 +227,14 @@ export function buildMediaStylePayload(
     base.slideshow = null
   }
   return base
+}
+
+export function collageGridClass(layout: AdBannerLayoutKey, count: number): string {
+  const wide = layout === 'center' || layout === 'leaderboard' || layout === 'mobile'
+  if (count <= 1) return 'grid-cols-1'
+  if (count === 2) return wide ? 'grid-cols-2 grid-rows-1' : 'grid-cols-1 grid-rows-2'
+  if (count === 3) return wide ? 'grid-cols-3 grid-rows-1' : 'grid-cols-1 grid-rows-3'
+  return 'grid-cols-2 grid-rows-2'
 }
 
 export function slideshowLayerClass(
