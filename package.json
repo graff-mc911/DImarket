@@ -29,7 +29,8 @@
     "db:deploy-checkout-functions": "npx supabase functions deploy create-checkout-session verify-checkout-session --project-ref wjlfvajloxkevggwjgtk",
     "icons:generate": "node scripts/generate-favicons.mjs",
     "deploy:prod": "npx vercel deploy --prod --yes",
-    "db:apply-ai-platform": "node scripts/apply-ai-platform-migration.mjs"
+    "db:apply-ai-platform": "node scripts/apply-ai-platform-migration.mjs",
+    "secrets:ai": "node scripts/set-ai-edge-secrets.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

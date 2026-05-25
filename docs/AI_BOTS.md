@@ -12,6 +12,23 @@
 
 Never put these keys in `VITE_*` frontend env vars.
 
+### Set secrets on production
+
+1. Add to `.env.local` (not committed):
+
+```
+OPENAI_API_KEY=sk-proj-...
+OPENAI_MODEL=gpt-4o-mini
+```
+
+2. Run:
+
+```bash
+npm run secrets:ai
+```
+
+This runs `supabase secrets set` and redeploys `ai-router`.
+
 ## Database
 
 Apply migration:
