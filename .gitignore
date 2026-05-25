@@ -12,6 +12,8 @@ install.log
 
 .env.vercel.pull
 .env.vercel.prod.pull
+.env.vercel.prod
+supabase/functions/.env
 .geonames-cache/
 
 # Playwright

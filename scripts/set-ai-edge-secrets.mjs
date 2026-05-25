@@ -8,7 +8,7 @@
  *
  * 2. node scripts/set-ai-edge-secrets.mjs
  */
-import { readFileSync, existsSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { spawnSync } from 'child_process'
@@ -56,6 +56,24 @@ if (env.WHATSAPP_ACCESS_TOKEN?.trim()) {
   args.push(`WHATSAPP_ACCESS_TOKEN=${env.WHATSAPP_ACCESS_TOKEN.trim()}`)
 }
 
+// Локальний supabase functions serve читає supabase/functions/.env
+const fnEnvPath = resolve(root, 'supabase/functions/.env')
+const fnLines = [
+  '# Auto-generated from .env.local — do not commit',
+  `OPENAI_API_KEY=${openai}`,
+]
+if (env.OPENAI_MODEL?.trim()) fnLines.push(`OPENAI_MODEL=${env.OPENAI_MODEL.trim()}`)
+if (env.GOOGLE_VISION_API_KEY?.trim()) {
+  fnLines.push(`GOOGLE_VISION_API_KEY=${env.GOOGLE_VISION_API_KEY.trim()}`)
+}
+if (env.TELEGRAM_BOT_TOKEN?.trim()) fnLines.push(`TELEGRAM_BOT_TOKEN=${env.TELEGRAM_BOT_TOKEN.trim()}`)
+if (env.WHATSAPP_ACCESS_TOKEN?.trim()) {
+  fnLines.push(`WHATSAPP_ACCESS_TOKEN=${env.WHATSAPP_ACCESS_TOKEN.trim()}`)
+}
+mkdirSync(resolve(root, 'supabase/functions'), { recursive: true })
+writeFileSync(fnEnvPath, fnLines.join('\n') + '\n', 'utf8')
+console.log('Wrote supabase/functions/.env (local edge only)')
+
 console.log('Setting Edge secrets on', projectRef, '...')
 
 const r = spawnSync(
@@ -69,10 +87,15 @@ if (r.status !== 0) {
   process.exit(r.status ?? 1)
 }
 
-console.log('OK. Redeploy ai-router...')
-const d = spawnSync(
-  'npx',
-  ['supabase', 'functions', 'deploy', 'ai-router', '--project-ref', projectRef],
-  { stdio: 'inherit', shell: true, cwd: root },
-)
-process.exit(d.status === 0 ? 0 : 1)
+const functions = ['ai-router', 'sales-chat']
+for (const fn of functions) {
+  console.log('Deploy', fn, '...')
+  const d = spawnSync(
+    'npx',
+    ['supabase', 'functions', 'deploy', fn, '--project-ref', projectRef],
+    { stdio: 'inherit', shell: true, cwd: root },
+  )
+  if (d.status !== 0) process.exit(d.status ?? 1)
+}
+console.log('OK — secrets + local .env + edge functions')
+process.exit(0)
