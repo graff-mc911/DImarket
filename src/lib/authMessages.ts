@@ -35,9 +35,9 @@ export function getAuthErrorMessage(
     return t('auth.error.rateLimit')
   }
   if (
-    msg.includes('provider is not enabled') ||
+    msg.includes('missing oauth client id') ||
     msg.includes('unsupported provider') ||
-    msg.includes('oauth')
+    msg.includes('provider is not enabled')
   ) {
     return t('auth.error.oauthNotConfigured')
   }

@@ -45,12 +45,31 @@ const redirectList = [
   'http://127.0.0.1:5173/**',
 ].join(',')
 
+const googleId = env.GOOGLE_OAUTH_CLIENT_ID?.trim()
+const googleSecret = env.GOOGLE_OAUTH_CLIENT_SECRET?.trim()
+const appleId = env.APPLE_OAUTH_CLIENT_ID?.trim()
+const appleSecret = env.APPLE_OAUTH_CLIENT_SECRET?.trim()
+
 const patch = {
   site_url: 'https://dimarket.app',
   uri_allow_list: redirectList,
   mailer_autoconfirm: true,
-  external_google_enabled: true,
-  external_apple_enabled: true,
+}
+
+if (googleId && googleSecret) {
+  patch.external_google_enabled = true
+  patch.external_google_client_id = googleId
+  patch.external_google_secret = googleSecret
+} else {
+  patch.external_google_enabled = false
+}
+
+if (appleId && appleSecret) {
+  patch.external_apple_enabled = true
+  patch.external_apple_client_id = appleId
+  patch.external_apple_secret = appleSecret
+} else {
+  patch.external_apple_enabled = false
 }
 
 console.log('Patching auth config...', patch)

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { getAuthErrorMessage } from '../lib/authMessages'
+import { oauthAppleEnabled, oauthGoogleEnabled } from '../lib/authOAuthFlags'
 import { signInWithOAuthProvider, type OAuthProvider } from '../lib/oauth'
 
 type AuthSocialButtonsProps = {
@@ -25,6 +26,10 @@ export function AuthSocialButtons({ onBeforeOAuth, disabled }: AuthSocialButtons
     }
   }
 
+  if (!oauthGoogleEnabled && !oauthAppleEnabled) {
+    return null
+  }
+
   return (
     <div className="space-y-3">
       {error && (
@@ -43,22 +48,26 @@ export function AuthSocialButtons({ onBeforeOAuth, disabled }: AuthSocialButtons
       </div>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <button
-          type="button"
-          disabled={disabled || loadingProvider !== null}
-          onClick={() => void handleOAuth('google')}
-          className="btn-secondary w-full justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loadingProvider === 'google' ? t('auth.oauthLoading') : t('auth.continueGoogle')}
-        </button>
-        <button
-          type="button"
-          disabled={disabled || loadingProvider !== null}
-          onClick={() => void handleOAuth('apple')}
-          className="btn-secondary w-full justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loadingProvider === 'apple' ? t('auth.oauthLoading') : t('auth.continueApple')}
-        </button>
+        {oauthGoogleEnabled && (
+          <button
+            type="button"
+            disabled={disabled || loadingProvider !== null}
+            onClick={() => void handleOAuth('google')}
+            className="btn-secondary w-full justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loadingProvider === 'google' ? t('auth.oauthLoading') : t('auth.continueGoogle')}
+          </button>
+        )}
+        {oauthAppleEnabled && (
+          <button
+            type="button"
+            disabled={disabled || loadingProvider !== null}
+            onClick={() => void handleOAuth('apple')}
+            className="btn-secondary w-full justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loadingProvider === 'apple' ? t('auth.oauthLoading') : t('auth.continueApple')}
+          </button>
+        )}
       </div>
     </div>
   )
