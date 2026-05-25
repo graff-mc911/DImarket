@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 import {
   parseRegistrationLocation,
-  REGISTRATION_GEO_DATA,
+  REGISTRATION_COUNTRIES,
 } from './registrationGeoData'
 
 export type AdGeoCountry = {
@@ -15,22 +15,12 @@ export type GeoRow = {
   city: string
 }
 
-/** Базовий каталог — збігається з seed у supabase/migrations */
+/** Мінімальний seed, поки в БД ще немає реєстрацій */
 const FALLBACK_GEO_ROWS: GeoRow[] = [
-  { country: 'Україна', region: 'Київська', city: 'Київ' },
-  { country: 'Україна', region: 'Львівська', city: 'Львів' },
-  { country: 'Україна', region: 'Харківська', city: 'Харків' },
-  { country: 'Україна', region: 'Одеська', city: 'Одеса' },
-  { country: 'Україна', region: 'Дніпропетровська', city: 'Дніпро' },
-  { country: 'Польща', region: 'Мазовецьке', city: 'Варшава' },
-  { country: 'Польща', region: 'Малопольське', city: 'Краків' },
-  { country: 'Польща', region: 'Нижньосілезьке', city: 'Вроцлав' },
-  { country: 'Німеччина', region: 'Баварія', city: 'Мюнхен' },
-  { country: 'Німеччина', region: 'Берлін', city: 'Берлін' },
-  { country: 'Німеччина', region: 'Північний Рейн-Вестфалія', city: 'Кельн' },
-  { country: 'Чехія', region: 'Прага', city: 'Прага' },
-  { country: 'Словаччина', region: 'Братиславський', city: 'Братислава' },
-  { country: 'Румунія', region: 'Бухарест', city: 'Бухарест' },
+  { country: 'Ukraine', region: 'Київська', city: 'Київ' },
+  { country: 'Ukraine', region: 'Львівська', city: 'Львів' },
+  { country: 'Poland', region: 'Mazowieckie', city: 'Warsaw' },
+  { country: 'Germany', region: 'Hessen', city: 'Frankfurt' },
 ]
 
 export function groupGeoRows(rows: GeoRow[]): AdGeoCountry[] {
@@ -59,22 +49,6 @@ export function groupGeoRows(rows: GeoRow[]): AdGeoCountry[] {
         .sort((a, b) => a.name.localeCompare(b.name)),
     }))
     .sort((a, b) => a.name.localeCompare(b.name))
-}
-
-function registrationGeoToRows(): GeoRow[] {
-  const rows: GeoRow[] = []
-  for (const [country, regions] of Object.entries(REGISTRATION_GEO_DATA)) {
-    for (const [region, cities] of Object.entries(regions)) {
-      for (const city of cities) {
-        rows.push({ country, region, city })
-      }
-    }
-  }
-  return rows
-}
-
-export function registrationGeoCatalog(): AdGeoCountry[] {
-  return groupGeoRows(registrationGeoToRows())
 }
 
 export function fallbackAdGeoCatalog(): AdGeoCountry[] {
@@ -118,52 +92,97 @@ export function mergeGeoCatalogs(...catalogs: AdGeoCountry[]): AdGeoCountry[] {
   )
 }
 
-async function loadGeoRowsFromTable(table: 'geo_catalog' | 'active_geo'): Promise<GeoRow[]> {
-  const { data, error } = await supabase
-    .from(table)
-    .select('country, region, city')
-    .order('country')
+/** Усі країни для вибору: фіксований список + країни з БД */
+export function allKnownCountries(catalog: AdGeoCountry[]): string[] {
+  return [...new Set([...REGISTRATION_COUNTRIES, ...catalog.map((c) => c.name)])].sort((a, b) =>
+    a.localeCompare(b, 'uk'),
+  )
+}
 
+/** Каталог з порожніми регіонами для країн без реєстрацій */
+export function catalogWithAllCountries(catalog: AdGeoCountry[]): AdGeoCountry[] {
+  const byName = new Map(catalog.map((c) => [c.name, c]))
+  for (const name of REGISTRATION_COUNTRIES) {
+    if (!byName.has(name)) {
+      byName.set(name, { name, regions: [] })
+    }
+  }
+  return Array.from(byName.values()).sort((a, b) => a.name.localeCompare(b.name, 'uk'))
+}
+
+async function loadGeoRowsFromTable(
+  table: 'geo_catalog' | 'active_geo',
+  country?: string,
+): Promise<GeoRow[]> {
+  let query = supabase.from(table).select('country, region, city').order('country')
+  if (country) {
+    query = query.eq('country', country)
+  }
+  const { data, error } = await query
   if (error || !data?.length) return []
   return dedupeGeoRows(data as GeoRow[])
 }
 
-/** Каталог для форми реклами: реєстраційне дерево + БД (профілі, оголошення) */
+async function loadAllGeoRows(): Promise<GeoRow[]> {
+  return dedupeGeoRows([
+    ...(await loadGeoRowsFromTable('geo_catalog')),
+    ...(await loadGeoRowsFromTable('active_geo')),
+  ])
+}
+
+/** Повний каталог для реклами — лише з БД (+ мінімальний seed) */
 export async function fetchAdGeoCatalog(): Promise<AdGeoCountry[]> {
-  const base = registrationGeoCatalog()
-
   try {
-    const dbRows = dedupeGeoRows([
-      ...(await loadGeoRowsFromTable('geo_catalog')),
-      ...(await loadGeoRowsFromTable('active_geo')),
-    ])
-    if (dbRows.length === 0) return base
-
-    const dbCatalog = groupGeoRows(dbRows)
-    return mergeGeoCatalogs(base, dbCatalog)
+    const dbRows = await loadAllGeoRows()
+    const fromDb = dbRows.length > 0 ? groupGeoRows(dbRows) : fallbackAdGeoCatalog()
+    return catalogWithAllCountries(fromDb)
   } catch (err) {
     console.error('Помилка завантаження geo_catalog:', err)
-    return base
+    return catalogWithAllCountries(fallbackAdGeoCatalog())
   }
 }
 
-/** Додає локацію з реєстрації в geo_catalog (через RPC, якщо є) */
-export async function upsertGeoCatalogFromLocation(location: string | null | undefined): Promise<void> {
-  const parsed = location ? parseRegistrationLocation(location) : null
-  if (!parsed) return
+/** Регіони/міста однієї країни (реєстрація, форми) */
+export async function fetchGeoCatalogForCountry(country: string): Promise<AdGeoCountry | null> {
+  if (!country.trim()) return null
+  try {
+    const rows = dedupeGeoRows([
+      ...(await loadGeoRowsFromTable('geo_catalog', country)),
+      ...(await loadGeoRowsFromTable('active_geo', country)),
+    ])
+    if (rows.length === 0) {
+      return { name: country, regions: [] }
+    }
+    const grouped = groupGeoRows(rows)
+    return grouped.find((c) => c.name === country) ?? grouped[0] ?? { name: country, regions: [] }
+  } catch (err) {
+    console.warn('fetchGeoCatalogForCountry:', err)
+    return { name: country, regions: [] }
+  }
+}
 
-  const { country, region, city } = parsed
+/** Додає країну/регіон/місто в geo_catalog */
+export async function upsertGeoCatalogEntry(
+  country: string,
+  region: string,
+  city: string,
+): Promise<void> {
+  const c = country?.trim()
+  const r = (region?.trim() || 'Інші')
+  const cityName = city?.trim()
+  if (!c || !cityName) return
+
   try {
     const { error } = await supabase.rpc('register_geo_location', {
-      p_country: country,
-      p_region: region,
-      p_city: city,
+      p_country: c,
+      p_region: r,
+      p_city: cityName,
     })
     if (error) {
       const { error: insertError } = await supabase.from('geo_catalog').insert({
-        country,
-        region,
-        city,
+        country: c,
+        region: r,
+        city: cityName,
       })
       if (insertError && insertError.code !== '23505') {
         console.warn('[geo_catalog] upsert:', insertError.message)
@@ -172,6 +191,13 @@ export async function upsertGeoCatalogFromLocation(location: string | null | und
   } catch (err) {
     console.warn('[geo_catalog] upsert failed:', err)
   }
+}
+
+/** Додає локацію з рядка "місто, регіон, країна" */
+export async function upsertGeoCatalogFromLocation(location: string | null | undefined): Promise<void> {
+  const parsed = location ? parseRegistrationLocation(location) : null
+  if (!parsed) return
+  await upsertGeoCatalogEntry(parsed.country, parsed.region, parsed.city)
 }
 
 export type GeoMode = 'global' | 'countries' | 'regions' | 'cities'
@@ -220,9 +246,8 @@ export function isGeoSelectionValid(
   return selectedCities.length > 0 && selectedCountries.length > 0
 }
 
-/** Допоміжники для каскаду країна → регіон → місто (як при реєстрації) */
 export function catalogCountries(catalog: AdGeoCountry[]): string[] {
-  return catalog.map((c) => c.name)
+  return allKnownCountries(catalog)
 }
 
 export function catalogRegionsForCountry(catalog: AdGeoCountry[], country: string) {

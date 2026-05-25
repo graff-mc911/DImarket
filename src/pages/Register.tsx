@@ -15,10 +15,16 @@ import { navigateTo } from '../lib/navigation'
 import { LANGUAGES }  from '../lib/types'
 import {
   IP_COUNTRY_MAP,
-  REGISTRATION_GEO_DATA,
+  isRegistrationCountry,
   sortedRegistrationCountries,
 } from '../lib/registrationGeoData'
-import { upsertGeoCatalogFromLocation } from '../lib/adGeoCatalog'
+import {
+  catalogCitiesForRegion,
+  fetchGeoCatalogForCountry,
+  upsertGeoCatalogEntry,
+  upsertGeoCatalogFromLocation,
+  type AdGeoCountry,
+} from '../lib/adGeoCatalog'
 
 export function Register() {
   const { t, language, setLanguage } = useApp()
@@ -50,21 +56,26 @@ export function Register() {
   const [region,     setRegion]     = useState('')
   const [city,       setCity]       = useState('')
   const [geoLoading, setGeoLoading] = useState(true)
+  const [catalogLoading, setCatalogLoading] = useState(false)
+  const [countryCatalog, setCountryCatalog] = useState<AdGeoCountry | null>(null)
   const [autoDetected, setAutoDetected] = useState(false)
+  const [manualRegion, setManualRegion] = useState(false)
   const [manualCity, setManualCity] = useState(false)
 
-  const availableRegions = country ? Object.keys(REGISTRATION_GEO_DATA[country] || {}) : []
-  const availableCities  = country && region ? (REGISTRATION_GEO_DATA[country]?.[region] || []) : []
-  const sortedCountries  = sortedRegistrationCountries()
+  const sortedCountries = sortedRegistrationCountries()
+  const availableRegions = countryCatalog?.regions.map((r) => r.name) ?? []
+  const availableCities =
+    country && region && countryCatalog
+      ? catalogCitiesForRegion([countryCatalog], country, region)
+      : []
 
-  // Визначаємо країну за IP
   useEffect(() => {
     const detect = async () => {
       try {
-        const res  = await fetch('https://ipapi.co/json/')
+        const res = await fetch('https://ipapi.co/json/')
         const data = await res.json()
         const name = IP_COUNTRY_MAP[data.country_code as string]
-        if (name && REGISTRATION_GEO_DATA[name]) {
+        if (name && isRegistrationCountry(name)) {
           setCountry(name)
           setAutoDetected(true)
         }
@@ -74,6 +85,21 @@ export function Register() {
     void detect()
   }, [])
 
+  useEffect(() => {
+    if (!country) {
+      setCountryCatalog(null)
+      return
+    }
+    let cancelled = false
+    setCatalogLoading(true)
+    void fetchGeoCatalogForCountry(country).then((data) => {
+      if (!cancelled) setCountryCatalog(data)
+    }).finally(() => {
+      if (!cancelled) setCatalogLoading(false)
+    })
+    return () => { cancelled = true }
+  }, [country])
+
   const buildPendingRegistration = () => {
     const displayName =
       selectedRole === 'company' ? (companyName.trim() || fullName.trim()) : fullName.trim()
@@ -81,16 +107,26 @@ export function Register() {
       role: selectedRole,
       full_name: displayName || undefined,
       phone: phone.trim() || undefined,
-      location: [city, region, country].filter(Boolean).join(', ') || undefined,
+      location:
+        city.trim() && country.trim()
+          ? [city.trim(), (region.trim() || 'Інші'), country.trim()].join(', ')
+          : undefined,
       company_name: companyName.trim() || undefined,
     }
   }
 
   const handleCountryChange = (val: string) => {
-    setCountry(val); setRegion(''); setCity(''); setManualCity(false); setAutoDetected(false)
+    setCountry(val)
+    setRegion('')
+    setCity('')
+    setManualRegion(false)
+    setManualCity(false)
+    setAutoDetected(false)
   }
   const handleRegionChange = (val: string) => {
-    setRegion(val); setCity(''); setManualCity(false)
+    setRegion(val)
+    setCity('')
+    setManualCity(false)
   }
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -118,6 +154,14 @@ export function Register() {
       setError(t('auth.error.passwordTooShort'))
       return
     }
+    if (!country.trim() || !city.trim()) {
+      setError(t('register.locationRequired'))
+      return
+    }
+
+    const regionVal = region.trim() || 'Інші'
+    const cityVal = city.trim()
+    const locationStr = [cityVal, regionVal, country.trim()].join(', ')
 
     setLoading(true)
     try {
@@ -129,7 +173,7 @@ export function Register() {
             full_name: displayName,
             user_role: selectedRole,
             phone: phone.trim() || null,
-            location: [city, region, country].filter(Boolean).join(', ') || null,
+            location: locationStr,
           },
         },
       })
@@ -138,19 +182,20 @@ export function Register() {
         throw new Error(t('common.error'))
       }
 
-      const locationStr = [city, region, country].filter(Boolean).join(', ') || null
       const { user_role, is_professional } = normalizeProfileRole(selectedRole)
+
+      void upsertGeoCatalogEntry(country.trim(), regionVal, cityVal)
 
       if (authData.session) {
         const profile = await ensureUserProfile(authData.user, {
           role: selectedRole,
           full_name: displayName,
           phone: phone.trim() || undefined,
-          location: locationStr ?? undefined,
+          location: locationStr,
           company_name: companyName.trim() || undefined,
         })
 
-        if (locationStr) void upsertGeoCatalogFromLocation(locationStr)
+        void upsertGeoCatalogFromLocation(locationStr)
 
         if (!profile) {
           const { error: profileError } = await supabase.from('profiles').upsert(
@@ -361,8 +406,18 @@ export function Register() {
                   </p>
                 )}
 
-                {/* Регіон */}
-                {country && availableRegions.length > 0 && (
+                {country && catalogLoading && (
+                  <div className="flex items-center gap-2 text-xs text-[var(--ink-500)]">
+                    <Loader className="h-3 w-3 animate-spin" />
+                    {t('register.catalogLoading')}
+                  </div>
+                )}
+
+                {country && !catalogLoading && (
+                  <p className="text-xs leading-5 text-[var(--ink-500)]">{t('register.geoFromUsers')}</p>
+                )}
+
+                {country && availableRegions.length > 0 && !manualRegion && (
                   <div className="relative">
                     <select value={region} onChange={e => handleRegionChange(e.target.value)}
                       className="input-glass appearance-none pr-10">
@@ -375,8 +430,28 @@ export function Register() {
                   </div>
                 )}
 
-                {/* Місто */}
-                {country && region && !manualCity && availableCities.length > 0 && (
+                {country && (manualRegion || availableRegions.length === 0) && (
+                  <input
+                    type="text"
+                    value={region}
+                    onChange={e => { setRegion(e.target.value); setCity(''); setManualCity(false) }}
+                    className="input-glass"
+                    placeholder={t('register.regionPlaceholder')}
+                  />
+                )}
+
+                {country && availableRegions.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => { setManualRegion(v => !v); setRegion(''); setCity(''); setManualCity(false) }}
+                    className="text-xs underline"
+                    style={{ color: 'var(--accent-700)' }}
+                  >
+                    {manualRegion ? t('register.selectRegion') : t('register.regionNotInList')}
+                  </button>
+                )}
+
+                {country && (region || manualRegion || availableRegions.length === 0) && !manualCity && availableCities.length > 0 && (
                   <div className="relative">
                     <select value={city} onChange={e => setCity(e.target.value)}
                       className="input-glass appearance-none pr-10">
@@ -389,17 +464,24 @@ export function Register() {
                   </div>
                 )}
 
-                {/* Ручне місто */}
-                {(manualCity || (country && region && availableCities.length === 0)) && (
-                  <input type="text" value={city} onChange={e => setCity(e.target.value)}
-                    className="input-glass" placeholder={t('register.cityPlaceholder')} />
+                {country && (region || manualRegion || availableRegions.length === 0) && (manualCity || availableCities.length === 0) && (
+                  <input
+                    type="text"
+                    required
+                    value={city}
+                    onChange={e => setCity(e.target.value)}
+                    className="input-glass"
+                    placeholder={t('register.cityPlaceholder')}
+                  />
                 )}
 
                 {country && region && availableCities.length > 0 && (
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => { setManualCity(v => !v); setCity('') }}
                     className="text-xs underline"
-                    style={{ color: 'var(--accent-700)' }}>
+                    style={{ color: 'var(--accent-700)' }}
+                  >
                     {manualCity ? t('register.selectCity') : t('register.cityNotInList')}
                   </button>
                 )}

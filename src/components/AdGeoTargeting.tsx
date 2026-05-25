@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { Plus, X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import type { AdGeoCountry, GeoMode } from '../lib/adGeoCatalog'
 import {
@@ -19,32 +18,39 @@ type AdGeoTargetingProps = {
   onCitiesChange: (values: string[]) => void
 }
 
-function ChipList({
-  items,
-  onRemove,
+function CheckboxGrid({
+  options,
+  selected,
+  onToggle,
+  emptyText,
 }: {
-  items: string[]
-  onRemove: (item: string) => void
+  options: string[]
+  selected: string[]
+  onToggle: (value: string) => void
+  emptyText: string
 }) {
-  if (items.length === 0) return null
+  if (options.length === 0) {
+    return <p className="text-sm text-[#9a8776]">{emptyText}</p>
+  }
+
   return (
-    <div className="flex flex-wrap gap-2">
-      {items.map((item) => (
-        <span
-          key={item}
-          className="inline-flex items-center gap-1 rounded-full bg-[rgba(99,102,241,0.12)] px-3 py-1 text-xs font-semibold text-[#4338ca]"
-        >
-          {item}
-          <button
-            type="button"
-            onClick={() => onRemove(item)}
-            className="rounded-full p-0.5 hover:bg-[rgba(99,102,241,0.2)]"
-            aria-label="Remove"
+    <div className="max-h-64 overflow-y-auto rounded-[18px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.55)] p-2">
+      <div className="grid gap-1 sm:grid-cols-2">
+        {options.map((option) => (
+          <label
+            key={option}
+            className="flex cursor-pointer items-center gap-2.5 rounded-[14px] px-3 py-2 text-sm text-[#2f2a24] hover:bg-[rgba(99,102,241,0.08)]"
           >
-            <X className="h-3 w-3" />
-          </button>
-        </span>
-      ))}
+            <input
+              type="checkbox"
+              checked={selected.includes(option)}
+              onChange={() => onToggle(option)}
+              className="h-4 w-4 shrink-0"
+            />
+            <span>{option}</span>
+          </label>
+        ))}
+      </div>
     </div>
   )
 }
@@ -61,96 +67,144 @@ export function AdGeoTargeting({
 }: AdGeoTargetingProps) {
   const { t } = useApp()
   const countries = useMemo(() => catalogCountries(geoData), [geoData])
+  const countriesWithRegions = useMemo(
+    () => geoData.filter((c) => c.regions.length > 0),
+    [geoData],
+  )
 
-  const [draftCountry, setDraftCountry] = useState('')
-  const [draftRegion, setDraftRegion] = useState('')
-  const [draftCity, setDraftCity] = useState('')
+  const [activeCountry, setActiveCountry] = useState('')
+  const [activeRegion, setActiveRegion] = useState('')
 
-  const draftRegions = draftCountry ? catalogRegionsForCountry(geoData, draftCountry) : []
-  const draftCities = draftCountry && draftRegion ? catalogCitiesForRegion(geoData, draftCountry, draftRegion) : []
+  const regionsForCountry = activeCountry ? catalogRegionsForCountry(geoData, activeCountry) : []
+  const regionNames = regionsForCountry.map((r) => r.name)
+  const citiesForRegion =
+    activeCountry && activeRegion ? catalogCitiesForRegion(geoData, activeCountry, activeRegion) : []
 
-  const resetDraft = () => {
-    setDraftCountry('')
-    setDraftRegion('')
-    setDraftCity('')
+  const syncCountriesFromRegions = (regions: string[]) => {
+    const fromRegions = geoData
+      .filter((c) => c.regions.some((r) => regions.includes(r.name)))
+      .map((c) => c.name)
+    onCountriesChange(fromRegions)
   }
 
-  const addCountry = () => {
-    if (!draftCountry || selectedCountries.includes(draftCountry)) return
-    onCountriesChange([...selectedCountries, draftCountry])
-    resetDraft()
+  const handleCountryFocus = (country: string) => {
+    setActiveCountry(country)
+    setActiveRegion('')
+    if (geoMode === 'cities') onCitiesChange([])
   }
 
-  const addRegion = () => {
-    if (!draftCountry || !draftRegion || selectedRegions.includes(draftRegion)) return
-    if (!selectedCountries.includes(draftCountry)) {
-      onCountriesChange([...selectedCountries, draftCountry])
+  const toggleCountry = (name: string) => {
+    const next = selectedCountries.includes(name)
+      ? selectedCountries.filter((c) => c !== name)
+      : [...selectedCountries, name]
+    onCountriesChange(next)
+    if (geoMode !== 'countries') {
+      onRegionsChange(selectedRegions.filter((r) => {
+        const owner = geoData.find((c) => c.regions.some((reg) => reg.name === r))
+        return owner ? next.includes(owner.name) : false
+      }))
+      onCitiesChange([])
     }
-    onRegionsChange([...selectedRegions, draftRegion])
-    setDraftRegion('')
-    setDraftCity('')
   }
 
-  const addCity = () => {
-    if (!draftCountry || !draftRegion || !draftCity || selectedCities.includes(draftCity)) return
-    if (!selectedCountries.includes(draftCountry)) {
-      onCountriesChange([...selectedCountries, draftCountry])
+  const toggleRegion = (name: string) => {
+    if (!activeCountry) return
+    const next = selectedRegions.includes(name)
+      ? selectedRegions.filter((r) => r !== name)
+      : [...selectedRegions, name]
+    onRegionsChange(next)
+    syncCountriesFromRegions(next)
+    if (geoMode === 'cities') onCitiesChange([])
+  }
+
+  const toggleCity = (name: string) => {
+    const next = selectedCities.includes(name)
+      ? selectedCities.filter((c) => c !== name)
+      : [...selectedCities, name]
+    onCitiesChange(next)
+    if (activeCountry && !selectedCountries.includes(activeCountry)) {
+      onCountriesChange([...selectedCountries, activeCountry])
     }
-    if (!selectedRegions.includes(draftRegion)) {
-      onRegionsChange([...selectedRegions, draftRegion])
+    if (activeRegion && !selectedRegions.includes(activeRegion)) {
+      const nextRegions = [...selectedRegions, activeRegion]
+      onRegionsChange(nextRegions)
+      syncCountriesFromRegions(nextRegions)
     }
-    onCitiesChange([...selectedCities, draftCity])
-    setDraftCity('')
-  }
-
-  const handleCountryChange = (val: string) => {
-    setDraftCountry(val)
-    setDraftRegion('')
-    setDraftCity('')
-  }
-
-  const handleRegionChange = (val: string) => {
-    setDraftRegion(val)
-    setDraftCity('')
   }
 
   if (geoMode === 'countries') {
     return (
+      <div className="space-y-3">
+        <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.geo.countriesHint')}</p>
+        <CheckboxGrid
+          options={countries}
+          selected={selectedCountries}
+          onToggle={toggleCountry}
+          emptyText={t('advertising.geo.noneAvailable')}
+        />
+        {selectedCountries.length > 0 && (
+          <p className="text-xs font-semibold text-[#5f5a54]">
+            {t('advertising.geo.selected')}: {selectedCountries.length}
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  if (geoMode === 'regions') {
+    return (
       <div className="space-y-4">
-        <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+        <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.geo.regionsHint')}</p>
+        <div>
+          <label className="mb-1.5 block text-xs font-semibold text-[#6f665d]">{t('register.selectCountry')}</label>
           <select
-            value={draftCountry}
-            onChange={(e) => handleCountryChange(e.target.value)}
-            className="select-glass"
+            value={activeCountry}
+            onChange={(e) => handleCountryFocus(e.target.value)}
+            className="select-glass w-full"
           >
             <option value="">{t('register.selectCountry')}</option>
-            {countries.map((c) => (
-              <option key={c} value={c}>
-                {c}
+            {countriesWithRegions.map((c) => (
+              <option key={c.name} value={c.name}>
+                {c.name}
               </option>
             ))}
           </select>
-          <button type="button" onClick={addCountry} disabled={!draftCountry} className="btn-secondary rounded-full px-4">
-            <Plus className="h-4 w-4" />
-            {t('advertising.geo.add')}
-          </button>
         </div>
-        <ChipList
-          items={selectedCountries}
-          onRemove={(c) => onCountriesChange(selectedCountries.filter((x) => x !== c))}
-        />
+        {activeCountry && regionNames.length === 0 && (
+          <p className="text-sm text-[#9a8776]">{t('advertising.geo.noRegionsYet')}</p>
+        )}
+        {activeCountry && regionNames.length > 0 && (
+          <>
+            <p className="text-xs font-semibold text-[#6f665d]">
+              {t('advertising.geo.selectRegions')} — {activeCountry}
+              {` (${regionNames.length})`}
+            </p>
+            <CheckboxGrid
+              options={regionNames}
+              selected={selectedRegions}
+              onToggle={toggleRegion}
+              emptyText={t('advertising.geo.noneAvailable')}
+            />
+          </>
+        )}
+        {selectedRegions.length > 0 && (
+          <p className="text-xs font-semibold text-[#5f5a54]">
+            {t('advertising.geo.selected')}: {selectedRegions.length}
+          </p>
+        )}
       </div>
     )
   }
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-3 md:grid-cols-3">
+      <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.geo.citiesHint')}</p>
+      <div className="grid gap-3 md:grid-cols-2">
         <div>
           <label className="mb-1.5 block text-xs font-semibold text-[#6f665d]">{t('register.selectCountry')}</label>
           <select
-            value={draftCountry}
-            onChange={(e) => handleCountryChange(e.target.value)}
+            value={activeCountry}
+            onChange={(e) => handleCountryFocus(e.target.value)}
             className="select-glass w-full"
           >
             <option value="">{t('register.selectCountry')}</option>
@@ -164,85 +218,40 @@ export function AdGeoTargeting({
         <div>
           <label className="mb-1.5 block text-xs font-semibold text-[#6f665d]">{t('register.selectRegion')}</label>
           <select
-            value={draftRegion}
-            onChange={(e) => handleRegionChange(e.target.value)}
-            disabled={!draftCountry || draftRegions.length === 0}
+            value={activeRegion}
+            onChange={(e) => {
+              setActiveRegion(e.target.value)
+              onCitiesChange([])
+            }}
+            disabled={!activeCountry || regionNames.length === 0}
             className="select-glass w-full disabled:opacity-50"
           >
             <option value="">{t('register.selectRegion')}</option>
-            {draftRegions.map((r) => (
-              <option key={r.name} value={r.name}>
-                {r.name}
+            {regionNames.map((r) => (
+              <option key={r} value={r}>
+                {r}
               </option>
             ))}
           </select>
         </div>
-        {geoMode === 'cities' && (
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-[#6f665d]">{t('register.selectCity')}</label>
-            <select
-              value={draftCity}
-              onChange={(e) => setDraftCity(e.target.value)}
-              disabled={!draftRegion || draftCities.length === 0}
-              className="select-glass w-full disabled:opacity-50"
-            >
-              <option value="">{t('register.selectCity')}</option>
-              {draftCities.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
       </div>
-
-      <div className="flex flex-wrap gap-2">
-        {geoMode === 'regions' && (
-          <button
-            type="button"
-            onClick={addRegion}
-            disabled={!draftCountry || !draftRegion}
-            className="btn-secondary inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm"
-          >
-            <Plus className="h-4 w-4" />
-            {t('advertising.geo.addRegion')}
-          </button>
-        )}
-        {geoMode === 'cities' && (
-          <button
-            type="button"
-            onClick={addCity}
-            disabled={!draftCountry || !draftRegion || !draftCity}
-            className="btn-secondary inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm"
-          >
-            <Plus className="h-4 w-4" />
-            {t('advertising.geo.addCity')}
-          </button>
-        )}
-      </div>
-
-      {(geoMode === 'regions' || geoMode === 'cities') && selectedCountries.length > 0 && (
-        <ChipList
-          items={selectedCountries}
-          onRemove={(c) => {
-            onCountriesChange(selectedCountries.filter((x) => x !== c))
-            onRegionsChange([])
-            onCitiesChange([])
-          }}
-        />
+      {activeCountry && activeRegion && (
+        <>
+          <p className="text-xs font-semibold text-[#6f665d]">
+            {t('advertising.geo.selectCities')} — {activeRegion}
+          </p>
+          <CheckboxGrid
+            options={citiesForRegion}
+            selected={selectedCities}
+            onToggle={toggleCity}
+            emptyText={t('advertising.geo.noneAvailable')}
+          />
+        </>
       )}
-      {geoMode === 'regions' && (
-        <ChipList
-          items={selectedRegions}
-          onRemove={(r) => onRegionsChange(selectedRegions.filter((x) => x !== r))}
-        />
-      )}
-      {geoMode === 'cities' && (
-        <ChipList
-          items={selectedCities}
-          onRemove={(c) => onCitiesChange(selectedCities.filter((x) => x !== c))}
-        />
+      {selectedCities.length > 0 && (
+        <p className="text-xs font-semibold text-[#5f5a54]">
+          {t('advertising.geo.selected')}: {selectedCities.length}
+        </p>
       )}
     </div>
   )
