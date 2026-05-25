@@ -33,6 +33,8 @@ import { Messages }     from './pages/Messages'
 import { Favorites }    from './pages/Favorites'
 import { CreateAd }       from './pages/CreateAd'
 import { JobRequestChat } from './pages/JobRequestChat'
+import { AiAdmin } from './pages/AiAdmin'
+import { AiChatWidget } from './components/ai/AiChatWidget'
 import { Checkout }     from './pages/Checkout'
 import { BoostProfile } from './pages/BoostProfile'
 
@@ -77,6 +79,7 @@ function App() {
       case '/favorites':     return <Favorites />
       case '/create-ad':     return <CreateAd />
       case '/assistant/job': return <JobRequestChat />
+      case '/admin/ai':        return <AiAdmin />
       case '/checkout':      return <Checkout />      // 🆕 Після оплати Stripe
       case '/boost':         return <BoostProfile />  // 🆕 Просування профілю
       default:               return <Home />
@@ -94,6 +97,7 @@ function App() {
             </PageWithSideAds>
           </main>
           <Footer />
+          <AiChatWidget />
         </div>
       </PaidAdsProvider>
     </AppProvider>

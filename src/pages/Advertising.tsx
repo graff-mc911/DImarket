@@ -38,6 +38,7 @@ import { AdPlacementSitePreview } from '../components/AdPlacementSitePreview'
 import { AdGeoTargeting } from '../components/AdGeoTargeting'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
 import { AdMediaEditor } from '../components/AdMediaEditor'
+import { AdImageAdaptPanel } from '../components/ads/AdImageAdaptPanel'
 import { AdMediaDisplay } from '../components/AdMediaDisplay'
 import { AdCampaignDraftPreview, AdCopyField } from '../components/AdCopyFields'
 import {
@@ -928,6 +929,9 @@ export function Advertising() {
               <p className="mt-2 text-sm leading-6 text-[#6f665d]">{t('advertising.preview.desc')}</p>
 
               <div className="mt-5 flex flex-col items-center gap-4">
+                {user && (mediaType === 'image' || mediaType === 'gif') && (
+                  <AdImageAdaptPanel userId={user.id} />
+                )}
                 <AdCampaignDraftPreview
                   title={title}
                   description={description}

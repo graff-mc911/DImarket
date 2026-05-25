@@ -503,10 +503,16 @@ export function Header() {
                         </button>
 
                         {isSiteOwner && (
-                          <button onClick={() => goTo('/dashboard')} type="button" className={dropdownItemClass}>
-                            <ClipboardList className="mr-2 inline h-4 w-4" />
-                            {t('header.dashboard')}
-                          </button>
+                          <>
+                            <button onClick={() => goTo('/dashboard')} type="button" className={dropdownItemClass}>
+                              <ClipboardList className="mr-2 inline h-4 w-4" />
+                              {t('header.dashboard')}
+                            </button>
+                            <button onClick={() => goTo('/admin/ai')} type="button" className={dropdownItemClass}>
+                              <Bot className="mr-2 inline h-4 w-4" />
+                              {t('ai.admin.title')}
+                            </button>
+                          </>
                         )}
 
                         <div className="my-2 border-t border-[var(--glass-border)]" />

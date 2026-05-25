@@ -8,3 +8,23 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+interface SpeechRecognition extends EventTarget {
+  lang: string
+  interimResults: boolean
+  maxAlternatives: number
+  start(): void
+  stop(): void
+  onresult: ((ev: SpeechRecognitionEvent) => void) | null
+  onend: ((ev: Event) => void) | null
+  onerror: ((ev: Event) => void) | null
+}
+
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList
+}
+
+interface Window {
+  SpeechRecognition?: new () => SpeechRecognition
+  webkitSpeechRecognition?: new () => SpeechRecognition
+}
