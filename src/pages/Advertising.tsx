@@ -34,7 +34,6 @@ import { navigateTo }  from '../lib/navigation'
 import { useApp }      from '../contexts/AppContext'
 import { AdCampaign }  from '../lib/types'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
-import { AdPlacementPicker } from '../components/AdPlacementPicker'
 import { AdPlacementSitePreview } from '../components/AdPlacementSitePreview'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
 import { AdCampaignDraftPreview, AdCopyField } from '../components/AdCopyFields'
@@ -480,6 +479,7 @@ export function Advertising() {
                   <div className="mt-4">
                     <AdPlacementSitePreview
                       selected={selectedSlots}
+                      onChange={handleSlotsChange}
                       page={placementPreviewPage}
                       onPageChange={setPlacementPreviewPage}
                       draftMediaUrl={
@@ -488,12 +488,6 @@ export function Advertising() {
                     />
                   </div>
                 </div>
-                <AdPlacementPicker
-                  selected={selectedSlots}
-                  onChange={handleSlotsChange}
-                  previewPage={placementPreviewPage}
-                  onPreviewPageChange={setPlacementPreviewPage}
-                />
               </div>
             </div>
 

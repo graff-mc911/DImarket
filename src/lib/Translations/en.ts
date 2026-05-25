@@ -653,7 +653,9 @@ export const enTranslations = {
   'advertising.slots.mobileHint':
     '#1 — wide banner under hero or above the list. #2–4 — between sections or cards (no fixed bottom sticky).',
   'advertising.catalog.previewTitle': 'Placement map on the site',
-  'advertising.catalog.previewDesc': 'Purple highlights match the slots you selected on the real DImarket page.',
+  'advertising.catalog.previewDesc': 'Click slots on the map — purple highlights are the positions you selected on the real DImarket page.',
+  'advertising.catalog.tapToSelect': 'Click L1–L4, R1–R4, Center, or mobile blocks to select or clear a position.',
+  'advertising.catalog.selectedOnPage': 'On this page',
   'advertising.catalog.desktopWire': 'Desktop (≥1024px)',
   'advertising.catalog.mobileWire': 'Mobile',
   'advertising.catalog.contentArea': 'Page content',

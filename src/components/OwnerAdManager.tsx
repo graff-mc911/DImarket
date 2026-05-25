@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { usePaidAds } from '../contexts/PaidAdsContext'
-import { AdPlacementPicker } from './AdPlacementPicker'
+import { AdPlacementSitePreview } from './AdPlacementSitePreview'
 import { AdCampaignDraftPreview } from './AdCopyFields'
 import { formatSlotLabel, sideSlotId } from '../lib/adPlacementSlots'
 import { formatSupabaseError } from '../lib/supabaseErrors'
@@ -491,7 +491,7 @@ export function OwnerAdManager({
 
           <div className="mt-5">
             <p className="mb-3 text-sm font-semibold text-[#2f2a24]">Блоки та банери на сайті *</p>
-            <AdPlacementPicker
+            <AdPlacementSitePreview
               selected={form.selectedSlots}
               onChange={(slots) => setForm((p) => ({ ...p, selectedSlots: slots }))}
             />

@@ -745,7 +745,9 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.slots.mobileHint':
     '№1 — широкий банер під hero або над списком. №2–4 — між секціями або картками (без фіксованого sticky знизу).',
   'advertising.catalog.previewTitle': 'Схема розміщення на сайті',
-  'advertising.catalog.previewDesc': 'Те, що підсвічено фіолетовим, відповідає обраним слотам на реальній сторінці DImarket.',
+  'advertising.catalog.previewDesc': 'Натисніть слоти на схемі — фіолетовим підсвічено обрані позиції на реальній сторінці DImarket.',
+  'advertising.catalog.tapToSelect': 'Клікніть L1–L4, R1–R4, «По центру» або мобільні блоки, щоб обрати чи зняти позицію.',
+  'advertising.catalog.selectedOnPage': 'На цій сторінці',
   'advertising.catalog.desktopWire': 'Desktop (екран ≥1024px)',
   'advertising.catalog.mobileWire': 'Смартфон',
   'advertising.catalog.contentArea': 'Контент сторінки',
