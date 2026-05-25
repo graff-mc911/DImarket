@@ -14,9 +14,14 @@ export const AD_SIDE_RAIL_WIDTH_PX = {
 /** Відступ між 4 боковими блоками = відступ від країв колонки (px) */
 export const AD_SIDE_STACK_GAP_PX = 8
 
-/** Висота sticky-колонки (під шапку) */
-export const AD_SIDE_STACK_STICKY_HEIGHT_CLASS =
-  'h-[calc(100vh-8rem)] xl:h-[calc(100vh-9rem)]'
+/** Sticky-обгортка бокової колонки (висота/відступ — у index.css через --header-offset) */
+export const AD_SIDE_RAIL_STICKY_CLASS = 'ad-side-rail__sticky'
+
+export const AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS =
+  'ad-side-rail__sticky ad-side-rail__sticky--viewport'
+
+export const AD_SIDE_RAIL_STICKY_FIT_CLASS =
+  'ad-side-rail__sticky ad-side-rail__sticky--fit'
 
 /** 4 рівні ряди + однаковий gap і padding */
 export const AD_SIDE_STACK_GRID_CLASS =

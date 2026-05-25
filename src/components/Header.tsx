@@ -289,6 +289,16 @@ export function Header() {
     'flex h-8 w-8 items-center justify-center rounded-full border-0 bg-transparent text-[var(--ink-700)] shadow-none outline-none transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_16px_rgba(196,122,61,0.22)] sm:h-9 sm:w-9'
 
   const showAnnouncement = announcement && !bannerDismissed
+
+  useEffect(() => {
+    if (showAnnouncement) {
+      document.documentElement.setAttribute('data-announcement', 'true')
+    } else {
+      document.documentElement.removeAttribute('data-announcement')
+    }
+    return () => document.documentElement.removeAttribute('data-announcement')
+  }, [showAnnouncement])
+
   const headerSpacerClass = showAnnouncement
     ? 'h-[11.5rem] lg:h-[12rem] xl:h-[12.5rem]'
     : 'h-[8rem] lg:h-[10rem] xl:h-[10.5rem]'

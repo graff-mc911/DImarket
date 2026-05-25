@@ -6,7 +6,8 @@ import { pickCampaignsForSideStack, trackAdImpression } from '../lib/adCampaigns
 import {
   AD_SIDE_STACK_CELL_CLASS,
   AD_SIDE_STACK_GRID_CLASS,
-  AD_SIDE_STACK_STICKY_HEIGHT_CLASS,
+  AD_SIDE_RAIL_STICKY_FIT_CLASS,
+  AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS,
   adSlotTailwind,
 } from '../lib/adSlotLayout'
 import { pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
@@ -17,8 +18,6 @@ interface AdBannerProps {
   page?: 'home' | 'listings' | 'professionals' | 'default'
   stackCount?: number
 }
-
-const STICKY_TOP = 'top-[8rem] xl:top-[9rem]'
 
 const SIDE_RAIL_CLASS = 'ad-side-rail shrink-0'
 
@@ -46,8 +45,7 @@ function SideRailFrame({
     <aside className={`${SIDE_RAIL_CLASS} h-full min-h-0 ${className}`}>
       <div
         className={
-          `sticky z-20 w-full ${STICKY_TOP} ` +
-          (fillViewport ? AD_SIDE_STACK_STICKY_HEIGHT_CLASS : 'h-fit')
+          fillViewport ? AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS : AD_SIDE_RAIL_STICKY_FIT_CLASS
         }
       >
         {children}
