@@ -2,7 +2,11 @@ import { useEffect, useMemo, type ReactNode } from 'react'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard } from './AdOverlayCard'
 import { sideSlotIdsForPage } from '../lib/adPlacementCatalog'
-import { pickCampaignsForSideStack, trackAdImpression } from '../lib/adCampaigns'
+import {
+  pickCampaignsForSideStack,
+  trackAdImpression,
+  type AdCampaignWithAdvertiser,
+} from '../lib/adCampaigns'
 import {
   AD_SIDE_STACK_CELL_CLASS,
   AD_SIDE_STACK_GRID_CLASS,
@@ -17,6 +21,8 @@ interface AdBannerProps {
   sticky?: boolean
   page?: 'home' | 'listings' | 'professionals' | 'default'
   stackCount?: number
+  /** Якщо задано — не рахувати слоти повторно (спільний пул L/R) */
+  stackCampaigns?: (AdCampaignWithAdvertiser | null)[]
 }
 
 const SIDE_RAIL_CLASS = 'ad-side-rail shrink-0'
@@ -58,7 +64,13 @@ function SideRailFrame({
   )
 }
 
-export function AdBanner({ position, sticky = true, page, stackCount }: AdBannerProps) {
+export function AdBanner({
+  position,
+  sticky = true,
+  page,
+  stackCount,
+  stackCampaigns: stackCampaignsProp,
+}: AdBannerProps) {
   const { loading, getForSlots } = usePaidAds()
 
   const pageKey = pageKeyFromSideAdsPage(page)
@@ -70,9 +82,10 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
   )
 
   const stackCampaigns = useMemo(() => {
+    if (stackCampaignsProp) return stackCampaignsProp
     if (!stackCount || stackCount < 2) return []
     return pickCampaignsForSideStack(pool, position, stackCount, page)
-  }, [pool, position, stackCount, page])
+  }, [stackCampaignsProp, pool, position, stackCount, page])
 
   const [primaryCampaign, secondaryCampaign] = useMemo(() => {
     if (stackCount && stackCount >= 2) return [null, null] as const
@@ -100,7 +113,7 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
     if (!stackCampaigns.some(Boolean)) return null
 
     return (
-      <SideRailFrame sticky={sticky} fillViewport>
+      <SideRailFrame position={position} sticky={sticky} fillViewport>
         <div className={AD_SIDE_STACK_GRID_CLASS}>
           {stackCampaigns.map((campaign, index) => (
             <div

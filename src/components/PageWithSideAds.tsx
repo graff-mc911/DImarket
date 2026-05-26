@@ -1,6 +1,7 @@
 import { useMemo, type ReactNode } from 'react'
 import { AdBanner } from './AdBanner'
 import { usePaidAds } from '../contexts/PaidAdsContext'
+import { pickSideStacksForPage } from '../lib/adCampaigns'
 import { sideSlotIdsForPage } from '../lib/adPlacementCatalog'
 import { pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
 
@@ -65,12 +66,24 @@ export function PageWithSideAds({
   return (
     <div className={`page-bg min-h-screen pb-8 ${className}`}>
       <div className="layout-with-side-ads">
-        {hasSideCampaigns ? (
-          <AdBanner position="left" sticky page={page} stackCount={SIDE_STACK_COUNT} />
+        {hasLeftRail ? (
+          <AdBanner
+            position="left"
+            sticky
+            page={page}
+            stackCount={SIDE_STACK_COUNT}
+            stackCampaigns={sideStacks.left}
+          />
         ) : null}
         <div className="layout-with-side-ads__main">{children}</div>
-        {hasSideCampaigns ? (
-          <AdBanner position="right" sticky page={page} stackCount={SIDE_STACK_COUNT} />
+        {hasRightRail ? (
+          <AdBanner
+            position="right"
+            sticky
+            page={page}
+            stackCount={SIDE_STACK_COUNT}
+            stackCampaigns={sideStacks.right}
+          />
         ) : null}
       </div>
     </div>

@@ -220,25 +220,56 @@ export function isAnimatedCampaign(campaign: AdCampaign): boolean {
   return getCampaignMediaType(campaign) === 'gif'
 }
 
-/** Бокова колонка: слот 1–4 зверху вниз; null — порожній ряд (фіксована сітка) */
-export function pickCampaignsForSideStack(
+function campaignMatchesPageSide(
+  campaign: AdCampaignWithAdvertiser,
+  pageKey: AdPageKey,
+  side?: 'left' | 'right',
+): boolean {
+  const placements = getCampaignPlacements(campaign)
+  const sideNeedle = side === 'left' ? '_side_l' : side === 'right' ? '_side_r' : '_side_'
+  if (placements.some((p) => p.startsWith(`${pageKey}${sideNeedle}`))) return true
+  if (!side && placements.some((p) => p.includes(`${pageKey}_side_`))) return true
+  return campaignMatchesSlot(campaign, 'sidebar')
+}
+
+/** Заповнити ліву колонку, якщо купили лише праві слоти (home_side_r1 …) */
+function pickLeftSideFallback(
+  pool: AdCampaignWithAdvertiser[],
+  pageKey: AdPageKey,
+  rowIndex: number,
+): AdCampaignWithAdvertiser | null {
+  if (pool.length === 0) return null
+
+  const leftOnly = pool.filter((c) => campaignMatchesPageSide(c, pageKey, 'left'))
+  if (leftOnly.length > 0) {
+    return leftOnly[hashSlotId(`left-fallback-${rowIndex}`) % leftOnly.length] ?? null
+  }
+
+  const anySide = pool.filter((c) => campaignMatchesPageSide(c, pageKey))
+  if (anySide.length > 0) {
+    return anySide[hashSlotId(`left-any-${rowIndex}`) % anySide.length] ?? null
+  }
+
+  return pool[hashSlotId(`left-pool-${rowIndex}`) % pool.length] ?? null
+}
+
+function fillSideStack(
   all: AdCampaignWithAdvertiser[],
-  position: 'left' | 'right',
+  used: Set<string>,
+  side: 'left' | 'right',
   count: number,
-  page?: 'home' | 'listings' | 'professionals' | 'default',
+  pageKey: AdPageKey,
 ): (AdCampaignWithAdvertiser | null)[] {
-  if (all.length === 0 || count <= 0) return []
-
-  const pageKey = pageKeyFromSideAdsPage(page)
-  const side = position === 'left' ? 'left' : 'right'
-  const used = new Set<string>()
-  const out: (AdCampaignWithAdvertiser | null)[] = []
-
   const pool = () => all.filter((c) => !used.has(c.id))
+  const out: (AdCampaignWithAdvertiser | null)[] = []
 
   for (let i = 0; i < count; i++) {
     const slotId = sideSlotId(pageKey, side, (i + 1) as SideIndex)
-    const picked = pickCampaignForSlot(pool(), slotId)
+    let picked = pickCampaignForSlot(pool(), slotId)
+
+    if (!picked && side === 'left') {
+      picked = pickLeftSideFallback(pool(), pageKey, i)
+    }
 
     if (picked) {
       out.push(picked)
@@ -249,6 +280,46 @@ export function pickCampaignsForSideStack(
   }
 
   return out
+}
+
+/** Ліва + права колонки з одним пулом (без дублювання кампаній між сторонами). */
+export function pickSideStacksForPage(
+  all: AdCampaignWithAdvertiser[],
+  count: number,
+  page?: 'home' | 'listings' | 'professionals' | 'default',
+): {
+  left: (AdCampaignWithAdvertiser | null)[]
+  right: (AdCampaignWithAdvertiser | null)[]
+} {
+  if (all.length === 0 || count <= 0) {
+    return { left: [], right: [] }
+  }
+
+  const pageKey = pageKeyFromSideAdsPage(page)
+  const used = new Set<string>()
+
+  const right = fillSideStack(all, used, 'right', count, pageKey)
+  const left = fillSideStack(all, used, 'left', count, pageKey)
+
+  /** Одна кампанія лише на правих слотах — показуємо її й зліва */
+  if (!left.some(Boolean) && right.some(Boolean)) {
+    for (let i = 0; i < count; i++) {
+      if (right[i]) left[i] = right[i]
+    }
+  }
+
+  return { left, right }
+}
+
+/** Бокова колонка: слот 1–4 зверху вниз; null — порожній ряд (фіксована сітка) */
+export function pickCampaignsForSideStack(
+  all: AdCampaignWithAdvertiser[],
+  position: 'left' | 'right',
+  count: number,
+  page?: 'home' | 'listings' | 'professionals' | 'default',
+): (AdCampaignWithAdvertiser | null)[] {
+  const stacks = pickSideStacksForPage(all, count, page)
+  return position === 'left' ? stacks.left : stacks.right
 }
 
 /** Один центральний блок — анімована реклама Baumit (або інший GIF/відео бренд) */
