@@ -79,9 +79,7 @@ export function MobileAdBanner({
     </div>
   )
 
-  if (outerClassName) {
-    return <div className={outerClassName}>{block}</div>
-  }
+  const wrapClass = outerClassName ?? 'layout-page-content w-full min-w-0'
 
-  return block
+  return <div className={wrapClass}>{block}</div>
 }

@@ -87,7 +87,6 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    overflow-x: clip;
     width: 100%;
     max-width: 100%;
     background-color: var(--bg-canvas);
@@ -97,7 +96,6 @@
     margin: 0;
     min-height: 100vh;
     min-height: 100dvh;
-    overflow-x: clip;
     width: 100%;
     max-width: 100%;
     background-color: var(--bg-canvas) !important;
@@ -113,7 +111,7 @@
     min-height: 100dvh;
     width: 100%;
     max-width: 100%;
-    overflow-x: clip;
+    min-width: 0;
     background-color: var(--bg-canvas);
   }
 
@@ -179,7 +177,11 @@
     isolation: isolate;
     width: 100%;
     max-width: 100%;
-    overflow-x: clip;
+    min-width: 0;
+  }
+
+  .app-shell > main {
+    min-width: 0;
   }
 
   .page-bg {
@@ -251,6 +253,8 @@
       max(var(--layout-gutter), env(safe-area-inset-right, 0px));
     width: 100%;
     max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
   }
 
   .ad-side-rail {
@@ -265,16 +269,28 @@
     .ad-side-rail {
       display: flex;
       flex-direction: column;
+      min-height: 100%;
     }
   }
 
-  /** Sticky-колонка бокових банерів (не ламати overflow-x: hidden на предках) */
+  /** Sticky-колонка бокових банерів (overflow-x: clip лише на .layout-with-side-ads__main, не на html/body) */
   .ad-side-rail__sticky {
     position: sticky;
     z-index: 20;
     top: var(--header-offset);
     width: 100%;
     max-height: calc(100dvh - var(--header-offset));
+    align-self: start;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card-hover-lift {
+      transition: transform 0.3s ease;
+    }
+
+    .card-hover-lift:hover {
+      transform: translateY(-0.25rem);
+    }
   }
 
   .ad-side-rail__sticky--viewport {

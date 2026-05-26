@@ -9,7 +9,7 @@
 // Вся оригінальна логіка навігації, пошуку і мов — збережена.
 // ============================================================
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   Bell,
   Bookmark,
@@ -90,6 +90,8 @@ export function Header() {
   const currencyRef = useRef<HTMLDivElement | null>(null)
   const accountRef  = useRef<HTMLDivElement | null>(null)
   const categoriesRef = useRef<HTMLDivElement | null>(null)
+  const fixedHeaderRef = useRef<HTMLDivElement | null>(null)
+  const [headerSpacerPx, setHeaderSpacerPx] = useState(128)
 
   // Слухаємо popstate для оновлення активного маршруту
   useEffect(() => {
@@ -302,9 +304,26 @@ export function Header() {
     return () => document.documentElement.removeAttribute('data-announcement')
   }, [showAnnouncement])
 
-  const headerSpacerClass = showAnnouncement
-    ? 'h-[11.5rem] lg:h-[12rem] xl:h-[12.5rem]'
-    : 'h-[8rem] lg:h-[10rem] xl:h-[10.5rem]'
+  /** Висота фіксованої шапки → spacer і --header-offset для sticky-банерів */
+  useLayoutEffect(() => {
+    const node = fixedHeaderRef.current
+    if (!node) return
+
+    const sync = () => {
+      const h = Math.ceil(node.getBoundingClientRect().height)
+      setHeaderSpacerPx(h)
+      document.documentElement.style.setProperty('--header-offset', `${h}px`)
+    }
+
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(node)
+    window.addEventListener('resize', sync)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', sync)
+    }
+  }, [showAnnouncement, mobileMenuOpen, user, unreadCount, language.code, currency.code])
 
   const dropdownPanelClass =
     'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.94)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] backdrop-blur-xl'
@@ -320,7 +339,7 @@ export function Header() {
 
   return (
     <>
-      <div className="fixed inset-x-0 top-0 z-50 w-full">
+      <div ref={fixedHeaderRef} className="fixed inset-x-0 top-0 z-50 w-full">
       {/* ===== Глобальний банер від власника ===== */}
       {showAnnouncement && (() => {
         const style = getBannerStyle(announcement!.type)
@@ -890,7 +909,7 @@ export function Header() {
       </header>
       </div>
 
-      <div className={headerSpacerClass} aria-hidden />
+      <div style={{ height: headerSpacerPx }} className="shrink-0" aria-hidden />
     </>
   )
 }

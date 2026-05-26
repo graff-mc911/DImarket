@@ -146,7 +146,7 @@ export function Home() {
 
   return (
     <>
-      <section className="pb-3 pt-2">
+      <section className="pb-3 pt-0">
         <div className="layout-page-content">
           <div className="glass-panel fade-rise rounded-[22px] p-4 md:p-6">
             <div className="flex flex-col items-center text-center">
@@ -488,7 +488,7 @@ function HomeJobCard({
     <button
       onClick={() => navigateTo(`/listing/${job.id}`)}
       type="button"
-      className="glass-card group overflow-hidden p-5 text-left transition duration-300 hover:-translate-y-1"
+      className="glass-card card-hover-lift group w-full min-w-0 overflow-hidden p-5 text-left"
     >
       {primaryImage ? (
         <img
@@ -574,7 +574,7 @@ function ProfessionalPreviewCard({
   const isFeatured = professional.is_featured === true
 
   return (
-    <div className="glass-card p-5 transition duration-300 hover:-translate-y-1">
+    <div className="glass-card card-hover-lift w-full min-w-0 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           {avatarUrl ? (
