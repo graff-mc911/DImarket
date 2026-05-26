@@ -210,14 +210,21 @@ function SlotBox({
 
   if (!interactive) {
     return (
-      <div title={title} className={baseClass}>
+      <div title={title} className={baseClass} data-slot-id={slotId || undefined}>
         {inner}
       </div>
     )
   }
 
   return (
-    <button type="button" title={title} aria-pressed={active} onClick={onToggle} className={baseClass}>
+    <button
+      type="button"
+      title={title}
+      aria-pressed={active}
+      data-slot-id={slotId || undefined}
+      onClick={onToggle}
+      className={baseClass}
+    >
       {inner}
     </button>
   )

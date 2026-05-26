@@ -63,7 +63,7 @@ import {
   sideSlotId,
   slotToLegacyPlacement,
 } from '../lib/adPlacementSlots'
-import { editorPageFromSlots, type PlacementEditorPageId } from '../lib/adPlacementPages'
+import type { PlacementEditorPageId } from '../lib/adPlacementPages'
 
 // ── Типи ──────────────────────────────────────────────────────────────────────
 type MediaType      = 'image' | 'gif' | 'video'
@@ -102,7 +102,6 @@ export function Advertising() {
     const clean = sanitizeSlotsForPurchase(slots)
     setSelectedSlots(clean)
     setSlotMedia((prev) => ensureSlotMediaForSelection(clean, prev))
-    setPlacementPreviewPage(editorPageFromSlots(clean))
   }, [])
 
   // Геотаргетинг
@@ -543,6 +542,7 @@ export function Advertising() {
                       <input
                         type="text"
                         required
+                        data-testid="ad-campaign-title"
                         value={title}
                         onChange={e => setTitle(e.target.value)}
                         className="input-glass"
@@ -571,6 +571,7 @@ export function Advertising() {
                       <input
                         type="url"
                         required
+                        data-testid="ad-campaign-link"
                         value={linkUrl}
                         onChange={e => setLinkUrl(e.target.value)}
                         className="input-glass"
@@ -688,6 +689,7 @@ export function Advertising() {
                     )}
                     <button
                       type="submit"
+                      data-testid="ad-campaign-submit"
                       disabled={saving}
                       className="btn-primary rounded-full disabled:cursor-not-allowed disabled:opacity-60"
                     >

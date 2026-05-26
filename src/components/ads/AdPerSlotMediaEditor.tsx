@@ -15,7 +15,7 @@ import {
   type SlotMediaMap,
 } from '../../lib/adSlotMedia'
 import { formatSlotLabel } from '../../lib/adPlacementSlots'
-import type { PlacementEditorPageId } from '../../lib/adPlacementPages'
+import { wireframeGroupForEditorPage, type PlacementEditorPageId } from '../../lib/adPlacementPages'
 import type { AdMediaStyle } from '../../lib/adMediaStyle'
 import type { BannerMediaType } from '../../hooks/useAdBannerMediaUpload'
 import { SlotMediaUploadError, useSlotMediaUpload } from '../../hooks/useSlotMediaUpload'
@@ -87,6 +87,20 @@ export function AdPerSlotMediaEditor({
     setFocusedSlotId(selectedSlots[0] ?? null)
   }, [selectedSlots, focusedSlotId])
 
+  const previewPage = editorPageProp ?? 'home'
+
+  useEffect(() => {
+    const group = wireframeGroupForEditorPage(previewPage)
+    const pageSlotIds = group.desktop.left.concat(
+      group.desktop.right,
+      group.desktop.center ? [group.desktop.center] : [],
+      group.mobile.inline,
+    )
+    if (focusedSlotId && pageSlotIds.includes(focusedSlotId)) return
+    const preferred = pageSlotIds.find((id) => selectedSlots.includes(id))
+    setFocusedSlotId(preferred ?? pageSlotIds[0] ?? null)
+  }, [previewPage, selectedSlots, focusedSlotId])
+
   const focusedEntry = focusedSlotId
     ? displaySlotMedia[focusedSlotId] ?? emptySlotMediaEntry()
     : emptySlotMediaEntry()
@@ -104,7 +118,7 @@ export function AdPerSlotMediaEditor({
   }
 
   const handleFileInput = async (files: FileList | null) => {
-    const slotId = pendingSlotRef.current
+    const slotId = pendingSlotRef.current ?? focusedSlotId
     const replace = replaceModeRef.current
     pendingSlotRef.current = null
     replaceModeRef.current = false
@@ -162,7 +176,6 @@ export function AdPerSlotMediaEditor({
   const title = cardTitle ?? t('advertising.placementsSection.title')
   const focusedHasMedia = slotMediaEntryHasMedia(focusedEntry)
   const focusedLayout = focusedSlotId ? layoutKeyFromSlotId(focusedSlotId) : 'center'
-  const previewPage = editorPageProp ?? 'home'
   const isBusy = slotUpload.isUploading
 
   const previewProps = {
