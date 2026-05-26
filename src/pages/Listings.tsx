@@ -263,13 +263,9 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
             <section className="glass-panel mb-6 p-6 md:p-7 xl:p-8">
               <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
                 <div className="max-w-3xl">
-                  <div className="eyebrow">{t('listings.eyebrow')}</div>
-                  <h1 className="mt-5 font-[var(--font-display)] text-[1.72rem] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--ink-900)] md:text-[2rem] xl:text-[2.2rem]">
+                  <h1 className="font-[var(--font-display)] text-[1.72rem] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--ink-900)] md:text-[2rem] xl:text-[2.2rem]">
                     {categoryPageMeta?.title ?? t('listings.simpleTitle')}
                   </h1>
-                  <p className="muted-text mt-4 max-w-2xl text-[14px] md:text-[15px]">
-                    {categoryPageMeta?.description ?? t('listings.simpleDescription')}
-                  </p>
                 </div>
                 <button
                   onClick={() => navigateTo('/create-ad')}

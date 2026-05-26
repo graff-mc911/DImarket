@@ -15,7 +15,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Building2,
   CalendarRange,
-  CheckCircle2,
   ChevronDown,
   Film,
   Globe2,
@@ -399,7 +398,7 @@ export function Advertising() {
 
         {/* ===== Hero секція (компактна ~50% висоти) ===== */}
         <section className="glass-panel p-4 md:p-5">
-          <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr] xl:items-start">
+          <div>
             <div>
               <div className="eyebrow px-3 py-1 text-xs">
                 <Megaphone className="h-3.5 w-3.5" />
@@ -409,10 +408,6 @@ export function Advertising() {
               <h1 className="mt-2 max-w-4xl text-2xl font-extrabold tracking-tight text-[#2f2a24] md:text-3xl">
                 {t('advertising.selfService.title')}
               </h1>
-
-              <p className="mt-2 max-w-3xl text-sm leading-5 text-[#6f665d] md:text-base md:leading-6">
-                {t('advertising.selfService.description')}
-              </p>
 
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                 {!user ? (
@@ -434,21 +429,6 @@ export function Advertising() {
                 </button>
               </div>
 
-              <div className="mt-4 grid gap-2 md:grid-cols-3">
-                <FeatureCard compact title={t('advertising.feature.placements')} text={t('advertising.feature.placementsText')} />
-                <FeatureCard compact title={t('advertising.feature.geo')} text={t('advertising.feature.geoText')} />
-                <FeatureCard compact title={t('advertising.feature.price')} text={t('advertising.feature.priceText')} />
-              </div>
-            </div>
-
-            {/* Як це працює */}
-            <div className="glass-card p-4">
-              <h2 className="text-lg font-extrabold text-[#2f2a24] md:text-xl">{t('advertising.howTitle')}</h2>
-              <div className="mt-3 space-y-2">
-                <StepRow compact number="01" title={t('advertising.step1.title')} text={t('advertising.step1.text')} />
-                <StepRow compact number="02" title={t('advertising.step2.title')} text={t('advertising.step2.text')} />
-                <StepRow compact number="03" title={t('advertising.step3.title')} text={t('advertising.step3.text')} />
-              </div>
             </div>
           </div>
         </section>
@@ -748,17 +728,6 @@ export function Advertising() {
               </div>
             </div>
 
-            {/* Поточний стан */}
-            <div className="glass-card p-6">
-              <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.status.title')}</h2>
-              <div className="mt-5 space-y-3 text-sm text-[#6f665d]">
-                <InfoRow text={t('advertising.status.1')} />
-                <InfoRow text={t('advertising.status.2')} />
-                <InfoRow text={t('advertising.status.3')} />
-                <InfoRow text={t('advertising.status.4')} />
-              </div>
-            </div>
-
             {/* Мої кампанії */}
             <div className="glass-card p-6">
               <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.myCampaigns.title')}</h2>
@@ -787,16 +756,6 @@ export function Advertising() {
               )}
             </div>
 
-            {/* Наступний етап */}
-            <div className="glass-card p-6">
-              <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.next.title')}</h2>
-              <div className="mt-5 space-y-3 text-sm text-[#6f665d]">
-                <InfoRow text={t('advertising.next.1')} />
-                <InfoRow text={t('advertising.next.2')} />
-                <InfoRow text={t('advertising.next.3')} />
-                <InfoRow text={t('advertising.next.4')} />
-              </div>
-            </div>
           </div>
         </section>
       </div>
@@ -866,69 +825,11 @@ function CampaignCard({ campaign, formatter, t, onEdit }: {
   )
 }
 
-function FeatureCard({ title, text, compact = false }: { title: string; text: string; compact?: boolean }) {
-  return (
-    <div
-      className={
-        compact
-          ? 'rounded-[16px] border border-white/40 bg-[rgba(255,255,255,0.30)] p-3'
-          : 'rounded-[24px] border border-white/40 bg-[rgba(255,255,255,0.30)] p-5'
-      }
-    >
-      <div className={compact ? 'text-sm font-extrabold text-[#2f2a24]' : 'text-lg font-extrabold text-[#2f2a24]'}>
-        {title}
-      </div>
-      <p className={compact ? 'mt-1 text-xs leading-5 text-[#6f665d]' : 'mt-2 text-sm leading-6 text-[#6f665d]'}>
-        {text}
-      </p>
-    </div>
-  )
-}
-
-function StepRow({
-  number,
-  title,
-  text,
-  compact = false,
-}: {
-  number: string
-  title: string
-  text: string
-  compact?: boolean
-}) {
-  return (
-    <div
-      className={
-        compact
-          ? 'rounded-[14px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-2.5'
-          : 'rounded-[22px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4'
-      }
-    >
-      <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9a8776]">{number}</div>
-      <div className={compact ? 'mt-0.5 text-sm font-extrabold text-[#2f2a24]' : 'mt-1 text-base font-extrabold text-[#2f2a24]'}>
-        {title}
-      </div>
-      <p className={compact ? 'mt-1 text-xs leading-5 text-[#6f665d]' : 'mt-2 text-sm leading-6 text-[#6f665d]'}>
-        {text}
-      </p>
-    </div>
-  )
-}
-
 function PreviewRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-3 rounded-[14px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] px-3 py-2">
       <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--ink-500)]">{label}</span>
       <span className="truncate text-right text-xs font-semibold text-[var(--ink-900)]">{value}</span>
-    </div>
-  )
-}
-
-function InfoRow({ text }: { text: string }) {
-  return (
-    <div className="flex items-start gap-3">
-      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#64748b]" />
-      <span>{text}</span>
     </div>
   )
 }

@@ -102,17 +102,9 @@ export function ChatMessenger({ bootstrap }: Props) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[rgba(99,102,241,0.12)] text-indigo-600">
-          <MessageSquare className="h-6 w-6" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: 'var(--ink-900)' }}>
-            {t('header.messages')}
-          </h1>
-          <p className="text-sm muted-text">{t('messages.subtitle')}</p>
-        </div>
-      </div>
+      <h1 className="mb-5 text-2xl font-extrabold tracking-tight" style={{ color: 'var(--ink-900)' }}>
+        {t('header.messages')}
+      </h1>
 
       <div className="glass-panel overflow-hidden rounded-[28px] border border-[var(--glass-border)] shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
         <div className="flex min-h-[520px] md:min-h-[600px]">

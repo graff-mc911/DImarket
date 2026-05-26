@@ -109,11 +109,7 @@ export function Contact() {
             {t('contact.title')}
           </h1>
 
-          <p className="mt-4 max-w-3xl text-base leading-7 text-[#6f665d] md:text-lg">
-            {t('contact.description')}
-          </p>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <button
               onClick={() => navigateTo('/')}
               type="button"
@@ -134,16 +130,11 @@ export function Contact() {
           </div>
         </section>
 
-        <section className="mt-6 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-          {/* Основна форма надсилання повідомлення. */}
+        <section className="mt-6">
           <div className="glass-card p-6">
             <h2 className="text-2xl font-extrabold text-[#2f2a24]">
               {t('contact.formTitle')}
             </h2>
-
-            <p className="mt-2 text-sm leading-6 text-[#6f665d]">
-              {t('contact.formDescription')}
-            </p>
 
             {feedback && (
               <div
@@ -245,46 +236,8 @@ export function Contact() {
               </div>
             </form>
           </div>
-
-          {/* Правий блок пояснює, як працює форма. */}
-          <div className="space-y-6">
-            <div className="glass-card p-6">
-              <h2 className="text-2xl font-extrabold text-[#2f2a24]">
-                {t('contact.howItWorksTitle')}
-              </h2>
-
-              <div className="mt-5 space-y-3 text-sm text-[#6f665d]">
-                <InfoRow text={t('contact.howItWorksStepOne')} />
-                <InfoRow text={t('contact.howItWorksStepTwo')} />
-                <InfoRow text={t('contact.howItWorksStepThree')} />
-              </div>
-            </div>
-
-            <div className="glass-card p-6">
-              <h2 className="text-2xl font-extrabold text-[#2f2a24]">
-                {t('contact.useCasesTitle')}
-              </h2>
-
-              <div className="mt-5 space-y-3 text-sm text-[#6f665d]">
-                <InfoRow text={t('contact.useCaseQuestions')} />
-                <InfoRow text={t('contact.useCaseBugs')} />
-                <InfoRow text={t('contact.useCaseIdeas')} />
-                <InfoRow text={t('contact.useCaseComplaints')} />
-              </div>
-            </div>
-          </div>
         </section>
       </div>
-    </div>
-  )
-}
-
-function InfoRow({ text }: { text: string }) {
-  return (
-    // Один короткий пояснювальний рядок у правих інфо-блоках.
-    <div className="flex items-start gap-3">
-      <div className="mt-1.5 h-2.5 w-2.5 rounded-full bg-[rgba(148,163,184,0.55)]" />
-      <span>{text}</span>
     </div>
   )
 }

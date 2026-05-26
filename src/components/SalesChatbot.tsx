@@ -55,10 +55,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
           <div className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[rgba(99,102,241,0.12)] text-[#6366f1]">
             <Bot className="h-5 w-5" />
           </div>
-          <div>
-            <p className="text-sm font-bold text-[#2f2a24]">{t('salesBot.title')}</p>
-            <p className="text-[11px] text-[#6f665d]">{t('salesBot.subtitle')}</p>
-          </div>
+          <p className="text-sm font-bold text-[#2f2a24]">{t('salesBot.title')}</p>
         </div>
         <button
           type="button"

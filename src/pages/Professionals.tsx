@@ -165,18 +165,11 @@ export function Professionals() {
   return (
     <div className="py-8 pb-24 lg:pb-8">
             <section className="glass-panel mb-6 p-5 md:p-6">
-              <div className="inline-flex items-center rounded-full border border-[rgba(233,202,177,0.7)] bg-[rgba(255,247,239,0.88)] px-4 py-2 text-sm font-semibold text-[#a26233]">
-                {t('professionals.eyebrow')}
-              </div>
-
-              <div className="mt-4 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+              <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
                 <div className="max-w-3xl">
                   <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
                     {t('professionals.simpleTitle')}
                   </h1>
-                  <p className="mt-3 text-sm leading-6 text-[#6f665d] md:text-base">
-                    {t('professionals.simpleDescription')}
-                  </p>
                 </div>
 
                 <button

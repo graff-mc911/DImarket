@@ -84,7 +84,6 @@ export function Login() {
               <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
                 {t('login.title')}
               </h1>
-              <p className="mt-3 text-sm leading-6 text-[#6f665d]">{t('login.subtitle')}</p>
             </div>
 
             {error && (

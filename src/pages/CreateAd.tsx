@@ -235,32 +235,9 @@ export function CreateAd() {
   return (
     <div className="py-8 pb-24 lg:pb-8">
             <section className="glass-panel p-5 md:p-6 xl:p-8">
-              <div className="inline-flex items-center rounded-full border border-[rgba(233,202,177,0.7)] bg-[rgba(255,247,239,0.88)] px-4 py-2 text-sm font-semibold text-[#a26233]">
-                {t('createAd.eyebrow')}
-              </div>
-
-              <div className="mt-4 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-                <div>
-                  <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
-                    {t('createAd.heroTitle')}
-                  </h1>
-                  <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6f665d] md:text-base">
-                    {t('createAd.heroDescription')}
-                  </p>
-                </div>
-
-                <div className="glass-card p-5">
-                  <h2 className="text-lg font-extrabold text-[#2f2a24]">
-                    {t('createAd.freeListTitle')}
-                  </h2>
-                  <div className="mt-4 space-y-3 text-sm text-[#6f665d]">
-                    <BenefitRow text={t('createAd.freeItemOne')} />
-                    <BenefitRow text={t('createAd.freeItemTwo')} />
-                    <BenefitRow text={t('createAd.freeItemThree')} />
-                    <BenefitRow text={t('createAd.freeItemFour')} />
-                  </div>
-                </div>
-              </div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
+                {t('createAd.heroTitle')}
+              </h1>
 
               <MobileAdBanner variant="horizontal" page="default" outerClassName="mt-6" />
 
@@ -595,15 +572,6 @@ export function CreateAd() {
                 </button>
               </form>
             </section>
-    </div>
-  )
-}
-
-function BenefitRow({ text }: { text: string }) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="mt-1 h-2.5 w-2.5 rounded-full bg-[rgba(242,171,116,0.72)]" />
-      <span>{text}</span>
     </div>
   )
 }

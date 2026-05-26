@@ -13,20 +13,31 @@ Phase 1 adds:
 
 ## 1. Database
 
-Apply migration:
+Apply migration (recommended — uses Management API + `.env.local` token):
 
 ```bash
-supabase db push
-# or run SQL: supabase/migrations/20260628120000_phase1_marketplace.sql
+npm run db:apply-phase1
 ```
+
+Or full Phase 1 backend deploy (migration + edge functions):
+
+```bash
+npm run deploy:phase1
+```
+
+Requires in `.env.local`:
+
+```
+SUPABASE_ACCESS_TOKEN=sbp_...   # https://supabase.com/dashboard/account/tokens
+```
+
+Manual alternative: SQL Editor → paste `supabase/migrations/20260628120000_phase1_marketplace.sql`
 
 ## 2. Edge Functions
 
-Deploy:
-
 ```bash
-supabase functions deploy ai-job-lead
-supabase functions deploy marketplace-matching
+npm run deploy:phase1-functions
+# or: npx supabase functions deploy ai-job-lead marketplace-matching --project-ref wjlfvajloxkevggwjgtk
 ```
 
 Set secrets (Supabase Dashboard → Edge Functions → Secrets):

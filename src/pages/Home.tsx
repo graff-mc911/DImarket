@@ -9,7 +9,6 @@ import {
   Clock3,
   ClipboardList,
   MapPin,
-  MessageCircle,
   Search,
   ShieldCheck,
   Star,
@@ -269,38 +268,6 @@ export function Home() {
       <section className="py-6">
         <div className="layout-page-content">
           <SectionHeader
-            title={t('home.howItWorksTitle')}
-            text={t('home.howItWorksText')}
-            buttonText={t('register.createAccount')}
-            onClick={() => navigateTo('/register')}
-          />
-
-          <div className="grid gap-4 md:grid-cols-3">
-            <HowItWorksCard
-              number="01"
-              icon={<UserRound className="h-4 w-4" />}
-              title={t('home.howStep1Title')}
-              text={t('home.howStep1Text')}
-            />
-            <HowItWorksCard
-              number="02"
-              icon={<Search className="h-4 w-4" />}
-              title={t('home.howStep2Title')}
-              text={t('home.howStep2Text')}
-            />
-            <HowItWorksCard
-              number="03"
-              icon={<MessageCircle className="h-4 w-4" />}
-              title={t('home.howStep3Title')}
-              text={t('home.howStep3Text')}
-            />
-          </div>
-        </div>
-      </section>
-
-      <section className="py-6">
-        <div className="layout-page-content">
-          <SectionHeader
             title={t('home.popularCategoriesTitle')}
             text={t('home.popularCategoriesText')}
             buttonText={t('home.browseRequests')}
@@ -430,48 +397,6 @@ function StatPill({
         {value > 0 ? `${value.toLocaleString()}+` : '—'}
       </span>
       <span className="text-xs">{label}</span>
-    </div>
-  )
-}
-
-function HowItWorksCard({
-  number,
-  icon,
-  title,
-  text,
-}: {
-  number: string
-  icon: React.ReactNode
-  title: string
-  text: string
-}) {
-  return (
-    <div className="glass-card flex items-start gap-3 p-3">
-      <div
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px]"
-        style={{
-          background: 'rgba(199,138,96,0.14)',
-          color: 'var(--accent-700)',
-        }}
-      >
-        {icon}
-      </div>
-
-      <div className="min-w-0">
-        <span
-          className="text-[10px] font-bold uppercase tracking-[0.18em]"
-          style={{ color: 'var(--ink-400)' }}
-        >
-          {number}
-        </span>
-        <h3
-          className="mt-0.5 text-sm font-extrabold tracking-[-0.02em] leading-snug"
-          style={{ color: 'var(--ink-900)' }}
-        >
-          {title}
-        </h3>
-        <p className="muted-text mt-1 line-clamp-2 text-xs leading-relaxed">{text}</p>
-      </div>
     </div>
   )
 }

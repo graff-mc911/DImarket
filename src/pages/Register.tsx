@@ -279,9 +279,6 @@ export function Register() {
               <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
                 {t('register.title')}
               </h1>
-              <p className="mt-3 text-sm leading-6 text-[#6f665d]">
-                {t('register.subtitle')}
-              </p>
             </div>
 
             {error && (
