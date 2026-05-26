@@ -52,8 +52,13 @@ export function PageWithSideAds({
   const sideSlots = useMemo(() => sideSlotIdsForPage(pageKey), [pageKey])
   const sideCampaigns = useMemo(() => getForSlots(sideSlots, 24), [getForSlots, sideSlots])
 
-  /** Рейки рендеримо лише коли є кампанії; сітку не перемикаємо під час loading (без стрибка макета). */
-  const hasSideCampaigns = !loading && sideCampaigns.length > 0
+  const sideStacks = useMemo(
+    () => pickSideStacksForPage(sideCampaigns, SIDE_STACK_COUNT, page),
+    [sideCampaigns, page],
+  )
+
+  const hasLeftRail = !loading && sideStacks.left.some(Boolean)
+  const hasRightRail = !loading && sideStacks.right.some(Boolean)
 
   if (!showSideAds) {
     return (
