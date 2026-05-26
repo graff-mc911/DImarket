@@ -118,7 +118,7 @@ export function AdBanner({
     if (!stackCampaigns.some(Boolean)) return null
 
     return (
-      <SideRailFrame position={position} sticky={sticky} fixedViewport={fixedViewport} fillViewport>
+      <SideRailFrame position={position} sticky={sticky} fixedViewport={fixedViewport} fillViewport={false}>
         <div className={AD_SIDE_STACK_GRID_CLASS}>
           {stackCampaigns.map((campaign, index) => {
             const slotId = sideSlotId(pageKey, position, (index + 1) as SideIndex)

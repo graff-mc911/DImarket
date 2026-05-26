@@ -45,7 +45,7 @@ export function CenterPageAd({ page, className = '' }: CenterPageAdProps) {
           campaign={campaign}
           slotId={slotId}
           variant="center"
-          className="w-full max-w-xl"
+          className="w-full"
           showDescription
         />
       </div>

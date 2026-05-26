@@ -23,12 +23,11 @@ export const AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS =
 export const AD_SIDE_RAIL_STICKY_FIT_CLASS =
   'ad-side-rail__sticky ad-side-rail__sticky--fit'
 
-/** 4 рівні ряди + однаковий gap і padding */
-export const AD_SIDE_STACK_GRID_CLASS =
-  'box-border grid h-full w-full grid-rows-4 gap-2 p-2'
+/** 4 ряди фіксованої висоти (--ad-side-slot-h з adSlotCssVars) */
+export const AD_SIDE_STACK_GRID_CLASS = 'ad-side-stack-grid box-border grid w-full gap-2 p-2'
 
-/** Комірка сітки — мін. висота щоб ряди 3–4 не зникали при viewport-стеку */
-export const AD_SIDE_STACK_CELL_CLASS = 'min-h-[4.5rem] min-w-0 w-full flex-1 overflow-hidden'
+/** Комірка сітки = containerH на схемі (248×{h}) */
+export const AD_SIDE_STACK_CELL_CLASS = 'ad-side-stack-cell min-w-0 w-full overflow-hidden'
 
 /** Класичний боковий банер (legacy) */
 export const AD_SIDE_LEGACY_MIN_PX = 198

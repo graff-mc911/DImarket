@@ -40,8 +40,9 @@ export function SponsoredCompanies() {
         <div className="flex justify-center">
           <AdOverlayCard
             campaign={campaign}
+            slotId="home_center"
             variant="center"
-            className="w-full max-w-xl"
+            className="w-full"
             showDescription
           />
         </div>

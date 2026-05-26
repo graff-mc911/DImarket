@@ -1,3 +1,4 @@
+import { type CSSProperties } from 'react'
 import { Megaphone } from 'lucide-react'
 import {
   getGeoTargetLabel,
@@ -12,18 +13,17 @@ import { parseAdMediaStyle } from '../lib/adMediaStyle'
 import { AdMediaDisplay } from './AdMediaDisplay'
 import { useApp } from '../contexts/AppContext'
 import { AD_TEXT_PANEL_CLASS, adSlotTailwind } from '../lib/adSlotLayout'
+import {
+  adSlotImageStyle,
+  adSlotShellStyle,
+  resolveAdSlotSpec,
+  type AdOverlayVariantKey,
+} from '../lib/adSlotDisplay'
 
 export const adOverlayGlow =
   'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_2px_8px_rgba(67,44,26,0.07)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_3px_12px_rgba(67,44,26,0.1)]'
 
-type AdOverlayVariant =
-  | 'stack'
-  | 'legacy'
-  | 'legacy-compact'
-  | 'center'
-  | 'mobile-sticky'
-  | 'mobile-inline'
-  | 'leaderboard'
+type AdOverlayVariant = AdOverlayVariantKey
 
 interface AdOverlayCardProps {
   campaign: AdCampaignWithAdvertiser
@@ -73,8 +73,8 @@ const variantStyles: Record<
     meta: 'text-[9px] line-clamp-1 leading-tight',
   },
   center: {
-    shell: adSlotTailwind.center,
-    image: 'h-[8.75rem] w-full shrink-0 md:h-[9.75rem]',
+    shell: `${adSlotTailwind.center} ad-slot-center`,
+    image: 'ad-slot-center__media w-full shrink-0 overflow-hidden',
     text: 'px-2.5 py-1',
     brand: 'text-[10px]',
     title: 'text-sm line-clamp-2 leading-tight',
@@ -90,7 +90,7 @@ const variantStyles: Record<
   },
   'mobile-inline': {
     shell: adSlotTailwind.mobileInline,
-    image: 'h-[4.25rem] w-full shrink-0',
+    image: 'ad-slot-mobile-inline__media w-full shrink-0 overflow-hidden',
     text: 'px-2 py-1',
     brand: 'text-[9px]',
     title: 'text-xs line-clamp-2 leading-tight',
@@ -98,7 +98,7 @@ const variantStyles: Record<
   },
   leaderboard: {
     shell: adSlotTailwind.leaderboard,
-    image: 'aspect-[4/1] h-auto w-full max-h-[300px] min-h-[4.5rem]',
+    image: 'ad-slot-leaderboard__media w-full shrink-0 overflow-hidden',
     text: 'hidden',
     brand: 'hidden',
     title: 'hidden',
@@ -141,20 +141,22 @@ function AdCampaignMedia({
         : 'image'
 
   return (
-    <AdMediaDisplay
-      src={imageSrc}
-      alt={campaign.title}
-      mediaType={mediaType}
-      style={mediaStyle}
-      layoutKey={layoutKey}
-      className={imageClass}
-      imageClassName={
-        fillBanner || imageSrc.includes('/ads/banners/')
-          ? 'h-full w-full'
-          : 'h-full w-full transition duration-500 group-hover:scale-[1.02]'
-      }
-      animateSlides
-    />
+    <div className={imageClass} style={imageStyle}>
+      <AdMediaDisplay
+        src={imageSrc}
+        alt={campaign.title}
+        mediaType={mediaType}
+        style={mediaStyle}
+        layoutKey={layoutKey}
+        className="h-full w-full"
+        imageClassName={
+          fillBanner || imageSrc.includes('/ads/banners/')
+            ? 'h-full w-full object-cover'
+            : 'h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]'
+        }
+        animateSlides
+      />
+    </div>
   )
 }
 
@@ -214,6 +216,11 @@ export function AdOverlayCard({
   const showDesc = showDescription && Boolean(campaign.description?.trim())
   const geoLabel = showGeo ? getGeoTargetLabel(campaign, t) : null
   const showText = hasAdTextBlock(brand, title, showDesc ? campaign.description : null, geoLabel)
+  const slotSpec = resolveAdSlotSpec(slotId, variant)
+  const shellStyle: CSSProperties | undefined = slotSpec
+    ? adSlotShellStyle(slotSpec, variant)
+    : undefined
+  const imageStyle: CSSProperties | undefined = slotSpec ? adSlotImageStyle(slotSpec) : undefined
 
   return (
     <a
@@ -221,6 +228,7 @@ export function AdOverlayCard({
       target="_blank"
       rel="noreferrer sponsored"
       className={`group flex flex-col overflow-hidden ${adOverlayGlow} ${styles.shell} ${className}`}
+      style={shellStyle}
       onClick={() => void trackAdClick(campaign.id)}
     >
       <AdCampaignMedia
@@ -228,6 +236,7 @@ export function AdOverlayCard({
         slotId={slotId}
         variant={variant}
         imageClass={styles.image}
+        imageStyle={imageStyle}
         fillBanner={isLeaderboard}
       />
 

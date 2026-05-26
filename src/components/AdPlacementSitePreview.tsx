@@ -23,6 +23,7 @@ import {
   type SlotMediaMap,
 } from '../lib/adSlotMedia'
 import type { TranslationKey } from '../lib/i18n'
+import { wireframeSlotHeightPx } from '../lib/adSlotDisplay'
 
 function interpolateTranslation(
   template: string,
@@ -78,6 +79,7 @@ function SlotBox({
   label,
   title,
   sizeShort,
+  slotHeightPx,
   className = '',
   draftMediaUrl,
   slotEntry,
@@ -93,6 +95,7 @@ function SlotBox({
   label: string
   title: string
   sizeShort?: string
+  slotHeightPx?: number
   className?: string
   draftMediaUrl?: string | null
   slotEntry?: SlotMediaEntry
@@ -133,6 +136,8 @@ function SlotBox({
       : '') +
     ' ' +
     className
+
+  const heightStyle = slotHeightPx ? { height: slotHeightPx, minHeight: slotHeightPx } : undefined
 
   const inner = (
     <>
@@ -211,7 +216,12 @@ function SlotBox({
 
   if (!interactive) {
     return (
-      <div title={title} className={baseClass} data-slot-id={slotId || undefined}>
+      <div
+        title={title}
+        className={baseClass}
+        style={heightStyle}
+        data-slot-id={slotId || undefined}
+      >
         {inner}
       </div>
     )
@@ -221,6 +231,7 @@ function SlotBox({
     <button
       type="button"
       title={title}
+      style={heightStyle}
       aria-pressed={active}
       data-slot-id={slotId || undefined}
       onClick={onToggle}
@@ -269,12 +280,16 @@ function DesktopWireframe({
     const def = getSlotDefinition(id)
     const spec = def ? containerSpecForZone(def.zone) : null
     const sizes = spec ? slotSizeLabels(spec, t) : null
+    const sideH = spec ? wireframeSlotHeightPx(spec.containerH) : undefined
+    const centerH = spec?.zone === 'center' ? wireframeSlotHeightPx(spec.containerH, 200) : sideH
+
     return {
       slotId: id,
       active: isActive(id),
       focused: focusedSlotId === id,
       label,
       sizeShort: sizes?.short,
+      slotHeightPx: def?.zone === 'center' ? centerH : sideH,
       title: sizes
         ? `${formatSlotLabel(id, t)}\n${sizes.title}`
         : formatSlotLabel(id, t),
@@ -304,10 +319,7 @@ function DesktopWireframe({
             {t('advertising.catalog.contentArea')}
           </div>
           {group.desktop.center && (
-            <SlotBox
-              {...slotProps(group.desktop.center, t('advertising.slots.centerShort'))}
-              className="min-h-[36px]"
-            />
+            <SlotBox {...slotProps(group.desktop.center, t('advertising.slots.centerShort'))} />
           )}
         </div>
         <div className="grid grid-rows-4 gap-1">
@@ -365,6 +377,7 @@ function MobileWireframe({
           const label = isLeader ? t('advertising.catalog.leaderboard') : `#${def?.row ?? i + 1}`
           const spec = def ? containerSpecForZone(def.zone) : null
           const sizes = spec ? slotSizeLabels(spec, t) : null
+          const mobH = spec ? wireframeSlotHeightPx(spec.containerH, 200) : undefined
           return (
             <div key={id}>
               <SlotBox
@@ -373,12 +386,13 @@ function MobileWireframe({
                 focused={focusedSlotId === id}
                 label={label}
                 sizeShort={sizes?.short}
+                slotHeightPx={mobH}
                 title={
                   sizes
                     ? `${formatSlotLabel(id, t)}\n${sizes.title}`
                     : formatSlotLabel(id, t)
                 }
-                className={isLeader ? 'min-h-[36px]' : 'min-h-[28px]'}
+                className=""
                 draftMediaUrl={draftMediaUrl}
                 slotEntry={slotMedia?.[id]}
                 interactive={interactive}

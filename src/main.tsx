@@ -5,7 +5,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
+import { applyAdSlotCssVars } from './lib/adSlotCssVars'
 import './index.css'
+
+applyAdSlotCssVars()
 
 const rootElement = document.getElementById('root')
 
