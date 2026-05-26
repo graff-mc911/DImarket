@@ -375,7 +375,7 @@ export function Header() {
         <div
           className={
             'w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl ' +
-            (mobileMenuOpen ? 'lg:overflow-visible max-lg:flex max-lg:max-h-[100dvh] max-lg:flex-col max-lg:overflow-hidden' : '')
+            (mobileMenuOpen ? 'xl:overflow-visible max-xl:flex max-xl:max-h-[100dvh] max-xl:flex-col max-xl:overflow-hidden' : '')
           }
         >
           <div className="shrink-0 px-3 py-2 md:px-4 md:py-2.5">
@@ -389,7 +389,7 @@ export function Header() {
               {/* Пошук (десктоп) */}
               <form
                 onSubmit={handleSearchSubmit}
-                className="hidden min-w-0 flex-1 items-center lg:flex lg:max-w-[620px]"
+                className="hidden min-w-0 flex-1 items-center xl:flex xl:max-w-[620px]"
               >
                 <div className="relative w-full">
                   <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
@@ -404,7 +404,7 @@ export function Header() {
               </form>
 
               {/* Десктоп: права панель */}
-              <div className="hidden items-center gap-2 lg:flex">
+              <div className="hidden items-center gap-2 xl:flex">
 
                 {/* Вибір мови */}
                 <div ref={languageRef} className="relative">
@@ -581,7 +581,7 @@ export function Header() {
                 <button
                   onClick={() => goTo('/assistant/job')}
                   type="button"
-                  className="hidden items-center gap-1.5 rounded-full border border-[rgba(99,102,241,0.35)] bg-white/60 px-3 py-2 text-xs font-semibold text-[#6366f1] lg:inline-flex"
+                  className="hidden items-center gap-1.5 rounded-full border border-[rgba(99,102,241,0.35)] bg-white/60 px-3 py-2 text-xs font-semibold text-[#6366f1] xl:inline-flex"
                 >
                   <Bot className="h-4 w-4" />
                   {t('header.aiAssistant')}
@@ -595,7 +595,7 @@ export function Header() {
               </div>
 
               {/* Мобільні кнопки */}
-              <div className="flex shrink-0 items-center gap-1.5 lg:hidden">
+              <div className="flex shrink-0 items-center gap-1.5 xl:hidden">
                 <OnlineVisitorsPill count={onlineVisitors} className="hidden min-[400px]:inline-flex" />
 
                 {/* Повідомлення (мобільний) */}
@@ -638,7 +638,7 @@ export function Header() {
             {/* Нижня навігаційна панель (десктоп) — однаковий gap між усіма пунктами */}
             <nav
               className={
-                'mt-2 hidden w-full flex-wrap items-center justify-center overflow-visible border-t border-[var(--glass-border)] pt-2 lg:flex ' +
+                'mt-2 hidden w-full flex-wrap items-center justify-center overflow-visible border-t border-[var(--glass-border)] pt-2 xl:flex ' +
                 bottomNavGapClass
               }
             >
@@ -726,7 +726,7 @@ export function Header() {
             </nav>
 
             {/* Пошук (мобільний) */}
-            <form onSubmit={handleSearchSubmit} className="mt-2.5 lg:hidden">
+            <form onSubmit={handleSearchSubmit} className="mt-2.5 xl:hidden">
               <div className="relative">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
                 <input
@@ -742,7 +742,7 @@ export function Header() {
 
           {/* Мобільне меню */}
           {mobileMenuOpen && (
-            <div className="min-h-0 shrink-0 px-3 pb-2 pt-3 lg:hidden">
+            <div className="min-h-0 shrink-0 px-3 pb-2 pt-3 xl:hidden">
               <div className="mobile-nav-menu">
                 <div className="mobile-nav-menu__scroll">
                 <div className="mb-3 flex justify-center">

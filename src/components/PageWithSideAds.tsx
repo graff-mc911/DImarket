@@ -51,20 +51,28 @@ export function PageWithSideAds({
   const sideSlots = useMemo(() => sideSlotIdsForPage(pageKey), [pageKey])
   const sideCampaigns = useMemo(() => getForSlots(sideSlots, 24), [getForSlots, sideSlots])
 
-  /** Без активних бокових кампаній — одна колонка (інакше порожні 15vw зліва/справа). */
-  const withRails = showSideAds && !loading && sideCampaigns.length > 0
+  /** Рейки рендеримо лише коли є кампанії; сітку не перемикаємо під час loading (без стрибка макета). */
+  const hasSideCampaigns = !loading && sideCampaigns.length > 0
+
+  if (!showSideAds) {
+    return (
+      <div className={`page-bg min-h-screen pb-8 ${className}`}>
+        <div className="layout-page-gutter min-w-0">{children}</div>
+      </div>
+    )
+  }
 
   return (
     <div className={`page-bg min-h-screen pb-8 ${className}`}>
-      {withRails ? (
-        <div className="layout-with-side-ads">
+      <div className="layout-with-side-ads">
+        {hasSideCampaigns ? (
           <AdBanner position="left" sticky page={page} stackCount={SIDE_STACK_COUNT} />
-          <div className="layout-with-side-ads__main">{children}</div>
+        ) : null}
+        <div className="layout-with-side-ads__main">{children}</div>
+        {hasSideCampaigns ? (
           <AdBanner position="right" sticky page={page} stackCount={SIDE_STACK_COUNT} />
-        </div>
-      ) : (
-        <div className="layout-page-gutter min-w-0">{children}</div>
-      )}
+        ) : null}
+      </div>
     </div>
   )
 }

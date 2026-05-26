@@ -145,7 +145,7 @@ export function Home() {
   )
 
   return (
-    <>
+    <div className="home-page">
       <section className="pb-3 pt-0">
         <div className="layout-page-content">
           <div className="glass-panel fade-rise rounded-[22px] p-4 md:p-6">
@@ -162,7 +162,7 @@ export function Home() {
               </div>
 
               <nav
-                className="mt-4 flex w-full max-w-2xl flex-wrap justify-center gap-2"
+                className="home-hero__category-chips mt-4 flex w-full max-w-2xl flex-wrap justify-center gap-2"
                 aria-label={t('home.popularCategoriesTitle')}
               >
                 {displayCategories.map((category) => (
@@ -362,7 +362,7 @@ export function Home() {
       <SponsoredCompanies />
 
       <MobileAdBanner variant="inline" page="home" inlineIndex={4} />
-    </>
+    </div>
   )
 }
 

@@ -174,7 +174,6 @@
 @layer components {
   .app-shell {
     background-color: var(--bg-canvas);
-    isolation: isolate;
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -204,9 +203,9 @@
   @media (min-width: 80rem) {
     .layout-with-side-ads {
       grid-template-columns:
-        minmax(0, min(var(--ad-side-rail-width), 15vw))
+        minmax(0, min(var(--ad-side-rail-width), 12vw))
         minmax(0, 1fr)
-        minmax(0, min(var(--ad-side-rail-width), 15vw));
+        minmax(0, min(var(--ad-side-rail-width), 12vw));
     }
   }
 
@@ -310,6 +309,21 @@
     .ad-slot-mobile-inline {
       display: none;
     }
+
+    /* Головна на широкому екрані: компактний hero, без дубля категорій */
+    .home-page .home-hero__category-chips {
+      display: none;
+    }
+
+    .home-page .glass-panel.fade-rise {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .home-page .layout-page-content > section:first-child {
+      padding-top: 0.25rem;
+    }
   }
 
   /** Мобільне меню шапки — скрол на iOS Safari / Android */
@@ -346,7 +360,7 @@
     padding-bottom: max(0.625rem, env(safe-area-inset-bottom, 0px));
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 80rem) {
     .mobile-nav-menu,
     .mobile-nav-menu__scroll,
     .mobile-nav-menu__footer {
