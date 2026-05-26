@@ -37,7 +37,8 @@
     "deploy:marketing-agent": "npx supabase functions deploy marketing-agent --project-ref wjlfvajloxkevggwjgtk",
     "db:apply-marketing-agent": "node scripts/apply-marketing-agent-migration.mjs",
     "marketing:setup": "node scripts/setup-marketing-full.mjs",
-    "marketing:cron": "node scripts/marketing-cron-invoke.mjs"
+    "marketing:cron": "node scripts/marketing-cron-invoke.mjs",
+    "marketing:telegram": "node scripts/setup-telegram-marketing.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
