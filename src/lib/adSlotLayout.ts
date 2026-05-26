@@ -27,8 +27,8 @@ export const AD_SIDE_RAIL_STICKY_FIT_CLASS =
 export const AD_SIDE_STACK_GRID_CLASS =
   'box-border grid h-full w-full grid-rows-4 gap-2 p-2'
 
-/** Комірка сітки */
-export const AD_SIDE_STACK_CELL_CLASS = 'min-h-0 min-w-0 w-full overflow-hidden'
+/** Комірка сітки — мін. висота щоб ряди 3–4 не зникали при viewport-стеку */
+export const AD_SIDE_STACK_CELL_CLASS = 'min-h-[4.5rem] min-w-0 w-full flex-1 overflow-hidden'
 
 /** Класичний боковий банер (legacy) */
 export const AD_SIDE_LEGACY_MIN_PX = 198

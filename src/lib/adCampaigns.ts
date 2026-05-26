@@ -253,6 +253,13 @@ function pickLeftSideFallback(
   return pool[hashSlotId(`left-pool-${rowIndex}`) % pool.length] ?? null
 }
 
+function countPageSideSlots(campaign: AdCampaignWithAdvertiser, pageKey: AdPageKey, side: 'left' | 'right'): number {
+  const sideNeedle = side === 'left' ? '_side_l' : '_side_r'
+  return getCampaignPlacements(campaign).filter(
+    (p) => p.startsWith(`${pageKey}${sideNeedle}`),
+  ).length
+}
+
 function fillSideStack(
   all: AdCampaignWithAdvertiser[],
   used: Set<string>,
@@ -260,23 +267,41 @@ function fillSideStack(
   count: number,
   pageKey: AdPageKey,
 ): (AdCampaignWithAdvertiser | null)[] {
-  const pool = () => all.filter((c) => !used.has(c.id))
-  const out: (AdCampaignWithAdvertiser | null)[] = []
+  const out: (AdCampaignWithAdvertiser | null)[] = Array.from({ length: count }, () => null)
 
   for (let i = 0; i < count; i++) {
     const slotId = sideSlotId(pageKey, side, (i + 1) as SideIndex)
+    const pool = () =>
+      all.filter((c) => !used.has(c.id) || getCampaignPlacements(c).includes(slotId))
     let picked = pickCampaignForSlot(pool(), slotId)
+
+    if (!picked) {
+      const exactOwner = all.find((c) => getCampaignPlacements(c).includes(slotId))
+      if (exactOwner) picked = exactOwner
+    }
 
     if (!picked && side === 'left') {
       picked = pickLeftSideFallback(pool(), pageKey, i)
     }
 
     if (picked) {
-      out.push(picked)
-      used.add(picked.id)
-    } else {
-      out.push(null)
+      out[i] = picked
+      if (countPageSideSlots(picked, pageKey, side) <= 1) {
+        used.add(picked.id)
+      }
     }
+  }
+
+  /** Другий прохід: ряди 3–4 (і інші порожні) — дозволяємо повтор кампанії для цієї сторінки */
+  const sidePool = all.filter((c) => campaignMatchesPageSide(c, pageKey, side))
+  const pagePool = all.filter((c) => campaignMatchesPageSide(c, pageKey))
+  const fillPool = sidePool.length > 0 ? sidePool : pagePool.length > 0 ? pagePool : all
+
+  for (let i = 0; i < count; i++) {
+    if (out[i]) continue
+    if (fillPool.length === 0) continue
+    const picked = fillPool[hashSlotId(`${pageKey}-${side}-row-${i}`) % fillPool.length] ?? null
+    if (picked) out[i] = picked
   }
 
   return out

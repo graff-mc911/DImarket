@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Monitor, Smartphone } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { formatSlotLabel, PAGE_LABEL_KEYS, type AdPageKey } from '../lib/adPlacementSlots'
@@ -284,8 +284,14 @@ export function AdPlacementSitePreview({
   const { t } = useApp()
   const groups = slotGroupsForPurchasePicker()
   const interactive = Boolean(onChange)
+  const [internalPage, setInternalPage] = useState<AdPageKey>('home')
 
-  const page = pageProp ?? groups[0]?.page ?? 'home'
+  const page = pageProp ?? internalPage
+
+  const switchPage = (next: AdPageKey) => {
+    if (onPageChange) onPageChange(next)
+    else setInternalPage(next)
+  }
 
   const selectedOnPage = useMemo(
     () => selected.filter((id) => id.startsWith(`${page}_`)),
@@ -342,7 +348,7 @@ export function AdPlacementSitePreview({
               <button
                 key={g.page}
                 type="button"
-                onClick={() => onPageChange?.(g.page)}
+                onClick={() => switchPage(g.page)}
                 className={
                   'rounded-full px-3 py-1.5 text-xs font-bold transition ' +
                   (page === g.page

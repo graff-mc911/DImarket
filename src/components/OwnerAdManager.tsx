@@ -18,7 +18,12 @@ import {
   type AdCampaignMediaState,
 } from '../lib/adCampaignMedia'
 import { DEFAULT_AD_MEDIA_STYLE, type AdMediaStyle } from '../lib/adMediaStyle'
-import { formatSlotLabel, sideSlotId } from '../lib/adPlacementSlots'
+import {
+  AD_PAGE_KEYS,
+  formatSlotLabel,
+  sideSlotId,
+  type AdPageKey,
+} from '../lib/adPlacementSlots'
 import { formatSupabaseError } from '../lib/supabaseErrors'
 import {
   buildOwnerCampaignPayload,
@@ -99,6 +104,14 @@ export function OwnerAdManager({
   const [mediaStyle, setMediaStyle] = useState<AdMediaStyle>(DEFAULT_AD_MEDIA_STYLE)
   const [bannerMediaType, setBannerMediaType] = useState<AdCampaignMediaState['mediaType']>('image')
   const [saving, setSaving] = useState(false)
+  const [placementPreviewPage, setPlacementPreviewPage] = useState<AdPageKey>('home')
+
+  function pageKeyFromSlots(slots: string[]): AdPageKey {
+    for (const p of AD_PAGE_KEYS) {
+      if (slots.some((id) => id.startsWith(`${p}_`))) return p
+    }
+    return 'home'
+  }
 
   const ownerCampaigns = useMemo(
     () => campaigns.filter((c) => !isDemoAdCampaign(c)),
@@ -126,6 +139,7 @@ export function OwnerAdManager({
   const openCreate = () => {
     setEditingId(null)
     setForm({ ...EMPTY_FORM, startsAt: toLocalInput(new Date().toISOString()) })
+    setPlacementPreviewPage('home')
     applyMediaState(emptyCampaignMediaState())
     setFormOpen(true)
   }
@@ -134,6 +148,7 @@ export function OwnerAdManager({
     setEditingId(campaign.id)
     const nextForm = campaignToForm(campaign)
     setForm(nextForm)
+    setPlacementPreviewPage(pageKeyFromSlots(nextForm.selectedSlots))
     applyMediaState(mediaStateFromCampaign(campaign))
     setFormOpen(true)
   }
@@ -454,7 +469,12 @@ export function OwnerAdManager({
             <p className="mb-3 text-sm font-semibold text-[#2f2a24]">Блоки та банери на сайті *</p>
             <AdPlacementSitePreview
               selected={form.selectedSlots}
-              onChange={(slots) => setForm((p) => ({ ...p, selectedSlots: slots }))}
+              onChange={(slots) => {
+                setForm((p) => ({ ...p, selectedSlots: slots }))
+                setPlacementPreviewPage(pageKeyFromSlots(slots))
+              }}
+              page={placementPreviewPage}
+              onPageChange={setPlacementPreviewPage}
             />
           </div>
 
