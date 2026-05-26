@@ -272,7 +272,7 @@
     }
   }
 
-  /** Sticky-колонка бокових банерів (overflow-x: clip лише на .layout-with-side-ads__main, не на html/body) */
+  /** Бокові банери: sticky як fallback; на ≥1280px — fixed до viewport (надійніше за sticky) */
   .ad-side-rail__sticky {
     position: sticky;
     z-index: 20;
@@ -280,6 +280,25 @@
     width: 100%;
     max-height: calc(100dvh - var(--header-offset));
     align-self: start;
+  }
+
+  @media (min-width: 80rem) {
+    .layout-with-side-ads > .ad-side-rail--left .ad-side-rail__sticky,
+    .layout-with-side-ads > .ad-side-rail--right .ad-side-rail__sticky {
+      position: fixed;
+      z-index: 25;
+      top: var(--header-offset);
+      width: min(var(--ad-side-rail-width), 12vw);
+      max-height: calc(100dvh - var(--header-offset));
+    }
+
+    .layout-with-side-ads > .ad-side-rail--left .ad-side-rail__sticky {
+      left: max(var(--layout-gutter), env(safe-area-inset-left, 0px));
+    }
+
+    .layout-with-side-ads > .ad-side-rail--right .ad-side-rail__sticky {
+      right: max(var(--layout-gutter), env(safe-area-inset-right, 0px));
+    }
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -294,6 +313,14 @@
 
   .ad-side-rail__sticky--viewport {
     height: calc(100dvh - var(--header-offset));
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 80rem) {
+    .ad-side-rail__sticky--viewport {
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   .ad-side-rail__sticky--fit {

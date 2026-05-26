@@ -22,27 +22,31 @@ interface AdBannerProps {
 const SIDE_RAIL_CLASS = 'ad-side-rail shrink-0'
 
 function SideRailFrame({
+  position,
   sticky,
   children,
   className = '',
   fillViewport = false,
 }: {
+  position: 'left' | 'right'
   sticky: boolean
   children: ReactNode
   className?: string
   /** 4 бокові слоти — колонка на всю доступну висоту вікна */
   fillViewport?: boolean
 }) {
+  const positionClass = position === 'left' ? 'ad-side-rail--left' : 'ad-side-rail--right'
+
   if (!sticky) {
     return (
-      <aside className={`${SIDE_RAIL_CLASS} h-full min-h-full ${className}`}>
+      <aside className={`${SIDE_RAIL_CLASS} ${positionClass} h-full min-h-full ${className}`}>
         {children}
       </aside>
     )
   }
 
   return (
-    <aside className={`${SIDE_RAIL_CLASS} h-full min-h-0 ${className}`}>
+    <aside className={`${SIDE_RAIL_CLASS} ${positionClass} h-full min-h-0 ${className}`}>
       <div
         className={
           fillViewport ? AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS : AD_SIDE_RAIL_STICKY_FIT_CLASS
@@ -121,7 +125,7 @@ export function AdBanner({ position, sticky = true, page, stackCount }: AdBanner
   if (!primaryCampaign && !secondaryCampaign) return null
 
   return (
-    <SideRailFrame sticky={sticky} className={sticky ? '' : 'h-fit'}>
+    <SideRailFrame position={position} sticky={sticky} className={sticky ? '' : 'h-fit'}>
       <div className={`flex min-h-0 flex-col overflow-hidden ${sticky ? 'max-h-full' : ''}`}>
         {primaryCampaign && (
           <div className="overflow-hidden">
