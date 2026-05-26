@@ -124,12 +124,22 @@ export function editorPageFromPath(path: string): PlacementEditorPageId {
   return 'contact'
 }
 
-export function editorPageFromSlots(selectedSlots: string[]): PlacementEditorPageId {
-  for (const slotId of selectedSlots) {
-    const prefix = slotId.split('_')[0] as AdPageKey
-    if (prefix === 'home') return 'home'
-    if (prefix === 'listings') return 'listings'
-    if (prefix === 'professionals') return 'professionals'
+/** Сторінка редактора, де реально є цей слот (не «перший home» у списку) */
+export function editorPageFromSlotId(slotId: string): PlacementEditorPageId {
+  for (const page of PLACEMENT_EDITOR_PAGES) {
+    if (slotIdsForEditorPage(page.id).includes(slotId)) {
+      return page.id
+    }
   }
+  const prefix = slotId.split('_')[0]
+  if (prefix === 'home') return 'home'
+  if (prefix === 'listings') return 'listings'
+  if (prefix === 'professionals') return 'professionals'
   return 'create-ad'
+}
+
+/** Для завантаження кампанії — останній слот, не пріоритет home */
+export function editorPageFromSlots(selectedSlots: string[]): PlacementEditorPageId {
+  if (selectedSlots.length === 0) return 'home'
+  return editorPageFromSlotId(selectedSlots[selectedSlots.length - 1]!)
 }

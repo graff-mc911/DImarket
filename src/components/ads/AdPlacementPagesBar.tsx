@@ -32,6 +32,7 @@ export function AdPlacementPagesBar({
               key={page.id}
               type="button"
               data-testid={`placement-page-${page.id}`}
+              data-active={active ? 'true' : 'false'}
               onClick={() => onPageChange(page.id)}
               className={
                 'min-w-[6.5rem] rounded-[12px] border px-2.5 py-1.5 text-left transition ' +

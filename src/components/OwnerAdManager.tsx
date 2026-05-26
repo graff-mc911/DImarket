@@ -468,7 +468,6 @@ export function OwnerAdManager({
               selectedSlots={form.selectedSlots}
               onSelectedSlotsChange={(slots) => {
                 setForm((p) => ({ ...p, selectedSlots: slots }))
-                setPlacementPreviewPage(previewEditorPageFromSlots(slots))
                 setSlotMedia((prev) => ensureSlotMediaForSelection(slots, prev))
               }}
               editorPage={placementPreviewPage}

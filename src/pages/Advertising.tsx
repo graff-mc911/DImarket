@@ -63,7 +63,7 @@ import {
   sideSlotId,
   slotToLegacyPlacement,
 } from '../lib/adPlacementSlots'
-import type { PlacementEditorPageId } from '../lib/adPlacementPages'
+import { editorPageFromSlots, type PlacementEditorPageId } from '../lib/adPlacementPages'
 
 // ── Типи ──────────────────────────────────────────────────────────────────────
 type MediaType      = 'image' | 'gif' | 'video'
@@ -242,7 +242,7 @@ export function Advertising() {
         : [sideSlotId('home', 'right', 1)]
     setSelectedSlots(slots)
     setSlotMedia(slotMediaMapFromCampaign(campaign as AdCampaign & { slot_media?: unknown }))
-    setPlacementPreviewPage(pageKeyFromSlots(slots))
+    setPlacementPreviewPage(editorPageFromSlots(slots))
     const media = mediaStateFromCampaign(campaign)
     setMediaUrl(media.mediaUrl)
     setSlideUrls(media.slideUrls)

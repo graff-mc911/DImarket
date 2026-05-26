@@ -5,6 +5,7 @@ import { AdMediaDisplay } from './AdMediaDisplay'
 import { formatSlotLabel } from '../lib/adPlacementSlots'
 import { getSlotDefinition } from '../lib/adPlacementCatalog'
 import {
+  editorPageFromSlotId,
   getPlacementEditorPage,
   wireframeGroupForEditorPage,
   type EditorWireframeGroup,
@@ -443,15 +444,23 @@ export function AdPlacementSitePreview({
     [selected, pageSlotIds],
   )
 
+  const syncEditorPageForSlot = (slotId: string) => {
+    if (onEditorPageChange) {
+      onEditorPageChange(editorPageFromSlotId(slotId))
+    }
+  }
+
   const toggle = (slotId: string) => {
     if (!onChange) return
     const isSelected = selected.includes(slotId)
     if (!isSelected) {
+      syncEditorPageForSlot(slotId)
       onChange([...selected, slotId])
       onFocusSlot?.(slotId)
       return
     }
     if (focusedSlotId !== slotId) {
+      syncEditorPageForSlot(slotId)
       onFocusSlot?.(slotId)
       return
     }

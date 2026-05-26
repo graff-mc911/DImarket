@@ -15,7 +15,11 @@ import {
   type SlotMediaMap,
 } from '../../lib/adSlotMedia'
 import { formatSlotLabel } from '../../lib/adPlacementSlots'
-import { wireframeGroupForEditorPage, type PlacementEditorPageId } from '../../lib/adPlacementPages'
+import {
+  editorPageFromSlotId,
+  wireframeGroupForEditorPage,
+  type PlacementEditorPageId,
+} from '../../lib/adPlacementPages'
 import type { AdMediaStyle } from '../../lib/adMediaStyle'
 import type { BannerMediaType } from '../../hooks/useAdBannerMediaUpload'
 import { SlotMediaUploadError, useSlotMediaUpload } from '../../hooks/useSlotMediaUpload'
@@ -82,13 +86,9 @@ export function AdPerSlotMediaEditor({
   const sorted = useMemo(() => sortSlotsForEditor(selectedSlots), [selectedSlots])
   const sideSlots = sorted.filter((id) => id.includes('_side_'))
 
-  useEffect(() => {
-    if (focusedSlotId && selectedSlots.includes(focusedSlotId)) return
-    setFocusedSlotId(selectedSlots[0] ?? null)
-  }, [selectedSlots, focusedSlotId])
-
   const previewPage = editorPageProp ?? 'home'
 
+  /** Фокус слота — у межах поточної вкладки wireframe, без стрибка на home_side_r1 */
   useEffect(() => {
     const group = wireframeGroupForEditorPage(previewPage)
     const pageSlotIds = group.desktop.left.concat(
@@ -96,9 +96,22 @@ export function AdPerSlotMediaEditor({
       group.desktop.center ? [group.desktop.center] : [],
       group.mobile.inline,
     )
-    if (focusedSlotId && pageSlotIds.includes(focusedSlotId)) return
-    const preferred = pageSlotIds.find((id) => selectedSlots.includes(id))
-    setFocusedSlotId(preferred ?? pageSlotIds[0] ?? null)
+
+    if (
+      focusedSlotId &&
+      selectedSlots.includes(focusedSlotId) &&
+      pageSlotIds.includes(focusedSlotId)
+    ) {
+      return
+    }
+
+    const preferredOnPage = pageSlotIds.find((id) => selectedSlots.includes(id))
+    if (preferredOnPage) {
+      setFocusedSlotId(preferredOnPage)
+      return
+    }
+
+    setFocusedSlotId(selectedSlots[0] ?? pageSlotIds[0] ?? null)
   }, [previewPage, selectedSlots, focusedSlotId])
 
   const focusedEntry = focusedSlotId
@@ -106,6 +119,7 @@ export function AdPerSlotMediaEditor({
     : emptySlotMediaEntry()
 
   const openFilePicker = (slotId: string, replace: boolean) => {
+    onEditorPageChange?.(editorPageFromSlotId(slotId))
     setFocusedSlotId(slotId)
     if (!replace && slotMediaEntryHasMedia(displaySlotMedia[slotId])) {
       setSlotHint(t('advertising.slotStudio.mustRemoveFirst'))
@@ -185,6 +199,7 @@ export function AdPerSlotMediaEditor({
     slotMedia: displaySlotMedia,
     focusedSlotId,
     onFocusSlot: (id: string | null) => {
+      if (id) onEditorPageChange?.(editorPageFromSlotId(id))
       setFocusedSlotId(id)
       setSlotHint(null)
     },

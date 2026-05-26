@@ -174,6 +174,13 @@ try {
     if ((await slot.getAttribute('aria-pressed')) !== 'true') {
       await slot.click()
     }
+    const tabStillActive =
+      (await placements.getByTestId(`placement-page-${pageId}`).getAttribute('data-active')) === 'true'
+    if (tabStillActive) {
+      pass(`Вкладка «${pageId}» лишилась активною після вибору ${slotId}`)
+    } else {
+      fail(`Після вибору ${slotId} wireframe перестрибнув з «${pageId}» на іншу сторінку`)
+    }
     const uploadDone = page
       .waitForResponse((r) => r.url().includes('/storage/v1/object') && r.request().method() === 'POST', {
         timeout: 45_000,
