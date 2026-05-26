@@ -9,6 +9,7 @@ import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
 import { PageWithSideAds, adPageForPath, pathUsesSideAdRails } from './components/PageWithSideAds'
+import { SideAdRails } from './components/SideAdRails'
 import { bindPathListener }    from './lib/navigation'
 
 // --- Публічні сторінки ---
@@ -92,13 +93,17 @@ function App() {
     }
   }
 
+  const showSideAds = pathUsesSideAdRails(path)
+  const sideAdsPage = adPageForPath(path)
+
   return (
     <AppProvider>
       <PaidAdsProvider>
         <div className="app-shell min-h-screen flex flex-col">
           <Header />
+          {showSideAds ? <SideAdRails page={sideAdsPage} /> : null}
           <main className="flex-1">
-            <PageWithSideAds page={adPageForPath(path)} showSideAds={pathUsesSideAdRails(path)}>
+            <PageWithSideAds showSideAds={showSideAds}>
               {getPage()}
             </PageWithSideAds>
           </main>

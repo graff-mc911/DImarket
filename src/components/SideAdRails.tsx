@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { AdBanner } from './AdBanner'
 import { usePaidAds } from '../contexts/PaidAdsContext'
-import { pickSideStacksForPage } from '../lib/adCampaigns'
+import { pickSideStacksForPageWithFallback } from '../lib/adCampaigns'
 import { sideSlotIdsForPage } from '../lib/adPlacementCatalog'
-import { pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
 import type { SideAdsPage } from './PageWithSideAds'
 
 const SIDE_STACK_COUNT = 4
@@ -12,25 +12,32 @@ type SideAdRailsProps = {
   page: SideAdsPage
 }
 
-/** Бокові рейки — fixed у viewport; контент слотів оновлюється при зміні сторінки */
+function allCatalogSideSlotIds(): string[] {
+  return [
+    ...sideSlotIdsForPage('home'),
+    ...sideSlotIdsForPage('listings'),
+    ...sideSlotIdsForPage('professionals'),
+    ...sideSlotIdsForPage('default'),
+  ]
+}
+
+/** Fixed бокові рейки в viewport; портал у body — не зникають при зміні маршруту */
 export function SideAdRails({ page }: SideAdRailsProps) {
   const { loading, getForSlots } = usePaidAds()
-  const pageKey = pageKeyFromSideAdsPage(page)
-  const sideSlots = useMemo(() => sideSlotIdsForPage(pageKey), [pageKey])
-  const sideCampaigns = useMemo(() => getForSlots(sideSlots, 24), [getForSlots, sideSlots])
+  const sideSlots = useMemo(() => allCatalogSideSlotIds(), [])
+  const sideCampaigns = useMemo(() => getForSlots(sideSlots, 48), [getForSlots, sideSlots])
 
   const sideStacks = useMemo(
-    () => pickSideStacksForPage(sideCampaigns, SIDE_STACK_COUNT, page),
+    () => pickSideStacksForPageWithFallback(sideCampaigns, SIDE_STACK_COUNT, page),
     [sideCampaigns, page],
   )
 
   const hasLeftRail = !loading && sideStacks.left.some(Boolean)
   const hasRightRail = !loading && sideStacks.right.some(Boolean)
 
-  const emptyRailClass =
-    'ad-side-rail ad-side-rail--viewport-fixed h-full min-h-0 pointer-events-none'
+  if (typeof document === 'undefined') return null
 
-  return (
+  return createPortal(
     <>
       {hasLeftRail ? (
         <AdBanner
@@ -42,7 +49,10 @@ export function SideAdRails({ page }: SideAdRailsProps) {
           stackCampaigns={sideStacks.left}
         />
       ) : (
-        <aside className={`${emptyRailClass} ad-side-rail--left`} aria-hidden />
+        <aside
+          className="ad-side-rail ad-side-rail--left ad-side-rail--viewport-fixed h-full min-h-0"
+          aria-hidden
+        />
       )}
       {hasRightRail ? (
         <AdBanner
@@ -54,8 +64,12 @@ export function SideAdRails({ page }: SideAdRailsProps) {
           stackCampaigns={sideStacks.right}
         />
       ) : (
-        <aside className={`${emptyRailClass} ad-side-rail--right`} aria-hidden />
+        <aside
+          className="ad-side-rail ad-side-rail--right ad-side-rail--viewport-fixed h-full min-h-0"
+          aria-hidden
+        />
       )}
-    </>
+    </>,
+    document.body,
   )
 }

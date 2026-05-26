@@ -1,5 +1,4 @@
 import { type ReactNode } from 'react'
-import { SideAdRails } from './SideAdRails'
 
 export type SideAdsPage = 'home' | 'listings' | 'professionals' | 'default'
 
@@ -35,15 +34,14 @@ export function pathUsesSideAdRails(path: string): boolean {
 
 interface PageWithSideAdsProps {
   children: ReactNode
-  page?: SideAdsPage
   className?: string
-  /** false — повна ширина без бокових рейок (реклама, логін, кабінет…) */
+  /** false — повна ширина без відступів під бокові рейки */
   showSideAds?: boolean
 }
 
+/** Обгортка контенту; бокові рейки рендеряться в App через SideAdRails */
 export function PageWithSideAds({
   children,
-  page = 'default',
   className = '',
   showSideAds = true,
 }: PageWithSideAdsProps) {
@@ -57,7 +55,6 @@ export function PageWithSideAds({
 
   return (
     <div className={`page-bg min-h-screen pb-8 app-page-with-fixed-rails ${className}`}>
-      <SideAdRails page={page} />
       <div className="app-page-main min-w-0">{children}</div>
     </div>
   )

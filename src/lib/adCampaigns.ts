@@ -266,6 +266,33 @@ export function pickSideStacksForPage(
   return { left, right }
 }
 
+function mergeSideStackRows(
+  primary: (AdCampaignWithAdvertiser | null)[],
+  fallback: (AdCampaignWithAdvertiser | null)[],
+): (AdCampaignWithAdvertiser | null)[] {
+  return primary.map((row, index) => row ?? fallback[index] ?? null)
+}
+
+/** Слоти поточної сторінки + fallback на home, щоб банери не зникали при переході */
+export function pickSideStacksForPageWithFallback(
+  all: AdCampaignWithAdvertiser[],
+  count: number,
+  page?: 'home' | 'listings' | 'professionals' | 'default',
+): {
+  left: (AdCampaignWithAdvertiser | null)[]
+  right: (AdCampaignWithAdvertiser | null)[]
+} {
+  const current = pickSideStacksForPage(all, count, page)
+  const pageKey = pageKeyFromSideAdsPage(page)
+  if (pageKey === 'home') return current
+
+  const home = pickSideStacksForPage(all, count, 'home')
+  return {
+    left: mergeSideStackRows(current.left, home.left),
+    right: mergeSideStackRows(current.right, home.right),
+  }
+}
+
 /** Бокова колонка: слот 1–4 зверху вниз; null — порожній ряд (фіксована сітка) */
 export function pickCampaignsForSideStack(
   all: AdCampaignWithAdvertiser[],

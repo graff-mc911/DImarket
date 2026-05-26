@@ -3,7 +3,6 @@ import { Copy, Trash2, Upload } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { AdMediaEditor } from '../AdMediaEditor'
 import { AdPlacementSitePreview } from '../AdPlacementSitePreview'
-import { AdPlacementCompactMap } from './AdPlacementCompactMap'
 import { AdPlacementPagesBar } from './AdPlacementPagesBar'
 import { AD_MEDIA_ACCEPT } from '../../lib/adMediaStorage'
 import {
@@ -90,7 +89,8 @@ export function AdPerSlotMediaEditor({
   const sorted = useMemo(() => sortSlotsForEditor(selectedSlots), [selectedSlots])
   const sideSlots = sorted.filter((id) => id.includes('_side_'))
 
-  const previewPage = editorPageProp ?? 'home'
+  const [internalPage, setInternalPage] = useState<PlacementEditorPageId>('home')
+  const previewPage = hidePagePicker ? internalPage : (editorPageProp ?? 'home')
 
   /** Фокус слота — у межах поточної вкладки wireframe (single-page mode) */
   useEffect(() => {
@@ -131,7 +131,8 @@ export function AdPerSlotMediaEditor({
     : emptySlotMediaEntry()
 
   const openFilePicker = (slotId: string, replace: boolean) => {
-    if (!hidePagePicker) onEditorPageChange?.(editorPageFromSlotId(slotId))
+    if (hidePagePicker) setInternalPage(editorPageFromSlotId(slotId))
+    else onEditorPageChange?.(editorPageFromSlotId(slotId))
     setFocusedSlotId(slotId)
     if (!replace && slotMediaEntryHasMedia(displaySlotMedia[slotId])) {
       setSlotHint(t('advertising.slotStudio.mustRemoveFirst'))
@@ -211,7 +212,10 @@ export function AdPerSlotMediaEditor({
     slotMedia: displaySlotMedia,
     focusedSlotId,
     onFocusSlot: (id: string | null) => {
-      if (id && !hidePagePicker) onEditorPageChange?.(editorPageFromSlotId(id))
+      if (id) {
+        if (hidePagePicker) setInternalPage(editorPageFromSlotId(id))
+        else onEditorPageChange?.(editorPageFromSlotId(id))
+      }
       setFocusedSlotId(id)
       setSlotHint(null)
     },
@@ -271,73 +275,35 @@ export function AdPerSlotMediaEditor({
       )}
 
       {hidePagePicker ? (
-        <>
-          {focusedSlotId ? (
-            <div className="flex flex-wrap items-center gap-2 rounded-[12px] border border-[rgba(148,163,184,0.2)] bg-white/40 px-2.5 py-2">
-              <span className="text-[11px] font-semibold text-[#2f2a24]">
+        <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,200px)]">
+          <div className="min-w-0">
+            {onSelectedSlotsChange ? (
+              <AdPlacementSitePreview {...previewProps} onChange={onSelectedSlotsChange} />
+            ) : (
+              <AdPlacementSitePreview {...previewProps} />
+            )}
+          </div>
+          <aside className="rounded-[12px] border border-[rgba(148,163,184,0.18)] bg-white/35 p-2">
+            {focusedSlotId ? (
+              <p className="text-[10px] font-semibold text-[#2f2a24]">
                 {formatSlotLabel(focusedSlotId, t)}
-              </span>
-              {!focusedHasMedia ? (
-                <button
-                  type="button"
-                  onClick={() => openFilePicker(focusedSlotId, false)}
-                  disabled={isBusy}
-                  className="inline-flex items-center gap-1 rounded-full bg-[#6366f1] px-2.5 py-0.5 text-[10px] font-semibold text-white disabled:opacity-50"
-                >
-                  <Upload className="h-3 w-3" />
-                  {isBusy ? '…' : t('advertising.slotStudio.uploadHere')}
-                </button>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => openFilePicker(focusedSlotId, true)}
-                    disabled={isBusy}
-                    className="inline-flex items-center gap-1 rounded-full bg-[#6366f1] px-2.5 py-0.5 text-[10px] font-semibold text-white disabled:opacity-50"
-                  >
-                    <Upload className="h-3 w-3" />
-                    {t('advertising.slotStudio.replace')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void slotUpload.clearSlot(focusedSlotId)}
-                    disabled={isBusy}
-                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(239,68,68,0.35)] bg-white px-2.5 py-0.5 text-[10px] font-semibold text-[#b91c1c]"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                    {t('advertising.slotStudio.removeMedia')}
-                  </button>
-                </>
-              )}
-            </div>
-          ) : null}
-
-          {onSelectedSlotsChange ? (
-            <AdPlacementCompactMap
-              selectedSlots={selectedSlots}
-              onChange={onSelectedSlotsChange}
-              slotMedia={displaySlotMedia}
-              focusedSlotId={focusedSlotId}
-              onFocusSlot={previewProps.onFocusSlot}
-              onSlotClear={previewProps.onSlotClear}
-              onSlotUploadRequest={previewProps.onSlotUploadRequest}
-              onSlotReplaceRequest={previewProps.onSlotReplaceRequest}
-            />
-          ) : (
-            <AdPlacementCompactMap
-              selectedSlots={selectedSlots}
-              slotMedia={displaySlotMedia}
-              focusedSlotId={focusedSlotId}
-              onFocusSlot={previewProps.onFocusSlot}
-            />
-          )}
-
-          {focusedHasMedia && focusedSlotId ? (
-            <details className="rounded-[12px] border border-[rgba(148,163,184,0.18)] bg-white/30 px-2.5 py-2">
-              <summary className="cursor-pointer text-[11px] font-semibold text-[#5f5a54]">
-                {t('advertising.slotStudio.animationTitle')}
-              </summary>
-              <div className="mt-2 max-h-[280px] overflow-y-auto">
+              </p>
+            ) : (
+              <p className="text-[10px] text-[#9a8776]">{t('advertising.slotStudio.focusHint')}</p>
+            )}
+            {focusedSlotId && !focusedHasMedia ? (
+              <button
+                type="button"
+                onClick={() => openFilePicker(focusedSlotId, false)}
+                disabled={isBusy}
+                className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-full bg-[#6366f1] px-2 py-1 text-[10px] font-semibold text-white"
+              >
+                <Upload className="h-3 w-3" />
+                {t('advertising.slotStudio.uploadHere')}
+              </button>
+            ) : null}
+            {focusedHasMedia && focusedSlotId ? (
+              <div className="mt-2 max-h-[240px] overflow-y-auto">
                 <AdMediaEditor
                   compact
                   singleImageOnly
@@ -361,9 +327,9 @@ export function AdPerSlotMediaEditor({
                   onClearMedia={() => void slotUpload.clearSlot(focusedSlotId)}
                 />
               </div>
-            </details>
-          ) : null}
-        </>
+            ) : null}
+          </aside>
+        </div>
       ) : (
         <>
       <div className="grid gap-3 lg:grid-cols-[minmax(0,220px)_1fr]">
