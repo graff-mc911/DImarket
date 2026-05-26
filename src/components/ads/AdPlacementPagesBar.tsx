@@ -1,18 +1,13 @@
 import { useApp } from '../../contexts/AppContext'
-import { slotCountOnPage, AD_PAGE_KEYS } from '../../lib/adPlacementPages'
-import { PAGE_LABEL_KEYS, type AdPageKey } from '../../lib/adPlacementSlots'
-import type { TranslationKey } from '../../lib/i18n'
-
-const PAGE_ROUTES_KEYS: Record<AdPageKey, TranslationKey> = {
-  home: 'advertising.places.routes.home',
-  listings: 'advertising.places.routes.listings',
-  professionals: 'advertising.places.routes.professionals',
-  default: 'advertising.places.routes.default',
-}
+import {
+  PLACEMENT_EDITOR_PAGES,
+  slotCountForEditorPage,
+  type PlacementEditorPageId,
+} from '../../lib/adPlacementPages'
 
 type AdPlacementPagesBarProps = {
-  activePage: AdPageKey
-  onPageChange: (page: AdPageKey) => void
+  activePage: PlacementEditorPageId
+  onPageChange: (page: PlacementEditorPageId) => void
   selectedSlots: string[]
 }
 
@@ -29,29 +24,29 @@ export function AdPlacementPagesBar({
         {t('advertising.places.pagesLabel')}
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
-        {AD_PAGE_KEYS.map((page) => {
-          const count = slotCountOnPage(page, selectedSlots)
-          const active = activePage === page
+        {PLACEMENT_EDITOR_PAGES.map((page) => {
+          const count = slotCountForEditorPage(page.id, selectedSlots)
+          const active = activePage === page.id
           return (
             <button
-              key={page}
+              key={page.id}
               type="button"
-              onClick={() => onPageChange(page)}
+              onClick={() => onPageChange(page.id)}
               className={
-                'min-w-[7rem] rounded-[14px] border px-3 py-2 text-left transition ' +
+                'min-w-[6.5rem] rounded-[12px] border px-2.5 py-1.5 text-left transition ' +
                 (active
                   ? 'border-[rgba(201,109,44,0.45)] bg-[rgba(201,109,44,0.12)] shadow-sm'
                   : 'border-[rgba(148,163,184,0.25)] bg-white/50 hover:border-[rgba(99,102,241,0.35)]')
               }
             >
-              <span className="block text-xs font-extrabold text-[#2f2a24]">
-                {t(PAGE_LABEL_KEYS[page])}
+              <span className="block text-[11px] font-extrabold leading-tight text-[#2f2a24]">
+                {t(page.labelKey)}
                 {count > 0 ? (
                   <span className="ml-1 font-bold text-[#6366f1]">({count})</span>
                 ) : null}
               </span>
-              <span className="mt-0.5 block text-[10px] leading-snug text-[#7a7168]">
-                {t(PAGE_ROUTES_KEYS[page])}
+              <span className="mt-0.5 block font-mono text-[9px] leading-snug text-[#7a7168]">
+                {page.route}
               </span>
             </button>
           )

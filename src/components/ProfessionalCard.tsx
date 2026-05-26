@@ -1,4 +1,4 @@
-import { ArrowRight, MapPin, Star } from 'lucide-react'
+import { ArrowRight, MapPin, ShieldCheck, Star, UserRound, Zap } from 'lucide-react'
 import { Category, Profile } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -18,14 +18,27 @@ interface ProfessionalCardData extends Profile {
 
 interface ProfessionalCardProps {
   professional: ProfessionalCardData
+  /** Компактний вигляд (~⅓ розміру стандартної картки) */
+  compact?: boolean
+  /** Значки verified / featured (головна) */
+  showStatusBadges?: boolean
+  /** Текст, якщо біо порожнє */
+  emptyBioLabel?: string
 }
 
-export function ProfessionalCard({ professional }: ProfessionalCardProps) {
+export function ProfessionalCard({
+  professional,
+  compact = true,
+  showStatusBadges = false,
+  emptyBioLabel,
+}: ProfessionalCardProps) {
   const { t, language } = useApp()
 
   const avatarUrl = professional.profile_photo || professional.avatar_url || null
   const ratingLabel =
     professional.rating > 0 ? professional.rating.toFixed(1) : t('professional.new')
+  const isVerified = professional.is_verified === true
+  const isFeatured = professional.is_featured === true
 
   const translateUnsafe = (key: string) => {
     return t(key as never)
@@ -56,7 +69,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
       return category.name
     })
     .filter(Boolean)
-    .slice(0, 3) as string[]
+    .slice(0, compact ? 2 : 3) as string[]
 
   const workSlugs = professional.work_subcategory_slugs ?? []
   const workCatSlug =
@@ -67,48 +80,119 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
     workCatSlug,
     workSlugs,
     language.code,
-    4,
+    compact ? 2 : 4,
   )
 
+  const rootClass = compact
+    ? 'glass-card card-hover-lift pro-card--compact flex h-full min-w-0 flex-col overflow-hidden'
+    : 'glass-card flex h-full flex-col overflow-hidden p-5'
+
+  const avatarClass = compact
+    ? 'pro-card__avatar shrink-0 rounded-[0.5rem] object-cover'
+    : 'h-16 w-16 shrink-0 rounded-[22px] object-cover'
+
+  const avatarFallbackClass = compact
+    ? 'pro-card__avatar flex shrink-0 items-center justify-center rounded-[0.5rem] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.42)] font-bold text-[var(--accent-700)]'
+    : 'flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-[linear-gradient(135deg,rgba(255,244,234,0.95),rgba(244,186,134,0.72))] text-lg font-extrabold text-[#9a5525]'
+
   return (
-    <div className="glass-card flex h-full flex-col overflow-hidden p-5">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        {avatarUrl ? (
-          <img
-            src={avatarUrl}
-            alt={professional.full_name || t('professional.defaultName')}
-            className="h-16 w-16 shrink-0 rounded-[22px] object-cover"
-          />
-        ) : (
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-[linear-gradient(135deg,rgba(255,244,234,0.95),rgba(244,186,134,0.72))] text-lg font-extrabold text-[#9a5525]">
-            {getInitials(professional.full_name)}
-          </div>
-        )}
+    <div className={rootClass}>
+      <div
+        className={
+          compact
+            ? 'pro-card__header flex items-start justify-between'
+            : 'flex flex-col gap-4 sm:flex-row sm:items-start'
+        }
+      >
+        <div
+          className={
+            compact ? 'pro-card__identity flex min-w-0 items-center' : 'flex items-center gap-3'
+          }
+        >
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={professional.full_name || t('professional.defaultName')}
+              className={avatarClass}
+            />
+          ) : (
+            <div className={avatarFallbackClass}>{getInitials(professional.full_name)}</div>
+          )}
 
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h3 className="truncate text-xl font-extrabold text-[#2f2a24]">
-                {professional.full_name || t('professional.defaultName')}
-              </h3>
+          <div className="min-w-0 flex-1">
+            <div
+              className={
+                compact
+                  ? 'flex min-w-0 items-center gap-1'
+                  : 'flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'
+              }
+            >
+              <div className="min-w-0">
+                <div className="flex min-w-0 items-center gap-1">
+                  <h3
+                    className={
+                      compact
+                        ? 'pro-card__name truncate font-bold text-[var(--ink-900)]'
+                        : 'truncate text-xl font-extrabold text-[#2f2a24]'
+                    }
+                  >
+                    {professional.full_name || t('professional.defaultName')}
+                  </h3>
 
-              <div className="mt-2 flex items-center gap-2 text-sm text-[#7a7168]">
-                <MapPin className="h-4 w-4 shrink-0" />
-                <span className="truncate">
-                  {professional.location || t('professional.global')}
-                </span>
+                  {showStatusBadges && isVerified && (
+                    <ShieldCheck
+                      className="pro-card__verified shrink-0 text-[#15803d]"
+                      aria-label={t('professional.verified')}
+                    />
+                  )}
+                </div>
+
+                <div
+                  className={
+                    compact
+                      ? 'pro-card__meta mt-0.5 flex items-center gap-1 text-[var(--ink-500)]'
+                      : 'mt-2 flex items-center gap-2 text-sm text-[#7a7168]'
+                  }
+                >
+                  <MapPin className="pro-card__avatar-icon shrink-0 text-[var(--accent-700)]" />
+                  <span className="truncate">
+                    {professional.location || t('professional.global')}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <div className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[rgba(255,249,236,0.96)] px-3 py-1 text-sm font-bold text-[#8c6728]">
-              <Star className="h-4 w-4 fill-current" />
-              <span>{ratingLabel}</span>
+              {!compact && (
+                <div className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[rgba(255,249,236,0.96)] px-3 py-1 text-sm font-bold text-[#8c6728]">
+                  <Star className="h-4 w-4 fill-current" />
+                  <span>{ratingLabel}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
+
+        {compact && (
+          <div className="pro-card__rating inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[var(--glass-border)] bg-[rgba(255,252,248,0.38)] font-semibold text-[#8c6728]">
+            <Star className="pro-card__avatar-icon fill-current" />
+            <span>{ratingLabel}</span>
+          </div>
+        )}
       </div>
 
-      {(skills.length > 0 || workTypesSummary) && (
+      {showStatusBadges && isFeatured && (
+        <div
+          className="pro-card__featured inline-flex items-center gap-0.5 rounded-full font-bold"
+          style={{
+            background: 'rgba(99,102,241,0.12)',
+            color: '#6366f1',
+          }}
+        >
+          <Zap className="pro-card__avatar-icon" />
+          {t('professional.featured')}
+        </div>
+      )}
+
+      {!compact && (skills.length > 0 || workTypesSummary) && (
         <div className="mt-4 flex flex-wrap gap-2">
           {skills.map((skill) => (
             <span
@@ -126,22 +210,67 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
         </div>
       )}
 
-      <p className="mt-4 line-clamp-4 text-sm leading-6 text-[#6f665d]">
-        {professional.bio || t('professional.profileInProgress')}
+      {compact && (skills.length > 0 || workTypesSummary) && (
+        <div className="pro-card__tags flex flex-wrap">
+          {skills.map((skill) => (
+            <span
+              key={`${professional.id}-${skill}`}
+              className="pro-card__chip rounded-full bg-[rgba(242,171,116,0.16)] font-semibold text-[#9a5525]"
+            >
+              {skill}
+            </span>
+          ))}
+          {workTypesSummary && (
+            <span className="pro-card__chip rounded-full bg-[rgba(99,102,241,0.12)] font-semibold text-[#4338ca]">
+              {workTypesSummary}
+            </span>
+          )}
+        </div>
+      )}
+
+      <p
+        className={
+          compact
+            ? 'pro-card__bio muted-text line-clamp-2'
+            : 'mt-4 line-clamp-4 text-sm leading-6 text-[#6f665d]'
+        }
+      >
+        {professional.bio ||
+          emptyBioLabel ||
+          t('professional.profileInProgress')}
       </p>
 
-      <div className="mt-5 flex flex-col gap-3 border-t border-[rgba(190,168,150,0.28)] pt-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm text-[#7a7168]">
-          {professional.total_reviews} {t('professional.reviews')}
+      <div
+        className={
+          compact
+            ? 'pro-card__footer mt-auto flex flex-col border-t border-[var(--glass-border)] sm:flex-row sm:items-center sm:justify-between'
+            : 'mt-5 flex flex-col gap-3 border-t border-[rgba(190,168,150,0.28)] pt-4 sm:flex-row sm:items-center sm:justify-between'
+        }
+      >
+        <div
+          className={
+            compact
+              ? 'pro-card__footer-text flex items-center gap-1 text-[var(--ink-500)]'
+              : 'text-sm text-[#7a7168]'
+          }
+        >
+          {compact && <UserRound className="pro-card__avatar-icon text-[var(--accent-700)]" />}
+          <span>
+            {professional.total_reviews} {t('professional.reviews')}
+          </span>
         </div>
 
         <button
           onClick={() => navigateTo(`/professional/${professional.id}`)}
           type="button"
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[rgba(242,171,116,0.18)] px-4 py-2 text-sm font-bold text-[#9a5525] transition hover:bg-[rgba(242,171,116,0.26)] sm:w-auto"
+          className={
+            compact
+              ? 'pro-card__action inline-flex items-center gap-1 font-semibold text-[var(--accent-700)] transition hover:text-[var(--ink-900)]'
+              : 'pro-card__action-btn inline-flex w-full items-center justify-center gap-2 rounded-full bg-[rgba(242,171,116,0.18)] px-4 py-2 text-sm font-bold text-[#9a5525] transition hover:bg-[rgba(242,171,116,0.26)] sm:w-auto'
+          }
         >
           <span>{t('professional.contact')}</span>
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="pro-card__avatar-icon" />
         </button>
       </div>
     </div>

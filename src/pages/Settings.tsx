@@ -415,7 +415,7 @@ export function Settings() {
 
   if (loading) {
     return (
-      <div className="py-10">
+      <div className="layout-page-content py-10">
         <div className="mx-auto max-w-4xl">
           <div className="glass-panel p-10 text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[rgba(201,109,44,0.18)] border-t-[#c96d2c]" />
@@ -427,7 +427,8 @@ export function Settings() {
   }
 
   return (
-    <div className="py-8 pb-24 lg:pb-8">
+    <div className="layout-page-content py-8 pb-24 lg:pb-8">
+      <div className="mx-auto max-w-4xl">
             <section className="glass-panel p-5 md:p-6 xl:p-8">
               <div className="mb-6">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(233,202,177,0.7)] bg-[rgba(255,247,239,0.88)] px-4 py-2 text-sm font-semibold text-[#a26233]">
@@ -791,6 +792,7 @@ export function Settings() {
                 </section>
               </div>
             </section>
+      </div>
     </div>
   )
 }

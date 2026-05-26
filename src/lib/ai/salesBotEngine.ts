@@ -105,7 +105,6 @@ export function getInitialTurn(ctx: SalesBotContext): SalesBotTurnResult {
 
   return {
     replyKey: 'salesBot.welcome',
-    replyParams: { categories: categoryListText(ctx.categories, ctx.categoryLabels) },
     step: 'category',
     draft,
     quickReplies: ctx.categories.slice(0, 6).map((c) => ctx.categoryLabels[c.slug] || c.name),
@@ -155,7 +154,6 @@ export function processSalesBotTurn(
       if (!cat) {
         return {
           replyKey: 'salesBot.categoryUnknown',
-          replyParams: { categories: categoryListText(ctx.categories, ctx.categoryLabels) },
           step: 'category',
           draft: next,
           quickReplies: ctx.categories.slice(0, 6).map((c) => ctx.categoryLabels[c.slug] || c.name),

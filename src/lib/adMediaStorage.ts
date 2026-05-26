@@ -1,8 +1,55 @@
 import { supabase } from './supabase'
+import { formatSupabaseError } from './supabaseErrors'
 import type { AdMediaStyle } from './adMediaStyle'
 import type { SlotMediaEntry } from './adSlotMedia'
 
 const BUCKET = 'ad-media'
+const MAX_FILE_MB = 20
+const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024
+
+export const AD_MEDIA_ACCEPT =
+  'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm'
+
+const ACCEPTED_MIME = AD_MEDIA_ACCEPT.split(',')
+
+export type SlotBannerMediaType = 'image' | 'gif' | 'video'
+
+export function mediaTypeFromFile(file: File): SlotBannerMediaType {
+  if (file.type === 'video/mp4' || file.type === 'video/webm') return 'video'
+  if (file.type === 'image/gif') return 'gif'
+  return 'image'
+}
+
+/** Завантажує один файл у ad-media, повертає публічний URL */
+export async function uploadAdMediaFile(file: File): Promise<string> {
+  if (!ACCEPTED_MIME.includes(file.type)) {
+    throw new Error('JPG, PNG, WebP, GIF, MP4, WebM')
+  }
+  if (file.size > MAX_FILE_BYTES) {
+    throw new Error(`Max ${MAX_FILE_MB} MB`)
+  }
+  const ext = file.name.split('.').pop() ?? 'bin'
+  const path = `campaigns/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+  const { error } = await supabase.storage
+    .from(BUCKET)
+    .upload(path, file, { cacheControl: '3600', upsert: false })
+  if (error) throw error
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path)
+  return data.publicUrl
+}
+
+export async function uploadAdMediaFileSafe(
+  file: File,
+  fallbackMessage: string,
+): Promise<string> {
+  try {
+    return await uploadAdMediaFile(file)
+  } catch (err) {
+    const message = err instanceof Error ? err.message : ''
+    if (message.startsWith('Max') || message.includes('JPG')) throw err
+    throw new Error(formatSupabaseError(err, fallbackMessage))
+  }
+}
 
 /** Шлях у bucket з публічного URL Supabase Storage */
 export function storagePathFromPublicUrl(url: string): string | null {

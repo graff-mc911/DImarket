@@ -6,7 +6,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="layout-page-gutter relative z-40 mt-auto w-full pb-2">
+    <footer className="layout-page-gutter relative z-10 mt-auto w-full pb-2">
       <div className="w-full rounded-[16px] border border-white/70 bg-[rgba(252,246,240,0.96)] p-3 text-center shadow-[0_8px_20px_rgba(89,63,48,0.05)] backdrop-blur-xl md:p-4">
         <FooterStats compact />
 

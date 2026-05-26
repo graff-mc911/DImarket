@@ -16,7 +16,7 @@ test.describe('Навігація з шапки', () => {
 
     await clickHeaderNavButton(
       page,
-      /Перегляд оголошень|Browse Listings|Browse/i,
+      /Перегляд оголошень|Переглянути оголошення|Browse Listings/i,
       viewport,
     )
     await expect(page).toHaveURL(/\/listings/)

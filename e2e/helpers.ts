@@ -93,12 +93,22 @@ export async function expectMainLayout(
   }
 }
 
-/** На широкому десктопі (≥1280px) центральна колонка в 2-й сітці. */
+/** На широкому десктопі (≥1280px) — 3 колонки, контент у центральній (2). */
 export async function expectMainInCenterGridColumn(page: Page) {
-  const column = await page.locator('main .layout-with-side-ads__main').evaluate((main) => {
-    return getComputedStyle(main).gridColumnStart
-  })
-  expect(column).toBe('2')
+  const grid = page.locator('main .layout-with-side-ads').first()
+  await expect(grid).toBeVisible()
+  await expect
+    .poll(async () =>
+      grid.evaluate((el) => {
+        const main = el.querySelector('.layout-with-side-ads__main')
+        if (!main) return null
+        const cols = getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length
+        const mainCol = getComputedStyle(main).gridColumnStart
+        const rails = el.querySelectorAll('.ad-side-rail').length
+        return { cols, mainCol, rails }
+      }),
+    )
+    .toEqual({ cols: 3, mainCol: '2', rails: 2 })
 }
 
 /** Планшет / телефон: одна колонка, бокові рейки приховані. */

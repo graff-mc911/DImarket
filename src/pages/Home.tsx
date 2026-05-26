@@ -11,11 +11,9 @@ import {
   MapPin,
   Search,
   ShieldCheck,
-  Star,
-  UserRound,
   Users,
-  Zap,
 } from 'lucide-react'
+import { ProfessionalCard } from '../components/ProfessionalCard'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -24,10 +22,10 @@ import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import type { Category, ListingWithImages, Profile } from '../lib/types'
 import type { TranslationKey } from '../lib/i18n'
 import { buildDisplayCategories, categoryPagePath } from '../lib/siteCategories'
-import { groupLabel } from '../lib/categoryCatalog'
 import {
   HOME_FEATURED_WORK_GROUPS,
   homeFeaturedWorkPath,
+  homeFeaturedWorkTitle,
 } from '../lib/homeFeaturedWorkTypes'
 
 interface PlatformStats {
@@ -182,7 +180,7 @@ export function Home() {
                     type="button"
                     className="rounded-full border border-[rgba(99,102,241,0.28)] bg-[rgba(99,102,241,0.08)] px-2.5 py-1 text-[11px] font-semibold text-[#4338ca] transition hover:bg-[rgba(99,102,241,0.14)]"
                   >
-                    {groupLabel('construction', feat.groupSlug, language.code)}
+                    {homeFeaturedWorkTitle(feat, t, language.code)}
                   </button>
                 ))}
               </nav>
@@ -272,7 +270,7 @@ export function Home() {
               {HOME_FEATURED_WORK_GROUPS.map((feat) => (
                 <CategoryCard
                   key={feat.groupSlug}
-                  name={groupLabel('construction', feat.groupSlug, language.code)}
+                  name={homeFeaturedWorkTitle(feat, t, language.code)}
                   icon={feat.icon}
                   onClick={() => navigateTo(homeFeaturedWorkPath(feat.groupSlug))}
                   accent="indigo"
@@ -284,6 +282,12 @@ export function Home() {
           )}
         </div>
       </section>
+
+      <div className="layout-page-content">
+        <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
+      </div>
+
+      <SponsoredCompanies />
 
       <MobileAdBanner variant="inline" page="home" inlineIndex={2} />
 
@@ -333,19 +337,14 @@ export function Home() {
           {loading ? (
             <LoadingBlock text={t('home.loading')} />
           ) : professionals.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="home-pros-grid">
               {professionals.map((professional) => (
-                <ProfessionalPreviewCard
+                <ProfessionalCard
                   key={professional.id}
                   professional={professional}
-                  noBioLabel={t('home.noBio')}
-                  defaultNameLabel={t('professional.defaultName')}
-                  globalLabel={t('professional.global')}
-                  newLabel={t('professional.new')}
-                  reviewLabel={t('professional.reviews')}
-                  actionLabel={t('professional.contact')}
-                  featuredLabel={t('professional.featured')}
-                  verifiedLabel={t('professional.verified')}
+                  compact
+                  showStatusBadges
+                  emptyBioLabel={t('home.noBio')}
                 />
               ))}
             </div>
@@ -354,12 +353,6 @@ export function Home() {
           )}
         </div>
       </section>
-
-      <div className="layout-page-content">
-        <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
-      </div>
-
-      <SponsoredCompanies />
 
       <MobileAdBanner variant="inline" page="home" inlineIndex={4} />
     </div>
@@ -546,113 +539,6 @@ function HomeJobCard({
   )
 }
 
-function ProfessionalPreviewCard({
-  professional,
-  noBioLabel,
-  defaultNameLabel,
-  globalLabel,
-  newLabel,
-  reviewLabel,
-  actionLabel,
-  featuredLabel,
-  verifiedLabel,
-}: {
-  professional: Profile
-  noBioLabel: string
-  defaultNameLabel: string
-  globalLabel: string
-  newLabel: string
-  reviewLabel: string
-  actionLabel: string
-  featuredLabel: string
-  verifiedLabel: string
-}) {
-  const initials = getInitials(professional.full_name)
-  const ratingLabel = professional.rating > 0 ? professional.rating.toFixed(1) : newLabel
-  const avatarUrl = professional.profile_photo || professional.avatar_url || null
-  const isVerified = professional.is_verified === true
-  const isFeatured = professional.is_featured === true
-
-  return (
-    <div className="glass-card card-hover-lift w-full min-w-0 p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt={professional.full_name || defaultNameLabel}
-              className="h-14 w-14 shrink-0 rounded-[18px] object-cover"
-            />
-          ) : (
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.42)] text-base font-bold text-[var(--accent-700)]">
-              {initials}
-            </div>
-          )}
-
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h3 className="truncate text-[0.98rem] font-bold tracking-[-0.02em] text-[var(--ink-900)] md:text-[1rem]">
-                {professional.full_name || defaultNameLabel}
-              </h3>
-
-              {isVerified && (
-                <ShieldCheck
-                  className="h-3.5 w-3.5 shrink-0 text-[#15803d]"
-                  aria-label={verifiedLabel}
-                />
-              )}
-            </div>
-
-            <p className="mt-1 text-[13px] text-[var(--ink-500)]">
-              {professional.location || globalLabel}
-            </p>
-          </div>
-        </div>
-
-        <div className="inline-flex items-center gap-1 rounded-full border border-[var(--glass-border)] bg-[rgba(255,252,248,0.38)] px-3 py-1 text-[13px] font-semibold text-[#8c6728]">
-          <Star className="h-4 w-4 fill-current" />
-          <span>{ratingLabel}</span>
-        </div>
-      </div>
-
-      {isFeatured && (
-        <div
-          className="mt-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold"
-          style={{
-            background: 'rgba(99,102,241,0.12)',
-            color: '#6366f1',
-          }}
-        >
-          <Zap className="h-3 w-3" />
-          {featuredLabel}
-        </div>
-      )}
-
-      <p className="muted-text mt-4 line-clamp-3 text-[13px]">
-        {professional.bio || noBioLabel}
-      </p>
-
-      <div className="mt-5 flex flex-col gap-3 border-t border-[var(--glass-border)] pt-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2 text-[13px] text-[var(--ink-500)]">
-          <UserRound className="h-4 w-4 text-[var(--accent-700)]" />
-          <span>
-            {professional.total_reviews} {reviewLabel}
-          </span>
-        </div>
-
-        <button
-          onClick={() => navigateTo(`/professional/${professional.id}`)}
-          type="button"
-          className="inline-flex items-center gap-2 text-[13px] font-semibold text-[var(--accent-700)] transition hover:text-[var(--ink-900)]"
-        >
-          <span>{actionLabel}</span>
-          <ArrowRight className="h-4 w-4" />
-        </button>
-      </div>
-    </div>
-  )
-}
-
 function LoadingBlock({ text }: { text: string }) {
   return (
     <div className="glass-card p-8 text-center text-[var(--ink-500)]">
@@ -667,12 +553,4 @@ function EmptyBlock({ text }: { text: string }) {
       {text}
     </div>
   )
-}
-
-function getInitials(fullName: string | null): string {
-  if (!fullName) return 'DI'
-
-  const parts = fullName.trim().split(/\s+/).slice(0, 2)
-
-  return parts.map((part) => part[0]?.toUpperCase() || '').join('') || 'DI'
 }

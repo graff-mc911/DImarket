@@ -65,6 +65,7 @@ export function PageWithSideAds({
 
   const hasLeftRail = !loading && sideStacks.left.some(Boolean)
   const hasRightRail = !loading && sideStacks.right.some(Boolean)
+  const reserveRails = true
 
   if (!showSideAds) {
     return (
@@ -85,6 +86,8 @@ export function PageWithSideAds({
             stackCount={SIDE_STACK_COUNT}
             stackCampaigns={sideStacks.left}
           />
+        ) : reserveRails ? (
+          <aside className="ad-side-rail ad-side-rail--left h-full min-h-full" aria-hidden />
         ) : null}
         <div className="layout-with-side-ads__main">{children}</div>
         {hasRightRail ? (
@@ -95,6 +98,8 @@ export function PageWithSideAds({
             stackCount={SIDE_STACK_COUNT}
             stackCampaigns={sideStacks.right}
           />
+        ) : reserveRails ? (
+          <aside className="ad-side-rail ad-side-rail--right h-full min-h-full" aria-hidden />
         ) : null}
       </div>
     </div>

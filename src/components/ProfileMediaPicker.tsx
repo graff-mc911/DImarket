@@ -1,7 +1,11 @@
 import { useRef, useState } from 'react'
 import { ImagePlus, Loader2, Upload } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
-import { uploadProfileImage, validateProfileImageFile } from '../lib/profileMediaUpload'
+import {
+  PROFILE_IMAGE_ACCEPT,
+  uploadProfileImage,
+  validateProfileImageFile,
+} from '../lib/profileMediaUpload'
 import { formatSupabaseError } from '../lib/supabaseErrors'
 
 type ProfileMediaPickerProps = {

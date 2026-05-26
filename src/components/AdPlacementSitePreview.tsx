@@ -2,8 +2,14 @@ import { useMemo, useState } from 'react'
 import { ImagePlus, Monitor, Smartphone, Upload, X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { AdMediaDisplay } from './AdMediaDisplay'
-import { formatSlotLabel, PAGE_LABEL_KEYS, type AdPageKey } from '../lib/adPlacementSlots'
-import { getSlotDefinition, slotGroupsForPurchasePicker } from '../lib/adPlacementCatalog'
+import { formatSlotLabel } from '../lib/adPlacementSlots'
+import { getSlotDefinition } from '../lib/adPlacementCatalog'
+import {
+  getPlacementEditorPage,
+  wireframeGroupForEditorPage,
+  type EditorWireframeGroup,
+  type PlacementEditorPageId,
+} from '../lib/adPlacementPages'
 import {
   AD_SLOT_CONTAINER_SPECS,
   containerSpecForZone,
@@ -29,8 +35,8 @@ function interpolateTranslation(
 type AdPlacementSitePreviewProps = {
   selected: string[]
   onChange?: (slots: string[]) => void
-  page?: AdPageKey
-  onPageChange?: (page: AdPageKey) => void
+  editorPage?: PlacementEditorPageId
+  onEditorPageChange?: (page: PlacementEditorPageId) => void
   /** @deprecated Використовуйте slotMedia */
   draftMediaUrl?: string | null
   slotMedia?: SlotMediaMap
@@ -38,6 +44,7 @@ type AdPlacementSitePreviewProps = {
   onFocusSlot?: (slotId: string | null) => void
   onSlotClear?: (slotId: string) => void
   onSlotUploadRequest?: (slotId: string) => void
+  onSlotReplaceRequest?: (slotId: string) => void
   compact?: boolean
   /** Сторінки перемикаються зовні (AdPlacementPagesBar) */
   hidePageTabs?: boolean
@@ -78,6 +85,7 @@ function SlotBox({
   onToggle,
   onClear,
   onUploadRequest,
+  onReplaceRequest,
 }: {
   active: boolean
   focused?: boolean
@@ -92,6 +100,7 @@ function SlotBox({
   onToggle?: () => void
   onClear?: () => void
   onUploadRequest?: () => void
+  onReplaceRequest?: () => void
 }) {
   const { t } = useApp()
   const hasSlotMedia = slotMediaEntryHasMedia(slotEntry)
@@ -128,13 +137,14 @@ function SlotBox({
     <>
       {previewUrl && hasSlotMedia ? (
         <AdMediaDisplay
+          key={previewUrl}
           src={previewUrl}
           mediaType={slotEntry!.mediaType}
           style={slotEntry!.mediaStyle}
           layoutKey={layoutKey}
           className="absolute inset-0 h-full w-full"
           imageClassName="h-full w-full object-cover"
-          animateSlides
+          animateSlides={false}
         />
       ) : previewUrl ? (
         <img
@@ -182,6 +192,19 @@ function SlotBox({
           <ImagePlus className="h-2.5 w-2.5" />
         </button>
       ) : null}
+      {active && hasSlotMedia && onReplaceRequest ? (
+        <button
+          type="button"
+          title={t('advertising.slotStudio.replace')}
+          onClick={(e) => {
+            e.stopPropagation()
+            onReplaceRequest()
+          }}
+          className="absolute bottom-0.5 right-0.5 z-[2] flex h-4 w-4 items-center justify-center rounded-full bg-[#6366f1] text-white opacity-0 transition group-hover:opacity-100"
+        >
+          <Upload className="h-2.5 w-2.5" />
+        </button>
+      ) : null}
     </>
   )
 
@@ -201,7 +224,8 @@ function SlotBox({
 }
 
 function DesktopWireframe({
-  page,
+  group,
+  editorLabel,
   selected,
   t,
   draftMediaUrl,
@@ -211,8 +235,10 @@ function DesktopWireframe({
   onToggle,
   onSlotClear,
   onSlotUploadRequest,
+  onSlotReplaceRequest,
 }: {
-  page: AdPageKey
+  group: EditorWireframeGroup
+  editorLabel: string
   selected: string[]
   t: (key: TranslationKey) => string
   draftMediaUrl?: string | null
@@ -222,8 +248,8 @@ function DesktopWireframe({
   onToggle: (id: string) => void
   onSlotClear?: (id: string) => void
   onSlotUploadRequest?: (id: string) => void
+  onSlotReplaceRequest?: (id: string) => void
 }) {
-  const group = slotGroupsForPurchasePicker().find((g) => g.page === page)!
   const isActive = (id: string) => selected.includes(id)
   const short = (id: string) => {
     const def = getSlotDefinition(id)
@@ -250,13 +276,14 @@ function DesktopWireframe({
       onToggle: () => onToggle(id),
       onClear: onSlotClear ? () => onSlotClear(id) : undefined,
       onUploadRequest: onSlotUploadRequest ? () => onSlotUploadRequest(id) : undefined,
+      onReplaceRequest: onSlotReplaceRequest ? () => onSlotReplaceRequest(id) : undefined,
     }
   }
 
   return (
     <div className="rounded-[18px] border border-white/45 bg-[rgba(248,250,252,0.65)] p-3">
       <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#9a8776]">
-        {t('advertising.catalog.desktopWire')} · {t(PAGE_LABEL_KEYS[page])}
+        {t('advertising.catalog.desktopWire')} · {editorLabel}
       </p>
       <div className="grid grid-cols-[minmax(58px,72px)_1fr_minmax(58px,72px)] gap-1.5">
         <div className="grid grid-rows-4 gap-1">
@@ -287,7 +314,8 @@ function DesktopWireframe({
 }
 
 function MobileWireframe({
-  page,
+  group,
+  editorLabel,
   selected,
   t,
   draftMediaUrl,
@@ -297,8 +325,10 @@ function MobileWireframe({
   onToggle,
   onSlotClear,
   onSlotUploadRequest,
+  onSlotReplaceRequest,
 }: {
-  page: AdPageKey
+  group: EditorWireframeGroup
+  editorLabel: string
   selected: string[]
   t: (key: TranslationKey) => string
   draftMediaUrl?: string | null
@@ -308,14 +338,14 @@ function MobileWireframe({
   onToggle: (id: string) => void
   onSlotClear?: (id: string) => void
   onSlotUploadRequest?: (id: string) => void
+  onSlotReplaceRequest?: (id: string) => void
 }) {
-  const group = slotGroupsForPurchasePicker().find((g) => g.page === page)!
   const isActive = (id: string) => selected.includes(id)
 
   return (
     <div className="mx-auto w-full max-w-[220px] rounded-[22px] border-2 border-[#2f2a24] bg-[#faf8f5] p-2 shadow-lg">
       <p className="mb-2 text-center text-[9px] font-bold uppercase tracking-wide text-[#9a8776]">
-        {t('advertising.catalog.mobileWire')}
+        {t('advertising.catalog.mobileWire')} · {editorLabel}
       </p>
       <div className="space-y-1">
         <div className="rounded bg-[rgba(148,163,184,0.2)] px-2 py-2 text-center text-[9px] font-semibold text-[#6f665d]">
@@ -349,6 +379,9 @@ function MobileWireframe({
                 onUploadRequest={
                   onSlotUploadRequest ? () => onSlotUploadRequest(id) : undefined
                 }
+                onReplaceRequest={
+                  onSlotReplaceRequest ? () => onSlotReplaceRequest(id) : undefined
+                }
               />
               {!isLeader && i < group.mobile.inline.length - 1 && (
                 <div className="my-0.5 rounded bg-[rgba(148,163,184,0.15)] px-1 py-1.5 text-center text-[8px] text-[#9a8776]">
@@ -366,32 +399,41 @@ function MobileWireframe({
 export function AdPlacementSitePreview({
   selected,
   onChange,
-  page: pageProp,
-  onPageChange,
+  editorPage: editorPageProp,
+  onEditorPageChange,
   draftMediaUrl,
   slotMedia,
   focusedSlotId,
   onFocusSlot,
   onSlotClear,
   onSlotUploadRequest,
+  onSlotReplaceRequest,
   compact = false,
   hidePageTabs = false,
 }: AdPlacementSitePreviewProps) {
   const { t } = useApp()
-  const groups = slotGroupsForPurchasePicker()
   const interactive = Boolean(onChange)
-  const [internalPage, setInternalPage] = useState<AdPageKey>('home')
+  const [internalEditorPage, setInternalEditorPage] = useState<PlacementEditorPageId>('home')
 
-  const page = pageProp ?? internalPage
+  const editorPage = editorPageProp ?? internalEditorPage
+  const wireframe = useMemo(() => wireframeGroupForEditorPage(editorPage), [editorPage])
+  const editorMeta = getPlacementEditorPage(editorPage)
+  const editorLabel = t(editorMeta.labelKey)
 
-  const switchPage = (next: AdPageKey) => {
-    if (onPageChange) onPageChange(next)
-    else setInternalPage(next)
+  const switchPage = (next: PlacementEditorPageId) => {
+    if (onEditorPageChange) onEditorPageChange(next)
+    else setInternalEditorPage(next)
   }
 
+  const pageSlotIds = useMemo(() => wireframe.desktop.left.concat(
+    wireframe.desktop.right,
+    wireframe.desktop.center ? [wireframe.desktop.center] : [],
+    wireframe.mobile.inline,
+  ), [wireframe])
+
   const selectedOnPage = useMemo(
-    () => selected.filter((id) => id.startsWith(`${page}_`)),
-    [selected, page],
+    () => selected.filter((id) => pageSlotIds.includes(id)),
+    [selected, pageSlotIds],
   )
 
   const toggle = (slotId: string) => {
@@ -415,14 +457,8 @@ export function AdPlacementSitePreview({
 
   const selectAllForPage = () => {
     if (!onChange) return
-    const g = groups.find((x) => x.page === page)!
-    const ids = [
-      ...g.desktop.left,
-      ...g.desktop.right,
-      ...(g.desktop.center ? [g.desktop.center] : []),
-      ...g.mobile.inline,
-    ]
-    const allSelected = ids.every((id) => selected.includes(id))
+    const ids = pageSlotIds
+    const allSelected = ids.length > 0 && ids.every((id) => selected.includes(id))
     if (allSelected) {
       const next = selected.filter((id) => !ids.includes(id))
       onChange(next.length > 0 ? next : [ids[0]])
@@ -431,53 +467,8 @@ export function AdPlacementSitePreview({
     }
   }
 
-  const pageSlotCount = (p: AdPageKey) => {
-    const g = groups.find((x) => x.page === p)!
-    const ids = [
-      ...g.desktop.left,
-      ...g.desktop.right,
-      ...(g.desktop.center ? [g.desktop.center] : []),
-      ...g.mobile.inline,
-    ]
-    return ids.filter((id) => selected.includes(id)).length
-  }
-
   return (
     <div className="space-y-4">
-      {!hidePageTabs && (
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap gap-2">
-          {groups.map((g) => {
-            const count = pageSlotCount(g.page)
-            return (
-              <button
-                key={g.page}
-                type="button"
-                onClick={() => switchPage(g.page)}
-                className={
-                  'rounded-full px-3 py-1.5 text-xs font-bold transition ' +
-                  (page === g.page
-                    ? 'bg-[rgba(201,109,44,0.18)] text-[var(--accent-700)]'
-                    : 'bg-white/40 text-[#6f665d] hover:bg-white/55')
-                }
-              >
-                {t(PAGE_LABEL_KEYS[g.page])}
-                {count > 0 ? ` (${count})` : ''}
-              </button>
-            )
-          })}
-        </div>
-        {interactive && (
-          <button
-            type="button"
-            onClick={selectAllForPage}
-            className="text-xs font-semibold text-[#6366f1] hover:underline"
-          >
-            {t('advertising.slots.togglePage')}
-          </button>
-        )}
-      </div>
-      )}
       {hidePageTabs && interactive && (
         <div className="flex justify-end">
           <button
@@ -501,7 +492,8 @@ export function AdPlacementSitePreview({
             {t('advertising.slots.desktopTitle')}
           </div>
           <DesktopWireframe
-            page={page}
+            group={wireframe}
+            editorLabel={editorLabel}
             selected={selected}
             t={t}
             draftMediaUrl={draftMediaUrl}
@@ -511,6 +503,7 @@ export function AdPlacementSitePreview({
             onToggle={toggle}
             onSlotClear={onSlotClear}
             onSlotUploadRequest={onSlotUploadRequest}
+            onSlotReplaceRequest={onSlotReplaceRequest}
           />
         </div>
         <div className={compact ? 'sm:max-w-[180px]' : ''}>
@@ -519,7 +512,8 @@ export function AdPlacementSitePreview({
             {t('advertising.slots.mobileTitle')}
           </div>
           <MobileWireframe
-            page={page}
+            group={wireframe}
+            editorLabel={editorLabel}
             selected={selected}
             t={t}
             draftMediaUrl={draftMediaUrl}
@@ -529,6 +523,7 @@ export function AdPlacementSitePreview({
             onToggle={toggle}
             onSlotClear={onSlotClear}
             onSlotUploadRequest={onSlotUploadRequest}
+            onSlotReplaceRequest={onSlotReplaceRequest}
           />
         </div>
       </div>
@@ -552,7 +547,7 @@ export function AdPlacementSitePreview({
               aspect: AD_SLOT_CONTAINER_SPECS.side_left.aspect,
             })}
           </li>
-          {page === 'home' && (
+          {wireframe.adPageKey === 'home' && wireframe.desktop.center && (
             <li>
               {interpolateTranslation(t('advertising.catalog.sizesLegendCenter'), {
                 iw: AD_SLOT_CONTAINER_SPECS.center.imageW,

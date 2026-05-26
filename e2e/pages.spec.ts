@@ -37,14 +37,8 @@ const PUBLIC_WITH_RAILS: Array<{
   },
   {
     path: '/create-ad',
-    heading: /Створити оголошення|Create a construction job request|Create a listing|Post an ad/i,
+    heading: /Створити будівельний запит|Create a construction job request|Create a listing|Post an ad/i,
   },
-]
-
-const PUBLIC_GUTTER_ONLY: Array<{
-  path: string
-  heading: RegExp
-}> = [
   {
     path: '/advertising',
     heading: /Додайте рекламу|Add your ad and choose/i,
@@ -53,6 +47,12 @@ const PUBLIC_GUTTER_ONLY: Array<{
     path: '/advertise',
     heading: /Додайте рекламу|Add your ad and choose/i,
   },
+]
+
+const PUBLIC_GUTTER_ONLY: Array<{
+  path: string
+  heading: RegExp
+}> = [
   { path: '/login', heading: /Вхід до DImarket|Sign In/i },
   {
     path: '/register',

@@ -223,8 +223,8 @@ export function Profile() {
   }
 
   return (
-    <div className="py-8 pb-24 lg:pb-8">
-      <div className="space-y-5">
+    <div className="layout-page-content py-8 pb-24 lg:pb-8">
+      <div className="mx-auto max-w-4xl space-y-5">
         <div className="glass-panel fade-rise overflow-hidden">
           <div className="relative h-32 rounded-t-[26px] bg-gradient-to-br from-[#8d5636] via-[#a96942] to-[#c78a60]">
             <button

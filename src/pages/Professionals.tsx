@@ -307,7 +307,7 @@ export function Professionals() {
                 {t('professionals.loadingSimple')}
               </div>
             ) : filteredProfessionals.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-3">
+              <div className="pros-grid--compact">
                 {filteredProfessionals.map((professional, index) => (
                   <div key={professional.id}>
                     <ProfessionalCard professional={professional} />

@@ -1,11 +1,10 @@
 import type { TranslationKey } from '../i18n'
 import type { JobRequestDraft } from './jobRequestDraft'
-import {
-  categoryListText,
-  type SalesBotContext,
-  type SalesBotMessage,
-  type SalesBotMessageTurn,
-  type SalesBotTurnResult,
+import type {
+  SalesBotContext,
+  SalesBotMessage,
+  SalesBotMessageTurn,
+  SalesBotTurnResult,
 } from './salesBotEngine'
 
 export function interpolateTemplate(
@@ -64,12 +63,6 @@ export function refreshAssistantTurn(
   if (turn.replyText) return turn
 
   const key = turn.replyKey
-  if (key === 'salesBot.welcome' || key === 'salesBot.categoryUnknown') {
-    return {
-      ...turn,
-      replyParams: { categories: categoryListText(ctx.categories, ctx.categoryLabels) },
-    }
-  }
   if (key === 'salesBot.askCity' && draft.categorySlug) {
     return {
       ...turn,

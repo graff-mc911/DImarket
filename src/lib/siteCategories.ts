@@ -9,6 +9,8 @@ export const SITE_CATEGORY_SLUGS = [
   'tools',
   'handyman',
   'furniture',
+  'legal-notary',
+  'accounting-finance',
   'vacancies',
   'sell-rent',
 ] as const
@@ -30,6 +32,8 @@ export const SITE_CATEGORY_CONFIG: Record<SiteCategorySlug, SiteCategoryConfig> 
   tools: { icon: '🚚' },
   handyman: { icon: '🛠️' },
   furniture: { icon: '🪑' },
+  'legal-notary': { icon: '⚖️' },
+  'accounting-finance': { icon: '📊' },
   vacancies: {
     icon: '💼',
     path: '/vacancies',

@@ -76,10 +76,10 @@ export default defineConfig({
       name: 'mobile-chrome',
       use: { ...devices['Pixel 5'] },
     },
-    // WebKit: увімкніть після `npx playwright install webkit`
-    ...(process.env.PLAYWRIGHT_SKIP_WEBKIT === '1'
-      ? []
-      : [{ name: 'mobile-safari', use: { ...devices['iPhone 13'] } }]),
+    // WebKit: `PLAYWRIGHT_WEBKIT=1` після `npx playwright install webkit`
+    ...(process.env.PLAYWRIGHT_WEBKIT === '1'
+      ? [{ name: 'mobile-safari', use: { ...devices['iPhone 13'] } }]
+      : []),
   ],
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined

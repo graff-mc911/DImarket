@@ -12,12 +12,19 @@ test.describe('Реклама на сайті', () => {
     }
   })
 
-  test('/advertising — схема розміщення та вибір слотів', async ({ page }) => {
+  test('/advertising — hero та секція розміщень', async ({ page }) => {
     await gotoPath(page, '/advertising')
     await expect(
-      page.getByText(/Схема розміщення на сайті|Placement map on the site/i),
+      page.getByRole('heading', {
+        level: 1,
+        name: /Додайте рекламу|Add your ad and choose/i,
+      }),
     ).toBeVisible()
-    await expect(page.getByText(/Де показувати рекламу|Where to show the ad/i)).toBeVisible()
-    await expect(page.getByRole('button', { name: /Головна сторінка|Home page/i }).first()).toBeVisible()
+    await expect(
+      page.getByRole('heading', { level: 2, name: /Де показувати рекламу|Where to show the ad/i }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: /Увійти для додавання|Sign in to add advertising/i }).first(),
+    ).toBeVisible()
   })
 })

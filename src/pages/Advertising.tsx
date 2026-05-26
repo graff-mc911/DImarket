@@ -62,8 +62,8 @@ import {
   formatSlotLabel,
   sideSlotId,
   slotToLegacyPlacement,
-  type AdPageKey,
 } from '../lib/adPlacementSlots'
+import { editorPageFromSlots, type PlacementEditorPageId } from '../lib/adPlacementPages'
 
 // ── Типи ──────────────────────────────────────────────────────────────────────
 type MediaType      = 'image' | 'gif' | 'video'
@@ -72,12 +72,6 @@ type FeedbackState = { type: 'success' | 'error'; text: string }
 
 const PRICE_PER_CITY_PER_WEEK = 25
 
-function pageKeyFromSlots(slots: string[]): AdPageKey {
-  for (const p of ['home', 'listings', 'professionals', 'default'] as AdPageKey[]) {
-    if (slots.some((id) => id.startsWith(`${p}_`))) return p
-  }
-  return 'home'
-}
 
 // ── Головний компонент ─────────────────────────────────────────────────────────
 
@@ -102,13 +96,13 @@ export function Advertising() {
     } catch { /* ignore */ }
     return [sideSlotId('home', 'right', 1)]
   })
-  const [placementPreviewPage, setPlacementPreviewPage] = useState<AdPageKey>('home')
+  const [placementPreviewPage, setPlacementPreviewPage] = useState<PlacementEditorPageId>('home')
 
   const handleSlotsChange = useCallback((slots: string[]) => {
     const clean = sanitizeSlotsForPurchase(slots)
     setSelectedSlots(clean)
     setSlotMedia((prev) => ensureSlotMediaForSelection(clean, prev))
-    setPlacementPreviewPage(pageKeyFromSlots(clean))
+    setPlacementPreviewPage(editorPageFromSlots(clean))
   }, [])
 
   // Геотаргетинг
@@ -481,8 +475,8 @@ export function Advertising() {
                 hideHeader
                 selectedSlots={selectedSlots}
                 onSelectedSlotsChange={handleSlotsChange}
-                page={placementPreviewPage}
-                onPageChange={setPlacementPreviewPage}
+                editorPage={placementPreviewPage}
+                onEditorPageChange={setPlacementPreviewPage}
                 slotMedia={slotMedia}
                 onSlotMediaChange={setSlotMedia}
                 fallbackMediaUrl={mediaUrl}

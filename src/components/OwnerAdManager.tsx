@@ -23,6 +23,7 @@ import {
   sideSlotId,
   type AdPageKey,
 } from '../lib/adPlacementSlots'
+import { editorPageFromSlots, type PlacementEditorPageId } from '../lib/adPlacementPages'
 import { formatSupabaseError } from '../lib/supabaseErrors'
 import {
   buildOwnerCampaignPayload,
@@ -109,14 +110,19 @@ export function OwnerAdManager({
   const [mediaStyle, setMediaStyle] = useState<AdMediaStyle>(DEFAULT_AD_MEDIA_STYLE)
   const [bannerMediaType, setBannerMediaType] = useState<AdCampaignMediaState['mediaType']>('image')
   const [saving, setSaving] = useState(false)
-  const [placementPreviewPage, setPlacementPreviewPage] = useState<AdPageKey>('home')
+  const [placementPreviewPage, setPlacementPreviewPage] = useState<PlacementEditorPageId>('home')
   const [slotMedia, setSlotMedia] = useState<SlotMediaMap>({})
 
   function pageKeyFromSlots(slots: string[]): AdPageKey {
+    // Legacy ключ сторінки потрібен для sideSlotId() та існуючих слотів у власному менеджері.
     for (const p of AD_PAGE_KEYS) {
       if (slots.some((id) => id.startsWith(`${p}_`))) return p
     }
     return 'home'
+  }
+
+  function previewEditorPageFromSlots(slots: string[]): PlacementEditorPageId {
+    return editorPageFromSlots(slots)
   }
 
   const ownerCampaigns = useMemo(
@@ -155,7 +161,7 @@ export function OwnerAdManager({
     setEditingId(campaign.id)
     const nextForm = campaignToForm(campaign)
     setForm(nextForm)
-    setPlacementPreviewPage(pageKeyFromSlots(nextForm.selectedSlots))
+    setPlacementPreviewPage(previewEditorPageFromSlots(nextForm.selectedSlots))
     setSlotMedia(slotMediaMapFromCampaign(campaign))
     applyMediaState(mediaStateFromCampaign(campaign))
     setFormOpen(true)
@@ -462,11 +468,11 @@ export function OwnerAdManager({
               selectedSlots={form.selectedSlots}
               onSelectedSlotsChange={(slots) => {
                 setForm((p) => ({ ...p, selectedSlots: slots }))
-                setPlacementPreviewPage(pageKeyFromSlots(slots))
+                setPlacementPreviewPage(previewEditorPageFromSlots(slots))
                 setSlotMedia((prev) => ensureSlotMediaForSelection(slots, prev))
               }}
-              page={placementPreviewPage}
-              onPageChange={setPlacementPreviewPage}
+              editorPage={placementPreviewPage}
+              onEditorPageChange={setPlacementPreviewPage}
               slotMedia={slotMedia}
               onSlotMediaChange={setSlotMedia}
               fallbackMediaUrl={mediaUrl}

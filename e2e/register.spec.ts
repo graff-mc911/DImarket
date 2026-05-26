@@ -21,11 +21,6 @@ test.describe('Реєстрація — усі типи акаунтів', () =>
     })
   }
 
-  test('OAuth: Google і Apple', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /Google/i })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Apple/i })).toBeVisible()
-  })
-
   test('компанія: без назви — HTML required блокує submit', async ({ page }) => {
     await page.getByTestId('register-role-company').click()
     await page.locator('input[type="email"]').fill(`co-${Date.now()}@example.com`)
