@@ -59,6 +59,8 @@ export function AdPerSlotMediaEditor({
   const { t } = useApp()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uploadSlotRef = useRef<string | null>(null)
+  const slotMediaRef = useRef(slotMedia)
+  slotMediaRef.current = slotMedia
   const [focusedSlotId, setFocusedSlotId] = useState<string | null>(null)
 
   const sorted = useMemo(() => sortSlotsForEditor(selectedSlots), [selectedSlots])
@@ -74,20 +76,21 @@ export function AdPerSlotMediaEditor({
     ? (slotMedia[activeSlotId] ?? emptySlotMediaEntry())
     : emptySlotMediaEntry()
 
-  const entryForSlot = (slotId: string) => slotMedia[slotId] ?? emptySlotMediaEntry()
+  const entryForSlot = (slotId: string) =>
+    slotMediaRef.current[slotId] ?? emptySlotMediaEntry()
 
   const patchSlot = useCallback(
     (slotId: string, entry: SlotMediaEntry) => {
-      onSlotMediaChange({ ...slotMedia, [slotId]: entry })
+      onSlotMediaChange({ ...slotMediaRef.current, [slotId]: entry })
     },
-    [onSlotMediaChange, slotMedia],
+    [onSlotMediaChange],
   )
 
   const clearSlot = useCallback(
     (slotId: string) => {
-      onSlotMediaChange({ ...slotMedia, [slotId]: emptySlotMediaEntry() })
+      onSlotMediaChange({ ...slotMediaRef.current, [slotId]: emptySlotMediaEntry() })
     },
-    [onSlotMediaChange, slotMedia],
+    [onSlotMediaChange],
   )
 
   const upload = useAdBannerMediaUpload({
@@ -98,7 +101,11 @@ export function AdPerSlotMediaEditor({
       const slotId = uploadSlotRef.current || focusedSlotId
       if (!slotId) return
       const entry = entryForSlot(slotId)
-      patchSlot(slotId, { ...entry, mediaUrl: url })
+      patchSlot(slotId, {
+        ...entry,
+        mediaUrl: url,
+        slideUrls: url ? (entry.slideUrls.length ? [url, ...entry.slideUrls.slice(1)] : [url]) : [],
+      })
     },
     setSlideUrls: (urls) => {
       const slotId = uploadSlotRef.current || focusedSlotId
@@ -108,7 +115,7 @@ export function AdPerSlotMediaEditor({
       patchSlot(slotId, {
         ...entry,
         slideUrls: next,
-        mediaUrl: next[0] || entry.mediaUrl,
+        mediaUrl: next[0] ?? '',
       })
     },
     setMediaType: (type) => {
@@ -314,9 +321,7 @@ export function AdPerSlotMediaEditor({
           const slot = uploadSlotRef.current || focusedSlotId
           if (files.length && slot) {
             if (slot !== focusedSlotId) setFocusedSlotId(slot)
-            void upload.uploadFiles(files, {
-              append: slotMediaEntryHasMedia(entryForSlot(slot)),
-            })
+            void upload.uploadFiles(files, { append: false })
           }
           e.target.value = ''
           uploadSlotRef.current = null

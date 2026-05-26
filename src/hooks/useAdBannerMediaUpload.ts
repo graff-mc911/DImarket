@@ -74,8 +74,10 @@ export function useAdBannerMediaUpload({
       if (!list.length) return
 
       const append =
-        options?.append === true ||
-        (Boolean(mediaUrl.trim() || slideUrls.length) && canMultiImage)
+        options?.append === false
+          ? false
+          : options?.append === true ||
+            (Boolean(mediaUrl.trim() || slideUrls.length) && canMultiImage)
 
       if (!append) {
         const first = list[0]
