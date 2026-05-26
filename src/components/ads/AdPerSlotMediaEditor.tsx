@@ -3,6 +3,7 @@ import { Copy, Trash2, Upload } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { AdMediaEditor } from '../AdMediaEditor'
 import { AdPlacementSitePreview } from '../AdPlacementSitePreview'
+import { AdPlacementPagesBar } from './AdPlacementPagesBar'
 import { useAdBannerMediaUpload } from '../../hooks/useAdBannerMediaUpload'
 import {
   emptySlotMediaEntry,
@@ -31,8 +32,10 @@ type AdPerSlotMediaEditorProps = {
   onFallbackSlideUrls: (urls: string[] | ((p: string[]) => string[])) => void
   onFallbackMediaType: (t: BannerMediaType) => void
   onFallbackMediaStyle: (s: AdMediaStyle) => void
-  /** Заголовок картки (напр. «Блоки та банери на сайті») */
+  /** Заголовок картки (напр. «Де показувати рекламу») */
   cardTitle?: string
+  /** Заголовок уже зовні секції */
+  hideHeader?: boolean
 }
 
 export function AdPerSlotMediaEditor({
@@ -51,6 +54,7 @@ export function AdPerSlotMediaEditor({
   onFallbackMediaType,
   onFallbackMediaStyle,
   cardTitle,
+  hideHeader = false,
 }: AdPerSlotMediaEditorProps) {
   const { t } = useApp()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -159,9 +163,24 @@ export function AdPerSlotMediaEditor({
   const title = cardTitle ?? t('advertising.placementsSection.title')
   const focusedHasMedia = slotMediaEntryHasMedia(focusedEntry)
   const focusedLayout = focusedSlotId ? layoutKeyFromSlotId(focusedSlotId) : 'center'
+  const previewPage = pageProp ?? 'home'
+
+  const previewProps = {
+    compact: true as const,
+    hidePageTabs: true as const,
+    selected: selectedSlots,
+    slotMedia,
+    focusedSlotId,
+    onFocusSlot: setFocusedSlotId,
+    onSlotClear: clearSlot,
+    onSlotUploadRequest: requestUpload,
+    page: previewPage,
+    onPageChange,
+  }
 
   return (
     <div className="space-y-3">
+      {!hideHeader && (
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="text-base font-extrabold text-[#2f2a24]">{title}</h3>
@@ -187,6 +206,17 @@ export function AdPerSlotMediaEditor({
           </button>
         </div>
       </div>
+      )}
+
+      {onPageChange && (
+        <AdPlacementPagesBar
+          activePage={previewPage}
+          onPageChange={onPageChange}
+          selectedSlots={selectedSlots}
+        />
+      )}
+
+      <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.slotStudio.desc')}</p>
 
       <div className="grid gap-3 lg:grid-cols-[minmax(0,220px)_1fr]">
         <aside className="order-2 rounded-[16px] border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.45)] p-3 lg:order-1">
@@ -237,30 +267,9 @@ export function AdPerSlotMediaEditor({
 
         <div className="order-1 min-w-0 lg:order-2">
           {onSelectedSlotsChange ? (
-            <AdPlacementSitePreview
-              compact
-              selected={selectedSlots}
-              onChange={onSelectedSlotsChange}
-              page={pageProp}
-              onPageChange={onPageChange}
-              slotMedia={slotMedia}
-              focusedSlotId={focusedSlotId}
-              onFocusSlot={setFocusedSlotId}
-              onSlotClear={clearSlot}
-              onSlotUploadRequest={requestUpload}
-            />
+            <AdPlacementSitePreview {...previewProps} onChange={onSelectedSlotsChange} />
           ) : (
-            <AdPlacementSitePreview
-              compact
-              selected={selectedSlots}
-              slotMedia={slotMedia}
-              focusedSlotId={focusedSlotId}
-              onFocusSlot={setFocusedSlotId}
-              onSlotClear={clearSlot}
-              onSlotUploadRequest={requestUpload}
-              page={pageProp}
-              onPageChange={onPageChange}
-            />
+            <AdPlacementSitePreview {...previewProps} />
           )}
         </div>
       </div>

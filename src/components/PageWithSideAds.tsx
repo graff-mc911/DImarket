@@ -13,6 +13,9 @@ export function adPageForPath(path: string): SideAdsPage {
   if (path === '/') return 'home'
   if (path === '/listings' || path === '/vacancies' || path === '/sell-rent') return 'listings'
   if (path === '/professionals') return 'professionals'
+  if (path === '/advertising' || path === '/advertise' || path === '/create-ad' || path === '/assistant/job') {
+    return 'default'
+  }
   return 'default'
 }
 
@@ -26,7 +29,9 @@ export function pathUsesSideAdRails(path: string): boolean {
     path === '/professionals' ||
     path === '/contact' ||
     path === '/create-ad' ||
-    path === '/assistant/job'
+    path === '/assistant/job' ||
+    path === '/advertising' ||
+    path === '/advertise'
   ) {
     return true
   }

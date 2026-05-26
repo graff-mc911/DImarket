@@ -1,7 +1,6 @@
 import { FileText } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { SalesChatbot } from '../components/SalesChatbot'
-import { AdSideBannersPromo } from '../components/ads/AdSideBannersPromo'
 import { navigateTo } from '../lib/navigation'
 
 /** Сторінка AI Sales Chatbot — діалог → структуроване оголошення. */
@@ -13,8 +12,6 @@ export function JobRequestChat() {
       <h1 className="mb-5 text-center text-2xl font-extrabold text-[#2f2a24] md:text-3xl">
         {t('salesBot.pageTitle')}
       </h1>
-
-      <AdSideBannersPromo page="home" />
 
       <div className="mt-6">
         <SalesChatbot />

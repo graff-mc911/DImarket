@@ -468,6 +468,47 @@ export function Advertising() {
           </div>
         </section>
 
+        <section id="ad-placements" className="glass-card mt-6 p-5 md:p-6">
+          <h2 className="text-xl font-extrabold text-[#2f2a24] md:text-2xl">
+            {t('advertising.placementsSection.title')}
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-[#6f665d]">
+            {t('advertising.placementsSection.desc')}
+          </p>
+          {user ? (
+            <div className="mt-4 rounded-[22px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-3 md:p-4">
+              <AdPerSlotMediaEditor
+                hideHeader
+                selectedSlots={selectedSlots}
+                onSelectedSlotsChange={handleSlotsChange}
+                page={placementPreviewPage}
+                onPageChange={setPlacementPreviewPage}
+                slotMedia={slotMedia}
+                onSlotMediaChange={setSlotMedia}
+                fallbackMediaUrl={mediaUrl}
+                fallbackSlideUrls={slideUrls}
+                fallbackMediaType={mediaType}
+                fallbackMediaStyle={mediaStyle}
+                onFallbackMediaUrl={setMediaUrl}
+                onFallbackSlideUrls={setSlideUrls}
+                onFallbackMediaType={setMediaType}
+                onFallbackMediaStyle={setMediaStyle}
+              />
+            </div>
+          ) : (
+            <p className="mt-4 text-sm text-[#6f665d]">
+              {t('advertising.form.loginRequired')}{' '}
+              <button
+                type="button"
+                onClick={() => navigateTo('/login')}
+                className="font-semibold text-[#6366f1] hover:underline"
+              >
+                {t('advertising.form.loginBtn')}
+              </button>
+            </p>
+          )}
+        </section>
+
         <section className="mt-6 grid gap-6 xl:grid-cols-[1.12fr_0.88fr]">
           <div className="space-y-6">
 
@@ -497,26 +538,6 @@ export function Advertising() {
                       {feedback.text}
                     </div>
                   )}
-
-                  <div className="rounded-[22px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-3 md:p-4">
-                    <AdPerSlotMediaEditor
-                      cardTitle={t('advertising.placementsSection.title')}
-                      selectedSlots={selectedSlots}
-                      onSelectedSlotsChange={handleSlotsChange}
-                      page={placementPreviewPage}
-                      onPageChange={setPlacementPreviewPage}
-                      slotMedia={slotMedia}
-                      onSlotMediaChange={setSlotMedia}
-                      fallbackMediaUrl={mediaUrl}
-                      fallbackSlideUrls={slideUrls}
-                      fallbackMediaType={mediaType}
-                      fallbackMediaStyle={mediaStyle}
-                      onFallbackMediaUrl={setMediaUrl}
-                      onFallbackSlideUrls={setSlideUrls}
-                      onFallbackMediaType={setMediaType}
-                      onFallbackMediaStyle={setMediaStyle}
-                    />
-                  </div>
 
                   {/* Назва, опис, посилання — у стилі карток застосунку */}
                   <div className="grid gap-3">

@@ -458,7 +458,7 @@ export function OwnerAdManager({
 
           <div className="mt-5 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.2)] p-3 md:p-4">
             <AdPerSlotMediaEditor
-              cardTitle="Блоки та банери на сайті *"
+              cardTitle={t('advertising.placementsSection.title')}
               selectedSlots={form.selectedSlots}
               onSelectedSlotsChange={(slots) => {
                 setForm((p) => ({ ...p, selectedSlots: slots }))

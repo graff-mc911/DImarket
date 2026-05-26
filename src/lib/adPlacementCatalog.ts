@@ -104,6 +104,7 @@ export const AD_PLACEMENT_CATALOG: AdPlacementSlotDef[] = [
     '/settings',
     '/profile',
     '/create-ad',
+    '/assistant/job',
     '/dashboard',
     '/messages',
     '/favorites',

@@ -39,6 +39,8 @@ type AdPlacementSitePreviewProps = {
   onSlotClear?: (slotId: string) => void
   onSlotUploadRequest?: (slotId: string) => void
   compact?: boolean
+  /** Сторінки перемикаються зовні (AdPlacementPagesBar) */
+  hidePageTabs?: boolean
 }
 
 function slotSizeLabels(
@@ -373,6 +375,7 @@ export function AdPlacementSitePreview({
   onSlotClear,
   onSlotUploadRequest,
   compact = false,
+  hidePageTabs = false,
 }: AdPlacementSitePreviewProps) {
   const { t } = useApp()
   const groups = slotGroupsForPurchasePicker()
@@ -441,6 +444,7 @@ export function AdPlacementSitePreview({
 
   return (
     <div className="space-y-4">
+      {!hidePageTabs && (
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap gap-2">
           {groups.map((g) => {
@@ -473,6 +477,18 @@ export function AdPlacementSitePreview({
           </button>
         )}
       </div>
+      )}
+      {hidePageTabs && interactive && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={selectAllForPage}
+            className="text-xs font-semibold text-[#6366f1] hover:underline"
+          >
+            {t('advertising.slots.togglePage')}
+          </button>
+        </div>
+      )}
 
       {interactive && (
         <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.catalog.tapToSelect')}</p>
