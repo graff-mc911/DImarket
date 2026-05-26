@@ -187,6 +187,52 @@
     background-color: var(--bg-canvas);
   }
 
+  /** Fixed side rails + scrollable main (header/footer лишаються з App) */
+  .app-page-with-fixed-rails {
+    position: relative;
+    width: 100%;
+  }
+
+  .app-page-main {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding-inline: max(var(--layout-gutter), env(safe-area-inset-left, 0px))
+      max(var(--layout-gutter), env(safe-area-inset-right, 0px));
+  }
+
+  @media (min-width: 80rem) {
+    .app-page-main {
+      margin-inline: min(var(--ad-side-rail-width), 12vw);
+    }
+  }
+
+  .ad-side-rail--viewport-fixed {
+    display: none;
+  }
+
+  @media (min-width: 80rem) {
+    .ad-side-rail--viewport-fixed {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      z-index: 15;
+      top: var(--header-offset);
+      bottom: 0;
+      width: min(var(--ad-side-rail-width), 12vw);
+      max-width: min(var(--ad-side-rail-width), 12vw);
+      pointer-events: auto;
+    }
+
+    .ad-side-rail--viewport-fixed.ad-side-rail--left {
+      left: max(var(--layout-gutter), env(safe-area-inset-left, 0px));
+    }
+
+    .ad-side-rail--viewport-fixed.ad-side-rail--right {
+      right: max(var(--layout-gutter), env(safe-area-inset-right, 0px));
+    }
+  }
+
   /** Контент + бокові реклами: однаковий відступ gutter до краю екрана і між колонками */
   .layout-with-side-ads {
     display: grid;

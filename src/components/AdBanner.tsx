@@ -19,6 +19,8 @@ import { pageKeyFromSideAdsPage, sideSlotId, type SideIndex } from '../lib/adPla
 interface AdBannerProps {
   position: 'left' | 'right'
   sticky?: boolean
+  /** Fixed у viewport (shell layout) */
+  fixedViewport?: boolean
   page?: 'home' | 'listings' | 'professionals' | 'default'
   stackCount?: number
   /** Якщо задано — не рахувати слоти повторно (спільний пул L/R) */
@@ -30,29 +32,31 @@ const SIDE_RAIL_CLASS = 'ad-side-rail shrink-0'
 function SideRailFrame({
   position,
   sticky,
+  fixedViewport = false,
   children,
   className = '',
   fillViewport = false,
 }: {
   position: 'left' | 'right'
   sticky: boolean
+  fixedViewport?: boolean
   children: ReactNode
   className?: string
-  /** 4 бокові слоти — колонка на всю доступну висоту вікна */
   fillViewport?: boolean
 }) {
   const positionClass = position === 'left' ? 'ad-side-rail--left' : 'ad-side-rail--right'
+  const fixedClass = fixedViewport ? ' ad-side-rail--viewport-fixed' : ''
 
   if (!sticky) {
     return (
-      <aside className={`${SIDE_RAIL_CLASS} ${positionClass} h-full min-h-full ${className}`}>
+      <aside className={`${SIDE_RAIL_CLASS} ${positionClass}${fixedClass} h-full min-h-full ${className}`}>
         {children}
       </aside>
     )
   }
 
   return (
-    <aside className={`${SIDE_RAIL_CLASS} ${positionClass} h-full min-h-0 ${className}`}>
+    <aside className={`${SIDE_RAIL_CLASS} ${positionClass}${fixedClass} h-full min-h-0 ${className}`}>
       <div
         className={
           fillViewport ? AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS : AD_SIDE_RAIL_STICKY_FIT_CLASS
@@ -67,6 +71,7 @@ function SideRailFrame({
 export function AdBanner({
   position,
   sticky = true,
+  fixedViewport = false,
   page,
   stackCount,
   stackCampaigns: stackCampaignsProp,
@@ -113,7 +118,7 @@ export function AdBanner({
     if (!stackCampaigns.some(Boolean)) return null
 
     return (
-      <SideRailFrame position={position} sticky={sticky} fillViewport>
+      <SideRailFrame position={position} sticky={sticky} fixedViewport={fixedViewport} fillViewport>
         <div className={AD_SIDE_STACK_GRID_CLASS}>
           {stackCampaigns.map((campaign, index) => {
             const slotId = sideSlotId(pageKey, position, (index + 1) as SideIndex)
@@ -142,7 +147,7 @@ export function AdBanner({
   if (!primaryCampaign && !secondaryCampaign) return null
 
   return (
-    <SideRailFrame position={position} sticky={sticky} className={sticky ? '' : 'h-fit'}>
+    <SideRailFrame position={position} sticky={sticky} fixedViewport={fixedViewport} className={sticky ? '' : 'h-fit'}>
       <div className={`flex min-h-0 flex-col overflow-hidden ${sticky ? 'max-h-full' : ''}`}>
         {primaryCampaign && (
           <div className="overflow-hidden">

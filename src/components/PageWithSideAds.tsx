@@ -1,13 +1,7 @@
-import { useMemo, type ReactNode } from 'react'
-import { AdBanner } from './AdBanner'
-import { usePaidAds } from '../contexts/PaidAdsContext'
-import { pickSideStacksForPage } from '../lib/adCampaigns'
-import { sideSlotIdsForPage } from '../lib/adPlacementCatalog'
-import { pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
+import { type ReactNode } from 'react'
+import { SideAdRails } from './SideAdRails'
 
 export type SideAdsPage = 'home' | 'listings' | 'professionals' | 'default'
-
-const SIDE_STACK_COUNT = 4
 
 export function adPageForPath(path: string): SideAdsPage {
   if (path === '/') return 'home'
@@ -53,20 +47,6 @@ export function PageWithSideAds({
   className = '',
   showSideAds = true,
 }: PageWithSideAdsProps) {
-  const { loading, getForSlots } = usePaidAds()
-  const pageKey = pageKeyFromSideAdsPage(page)
-  const sideSlots = useMemo(() => sideSlotIdsForPage(pageKey), [pageKey])
-  const sideCampaigns = useMemo(() => getForSlots(sideSlots, 24), [getForSlots, sideSlots])
-
-  const sideStacks = useMemo(
-    () => pickSideStacksForPage(sideCampaigns, SIDE_STACK_COUNT, page),
-    [sideCampaigns, page],
-  )
-
-  const hasLeftRail = !loading && sideStacks.left.some(Boolean)
-  const hasRightRail = !loading && sideStacks.right.some(Boolean)
-  const reserveRails = true
-
   if (!showSideAds) {
     return (
       <div className={`page-bg min-h-screen pb-8 ${className}`}>
@@ -76,32 +56,9 @@ export function PageWithSideAds({
   }
 
   return (
-    <div className={`page-bg min-h-screen pb-8 ${className}`}>
-      <div className="layout-with-side-ads">
-        {hasLeftRail ? (
-          <AdBanner
-            position="left"
-            sticky
-            page={page}
-            stackCount={SIDE_STACK_COUNT}
-            stackCampaigns={sideStacks.left}
-          />
-        ) : reserveRails ? (
-          <aside className="ad-side-rail ad-side-rail--left h-full min-h-full" aria-hidden />
-        ) : null}
-        <div className="layout-with-side-ads__main">{children}</div>
-        {hasRightRail ? (
-          <AdBanner
-            position="right"
-            sticky
-            page={page}
-            stackCount={SIDE_STACK_COUNT}
-            stackCampaigns={sideStacks.right}
-          />
-        ) : reserveRails ? (
-          <aside className="ad-side-rail ad-side-rail--right h-full min-h-full" aria-hidden />
-        ) : null}
-      </div>
+    <div className={`page-bg min-h-screen pb-8 app-page-with-fixed-rails ${className}`}>
+      <SideAdRails page={page} />
+      <div className="app-page-main min-w-0">{children}</div>
     </div>
   )
 }

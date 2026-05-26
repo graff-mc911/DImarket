@@ -461,21 +461,20 @@ export function Advertising() {
           </div>
         </section>
 
-        <section id="ad-placements" className="glass-card mt-6 p-5 md:p-6">
-          <h2 className="text-xl font-extrabold text-[#2f2a24] md:text-2xl">
+        <section id="ad-placements" className="glass-card mt-6 p-4 md:p-5">
+          <h2 className="text-lg font-extrabold text-[#2f2a24] md:text-xl">
             {t('advertising.placementsSection.title')}
           </h2>
-          <p className="mt-1 text-sm leading-6 text-[#6f665d]">
+          <p className="mt-1 text-xs leading-5 text-[#6f665d]">
             {t('advertising.placementsSection.desc')}
           </p>
           {user ? (
-            <div className="mt-4 rounded-[22px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-3 md:p-4">
+            <div className="mt-3 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-2.5 md:p-3">
               <AdPerSlotMediaEditor
                 hideHeader
+                hidePagePicker
                 selectedSlots={selectedSlots}
                 onSelectedSlotsChange={handleSlotsChange}
-                editorPage={placementPreviewPage}
-                onEditorPageChange={setPlacementPreviewPage}
                 slotMedia={slotMedia}
                 onSlotMediaChange={setSlotMedia}
                 fallbackMediaUrl={mediaUrl}

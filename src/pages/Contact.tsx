@@ -3,6 +3,7 @@ import { LifeBuoy, Mail, MessageSquare, Phone, Send, User } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { CenterPageAd } from '../components/CenterPageAd'
 
 type FeedbackState = {
   type: 'success' | 'error'
@@ -129,6 +130,8 @@ export function Contact() {
             )}
           </div>
         </section>
+
+        <CenterPageAd page="default" className="my-6" />
 
         <section className="mt-6">
           <div className="glass-card p-6">

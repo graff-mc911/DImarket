@@ -3,7 +3,7 @@ import { MapPin, Search, SlidersHorizontal, Star } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Profile, Category } from '../lib/types'
 import { ProfessionalCard } from '../components/ProfessionalCard'
-import { MobileAdBanner } from '../components/MobileAdBanner'
+import { CenterPageAd } from '../components/CenterPageAd'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { ConstructionWorkTypesPanel } from '../components/ConstructionWorkTypesPanel'
@@ -290,6 +290,8 @@ export function Professionals() {
                 </div>
               )}
             </section>
+
+            <CenterPageAd page="professionals" className="my-4" />
 
             <MobileAdBanner variant="horizontal" page="professionals" outerClassName="mb-4" />
 

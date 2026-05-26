@@ -166,20 +166,11 @@ try {
   const fileInput = placements.locator('input[type="file"]')
 
   for (const { pageId, slotId, file } of SLOTS) {
-    log(`Сторінка + слот: ${slotId}`)
-    await placements.getByTestId(`placement-page-${pageId}`).click()
-    await placements.locator(`[data-slot-id="${slotId}"]`).first().waitFor({ state: 'visible', timeout: 20_000 })
+    log(`Слот: ${slotId}`)
     const slot = placements.locator(`[data-slot-id="${slotId}"]`).first()
-    await slot.click()
+    await slot.waitFor({ state: 'visible', timeout: 20_000 })
     if ((await slot.getAttribute('aria-pressed')) !== 'true') {
       await slot.click()
-    }
-    const tabStillActive =
-      (await placements.getByTestId(`placement-page-${pageId}`).getAttribute('data-active')) === 'true'
-    if (tabStillActive) {
-      pass(`Вкладка «${pageId}» лишилась активною після вибору ${slotId}`)
-    } else {
-      fail(`Після вибору ${slotId} wireframe перестрибнув з «${pageId}» на іншу сторінку`)
     }
     const uploadDone = page
       .waitForResponse((r) => r.url().includes('/storage/v1/object') && r.request().method() === 'POST', {
