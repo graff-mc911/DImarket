@@ -57,3 +57,6 @@ verify_jwt = false
 
 [functions.marketplace-matching]
 verify_jwt = true
+
+[functions.marketing-agent]
+verify_jwt = false

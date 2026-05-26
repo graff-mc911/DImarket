@@ -12,6 +12,7 @@ type Action =
   | 'reject_post'
   | 'generate_preview'
   | 'run_cycle'
+  | 'cron_run'
   | 'publish_post'
   | 'analytics_summary'
   | 'registration_webhook'
@@ -156,6 +157,179 @@ async function publishTelegram(body: string): Promise<{ ok: boolean; id?: string
   return { ok: Boolean(data.ok), id: data.result?.message_id?.toString() }
 }
 
+type AdminClient = ReturnType<typeof createClient>
+
+function formatPostBody(post: { body: string; hashtags?: string[] | null }): string {
+  const tags = (post.hashtags ?? []).map((h) => `#${String(h).replace(/^#/, '')}`).join(' ')
+  return tags ? `${post.body}\n\n${tags}` : post.body
+}
+
+async function publishBlog(
+  admin: AdminClient,
+  body: string,
+): Promise<{ ok: boolean; id?: string }> {
+  const message = body.slice(0, 280)
+  await admin.from('announcements').update({ is_active: false }).eq('type', 'promo')
+  const { data, error } = await admin
+    .from('announcements')
+    .insert({
+      message,
+      type: 'promo',
+      is_active: true,
+      starts_at: new Date().toISOString(),
+    })
+    .select('id')
+    .single()
+  if (error) return { ok: false }
+  return { ok: true, id: data?.id as string }
+}
+
+async function publishPostInternal(
+  admin: AdminClient,
+  post: Record<string, unknown>,
+): Promise<{ success: boolean; externalId?: string }> {
+  const postId = String(post.id)
+  const platform = String(post.platform)
+  const fullBody = formatPostBody({
+    body: String(post.body),
+    hashtags: post.hashtags as string[] | null,
+  })
+  let success = false
+  let externalId: string | undefined
+
+  if (platform === 'telegram') {
+    const r = await publishTelegram(fullBody)
+    success = r.ok
+    externalId = r.id
+  }
+  if (!success) {
+    const blog = await publishBlog(admin, fullBody)
+    success = blog.ok
+    externalId = blog.id
+  }
+
+  await admin
+    .from('marketing_posts')
+    .update({
+      status: success ? 'published' : 'failed',
+      published_at: success ? new Date().toISOString() : null,
+      external_id: externalId ?? null,
+      publish_error: success ? null : 'publish_failed',
+    })
+    .eq('id', postId)
+
+  await admin.from('marketing_analytics').insert({
+    post_id: postId,
+    event_type: 'publish',
+    payload: { platform, success, externalId },
+  })
+
+  return { success, externalId }
+}
+
+async function runCycleInternal(admin: AdminClient): Promise<{ created: number; published: number }> {
+  const { data: config } = await admin.from('marketing_agent_config').select('*').eq('id', 'default').single()
+  if (!config?.is_running) return { created: 0, published: 0 }
+
+  const markets = (config.target_markets?.length ? config.target_markets : DEFAULT_MARKETS) as {
+    countryCode: string
+    languageCode: string
+  }[]
+  const platforms = (config.platforms?.length ? config.platforms : ['blog', 'telegram']) as string[]
+  const roles = ['client', 'master', 'company', 'advertiser']
+  const { data: existing } = await admin.from('marketing_posts').select('content_hash').limit(500)
+  const hashes = new Set((existing ?? []).map((r) => r.content_hash).filter(Boolean))
+
+  let created = 0
+  const roleStart = config.next_role_index ?? 0
+  const slotCount = config.frequency === 'hourly' ? 4 : config.frequency === 'weekly' ? 16 : 8
+
+  for (let i = 0; i < Math.min(slotCount, markets.length * platforms.length); i++) {
+    const market = markets[i % markets.length]
+    const platform = platforms[i % platforms.length]
+    const role = roles[(roleStart + i) % roles.length]
+    const prompt = `${DIMARKET_KNOWLEDGE}
+Unique post: role ${role}, ${platform}, ${market.languageCode}, ${market.countryCode}. JSON only.`
+    const gen = await generateWithLlm(prompt)
+    const parsed = parseContentJson(gen?.text ?? '', role)
+    const hash = contentHash(parsed.body)
+    if (hashes.has(hash)) continue
+    hashes.add(hash)
+    const status = config.auto_publish ? 'approved' : 'pending_review'
+    const { data: inserted } = await admin
+      .from('marketing_posts')
+      .insert({
+        role_target: role,
+        platform,
+        country_code: market.countryCode,
+        language_code: market.languageCode,
+        body: parsed.body,
+        hashtags: parsed.hashtags,
+        image_prompt: parsed.imagePrompt ?? null,
+        content_hash: hash,
+        llm_provider: gen?.provider ?? 'template',
+        status,
+      })
+      .select('*')
+      .single()
+
+    created++
+    if (config.auto_publish && inserted) {
+      await publishPostInternal(admin, inserted as Record<string, unknown>)
+    }
+  }
+
+  await admin
+    .from('marketing_agent_config')
+    .update({
+      last_run_at: new Date().toISOString(),
+      next_role_index: (roleStart + created) % 4,
+    })
+    .eq('id', 'default')
+
+  const { data: approved } = await admin
+    .from('marketing_posts')
+    .select('*')
+    .eq('status', 'approved')
+    .limit(10)
+
+  let published = config.auto_publish ? created : 0
+  if (!config.auto_publish) {
+    for (const post of approved ?? []) {
+      const r = await publishPostInternal(admin, post as Record<string, unknown>)
+      if (r.success) published++
+    }
+  }
+
+  await admin.from('marketing_analytics').insert({
+    event_type: 'cycle_complete',
+    payload: { created, published },
+  })
+
+  return { created, published }
+}
+
+function verifyCronAuth(req: Request): boolean {
+  const secret = Deno.env.get('MARKETING_CRON_SECRET')
+  const header = req.headers.get('x-cron-secret')
+  if (secret && header === secret) return true
+  const auth = req.headers.get('Authorization') ?? ''
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  if (serviceKey && auth === `Bearer ${serviceKey}`) return true
+  return false
+}
+
+function cronIsDue(config: { frequency?: string; last_run_at?: string | null }): boolean {
+  const last = config.last_run_at ? new Date(config.last_run_at).getTime() : 0
+  const gap =
+    config.frequency === 'hourly'
+      ? 55 * 60 * 1000
+      : config.frequency === 'weekly'
+        ? 6.5 * 24 * 60 * 60 * 1000
+        : 23 * 60 * 60 * 1000
+  return Date.now() - last >= gap
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders })
@@ -173,6 +347,26 @@ Deno.serve(async (req: Request) => {
 
   const action = body.action ?? 'status'
 
+  if (action === 'cron_run') {
+    if (!verifyCronAuth(req)) {
+      return jsonResponse({ ok: false, error: 'forbidden' }, 403)
+    }
+    const admin = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    )
+    const { data: config } = await admin.from('marketing_agent_config').select('*').eq('id', 'default').single()
+    if (!config?.is_running) {
+      return jsonResponse({ ok: true, data: { skipped: true, reason: 'agent_stopped' } })
+    }
+    const force = body.payload?.force === true
+    if (!force && !cronIsDue(config)) {
+      return jsonResponse({ ok: true, data: { skipped: true, reason: 'not_due' } })
+    }
+    const result = await runCycleInternal(admin)
+    return jsonResponse({ ok: true, data: result })
+  }
+
   if (action === 'registration_webhook') {
     const admin = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -184,6 +378,19 @@ Deno.serve(async (req: Request) => {
     const countryCode = String(body.payload?.countryCode ?? 'UA')
 
     if (!userId) return jsonResponse({ ok: false, error: 'missing_user' }, 400)
+
+    const authHeader = req.headers.get('Authorization')
+    if (authHeader) {
+      const userClient = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_ANON_KEY')!,
+        { global: { headers: { Authorization: authHeader } } },
+      )
+      const { data: { user } } = await userClient.auth.getUser()
+      if (!user || user.id !== userId) {
+        return jsonResponse({ ok: false, error: 'forbidden' }, 403)
+      }
+    }
 
     await admin.from('marketing_registration_attribution').insert({
       user_id: userId,
@@ -211,12 +418,9 @@ Write a short welcome message in language "${languageCode}" for new ${userRole} 
       status: 'approved',
       llm_provider: gen?.provider ?? 'template',
       content_hash: contentHash(parsed.body),
-    }).select('id').single()
+    }).select('*').single()
 
-    const config = await admin.from('marketing_agent_config').select('auto_publish').eq('id', 'default').maybeSingle()
-    if (config.data?.auto_publish) {
-      await publishTelegram(parsed.body)
-    }
+    const { data: agentCfg } = await admin.from('marketing_agent_config').select('auto_publish').eq('id', 'default').maybeSingle()
 
     const { data: attrRows } = await admin
       .from('marketing_registration_attribution')
@@ -231,7 +435,38 @@ Write a short welcome message in language "${languageCode}" for new ${userRole} 
         .eq('id', attrRows[0].id)
     }
 
-    return jsonResponse({ ok: true, data: { postId: post?.id, welcome: parsed.body } })
+    let boostPostId: string | null = null
+    if (userRole === 'master' || userRole === 'company') {
+      const boostPrompt = `${DIMARKET_KNOWLEDGE}
+New ${userRole} joined DiMarket in ${countryCode}. Write a short promo encouraging others to hire/register. Lang: ${languageCode}. JSON: {"body":"","hashtags":[]}`
+      const boostGen = await generateWithLlm(boostPrompt)
+      const boostParsed = parseContentJson(boostGen?.text ?? '', userRole)
+      const { data: boostPost } = await admin.from('marketing_posts').insert({
+        role_target: userRole,
+        platform: 'blog',
+        country_code: countryCode,
+        language_code: languageCode,
+        content_kind: 'social_post',
+        body: boostParsed.body,
+        hashtags: boostParsed.hashtags,
+        status: 'approved',
+        llm_provider: boostGen?.provider ?? 'template',
+        content_hash: contentHash(boostParsed.body + Date.now()),
+      }).select('*').single()
+      if (boostPost) {
+        boostPostId = boostPost.id as string
+        await publishPostInternal(admin, boostPost as Record<string, unknown>)
+      }
+    }
+
+    if (agentCfg?.auto_publish && post) {
+      await publishPostInternal(admin, post as Record<string, unknown>)
+    }
+
+    return jsonResponse({
+      ok: true,
+      data: { postId: post?.id, welcome: parsed.body, boostPostId },
+    })
   }
 
   const auth = await requireAdmin(req)
@@ -321,72 +556,19 @@ JSON: {"body":"","hashtags":[],"title":"","imagePrompt":""}`
       }
 
       case 'run_cycle': {
-        const { data: config } = await admin.from('marketing_agent_config').select('*').eq('id', 'default').single()
+        const { data: config } = await admin.from('marketing_agent_config').select('is_running').eq('id', 'default').single()
         if (!config?.is_running) {
           return jsonResponse({ ok: false, error: 'agent_stopped' }, 400)
         }
-        const markets = (config.target_markets?.length ? config.target_markets : DEFAULT_MARKETS) as { countryCode: string; languageCode: string }[]
-        const platforms = (config.platforms?.length ? config.platforms : ['telegram']) as string[]
-        const roles = ['client', 'master', 'company', 'advertiser']
-        const { data: existing } = await admin.from('marketing_posts').select('content_hash').limit(300)
-        const hashes = new Set((existing ?? []).map((r) => r.content_hash).filter(Boolean))
-
-        let created = 0
-        const roleStart = config.next_role_index ?? 0
-        for (let i = 0; i < Math.min(8, markets.length * platforms.length); i++) {
-          const market = markets[i % markets.length]
-          const platform = platforms[i % platforms.length]
-          const role = roles[(roleStart + i) % roles.length]
-          const prompt = `${DIMARKET_KNOWLEDGE}
-Unique post: role ${role}, ${platform}, ${market.languageCode}, ${market.countryCode}. JSON only.`
-          const gen = await generateWithLlm(prompt)
-          const parsed = parseContentJson(gen?.text ?? '', role)
-          const hash = contentHash(parsed.body)
-          if (hashes.has(hash)) continue
-          hashes.add(hash)
-          const status = config.auto_publish ? 'approved' : 'pending_review'
-          await admin.from('marketing_posts').insert({
-            role_target: role,
-            platform,
-            country_code: market.countryCode,
-            language_code: market.languageCode,
-            body: parsed.body,
-            hashtags: parsed.hashtags,
-            image_prompt: parsed.imagePrompt ?? null,
-            content_hash: hash,
-            llm_provider: gen?.provider ?? 'template',
-            status,
-          })
-          created++
-        }
-        await admin.from('marketing_agent_config').update({
-          last_run_at: new Date().toISOString(),
-          next_role_index: (roleStart + created) % 4,
-        }).eq('id', 'default')
-        return jsonResponse({ ok: true, data: { created } })
+        const result = await runCycleInternal(admin)
+        return jsonResponse({ ok: true, data: result })
       }
 
       case 'publish_post': {
         const postId = String(body.payload?.postId ?? '')
         const { data: post } = await admin.from('marketing_posts').select('*').eq('id', postId).single()
         if (!post) return jsonResponse({ ok: false, error: 'not_found' }, 404)
-        let success = false
-        let externalId: string | undefined
-        if (post.platform === 'telegram') {
-          const r = await publishTelegram(post.body)
-          success = r.ok
-          externalId = r.id
-        }
-        await admin.from('marketing_posts').update({
-          status: success ? 'published' : 'failed',
-          published_at: success ? new Date().toISOString() : null,
-          external_id: externalId ?? null,
-        }).eq('id', postId)
-        await admin.from('marketing_analytics').insert({
-          post_id: postId,
-          event_type: 'publish',
-          payload: { platform: post.platform, success },
-        })
+        const { success, externalId } = await publishPostInternal(admin, post as Record<string, unknown>)
         return jsonResponse({ ok: true, data: { success, externalId } })
       }
 

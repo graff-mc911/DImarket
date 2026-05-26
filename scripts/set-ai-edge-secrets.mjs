@@ -56,6 +56,9 @@ if (env.TELEGRAM_CHANNEL_ID?.trim()) args.push(`TELEGRAM_CHANNEL_ID=${env.TELEGR
 if (env.ANTHROPIC_API_KEY?.trim()) args.push(`ANTHROPIC_API_KEY=${env.ANTHROPIC_API_KEY.trim()}`)
 if (env.ANTHROPIC_MODEL?.trim()) args.push(`ANTHROPIC_MODEL=${env.ANTHROPIC_MODEL.trim()}`)
 if (env.DEEPL_API_KEY?.trim()) args.push(`DEEPL_API_KEY=${env.DEEPL_API_KEY.trim()}`)
+if (env.MARKETING_CRON_SECRET?.trim()) {
+  args.push(`MARKETING_CRON_SECRET=${env.MARKETING_CRON_SECRET.trim()}`)
+}
 if (env.WHATSAPP_ACCESS_TOKEN?.trim()) {
   args.push(`WHATSAPP_ACCESS_TOKEN=${env.WHATSAPP_ACCESS_TOKEN.trim()}`)
 }

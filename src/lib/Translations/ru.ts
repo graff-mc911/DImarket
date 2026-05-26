@@ -435,6 +435,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'marketing.admin.published': 'Опубликовано',
   'marketing.admin.pending': 'На проверке',
   'marketing.admin.registrations': 'Атрибутированные регистрации',
+  'marketing.admin.blogHint': 'Без Telegram посты публикуются как промо-баннер на dimarket.app. Cron — каждый час.',
   'ai.adImage.title': 'Адаптация изображение для баннеров',
   'ai.adImage.desc': 'Одне фото → 4 формати для desktop, sidebar, mobile, card.',
   'ai.adImage.upload': 'Загрузить и згенерувати',

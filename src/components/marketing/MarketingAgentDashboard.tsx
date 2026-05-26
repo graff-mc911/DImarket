@@ -153,6 +153,7 @@ export function MarketingAgentDashboard() {
             <div>
               <h1 className="text-2xl font-extrabold text-[#2f2a24]">{t('marketing.admin.title')}</h1>
               <p className="text-sm text-[#6f665d]">{t('marketing.admin.subtitle')}</p>
+            <p className="mt-1 text-xs text-[#9a8776]">{t('marketing.admin.blogHint')}</p>
             </div>
           </div>
           <div className="flex gap-2">

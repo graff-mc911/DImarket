@@ -462,6 +462,7 @@ export const enTranslations = {
   'marketing.admin.published': 'Published posts',
   'marketing.admin.pending': 'Pending review',
   'marketing.admin.registrations': 'Attributed registrations',
+  'marketing.admin.blogHint': 'Without Telegram, posts publish as promo banners on dimarket.app. Cron runs hourly.',
   'ai.adImage.title': 'Adapt image for ad blocks',
   'ai.adImage.desc': 'One upload → 4 banner formats.',
   'ai.adImage.upload': 'Upload and generate',

@@ -464,6 +464,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'marketing.admin.published': 'Опубліковано',
   'marketing.admin.pending': 'На перевірці',
   'marketing.admin.registrations': 'Атрибутовані реєстрації',
+  'marketing.admin.blogHint': 'Без Telegram пости публікуються як промо-банер на dimarket.app. Cron — щогодини.',
   'ai.adImage.title': 'Адаптація зображення для банерів',
   'ai.adImage.desc': 'Одне фото → 4 формати для desktop, sidebar, mobile, card.',
   'ai.adImage.upload': 'Завантажити та згенерувати',
