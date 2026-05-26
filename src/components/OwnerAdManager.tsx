@@ -9,8 +9,8 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { usePaidAds } from '../contexts/PaidAdsContext'
-import { AdBannerMediaForm } from './AdBannerMediaForm'
 import { AdPlacementSitePreview } from './AdPlacementSitePreview'
+import { AdPerSlotMediaEditor } from './ads/AdPerSlotMediaEditor'
 import { AdCampaignDraftPreview } from './AdCopyFields'
 import {
   emptyCampaignMediaState,
@@ -33,6 +33,12 @@ import {
 import type { AdCampaign } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { isDemoAdCampaign } from '../lib/demoAdCampaigns'
+import {
+  ensureSlotMediaForSelection,
+  selectedSlotsHaveMedia,
+  slotMediaMapFromCampaign,
+  type SlotMediaMap,
+} from '../lib/adSlotMedia'
 
 type OwnerAdManagerProps = {
   ownerId: string
@@ -105,6 +111,7 @@ export function OwnerAdManager({
   const [bannerMediaType, setBannerMediaType] = useState<AdCampaignMediaState['mediaType']>('image')
   const [saving, setSaving] = useState(false)
   const [placementPreviewPage, setPlacementPreviewPage] = useState<AdPageKey>('home')
+  const [slotMedia, setSlotMedia] = useState<SlotMediaMap>({})
 
   function pageKeyFromSlots(slots: string[]): AdPageKey {
     for (const p of AD_PAGE_KEYS) {
@@ -140,6 +147,7 @@ export function OwnerAdManager({
     setEditingId(null)
     setForm({ ...EMPTY_FORM, startsAt: toLocalInput(new Date().toISOString()) })
     setPlacementPreviewPage('home')
+    setSlotMedia({})
     applyMediaState(emptyCampaignMediaState())
     setFormOpen(true)
   }
@@ -149,6 +157,7 @@ export function OwnerAdManager({
     const nextForm = campaignToForm(campaign)
     setForm(nextForm)
     setPlacementPreviewPage(pageKeyFromSlots(nextForm.selectedSlots))
+    setSlotMedia(slotMediaMapFromCampaign(campaign))
     applyMediaState(mediaStateFromCampaign(campaign))
     setFormOpen(true)
   }
@@ -166,8 +175,14 @@ export function OwnerAdManager({
       onError('Вкажіть назву реклами')
       return
     }
-    if (!mediaUrl.trim() && slideUrls.length === 0) {
-      onError('Додайте зображення або URL банера')
+    const mediaState: AdCampaignMediaState = {
+      mediaUrl,
+      slideUrls,
+      mediaStyle,
+      mediaType: bannerMediaType,
+    }
+    if (!selectedSlotsHaveMedia(slotMedia, form.selectedSlots, mediaState)) {
+      onError('Додайте зображення хоча б для одного банера або базове медіа')
       return
     }
     if (!form.linkUrl.trim()) {
@@ -181,13 +196,12 @@ export function OwnerAdManager({
 
     setSaving(true)
     try {
-      const mediaState: AdCampaignMediaState = {
-        mediaUrl,
-        slideUrls,
-        mediaStyle,
-        mediaType: bannerMediaType,
-      }
-      const payload = buildOwnerCampaignPayload(form, ownerId, editingCampaign, mediaState)
+      const payload = buildOwnerCampaignPayload(
+        { ...form, slotMedia: ensureSlotMediaForSelection(form.selectedSlots, slotMedia) },
+        ownerId,
+        editingCampaign,
+        mediaState,
+      )
 
       if (editingId) {
         const { error } = await supabase.from('ad_campaigns').update(payload).eq('id', editingId)
@@ -443,28 +457,6 @@ export function OwnerAdManager({
             </select>
           </label>
 
-          <div className="mt-4 rounded-[20px] border border-white/40 bg-[rgba(255,255,255,0.25)] p-4">
-            <p className="text-sm font-semibold text-[#2f2a24]">Зображення / банер *</p>
-            <div className="mt-3">
-              <AdBannerMediaForm
-                mediaType={bannerMediaType}
-                setMediaType={(type) => {
-                  setBannerMediaType(type)
-                  setForm((p) => ({ ...p, mediaType: type }))
-                }}
-                mediaUrl={mediaUrl}
-                setMediaUrl={(url) => {
-                  setMediaUrl(url)
-                  setForm((p) => ({ ...p, mediaUrl: url }))
-                }}
-                slideUrls={slideUrls}
-                setSlideUrls={setSlideUrls}
-                mediaStyle={mediaStyle}
-                setMediaStyle={setMediaStyle}
-              />
-            </div>
-          </div>
-
           <div className="mt-5">
             <p className="mb-3 text-sm font-semibold text-[#2f2a24]">Блоки та банери на сайті *</p>
             <AdPlacementSitePreview
@@ -472,9 +464,32 @@ export function OwnerAdManager({
               onChange={(slots) => {
                 setForm((p) => ({ ...p, selectedSlots: slots }))
                 setPlacementPreviewPage(pageKeyFromSlots(slots))
+                setSlotMedia((prev) => ensureSlotMediaForSelection(slots, prev))
               }}
               page={placementPreviewPage}
               onPageChange={setPlacementPreviewPage}
+            />
+          </div>
+
+          <div className="mt-5">
+            <AdPerSlotMediaEditor
+              selectedSlots={form.selectedSlots}
+              slotMedia={slotMedia}
+              onSlotMediaChange={setSlotMedia}
+              fallbackMediaUrl={mediaUrl}
+              fallbackSlideUrls={slideUrls}
+              fallbackMediaType={bannerMediaType}
+              fallbackMediaStyle={mediaStyle}
+              onFallbackMediaUrl={(url) => {
+                setMediaUrl(url)
+                setForm((p) => ({ ...p, mediaUrl: url }))
+              }}
+              onFallbackSlideUrls={setSlideUrls}
+              onFallbackMediaType={(type) => {
+                setBannerMediaType(type)
+                setForm((p) => ({ ...p, mediaType: type }))
+              }}
+              onFallbackMediaStyle={setMediaStyle}
             />
           </div>
 

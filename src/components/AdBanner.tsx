@@ -14,7 +14,7 @@ import {
   AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS,
   adSlotTailwind,
 } from '../lib/adSlotLayout'
-import { pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
+import { pageKeyFromSideAdsPage, sideSlotId, type SideIndex } from '../lib/adPlacementSlots'
 
 interface AdBannerProps {
   position: 'left' | 'right'
@@ -115,7 +115,9 @@ export function AdBanner({
     return (
       <SideRailFrame position={position} sticky={sticky} fillViewport>
         <div className={AD_SIDE_STACK_GRID_CLASS}>
-          {stackCampaigns.map((campaign, index) => (
+          {stackCampaigns.map((campaign, index) => {
+            const slotId = sideSlotId(pageKey, position, (index + 1) as SideIndex)
+            return (
             <div
               key={campaign ? `${campaign.id}-${index}` : `empty-${index}`}
               className={AD_SIDE_STACK_CELL_CLASS}
@@ -123,13 +125,15 @@ export function AdBanner({
               {campaign ? (
                 <AdOverlayCard
                   campaign={campaign}
+                  slotId={slotId}
                   variant="stack"
                   className={adSlotTailwind.sideStackSlot}
                   showDescription
                 />
               ) : null}
             </div>
-          ))}
+            )
+          })}
         </div>
       </SideRailFrame>
     )

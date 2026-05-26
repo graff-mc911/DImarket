@@ -6,6 +6,7 @@ import {
   trackAdClick,
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
+import { campaignWithSlotMedia, mediaStateFromCampaignAndSlot } from '../lib/adSlotMedia'
 import { layoutKeyFromOverlayVariant } from '../lib/adBannerLayouts'
 import { parseAdMediaStyle } from '../lib/adMediaStyle'
 import { AdMediaDisplay } from './AdMediaDisplay'
@@ -32,6 +33,8 @@ interface AdOverlayCardProps {
   showGeo?: boolean
   /** Лише зображення на весь банер (leaderboard 4:1) */
   imageOnly?: boolean
+  /** Гранульований слот — окреме медіа з slot_media */
+  slotId?: string
 }
 
 const variantStyles: Record<
@@ -108,21 +111,34 @@ function AdCampaignMedia({
   imageClass,
   fillBanner = false,
   variant,
+  slotId,
 }: {
   campaign: AdCampaignWithAdvertiser
   imageClass: string
   fillBanner?: boolean
   variant: AdOverlayVariant
+  slotId?: string
 }) {
-  const imageSrc = getPublicBannerImageUrl(campaign)
-  const mediaStyle = parseAdMediaStyle(
-    (campaign as AdCampaignWithAdvertiser & { media_style?: unknown }).media_style,
+  const resolved = campaignWithSlotMedia(
+    campaign as AdCampaignWithAdvertiser & { slot_media?: unknown },
+    slotId,
   )
+  const slotState = mediaStateFromCampaignAndSlot(
+    campaign as AdCampaignWithAdvertiser & { slot_media?: unknown; media_style?: unknown },
+    slotId,
+  )
+  const imageSrc =
+    slotState.slideUrls[0] ||
+    slotState.mediaUrl ||
+    getPublicBannerImageUrl(resolved)
+  const mediaStyle = slotState.mediaStyle
   const layoutKey = layoutKeyFromOverlayVariant(variant)
   const mediaType =
-    campaign.media_type === 'video' || campaign.media_type === 'gif'
-      ? campaign.media_type
-      : 'image'
+    slotState.mediaType === 'video' || slotState.mediaType === 'gif'
+      ? slotState.mediaType
+      : resolved.media_type === 'video' || resolved.media_type === 'gif'
+        ? resolved.media_type
+        : 'image'
 
   return (
     <AdMediaDisplay
@@ -189,6 +205,7 @@ export function AdOverlayCard({
   showDescription = false,
   showGeo = false,
   imageOnly = false,
+  slotId,
 }: AdOverlayCardProps) {
   const { t } = useApp()
   const { brand, title } = resolveAdDisplayCopy(campaign)
@@ -208,6 +225,7 @@ export function AdOverlayCard({
     >
       <AdCampaignMedia
         campaign={campaign}
+        slotId={slotId}
         variant={variant}
         imageClass={styles.image}
         fillBanner={isLeaderboard}

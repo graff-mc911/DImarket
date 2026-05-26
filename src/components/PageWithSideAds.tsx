@@ -25,7 +25,8 @@ export function pathUsesSideAdRails(path: string): boolean {
     path === '/sell-rent' ||
     path === '/professionals' ||
     path === '/contact' ||
-    path === '/create-ad'
+    path === '/create-ad' ||
+    path === '/assistant/job'
   ) {
     return true
   }

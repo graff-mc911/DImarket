@@ -70,6 +70,7 @@ export function MobileAdBanner({
 
         <AdOverlayCard
           campaign={campaign}
+          slotId={slotId}
           variant={isHorizontal ? 'leaderboard' : 'mobile-inline'}
           className={isHorizontal ? adSlotTailwind.leaderboard : adSlotTailwind.mobileInline}
           showGeo={!isHorizontal}

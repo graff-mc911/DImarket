@@ -1,5 +1,11 @@
 import type { AdCampaign } from './types'
 import { buildCampaignMediaFields, type AdCampaignMediaState } from './adCampaignMedia'
+import {
+  buildFullCampaignMediaFields,
+  ensureSlotMediaForSelection,
+  slotMediaMapFromCampaign,
+  type SlotMediaMap,
+} from './adSlotMedia'
 import { slotToLegacyPlacement } from './adPlacementSlots'
 
 export const OWNER_MANAGED_PREFIX = 'owner_managed'
@@ -20,6 +26,7 @@ export type OwnerAdFormValues = {
   mediaUrl: string
   mediaType: 'image' | 'gif' | 'video'
   selectedSlots: string[]
+  slotMedia?: SlotMediaMap
   geoScope: 'global' | 'countries' | 'regions' | 'cities'
   status: AdCampaign['status'] | 'pending_payment'
   startsAt: string
@@ -46,7 +53,9 @@ export function buildOwnerCampaignPayload(
     title: values.title.trim(),
     description: values.description.trim() || null,
     ...(media
-      ? buildCampaignMediaFields(media)
+      ? values.slotMedia
+        ? buildFullCampaignMediaFields(values.slotMedia, values.selectedSlots, media)
+        : buildCampaignMediaFields(media)
       : {
           image_url: values.mediaUrl.trim(),
           media_url: values.mediaUrl.trim(),
@@ -86,6 +95,8 @@ export const OWNER_SLOT_PRESETS: { label: string; slots: string[] }[] = [
     slots: ['home_mob_inline_1', 'home_center', 'home_side_r1'],
   },
   { label: 'Головна — центральний блок', slots: ['home_center', 'home_mob_inline_1'] },
+  { label: 'Головна — бокові L1–L4', slots: ['home_side_l1', 'home_side_l2', 'home_side_l3', 'home_side_l4'] },
+  { label: 'Головна — бокові R1–R4', slots: ['home_side_r1', 'home_side_r2', 'home_side_r3', 'home_side_r4'] },
   { label: 'Головна — бокова колонка зліва (1-й)', slots: ['home_side_l1'] },
   { label: 'Головна — бокова колонка справа (1-й)', slots: ['home_side_r1'] },
   { label: 'Головна — широкий мобільний банер', slots: ['home_mob_inline_1'] },

@@ -35,12 +35,16 @@ import { createCheckoutSession, eurosToCents } from '../lib/stripe'
 import { AdPlacementSitePreview } from '../components/AdPlacementSitePreview'
 import { AdGeoTargeting } from '../components/AdGeoTargeting'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
-import { AdBannerMediaForm } from '../components/AdBannerMediaForm'
+import { AdPerSlotMediaEditor } from '../components/ads/AdPerSlotMediaEditor'
 import { AdImageAdaptPanel } from '../components/ads/AdImageAdaptPanel'
+import { mediaStateFromCampaign } from '../lib/adCampaignMedia'
 import {
-  buildCampaignMediaFields,
-  mediaStateFromCampaign,
-} from '../lib/adCampaignMedia'
+  buildFullCampaignMediaFields,
+  ensureSlotMediaForSelection,
+  selectedSlotsHaveMedia,
+  slotMediaMapFromCampaign,
+  type SlotMediaMap,
+} from '../lib/adSlotMedia'
 import { AdCampaignDraftPreview, AdCopyField } from '../components/AdCopyFields'
 import { DEFAULT_AD_MEDIA_STYLE, type AdMediaStyle } from '../lib/adMediaStyle'
 import {
@@ -69,6 +73,13 @@ type FeedbackState = { type: 'success' | 'error'; text: string }
 
 const PRICE_PER_CITY_PER_WEEK = 25
 
+function pageKeyFromSlots(slots: string[]): AdPageKey {
+  for (const p of ['home', 'listings', 'professionals', 'default'] as AdPageKey[]) {
+    if (slots.some((id) => id.startsWith(`${p}_`))) return p
+  }
+  return 'home'
+}
+
 // ── Головний компонент ─────────────────────────────────────────────────────────
 
 export function Advertising() {
@@ -82,11 +93,23 @@ export function Advertising() {
   const [endsAt, setEndsAt]           = useState('')
 
   // Гранульовані слоти показу (мінімум один)
-  const [selectedSlots, setSelectedSlots] = useState<string[]>([sideSlotId('home', 'right', 1)])
+  const [selectedSlots, setSelectedSlots] = useState<string[]>(() => {
+    try {
+      const raw = sessionStorage.getItem('dimarket_ad_preset_slots')
+      if (raw) {
+        sessionStorage.removeItem('dimarket_ad_preset_slots')
+        return sanitizeSlotsForPurchase(JSON.parse(raw) as string[])
+      }
+    } catch { /* ignore */ }
+    return [sideSlotId('home', 'right', 1)]
+  })
   const [placementPreviewPage, setPlacementPreviewPage] = useState<AdPageKey>('home')
 
   const handleSlotsChange = useCallback((slots: string[]) => {
-    setSelectedSlots(sanitizeSlotsForPurchase(slots))
+    const clean = sanitizeSlotsForPurchase(slots)
+    setSelectedSlots(clean)
+    setSlotMedia((prev) => ensureSlotMediaForSelection(clean, prev))
+    setPlacementPreviewPage(pageKeyFromSlots(clean))
   }, [])
 
   // Геотаргетинг
@@ -102,6 +125,7 @@ export function Advertising() {
   const [slideUrls, setSlideUrls]   = useState<string[]>([])
   const [mediaStyle, setMediaStyle] = useState<AdMediaStyle>(DEFAULT_AD_MEDIA_STYLE)
   const [editingCampaignId, setEditingCampaignId] = useState<string | null>(null)
+  const [slotMedia, setSlotMedia] = useState<SlotMediaMap>({})
 
   const hasBannerMedia = Boolean(mediaUrl.trim() || slideUrls.length)
 
@@ -225,6 +249,8 @@ export function Advertising() {
         ? sanitizeSlotsForPurchase(data.placements)
         : [sideSlotId('home', 'right', 1)]
     setSelectedSlots(slots)
+    setSlotMedia(slotMediaMapFromCampaign(campaign as AdCampaign & { slot_media?: unknown }))
+    setPlacementPreviewPage(pageKeyFromSlots(slots))
     const media = mediaStateFromCampaign(campaign)
     setMediaUrl(media.mediaUrl)
     setSlideUrls(media.slideUrls)
@@ -244,6 +270,8 @@ export function Advertising() {
     setEditingCampaignId(null)
     setTitle(''); setDescription(''); setLinkUrl('')
     setSelectedSlots([sideSlotId('home', 'right', 1)])
+    setSlotMedia({})
+    setPlacementPreviewPage('home')
     setGeoMode('global'); setSelectedCountries([]); setSelectedRegions([]); setSelectedCities([])
     setDurationWeeks(1)
     setMediaType('image')
@@ -272,7 +300,16 @@ export function Advertising() {
   const handleCreateCampaign = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!user)          { setFeedback({ type: 'error', text: t('advertising.error.noAuth') }); return }
-    if (!mediaUrl)      { setFeedback({ type: 'error', text: t('advertising.error.noMedia') }); return }
+    const fallbackMedia = {
+      mediaUrl,
+      slideUrls,
+      mediaStyle,
+      mediaType,
+    }
+    if (!selectedSlotsHaveMedia(slotMedia, selectedSlots, fallbackMedia)) {
+      setFeedback({ type: 'error', text: t('advertising.error.noMedia') })
+      return
+    }
     if (!linkUrl.trim()){ setFeedback({ type: 'error', text: t('advertising.error.noLink') }); return }
     if (!isGeoSelectionValid(geoMode, selectedCountries, selectedRegions, selectedCities)) {
       setFeedback({ type: 'error', text: t('advertising.error.noGeo') })
@@ -295,12 +332,11 @@ export function Advertising() {
 
       const campaignStatus = ownerAccount ? 'active' : 'pending_payment'
       const nowIso = now.toISOString()
-      const mediaFields = buildCampaignMediaFields({
-        mediaUrl,
-        slideUrls,
-        mediaStyle,
-        mediaType,
-      })
+      const mediaFields = buildFullCampaignMediaFields(
+        ensureSlotMediaForSelection(selectedSlots, slotMedia),
+        selectedSlots,
+        fallbackMedia,
+      )
 
       const row = {
         title:       title.trim(),
@@ -486,21 +522,19 @@ export function Advertising() {
                     </div>
                   )}
 
-                  <div>
-                    <label className="mb-3 flex items-center gap-2 text-sm font-semibold text-[#5f5a54]">
-                      <ImagePlus className="h-4 w-4" />
-                      <span>{t('advertising.form.mediaLabel')}</span>
-                      <span className="font-normal text-[#9a8776]">— {t('advertising.form.mediaMax')}</span>
-                    </label>
-                    <AdBannerMediaForm
-                      mediaType={mediaType}
-                      setMediaType={setMediaType}
-                      mediaUrl={mediaUrl}
-                      setMediaUrl={setMediaUrl}
-                      slideUrls={slideUrls}
-                      setSlideUrls={setSlideUrls}
-                      mediaStyle={mediaStyle}
-                      setMediaStyle={setMediaStyle}
+                  <div className="rounded-[22px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-4 md:p-5">
+                    <AdPerSlotMediaEditor
+                      selectedSlots={selectedSlots}
+                      slotMedia={slotMedia}
+                      onSlotMediaChange={setSlotMedia}
+                      fallbackMediaUrl={mediaUrl}
+                      fallbackSlideUrls={slideUrls}
+                      fallbackMediaType={mediaType}
+                      fallbackMediaStyle={mediaStyle}
+                      onFallbackMediaUrl={setMediaUrl}
+                      onFallbackSlideUrls={setSlideUrls}
+                      onFallbackMediaType={setMediaType}
+                      onFallbackMediaStyle={setMediaStyle}
                     />
                   </div>
 

@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { Category, Listing } from '../lib/types'
 import { MobileAdBanner } from '../components/MobileAdBanner'
+import { AdSideBannersPromo } from '../components/ads/AdSideBannersPromo'
 import { getCurrentLocation, searchLocations, LocationSuggestion } from '../lib/geocoding'
 import { navigateTo } from '../lib/navigation'
 import {
@@ -240,6 +241,7 @@ export function CreateAd() {
               </h1>
 
               <MobileAdBanner variant="horizontal" page="default" outerClassName="mt-6" />
+              <AdSideBannersPromo page="default" />
 
               {error && (
                 <div className="mt-6 rounded-[22px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">

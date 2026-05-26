@@ -14,7 +14,7 @@ export type AdCampaignMediaState = {
 }
 
 export function mediaStateFromCampaign(
-  campaign: AdCampaign & { media_style?: unknown },
+  campaign: AdCampaign & { media_style?: unknown; slot_media?: unknown },
 ): AdCampaignMediaState {
   const mediaStyle = parseAdMediaStyle(campaign.media_style)
   const primary = (campaign.media_url || campaign.image_url || '').trim()
