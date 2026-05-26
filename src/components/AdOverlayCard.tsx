@@ -50,7 +50,7 @@ const variantStyles: Record<
 > = {
   stack: {
     shell: 'flex h-full w-full min-h-0 flex-col overflow-hidden',
-    image: 'min-h-0 w-full flex-1 basis-0',
+    image: 'ad-slot-side__media w-full shrink-0 overflow-hidden',
     text: 'shrink-0 px-1.5 py-0.5',
     brand: 'text-[9px]',
     title: 'text-[10px] line-clamp-1 leading-tight',
@@ -109,12 +109,14 @@ const variantStyles: Record<
 function AdCampaignMedia({
   campaign,
   imageClass,
+  imageStyle,
   fillBanner = false,
   variant,
   slotId,
 }: {
   campaign: AdCampaignWithAdvertiser
   imageClass: string
+  imageStyle?: CSSProperties
   fillBanner?: boolean
   variant: AdOverlayVariant
   slotId?: string

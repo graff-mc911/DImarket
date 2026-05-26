@@ -8,9 +8,11 @@ import App from './App.tsx'
 import { applyAdSlotCssVars } from './lib/adSlotCssVars'
 import './index.css'
 
-applyAdSlotCssVars()
-
 const rootElement = document.getElementById('root')
+
+if (typeof document !== 'undefined') {
+  applyAdSlotCssVars()
+}
 
 if (!rootElement) {
   throw new Error('Не знайдено елемент #root у index.html — перевірте розмітку.')
