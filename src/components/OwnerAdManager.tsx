@@ -9,7 +9,6 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { usePaidAds } from '../contexts/PaidAdsContext'
-import { AdPlacementSitePreview } from './AdPlacementSitePreview'
 import { AdPerSlotMediaEditor } from './ads/AdPerSlotMediaEditor'
 import { AdCampaignDraftPreview } from './AdCopyFields'
 import {
@@ -457,23 +456,17 @@ export function OwnerAdManager({
             </select>
           </label>
 
-          <div className="mt-5">
-            <p className="mb-3 text-sm font-semibold text-[#2f2a24]">Блоки та банери на сайті *</p>
-            <AdPlacementSitePreview
-              selected={form.selectedSlots}
-              onChange={(slots) => {
+          <div className="mt-5 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.2)] p-3 md:p-4">
+            <AdPerSlotMediaEditor
+              cardTitle="Блоки та банери на сайті *"
+              selectedSlots={form.selectedSlots}
+              onSelectedSlotsChange={(slots) => {
                 setForm((p) => ({ ...p, selectedSlots: slots }))
                 setPlacementPreviewPage(pageKeyFromSlots(slots))
                 setSlotMedia((prev) => ensureSlotMediaForSelection(slots, prev))
               }}
               page={placementPreviewPage}
               onPageChange={setPlacementPreviewPage}
-            />
-          </div>
-
-          <div className="mt-5">
-            <AdPerSlotMediaEditor
-              selectedSlots={form.selectedSlots}
               slotMedia={slotMedia}
               onSlotMediaChange={setSlotMedia}
               fallbackMediaUrl={mediaUrl}

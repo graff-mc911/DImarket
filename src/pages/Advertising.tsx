@@ -32,7 +32,6 @@ import { navigateTo }  from '../lib/navigation'
 import { useApp }      from '../contexts/AppContext'
 import { AdCampaign }  from '../lib/types'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
-import { AdPlacementSitePreview } from '../components/AdPlacementSitePreview'
 import { AdGeoTargeting } from '../components/AdGeoTargeting'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
 import { AdPerSlotMediaEditor } from '../components/ads/AdPerSlotMediaEditor'
@@ -472,29 +471,6 @@ export function Advertising() {
         <section className="mt-6 grid gap-6 xl:grid-cols-[1.12fr_0.88fr]">
           <div className="space-y-6">
 
-            {/* ===== Вибір позицій ===== */}
-            <div className="glass-card p-6">
-              <div>
-                <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.placementsSection.title')}</h2>
-                <p className="mt-1 text-sm leading-6 text-[#6f665d]">{t('advertising.placementsSection.desc')}</p>
-              </div>
-              <div className="mt-5 space-y-6">
-                <div className="rounded-[22px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-4 md:p-5">
-                  <h3 className="text-sm font-extrabold text-[#2f2a24]">{t('advertising.catalog.previewTitle')}</h3>
-                  <p className="mt-1 text-xs leading-5 text-[#6f665d]">{t('advertising.catalog.previewDesc')}</p>
-                  <div className="mt-4">
-                    <AdPlacementSitePreview
-                      selected={selectedSlots}
-                      onChange={handleSlotsChange}
-                      page={placementPreviewPage}
-                      onPageChange={setPlacementPreviewPage}
-                      draftMediaUrl={hasBannerMedia ? slideUrls[0] || mediaUrl.trim() : null}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* ===== Форма нової кампанії ===== */}
             <div id="ad-form" className="glass-card p-6">
               <h2 className="text-2xl font-extrabold text-[#2f2a24]">
@@ -522,9 +498,13 @@ export function Advertising() {
                     </div>
                   )}
 
-                  <div className="rounded-[22px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-4 md:p-5">
+                  <div className="rounded-[22px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-3 md:p-4">
                     <AdPerSlotMediaEditor
+                      cardTitle={t('advertising.placementsSection.title')}
                       selectedSlots={selectedSlots}
+                      onSelectedSlotsChange={handleSlotsChange}
+                      page={placementPreviewPage}
+                      onPageChange={setPlacementPreviewPage}
                       slotMedia={slotMedia}
                       onSlotMediaChange={setSlotMedia}
                       fallbackMediaUrl={mediaUrl}

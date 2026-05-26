@@ -1,9 +1,8 @@
-import { useMemo } from 'react'
-import { Copy, Layers } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Copy, Trash2, Upload } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
-import { AdBannerMediaForm } from '../AdBannerMediaForm'
-import { AdMediaDisplay } from '../AdMediaDisplay'
 import { AdMediaEditor } from '../AdMediaEditor'
+import { AdPlacementSitePreview } from '../AdPlacementSitePreview'
 import { useAdBannerMediaUpload } from '../../hooks/useAdBannerMediaUpload'
 import {
   emptySlotMediaEntry,
@@ -13,17 +12,17 @@ import {
   type SlotMediaEntry,
   type SlotMediaMap,
 } from '../../lib/adSlotMedia'
-import { containerSpecForSlotId, formatSlotContainerShort } from '../../lib/adSlotContainerSpecs'
-import { formatSlotLabel } from '../../lib/adPlacementSlots'
-import { AD_BANNER_LAYOUT_META } from '../../lib/adBannerLayouts'
+import { formatSlotLabel, type AdPageKey } from '../../lib/adPlacementSlots'
 import type { AdMediaStyle } from '../../lib/adMediaStyle'
 import type { BannerMediaType } from '../../hooks/useAdBannerMediaUpload'
 
 type AdPerSlotMediaEditorProps = {
   selectedSlots: string[]
+  onSelectedSlotsChange?: (slots: string[]) => void
   slotMedia: SlotMediaMap
   onSlotMediaChange: (next: SlotMediaMap) => void
-  /** Базове медіа для слотів без окремого файлу */
+  page?: AdPageKey
+  onPageChange?: (page: AdPageKey) => void
   fallbackMediaUrl: string
   fallbackSlideUrls: string[]
   fallbackMediaType: BannerMediaType
@@ -32,125 +31,17 @@ type AdPerSlotMediaEditorProps = {
   onFallbackSlideUrls: (urls: string[] | ((p: string[]) => string[])) => void
   onFallbackMediaType: (t: BannerMediaType) => void
   onFallbackMediaStyle: (s: AdMediaStyle) => void
-}
-
-function SlotMediaBlock({
-  slotId,
-  entry,
-  onChange,
-}: {
-  slotId: string
-  entry: SlotMediaEntry
-  onChange: (entry: SlotMediaEntry) => void
-}) {
-  const { t } = useApp()
-  const layoutKey = layoutKeyFromSlotId(slotId)
-  const spec = containerSpecForSlotId(slotId)
-  const sizeLabel = spec ? formatSlotContainerShort(spec) : ''
-
-  const upload = useAdBannerMediaUpload({
-    mediaUrl: entry.mediaUrl,
-    slideUrls: entry.slideUrls,
-    mediaType: entry.mediaType,
-    setMediaUrl: (url) => onChange({ ...entry, mediaUrl: url }),
-    setSlideUrls: (urls) => {
-      const next = typeof urls === 'function' ? urls(entry.slideUrls) : urls
-      onChange({ ...entry, slideUrls: next, mediaUrl: next[0] || entry.mediaUrl })
-    },
-    setMediaType: (type) => onChange({ ...entry, mediaType: type }),
-    uploadErrorFallback: t('advertising.error.upload'),
-  })
-
-  const hasMedia = slotMediaEntryHasMedia(entry)
-  const previewUrl = entry.slideUrls[0] || entry.mediaUrl
-
-  return (
-    <div className="rounded-[18px] border border-white/50 bg-[rgba(255,255,255,0.35)] p-4">
-      <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <p className="text-sm font-bold text-[#2f2a24]">{formatSlotLabel(slotId, t)}</p>
-          {sizeLabel ? (
-            <p className="text-[11px] font-semibold tabular-nums text-[#6366f1]">
-              {t('advertising.slotMedia.size')}: {sizeLabel}px
-            </p>
-          ) : null}
-        </div>
-        <span className="rounded-full bg-[rgba(99,102,241,0.12)] px-2 py-0.5 text-[10px] font-bold uppercase text-[#4338ca]">
-          {t(`advertising.mediaEditor.layout.${layoutKey}`)}
-        </span>
-      </div>
-
-      <div
-        onDragOver={(e) => {
-          e.preventDefault()
-          upload.setIsDragOver(true)
-        }}
-        onDragLeave={() => upload.setIsDragOver(false)}
-        onDrop={upload.handleDrop}
-        className={
-          'relative mb-3 overflow-hidden rounded-[14px] border-2 border-dashed transition ' +
-          (upload.isDragOver
-            ? 'border-[#6366f1] bg-[rgba(99,102,241,0.06)]'
-            : hasMedia
-              ? 'border-[rgba(34,197,94,0.35)]'
-              : 'border-[rgba(148,163,184,0.35)]')
-        }
-      >
-        {hasMedia ? (
-          <div className="p-2">
-            <AdMediaDisplay
-              src={previewUrl}
-              mediaType={entry.mediaType}
-              style={entry.mediaStyle}
-              layoutKey={layoutKey}
-              className={AD_BANNER_LAYOUT_META[layoutKey].aspectClass}
-              imageClassName="h-full w-full object-contain"
-              animateSlides
-            />
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => upload.openFilePicker(false)}
-            className="flex w-full flex-col items-center gap-2 px-4 py-8 text-sm font-semibold text-[#6f665d]"
-          >
-            <Layers className="h-6 w-6 text-[#6366f1]" />
-            {t('advertising.slotMedia.uploadForSlot')}
-          </button>
-        )}
-        <input
-          ref={upload.fileInputRef}
-          type="file"
-          accept={upload.acceptedMime.join(',')}
-          multiple={entry.mediaType === 'image'}
-          onChange={upload.handleFileChange}
-          className="hidden"
-        />
-      </div>
-
-      {hasMedia && (
-        <AdMediaEditor
-          mediaType={entry.mediaType}
-          primaryUrl={entry.mediaUrl}
-          slideUrls={entry.slideUrls.length ? entry.slideUrls : [entry.mediaUrl]}
-          style={entry.mediaStyle}
-          onStyleChange={(mediaStyle) => onChange({ ...entry, mediaStyle })}
-          onSlideUrlsChange={(slideUrls) =>
-            onChange({ ...entry, slideUrls, mediaUrl: slideUrls[0] || entry.mediaUrl })
-          }
-          onPrimaryUrlChange={(mediaUrl) => onChange({ ...entry, mediaUrl })}
-          onUploadFiles={(files) => upload.uploadFiles(files, { append: true })}
-          isUploading={upload.pendingUploads > 0}
-        />
-      )}
-    </div>
-  )
+  /** Заголовок картки (напр. «Блоки та банери на сайті») */
+  cardTitle?: string
 }
 
 export function AdPerSlotMediaEditor({
   selectedSlots,
+  onSelectedSlotsChange,
   slotMedia,
   onSlotMediaChange,
+  page: pageProp,
+  onPageChange,
   fallbackMediaUrl,
   fallbackSlideUrls,
   fallbackMediaType,
@@ -159,15 +50,75 @@ export function AdPerSlotMediaEditor({
   onFallbackSlideUrls,
   onFallbackMediaType,
   onFallbackMediaStyle,
+  cardTitle,
 }: AdPerSlotMediaEditorProps) {
   const { t } = useApp()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const uploadSlotRef = useRef<string | null>(null)
+  const [focusedSlotId, setFocusedSlotId] = useState<string | null>(null)
+
   const sorted = useMemo(() => sortSlotsForEditor(selectedSlots), [selectedSlots])
-
   const sideSlots = sorted.filter((id) => id.includes('_side_'))
-  const otherSlots = sorted.filter((id) => !id.includes('_side_'))
 
-  const patchSlot = (slotId: string, entry: SlotMediaEntry) => {
-    onSlotMediaChange({ ...slotMedia, [slotId]: entry })
+  useEffect(() => {
+    if (focusedSlotId && selectedSlots.includes(focusedSlotId)) return
+    setFocusedSlotId(selectedSlots[0] ?? null)
+  }, [selectedSlots, focusedSlotId])
+
+  const activeSlotId = focusedSlotId
+  const focusedEntry = activeSlotId
+    ? (slotMedia[activeSlotId] ?? emptySlotMediaEntry())
+    : emptySlotMediaEntry()
+
+  const entryForSlot = (slotId: string) => slotMedia[slotId] ?? emptySlotMediaEntry()
+
+  const patchSlot = useCallback(
+    (slotId: string, entry: SlotMediaEntry) => {
+      onSlotMediaChange({ ...slotMedia, [slotId]: entry })
+    },
+    [onSlotMediaChange, slotMedia],
+  )
+
+  const clearSlot = useCallback(
+    (slotId: string) => {
+      onSlotMediaChange({ ...slotMedia, [slotId]: emptySlotMediaEntry() })
+    },
+    [onSlotMediaChange, slotMedia],
+  )
+
+  const upload = useAdBannerMediaUpload({
+    mediaUrl: focusedEntry.mediaUrl,
+    slideUrls: focusedEntry.slideUrls,
+    mediaType: focusedEntry.mediaType,
+    setMediaUrl: (url) => {
+      const slotId = uploadSlotRef.current || focusedSlotId
+      if (!slotId) return
+      const entry = entryForSlot(slotId)
+      patchSlot(slotId, { ...entry, mediaUrl: url })
+    },
+    setSlideUrls: (urls) => {
+      const slotId = uploadSlotRef.current || focusedSlotId
+      if (!slotId) return
+      const entry = entryForSlot(slotId)
+      const next = typeof urls === 'function' ? urls(entry.slideUrls) : urls
+      patchSlot(slotId, {
+        ...entry,
+        slideUrls: next,
+        mediaUrl: next[0] || entry.mediaUrl,
+      })
+    },
+    setMediaType: (type) => {
+      const slotId = uploadSlotRef.current || focusedSlotId
+      if (!slotId) return
+      patchSlot(slotId, { ...entryForSlot(slotId), mediaType: type })
+    },
+    uploadErrorFallback: t('advertising.error.upload'),
+  })
+
+  const requestUpload = (slotId: string) => {
+    uploadSlotRef.current = slotId
+    setFocusedSlotId(slotId)
+    setTimeout(() => fileInputRef.current?.click(), 0)
   }
 
   const copyFirstSideToAllSides = () => {
@@ -205,63 +156,163 @@ export function AdPerSlotMediaEditor({
     )
   }
 
+  const title = cardTitle ?? t('advertising.placementsSection.title')
+  const focusedHasMedia = slotMediaEntryHasMedia(focusedEntry)
+  const focusedLayout = focusedSlotId ? layoutKeyFromSlotId(focusedSlotId) : 'center'
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-extrabold text-[#2f2a24]">{t('advertising.slotMedia.title')}</h3>
-        <p className="mt-1 text-sm leading-6 text-[#6f665d]">{t('advertising.slotMedia.desc')}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0">
+          <h3 className="text-base font-extrabold text-[#2f2a24]">{title}</h3>
+          <p className="mt-0.5 text-xs leading-5 text-[#6f665d]">{t('advertising.slotStudio.desc')}</p>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
           {sideSlots.length > 1 && (
             <button
               type="button"
               onClick={copyFirstSideToAllSides}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#c7d2fe] bg-white px-3 py-1.5 text-xs font-semibold text-[#4338ca]"
+              className="inline-flex items-center gap-1 rounded-full border border-[#c7d2fe] bg-white px-2.5 py-1 text-[10px] font-semibold text-[#4338ca]"
             >
-              <Copy className="h-3.5 w-3.5" />
+              <Copy className="h-3 w-3" />
               {t('advertising.slotMedia.copySide')}
             </button>
           )}
           <button
             type="button"
             onClick={applyFallbackToEmpty}
-            className="inline-flex items-center gap-1.5 rounded-full border border-[#e7ddd3] bg-white px-3 py-1.5 text-xs font-semibold text-[#5f5a54]"
+            className="inline-flex items-center gap-1 rounded-full border border-[#e7ddd3] bg-white px-2.5 py-1 text-[10px] font-semibold text-[#5f5a54]"
           >
             {t('advertising.slotMedia.fillEmpty')}
           </button>
         </div>
       </div>
 
-      <div className="space-y-4">
-        {sorted.map((slotId) => (
-          <SlotMediaBlock
-            key={slotId}
-            slotId={slotId}
-            entry={slotMedia[slotId] ?? emptySlotMediaEntry()}
-            onChange={(entry) => patchSlot(slotId, entry)}
-          />
-        ))}
-      </div>
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,220px)_1fr]">
+        <aside className="order-2 rounded-[16px] border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.45)] p-3 lg:order-1">
+          <p className="text-[10px] font-bold uppercase tracking-wide text-[#6f665d]">
+            {t('advertising.slotStudio.animationTitle')}
+          </p>
+          {focusedSlotId ? (
+            <p className="mt-1 text-xs font-semibold text-[#2f2a24]">
+              {formatSlotLabel(focusedSlotId, t)}
+            </p>
+          ) : null}
+          {focusedHasMedia ? (
+            <div className="mt-2 max-h-[min(52vh,420px)] overflow-y-auto pr-0.5">
+              <AdMediaEditor
+                compact
+                fixedLayoutKey={focusedLayout}
+                mediaType={focusedEntry.mediaType}
+                primaryUrl={focusedEntry.mediaUrl}
+                slideUrls={
+                  focusedEntry.slideUrls.length
+                    ? focusedEntry.slideUrls
+                    : [focusedEntry.mediaUrl]
+                }
+                style={focusedEntry.mediaStyle}
+                onStyleChange={(mediaStyle) =>
+                  focusedSlotId && patchSlot(focusedSlotId, { ...focusedEntry, mediaStyle })
+                }
+                onSlideUrlsChange={(slideUrls) => {
+                  if (!focusedSlotId) return
+                  patchSlot(focusedSlotId, {
+                    ...focusedEntry,
+                    slideUrls,
+                    mediaUrl: slideUrls[0] ?? '',
+                  })
+                }}
+                onPrimaryUrlChange={(mediaUrl) =>
+                  focusedSlotId && patchSlot(focusedSlotId, { ...focusedEntry, mediaUrl })
+                }
+                onUploadFiles={(files) => upload.uploadFiles(files, { append: true })}
+                isUploading={upload.pendingUploads > 0}
+                onClearMedia={() => focusedSlotId && clearSlot(focusedSlotId)}
+              />
+            </div>
+          ) : (
+            <p className="mt-3 text-xs leading-5 text-[#9a8776]">{t('advertising.slotStudio.focusHint')}</p>
+          )}
+        </aside>
 
-      <div className="rounded-[20px] border border-dashed border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.25)] p-4">
-        <p className="text-sm font-bold text-[#2f2a24]">{t('advertising.slotMedia.fallbackTitle')}</p>
-        <p className="mt-1 text-xs leading-5 text-[#6f665d]">{t('advertising.slotMedia.fallbackDesc')}</p>
-        <div className="mt-4">
-          <AdBannerMediaForm
-            mediaType={fallbackMediaType}
-            setMediaType={onFallbackMediaType}
-            mediaUrl={fallbackMediaUrl}
-            setMediaUrl={onFallbackMediaUrl}
-            slideUrls={fallbackSlideUrls}
-            setSlideUrls={onFallbackSlideUrls}
-            mediaStyle={fallbackMediaStyle}
-            setMediaStyle={onFallbackMediaStyle}
-          />
+        <div className="order-1 min-w-0 lg:order-2">
+          {onSelectedSlotsChange ? (
+            <AdPlacementSitePreview
+              compact
+              selected={selectedSlots}
+              onChange={onSelectedSlotsChange}
+              page={pageProp}
+              onPageChange={onPageChange}
+              slotMedia={slotMedia}
+              focusedSlotId={focusedSlotId}
+              onFocusSlot={setFocusedSlotId}
+              onSlotClear={clearSlot}
+              onSlotUploadRequest={requestUpload}
+            />
+          ) : (
+            <AdPlacementSitePreview
+              compact
+              selected={selectedSlots}
+              slotMedia={slotMedia}
+              focusedSlotId={focusedSlotId}
+              onFocusSlot={setFocusedSlotId}
+              onSlotClear={clearSlot}
+              onSlotUploadRequest={requestUpload}
+              page={pageProp}
+              onPageChange={onPageChange}
+            />
+          )}
         </div>
       </div>
 
-      {otherSlots.length > 0 && sideSlots.length > 0 && (
-        <p className="text-xs text-[#9a8776]">{t('advertising.slotMedia.sideNote')}</p>
+      {focusedSlotId && (
+        <div className="flex flex-wrap items-center gap-2 rounded-[14px] border border-white/40 bg-white/30 px-3 py-2">
+          <span className="text-xs font-semibold text-[#2f2a24]">
+            {formatSlotLabel(focusedSlotId, t)}
+          </span>
+          <button
+            type="button"
+            onClick={() => requestUpload(focusedSlotId)}
+            disabled={upload.pendingUploads > 0}
+            className="inline-flex items-center gap-1 rounded-full bg-[#6366f1] px-3 py-1 text-[11px] font-semibold text-white disabled:opacity-50"
+          >
+            <Upload className="h-3 w-3" />
+            {focusedHasMedia
+              ? t('advertising.slotStudio.replace')
+              : t('advertising.slotStudio.uploadHere')}
+          </button>
+          {focusedHasMedia && (
+            <button
+              type="button"
+              onClick={() => clearSlot(focusedSlotId)}
+              className="inline-flex items-center gap-1 rounded-full border border-[rgba(239,68,68,0.35)] bg-white px-3 py-1 text-[11px] font-semibold text-[#b91c1c]"
+            >
+              <Trash2 className="h-3 w-3" />
+              {t('advertising.slotStudio.removeMedia')}
+            </button>
+          )}
+        </div>
       )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={upload.acceptedMime.join(',')}
+        multiple={focusedEntry.mediaType === 'image'}
+        className="hidden"
+        onChange={(e) => {
+          const files = e.target.files ? Array.from(e.target.files) : []
+          const slot = uploadSlotRef.current || focusedSlotId
+          if (files.length && slot) {
+            if (slot !== focusedSlotId) setFocusedSlotId(slot)
+            void upload.uploadFiles(files, {
+              append: slotMediaEntryHasMedia(entryForSlot(slot)),
+            })
+          }
+          e.target.value = ''
+          uploadSlotRef.current = null
+        }}
+      />
     </div>
   )
 }

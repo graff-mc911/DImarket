@@ -32,6 +32,11 @@ type AdMediaEditorProps = {
   onPrimaryUrlChange: (url: string) => void
   onUploadFiles: (files: File[]) => Promise<void>
   isUploading?: boolean
+  /** Компактна панель без великого превʼю (превʼю на схемі слотів) */
+  compact?: boolean
+  /** Фіксований тип банера — без перемикання layout */
+  fixedLayoutKey?: AdBannerLayoutKey
+  onClearMedia?: () => void
 }
 
 const DISPLAY_MODES: AdDisplayMode[] = ['single', 'rotate', 'collage']
@@ -46,17 +51,21 @@ export function AdMediaEditor({
   onPrimaryUrlChange,
   onUploadFiles,
   isUploading = false,
+  compact = false,
+  fixedLayoutKey,
+  onClearMedia,
 }: AdMediaEditorProps) {
   const { t } = useApp()
   const extraInputRef = useRef<HTMLInputElement>(null)
-  const [activeLayout, setActiveLayout] = useState<AdBannerLayoutKey>('center')
+  const [activeLayout, setActiveLayout] = useState<AdBannerLayoutKey>(fixedLayoutKey ?? 'center')
+  const layoutKey = fixedLayoutKey ?? activeLayout
 
   const displayUrl = slideUrls[0] || primaryUrl
   const canMulti = mediaType === 'image' || mediaType === 'gif'
   const hasMedia = Boolean(displayUrl.trim())
-  const previewAspectClass = AD_BANNER_LAYOUT_META[activeLayout].aspectClass
+  const previewAspectClass = AD_BANNER_LAYOUT_META[layoutKey].aspectClass
   const slideCount = slideUrls.filter(Boolean).length
-  const activeDisplayMode = resolveDisplayMode(style, activeLayout, slideCount)
+  const activeDisplayMode = resolveDisplayMode(style, layoutKey, slideCount)
 
   const patchSlideshow = (patch: Partial<NonNullable<AdMediaStyle['slideshow']>>) => {
     onStyleChange({
@@ -78,12 +87,13 @@ export function AdMediaEditor({
   const removeSlide = (index: number) => {
     const next = slideUrls.filter((_, i) => i !== index)
     onSlideUrlsChange(next)
-    if (index === 0) onPrimaryUrlChange(next[0] ?? '')
+    onPrimaryUrlChange(next[0] ?? '')
     if (next.length > 1) {
       patchSlideshow({ urls: next })
     } else {
       onStyleChange({ ...style, slideshow: null })
     }
+    if (next.length === 0 && onClearMedia) onClearMedia()
   }
 
   const layoutLabel = (key: AdBannerLayoutKey) => t(`advertising.mediaEditor.layout.${key}`)
@@ -95,12 +105,18 @@ export function AdMediaEditor({
     slideCount >= 2 &&
     AD_BANNER_LAYOUT_KEYS.some((k) => resolveDisplayMode(style, k, slideCount) === 'rotate')
 
+  const shellClass = compact
+    ? 'space-y-3'
+    : 'space-y-4 rounded-[20px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-4'
+
   return (
-    <div className="space-y-4 rounded-[20px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-4">
+    <div className={shellClass}>
+      {!compact && (
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#6f665d]">
           {t('advertising.mediaEditor.previewFrame')}
         </p>
+        {!fixedLayoutKey && (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {AD_BANNER_LAYOUT_KEYS.map((key) => (
             <button
@@ -117,6 +133,7 @@ export function AdMediaEditor({
             </button>
           ))}
         </div>
+        )}
         <p className="mt-1 text-[11px] leading-snug text-[#9a8776]">
           {t('advertising.mediaEditor.autoFitHint')}
         </p>
@@ -128,7 +145,7 @@ export function AdMediaEditor({
               src={displayUrl}
               mediaType={mediaType}
               style={style}
-              layoutKey={activeLayout}
+              layoutKey={layoutKey}
               className="h-full w-full"
               imageClassName="h-full w-full"
               animateSlides={activeDisplayMode === 'rotate'}
@@ -140,6 +157,18 @@ export function AdMediaEditor({
           )}
         </div>
       </div>
+      )}
+
+      {compact && onClearMedia && hasMedia && (
+        <button
+          type="button"
+          onClick={onClearMedia}
+          className="flex w-full items-center justify-center gap-1 rounded-full border border-[rgba(239,68,68,0.3)] py-1.5 text-[10px] font-semibold text-[#b91c1c]"
+        >
+          <X className="h-3 w-3" />
+          {t('advertising.slotStudio.removeMedia')}
+        </button>
+      )}
 
       {hasMedia && canMulti && (
         <div>
@@ -191,13 +220,17 @@ export function AdMediaEditor({
       )}
 
       {hasMedia && canMulti && (
-        <div className="border-t border-[rgba(148,163,184,0.15)] pt-4">
+        <div className={compact ? 'space-y-2' : 'border-t border-[rgba(148,163,184,0.15)] pt-4'}>
+          {!compact && (
+          <>
           <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#6f665d]">
             {t('advertising.mediaEditor.perLayoutTitle')}
           </p>
           <p className="mt-1 text-[11px] leading-snug text-[#9a8776]">
             {t('advertising.mediaEditor.perLayoutHint')}
           </p>
+          </>
+          )}
 
           {slideCount < 2 && (
             <p className="mt-2 text-[10px] text-[#9a8776]">
@@ -206,35 +239,37 @@ export function AdMediaEditor({
           )}
 
           <div className="mt-3 space-y-3">
-            {AD_BANNER_LAYOUT_KEYS.map((layoutKey) => {
-              const mode = resolveDisplayMode(style, layoutKey, slideCount)
-              const transition = resolveLayoutTransition(style, layoutKey)
-              const transitions = TRANSITIONS_FOR_LAYOUT[layoutKey].filter((tr) =>
+            {(fixedLayoutKey ? [fixedLayoutKey] : AD_BANNER_LAYOUT_KEYS).map((lk) => {
+              const mode = resolveDisplayMode(style, lk, slideCount)
+              const transition = resolveLayoutTransition(style, lk)
+              const transitions = TRANSITIONS_FOR_LAYOUT[lk].filter((tr) =>
                 AD_SLIDESHOW_TRANSITIONS.includes(tr),
               )
 
               return (
                 <div
-                  key={layoutKey}
+                  key={lk}
                   className="rounded-[14px] border border-[rgba(148,163,184,0.18)] bg-white/40 p-3"
                 >
+                  {!compact && (
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-xs font-bold text-[#2f2a24]">
-                      {layoutLabel(layoutKey)}
-                      {layoutHasPrefs(style, layoutKey) && (
+                      {layoutLabel(lk)}
+                      {layoutHasPrefs(style, lk) && (
                         <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-[#f59e0b]" />
                       )}
                     </span>
-                    {layoutHasPrefs(style, layoutKey) && (
+                    {layoutHasPrefs(style, lk) && (
                       <button
                         type="button"
-                        onClick={() => onStyleChange(clearLayoutPrefs(style, layoutKey))}
+                        onClick={() => onStyleChange(clearLayoutPrefs(style, lk))}
                         className="text-[10px] font-semibold text-[#6366f1]"
                       >
                         {t('advertising.mediaEditor.resetLayout')}
                       </button>
                     )}
                   </div>
+                  )}
 
                   <div className="mt-2 flex flex-wrap gap-1">
                     {DISPLAY_MODES.map((m) => {
@@ -244,7 +279,7 @@ export function AdMediaEditor({
                           key={m}
                           type="button"
                           disabled={disabled}
-                          onClick={() => patchLayout(layoutKey, { displayMode: m })}
+                          onClick={() => patchLayout(lk, { displayMode: m })}
                           className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold disabled:opacity-40 ${
                             mode === m
                               ? 'bg-[#6366f1] text-white'
@@ -263,7 +298,7 @@ export function AdMediaEditor({
                       value={transition}
                       disabled={mode !== 'rotate' || slideCount < 2}
                       onChange={(e) =>
-                        patchLayout(layoutKey, {
+                        patchLayout(lk, {
                           transition: e.target.value as AdSlideshowTransition,
                         })
                       }
