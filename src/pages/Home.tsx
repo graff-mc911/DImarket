@@ -147,7 +147,7 @@ export function Home() {
   return (
     <>
       <section className="pb-3 pt-2">
-        <div className="w-full">
+        <div className="layout-page-content">
           <div className="glass-panel fade-rise rounded-[22px] p-4 md:p-6">
             <div className="flex flex-col items-center text-center">
               <div className="eyebrow gap-1.5 px-2.5 py-1 text-[11px]">
@@ -249,11 +249,7 @@ export function Home() {
         </div>
       </section>
 
-      <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
-
-      <SponsoredCompanies />
-
-      <section className="py-6">
+      <section className="pt-2 pb-6">
         <div className="layout-page-content">
           <SectionHeader
             title={t('home.popularCategoriesTitle')}
@@ -291,8 +287,6 @@ export function Home() {
 
       <MobileAdBanner variant="inline" page="home" inlineIndex={2} />
 
-      <MobileAdBanner variant="inline" page="home" inlineIndex={3} />
-
       <section className="py-6">
         <div className="layout-page-content">
           <SectionHeader
@@ -326,6 +320,8 @@ export function Home() {
         </div>
       </section>
 
+      <MobileAdBanner variant="inline" page="home" inlineIndex={3} />
+
       <section className="pb-14 pt-6">
         <div className="layout-page-content">
           <SectionHeader
@@ -358,6 +354,12 @@ export function Home() {
           )}
         </div>
       </section>
+
+      <div className="layout-page-content">
+        <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
+      </div>
+
+      <SponsoredCompanies />
 
       <MobileAdBanner variant="inline" page="home" inlineIndex={4} />
     </>

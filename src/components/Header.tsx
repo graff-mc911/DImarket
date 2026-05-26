@@ -370,7 +370,7 @@ export function Header() {
               {/* Пошук (десктоп) */}
               <form
                 onSubmit={handleSearchSubmit}
-                className="hidden min-w-0 flex-1 items-center xl:flex xl:max-w-[620px]"
+                className="hidden min-w-0 flex-1 items-center lg:flex lg:max-w-[620px]"
               >
                 <div className="relative w-full">
                   <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
@@ -385,7 +385,7 @@ export function Header() {
               </form>
 
               {/* Десктоп: права панель */}
-              <div className="hidden items-center gap-2 xl:flex">
+              <div className="hidden items-center gap-2 lg:flex">
 
                 {/* Вибір мови */}
                 <div ref={languageRef} className="relative">
@@ -562,7 +562,7 @@ export function Header() {
                 <button
                   onClick={() => goTo('/assistant/job')}
                   type="button"
-                  className="hidden items-center gap-1.5 rounded-full border border-[rgba(99,102,241,0.35)] bg-white/60 px-3 py-2 text-xs font-semibold text-[#6366f1] xl:inline-flex"
+                  className="hidden items-center gap-1.5 rounded-full border border-[rgba(99,102,241,0.35)] bg-white/60 px-3 py-2 text-xs font-semibold text-[#6366f1] lg:inline-flex"
                 >
                   <Bot className="h-4 w-4" />
                   {t('header.aiAssistant')}
@@ -576,7 +576,7 @@ export function Header() {
               </div>
 
               {/* Мобільні кнопки */}
-              <div className="flex shrink-0 items-center gap-1.5 xl:hidden">
+              <div className="flex shrink-0 items-center gap-1.5 lg:hidden">
                 <OnlineVisitorsPill count={onlineVisitors} className="hidden min-[400px]:inline-flex" />
 
                 {/* Повідомлення (мобільний) */}
@@ -707,7 +707,7 @@ export function Header() {
             </nav>
 
             {/* Пошук (мобільний) */}
-            <form onSubmit={handleSearchSubmit} className="mt-2.5 xl:hidden">
+            <form onSubmit={handleSearchSubmit} className="mt-2.5 lg:hidden">
               <div className="relative">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
                 <input
