@@ -28,9 +28,6 @@ export function SponsoredCompanies() {
             <h2 className="text-xl font-extrabold tracking-[-0.02em] text-[var(--ink-900)] md:text-2xl">
               {t('home.sponsoredTitle')}
             </h2>
-            <p className="muted-text mt-2 max-w-2xl text-sm">
-              {t('home.sponsoredSubtitle')}
-            </p>
           </div>
           <button
             type="button"

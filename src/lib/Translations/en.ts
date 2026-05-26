@@ -47,8 +47,7 @@ export const enTranslations = {
     'Construction brands, materials, tools, logistics, and local services can reach active demand across listings and professional pages.',
   'footer.adsButton': 'Advertising page',
   'footer.contactButton': 'Contact us',
-  'footer.legalRight':
-    'Free construction-services platform with advertising-only monetization.',
+  'footer.legalRight': '',
 
   // Сторінка зворотного звʼязку: заголовки, форма, повідомлення і підказки.
   'contact.eyebrow': 'Contact',
@@ -126,22 +125,18 @@ export const enTranslations = {
   // Головна сторінка: нові ключі для актуального hero-блоку, категорій, запитів і майстрів.
   'home.globalEyebrow': 'Global construction services',
   'home.heroSimpleTitle': 'Find a master for repair, installation, or building work.',
-  'home.heroSimpleDescription':
-    'Clients post job requests, professionals respond directly, and Dimarket stays free for users.',
+  'home.heroSimpleDescription': '',
   'home.whatNeedsToBeDone': 'What needs to be done?',
   'home.cityOrCountry': 'City or country',
   'home.postJob': 'Post job',
   'home.popularCategoriesTitle': 'Popular categories',
-  'home.popularCategoriesText':
-    'The most requested construction and renovation directions on Dimarket.',
+  'home.popularCategoriesText': '',
   'home.browseRequests': 'Browse job requests',
   'home.freshRequestsTitle': 'Fresh job requests',
-  'home.freshRequestsText':
-    'New client requests that professionals can review and answer right away.',
+  'home.freshRequestsText': '',
   'home.allRequests': 'All job requests',
   'home.popularProsTitle': 'Popular professionals',
-  'home.popularProsText':
-    'Profiles with visible experience, steady ratings, and direct contact flow.',
+  'home.popularProsText': '',
   'home.allPros': 'All professionals',
   'home.adTitle': 'Advertising',
   'home.adText':
@@ -160,8 +155,7 @@ export const enTranslations = {
   'home.sponsoredPlacement':
     'Sponsored placement for tools, materials, logistics, or local construction partners.',
   'home.sponsoredTitle': 'Partner companies',
-  'home.sponsoredSubtitle':
-    'Paid advertising from construction brands, suppliers, and service companies on DImarket.',
+  'home.sponsoredSubtitle': '',
   'home.sponsoredCta': 'Advertise your company',
   'home.sidebarAdOne': 'Place brand visibility next to live construction demand.',
   'home.sidebarAdTwo':

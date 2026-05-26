@@ -220,9 +220,6 @@ export function FooterStats({ compact = false }: { compact?: boolean }) {
         <h3 className="text-sm font-extrabold text-[#2f2a24]">
           {t('footerStats.title')}
         </h3>
-        <p className="mt-1 text-xs leading-5 text-[#6f665d]">
-          {t('footerStats.subtitle')}
-        </p>
       </div>
 
       <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-5">

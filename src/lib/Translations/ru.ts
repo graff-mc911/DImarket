@@ -46,8 +46,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'footer.adsText':
     'Бренды строительных материалов, инструментов, логистики и локальных сервисов могут охватывать активный спрос в ленте заявок и на страницах мастеров.',
   'footer.adsButton': 'Страница рекламы',
-  'footer.legalRight':
-    'Бесплатная платформа строительных услуг с монетизацией только через рекламу.',
+  'footer.legalRight': '',
 
   // Contact
   'contact.eyebrow': 'Обратная связь',
@@ -129,22 +128,18 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'home.globalEyebrow': 'Глобальные строительные услуги',
   'home.heroSimpleTitle':
     'Найдите мастера для ремонта, монтажа или строительных работ.',
-  'home.heroSimpleDescription':
-    'Клиенты публикуют заявки на работу, мастера отвечают напрямую, а Dimarket остаётся бесплатным для пользователей.',
+  'home.heroSimpleDescription': '',
   'home.whatNeedsToBeDone': 'Что нужно сделать?',
   'home.cityOrCountry': 'Город или страна',
   'home.postJob': 'Опубликовать заявку',
   'home.popularCategoriesTitle': 'Популярные категории',
-  'home.popularCategoriesText':
-    'Самые востребованные направленетя строительства и ремонта на Dimarket.',
+  'home.popularCategoriesText': '',
   'home.browseRequests': 'Посмотреть заявки',
   'home.freshRequestsTitle': 'Свежие заявки на работу',
-  'home.freshRequestsText':
-    'Новые клиентские заявки, которые мастера могут сразу посмотреть и взять в работу.',
+  'home.freshRequestsText': '',
   'home.allRequests': 'Все заявки на работу',
   'home.popularProsTitle': 'Популярные мастера',
-  'home.popularProsText':
-    'Профили с отимым опытом, стабильным рейтингом и прямым контактом.',
+  'home.popularProsText': '',
   'home.allPros': 'Все мастера',
   'home.adTitle': 'Реклама',
   'home.adText':
@@ -163,8 +158,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'home.sponsoredPlacement':
     'Спонсорское размещение для инструментов, материалов, логистики или локальных строительных партнёров.',
   'home.sponsoredTitle': 'Партнёрские компании',
-  'home.sponsoredSubtitle':
-    'Платная реклама строительных брендов, поставщиков и сервисных компаний на DImarket.',
+  'home.sponsoredSubtitle': '',
   'home.sponsoredCta': 'Разместить рекламу компании',
   'home.sidebarAdOne': 'Покажите бренд рядом с живым строительным спросом.',
   'home.sidebarAdTwo':

@@ -134,15 +134,6 @@ export function Home() {
     return category.name
   }
 
-  const getCategoryDescription = (category: Category) => {
-    const legacyKey = `category.${category.slug}Desc`
-    const legacyValue = tr(legacyKey)
-
-    if (legacyValue !== legacyKey) return legacyValue
-
-    return category.description || t('home.unknownCategory')
-  }
-
   const getListingCategoryName = (job: ListingWithImages) => {
     if (!job.category) return t('home.unknownCategory')
     return getCategoryName(job.category)
@@ -168,9 +159,6 @@ export function Home() {
                 <h1 className="font-[var(--font-display)] text-[1.15rem] font-bold leading-[1.1] tracking-[-0.035em] text-[var(--ink-900)] md:text-[1.35rem] xl:text-[1.5rem]">
                   {t('home.heroSimpleTitle')}
                 </h1>
-                <p className="muted-text mx-auto mt-2 max-w-2xl text-[12px] leading-snug md:text-[13px]">
-                  {t('home.heroSimpleDescription')}
-                </p>
               </div>
 
               <nav
@@ -269,7 +257,6 @@ export function Home() {
         <div className="layout-page-content">
           <SectionHeader
             title={t('home.popularCategoriesTitle')}
-            text={t('home.popularCategoriesText')}
             buttonText={t('home.browseRequests')}
             onClick={() => navigateTo('/listings')}
           />
@@ -282,7 +269,6 @@ export function Home() {
                 <CategoryCard
                   key={category.id}
                   name={getCategoryName(category)}
-                  description={getCategoryDescription(category)}
                   icon={category.icon || '•'}
                   onClick={() => navigateTo(categoryPagePath(category.slug))}
                 />
@@ -291,7 +277,6 @@ export function Home() {
                 <CategoryCard
                   key={feat.groupSlug}
                   name={groupLabel('construction', feat.groupSlug, language.code)}
-                  description={t(feat.descriptionKey)}
                   icon={feat.icon}
                   onClick={() => navigateTo(homeFeaturedWorkPath(feat.groupSlug))}
                   accent="indigo"
@@ -312,7 +297,6 @@ export function Home() {
         <div className="layout-page-content">
           <SectionHeader
             title={t('home.freshRequestsTitle')}
-            text={t('home.freshRequestsText')}
             buttonText={t('home.allRequests')}
             onClick={() => navigateTo('/listings')}
           />
@@ -346,7 +330,6 @@ export function Home() {
         <div className="layout-page-content">
           <SectionHeader
             title={t('home.popularProsTitle')}
-            text={t('home.popularProsText')}
             buttonText={t('home.allPros')}
             onClick={() => navigateTo('/professionals')}
           />
@@ -403,13 +386,11 @@ function StatPill({
 
 function CategoryCard({
   name,
-  description,
   icon,
   onClick,
   accent = 'default',
 }: {
   name: string
-  description: string
   icon: string
   onClick: () => void
   accent?: 'default' | 'indigo'
@@ -434,7 +415,6 @@ function CategoryCard({
         <h3 className="truncate text-sm font-bold tracking-[-0.02em] text-[var(--ink-900)] transition group-hover:text-[var(--accent-700)]">
           {name}
         </h3>
-        <p className="muted-text mt-0.5 line-clamp-1 text-[11px] leading-snug">{description}</p>
       </div>
       <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[var(--ink-500)] transition group-hover:text-[var(--accent-700)]" />
     </button>
@@ -443,12 +423,10 @@ function CategoryCard({
 
 function SectionHeader({
   title,
-  text,
   buttonText,
   onClick,
 }: {
   title: string
-  text: string
   buttonText: string
   onClick: () => void
 }) {
@@ -458,9 +436,6 @@ function SectionHeader({
         <h2 className="font-[var(--font-display)] text-[1.35rem] font-bold leading-[1.08] tracking-[-0.03em] text-[var(--ink-900)] md:text-[1.6rem]">
           {title}
         </h2>
-        <p className="muted-text mt-2 max-w-2xl text-[13px] md:text-[14px]">
-          {text}
-        </p>
       </div>
 
       <button
