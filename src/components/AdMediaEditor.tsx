@@ -37,6 +37,8 @@ type AdMediaEditorProps = {
   /** Фіксований тип банера — без перемикання layout */
   fixedLayoutKey?: AdBannerLayoutKey
   onClearMedia?: () => void
+  /** Один файл на слот — без галереї та додавання кадрів */
+  singleImageOnly?: boolean
 }
 
 const DISPLAY_MODES: AdDisplayMode[] = ['single', 'rotate', 'collage']
@@ -54,6 +56,7 @@ export function AdMediaEditor({
   compact = false,
   fixedLayoutKey,
   onClearMedia,
+  singleImageOnly = false,
 }: AdMediaEditorProps) {
   const { t } = useApp()
   const extraInputRef = useRef<HTMLInputElement>(null)
@@ -170,7 +173,7 @@ export function AdMediaEditor({
         </button>
       )}
 
-      {hasMedia && canMulti && (
+      {hasMedia && canMulti && !singleImageOnly && (
         <div>
           <p className="text-xs font-bold text-[#5f5a54]">{t('advertising.mediaEditor.images')}</p>
           <p className="mt-1 text-[11px] text-[#9a8776]">{t('advertising.mediaEditor.imagesHint')}</p>
@@ -219,7 +222,7 @@ export function AdMediaEditor({
         </div>
       )}
 
-      {hasMedia && canMulti && (
+      {hasMedia && canMulti && !singleImageOnly && (
         <div className={compact ? 'space-y-2' : 'border-t border-[rgba(148,163,184,0.15)] pt-4'}>
           {!compact && (
           <>

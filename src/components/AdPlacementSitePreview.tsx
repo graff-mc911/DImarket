@@ -142,7 +142,7 @@ function SlotBox({
           alt=""
           className="absolute inset-0 h-full w-full object-cover bg-[#1a1816]/80"
         />
-      ) : active && interactive ? (
+      ) : active && interactive && !hasSlotMedia ? (
         <span className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 bg-[rgba(238,242,255,0.35)] text-[#6366f1] opacity-80 group-hover:opacity-100">
           <Upload className="h-3 w-3" />
           <span className="text-[7px] font-bold">{t('advertising.slotStudio.tapUpload')}</span>
@@ -169,7 +169,7 @@ function SlotBox({
           <X className="h-2.5 w-2.5" />
         </button>
       )}
-      {active && !hasSlotMedia && onUploadRequest && (
+      {active && !hasSlotMedia && onUploadRequest ? (
         <button
           type="button"
           title={t('advertising.slotStudio.uploadHere')}
@@ -181,7 +181,7 @@ function SlotBox({
         >
           <ImagePlus className="h-2.5 w-2.5" />
         </button>
-      )}
+      ) : null}
     </>
   )
 

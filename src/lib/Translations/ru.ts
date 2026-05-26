@@ -457,6 +457,8 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.slotStudio.uploadHere': 'Загрузить',
   'advertising.slotStudio.replace': 'Заменить',
   'advertising.slotStudio.tapUpload': 'Файл',
+  'advertising.slotStudio.mustRemoveFirst': 'Сначала удалите текущее изображение (✕), затем загрузите новое.',
+  'advertising.slotStudio.onePerSlot': 'Один баннер на слот. Чтобы изменить — сначала удалите, затем загрузите снова.',
   'advertising.places.pagesLabel': 'Страницы сайта',
   'advertising.places.routes.home': '/',
   'advertising.places.routes.listings': '/listings, /vacancies, /sell-rent',

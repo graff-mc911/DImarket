@@ -33,6 +33,21 @@ export function emptySlotMediaEntry(): SlotMediaEntry {
   }
 }
 
+/** Один файл на слот — без накладання слайдів */
+export function normalizeSlotMediaEntry(entry: SlotMediaEntry): SlotMediaEntry {
+  const url = (entry.slideUrls.find(Boolean) || entry.mediaUrl || '').trim()
+  if (!url) return emptySlotMediaEntry()
+  return {
+    mediaUrl: url,
+    mediaType: entry.mediaType,
+    slideUrls: [url],
+    mediaStyle: {
+      ...entry.mediaStyle,
+      slideshow: null,
+    },
+  }
+}
+
 export function parseSlotMediaMap(raw: unknown): SlotMediaMap {
   if (!raw || typeof raw !== 'object') return {}
   const out: SlotMediaMap = {}
@@ -47,12 +62,12 @@ export function parseSlotMediaMap(raw: unknown): SlotMediaMap {
       : mediaUrl
         ? [mediaUrl]
         : []
-    out[key] = {
+    out[key] = normalizeSlotMediaEntry({
       mediaUrl: slideUrls[0] || mediaUrl,
       mediaType,
       slideUrls,
       mediaStyle: parseAdMediaStyle(o.mediaStyle),
-    }
+    })
   }
   return out
 }
@@ -93,7 +108,7 @@ export function mergeSlotMediaWithDefault(
   for (const slotId of selectedSlots) {
     const custom = slotMedia[slotId]
     if (slotMediaEntryHasMedia(custom)) {
-      merged[slotId] = custom!
+      merged[slotId] = normalizeSlotMediaEntry(custom!)
       continue
     }
     if (fallback.mediaUrl.trim() || fallback.slideUrls.length) {
@@ -159,11 +174,12 @@ export function buildSlotMediaPayload(
   const payload: Record<string, unknown> = {}
   for (const [slotId, entry] of Object.entries(merged)) {
     if (!slotMediaEntryHasMedia(entry)) continue
+    const norm = normalizeSlotMediaEntry(entry)
     payload[slotId] = {
-      mediaUrl: entry.slideUrls[0] || entry.mediaUrl,
-      mediaType: entry.mediaType,
-      slideUrls: entry.slideUrls,
-      mediaStyle: buildMediaStylePayload(entry.mediaStyle, entry.slideUrls),
+      mediaUrl: norm.mediaUrl,
+      mediaType: norm.mediaType,
+      slideUrls: norm.slideUrls,
+      mediaStyle: buildMediaStylePayload(norm.mediaStyle, norm.slideUrls),
     }
   }
   return payload

@@ -484,6 +484,8 @@ export const enTranslations = {
   'advertising.slotStudio.uploadHere': 'Upload',
   'advertising.slotStudio.replace': 'Replace',
   'advertising.slotStudio.tapUpload': 'Upload',
+  'advertising.slotStudio.mustRemoveFirst': 'Remove the current image first (✕), then upload a new one.',
+  'advertising.slotStudio.onePerSlot': 'One banner per slot. To change it, delete first, then upload again.',
   'advertising.places.pagesLabel': 'Site pages',
   'advertising.places.routes.home': '/',
   'advertising.places.routes.listings': '/listings, /vacancies, /sell-rent',
