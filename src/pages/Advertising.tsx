@@ -422,7 +422,7 @@ export function Advertising() {
 
   return (
     <div className="py-8 pb-24 lg:pb-8">
-      <div className="mx-auto max-w-7xl">
+      <div className="w-full min-w-0">
 
         {/* ===== Hero секція (компактна ~50% висоти) ===== */}
         <section className="glass-panel p-4 md:p-5">

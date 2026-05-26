@@ -29,6 +29,8 @@
     --mint-soft: rgba(111, 145, 125, 0.1);
     /* бокові реклами: +15% до колишніх 200/216/252px; gutter = відступ від краю екрана = між колонками */
     --ad-side-rail-width: 14.375rem;
+    --layout-side-rail-inset: min(var(--ad-side-rail-width), 12vw);
+    --layout-content-max: 80rem;
     --layout-gutter: 1rem;
     /* бокові рейки лише на широкому десктопі (планшети Android/iPad — одна колонка) */
     --layout-side-ads-min: 80rem;
@@ -196,14 +198,23 @@
   .app-page-main {
     min-width: 0;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
+    overflow-x: clip;
     padding-inline: max(var(--layout-gutter), env(safe-area-inset-left, 0px))
       max(var(--layout-gutter), env(safe-area-inset-right, 0px));
   }
 
   @media (min-width: 80rem) {
-    .app-page-main {
-      margin-inline: min(var(--ad-side-rail-width), 12vw);
+    .app-page-with-fixed-rails .app-page-main {
+      padding-inline: max(
+          calc(var(--layout-side-rail-inset) + var(--layout-gutter)),
+          env(safe-area-inset-left, 0px)
+        )
+        max(
+          calc(var(--layout-side-rail-inset) + var(--layout-gutter)),
+          env(safe-area-inset-right, 0px)
+        );
     }
   }
 
@@ -279,10 +290,13 @@
        при появі/зникненні бокової реклами. */
   }
 
-  /** Повна ширина центральної колонки (замість max-w-7xl на сторінках з боковими рейками) */
+  /** Єдина центральна колонка на всіх сторінках з боковими рейками */
   .layout-page-content {
+    box-sizing: border-box;
     min-width: 0;
     width: 100%;
+    max-width: var(--layout-content-max);
+    margin-inline: auto;
   }
 
   .layout-page-gutter {

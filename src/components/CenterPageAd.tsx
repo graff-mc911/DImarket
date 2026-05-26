@@ -40,16 +40,14 @@ export function CenterPageAd({ page, className = '' }: CenterPageAdProps) {
 
   return (
     <section className={`hidden md:block ${className}`}>
-      <div className="layout-page-content">
-        <div className="flex justify-center">
-          <AdOverlayCard
-            campaign={campaign}
-            slotId={slotId}
-            variant="center"
-            className="w-full max-w-xl"
-            showDescription
-          />
-        </div>
+      <div className="flex justify-center">
+        <AdOverlayCard
+          campaign={campaign}
+          slotId={slotId}
+          variant="center"
+          className="w-full max-w-xl"
+          showDescription
+        />
       </div>
     </section>
   )

@@ -165,7 +165,6 @@ export function Professionals() {
 
   return (
     <div className="py-8 pb-24 lg:pb-8">
-      <div className="layout-page-content">
             <section className="glass-panel mb-6 p-5 md:p-6">
               <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
                 <div className="max-w-3xl">
@@ -355,7 +354,6 @@ export function Professionals() {
             )}
 
             <MobileAdBanner variant="inline" page="professionals" inlineIndex={2} outerClassName="mt-8" />
-      </div>
     </div>
   )
 }

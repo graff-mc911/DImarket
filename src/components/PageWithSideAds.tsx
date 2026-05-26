@@ -55,7 +55,9 @@ export function PageWithSideAds({
 
   return (
     <div className={`page-bg min-h-screen pb-8 app-page-with-fixed-rails ${className}`}>
-      <div className="app-page-main min-w-0">{children}</div>
+      <div className="app-page-main min-w-0">
+        <div className="layout-page-content">{children}</div>
+      </div>
     </div>
   )
 }
