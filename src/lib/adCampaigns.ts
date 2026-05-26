@@ -220,88 +220,27 @@ export function isAnimatedCampaign(campaign: AdCampaign): boolean {
   return getCampaignMediaType(campaign) === 'gif'
 }
 
-function campaignMatchesPageSide(
-  campaign: AdCampaignWithAdvertiser,
-  pageKey: AdPageKey,
-  side?: 'left' | 'right',
-): boolean {
-  const placements = getCampaignPlacements(campaign)
-  const sideNeedle = side === 'left' ? '_side_l' : side === 'right' ? '_side_r' : '_side_'
-  if (placements.some((p) => p.startsWith(`${pageKey}${sideNeedle}`))) return true
-  if (!side && placements.some((p) => p.includes(`${pageKey}_side_`))) return true
-  return campaignMatchesSlot(campaign, 'sidebar')
-}
-
-/** Заповнити ліву колонку, якщо купили лише праві слоти (home_side_r1 …) */
-function pickLeftSideFallback(
-  pool: AdCampaignWithAdvertiser[],
-  pageKey: AdPageKey,
-  rowIndex: number,
-): AdCampaignWithAdvertiser | null {
-  if (pool.length === 0) return null
-
-  const leftOnly = pool.filter((c) => campaignMatchesPageSide(c, pageKey, 'left'))
-  if (leftOnly.length > 0) {
-    return leftOnly[hashSlotId(`left-fallback-${rowIndex}`) % leftOnly.length] ?? null
-  }
-
-  const anySide = pool.filter((c) => campaignMatchesPageSide(c, pageKey))
-  if (anySide.length > 0) {
-    return anySide[hashSlotId(`left-any-${rowIndex}`) % anySide.length] ?? null
-  }
-
-  return pool[hashSlotId(`left-pool-${rowIndex}`) % pool.length] ?? null
-}
-
-function countPageSideSlots(campaign: AdCampaignWithAdvertiser, pageKey: AdPageKey, side: 'left' | 'right'): number {
-  const sideNeedle = side === 'left' ? '_side_l' : '_side_r'
-  return getCampaignPlacements(campaign).filter(
-    (p) => p.startsWith(`${pageKey}${sideNeedle}`),
-  ).length
-}
-
 function fillSideStack(
   all: AdCampaignWithAdvertiser[],
-  used: Set<string>,
   side: 'left' | 'right',
   count: number,
   pageKey: AdPageKey,
 ): (AdCampaignWithAdvertiser | null)[] {
   const out: (AdCampaignWithAdvertiser | null)[] = Array.from({ length: count }, () => null)
+  const legacyPool = all.filter((c) => !campaignUsesGranularPlacements(c))
 
   for (let i = 0; i < count; i++) {
     const slotId = sideSlotId(pageKey, side, (i + 1) as SideIndex)
-    const pool = () =>
-      all.filter((c) => !used.has(c.id) || getCampaignPlacements(c).includes(slotId))
-    let picked = pickCampaignForSlot(pool(), slotId)
 
-    if (!picked) {
-      const exactOwner = all.find((c) => getCampaignPlacements(c).includes(slotId))
-      if (exactOwner) picked = exactOwner
+    /** Куплений слот — лише exact match (home_side_r1 → тільки R1) */
+    const exactOwner = all.find((c) => getCampaignPlacements(c).includes(slotId))
+    if (exactOwner) {
+      out[i] = exactOwner
+      continue
     }
 
-    if (!picked && side === 'left') {
-      picked = pickLeftSideFallback(pool(), pageKey, i)
-    }
-
-    if (picked) {
-      out[i] = picked
-      if (countPageSideSlots(picked, pageKey, side) <= 1) {
-        used.add(picked.id)
-      }
-    }
-  }
-
-  /** Другий прохід: ряди 3–4 (і інші порожні) — дозволяємо повтор кампанії для цієї сторінки */
-  const sidePool = all.filter((c) => campaignMatchesPageSide(c, pageKey, side))
-  const pagePool = all.filter((c) => campaignMatchesPageSide(c, pageKey))
-  const fillPool = sidePool.length > 0 ? sidePool : pagePool.length > 0 ? pagePool : all
-
-  for (let i = 0; i < count; i++) {
-    if (out[i]) continue
-    if (fillPool.length === 0) continue
-    const picked = fillPool[hashSlotId(`${pageKey}-${side}-row-${i}`) % fillPool.length] ?? null
-    if (picked) out[i] = picked
+    /** Легасі placement (sidebar, home…) — старі кампанії без гранульованих ID */
+    out[i] = pickCampaignForSlot(legacyPool, slotId)
   }
 
   return out
@@ -321,17 +260,8 @@ export function pickSideStacksForPage(
   }
 
   const pageKey = pageKeyFromSideAdsPage(page)
-  const used = new Set<string>()
-
-  const right = fillSideStack(all, used, 'right', count, pageKey)
-  const left = fillSideStack(all, used, 'left', count, pageKey)
-
-  /** Одна кампанія лише на правих слотах — показуємо її й зліва */
-  if (!left.some(Boolean) && right.some(Boolean)) {
-    for (let i = 0; i < count; i++) {
-      if (right[i]) left[i] = right[i]
-    }
-  }
+  const right = fillSideStack(all, 'right', count, pageKey)
+  const left = fillSideStack(all, 'left', count, pageKey)
 
   return { left, right }
 }
