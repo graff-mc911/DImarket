@@ -35,6 +35,7 @@ import { Favorites }    from './pages/Favorites'
 import { CreateAd }       from './pages/CreateAd'
 import { JobRequestChat } from './pages/JobRequestChat'
 import { AiAdmin } from './pages/AiAdmin'
+import { MarketingAgentAdmin } from './pages/MarketingAgentAdmin'
 import { AiChatWidget } from './components/ai/AiChatWidget'
 import { Checkout }     from './pages/Checkout'
 import { BoostProfile } from './pages/BoostProfile'
@@ -83,6 +84,7 @@ function App() {
       case '/create-ad':     return <CreateAd />
       case '/assistant/job': return <JobRequestChat />
       case '/admin/ai':        return <AiAdmin />
+      case '/admin/marketing-agent': return <MarketingAgentAdmin />
       case '/checkout':      return <Checkout />      // 🆕 Після оплати Stripe
       case '/boost':         return <BoostProfile />  // 🆕 Просування профілю
       case '/verification':  return <Verification />

@@ -20,6 +20,7 @@ import {
   Globe,
   Hammer,
   LogOut,
+  Megaphone,
   Menu,
   MessageSquare,
   PlusCircle,
@@ -555,6 +556,10 @@ export function Header() {
                             <button onClick={() => goTo('/admin/ai')} type="button" className={dropdownItemClass}>
                               <Bot className="mr-2 inline h-4 w-4" />
                               {t('ai.admin.title')}
+                            </button>
+                            <button onClick={() => goTo('/admin/marketing-agent')} type="button" className={dropdownItemClass}>
+                              <Megaphone className="mr-2 inline h-4 w-4" />
+                              {t('marketing.admin.title')}
                             </button>
                           </>
                         )}

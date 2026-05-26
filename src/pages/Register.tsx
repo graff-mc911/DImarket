@@ -11,6 +11,7 @@ import {
 import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { triggerRegistrationMarketing } from '../lib/marketing/agentApi'
 import { LANGUAGES }  from '../lib/types'
 import {
   IP_COUNTRY_MAP,
@@ -211,6 +212,15 @@ export function Register() {
           )
           if (profileError) throw profileError
         }
+
+        const marketingRole =
+          selectedRole === 'professional' ? 'master' : selectedRole
+        triggerRegistrationMarketing({
+          userId: authData.user.id,
+          userRole: marketingRole,
+          languageCode: document.documentElement.lang?.slice(0, 2) || 'uk',
+          countryCode: country.trim().slice(0, 2).toUpperCase() || 'UA',
+        })
 
         setSuccess(true)
         setTimeout(() => {
