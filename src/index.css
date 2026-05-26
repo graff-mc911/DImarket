@@ -228,6 +228,15 @@
     .layout-with-side-ads > .ad-side-rail:last-of-type {
       grid-column: 3;
     }
+
+    /* Немає бокових рейок (рекламу видалили) — контент на всю ширину */
+    .layout-with-side-ads:has(> .layout-with-side-ads__main:only-child) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .layout-with-side-ads:has(> .layout-with-side-ads__main:only-child) .layout-with-side-ads__main {
+      grid-column: 1;
+    }
   }
 
   /** Повна ширина центральної колонки (замість max-w-7xl на сторінках з боковими рейками) */

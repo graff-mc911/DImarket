@@ -225,25 +225,25 @@ export function Home() {
                 </button>
               </nav>
 
-            {!loading && (stats.professionals > 0 || stats.listings > 0) && (
-              <div className="mt-4 flex w-full flex-wrap justify-center gap-x-5 gap-y-2 border-t border-[var(--glass-border)] pt-4">
-                <StatPill
-                  icon={<Users className="h-4 w-4" />}
-                  value={stats.professionals}
-                  label={t('home.statsProfessionals')}
-                />
-                <StatPill
-                  icon={<ClipboardList className="h-4 w-4" />}
-                  value={stats.listings}
-                  label={t('home.statsListings')}
-                />
-                <StatPill
-                  icon={<ShieldCheck className="h-4 w-4" />}
-                  value={stats.countries}
-                  label={t('home.statsLanguages')}
-                />
-              </div>
-            )}
+              {!loading && (stats.professionals > 0 || stats.listings > 0) && (
+                <div className="mt-4 flex w-full flex-wrap justify-center gap-x-5 gap-y-2 border-t border-[var(--glass-border)] pt-4">
+                  <StatPill
+                    icon={<Users className="h-4 w-4" />}
+                    value={stats.professionals}
+                    label={t('home.statsProfessionals')}
+                  />
+                  <StatPill
+                    icon={<ClipboardList className="h-4 w-4" />}
+                    value={stats.listings}
+                    label={t('home.statsListings')}
+                  />
+                  <StatPill
+                    icon={<ShieldCheck className="h-4 w-4" />}
+                    value={stats.countries}
+                    label={t('home.statsLanguages')}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

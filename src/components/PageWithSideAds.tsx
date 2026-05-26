@@ -1,5 +1,8 @@
-import type { ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { AdBanner } from './AdBanner'
+import { usePaidAds } from '../contexts/PaidAdsContext'
+import { sideSlotIdsForPage } from '../lib/adPlacementCatalog'
+import { pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
 
 export type SideAdsPage = 'home' | 'listings' | 'professionals' | 'default'
 
@@ -43,7 +46,13 @@ export function PageWithSideAds({
   className = '',
   showSideAds = true,
 }: PageWithSideAdsProps) {
-  const withRails = showSideAds
+  const { loading, getForSlots } = usePaidAds()
+  const pageKey = pageKeyFromSideAdsPage(page)
+  const sideSlots = useMemo(() => sideSlotIdsForPage(pageKey), [pageKey])
+  const sideCampaigns = useMemo(() => getForSlots(sideSlots, 24), [getForSlots, sideSlots])
+
+  /** Без активних бокових кампаній — одна колонка (інакше порожні 15vw зліва/справа). */
+  const withRails = showSideAds && !loading && sideCampaigns.length > 0
 
   return (
     <div className={`page-bg min-h-screen pb-8 ${className}`}>
