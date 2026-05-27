@@ -20,6 +20,7 @@ import { VerificationAdminPanel } from '../components/verification/VerificationA
 import { AdCampaign, Announcement, FeedbackMessage, Message, Profile } from '../lib/types'
 import { isSiteOwner } from '../lib/siteOwner'
 import { OwnerAdManager } from '../components/OwnerAdManager'
+import { AdminAIPanel } from '../components/AdminAI/AdminAIPanel'
 
 interface OwnerStats {
   totalVisits: number
@@ -860,6 +861,7 @@ export function Dashboard() {
               <AnnouncementsManager />
 
             </section>
+      <AdminAIPanel />
     </div>
   )
 }
