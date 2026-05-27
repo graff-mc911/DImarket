@@ -160,7 +160,7 @@ export function Home() {
               </div>
 
               <nav
-                className="home-hero__category-chips mt-4 flex w-full max-w-2xl flex-wrap justify-center gap-2"
+                className="home-hero__category-chips mt-4 hidden w-full max-w-2xl flex-wrap justify-center gap-2 md:flex"
                 aria-label={t('home.popularCategoriesTitle')}
               >
                 {displayCategories.map((category) => (
