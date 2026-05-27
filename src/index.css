@@ -585,6 +585,59 @@
     transform-origin: center bottom;
   }
 
+  .logo-construction-scene {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .logo-scene-actor {
+    position: absolute;
+    font-size: 0.74em;
+    line-height: 1;
+    opacity: 0;
+    will-change: transform, opacity, filter;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  }
+
+  .logo-scene-builder {
+    left: -0.9em;
+    top: 0.28em;
+    animation: logo-builder-run 7s linear infinite;
+  }
+
+  .logo-scene-brick {
+    left: 1.1em;
+    top: 0.46em;
+    animation: logo-brick-drop 7s linear infinite;
+  }
+
+  .logo-scene-hammer {
+    left: 2.2em;
+    top: 0.08em;
+    transform-origin: 20% 90%;
+    animation: logo-hammer-hit 7s ease-in-out infinite;
+  }
+
+  .logo-scene-spackle {
+    left: 3em;
+    top: 0.42em;
+    animation: logo-spackle-pass 7s ease-in-out infinite;
+  }
+
+  .logo-scene-paint {
+    left: 4.2em;
+    top: 0.33em;
+    animation: logo-paint-pass 7s ease-in-out infinite;
+  }
+
+  .logo-scene-bulldozer {
+    right: -1.6em;
+    top: 0.44em;
+    animation: logo-bulldozer-crash 7s ease-in-out infinite;
+  }
+
   @keyframes logo-construction-sequence {
     /* Підхід будівельника + початок будівництва */
     0% {
@@ -648,6 +701,132 @@
       opacity: 0;
       transform: translateY(12px) scale(0.9);
       filter: grayscale(0.4) brightness(0.9);
+    }
+  }
+
+  @keyframes logo-builder-run {
+    0% {
+      opacity: 0;
+      transform: translateX(-0.8em);
+    }
+    6%,
+    16% {
+      opacity: 1;
+      transform: translateX(0.7em);
+    }
+    22% {
+      opacity: 1;
+      transform: translateX(1.2em);
+    }
+    24%,
+    100% {
+      opacity: 0;
+      transform: translateX(1.3em);
+    }
+  }
+
+  @keyframes logo-brick-drop {
+    0%,
+    14% {
+      opacity: 0;
+      transform: translateY(-0.5em) scale(0.8);
+    }
+    18%,
+    26% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    30%,
+    100% {
+      opacity: 0;
+      transform: translateY(0.3em) scale(0.9);
+    }
+  }
+
+  @keyframes logo-hammer-hit {
+    0%,
+    26% {
+      opacity: 0;
+      transform: rotate(0deg);
+    }
+    30%,
+    40% {
+      opacity: 1;
+    }
+    32% {
+      transform: rotate(-55deg);
+    }
+    35% {
+      transform: rotate(20deg);
+    }
+    38% {
+      transform: rotate(-42deg);
+    }
+    41% {
+      transform: rotate(0deg);
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+      transform: rotate(0deg);
+    }
+  }
+
+  @keyframes logo-spackle-pass {
+    0%,
+    40% {
+      opacity: 0;
+      transform: translateX(-0.4em);
+    }
+    44%,
+    56% {
+      opacity: 1;
+      transform: translateX(0.35em);
+    }
+    60%,
+    100% {
+      opacity: 0;
+      transform: translateX(0.7em);
+    }
+  }
+
+  @keyframes logo-paint-pass {
+    0%,
+    54% {
+      opacity: 0;
+      transform: translateX(-0.4em) rotate(-6deg);
+    }
+    58%,
+    69% {
+      opacity: 1;
+      transform: translateX(0.42em) rotate(8deg);
+    }
+    72%,
+    100% {
+      opacity: 0;
+      transform: translateX(0.9em) rotate(0deg);
+    }
+  }
+
+  @keyframes logo-bulldozer-crash {
+    0%,
+    68% {
+      opacity: 0;
+      transform: translateX(0.9em);
+    }
+    72%,
+    80% {
+      opacity: 1;
+      transform: translateX(-0.5em);
+    }
+    83% {
+      opacity: 1;
+      transform: translateX(-1.4em);
+    }
+    90%,
+    100% {
+      opacity: 0;
+      transform: translateX(-2em);
     }
   }
 

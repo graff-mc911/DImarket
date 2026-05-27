@@ -45,6 +45,19 @@ function Wordmark({ className = '' }: { className?: string }) {
   )
 }
 
+function ConstructionScene() {
+  return (
+    <span className="logo-construction-scene" aria-hidden="true">
+      <span className="logo-scene-actor logo-scene-builder">👷</span>
+      <span className="logo-scene-actor logo-scene-brick">🧱</span>
+      <span className="logo-scene-actor logo-scene-hammer">🔨</span>
+      <span className="logo-scene-actor logo-scene-spackle">🪣</span>
+      <span className="logo-scene-actor logo-scene-paint">🎨</span>
+      <span className="logo-scene-actor logo-scene-bulldozer">🚜</span>
+    </span>
+  )
+}
+
 export function Logo({
   compact = false,
   size = 'md',
@@ -59,20 +72,22 @@ export function Logo({
       <div
         role="img"
         aria-label="DImarket logo"
-        className={animated ? `logo-construction ${className}` : className}
+        className={animated ? `logo-construction relative ${className}` : className}
       >
         <Wordmark className={current.title} />
+        {animated && <ConstructionScene />}
       </div>
     )
   }
 
   return (
     <div
-      className={`leading-none ${animated ? 'logo-construction ' : ''}${className}`}
+      className={`leading-none ${animated ? 'logo-construction relative ' : ''}${className}`}
       role="img"
       aria-label="DImarket logo"
     >
       <Wordmark className={current.title} />
+      {animated && <ConstructionScene />}
       {current.subtitle !== 'hidden' && (
         <div className={`${current.subtitle} mt-1.5 uppercase tracking-[0.22em] text-[#5C4D41]`}>
           Build & Renovate
