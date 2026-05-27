@@ -35,29 +35,29 @@ export function pathUsesSideAdRails(path: string): boolean {
 interface PageWithSideAdsProps {
   children: ReactNode
   className?: string
-  /** false — повна ширина без відступів під бокові рейки */
+  /** @deprecated Використовуйте inSideAdsGrid */
   showSideAds?: boolean
+  /** Центральна колонка в сітці layout-with-side-ads (бокові рейки зовні) */
+  inSideAdsGrid?: boolean
 }
 
-/** Обгортка контенту; бокові рейки рендеряться в App через SideAdRails */
+/** Обгортка контенту; бокові рейки — у SideAdRailsLayout (App.tsx) */
 export function PageWithSideAds({
   children,
   className = '',
-  showSideAds = true,
+  inSideAdsGrid = false,
 }: PageWithSideAdsProps) {
-  if (!showSideAds) {
+  if (inSideAdsGrid) {
     return (
-      <div className={`page-bg min-h-screen pb-8 ${className}`}>
-        <div className="layout-page-gutter min-w-0">{children}</div>
+      <div className={`page-bg min-h-full pb-8 ${className}`}>
+        <div className="layout-page-content min-w-0">{children}</div>
       </div>
     )
   }
 
   return (
-    <div className={`page-bg min-h-screen pb-8 app-page-with-fixed-rails ${className}`}>
-      <div className="app-page-main min-w-0">
-        <div className="layout-page-content">{children}</div>
-      </div>
+    <div className={`page-bg min-h-screen pb-8 ${className}`}>
+      <div className="layout-page-gutter min-w-0">{children}</div>
     </div>
   )
 }

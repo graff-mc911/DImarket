@@ -334,7 +334,15 @@
     .ad-side-rail {
       display: flex;
       flex-direction: column;
+      align-self: stretch;
       min-height: 100%;
+    }
+
+    .layout-with-side-ads > .ad-side-rail--empty {
+      display: block;
+      visibility: hidden;
+      pointer-events: none;
+      min-width: 0;
     }
 
     /* Після .ad-side-rail { width:100% } — інакше fixed-рейки на body розтягуються на весь екран */

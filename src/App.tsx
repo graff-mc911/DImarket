@@ -9,7 +9,7 @@ import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
 import { PageWithSideAds, adPageForPath, pathUsesSideAdRails } from './components/PageWithSideAds'
-import { SideAdRails } from './components/SideAdRails'
+import { SideAdRailsLayout } from './components/SideAdRails'
 import { bindPathListener }    from './lib/navigation'
 
 // --- Публічні сторінки ---
@@ -101,13 +101,21 @@ function App() {
       <PaidAdsProvider>
         <div className="app-shell min-h-screen flex flex-col">
           <Header />
-          {showSideAds ? <SideAdRails page={sideAdsPage} /> : null}
-          <main className="flex-1">
-            <PageWithSideAds showSideAds={showSideAds}>
-              {getPage()}
-            </PageWithSideAds>
-          </main>
-          <Footer />
+          {showSideAds ? (
+            <SideAdRailsLayout page={sideAdsPage}>
+              <main className="min-w-0 flex-1">
+                <PageWithSideAds inSideAdsGrid>{getPage()}</PageWithSideAds>
+              </main>
+              <Footer />
+            </SideAdRailsLayout>
+          ) : (
+            <>
+              <main className="flex-1">
+                <PageWithSideAds>{getPage()}</PageWithSideAds>
+              </main>
+              <Footer />
+            </>
+          )}
           <AiChatWidget />
         </div>
       </PaidAdsProvider>
