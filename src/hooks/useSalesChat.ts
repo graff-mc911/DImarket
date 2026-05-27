@@ -22,6 +22,7 @@ import { supabase } from '../lib/supabase'
 import { navigateTo } from '../lib/navigation'
 
 const STORAGE_KEY = 'dimarket_ai_sales_chat_v2'
+const AD_GUIDE_START_KEY = 'dimarket_ad_guide_start'
 
 type StoredChat = {
   step: SalesBotStep
@@ -49,13 +50,14 @@ function saveStored(state: StoredChat) {
 
 const JOB_CATEGORY_BLOCKLIST = new Set(['vacancies', 'sell-rent'])
 
-function detectGuideRoute(text: string): { reply: string; path?: string } | null {
+function detectGuideRoute(text: string): { reply: string; path?: string; adWizard?: boolean; adGuide?: boolean } | null {
   const q = text.toLowerCase()
   if (/(реклам|банер|advert|ads?|маркетинг)/i.test(q)) {
     return {
       reply:
-        'Відкрив AI помічник гід по сайту для реклами: оберіть слот на схемі, додайте дані й зображення, перегляньте превʼю, потім виберіть гео/тривалість і оплату. Після підтвердження оплати відкрию кабінет рекламодавця.',
+        'Відкриваю сторінку реклами і вмикаю покроковий AI гід: слоти → контент → гео → ціна → оплата.',
       path: '/advertising',
+      adGuide: true,
     }
   }
   if (/(майстр|компан|підрядник|specialist|contractor)/i.test(q) && /(чат|зв.?яз|contact)/i.test(q)) {
@@ -88,6 +90,7 @@ export function useSalesChat() {
   const [error, setError] = useState<string | null>(null)
   const [listingId, setListingId] = useState<string | null>(null)
   const [quickReplies, setQuickReplies] = useState<string[]>([])
+  const [adWizardActive, setAdWizardActive] = useState(false)
   const initialized = useRef(false)
   const sessionIdRef = useRef<string | null>(null)
 
@@ -179,6 +182,17 @@ export function useSalesChat() {
       if (guide) {
         setMessages((prev) => [...prev, { role: 'assistant', content: guide.reply }])
         setQuickReplies([])
+        if (guide.adGuide) {
+          try {
+            sessionStorage.setItem(AD_GUIDE_START_KEY, '1')
+          } catch {
+            /* ignore */
+          }
+        }
+        if (guide.adWizard) {
+          setAdWizardActive(true)
+          return
+        }
         if (guide.path) navigateTo(guide.path)
         return
       }
@@ -310,6 +324,8 @@ export function useSalesChat() {
     error,
     listingId,
     quickReplies,
+    adWizardActive,
+    setAdWizardActive,
     sendMessage,
     resetChat,
   }

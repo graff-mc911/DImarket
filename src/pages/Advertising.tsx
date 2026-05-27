@@ -73,12 +73,73 @@ type FeedbackState = { type: 'success' | 'error'; text: string }
 // ── Константи ──────────────────────────────────────────────────────────────────
 
 const PRICE_PER_CITY_PER_WEEK = 25
+const AD_GUIDE_START_KEY = 'dimarket_ad_guide_start'
+
+type AdGuideStep = {
+  key: 'placements' | 'title' | 'desc' | 'link' | 'geo' | 'price' | 'preview' | 'submit'
+  selector: string
+  title: string
+  text: string
+}
+
+const AD_GUIDE_STEPS: AdGuideStep[] = [
+  {
+    key: 'placements',
+    selector: '#ad-placements',
+    title: 'Крок 1: Оберіть слоти',
+    text: 'На цій схемі виберіть, де показувати рекламу, і завантажте зображення в слот.',
+  },
+  {
+    key: 'title',
+    selector: '#ad-campaign-title',
+    title: 'Крок 2: Назва кампанії',
+    text: 'Введіть коротку зрозумілу назву вашої реклами.',
+  },
+  {
+    key: 'desc',
+    selector: '#ad-campaign-desc',
+    title: 'Крок 3: Опис',
+    text: 'Додайте опис: що саме рекламуєте і для кого.',
+  },
+  {
+    key: 'link',
+    selector: '#ad-campaign-link',
+    title: 'Крок 4: Посилання',
+    text: 'Вкажіть сайт або сторінку, куди переходить клієнт після кліку.',
+  },
+  {
+    key: 'geo',
+    selector: '#ad-geo-block',
+    title: 'Крок 5: Географія показу',
+    text: 'Оберіть країни/міста або показ на весь світ.',
+  },
+  {
+    key: 'price',
+    selector: '#ad-price-block',
+    title: 'Крок 6: Перевірте ціну',
+    text: 'Виберіть тривалість і перевірте суму перед оплатою.',
+  },
+  {
+    key: 'preview',
+    selector: '#ad-preview-block',
+    title: 'Крок 7: Перевірте попередній вигляд',
+    text: 'Переконайтесь, що банер виглядає правильно у превʼю.',
+  },
+  {
+    key: 'submit',
+    selector: '#ad-submit-btn',
+    title: 'Крок 8: Перехід до оплати',
+    text: 'Натисніть цю кнопку, щоб створити кампанію і перейти до оплати Stripe.',
+  },
+]
 
 
 // ── Головний компонент ─────────────────────────────────────────────────────────
 
 export function Advertising() {
   const { user, profile, t } = useApp()
+  const [adGuideActive, setAdGuideActive] = useState(false)
+  const [adGuideStepIndex, setAdGuideStepIndex] = useState(0)
 
   // Поля форми
   const [title, setTitle]             = useState('')
@@ -170,9 +231,34 @@ export function Advertising() {
   const [loadingCampaigns, setLoadingCampaigns] = useState(false)
   const [saving, setSaving]                     = useState(false)
   const [feedback, setFeedback]                 = useState<FeedbackState | null>(null)
+  const activeGuideStep = adGuideActive ? AD_GUIDE_STEPS[adGuideStepIndex] : null
 
   const createdAtFormatter = useMemo(() =>
     new Intl.DateTimeFormat('uk-UA', { dateStyle: 'medium', timeStyle: 'short' }), [])
+
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem(AD_GUIDE_START_KEY) === '1') {
+        sessionStorage.removeItem(AD_GUIDE_START_KEY)
+        setAdGuideActive(true)
+        setAdGuideStepIndex(0)
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!activeGuideStep) return
+    const el = document.querySelector(activeGuideStep.selector)
+    if (!el) return
+    ;(el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [activeGuideStep])
+
+  const guideClass = (key: AdGuideStep['key']) =>
+    activeGuideStep?.key === key
+      ? 'ring-2 ring-[#6366f1] ring-offset-2 ring-offset-white/60 rounded-[14px]'
+      : ''
 
   const targetCities = useMemo(
     () => resolveTargetCities(geoMode, geoData, selectedCountries, selectedRegions, selectedCities),
@@ -501,7 +587,7 @@ export function Advertising() {
           </div>
         </section>
 
-        <section id="ad-placements" className="glass-card mt-6 p-4 md:p-5">
+        <section id="ad-placements" className={`glass-card mt-6 p-4 md:p-5 ${guideClass('placements')}`}>
           <h2 className="text-lg font-extrabold text-[#2f2a24] md:text-xl">
             {t('advertising.placementsSection.title')}
           </h2>
@@ -579,6 +665,7 @@ export function Advertising() {
                       required
                     >
                       <input
+                        id="ad-campaign-title"
                         type="text"
                         required
                         data-testid="ad-campaign-title"
@@ -594,6 +681,7 @@ export function Advertising() {
                       label={t('advertising.form.descLabel')}
                     >
                       <textarea
+                        id="ad-campaign-desc"
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         rows={4}
@@ -608,6 +696,7 @@ export function Advertising() {
                       required
                     >
                       <input
+                        id="ad-campaign-link"
                         type="url"
                         required
                         data-testid="ad-campaign-link"
@@ -620,7 +709,7 @@ export function Advertising() {
                   </div>
 
                   {/* Геотаргетинг */}
-                  <div className="border-t border-[rgba(148,163,184,0.18)] pt-5">
+                  <div id="ad-geo-block" className={`border-t border-[rgba(148,163,184,0.18)] pt-5 ${guideClass('geo')}`}>
                     <label className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#5f5a54]">
                       <Globe2 className="h-4 w-4" />
                       {t('advertising.geo.label')}
@@ -672,7 +761,7 @@ export function Advertising() {
                     )}
 
                     {/* Розрахунок ціни */}
-                    <div className="mt-5 rounded-[20px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.50)] p-4">
+                    <div id="ad-price-block" className={`mt-5 rounded-[20px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.50)] p-4 ${guideClass('price')}`}>
                       <div className="text-sm font-bold text-[#2f2a24]">{t('advertising.price.title')}</div>
                       <div className="mt-3 space-y-1 text-sm text-[#6f665d]">
                         <div>{t('advertising.price.geo')}: <b>{geoSummary}</b></div>
@@ -727,10 +816,11 @@ export function Advertising() {
                       </button>
                     )}
                     <button
+                      id="ad-submit-btn"
                       type="submit"
                       data-testid="ad-campaign-submit"
                       disabled={saving}
-                      className="btn-primary rounded-full disabled:cursor-not-allowed disabled:opacity-60"
+                      className={`btn-primary rounded-full disabled:cursor-not-allowed disabled:opacity-60 ${guideClass('submit')}`}
                     >
                       {saving
                         ? t('advertising.submitting')
@@ -750,7 +840,7 @@ export function Advertising() {
           <div className="space-y-6">
 
             {/* Превью */}
-            <div className="glass-card p-6">
+            <div id="ad-preview-block" className={`glass-card p-6 ${guideClass('preview')}`}>
               <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.preview.title')}</h2>
               <p className="mt-2 text-sm leading-6 text-[#6f665d]">{t('advertising.preview.desc')}</p>
 
@@ -834,6 +924,43 @@ export function Advertising() {
 
           </div>
         </section>
+
+        {adGuideActive && activeGuideStep && (
+          <div className="fixed bottom-4 right-4 z-[120] w-[min(92vw,380px)] rounded-[18px] border border-[rgba(99,102,241,0.3)] bg-white p-4 shadow-[0_10px_30px_rgba(67,44,26,0.18)]">
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#6366f1]">
+              AI гід · {adGuideStepIndex + 1}/{AD_GUIDE_STEPS.length}
+            </p>
+            <p className="mt-1 text-sm font-bold text-[#2f2a24]">{activeGuideStep.title}</p>
+            <p className="mt-1 text-xs leading-5 text-[#6f665d]">{activeGuideStep.text}</p>
+            <div className="mt-3 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setAdGuideStepIndex((i) => Math.max(0, i - 1))}
+                disabled={adGuideStepIndex === 0}
+                className="btn-secondary rounded-full px-3 py-1.5 text-xs disabled:opacity-50"
+              >
+                Назад
+              </button>
+              {adGuideStepIndex < AD_GUIDE_STEPS.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={() => setAdGuideStepIndex((i) => Math.min(AD_GUIDE_STEPS.length - 1, i + 1))}
+                  className="btn-primary rounded-full px-3 py-1.5 text-xs"
+                >
+                  Далі
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setAdGuideActive(false)}
+                  className="btn-primary rounded-full px-3 py-1.5 text-xs"
+                >
+                  Завершити
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
