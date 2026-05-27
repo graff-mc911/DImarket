@@ -5,6 +5,7 @@ import {
   type AdminAiAlert,
   type AdminAiMessage,
 } from '../lib/adminAI/adminAiApi'
+import { fetchLocalPlatformStats, formatAdminAiInvokeError } from '../lib/adminAI/localStats'
 import { startSystemMonitor, subscribeAdminAlerts } from '../lib/adminAI/monitor'
 
 function uid() {
@@ -46,6 +47,43 @@ export function useAdminAI(lang = 'uk-UA') {
         { id: uid(), role: 'user', content: text, timestamp: Date.now() },
         { id: uid(), role: 'assistant', content: localHelp, timestamp: Date.now() },
       ])
+      return
+    }
+
+    if (text.trim().toLowerCase() === '/stats') {
+      const userMsg: AdminAiMessage = {
+        id: uid(),
+        role: 'user',
+        content: text,
+        timestamp: Date.now(),
+      }
+      setMessages((m) => [...m, userMsg])
+      setLoading(true)
+      try {
+        const data = await fetchLocalPlatformStats()
+        setMessages((m) => [
+          ...m,
+          {
+            id: uid(),
+            role: 'assistant',
+            content: data.reply,
+            table: data.table,
+            timestamp: Date.now(),
+          },
+        ])
+      } catch (e) {
+        setMessages((m) => [
+          ...m,
+          {
+            id: uid(),
+            role: 'assistant',
+            content: formatAdminAiInvokeError(e),
+            timestamp: Date.now(),
+          },
+        ])
+      } finally {
+        setLoading(false)
+      }
       return
     }
 
@@ -91,7 +129,7 @@ export function useAdminAI(lang = 'uk-UA') {
         {
           id: uid(),
           role: 'assistant',
-          content: `❌ ${e instanceof Error ? e.message : 'Помилка AI'}`,
+          content: formatAdminAiInvokeError(e),
           timestamp: Date.now(),
         },
       ])

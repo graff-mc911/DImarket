@@ -24,12 +24,8 @@ export async function runSystemHealthCheck(): Promise<AdminAiAlert[]> {
       timestamp: Date.now(),
     }))
   } catch {
-    return [{
-      id: `health-err-${Date.now()}`,
-      message: '🚨 Не вдалося перевірити стан системи.',
-      severity: 'error',
-      timestamp: Date.now(),
-    }]
+    // Edge function ще не задеплоєна — не лякаємо адміна червоним банером
+    return []
   }
 }
 
