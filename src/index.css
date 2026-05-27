@@ -607,6 +607,18 @@
     animation: logo-builder-run 7s linear infinite;
   }
 
+  .logo-scene-ladder {
+    left: -3.8em;
+    top: 0.2em;
+    animation: logo-ladder-carry 7s linear infinite;
+  }
+
+  .logo-scene-tools {
+    left: -3.3em;
+    top: 0.68em;
+    animation: logo-tools-carry 7s linear infinite;
+  }
+
   .logo-scene-brick {
     left: 1.1em;
     top: 0.46em;
@@ -636,6 +648,24 @@
     right: -1.6em;
     top: 0.44em;
     animation: logo-bulldozer-crash 7s ease-in-out infinite;
+  }
+
+  .logo-build-letter {
+    display: inline-block;
+    opacity: 0.18;
+    transform-origin: center bottom;
+  }
+
+  .logo-build-letter--d {
+    animation: logo-build-letter-d 7s ease-in-out infinite;
+  }
+
+  .logo-build-letter--i {
+    animation: logo-build-letter-i 7s ease-in-out infinite;
+  }
+
+  .logo-build-letter--market {
+    animation: logo-build-letter-market 7s ease-in-out infinite;
   }
 
   @keyframes logo-construction-sequence {
@@ -723,15 +753,81 @@
     }
     32% {
       opacity: 1;
-      transform: translateX(2.5em);
+      transform: translateX(2.5em) translateY(-0.08em);
     }
     40% {
       opacity: 0.9;
-      transform: translateX(2.6em);
+      transform: translateX(2.6em) translateY(0);
+    }
+    52% {
+      opacity: 1;
+      transform: translateX(3.65em) translateY(-0.08em);
+    }
+    62% {
+      opacity: 1;
+      transform: translateX(4.35em) translateY(0);
+    }
+    72% {
+      opacity: 1;
+      transform: translateX(5.2em) translateY(-0.06em);
     }
     100% {
       opacity: 0;
-      transform: translateX(2.8em);
+      transform: translateX(5.7em) translateY(0);
+    }
+  }
+
+  @keyframes logo-ladder-carry {
+    0% {
+      opacity: 1;
+      transform: translateX(0) rotate(-10deg);
+    }
+    24% {
+      opacity: 1;
+      transform: translateX(2.4em) rotate(-7deg);
+    }
+    42% {
+      opacity: 1;
+      transform: translateX(3.1em) rotate(0deg);
+    }
+    55% {
+      opacity: 0.95;
+      transform: translateX(3.25em) rotate(8deg);
+    }
+    68% {
+      opacity: 0.9;
+      transform: translateX(4.9em) rotate(2deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(5.2em) rotate(0deg);
+    }
+  }
+
+  @keyframes logo-tools-carry {
+    0% {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+    24% {
+      opacity: 1;
+      transform: translateX(2.4em) translateY(-0.06em);
+    }
+    46% {
+      opacity: 1;
+      transform: translateX(3.35em) translateY(0);
+    }
+    58% {
+      opacity: 1;
+      transform: translateX(3.6em) translateY(-0.03em);
+    }
+    72% {
+      opacity: 0.95;
+      transform: translateX(5em) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(5.4em) translateY(0);
     }
   }
 
@@ -750,6 +846,78 @@
     100% {
       opacity: 0;
       transform: translateY(0.3em) scale(0.9);
+    }
+  }
+
+  @keyframes logo-build-letter-d {
+    0%,
+    13% {
+      opacity: 0.12;
+      transform: translateY(0.3em) scale(0.92);
+      filter: blur(0.4px);
+    }
+    18%,
+    34% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: none;
+    }
+    82% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0.15;
+      transform: translateY(0.25em) scale(0.92);
+      filter: blur(0.5px);
+    }
+  }
+
+  @keyframes logo-build-letter-i {
+    0%,
+    32% {
+      opacity: 0.12;
+      transform: translateY(0.3em) scale(0.92);
+      filter: blur(0.4px);
+    }
+    38%,
+    56% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: none;
+    }
+    84% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0.15;
+      transform: translateY(0.25em) scale(0.92);
+      filter: blur(0.5px);
+    }
+  }
+
+  @keyframes logo-build-letter-market {
+    0%,
+    52% {
+      opacity: 0.12;
+      transform: translateY(0.3em) scale(0.94);
+      filter: blur(0.35px);
+    }
+    60%,
+    78% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: none;
+    }
+    86% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0.15;
+      transform: translateY(0.25em) scale(0.92);
+      filter: blur(0.5px);
     }
   }
 

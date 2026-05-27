@@ -32,15 +32,21 @@ const sizes = {
 
 const wordmarkFont = "Georgia, 'Times New Roman', Times, serif"
 
-function Wordmark({ className = '' }: { className?: string }) {
+function Wordmark({
+  className = '',
+  animated = false,
+}: {
+  className?: string
+  animated?: boolean
+}) {
   return (
     <div
       className={`font-medium tracking-[-0.03em] ${className}`}
       style={{ fontFamily: wordmarkFont }}
     >
-      <span className="text-[#2B231D]">D</span>
-      <span className="text-[#A66332]">I</span>
-      <span className="text-[#2B231D]">market</span>
+      <span className={animated ? 'logo-build-letter logo-build-letter--d text-[#2B231D]' : 'text-[#2B231D]'}>D</span>
+      <span className={animated ? 'logo-build-letter logo-build-letter--i text-[#A66332]' : 'text-[#A66332]'}>I</span>
+      <span className={animated ? 'logo-build-letter logo-build-letter--market text-[#2B231D]' : 'text-[#2B231D]'}>market</span>
     </div>
   )
 }
@@ -49,6 +55,8 @@ function ConstructionScene() {
   return (
     <span className="logo-construction-scene" aria-hidden="true">
       <span className="logo-scene-actor logo-scene-builder">👷</span>
+      <span className="logo-scene-actor logo-scene-ladder">🪜</span>
+      <span className="logo-scene-actor logo-scene-tools">🧰</span>
       <span className="logo-scene-actor logo-scene-brick">🧱</span>
       <span className="logo-scene-actor logo-scene-hammer">🔨</span>
       <span className="logo-scene-actor logo-scene-spackle">🪣</span>
@@ -74,7 +82,7 @@ export function Logo({
         aria-label="DImarket logo"
         className={animated ? `logo-construction relative ${className}` : className}
       >
-        <Wordmark className={current.title} />
+        <Wordmark className={current.title} animated={animated} />
         {animated && <ConstructionScene />}
       </div>
     )
@@ -86,7 +94,7 @@ export function Logo({
       role="img"
       aria-label="DImarket logo"
     >
-      <Wordmark className={current.title} />
+      <Wordmark className={current.title} animated={animated} />
       {animated && <ConstructionScene />}
       {current.subtitle !== 'hidden' && (
         <div className={`${current.subtitle} mt-1.5 uppercase tracking-[0.22em] text-[#5C4D41]`}>
