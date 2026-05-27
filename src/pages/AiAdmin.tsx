@@ -13,13 +13,24 @@ export function AiAdmin() {
 
   useEffect(() => {
     let cancelled = false
-    void supabase.auth.getSession().finally(() => {
+    const timeout = window.setTimeout(() => {
       if (!cancelled) setSessionReady(true)
+    }, 3000)
+    void supabase.auth.getSession().finally(() => {
+      if (!cancelled) {
+        window.clearTimeout(timeout)
+        setSessionReady(true)
+      }
     })
     return () => {
       cancelled = true
+      window.clearTimeout(timeout)
     }
   }, [])
+
+  useEffect(() => {
+    if (user) setSessionReady(true)
+  }, [user])
 
   if (!sessionReady) {
     return (

@@ -3,6 +3,7 @@ import { AlertTriangle, Loader2, Shield } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { aiDb } from '../../lib/ai/db'
 import { fetchAiProviderStatus } from '../../lib/bots/client'
+import { getMessagingChannelStatus } from '../../lib/bots'
 import { AdminAIAssistantInline } from '../AdminAI/AdminAIAssistantInline'
 
 type FraudRow = {
