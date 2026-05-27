@@ -230,34 +230,27 @@
       top: var(--header-offset);
       bottom: 0;
       pointer-events: auto;
-      --layout-content-block-w: min(
-        var(--layout-content-max),
-        100vw - 2 * var(--layout-page-pad-inline)
-      );
+      --layout-rail-w: min(var(--ad-side-rail-width), 14vw);
+      /* Як у .app-page-main + .layout-page-content (без подвійного gutter) */
+      --layout-pad-left: max(var(--layout-page-pad-inline), env(safe-area-inset-left, 0px));
+      --layout-pad-right: max(var(--layout-page-pad-inline), env(safe-area-inset-right, 0px));
+      --layout-inner-w: calc(100vw - var(--layout-pad-left) - var(--layout-pad-right));
+      --layout-content-block-w: min(var(--layout-content-max), var(--layout-inner-w));
       --layout-content-left: calc(
-        max(var(--layout-gutter), env(safe-area-inset-left, 0px)) + var(--layout-page-pad-inline) +
-          max(0px, (100vw - 2 * var(--layout-page-pad-inline) - var(--layout-content-block-w)) / 2)
+        var(--layout-pad-left) +
+          max(0px, (var(--layout-inner-w) - var(--layout-content-block-w)) / 2)
       );
       --layout-content-right: calc(var(--layout-content-left) + var(--layout-content-block-w));
-      --layout-screen-edge-left: max(var(--layout-gutter), env(safe-area-inset-left, 0px));
-      --layout-screen-edge-right: max(var(--layout-gutter), env(safe-area-inset-right, 0px));
-      --layout-rail-w: min(var(--ad-side-rail-width), 14vw);
     }
 
+    /* Центр бічної зони: край viewport ↔ лівий край контенту */
     .ad-side-rail--viewport-fixed.ad-side-rail--left {
-      left: calc(
-        var(--layout-screen-edge-left) +
-          (var(--layout-content-left) - var(--layout-screen-edge-left) - var(--layout-rail-w)) / 2
-      );
+      left: calc((var(--layout-content-left) - var(--layout-rail-w)) / 2);
       right: auto;
     }
 
     .ad-side-rail--viewport-fixed.ad-side-rail--right {
-      right: calc(
-        var(--layout-screen-edge-right) +
-          (100vw - var(--layout-content-right) - var(--layout-screen-edge-right) - var(--layout-rail-w)) /
-            2
-      );
+      right: calc((100vw - var(--layout-content-right) - var(--layout-rail-w)) / 2);
       left: auto;
     }
   }
