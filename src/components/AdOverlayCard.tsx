@@ -224,6 +224,11 @@ export function AdOverlayCard({
   const showDesc = showDescription && Boolean(campaign.description?.trim())
   const geoLabel = showGeo ? getGeoTargetLabel(campaign, t) : null
   const showText = hasAdTextBlock(brand, title, showDesc ? campaign.description : null, geoLabel)
+  const slotState = mediaStateFromCampaignAndSlot(
+    campaign as AdCampaignWithAdvertiser & { slot_media?: unknown; media_style?: unknown },
+    slotId,
+  )
+  const textOnImage = Boolean(slotState.mediaStyle.textOverlay) && !isLeaderboard
   const slotSpec = resolveAdSlotSpec(slotId, variant)
   const shellStyle: CSSProperties | undefined = slotSpec
     ? adSlotShellStyle(slotSpec, variant)
@@ -241,16 +246,33 @@ export function AdOverlayCard({
       style={shellStyle}
       onClick={() => void trackAdClick(campaign.id)}
     >
-      <AdCampaignMedia
-        campaign={campaign}
-        slotId={slotId}
-        variant={variant}
-        imageClass={styles.image}
-        imageStyle={imageStyle}
-        fillBanner={isLeaderboard}
-      />
+      <div className="relative min-h-0 shrink-0">
+        <AdCampaignMedia
+          campaign={campaign}
+          slotId={slotId}
+          variant={variant}
+          imageClass={styles.image}
+          imageStyle={imageStyle}
+          fillBanner={isLeaderboard}
+        />
+        {textOnImage && showText && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2 py-2">
+            {brand ? (
+              <p className={`font-bold uppercase tracking-[0.08em] text-white/75 ${styles.brand}`}>
+                {brand}
+              </p>
+            ) : null}
+            {title ? (
+              <p className={`font-extrabold text-white ${styles.title}`}>{title}</p>
+            ) : null}
+            {showDesc && campaign.description?.trim() ? (
+              <p className={`mt-0.5 text-white/90 ${styles.meta}`}>{campaign.description.trim()}</p>
+            ) : null}
+          </div>
+        )}
+      </div>
 
-      {!isLeaderboard && showText && (
+      {!isLeaderboard && showText && !textOnImage && (
         <div className={`${AD_TEXT_PANEL_CLASS} ${styles.text}`}>
           <AdTextContent
             brand={brand}

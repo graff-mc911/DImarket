@@ -41,11 +41,13 @@ import {
   buildFullCampaignMediaFields,
   ensureSlotMediaForSelection,
   selectedSlotsHaveMedia,
+  slotMediaEntryHasMedia,
   slotMediaMapFromCampaign,
   type SlotMediaMap,
 } from '../lib/adSlotMedia'
 import { AdCampaignDraftPreview, AdCopyField } from '../components/AdCopyFields'
 import { DEFAULT_AD_MEDIA_STYLE, type AdMediaStyle } from '../lib/adMediaStyle'
+import { useAdBannerMediaUpload } from '../hooks/useAdBannerMediaUpload'
 import {
   allCitiesFromCatalog,
   billingCityUnits,
@@ -120,6 +122,44 @@ export function Advertising() {
   const [slotMedia, setSlotMedia] = useState<SlotMediaMap>({})
 
   const hasBannerMedia = Boolean(mediaUrl.trim() || slideUrls.length)
+
+  const previewMediaReady = useMemo(
+    () =>
+      selectedSlotsHaveMedia(slotMedia, selectedSlots, {
+        mediaUrl,
+        slideUrls,
+        mediaStyle,
+        mediaType,
+      }),
+    [slotMedia, selectedSlots, mediaUrl, slideUrls, mediaStyle, mediaType],
+  )
+
+  const previewUpload = useAdBannerMediaUpload({
+    mediaUrl,
+    slideUrls,
+    mediaType,
+    setMediaUrl,
+    setSlideUrls,
+    setMediaType,
+    uploadErrorFallback: t('advertising.error.upload'),
+  })
+
+  const handlePreviewMediaStyleChange = useCallback(
+    (next: AdMediaStyle) => {
+      setMediaStyle(next)
+      setSlotMedia((prev) => {
+        let changed = false
+        const out = { ...prev }
+        for (const id of selectedSlots) {
+          if (!slotMediaEntryHasMedia(out[id])) continue
+          out[id] = { ...out[id]!, mediaStyle: next }
+          changed = true
+        }
+        return changed ? out : prev
+      })
+    },
+    [selectedSlots],
+  )
 
   // Географія з бази — завантажується автоматично
   const [geoData, setGeoData] = useState<AdGeoCountry[]>([])
@@ -724,10 +764,16 @@ export function Advertising() {
                   linkUrl={linkUrl}
                   mediaUrl={mediaUrl}
                   mediaType={mediaType}
-                  mediaReady={hasBannerMedia}
+                  mediaReady={previewMediaReady}
                   placeholderTitle={t('advertising.preview.placeholder')}
                   mediaStyle={mediaStyle}
                   slideUrls={slideUrls}
+                  selectedSlots={selectedSlots}
+                  slotMedia={slotMedia}
+                  editable={Boolean(user)}
+                  onMediaStyleChange={handlePreviewMediaStyleChange}
+                  onSlideUrlsChange={setSlideUrls}
+                  onUploadFiles={(files) => previewUpload.uploadFiles(files, { append: true })}
                 />
 
                 <div className="glass-card w-full max-w-xl p-4">

@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import type { AdBannerLayoutKey } from '../lib/adBannerLayouts'
 import {
   COLLAGE_MAX_BY_LAYOUT,
   collageGridClass,
+  layoutFrameImageStyle,
   resolveDisplayMode,
+  resolveLayoutFrame,
   resolveLayoutTransition,
   resolveSlideUrls,
   slideshowLayerClass,
@@ -22,34 +24,42 @@ type AdMediaDisplayProps = {
   animateSlides?: boolean
 }
 
-/** Повне зображення в контейнері без обрізання; фон заповнюється розмитою копією. */
+/** Повне зображення в контейнері; фон — розмита копія; frame — ручне кадрування. */
 function AdMediaImageFill({
   src,
   alt,
   className = '',
   imageClassName = '',
+  frameStyle,
 }: {
   src: string
   alt: string
   className?: string
   imageClassName?: string
+  frameStyle?: CSSProperties
 }) {
+  const mergedImageStyle = frameStyle
+  const useBlurBg = (frameStyle?.objectFit ?? 'contain') === 'contain'
+
   return (
     <div className={`relative h-full w-full overflow-hidden bg-[#1a1816] ${className}`}>
-      <img
-        src={src}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full scale-110 object-cover opacity-45 blur-md"
-        loading="lazy"
-        onError={(e) => {
-          e.currentTarget.src = AD_MEDIA_FALLBACK
-        }}
-      />
+      {useBlurBg && (
+        <img
+          src={src}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full scale-110 object-cover opacity-45 blur-md"
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.src = AD_MEDIA_FALLBACK
+          }}
+        />
+      )}
       <img
         src={src}
         alt={alt}
-        className={`relative z-[1] mx-auto h-full w-full ${imageClassName || 'object-contain'}`}
+        style={mergedImageStyle}
+        className={`relative z-[1] mx-auto h-full w-full ${imageClassName || (frameStyle ? '' : 'object-contain')}`}
         loading="lazy"
         onError={(e) => {
           e.currentTarget.src = AD_MEDIA_FALLBACK
@@ -80,6 +90,14 @@ export function AdMediaDisplay({
   const transition = useMemo(
     () => resolveLayoutTransition(resolvedStyle, layoutKey),
     [resolvedStyle, layoutKey],
+  )
+  const frame = useMemo(
+    () => (layoutKey ? resolveLayoutFrame(resolvedStyle, layoutKey) : undefined),
+    [resolvedStyle, layoutKey],
+  )
+  const frameStyle = useMemo(
+    () => (frame ? layoutFrameImageStyle(frame) : undefined),
+    [frame],
   )
 
   useEffect(() => {
@@ -137,6 +155,7 @@ export function AdMediaDisplay({
               alt={alt}
               className="min-h-0 min-w-0"
               imageClassName={imageClassName}
+              frameStyle={frameStyle}
             />
           ))}
         </div>
@@ -153,6 +172,7 @@ export function AdMediaDisplay({
         alt={alt}
         className={className}
         imageClassName={imageClassName}
+        frameStyle={frameStyle}
       />
     )
   }
@@ -166,7 +186,7 @@ export function AdMediaDisplay({
             key={`${url}-${i}`}
             className={slideshowLayerClass(active, transition)}
           >
-            <AdMediaImageFill src={url} alt={alt} imageClassName={imageClassName} />
+            <AdMediaImageFill src={url} alt={alt} imageClassName={imageClassName} frameStyle={frameStyle} />
           </div>
         )
       })}

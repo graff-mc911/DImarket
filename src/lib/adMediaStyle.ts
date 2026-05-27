@@ -1,5 +1,6 @@
 /** Налаштування відображення банера (зберігається в ad_campaigns.media_style). */
 
+import type { CSSProperties } from 'react'
 import type { AdBannerLayoutKey } from './adBannerLayouts'
 
 export type AdDisplayMode = 'single' | 'rotate' | 'collage'
@@ -19,26 +20,29 @@ export type AdMediaSlideshow = {
   transition: AdSlideshowTransition
 }
 
-/** Режим показу для типу банера (без ручного кадрування). */
-export type AdLayoutPrefs = {
-  displayMode?: AdDisplayMode
-  transition?: AdSlideshowTransition
-}
-
-/** @deprecated Лише для зворотної сумісності в БД — на рендері не використовується. */
-export type AdFrameStyle = {
+/** Ручне кадрування зображення в контейнері (на layout). */
+export type AdLayoutFrame = {
   fit?: 'cover' | 'contain'
   positionX?: number
   positionY?: number
   scale?: number
-  brightness?: number
-  contrast?: number
-  saturate?: number
 }
+
+/** Режим показу для типу банера. */
+export type AdLayoutPrefs = {
+  displayMode?: AdDisplayMode
+  transition?: AdSlideshowTransition
+  frame?: AdLayoutFrame
+}
+
+/** @deprecated Використовуйте AdLayoutFrame у byLayout */
+export type AdFrameStyle = AdLayoutFrame
 
 export type AdMediaStyle = {
   byLayout?: Partial<Record<AdBannerLayoutKey, AdLayoutPrefs>>
   slideshow?: AdMediaSlideshow | null
+  /** Текст поверх зображення (заголовок / опис кампанії) */
+  textOverlay?: boolean
 }
 
 export const DEFAULT_AD_MEDIA_STYLE: AdMediaStyle = {
@@ -93,13 +97,39 @@ function normalizeDisplayMode(raw: unknown): AdDisplayMode | undefined {
   return undefined
 }
 
+function clampPct(n: number): number {
+  return Math.max(0, Math.min(100, n))
+}
+
+function clampScale(n: number): number {
+  return Math.max(0.5, Math.min(2, n))
+}
+
+function parseFrame(raw: unknown): AdLayoutFrame | undefined {
+  if (!raw || typeof raw !== 'object') return undefined
+  const o = raw as Record<string, unknown>
+  const fit = o.fit === 'cover' || o.fit === 'contain' ? o.fit : undefined
+  const positionX = typeof o.positionX === 'number' ? clampPct(o.positionX) : undefined
+  const positionY = typeof o.positionY === 'number' ? clampPct(o.positionY) : undefined
+  const scale = typeof o.scale === 'number' ? clampScale(o.scale) : undefined
+  if (!fit && positionX === undefined && positionY === undefined && scale === undefined) {
+    return undefined
+  }
+  return { ...(fit ? { fit } : {}), ...(positionX !== undefined ? { positionX } : {}), ...(positionY !== undefined ? { positionY } : {}), ...(scale !== undefined ? { scale } : {}) }
+}
+
 function parseLayoutPrefs(entry: Record<string, unknown>): AdLayoutPrefs | undefined {
   const displayMode = normalizeDisplayMode(entry.displayMode)
   const transition = entry.transition
     ? normalizeTransition(entry.transition)
     : undefined
-  if (displayMode || transition) {
-    return { ...(displayMode ? { displayMode } : {}), ...(transition ? { transition } : {}) }
+  const frame = parseFrame(entry.frame)
+  if (displayMode || transition || frame) {
+    return {
+      ...(displayMode ? { displayMode } : {}),
+      ...(transition ? { transition } : {}),
+      ...(frame ? { frame } : {}),
+    }
   }
   return undefined
 }
@@ -144,6 +174,7 @@ export function parseAdMediaStyle(raw: unknown): AdMediaStyle {
   return {
     byLayout: parseByLayout(o.byLayout),
     slideshow,
+    textOverlay: o.textOverlay === true,
   }
 }
 
@@ -181,7 +212,48 @@ export function resolveLayoutTransition(
 }
 
 export function layoutHasPrefs(style: AdMediaStyle, layout: AdBannerLayoutKey): boolean {
-  return Boolean(style.byLayout?.[layout])
+  const prefs = style.byLayout?.[layout]
+  if (!prefs) return false
+  return Boolean(prefs.displayMode || prefs.transition || prefs.frame)
+}
+
+export function resolveLayoutFrame(
+  style: AdMediaStyle,
+  layout: AdBannerLayoutKey | undefined,
+): AdLayoutFrame {
+  const frame = layout ? style.byLayout?.[layout]?.frame : undefined
+  return {
+    fit: frame?.fit ?? 'contain',
+    positionX: clampPct(frame?.positionX ?? 50),
+    positionY: clampPct(frame?.positionY ?? 50),
+    scale: clampScale(frame?.scale ?? 1),
+  }
+}
+
+export function layoutFrameImageStyle(frame: AdLayoutFrame): CSSProperties {
+  const px = frame.positionX ?? 50
+  const py = frame.positionY ?? 50
+  const scale = frame.scale ?? 1
+  return {
+    objectFit: frame.fit ?? 'contain',
+    objectPosition: `${px}% ${py}%`,
+    ...(scale !== 1
+      ? { transform: `scale(${scale})`, transformOrigin: `${px}% ${py}%` }
+      : {}),
+  }
+}
+
+export function patchLayoutFrame(
+  style: AdMediaStyle,
+  layout: AdBannerLayoutKey,
+  patch: Partial<AdLayoutFrame>,
+): AdMediaStyle {
+  const prefs = resolveLayoutPrefs(style, layout)
+  const prev = prefs.frame ?? {}
+  return setLayoutPrefs(style, layout, {
+    ...prefs,
+    frame: { ...prev, ...patch },
+  })
 }
 
 export function setLayoutPrefs(
@@ -216,7 +288,10 @@ export function buildMediaStylePayload(
   slideUrls: string[],
 ): AdMediaStyle {
   const urls = slideUrls.filter(Boolean)
-  const base: AdMediaStyle = { byLayout: style.byLayout }
+  const base: AdMediaStyle = {
+    byLayout: style.byLayout,
+    textOverlay: style.textOverlay,
+  }
   if (urls.length > 1) {
     base.slideshow = {
       urls,
