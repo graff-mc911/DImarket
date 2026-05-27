@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   AlertTriangle,
   BarChart3,
@@ -877,10 +877,6 @@ function AnnouncementsManager() {
   const [actionId, setActionId]           = useState<string | null>(null)
   const [notice, setNotice]               = useState('')
   const [error, setError]                 = useState('')
-  const activeAnnouncements = useMemo(
-    () => announcements.filter((a) => a.is_active && a.message.trim().length > 0),
-    [announcements],
-  )
 
   useEffect(() => {
     void loadAnnouncements()
@@ -999,23 +995,6 @@ function AnnouncementsManager() {
           </p>
         </div>
       </div>
-
-      {activeAnnouncements.length > 0 && (
-        <div className="owner-announcement-ticker mb-5 rounded-[16px] border border-[rgba(201,109,44,0.22)] bg-[rgba(201,109,44,0.08)] px-3 py-2">
-          <div className="owner-announcement-ticker__track">
-            {[0, 1].map((dup) => (
-              <div key={dup} className="owner-announcement-ticker__lane">
-                {activeAnnouncements.map((ann) => (
-                  <span key={`${dup}-${ann.id}`} className="owner-announcement-ticker__item">
-                    <Bell className="h-3.5 w-3.5 shrink-0 text-[#c96d2c]" />
-                    <span>{ann.message}</span>
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {notice && (
         <div className="mb-4 rounded-[18px] border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">

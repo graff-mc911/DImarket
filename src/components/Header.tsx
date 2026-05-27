@@ -80,8 +80,7 @@ export function Header() {
   const [categoriesOpen, setCategoriesOpen] = useState(false)
 
   // Глобальний банер від власника
-  const [announcement, setAnnouncement]   = useState<Announcement | null>(null)
-  const [bannerDismissed, setBannerDismissed] = useState(false)
+  const [announcements, setAnnouncements] = useState<Announcement[]>([])
 
   // Лічильник непрочитаних повідомлень
   const [unreadCount, setUnreadCount]     = useState(0)
@@ -172,10 +171,9 @@ export function Header() {
         .select('id, message, type')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
+        .limit(12)
 
-      if (data) setAnnouncement(data as Announcement)
+      setAnnouncements((data as Announcement[] | null) || [])
     } catch {
       // Таблиця може не існувати — ігноруємо
     }
@@ -294,7 +292,7 @@ export function Header() {
   const mobileIconButtonClass =
     'flex h-8 w-8 items-center justify-center rounded-full border-0 bg-transparent text-[var(--ink-700)] shadow-none outline-none transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_16px_rgba(196,122,61,0.22)] sm:h-9 sm:w-9'
 
-  const showAnnouncement = announcement && !bannerDismissed
+  const showAnnouncement = announcements.length > 0
 
   useEffect(() => {
     if (showAnnouncement) {
@@ -343,28 +341,31 @@ export function Header() {
       <div ref={fixedHeaderRef} className="fixed inset-x-0 top-0 z-50 w-full">
       {/* ===== Глобальний банер від власника ===== */}
       {showAnnouncement && (() => {
-        const style = getBannerStyle(announcement!.type)
+        const first = announcements[0]
+        const style = getBannerStyle(first.type)
         return (
           <div
             className="w-full py-1.5"
             style={{ background: style.bg, borderBottom: '1px solid ' + style.border }}
           >
             <div className="layout-page-gutter">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <Bell className="h-4 w-4 shrink-0" style={{ color: style.color }} />
-                  <p className="text-sm font-semibold" style={{ color: style.color }}>
-                    {announcement!.message}
-                  </p>
+              <div className="global-announcement-marquee">
+                <div className="global-announcement-marquee__track">
+                  {[0, 1].map((dup) => (
+                    <div key={dup} className="global-announcement-marquee__lane">
+                      {announcements.map((ann) => (
+                        <span
+                          key={`${dup}-${ann.id}`}
+                          className="global-announcement-marquee__item"
+                          style={{ color: getBannerStyle(ann.type).color }}
+                        >
+                          <Bell className="h-3.5 w-3.5 shrink-0" />
+                          <span>{ann.message}</span>
+                        </span>
+                      ))}
+                    </div>
+                  ))}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setBannerDismissed(true)}
-                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition hover:scale-110"
-                  style={{ background: 'rgba(0,0,0,0.08)' }}
-                >
-                  <X className="h-3.5 w-3.5" style={{ color: style.color }} />
-                </button>
               </div>
             </div>
           </div>
