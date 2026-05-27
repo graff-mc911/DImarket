@@ -357,14 +357,14 @@ export const enTranslations = {
   'createAd.radius.global': 'All Users',
 
   'salesBot.eyebrow': 'AI assistant',
-  'salesBot.title': 'Listing assistant',
-  'salesBot.subtitle': 'We will turn the chat into a published listing',
-  'salesBot.pageTitle': 'Create a listing in chat',
+  'salesBot.title': 'AI assistant site guide',
+  'salesBot.subtitle': 'AI assistant site guide',
+  'salesBot.pageTitle': 'AI assistant site guide',
   'salesBot.pageDesc':
     'Tell us the category, city, budget, deadline, description, and photos — we will prepare a structured listing for professionals.',
   'salesBot.classicForm': 'Classic form instead',
   'salesBot.reset': 'Start over',
-  'salesBot.inputPlaceholder': 'Your answer…',
+  'salesBot.inputPlaceholder': '',
   'salesBot.thinking': 'Thinking…',
   'salesBot.publishing': 'Publishing your listing…',
   'salesBot.draftLabel': 'Draft',
@@ -376,7 +376,8 @@ export const enTranslations = {
   'salesBot.errorGeneric': 'Something went wrong. Try again.',
   'salesBot.errorDescription': 'Description is too short.',
   'salesBot.errorLocation': 'City is required.',
-  'salesBot.welcome': 'Hi! I will help you post a listing on Dimarket.',
+  'salesBot.cardMessage': 'Hi, write what you want and I will do it',
+  'salesBot.welcome': 'Hi, write what you want and I will do it',
   'salesBot.categoryUnknown':
     'I did not recognize the category. Pick a button below or type the category name.',
   'salesBot.askCity': 'Great — {{category}}. Which city or area is the job in?',

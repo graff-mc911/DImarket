@@ -329,14 +329,14 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.radius.global': 'Все пользователи',
 
   'salesBot.eyebrow': 'AI-помощник',
-  'salesBot.title': 'Помощник по объявлению',
-  'salesBot.subtitle': 'Превратим диалог в опубликованное объявление',
-  'salesBot.pageTitle': 'Создать объявление в чате',
+  'salesBot.title': 'AI помощник гид по сайту',
+  'salesBot.subtitle': 'AI помощник гид по сайту',
+  'salesBot.pageTitle': 'AI помощник гид по сайту',
   'salesBot.pageDesc':
     'Расскажите категорию, город, бюджет, срок, описание и фото — мы сформируем структурированное объявление для мастеров.',
   'salesBot.classicForm': 'Обычная форма',
   'salesBot.reset': 'Сначала',
-  'salesBot.inputPlaceholder': 'Ваш ответ…',
+  'salesBot.inputPlaceholder': '',
   'salesBot.thinking': 'Думаю…',
   'salesBot.publishing': 'Публикую объявление…',
   'salesBot.draftLabel': 'Черновик',
@@ -348,8 +348,8 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'salesBot.errorGeneric': 'Чтось пошло не да. Попробуйте ещё раз.',
   'salesBot.errorDescription': 'Описание слишком короткий.',
   'salesBot.errorLocation': 'Нужно вказати город.',
-  'salesBot.welcome':
-    'Здравствуйте! Помогу опубликовать заявку на Dimarket.\n\nВыберите категорию (номер или название):\n{{categories}}',
+  'salesBot.cardMessage': 'Привет, напиши что желаешь и я это выполню',
+  'salesBot.welcome': 'Привет, напиши что желаешь и я это выполню',
   'salesBot.categoryUnknown':
     'Не розпизнав категорию. Выберите зи списку:\n{{categories}}',
   'salesBot.askCity': 'Отлично — {{category}}. В каком городе или районе нужна работа?',

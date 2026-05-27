@@ -19,6 +19,7 @@ import { getInitialTurn, type SalesBotMessage } from '../lib/ai/salesBotEngine'
 import { runSalesChatTurn } from '../lib/ai/salesBotApi'
 import type { Category } from '../lib/types'
 import { supabase } from '../lib/supabase'
+import { navigateTo } from '../lib/navigation'
 
 const STORAGE_KEY = 'dimarket_ai_sales_chat_v2'
 
@@ -47,6 +48,34 @@ function saveStored(state: StoredChat) {
 }
 
 const JOB_CATEGORY_BLOCKLIST = new Set(['vacancies', 'sell-rent'])
+
+function detectGuideRoute(text: string): { reply: string; path?: string } | null {
+  const q = text.toLowerCase()
+  if (/(реклам|банер|advert|ads?|маркетинг)/i.test(q)) {
+    return {
+      reply:
+        'Відкрив AI помічник гід по сайту для реклами: оберіть слот на схемі, додайте дані й зображення, перегляньте превʼю, потім виберіть гео/тривалість і оплату. Після підтвердження оплати відкрию кабінет рекламодавця.',
+      path: '/advertising',
+    }
+  }
+  if (/(майстр|компан|підрядник|specialist|contractor)/i.test(q) && /(чат|зв.?яз|contact)/i.test(q)) {
+    return {
+      reply:
+        'Відкрив сторінку майстрів: оберіть виконавця, і я переведу вас у чат з майстром або компанією.',
+      path: '/professionals',
+    }
+  }
+  if (
+    /(оголош|замовлен|послуг|пофарб|прибра|підключ|ремонт|монтаж|clean|paint|install|fix)/i.test(q)
+  ) {
+    return {
+      reply:
+        'Працюємо як AI гід: формую оголошення під потрібну підкатегорію, покажу готовий варіант, запропоную майстрів/компанії. Якщо не оберете виконавця — опублікую оголошення і відкрию сторінку клієнта.',
+      path: '/assistant/job',
+    }
+  }
+  return null
+}
 
 export function useSalesChat() {
   const { user, profile, currency, language, t } = useApp()
@@ -146,6 +175,13 @@ export function useSalesChat() {
 
       setError(null)
       setMessages((prev) => [...prev, { role: 'user', content: trimmed }])
+      const guide = detectGuideRoute(trimmed)
+      if (guide) {
+        setMessages((prev) => [...prev, { role: 'assistant', content: guide.reply }])
+        setQuickReplies([])
+        if (guide.path) navigateTo(guide.path)
+        return
+      }
       setLoading(true)
       setQuickReplies([])
 

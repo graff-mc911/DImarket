@@ -2,10 +2,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Bot, X } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
-import { BOT_IDS, type BotId } from '../../lib/bots'
 import { bindPathListener } from '../../lib/navigation'
 import { SalesChatbot } from '../SalesChatbot'
-import { AiBotPanel } from './AiBotPanel'
 
 /** Після відкриття блокуємо «ghost click» (iOS/Android) на overlay. */
 const OVERLAY_CLICK_GUARD_MS = 700
@@ -15,7 +13,6 @@ export function AiChatWidget() {
   const { t } = useApp()
   const [open, setOpen] = useState(false)
   const [overlayReady, setOverlayReady] = useState(false)
-  const [bot, setBot] = useState<BotId>('sales')
   const [path, setPath] = useState(() => window.location.pathname)
   const blockOutsideUntil = useRef(0)
 
@@ -80,12 +77,6 @@ export function AiChatWidget() {
     openPanel()
   }
 
-  const handleBotSelect = (id: BotId) => {
-    setBot(id)
-  }
-
-  const selectableBots = BOT_IDS.filter((id) => id !== 'messaging' && id !== 'ad_image')
-
   const layer = (
     <div className="ai-chat-widget-layer pointer-events-none fixed inset-0 z-[200]">
       {open && (
@@ -112,26 +103,7 @@ export function AiChatWidget() {
           onClick={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
         >
-          <div className="flex flex-wrap gap-1 border-b border-[rgba(148,163,184,0.15)] p-2">
-            {selectableBots.map((id) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => handleBotSelect(id)}
-                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                  bot === id ? 'bg-[#6366f1] text-white' : 'text-[#6f665d]'
-                }`}
-              >
-                {t(`ai.bot.${id}`)}
-              </button>
-            ))}
-          </div>
-
-          {bot === 'sales' ? (
-            <SalesChatbot compact className="min-h-[14rem] flex-1 border-0 shadow-none" />
-          ) : (
-            <AiBotPanel botId={bot} />
-          )}
+          <SalesChatbot compact className="min-h-[14rem] flex-1 border-0 shadow-none" />
         </div>
       )}
 

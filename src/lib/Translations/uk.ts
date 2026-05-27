@@ -359,14 +359,14 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.radius.global': 'Усі користувачі',
 
   'salesBot.eyebrow': 'AI-помічник',
-  'salesBot.title': 'Помічник з оголошення',
-  'salesBot.subtitle': 'Перетворимо діалог на опубліковане оголошення',
-  'salesBot.pageTitle': 'Створити оголошення в чаті',
+  'salesBot.title': 'AI помічник гід по сайту',
+  'salesBot.subtitle': 'AI помічник гід по сайту',
+  'salesBot.pageTitle': 'AI помічник гід по сайту',
   'salesBot.pageDesc':
     'Розкажіть категорію, місто, бюджет, термін, опис і фото — ми сформуємо структуроване оголошення для майстрів.',
   'salesBot.classicForm': 'Звичайна форма',
   'salesBot.reset': 'Спочатку',
-  'salesBot.inputPlaceholder': 'Ваша відповідь…',
+  'salesBot.inputPlaceholder': '',
   'salesBot.thinking': 'Думаю…',
   'salesBot.publishing': 'Публікую оголошення…',
   'salesBot.draftLabel': 'Чернетка',
@@ -378,7 +378,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'salesBot.errorGeneric': 'Щось пішло не так. Спробуйте ще раз.',
   'salesBot.errorDescription': 'Опис занадто короткий.',
   'salesBot.errorLocation': 'Потрібно вказати місто.',
-  'salesBot.welcome': 'Вітаю! Допоможу опублікувати оголошення на Dimarket.',
+  'salesBot.cardMessage': 'Привіт напиши що бажаєш і я це виконаю',
+  'salesBot.welcome': 'Привіт напиши що бажаєш і я це виконаю',
   'salesBot.categoryUnknown':
     'Не розпізнав категорію. Оберіть кнопку нижче або напишіть назву категорії.',
   'salesBot.askCity': 'Чудово — {{category}}. У якому місті або районі потрібна робота?',
