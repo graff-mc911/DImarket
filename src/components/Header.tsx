@@ -386,7 +386,7 @@ export function Header() {
 
               {/* Логотип */}
               <button onClick={() => goTo('/')} type="button" className="shrink-0 text-left">
-                <Logo variant="text" size="header" animated={currentPath === '/'} />
+                <Logo variant="text" size="header" />
               </button>
 
               {/* Пошук (десктоп) */}
