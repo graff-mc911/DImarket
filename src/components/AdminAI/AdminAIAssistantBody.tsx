@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { Bot, ChevronDown, X } from 'lucide-react'
 import type { AdminAiAlert, AdminAiMessage } from '../../lib/adminAI/adminAiApi'
 import { AdminAIChat } from './AdminAIChat'
@@ -15,6 +16,7 @@ export type AdminAIAssistantBodyProps = {
   navigateHistory: (dir: 'up' | 'down') => string | null
   onCollapse?: () => void
   className?: string
+  style?: CSSProperties
 }
 
 export function AdminAIAssistantBody({
@@ -29,9 +31,13 @@ export function AdminAIAssistantBody({
   navigateHistory,
   onCollapse,
   className = '',
+  style,
 }: AdminAIAssistantBodyProps) {
   return (
-    <div className={`flex min-h-0 flex-col overflow-hidden bg-[#18181b] ${className}`}>
+    <div
+      className={`flex min-h-0 flex-col overflow-hidden bg-[#18181b] ${className}`}
+      style={style}
+    >
       <header className="flex shrink-0 items-center justify-between border-b border-[rgba(148,163,184,0.15)] bg-[rgba(24,24,27,0.95)] px-3 py-2.5">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c96d2c] text-white">

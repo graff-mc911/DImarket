@@ -46,6 +46,8 @@ export function AiAdminDashboard() {
 
   return (
     <div className="space-y-6">
+      <AdminAIAssistantInline />
+
       <div className="glass-card p-6">
         <div className="flex items-center gap-3">
           <Shield className="h-8 w-8 text-[#6366f1]" />
@@ -55,8 +57,6 @@ export function AiAdminDashboard() {
           </div>
         </div>
       </div>
-
-      <AdminAIAssistantInline />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="glass-card p-4">

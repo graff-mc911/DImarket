@@ -34,7 +34,8 @@ export function AdminAIAssistantInline() {
         dismissAlert={ai.dismissAlert}
         sendMessage={ai.sendMessage}
         navigateHistory={ai.navigateHistory}
-        className="h-[min(420px,55vh)]"
+        className="min-h-[420px]"
+        style={{ height: 'min(420px, 55vh)' }}
       />
     </section>
   )

@@ -1,19 +1,52 @@
+import { useEffect, useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { isSiteOwner } from '../lib/siteOwner'
 import { navigateTo } from '../lib/navigation'
+import { supabase } from '../lib/supabase'
 import { AiAdminDashboard } from '../components/ai/AiAdminDashboard'
+import { AdminAIPanel } from '../components/AdminAI/AdminAIPanel'
 
 export function AiAdmin() {
   const { user, profile, t } = useApp()
+  const [sessionReady, setSessionReady] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    void supabase.auth.getSession().finally(() => {
+      if (!cancelled) setSessionReady(true)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (!sessionReady) {
+    return (
+      <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-20">
+        <Loader2 className="h-10 w-10 animate-spin text-[#c96d2c]" />
+        <p className="mt-4 text-sm text-[#6f665d]">Завантаження…</p>
+      </div>
+    )
+  }
+
   const allowed = isSiteOwner(profile, user?.email)
 
   if (!allowed) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
         <p className="text-sm text-[#6f665d]">{t('ai.admin.denied')}</p>
-        <button type="button" onClick={() => navigateTo('/')} className="btn-primary mt-4 rounded-full">
-          {t('ai.admin.home')}
-        </button>
+        <p className="mt-3 text-xs text-[#9a8776]">
+          Увійдіть як власник сайту ({'ivan.sovban@gmail.com'}).
+        </p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <button type="button" onClick={() => navigateTo('/login')} className="btn-primary rounded-full">
+            Увійти
+          </button>
+          <button type="button" onClick={() => navigateTo('/')} className="btn-secondary rounded-full">
+            {t('ai.admin.home')}
+          </button>
+        </div>
       </div>
     )
   }
@@ -21,6 +54,7 @@ export function AiAdmin() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <AiAdminDashboard />
+      <AdminAIPanel />
     </div>
   )
 }
