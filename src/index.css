@@ -473,9 +473,9 @@
   }
 
   .ad-slot-leaderboard__media {
-    height: var(--ad-leaderboard-slot-h, 6.125rem);
-    max-height: var(--ad-leaderboard-slot-h, 6.125rem);
-    min-height: var(--ad-leaderboard-slot-h, 6.125rem);
+    height: var(--ad-leaderboard-slot-h, 12.25rem);
+    max-height: var(--ad-leaderboard-slot-h, 12.25rem);
+    min-height: var(--ad-leaderboard-slot-h, 12.25rem);
     width: 100%;
   }
 

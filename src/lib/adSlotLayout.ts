@@ -47,9 +47,10 @@ export const AD_CENTER_MIN_MD_PX = 248
 export const AD_MOBILE_INLINE_MIN_PX = 108
 export const AD_MOBILE_INLINE_IMAGE_PX = 68
 
-/** Широкий банер (hero / над списком) */
-export const AD_LEADERBOARD_MAX_PX = 300
-export const AD_LEADERBOARD_ASPECT = '4 / 1' as const
+/** Широкий лінійний банер (hero / над списком) — висота 2× для коректного object-fit */
+export const AD_LEADERBOARD_DISPLAY_H_PX = 196
+export const AD_LEADERBOARD_MAX_PX = 600
+export const AD_LEADERBOARD_ASPECT = '2 / 1' as const
 
 /** Прозора панель тексту під зображенням — висота лише за вмістом */
 export const AD_TEXT_PANEL_CLASS =
@@ -61,5 +62,5 @@ export const adSlotTailwind = {
   sideLegacyCompact: 'h-auto w-[90%] max-w-full mx-auto',
   center: 'h-auto w-full max-w-full',
   mobileInline: 'h-auto w-full',
-  leaderboard: 'aspect-[4/1] w-full max-h-[300px] min-h-[4.5rem]',
+  leaderboard: 'aspect-[2/1] w-full max-h-[600px] min-h-[9rem]',
 } as const

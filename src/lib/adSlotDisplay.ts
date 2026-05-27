@@ -95,7 +95,7 @@ export function wireframeSlotHeightPx(containerH: number, columnWidthPx = 72): n
 export function wireframeWideAspectClass(
   zone: 'center' | 'mob_leaderboard' | 'mob_inline' | 'side_left' | 'side_right',
 ): string {
-  if (zone === 'center') return 'aspect-[72/25] min-h-[52px] w-full'
-  if (zone === 'mob_leaderboard') return 'aspect-[4/1] min-h-[44px] w-full'
+  if (zone === 'center') return 'aspect-[36/25] min-h-[104px] w-full'
+  if (zone === 'mob_leaderboard') return 'aspect-[2/1] min-h-[88px] w-full'
   return ''
 }
