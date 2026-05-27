@@ -3,6 +3,7 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'header' | 'lg' | 'xl'
   variant?: 'full' | 'text'
   className?: string
+  animated?: boolean
 }
 
 const sizes = {
@@ -49,19 +50,28 @@ export function Logo({
   size = 'md',
   variant = 'text',
   className = '',
+  animated = false,
 }: LogoProps) {
   const current = sizes[size]
 
   if (variant === 'text' || compact) {
     return (
-      <div role="img" aria-label="DImarket logo" className={className}>
+      <div
+        role="img"
+        aria-label="DImarket logo"
+        className={animated ? `logo-construction ${className}` : className}
+      >
         <Wordmark className={current.title} />
       </div>
     )
   }
 
   return (
-    <div className={`leading-none ${className}`} role="img" aria-label="DImarket logo">
+    <div
+      className={`leading-none ${animated ? 'logo-construction ' : ''}${className}`}
+      role="img"
+      aria-label="DImarket logo"
+    >
       <Wordmark className={current.title} />
       {current.subtitle !== 'hidden' && (
         <div className={`${current.subtitle} mt-1.5 uppercase tracking-[0.22em] text-[#5C4D41]`}>
