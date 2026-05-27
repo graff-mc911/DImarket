@@ -58,12 +58,28 @@ export function adSlotShellStyle(
   }
 
   const isCenter = variant === 'center'
-  const isFullBleed = variant === 'leaderboard' || variant === 'mobile-inline' || variant === 'mobile-sticky'
+
+  if (variant === 'leaderboard') {
+    return {
+      boxSizing: 'border-box',
+      width: '100%',
+      maxWidth: '100%',
+    }
+  }
+
+  if (variant === 'mobile-inline' || variant === 'mobile-sticky') {
+    return {
+      boxSizing: 'border-box',
+      width: '100%',
+      maxWidth: '100%',
+      minHeight: spec.containerH,
+    }
+  }
 
   return {
     boxSizing: 'border-box',
     width: '100%',
-    maxWidth: isCenter ? spec.containerW : isFullBleed ? '100%' : spec.containerW,
+    maxWidth: isCenter ? spec.containerW : spec.containerW,
     height: spec.containerH,
     maxHeight: spec.containerH,
     minHeight: spec.containerH,
@@ -75,6 +91,15 @@ export function adSlotImageStyle(
   variant?: AdOverlayVariantKey,
 ): CSSProperties | undefined {
   if (variant === 'stack') return undefined
+
+  if (variant === 'leaderboard') {
+    return {
+      width: '100%',
+      height: '100%',
+      minHeight: 0,
+      flex: '1 1 auto',
+    }
+  }
 
   return {
     width: '100%',

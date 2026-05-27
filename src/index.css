@@ -473,10 +473,10 @@
   }
 
   .ad-slot-leaderboard__media {
-    height: var(--ad-leaderboard-slot-h, 12.25rem);
-    max-height: var(--ad-leaderboard-slot-h, 12.25rem);
-    min-height: var(--ad-leaderboard-slot-h, 12.25rem);
     width: 100%;
+    height: 100%;
+    min-height: var(--ad-leaderboard-slot-h, 12.25rem);
+    flex: 1 1 auto;
   }
 
   .ad-slot-mobile-inline__media {
@@ -489,6 +489,15 @@
   /** Inline-реклама між секціями — лише телефон / планшет (< 1280px) */
   .ad-slot-mobile-inline {
     margin-block: 1rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .ad-slot-mobile-inline > .relative,
+  .ad-slot-mobile-inline a {
+    width: 100%;
+    max-width: 100%;
   }
 
   @media (min-width: 80rem) {

@@ -49,7 +49,7 @@ function AdMediaImageFill({
       <img
         src={src}
         alt={alt}
-        className={`relative z-[1] mx-auto h-full w-full object-contain ${imageClassName}`}
+        className={`relative z-[1] mx-auto h-full w-full ${imageClassName || 'object-contain'}`}
         loading="lazy"
         onError={(e) => {
           e.currentTarget.src = AD_MEDIA_FALLBACK

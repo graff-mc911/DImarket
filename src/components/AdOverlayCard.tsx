@@ -90,7 +90,7 @@ const variantStyles: Record<
   },
   'mobile-inline': {
     shell: adSlotTailwind.mobileInline,
-    image: 'ad-slot-mobile-inline__media w-full shrink-0 overflow-hidden',
+    image: 'ad-slot-mobile-inline__media w-full min-h-0 shrink-0 overflow-hidden',
     text: 'px-2 py-1',
     brand: 'text-[9px]',
     title: 'text-xs line-clamp-2 leading-tight',
@@ -98,7 +98,7 @@ const variantStyles: Record<
   },
   leaderboard: {
     shell: adSlotTailwind.leaderboard,
-    image: 'ad-slot-leaderboard__media w-full shrink-0 overflow-hidden',
+    image: 'ad-slot-leaderboard__media min-h-0 w-full shrink-0 overflow-hidden',
     text: 'hidden',
     brand: 'hidden',
     title: 'hidden',
