@@ -602,8 +602,8 @@
   }
 
   .logo-scene-builder {
-    left: -0.9em;
-    top: 0.28em;
+    left: -2.8em;
+    top: 0.3em;
     animation: logo-builder-run 7s linear infinite;
   }
 
@@ -706,22 +706,32 @@
 
   @keyframes logo-builder-run {
     0% {
-      opacity: 0;
-      transform: translateX(-0.8em);
+      opacity: 1;
+      transform: translateX(0);
     }
-    6%,
+    8% {
+      opacity: 1;
+      transform: translateX(0.8em);
+    }
     16% {
       opacity: 1;
-      transform: translateX(0.7em);
+      transform: translateX(1.55em);
     }
-    22% {
+    24% {
       opacity: 1;
-      transform: translateX(1.2em);
+      transform: translateX(2.35em);
     }
-    24%,
+    32% {
+      opacity: 1;
+      transform: translateX(2.5em);
+    }
+    40% {
+      opacity: 0.9;
+      transform: translateX(2.6em);
+    }
     100% {
       opacity: 0;
-      transform: translateX(1.3em);
+      transform: translateX(2.8em);
     }
   }
 
