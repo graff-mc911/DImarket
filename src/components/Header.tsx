@@ -42,6 +42,7 @@ import {
   headerCategoryLabel,
 } from '../lib/siteCategories'
 import { Logo }        from './Logo'
+import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
 
 interface NavItem {
@@ -360,7 +361,7 @@ export function Header() {
                           style={{ color: getBannerStyle(ann.type).color }}
                         >
                           <Bell className="h-3.5 w-3.5 shrink-0" />
-                          <span>{ann.message}</span>
+                          <EmojiText text={ann.message} />
                         </span>
                       ))}
                     </div>
