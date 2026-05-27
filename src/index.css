@@ -604,19 +604,25 @@
   .logo-scene-builder {
     left: -2.8em;
     top: 0.3em;
+    font-size: 1.04em;
     animation: logo-builder-run 7s linear infinite;
+    z-index: 4;
   }
 
   .logo-scene-ladder {
     left: -3.8em;
     top: 0.2em;
+    font-size: 0.86em;
     animation: logo-ladder-carry 7s linear infinite;
+    z-index: 3;
   }
 
   .logo-scene-tools {
     left: -3.3em;
     top: 0.68em;
+    font-size: 0.78em;
     animation: logo-tools-carry 7s linear infinite;
+    z-index: 3;
   }
 
   .logo-scene-brick {
