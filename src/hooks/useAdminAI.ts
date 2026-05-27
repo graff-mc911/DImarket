@@ -14,7 +14,7 @@ function uid() {
 export function useAdminAI(lang = 'uk-UA') {
   const [messages, setMessages] = useState<AdminAiMessage[]>([])
   const [loading, setLoading] = useState(false)
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
   const [voiceOut, setVoiceOut] = useState(false)
   const [alerts, setAlerts] = useState<AdminAiAlert[]>([])
   const [historyIndex, setHistoryIndex] = useState(-1)

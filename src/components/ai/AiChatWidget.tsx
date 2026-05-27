@@ -57,7 +57,8 @@ export function AiChatWidget() {
     }
   }, [open])
 
-  if (path === '/assistant/job') return null
+  // На /dashboard — окремий Admin AI; не перекриваємо поле вводу фіолетовим ботом
+  if (path === '/assistant/job' || path === '/dashboard') return null
 
   const openPanel = () => {
     setOpen(true)
