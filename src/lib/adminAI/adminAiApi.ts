@@ -59,16 +59,13 @@ export const adminAiApi = {
 export function parseLocalShortcut(input: string): string | null {
   const t = input.trim().toLowerCase()
   if (t === '/help') {
-    return `Команди:
+    return `Команди (працюють без хмарного AI):
 /stats — статистика
-/health — стан системи
-/boost email N — рейтинг
-/verify email — верифікація
-/ban email — блокування (потрібно ПІДТВЕРДЖУЮ)
-/email email текст — лист
-/search запит — пошук в інтернеті
-/learn — база знань
-/alert test — тест сповіщення`
+/boost Імʼя N — +N зірок майстру (напр. /boost Test 5)
+/verify Імʼя — верифікація
+«додай 5 зірок майстру Test» — те саме
+«топ 5 майстрів» — рейтинг
+/help — цей список`
   }
   return null
 }

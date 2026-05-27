@@ -39,7 +39,7 @@ export function formatAdminAiInvokeError(error: unknown): string {
     return (
       '❌ Сервер Admin AI ще не підключений.\n\n' +
       'На Supabase потрібно задеплоїти функцію `admin-ai-assistant` (npm run deploy:admin-ai).\n\n' +
-      'Поки що працюють локальні команди: /stats, /help'
+      'Поки що локально: /stats, /boost Test 5, /verify Test, «топ 5 майстрів»'
     )
   }
   return `❌ ${msg}`

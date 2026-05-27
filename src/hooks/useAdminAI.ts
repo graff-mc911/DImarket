@@ -5,6 +5,7 @@ import {
   type AdminAiAlert,
   type AdminAiMessage,
 } from '../lib/adminAI/adminAiApi'
+import { runLocalAdminCommand } from '../lib/adminAI/localActions'
 import { fetchLocalPlatformStats, formatAdminAiInvokeError } from '../lib/adminAI/localStats'
 import { startSystemMonitor, subscribeAdminAlerts } from '../lib/adminAI/monitor'
 
@@ -46,6 +47,28 @@ export function useAdminAI(lang = 'uk-UA') {
         ...m,
         { id: uid(), role: 'user', content: text, timestamp: Date.now() },
         { id: uid(), role: 'assistant', content: localHelp, timestamp: Date.now() },
+      ])
+      return
+    }
+
+    const localAction = await runLocalAdminCommand(text)
+    if (localAction) {
+      const userMsg: AdminAiMessage = {
+        id: uid(),
+        role: 'user',
+        content: text,
+        timestamp: Date.now(),
+      }
+      setMessages((m) => [
+        ...m,
+        userMsg,
+        {
+          id: uid(),
+          role: 'assistant',
+          content: localAction.reply,
+          table: localAction.table,
+          timestamp: Date.now(),
+        },
       ])
       return
     }

@@ -40,6 +40,7 @@
     "marketing:cron": "node scripts/marketing-cron-invoke.mjs",
     "marketing:telegram": "node scripts/setup-telegram-marketing.mjs",
     "db:apply-admin-ai": "node scripts/apply-admin-ai-migration.mjs",
+    "db:apply-admin-rating": "node scripts/apply-admin-local-rating-rpc.mjs",
     "deploy:admin-ai": "npx supabase functions deploy admin-ai-assistant send-notification --project-ref wjlfvajloxkevggwjgtk"
   },
   "dependencies": {
