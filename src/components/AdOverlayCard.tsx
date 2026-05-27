@@ -142,6 +142,16 @@ function AdCampaignMedia({
         ? resolved.media_type
         : 'image'
 
+  const fitWideBanner =
+    variant === 'leaderboard' || variant === 'center' || variant === 'mobile-inline'
+  const imageFitClass = variant === 'stack'
+    ? 'h-full w-full object-cover'
+    : fitWideBanner
+      ? 'h-full w-full object-contain'
+      : fillBanner || imageSrc.includes('/ads/banners/')
+        ? 'h-full w-full object-cover'
+        : 'h-full w-full object-contain transition duration-500 group-hover:scale-[1.02]'
+
   return (
     <div className={imageClass} style={imageStyle}>
       <AdMediaDisplay
@@ -151,11 +161,7 @@ function AdCampaignMedia({
         style={mediaStyle}
         layoutKey={layoutKey}
         className="h-full w-full"
-        imageClassName={
-          fillBanner || imageSrc.includes('/ads/banners/')
-            ? 'h-full w-full object-cover'
-            : 'h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]'
-        }
+        imageClassName={imageFitClass}
         animateSlides
       />
     </div>

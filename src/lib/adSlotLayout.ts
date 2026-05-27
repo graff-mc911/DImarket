@@ -61,7 +61,6 @@ export const adSlotTailwind = {
   sideLegacy: 'h-auto w-[90%] max-w-full mx-auto',
   sideLegacyCompact: 'h-auto w-[90%] max-w-full mx-auto',
   center: 'h-auto w-full max-w-full',
-  leaderboard:
-    'flex w-full min-w-0 max-w-full flex-col overflow-hidden aspect-[2/1] min-h-[var(--ad-leaderboard-slot-h,12.25rem)] max-h-[min(600px,100vw)]',
+  leaderboard: 'flex w-full min-w-0 max-w-full flex-col overflow-hidden',
   mobileInline: 'flex w-full min-w-0 max-w-full flex-col overflow-hidden',
 } as const

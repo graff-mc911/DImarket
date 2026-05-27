@@ -162,7 +162,7 @@ function SlotBox({
           style={slotEntry!.mediaStyle}
           layoutKey={layoutKey}
           className="absolute inset-0 h-full w-full"
-          imageClassName="h-full w-full object-cover"
+          imageClassName="h-full w-full object-contain"
           animateSlides={shouldAnimate}
         />
       ) : previewUrl ? (

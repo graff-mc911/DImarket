@@ -64,6 +64,8 @@ export function adSlotShellStyle(
       boxSizing: 'border-box',
       width: '100%',
       maxWidth: '100%',
+      height: spec.containerH,
+      minHeight: spec.containerH,
     }
   }
 
@@ -95,9 +97,10 @@ export function adSlotImageStyle(
   if (variant === 'leaderboard') {
     return {
       width: '100%',
-      height: '100%',
-      minHeight: 0,
-      flex: '1 1 auto',
+      height: spec.imageH,
+      maxHeight: spec.imageH,
+      minHeight: spec.imageH,
+      flexShrink: 0,
     }
   }
 
