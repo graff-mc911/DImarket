@@ -153,7 +153,6 @@ export function AdMediaEditor({
               style={style}
               layoutKey={layoutKey}
               className="h-full w-full"
-              imageClassName="h-full w-full"
               animateSlides={activeDisplayMode === 'rotate'}
             />
           ) : (

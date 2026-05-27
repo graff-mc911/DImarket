@@ -949,7 +949,8 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.catalog.slotSizeSublinePhoto': 'фото {ih}px',
   'advertising.catalog.slotSizeSublinePhotoApprox': 'фото ~{ih}px',
   'advertising.catalog.slotSizeTooltip':
-    'Контейнер на сайте: {cw}×{ch} px. Зона изображения: ~{iw}×{ih} px. Рекомендуемый файл: {uw}×{uh} px, соотношение {aspect}. На сайте изображение вмещается целиком (object-contain).',
+    'Файл {iw}×{ih} px (зона фото). Контейнер на сайте: {cw}×{ch} px. Экспорт: {uw}×{uh} px. Широкие — contain, боковые — cover.',
+  'advertising.catalog.slotSizeSublineContainer': 'конт. {cw}×{ch}',
   'advertising.catalog.sizesLegendTitle': 'Размеры контейнеров (ориентир для макета)',
   'advertising.catalog.sizesLegendSide':
     'Боковые L/R 1–4 (desktop ≥1280px): ширина {cw} px, высота ряда ~{ch} px (зависит от экрана), файл {uw}×{uh} px ({aspect}).',
@@ -996,7 +997,8 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.preview.cost': 'Стоимость',
   'advertising.preview.desc':
     'Выберите тип баннера, подгоните изображение под реальный контейнер, сделайте коллаж или добавьте текст поверх фото.',
-  'advertising.previewStudio.containerSize': 'Контейнер',
+  'advertising.previewStudio.containerSize': 'Зона фото',
+  'advertising.previewStudio.fileSizeHint': 'готовьте файл именно в этом размере',
   'advertising.previewStudio.imagesTitle': 'Изображения для коллажа / анимации',
   'advertising.previewStudio.imagesHint':
     'Загрузите несколько фото в разные слоты или добавьте здесь. Для коллажа или слайдшоу нужно 2+ изображения.',

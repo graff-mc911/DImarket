@@ -14,8 +14,8 @@ import {
 import {
   AD_SLOT_CONTAINER_SPECS,
   containerSpecForZone,
+  wireframeSlotFileSizeShort,
   wireframeSlotSizeShort,
-  wireframeSlotImageHeightPx,
   type AdSlotContainerSpec,
 } from '../lib/adSlotContainerSpecs'
 import {
@@ -71,18 +71,14 @@ function slotSizeLabels(
     aspect: spec.aspect,
   }
   return {
-    short: wireframeSlotSizeShort(spec),
-    subline: (() => {
-      const ih = wireframeSlotImageHeightPx(spec)
-      if (ih == null) return null
-      const approx = spec.zone === 'side_left' || spec.zone === 'side_right'
-      return interpolateTranslation(
-        approx
-          ? t('advertising.catalog.slotSizeSublinePhotoApprox')
-          : t('advertising.catalog.slotSizeSublinePhoto'),
-        { ih },
-      )
-    })(),
+    short: wireframeSlotFileSizeShort(spec),
+    subline:
+      spec.imageH < spec.containerH
+        ? interpolateTranslation(t('advertising.catalog.slotSizeSublineContainer'), {
+            cw: spec.containerW,
+            ch: spec.containerH,
+          })
+        : null,
     title: interpolateTranslation(t('advertising.catalog.slotSizeTooltip'), params),
   }
 }
@@ -180,7 +176,6 @@ function SlotBox({
           style={slotEntry!.mediaStyle}
           layoutKey={layoutKey}
           className="absolute inset-0 h-full w-full"
-          imageClassName="h-full w-full object-contain"
           animateSlides={shouldAnimate}
         />
       ) : previewUrl ? (

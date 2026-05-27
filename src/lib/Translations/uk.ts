@@ -1004,7 +1004,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.catalog.slotSizeSublinePhoto': 'фото {ih}px',
   'advertising.catalog.slotSizeSublinePhotoApprox': 'фото ~{ih}px',
   'advertising.catalog.slotSizeTooltip':
-    'Контейнер на сайті: {cw}×{ch} px. Зона зображення: ~{iw}×{ih} px. Рекомендований файл: {uw}×{uh} px, співвідношення {aspect}. На сайті зображення вміщується повністю (object-contain).',
+    'Готуйте файл {iw}×{ih} px (зона фото). Контейнер на сайті: {cw}×{ch} px. Рекомендований експорт: {uw}×{uh} px. Зображення вміщується без обрізання (contain), бокові — cover.',
+  'advertising.catalog.slotSizeSublineContainer': 'конт. {cw}×{ch}',
   'advertising.catalog.sizesLegendTitle': 'Розміри контейнерів (орієнтир для макету)',
   'advertising.catalog.sizesLegendSide':
     'Бокові L/R 1–4 (desktop ≥1280px): ширина {cw} px, висота рядка ~{ch} px (залежить від екрана), файл {uw}×{uh} px ({aspect}).',
@@ -1050,7 +1051,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.preview.citiesCount': 'міст',
   'advertising.preview.cost': 'Вартість',
   'advertising.preview.desc': 'Оберіть тип банера, підігнайте зображення під реальний контейнер, зробіть колаж або додайте текст поверх фото.',
-  'advertising.previewStudio.containerSize': 'Контейнер',
+  'advertising.previewStudio.containerSize': 'Зона фото',
+  'advertising.previewStudio.fileSizeHint': 'готуйте файл саме в цьому розмірі',
   'advertising.previewStudio.imagesTitle': 'Зображення для колажу / анімації',
   'advertising.previewStudio.imagesHint':
     'Завантажте кілька фото на різні слоти або додайте ще тут. Для колажу або слайдшоу потрібно 2+ зображення.',

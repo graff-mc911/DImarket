@@ -126,6 +126,11 @@ export function wireframeSlotSizeShort(spec: AdSlotContainerSpec): string {
   }
 }
 
+/** Розмір файлу для макета — зона зображення (те, що реально показується). */
+export function wireframeSlotFileSizeShort(spec: AdSlotContainerSpec): string {
+  return `${spec.imageW}×${spec.imageH}`
+}
+
 /** Додатковий рядок: зона фото (px), якщо менша за контейнер. */
 export function wireframeSlotImageHeightPx(spec: AdSlotContainerSpec): number | null {
   if (spec.zone === 'side_left' || spec.zone === 'side_right') {

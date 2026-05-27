@@ -50,7 +50,7 @@ const variantStyles: Record<
 > = {
   stack: {
     shell: 'flex h-full w-full min-h-0 flex-col overflow-hidden',
-    image: 'ad-slot-side__media min-h-0 w-full flex-1 overflow-hidden',
+    image: 'ad-slot-side__media w-full shrink-0 overflow-hidden',
     text: 'shrink-0 px-1.5 py-0.5',
     brand: 'text-[9px]',
     title: 'text-[10px] line-clamp-1 leading-tight',
@@ -142,16 +142,6 @@ function AdCampaignMedia({
         ? resolved.media_type
         : 'image'
 
-  const fitWideBanner =
-    variant === 'leaderboard' || variant === 'center' || variant === 'mobile-inline'
-  const imageFitClass = variant === 'stack'
-    ? 'h-full w-full object-cover'
-    : fitWideBanner
-      ? 'h-full w-full object-contain'
-      : fillBanner || imageSrc.includes('/ads/banners/')
-        ? 'h-full w-full object-cover'
-        : 'h-full w-full object-contain transition duration-500 group-hover:scale-[1.02]'
-
   return (
     <div className={imageClass} style={imageStyle}>
       <AdMediaDisplay
@@ -161,7 +151,6 @@ function AdCampaignMedia({
         style={mediaStyle}
         layoutKey={layoutKey}
         className="h-full w-full"
-        imageClassName={imageFitClass}
         animateSlides
       />
     </div>

@@ -905,7 +905,8 @@ export const enTranslations = {
   'advertising.catalog.slotSizeSublinePhoto': 'photo {ih}px',
   'advertising.catalog.slotSizeSublinePhotoApprox': 'photo ~{ih}px',
   'advertising.catalog.slotSizeTooltip':
-    'On-site container: {cw}×{ch} px. Image area: ~{iw}×{ih} px. Recommended file: {uw}×{uh} px, ratio {aspect}. The site fits the full image (object-contain).',
+    'Prepare file {iw}×{ih} px (photo area). On-site container: {cw}×{ch} px. Export: {uw}×{uh} px. Wide banners use contain; side banners use cover.',
+  'advertising.catalog.slotSizeSublineContainer': 'box {cw}×{ch}',
   'advertising.catalog.sizesLegendTitle': 'Container sizes (layout reference)',
   'advertising.catalog.sizesLegendSide':
     'Side L/R 1–4 (desktop ≥1280px): width {cw} px, row height ~{ch} px (viewport-dependent), file {uw}×{uh} px ({aspect}).',
@@ -1010,7 +1011,8 @@ export const enTranslations = {
   'advertising.preview.title': 'Preview',
   'advertising.preview.desc':
     'Pick a banner type, fit the image to the real container, build a collage, or add text on the photo.',
-  'advertising.previewStudio.containerSize': 'Container',
+  'advertising.previewStudio.containerSize': 'Photo area',
+  'advertising.previewStudio.fileSizeHint': 'prepare your file at this exact size',
   'advertising.previewStudio.imagesTitle': 'Images for collage / animation',
   'advertising.previewStudio.imagesHint':
     'Upload photos to different slots or add more here. Collage or slideshow needs 2+ images.',

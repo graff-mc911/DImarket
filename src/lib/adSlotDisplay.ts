@@ -92,7 +92,15 @@ export function adSlotImageStyle(
   spec: AdSlotContainerSpec,
   variant?: AdOverlayVariantKey,
 ): CSSProperties | undefined {
-  if (variant === 'stack') return undefined
+  if (variant === 'stack') {
+    return {
+      width: '100%',
+      height: spec.imageH,
+      maxHeight: spec.imageH,
+      minHeight: spec.imageH,
+      flexShrink: 0,
+    }
+  }
 
   if (variant === 'leaderboard') {
     return {

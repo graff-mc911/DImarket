@@ -220,14 +220,23 @@ export function layoutHasPrefs(style: AdMediaStyle, layout: AdBannerLayoutKey): 
 export function resolveLayoutFrame(
   style: AdMediaStyle,
   layout: AdBannerLayoutKey | undefined,
-): AdLayoutFrame {
-  const frame = layout ? style.byLayout?.[layout]?.frame : undefined
+): AdLayoutFrame | null {
+  if (!layout) return null
+  const frame = style.byLayout?.[layout]?.frame
+  if (!frame) return null
   return {
-    fit: frame?.fit ?? 'contain',
-    positionX: clampPct(frame?.positionX ?? 50),
-    positionY: clampPct(frame?.positionY ?? 50),
-    scale: clampScale(frame?.scale ?? 1),
+    fit: frame.fit ?? defaultObjectFitForLayout(layout),
+    positionX: clampPct(frame.positionX ?? 50),
+    positionY: clampPct(frame.positionY ?? 50),
+    scale: clampScale(frame.scale ?? 1),
   }
+}
+
+/** Стандартний object-fit, якщо користувач не налаштовував кадр вручну. */
+export function defaultObjectFitForLayout(
+  layout: AdBannerLayoutKey,
+): 'cover' | 'contain' {
+  return layout === 'side' ? 'cover' : 'contain'
 }
 
 export function layoutFrameImageStyle(frame: AdLayoutFrame): CSSProperties {
@@ -235,11 +244,24 @@ export function layoutFrameImageStyle(frame: AdLayoutFrame): CSSProperties {
   const py = frame.positionY ?? 50
   const scale = frame.scale ?? 1
   return {
+    width: '100%',
+    height: '100%',
+    display: 'block',
     objectFit: frame.fit ?? 'contain',
     objectPosition: `${px}% ${py}%`,
     ...(scale !== 1
       ? { transform: `scale(${scale})`, transformOrigin: `${px}% ${py}%` }
       : {}),
+  }
+}
+
+export function layoutDefaultImageStyle(layout: AdBannerLayoutKey): CSSProperties {
+  return {
+    width: '100%',
+    height: '100%',
+    display: 'block',
+    objectFit: defaultObjectFitForLayout(layout),
+    objectPosition: 'center',
   }
 }
 

@@ -3,6 +3,7 @@ import type { AdBannerLayoutKey } from '../lib/adBannerLayouts'
 import {
   COLLAGE_MAX_BY_LAYOUT,
   collageGridClass,
+  layoutDefaultImageStyle,
   layoutFrameImageStyle,
   resolveDisplayMode,
   resolveLayoutFrame,
@@ -20,46 +21,47 @@ type AdMediaDisplayProps = {
   style?: AdMediaStyle
   layoutKey?: AdBannerLayoutKey
   className?: string
-  imageClassName?: string
   animateSlides?: boolean
 }
 
-/** Повне зображення в контейнері; фон — розмита копія; frame — ручне кадрування. */
+function resolveImageStyle(
+  layoutKey: AdBannerLayoutKey | undefined,
+  frameStyle: CSSProperties | null,
+): CSSProperties {
+  if (frameStyle) return frameStyle
+  if (layoutKey) return layoutDefaultImageStyle(layoutKey)
+  return {
+    width: '100%',
+    height: '100%',
+    display: 'block',
+    objectFit: 'contain',
+    objectPosition: 'center',
+  }
+}
+
+/** Зображення на 100% зони слота — без blur-фону; ручне кадрування лише якщо задано в media_style. */
 function AdMediaImageFill({
   src,
   alt,
   className = '',
-  imageClassName = '',
+  layoutKey,
   frameStyle,
 }: {
   src: string
   alt: string
   className?: string
-  imageClassName?: string
-  frameStyle?: CSSProperties
+  layoutKey?: AdBannerLayoutKey
+  frameStyle?: CSSProperties | null
 }) {
-  const mergedImageStyle = frameStyle
-  const useBlurBg = (frameStyle?.objectFit ?? 'contain') === 'contain'
+  const imgStyle = resolveImageStyle(layoutKey, frameStyle ?? null)
 
   return (
     <div className={`relative h-full w-full overflow-hidden bg-[#1a1816] ${className}`}>
-      {useBlurBg && (
-        <img
-          src={src}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 h-full w-full scale-110 object-cover opacity-45 blur-md"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = AD_MEDIA_FALLBACK
-          }}
-        />
-      )}
       <img
         src={src}
         alt={alt}
-        style={mergedImageStyle}
-        className={`relative z-[1] mx-auto h-full w-full ${imageClassName || (frameStyle ? '' : 'object-contain')}`}
+        style={imgStyle}
+        className="h-full w-full max-h-full max-w-full"
         loading="lazy"
         onError={(e) => {
           e.currentTarget.src = AD_MEDIA_FALLBACK
@@ -76,7 +78,6 @@ export function AdMediaDisplay({
   style,
   layoutKey,
   className = '',
-  imageClassName = '',
   animateSlides = true,
 }: AdMediaDisplayProps) {
   const resolvedStyle = style ?? { slideshow: null }
@@ -91,13 +92,13 @@ export function AdMediaDisplay({
     () => resolveLayoutTransition(resolvedStyle, layoutKey),
     [resolvedStyle, layoutKey],
   )
-  const frame = useMemo(
-    () => (layoutKey ? resolveLayoutFrame(resolvedStyle, layoutKey) : undefined),
+  const customFrame = useMemo(
+    () => (layoutKey ? resolveLayoutFrame(resolvedStyle, layoutKey) : null),
     [resolvedStyle, layoutKey],
   )
   const frameStyle = useMemo(
-    () => (frame ? layoutFrameImageStyle(frame) : undefined),
-    [frame],
+    () => (customFrame ? layoutFrameImageStyle(customFrame) : null),
+    [customFrame],
   )
 
   useEffect(() => {
@@ -120,7 +121,7 @@ export function AdMediaDisplay({
       <div className={`relative overflow-hidden bg-[#1a1816] ${className}`}>
         <video
           src={src}
-          className={`h-full w-full object-contain ${imageClassName}`}
+          className="block h-full w-full object-contain"
           muted
           playsInline
           loop
@@ -136,7 +137,7 @@ export function AdMediaDisplay({
         <img
           src={AD_MEDIA_FALLBACK}
           alt={alt}
-          className={`h-full w-full object-contain ${imageClassName}`}
+          className="block h-full w-full object-contain"
         />
       </div>
     )
@@ -154,7 +155,7 @@ export function AdMediaDisplay({
               src={url}
               alt={alt}
               className="min-h-0 min-w-0"
-              imageClassName={imageClassName}
+              layoutKey={layoutKey}
               frameStyle={frameStyle}
             />
           ))}
@@ -171,7 +172,7 @@ export function AdMediaDisplay({
         src={slides[0]}
         alt={alt}
         className={className}
-        imageClassName={imageClassName}
+        layoutKey={layoutKey}
         frameStyle={frameStyle}
       />
     )
@@ -186,7 +187,12 @@ export function AdMediaDisplay({
             key={`${url}-${i}`}
             className={slideshowLayerClass(active, transition)}
           >
-            <AdMediaImageFill src={url} alt={alt} imageClassName={imageClassName} frameStyle={frameStyle} />
+            <AdMediaImageFill
+              src={url}
+              alt={alt}
+              layoutKey={layoutKey}
+              frameStyle={frameStyle}
+            />
           </div>
         )
       })}

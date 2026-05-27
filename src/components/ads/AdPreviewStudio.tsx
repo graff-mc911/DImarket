@@ -17,13 +17,14 @@ import {
   resolveLayoutFrame,
   resolveLayoutTransition,
   setLayoutPrefs,
+  defaultObjectFitForLayout,
   TRANSITIONS_FOR_LAYOUT,
   type AdDisplayMode,
   type AdMediaStyle,
   type AdSlideshowTransition,
 } from '../../lib/adMediaStyle'
 import {
-  wireframeSlotSizeShort,
+  wireframeSlotFileSizeShort,
 } from '../../lib/adSlotContainerSpecs'
 import { containerSpecForOverlayVariant } from '../../lib/adSlotDisplay'
 import {
@@ -119,9 +120,14 @@ export function AdPreviewStudio({
   const canMulti = mediaType === 'image' || mediaType === 'gif'
   const overlayVariant = AD_BANNER_LAYOUT_META[previewLayout].overlayVariant
   const spec = containerSpecForOverlayVariant(overlayVariant)
-  const sizeLabel = wireframeSlotSizeShort(spec)
   const displayMode = resolveDisplayMode(mediaStyle, previewLayout, slideCount)
-  const frame = resolveLayoutFrame(mediaStyle, previewLayout)
+  const frame =
+    resolveLayoutFrame(mediaStyle, previewLayout) ?? {
+      fit: defaultObjectFitForLayout(previewLayout),
+      positionX: 50,
+      positionY: 50,
+      scale: 1,
+    }
   const transition = resolveLayoutTransition(mediaStyle, previewLayout)
 
   const stylePayload = mediaReady
@@ -193,7 +199,10 @@ export function AdPreviewStudio({
       </div>
 
       <p className="mb-2 text-center text-[10px] font-semibold tabular-nums text-[#9a8776]">
-        {t('advertising.previewStudio.containerSize')}: {sizeLabel}
+        {t('advertising.previewStudio.containerSize')}: {wireframeSlotFileSizeShort(spec)}
+        <span className="block text-[9px] font-normal opacity-80">
+          {t('advertising.previewStudio.fileSizeHint')}
+        </span>
       </p>
 
       <div className={previewMaxWidthClass(previewLayout)}>
