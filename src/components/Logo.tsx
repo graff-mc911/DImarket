@@ -4,6 +4,7 @@ interface LogoProps {
   variant?: 'full' | 'text'
   className?: string
   animated?: boolean
+  shimmer?: boolean
 }
 
 const sizes = {
@@ -79,8 +80,10 @@ export function Logo({
   variant = 'text',
   className = '',
   animated = false,
+  shimmer = false,
 }: LogoProps) {
   const current = sizes[size]
+  const shimmerClass = shimmer ? 'logo-shimmer' : ''
 
   if (variant === 'text' || compact) {
     return (
@@ -89,7 +92,7 @@ export function Logo({
         aria-label="DImarket logo"
         className={animated ? `logo-construction relative ${className}` : className}
       >
-        <Wordmark className={current.title} animated={animated} />
+        <Wordmark className={`${current.title} ${shimmerClass}`.trim()} animated={animated} />
         {animated && <ConstructionScene />}
       </div>
     )
@@ -101,7 +104,7 @@ export function Logo({
       role="img"
       aria-label="DImarket logo"
     >
-      <Wordmark className={current.title} animated={animated} />
+      <Wordmark className={`${current.title} ${shimmerClass}`.trim()} animated={animated} />
       {animated && <ConstructionScene />}
       {current.subtitle !== 'hidden' && (
         <div className={`${current.subtitle} mt-1.5 uppercase tracking-[0.22em] text-[#5C4D41]`}>
