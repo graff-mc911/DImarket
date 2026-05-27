@@ -581,7 +581,7 @@
 
   .logo-construction {
     display: inline-block;
-    animation: logo-construction-sequence 7s ease-in-out infinite;
+    animation: logo-construction-sequence 8.8s ease-in-out infinite;
     transform-origin: center bottom;
   }
 
@@ -609,7 +609,7 @@
     height: 1.28em;
     opacity: 0;
     z-index: 4;
-    animation: logo-builder-run 7s linear infinite;
+    animation: logo-builder-run 8.8s linear infinite;
     transform-origin: center bottom;
   }
 
@@ -622,7 +622,7 @@
     border-radius: 999px;
     background: #f4c993;
     box-shadow: 0 -0.07em 0 0 #e8b200;
-    animation: logo-builder-torso-sway 7s linear infinite;
+    animation: logo-builder-torso-sway 8.8s linear infinite;
   }
 
   .logo-builder-body {
@@ -633,7 +633,7 @@
     height: 0.5em;
     border-radius: 0.12em;
     background: #2f7ac7;
-    animation: logo-builder-torso-sway 7s linear infinite;
+    animation: logo-builder-torso-sway 8.8s linear infinite;
   }
 
   .logo-builder-arm {
@@ -648,12 +648,12 @@
 
   .logo-builder-arm--left {
     left: 0.05em;
-    animation: logo-builder-arm-left 7s linear infinite;
+    animation: logo-builder-arm-left 8.8s linear infinite;
   }
 
   .logo-builder-arm--right {
     left: 0.58em;
-    animation: logo-builder-arm-right 7s linear infinite;
+    animation: logo-builder-arm-right 8.8s linear infinite;
   }
 
   .logo-builder-leg {
@@ -668,19 +668,19 @@
 
   .logo-builder-leg--left {
     left: 0.33em;
-    animation: logo-builder-leg-left 7s linear infinite;
+    animation: logo-builder-leg-left 8.8s linear infinite;
   }
 
   .logo-builder-leg--right {
     left: 0.53em;
-    animation: logo-builder-leg-right 7s linear infinite;
+    animation: logo-builder-leg-right 8.8s linear infinite;
   }
 
   .logo-scene-ladder {
     left: -3.8em;
     top: 0.2em;
     font-size: 0.86em;
-    animation: logo-ladder-carry 7s linear infinite;
+    animation: logo-ladder-carry 8.8s linear infinite;
     z-index: 3;
   }
 
@@ -688,39 +688,39 @@
     left: -3.3em;
     top: 0.68em;
     font-size: 0.78em;
-    animation: logo-tools-carry 7s linear infinite;
+    animation: logo-tools-carry 8.8s linear infinite;
     z-index: 3;
   }
 
   .logo-scene-brick {
     left: 1.1em;
     top: 0.46em;
-    animation: logo-brick-drop 7s linear infinite;
+    animation: logo-brick-drop 8.8s linear infinite;
   }
 
   .logo-scene-hammer {
     left: 2.2em;
     top: 0.08em;
     transform-origin: 20% 90%;
-    animation: logo-hammer-hit 7s ease-in-out infinite;
+    animation: logo-hammer-hit 8.8s ease-in-out infinite;
   }
 
   .logo-scene-spackle {
     left: 3em;
     top: 0.42em;
-    animation: logo-spackle-pass 7s ease-in-out infinite;
+    animation: logo-spackle-pass 8.8s ease-in-out infinite;
   }
 
   .logo-scene-paint {
     left: 4.2em;
     top: 0.33em;
-    animation: logo-paint-pass 7s ease-in-out infinite;
+    animation: logo-paint-pass 8.8s ease-in-out infinite;
   }
 
   .logo-scene-bulldozer {
     right: -1.6em;
     top: 0.44em;
-    animation: logo-bulldozer-crash 7s ease-in-out infinite;
+    animation: logo-bulldozer-crash 8.8s ease-in-out infinite;
   }
 
   .logo-build-letter {
@@ -730,15 +730,18 @@
   }
 
   .logo-build-letter--d {
-    animation: logo-build-letter-d 7s ease-in-out infinite;
+    animation: logo-build-letter-d 8.8s ease-in-out infinite,
+      logo-letter-hit-d 8.8s linear infinite;
   }
 
   .logo-build-letter--i {
-    animation: logo-build-letter-i 7s ease-in-out infinite;
+    animation: logo-build-letter-i 8.8s ease-in-out infinite,
+      logo-letter-hit-i 8.8s linear infinite;
   }
 
   .logo-build-letter--market {
-    animation: logo-build-letter-market 7s ease-in-out infinite;
+    animation: logo-build-letter-market 8.8s ease-in-out infinite,
+      logo-letter-hit-market 8.8s linear infinite;
   }
 
   @keyframes logo-construction-sequence {
@@ -788,13 +791,13 @@
     75% {
       transform: translateX(-4px) rotate(-1.4deg) scale(1.02);
     }
-    84% {
+    90% {
       transform: translateX(10px) rotate(2deg) scale(0.98);
       filter: drop-shadow(0 0 14px rgba(0, 0, 0, 0.18))
         brightness(0.96);
     }
     /* Руйнування: розліт та зникнення */
-    95% {
+    98% {
       opacity: 0;
       transform: translateX(40px) translateY(8px) scale(0.9)
         rotate(-6deg);
@@ -1021,11 +1024,11 @@
       transform: translateY(0) scale(1);
       filter: none;
     }
-    92% {
+    95% {
       opacity: 1;
       transform: translateY(0) scale(1);
     }
-    96% {
+    98% {
       opacity: 0.78;
       transform: translateY(0.06em) scale(0.98);
       filter: blur(0.25px);
@@ -1050,11 +1053,11 @@
       transform: translateY(0) scale(1);
       filter: none;
     }
-    92% {
+    95% {
       opacity: 1;
       transform: translateY(0) scale(1);
     }
-    96% {
+    98% {
       opacity: 0.78;
       transform: translateY(0.06em) scale(0.98);
       filter: blur(0.25px);
@@ -1079,11 +1082,11 @@
       transform: translateY(0) scale(1);
       filter: none;
     }
-    92% {
+    95% {
       opacity: 1;
       transform: translateY(0) scale(1);
     }
-    96% {
+    98% {
       opacity: 0.78;
       transform: translateY(0.06em) scale(0.98);
       filter: blur(0.25px);
@@ -1093,6 +1096,27 @@
       transform: translateY(0.25em) scale(0.92);
       filter: blur(0.5px);
     }
+  }
+
+  @keyframes logo-letter-hit-d {
+    0%, 27%, 100% { transform: translateX(0) rotate(0deg); }
+    29% { transform: translateX(-0.025em) rotate(-1.2deg); }
+    31% { transform: translateX(0.03em) rotate(1.2deg); }
+    33% { transform: translateX(0) rotate(0deg); }
+  }
+
+  @keyframes logo-letter-hit-i {
+    0%, 40%, 100% { transform: translateX(0) rotate(0deg); }
+    42% { transform: translateX(-0.02em) rotate(-1deg); }
+    44% { transform: translateX(0.025em) rotate(1deg); }
+    46% { transform: translateX(0) rotate(0deg); }
+  }
+
+  @keyframes logo-letter-hit-market {
+    0%, 62%, 100% { transform: translateX(0) rotate(0deg); }
+    64% { transform: translateX(-0.018em) rotate(-0.8deg); }
+    66% { transform: translateX(0.022em) rotate(0.9deg); }
+    68% { transform: translateX(0) rotate(0deg); }
   }
 
   @keyframes logo-hammer-hit {
