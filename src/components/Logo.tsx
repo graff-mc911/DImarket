@@ -54,7 +54,14 @@ function Wordmark({
 function ConstructionScene() {
   return (
     <span className="logo-construction-scene" aria-hidden="true">
-      <span className="logo-scene-actor logo-scene-builder">👷</span>
+      <span className="logo-scene-builder">
+        <span className="logo-builder-head" />
+        <span className="logo-builder-body" />
+        <span className="logo-builder-arm logo-builder-arm--left" />
+        <span className="logo-builder-arm logo-builder-arm--right" />
+        <span className="logo-builder-leg logo-builder-leg--left" />
+        <span className="logo-builder-leg logo-builder-leg--right" />
+      </span>
       <span className="logo-scene-actor logo-scene-ladder">🪜</span>
       <span className="logo-scene-actor logo-scene-tools">🧰</span>
       <span className="logo-scene-actor logo-scene-brick">🧱</span>
