@@ -34,6 +34,9 @@ export function SideAdRails({ page }: SideAdRailsProps) {
 
   const hasLeftRail = !loading && sideStacks.left.some(Boolean)
   const hasRightRail = !loading && sideStacks.right.some(Boolean)
+  // Для «default» (у т.ч. сторінка реклами) не фіксуємо рейки на весь viewport,
+  // щоб футер не заїжджав під бокові баннери.
+  const fixedViewport = page === 'home' || page === 'listings' || page === 'professionals'
 
   if (typeof document === 'undefined') return null
 
@@ -43,7 +46,7 @@ export function SideAdRails({ page }: SideAdRailsProps) {
         <AdBanner
           position="left"
           sticky
-          fixedViewport
+          fixedViewport={fixedViewport}
           page={page}
           stackCount={SIDE_STACK_COUNT}
           stackCampaigns={sideStacks.left}
@@ -53,7 +56,7 @@ export function SideAdRails({ page }: SideAdRailsProps) {
         <AdBanner
           position="right"
           sticky
-          fixedViewport
+          fixedViewport={fixedViewport}
           page={page}
           stackCount={SIDE_STACK_COUNT}
           stackCampaigns={sideStacks.right}
