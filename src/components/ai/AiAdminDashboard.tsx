@@ -3,7 +3,7 @@ import { AlertTriangle, Loader2, Shield } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { aiDb } from '../../lib/ai/db'
 import { fetchAiProviderStatus } from '../../lib/bots/client'
-import { getMessagingChannelStatus } from '../../lib/bots'
+import { AdminAIAssistantInline } from '../AdminAI/AdminAIAssistantInline'
 
 type FraudRow = {
   id: string
@@ -55,6 +55,8 @@ export function AiAdminDashboard() {
           </div>
         </div>
       </div>
+
+      <AdminAIAssistantInline />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="glass-card p-4">
