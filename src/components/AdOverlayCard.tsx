@@ -1,4 +1,4 @@
-import { type CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { Megaphone } from 'lucide-react'
 import {
   getGeoTargetLabel,
@@ -90,7 +90,7 @@ const variantStyles: Record<
   },
   'mobile-inline': {
     shell: adSlotTailwind.mobileInline,
-    image: 'ad-slot-mobile-inline__media w-full min-h-0 shrink-0 overflow-hidden',
+    image: 'w-full min-h-0 shrink-0 overflow-hidden',
     text: 'px-2 py-1',
     brand: 'text-[9px]',
     title: 'text-xs line-clamp-2 leading-tight',
@@ -98,7 +98,7 @@ const variantStyles: Record<
   },
   leaderboard: {
     shell: adSlotTailwind.leaderboard,
-    image: 'ad-slot-leaderboard__media min-h-0 w-full shrink-0 overflow-hidden',
+    image: 'min-h-0 w-full shrink-0 overflow-hidden',
     text: 'hidden',
     brand: 'hidden',
     title: 'hidden',
@@ -106,18 +106,43 @@ const variantStyles: Record<
   },
 }
 
+function useImageAspectRatio(src: string, enabled: boolean): number | null {
+  const [ratio, setRatio] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!enabled || !src) {
+      setRatio(null)
+      return
+    }
+    const img = new Image()
+    img.onload = () => {
+      if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+        setRatio(img.naturalWidth / img.naturalHeight)
+      } else {
+        setRatio(null)
+      }
+    }
+    img.onerror = () => setRatio(null)
+    img.src = src
+    return () => {
+      img.onload = null
+      img.onerror = null
+    }
+  }, [src, enabled])
+
+  return ratio
+}
+
 function AdCampaignMedia({
   campaign,
   imageClass,
   imageStyle,
-  fillBanner = false,
   variant,
   slotId,
 }: {
   campaign: AdCampaignWithAdvertiser
   imageClass: string
   imageStyle?: CSSProperties
-  fillBanner?: boolean
   variant: AdOverlayVariant
   slotId?: string
 }) {
@@ -129,6 +154,25 @@ function AdCampaignMedia({
     campaign as AdCampaignWithAdvertiser & { slot_media?: unknown; media_style?: unknown },
     slotId,
   )
+  const measuredSource =
+    slotState.slideUrls[0] ||
+    slotState.mediaUrl ||
+    getPublicBannerImageUrl(resolved)
+  const shouldAdaptRatio =
+    (variant === 'leaderboard' || variant === 'mobile-inline') &&
+    (slotState.mediaType === 'image' || slotState.mediaType === 'gif')
+  const adaptiveRatio = useImageAspectRatio(measuredSource, shouldAdaptRatio)
+  const adaptiveImageStyle: CSSProperties | undefined =
+    shouldAdaptRatio && adaptiveRatio
+      ? {
+          ...(imageStyle ?? {}),
+          width: '100%',
+          height: 'auto',
+          aspectRatio: `${adaptiveRatio}`,
+          minHeight: 0,
+          maxHeight: 'none',
+        }
+      : imageStyle
   const imageSrc =
     slotState.slideUrls[0] ||
     slotState.mediaUrl ||
@@ -143,7 +187,7 @@ function AdCampaignMedia({
         : 'image'
 
   return (
-    <div className={imageClass} style={imageStyle}>
+    <div className={imageClass} style={adaptiveImageStyle}>
       <AdMediaDisplay
         src={imageSrc}
         alt={campaign.title}
@@ -242,7 +286,6 @@ export function AdOverlayCard({
           variant={variant}
           imageClass={styles.image}
           imageStyle={imageStyle}
-          fillBanner={isLeaderboard}
         />
         {textOnImage && showText && (
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2 py-2">
