@@ -902,11 +902,13 @@ export const enTranslations = {
   'advertising.catalog.previewDesc':
     'Click slots on the map — purple highlights are your positions. Each slot shows its on-site container size; upload at the recommended size to avoid cropping and empty space.',
   'advertising.catalog.slotSizeShort': '{w}×{h}',
+  'advertising.catalog.slotSizeSublinePhoto': 'photo {ih}px',
+  'advertising.catalog.slotSizeSublinePhotoApprox': 'photo ~{ih}px',
   'advertising.catalog.slotSizeTooltip':
     'On-site container: {cw}×{ch} px. Image area: ~{iw}×{ih} px. Recommended file: {uw}×{uh} px, ratio {aspect}. The site fits the full image (object-contain).',
   'advertising.catalog.sizesLegendTitle': 'Container sizes (layout reference)',
   'advertising.catalog.sizesLegendSide':
-    'Side L/R 1–4 (desktop ≥1280px): container {cw}×{ch} px, file {uw}×{uh} px ({aspect}).',
+    'Side L/R 1–4 (desktop ≥1280px): width {cw} px, row height ~{ch} px (viewport-dependent), file {uw}×{uh} px ({aspect}).',
   'advertising.catalog.sizesLegendCenter':
     'Center (home): image ~{iw}×{ih} px in the content column, file {uw}×{uh} px ({aspect}).',
   'advertising.catalog.sizesLegendLeaderboard':

@@ -1001,11 +1001,13 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.catalog.previewDesc':
     'Натисніть слоти на схемі — фіолетовим підсвічено обрані позиції. Під кожним слотом — розмір контейнера на сайті; готуйте файл за рекомендованим розміром, щоб уникнути обрізання й порожніх полів.',
   'advertising.catalog.slotSizeShort': '{w}×{h}',
+  'advertising.catalog.slotSizeSublinePhoto': 'фото {ih}px',
+  'advertising.catalog.slotSizeSublinePhotoApprox': 'фото ~{ih}px',
   'advertising.catalog.slotSizeTooltip':
     'Контейнер на сайті: {cw}×{ch} px. Зона зображення: ~{iw}×{ih} px. Рекомендований файл: {uw}×{uh} px, співвідношення {aspect}. На сайті зображення вміщується повністю (object-contain).',
   'advertising.catalog.sizesLegendTitle': 'Розміри контейнерів (орієнтир для макету)',
   'advertising.catalog.sizesLegendSide':
-    'Бокові L/R 1–4 (desktop ≥1280px): контейнер {cw}×{ch} px, файл {uw}×{uh} px ({aspect}).',
+    'Бокові L/R 1–4 (desktop ≥1280px): ширина {cw} px, висота рядка ~{ch} px (залежить від екрана), файл {uw}×{uh} px ({aspect}).',
   'advertising.catalog.sizesLegendCenter':
     'По центру (головна): зображення ~{iw}×{ih} px у широкій колонці, файл {uw}×{uh} px ({aspect}).',
   'advertising.catalog.sizesLegendLeaderboard':

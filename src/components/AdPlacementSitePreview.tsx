@@ -14,6 +14,8 @@ import {
 import {
   AD_SLOT_CONTAINER_SPECS,
   containerSpecForZone,
+  wireframeSlotSizeShort,
+  wireframeSlotImageHeightPx,
   type AdSlotContainerSpec,
 } from '../lib/adSlotContainerSpecs'
 import {
@@ -56,7 +58,7 @@ type AdPlacementSitePreviewProps = {
 function slotSizeLabels(
   spec: AdSlotContainerSpec,
   t: (key: TranslationKey) => string,
-): { short: string; title: string } {
+): { short: string; subline: string | null; title: string } {
   const params = {
     w: spec.containerW,
     h: spec.containerH,
@@ -69,7 +71,18 @@ function slotSizeLabels(
     aspect: spec.aspect,
   }
   return {
-    short: interpolateTranslation(t('advertising.catalog.slotSizeShort'), params),
+    short: wireframeSlotSizeShort(spec),
+    subline: (() => {
+      const ih = wireframeSlotImageHeightPx(spec)
+      if (ih == null) return null
+      const approx = spec.zone === 'side_left' || spec.zone === 'side_right'
+      return interpolateTranslation(
+        approx
+          ? t('advertising.catalog.slotSizeSublinePhotoApprox')
+          : t('advertising.catalog.slotSizeSublinePhoto'),
+        { ih },
+      )
+    })(),
     title: interpolateTranslation(t('advertising.catalog.slotSizeTooltip'), params),
   }
 }
@@ -80,6 +93,7 @@ function SlotBox({
   label,
   title,
   sizeShort,
+  sizeSubline,
   slotHeightPx,
   aspectClass = '',
   className = '',
@@ -97,6 +111,7 @@ function SlotBox({
   label: string
   title: string
   sizeShort?: string
+  sizeSubline?: string | null
   slotHeightPx?: number
   aspectClass?: string
   className?: string
@@ -126,8 +141,11 @@ function SlotBox({
   const labelBlock = (
     <span className="flex flex-col items-center gap-0.5 leading-tight">
       <span>{label}</span>
-      {sizeShort && !previewUrl ? (
+      {sizeShort ? (
         <span className="text-[7px] font-semibold tabular-nums opacity-90">{sizeShort}</span>
+      ) : null}
+      {sizeSubline ? (
+        <span className="text-[6px] font-medium tabular-nums opacity-80">{sizeSubline}</span>
       ) : null}
     </span>
   )
@@ -304,6 +322,7 @@ function DesktopWireframe({
       focused: focusedSlotId === id,
       label,
       sizeShort: sizes?.short,
+      sizeSubline: sizes?.subline,
       slotHeightPx: sideH,
       aspectClass: zone ? wireframeWideAspectClass(zone) : '',
       title: sizes
@@ -406,6 +425,7 @@ function MobileWireframe({
                 focused={focusedSlotId === id}
                 label={label}
                 sizeShort={sizes?.short}
+                sizeSubline={sizes?.subline}
                 slotHeightPx={mobH}
                 aspectClass={def?.zone ? wireframeWideAspectClass(def.zone) : ''}
                 title={
@@ -585,8 +605,13 @@ export function AdPlacementSitePreview({
         </p>
       )}
 
-      {!compact && (
-      <div className="rounded-[14px] border border-white/35 bg-white/25 px-3 py-2.5 text-[11px] leading-relaxed text-[#5f5a54]">
+      <div
+        className={
+          compact
+            ? 'rounded-[12px] border border-white/35 bg-white/25 px-2.5 py-2 text-[10px] leading-relaxed text-[#5f5a54]'
+            : 'rounded-[14px] border border-white/35 bg-white/25 px-3 py-2.5 text-[11px] leading-relaxed text-[#5f5a54]'
+        }
+      >
         <p className="font-bold text-[#2f2a24]">{t('advertising.catalog.sizesLegendTitle')}</p>
         <ul className="mt-1.5 list-inside list-disc space-y-1">
           <li>
@@ -631,7 +656,6 @@ export function AdPlacementSitePreview({
           </li>
         </ul>
       </div>
-      )}
 
       {!compact && selectedOnPage.length > 0 ? (
         <details className="rounded-[14px] border border-white/35 bg-white/25 px-3 py-2 text-xs text-[#5f5a54]">

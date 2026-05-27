@@ -128,7 +128,7 @@ export function wireframeMobileInlineHeightPx(containerH: number, columnWidthPx 
 export function wireframeWideAspectClass(
   zone: 'center' | 'mob_leaderboard' | 'mob_inline' | 'side_left' | 'side_right',
 ): string {
-  if (zone === 'center') return 'aspect-[36/25] min-h-[104px] w-full'
+  if (zone === 'center') return 'aspect-[720/248] min-h-[72px] w-full'
   if (zone === 'mob_leaderboard') return 'aspect-[2/1] min-h-[88px] w-full'
   return ''
 }

@@ -106,6 +106,37 @@ export function formatSlotContainerShort(spec: AdSlotContainerSpec): string {
   return `${spec.containerW}×${spec.containerH}`
 }
 
+/**
+ * Розмір на схемі «Де показувати рекламу» — синхронізовано з applyAdSlotCssVars / index.css.
+ * Ширина 100% — слот займає всю колонку контенту; бокові — орієнтир при viewport ~900px.
+ */
+export function wireframeSlotSizeShort(spec: AdSlotContainerSpec): string {
+  switch (spec.zone) {
+    case 'side_left':
+    case 'side_right':
+      return `${spec.containerW}×~${spec.containerH}`
+    case 'center':
+      return `${spec.containerW}×${spec.imageH}`
+    case 'mob_leaderboard':
+      return `100%×${spec.containerH}`
+    case 'mob_inline':
+      return `100%×${spec.containerH}`
+    default:
+      return formatSlotContainerShort(spec)
+  }
+}
+
+/** Додатковий рядок: зона фото (px), якщо менша за контейнер. */
+export function wireframeSlotImageHeightPx(spec: AdSlotContainerSpec): number | null {
+  if (spec.zone === 'side_left' || spec.zone === 'side_right') {
+    return spec.imageH < spec.containerH ? spec.imageH : null
+  }
+  if (spec.zone === 'mob_inline' && spec.imageH < spec.containerH) {
+    return spec.imageH
+  }
+  return null
+}
+
 /** Підказка при наведенні / title. */
 export function formatSlotContainerTooltip(
   spec: AdSlotContainerSpec,

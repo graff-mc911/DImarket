@@ -946,11 +946,13 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.catalog.previewDesc':
     'Нажмите слоты на схеме — фиолетовым подсвечены выбранные позиции. Под каждым слотом — размер контейнера; готовьте файл по рекомендации, чтобы избежать обрезки и пустых полей.',
   'advertising.catalog.slotSizeShort': '{w}×{h}',
+  'advertising.catalog.slotSizeSublinePhoto': 'фото {ih}px',
+  'advertising.catalog.slotSizeSublinePhotoApprox': 'фото ~{ih}px',
   'advertising.catalog.slotSizeTooltip':
     'Контейнер на сайте: {cw}×{ch} px. Зона изображения: ~{iw}×{ih} px. Рекомендуемый файл: {uw}×{uh} px, соотношение {aspect}. На сайте изображение вмещается целиком (object-contain).',
   'advertising.catalog.sizesLegendTitle': 'Размеры контейнеров (ориентир для макета)',
   'advertising.catalog.sizesLegendSide':
-    'Боковые L/R 1–4 (desktop ≥1280px): контейнер {cw}×{ch} px, файл {uw}×{uh} px ({aspect}).',
+    'Боковые L/R 1–4 (desktop ≥1280px): ширина {cw} px, высота ряда ~{ch} px (зависит от экрана), файл {uw}×{uh} px ({aspect}).',
   'advertising.catalog.sizesLegendCenter':
     'По центру (главная): изображение ~{iw}×{ih} px, файл {uw}×{uh} px ({aspect}).',
   'advertising.catalog.sizesLegendLeaderboard':
