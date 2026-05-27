@@ -8,7 +8,7 @@ import { AppProvider }         from './contexts/AppContext'
 import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
-import { PageWithSideAds, adPageForPath, pathUsesSideAdRails } from './components/PageWithSideAds'
+import { PageWithSideAds, pathUsesSideAdRails } from './components/PageWithSideAds'
 import { SideAdRailsLayout } from './components/SideAdRails'
 import { bindPathListener }    from './lib/navigation'
 
@@ -94,7 +94,6 @@ function App() {
   }
 
   const showSideAds = pathUsesSideAdRails(path)
-  const sideAdsPage = adPageForPath(path)
 
   return (
     <AppProvider>
@@ -102,7 +101,7 @@ function App() {
         <div className="app-shell min-h-screen flex flex-col">
           <Header />
           {showSideAds ? (
-            <SideAdRailsLayout page={sideAdsPage}>
+            <SideAdRailsLayout>
               <main className="min-w-0 flex-1">
                 <PageWithSideAds inSideAdsGrid>{getPage()}</PageWithSideAds>
               </main>
