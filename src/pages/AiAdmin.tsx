@@ -5,8 +5,6 @@ import { isSiteOwner } from '../lib/siteOwner'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { AiAdminDashboard } from '../components/ai/AiAdminDashboard'
-import { AdminAIPanel } from '../components/AdminAI/AdminAIPanel'
-
 export function AiAdmin() {
   const { user, profile, t } = useApp()
   const [sessionReady, setSessionReady] = useState(false)
@@ -65,7 +63,6 @@ export function AiAdmin() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <AiAdminDashboard />
-      <AdminAIPanel />
     </div>
   )
 }
