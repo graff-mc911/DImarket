@@ -209,7 +209,7 @@ export function AdPerSlotMediaEditor({
     compact: true as const,
     hidePageTabs: true as const,
     selected: selectedSlots,
-    slotMedia: displaySlotMedia,
+    slotMedia: slotMedia,
     focusedSlotId,
     onFocusSlot: (id: string | null) => {
       if (id) {

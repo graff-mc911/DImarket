@@ -23,7 +23,8 @@ import {
   type SlotMediaMap,
 } from '../lib/adSlotMedia'
 import type { TranslationKey } from '../lib/i18n'
-import { wireframeSlotHeightPx } from '../lib/adSlotDisplay'
+import { wireframeSlotHeightPx, wireframeWideAspectClass } from '../lib/adSlotDisplay'
+import { resolveSlideUrls } from '../lib/adMediaStyle'
 
 function interpolateTranslation(
   template: string,
@@ -80,6 +81,7 @@ function SlotBox({
   title,
   sizeShort,
   slotHeightPx,
+  aspectClass = '',
   className = '',
   draftMediaUrl,
   slotEntry,
@@ -96,6 +98,7 @@ function SlotBox({
   title: string
   sizeShort?: string
   slotHeightPx?: number
+  aspectClass?: string
   className?: string
   draftMediaUrl?: string | null
   slotEntry?: SlotMediaEntry
@@ -114,6 +117,11 @@ function SlotBox({
       ? draftMediaUrl
       : null
   const layoutKey = slotId ? layoutKeyFromSlotId(slotId) : 'center'
+  const slideUrls = previewUrl
+    ? resolveSlideUrls(previewUrl, slotEntry?.mediaStyle)
+    : []
+  const shouldAnimate =
+    slideUrls.length > 1 && slotEntry?.mediaType !== 'video'
 
   const labelBlock = (
     <span className="flex flex-col items-center gap-0.5 leading-tight">
@@ -135,9 +143,14 @@ function SlotBox({
       ? ' cursor-pointer hover:brightness-95'
       : '') +
     ' ' +
+    aspectClass +
+    ' ' +
     className
 
-  const heightStyle = slotHeightPx ? { height: slotHeightPx, minHeight: slotHeightPx } : undefined
+  const heightStyle =
+    aspectClass || !slotHeightPx
+      ? undefined
+      : { height: slotHeightPx, minHeight: slotHeightPx }
 
   const inner = (
     <>
@@ -150,7 +163,7 @@ function SlotBox({
           layoutKey={layoutKey}
           className="absolute inset-0 h-full w-full"
           imageClassName="h-full w-full object-cover"
-          animateSlides={false}
+          animateSlides={shouldAnimate}
         />
       ) : previewUrl ? (
         <img
@@ -280,8 +293,10 @@ function DesktopWireframe({
     const def = getSlotDefinition(id)
     const spec = def ? containerSpecForZone(def.zone) : null
     const sizes = spec ? slotSizeLabels(spec, t) : null
-    const sideH = spec ? wireframeSlotHeightPx(spec.containerH) : undefined
-    const centerH = spec?.zone === 'center' ? wireframeSlotHeightPx(spec.containerH, 200) : sideH
+    const zone = def?.zone
+    const isWide = zone === 'center' || zone === 'mob_leaderboard'
+    const sideH =
+      spec && !isWide ? wireframeSlotHeightPx(spec.containerH) : undefined
 
     return {
       slotId: id,
@@ -289,7 +304,8 @@ function DesktopWireframe({
       focused: focusedSlotId === id,
       label,
       sizeShort: sizes?.short,
-      slotHeightPx: def?.zone === 'center' ? centerH : sideH,
+      slotHeightPx: sideH,
+      aspectClass: zone ? wireframeWideAspectClass(zone) : '',
       title: sizes
         ? `${formatSlotLabel(id, t)}\n${sizes.title}`
         : formatSlotLabel(id, t),
@@ -377,7 +393,9 @@ function MobileWireframe({
           const label = isLeader ? t('advertising.catalog.leaderboard') : `#${def?.row ?? i + 1}`
           const spec = def ? containerSpecForZone(def.zone) : null
           const sizes = spec ? slotSizeLabels(spec, t) : null
-          const mobH = spec ? wireframeSlotHeightPx(spec.containerH, 200) : undefined
+          const isWide = def?.zone === 'center' || def?.zone === 'mob_leaderboard'
+          const mobH =
+            spec && !isWide ? wireframeSlotHeightPx(spec.containerH, 200) : undefined
           return (
             <div key={id}>
               <SlotBox
@@ -387,6 +405,7 @@ function MobileWireframe({
                 label={label}
                 sizeShort={sizes?.short}
                 slotHeightPx={mobH}
+                aspectClass={def?.zone ? wireframeWideAspectClass(def.zone) : ''}
                 title={
                   sizes
                     ? `${formatSlotLabel(id, t)}\n${sizes.title}`

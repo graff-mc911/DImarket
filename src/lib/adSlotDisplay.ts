@@ -85,8 +85,17 @@ export function adSlotImageStyle(
   }
 }
 
-/** Масштаб слота на wireframe (колонка вужча за реальні 248px) */
+/** Масштаб бокового слота на wireframe (колонка вужча за реальні 248px) */
 export function wireframeSlotHeightPx(containerH: number, columnWidthPx = 72): number {
   const scale = columnWidthPx / AD_SLOT_CONTAINER_SPECS.side_left.containerW
   return Math.max(32, Math.round(containerH * scale))
+}
+
+/** Широкі банери — пропорції як на сайті (не фіксована висота в px) */
+export function wireframeWideAspectClass(
+  zone: 'center' | 'mob_leaderboard' | 'mob_inline' | 'side_left' | 'side_right',
+): string {
+  if (zone === 'center') return 'aspect-[72/25] min-h-[52px] w-full'
+  if (zone === 'mob_leaderboard') return 'aspect-[4/1] min-h-[44px] w-full'
+  return ''
 }
