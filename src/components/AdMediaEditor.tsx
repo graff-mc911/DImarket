@@ -39,6 +39,8 @@ type AdMediaEditorProps = {
   onClearMedia?: () => void
   /** Один файл на слот — без галереї та додавання кадрів */
   singleImageOnly?: boolean
+  /** Показати режим/анімацію навіть для singleImageOnly (компактний редактор слотів) */
+  showAnimationControls?: boolean
 }
 
 const DISPLAY_MODES: AdDisplayMode[] = ['single', 'rotate', 'collage']
@@ -57,6 +59,7 @@ export function AdMediaEditor({
   fixedLayoutKey,
   onClearMedia,
   singleImageOnly = false,
+  showAnimationControls = false,
 }: AdMediaEditorProps) {
   const { t } = useApp()
   const extraInputRef = useRef<HTMLInputElement>(null)
@@ -222,7 +225,8 @@ export function AdMediaEditor({
         </div>
       )}
 
-      {hasMedia && canMulti && !singleImageOnly && (
+      {(hasMedia && canMulti && !singleImageOnly) ||
+      (hasMedia && showAnimationControls) ? (
         <div className={compact ? 'space-y-2' : 'border-t border-[rgba(148,163,184,0.15)] pt-4'}>
           {!compact && (
           <>
@@ -242,7 +246,12 @@ export function AdMediaEditor({
           )}
 
           <div className="mt-3 space-y-3">
-            {(fixedLayoutKey ? [fixedLayoutKey] : AD_BANNER_LAYOUT_KEYS).map((lk) => {
+            {(showAnimationControls && fixedLayoutKey
+              ? [fixedLayoutKey]
+              : fixedLayoutKey
+                ? [fixedLayoutKey]
+                : AD_BANNER_LAYOUT_KEYS
+            ).map((lk) => {
               const mode = resolveDisplayMode(style, lk, slideCount)
               const transition = resolveLayoutTransition(style, lk)
               const transitions = TRANSITIONS_FOR_LAYOUT[lk].filter((tr) =>
@@ -343,7 +352,7 @@ export function AdMediaEditor({
             {t('advertising.mediaEditor.collageHint')}
           </p>
         </div>
-      )}
+      ) : null}
 
       {!hasMedia && (
         <p className="flex items-center gap-2 text-xs text-[#9a8776]">

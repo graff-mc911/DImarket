@@ -119,6 +119,11 @@ export function wireframeSlotHeightPx(containerH: number, columnWidthPx = 72): n
   return Math.max(32, Math.round(containerH * scale))
 }
 
+/** Масштаб inline-слота на mobile wireframe (колонка ~200px); лінійний — aspect */
+export function wireframeMobileInlineHeightPx(containerH: number, columnWidthPx = 200): number {
+  return Math.max(24, Math.round(wireframeSlotHeightPx(containerH, columnWidthPx) / 2))
+}
+
 /** Широкі банери — пропорції як на сайті (не фіксована висота в px) */
 export function wireframeWideAspectClass(
   zone: 'center' | 'mob_leaderboard' | 'mob_inline' | 'side_left' | 'side_right',

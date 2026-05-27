@@ -43,9 +43,9 @@ export const AD_SIDE_LEGACY_COMPACT_MIN_PX = 108
 export const AD_CENTER_MIN_PX = 220
 export const AD_CENTER_MIN_MD_PX = 248
 
-/** Мобільний inline між секціями */
-export const AD_MOBILE_INLINE_MIN_PX = 160
-export const AD_MOBILE_INLINE_IMAGE_PX = 136
+/** Мобільний inline між секціями (компактний; лінійний leaderboard — окремо) */
+export const AD_MOBILE_INLINE_MIN_PX = 80
+export const AD_MOBILE_INLINE_IMAGE_PX = 68
 
 /** Широкий лінійний банер (hero / над списком) — висота 2× для коректного object-fit */
 export const AD_LEADERBOARD_DISPLAY_H_PX = 196

@@ -23,7 +23,7 @@ import {
   type SlotMediaMap,
 } from '../lib/adSlotMedia'
 import type { TranslationKey } from '../lib/i18n'
-import { wireframeSlotHeightPx, wireframeWideAspectClass } from '../lib/adSlotDisplay'
+import { wireframeMobileInlineHeightPx, wireframeSlotHeightPx, wireframeWideAspectClass } from '../lib/adSlotDisplay'
 import { resolveSlideUrls } from '../lib/adMediaStyle'
 
 function interpolateTranslation(
@@ -395,7 +395,9 @@ function MobileWireframe({
           const sizes = spec ? slotSizeLabels(spec, t) : null
           const isWide = def?.zone === 'center' || def?.zone === 'mob_leaderboard'
           const mobH =
-            spec && !isWide ? wireframeSlotHeightPx(spec.containerH, 200) : undefined
+            spec && def?.zone === 'mob_inline'
+              ? wireframeMobileInlineHeightPx(spec.containerH)
+              : undefined
           return (
             <div key={id}>
               <SlotBox

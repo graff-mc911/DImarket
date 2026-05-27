@@ -21,8 +21,10 @@ import {
   type PlacementEditorPageId,
 } from '../../lib/adPlacementPages'
 import type { AdMediaStyle } from '../../lib/adMediaStyle'
+import { resolveSlideUrls } from '../../lib/adMediaStyle'
 import type { BannerMediaType } from '../../hooks/useAdBannerMediaUpload'
 import { SlotMediaUploadError, useSlotMediaUpload } from '../../hooks/useSlotMediaUpload'
+import { SlotAnimationPicker } from './SlotAnimationPicker'
 
 type AdPerSlotMediaEditorProps = {
   selectedSlots: string[]
@@ -91,6 +93,37 @@ export function AdPerSlotMediaEditor({
 
   const [internalPage, setInternalPage] = useState<PlacementEditorPageId>('home')
   const previewPage = hidePagePicker ? internalPage : (editorPageProp ?? 'home')
+
+  const previewWireframe = useMemo(() => wireframeGroupForEditorPage(previewPage), [previewPage])
+  const pageSlotIds = useMemo(
+    () =>
+      previewWireframe.desktop.left.concat(
+        previewWireframe.desktop.right,
+        previewWireframe.desktop.center ? [previewWireframe.desktop.center] : [],
+        previewWireframe.mobile.inline,
+      ),
+    [previewWireframe],
+  )
+  const slotsWithMediaOnPage = useMemo(
+    () =>
+      pageSlotIds.filter(
+        (id) => selectedSlots.includes(id) && slotMediaEntryHasMedia(slotMedia[id]),
+      ),
+    [pageSlotIds, selectedSlots, slotMedia],
+  )
+
+  const patchSlotStyle = (slotId: string, mediaStyle: AdMediaStyle) => {
+    const entry = slotMediaRef.current[slotId] ?? emptySlotMediaEntry()
+    onSlotMediaChange({
+      ...slotMediaRef.current,
+      [slotId]: { ...entry, mediaStyle },
+    })
+  }
+
+  const slotSlideCount = (entry: SlotMediaEntry) => {
+    const url = entry.slideUrls[0] || entry.mediaUrl
+    return resolveSlideUrls(url, entry.mediaStyle).length
+  }
 
   /** Фокус слота — у межах поточної вкладки wireframe (single-page mode) */
   useEffect(() => {
@@ -275,6 +308,7 @@ export function AdPerSlotMediaEditor({
       )}
 
       {hidePagePicker ? (
+        <>
         <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,200px)]">
           <div className="min-w-0">
             {onSelectedSlotsChange ? (
@@ -307,19 +341,15 @@ export function AdPerSlotMediaEditor({
                 <AdMediaEditor
                   compact
                   singleImageOnly
+                  showAnimationControls
                   fixedLayoutKey={focusedLayout}
                   mediaType={focusedEntry.mediaType}
                   primaryUrl={focusedEntry.mediaUrl}
                   slideUrls={[focusedEntry.mediaUrl]}
                   style={focusedEntry.mediaStyle}
                   onStyleChange={(mediaStyle) => {
-                    onSlotMediaChange({
-                      ...slotMediaRef.current,
-                      [focusedSlotId]: normalizeSlotMediaEntry({
-                        ...focusedEntry,
-                        mediaStyle,
-                      }),
-                    })
+                    if (!focusedSlotId) return
+                    patchSlotStyle(focusedSlotId, mediaStyle)
                   }}
                   onSlideUrlsChange={() => {}}
                   onPrimaryUrlChange={() => {}}
@@ -330,6 +360,38 @@ export function AdPerSlotMediaEditor({
             ) : null}
           </aside>
         </div>
+        {slotsWithMediaOnPage.length > 0 ? (
+          <div className="rounded-[12px] border border-[rgba(148,163,184,0.18)] bg-white/35 p-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-[#6f665d]">
+              {t('advertising.slotStudio.animationTitle')}
+            </p>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+              {slotsWithMediaOnPage.map((slotId) => {
+                const entry = slotMedia[slotId] ?? emptySlotMediaEntry()
+                return (
+                  <div
+                    key={slotId}
+                    className="rounded-[10px] border border-[rgba(148,163,184,0.15)] bg-white/50 p-2"
+                  >
+                    <p className="text-[10px] font-semibold text-[#2f2a24]">
+                      {formatSlotLabel(slotId, t)}
+                    </p>
+                    <div className="mt-1.5">
+                      <SlotAnimationPicker
+                        compact
+                        layoutKey={layoutKeyFromSlotId(slotId)}
+                        style={entry.mediaStyle}
+                        slideCount={slotSlideCount(entry)}
+                        onStyleChange={(mediaStyle) => patchSlotStyle(slotId, mediaStyle)}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        ) : null}
+        </>
       ) : (
         <>
       <div className="grid gap-3 lg:grid-cols-[minmax(0,220px)_1fr]">
@@ -347,6 +409,7 @@ export function AdPerSlotMediaEditor({
               <AdMediaEditor
                 compact
                 singleImageOnly
+                showAnimationControls
                 fixedLayoutKey={focusedLayout}
                 mediaType={focusedEntry.mediaType}
                 primaryUrl={focusedEntry.mediaUrl}
@@ -354,13 +417,7 @@ export function AdPerSlotMediaEditor({
                 style={focusedEntry.mediaStyle}
                 onStyleChange={(mediaStyle) => {
                   if (!focusedSlotId) return
-                  onSlotMediaChange({
-                    ...slotMediaRef.current,
-                    [focusedSlotId]: normalizeSlotMediaEntry({
-                      ...focusedEntry,
-                      mediaStyle,
-                    }),
-                  })
+                  patchSlotStyle(focusedSlotId, mediaStyle)
                 }}
                 onSlideUrlsChange={() => {}}
                 onPrimaryUrlChange={() => {}}
@@ -421,6 +478,38 @@ export function AdPerSlotMediaEditor({
           )}
         </div>
       )}
+
+      {slotsWithMediaOnPage.length > 0 ? (
+        <div className="rounded-[12px] border border-[rgba(148,163,184,0.18)] bg-white/35 p-2.5">
+          <p className="text-[10px] font-bold uppercase tracking-wide text-[#6f665d]">
+            {t('advertising.slotStudio.animationTitle')}
+          </p>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            {slotsWithMediaOnPage.map((slotId) => {
+              const entry = slotMedia[slotId] ?? emptySlotMediaEntry()
+              return (
+                <div
+                  key={slotId}
+                  className="rounded-[10px] border border-[rgba(148,163,184,0.15)] bg-white/50 p-2"
+                >
+                  <p className="text-[10px] font-semibold text-[#2f2a24]">
+                    {formatSlotLabel(slotId, t)}
+                  </p>
+                  <div className="mt-1.5">
+                    <SlotAnimationPicker
+                      compact
+                      layoutKey={layoutKeyFromSlotId(slotId)}
+                      style={entry.mediaStyle}
+                      slideCount={slotSlideCount(entry)}
+                      onStyleChange={(mediaStyle) => patchSlotStyle(slotId, mediaStyle)}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ) : null}
         </>
       )}
 

@@ -480,9 +480,9 @@
   }
 
   .ad-slot-mobile-inline__media {
-    height: var(--ad-mobile-inline-image-h, 8.5rem);
-    max-height: var(--ad-mobile-inline-image-h, 8.5rem);
-    min-height: var(--ad-mobile-inline-image-h, 8.5rem);
+    height: var(--ad-mobile-inline-image-h, 4.25rem);
+    max-height: var(--ad-mobile-inline-image-h, 4.25rem);
+    min-height: var(--ad-mobile-inline-image-h, 4.25rem);
     width: 100%;
   }
 
