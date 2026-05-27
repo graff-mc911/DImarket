@@ -29,7 +29,7 @@
     --mint-soft: rgba(111, 145, 125, 0.1);
     /* бокові реклами: +15% до колишніх 200/216/252px; gutter = відступ від краю екрана = між колонками */
     --ad-side-rail-width: 14.375rem;
-    --layout-side-rail-inset: min(var(--ad-side-rail-width), 12vw);
+    --layout-side-rail-inset: min(var(--ad-side-rail-width), 14vw);
     --layout-content-max: 80rem;
     --layout-gutter: 1rem;
     /* бокові рейки лише на широкому десктопі (планшети Android/iPad — одна колонка) */
@@ -326,8 +326,8 @@
 
     /* Після .ad-side-rail { width:100% } — інакше fixed-рейки на body розтягуються на весь екран */
     .ad-side-rail.ad-side-rail--viewport-fixed {
-      width: min(var(--ad-side-rail-width), 12vw);
-      max-width: min(var(--ad-side-rail-width), 12vw);
+      width: min(var(--ad-side-rail-width), 14vw);
+      max-width: min(var(--ad-side-rail-width), 14vw);
       flex-shrink: 0;
       box-sizing: border-box;
       overflow: hidden;
@@ -384,27 +384,56 @@
     height: fit-content;
   }
 
-  /** Боковий стек: 4 слоти з розмірами як на схемі (adSlotContainerSpecs) */
+  /** Боковий стек: 4 рівні ряди на доступну висоту екрана (без скролу) */
+  .ad-side-rail__sticky--stack {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - var(--header-offset));
+    max-height: calc(100dvh - var(--header-offset));
+    overflow: hidden;
+  }
+
   .ad-side-stack-grid {
-    grid-template-rows: repeat(4, var(--ad-side-slot-h, 10.8125rem));
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.25rem, 0.6vh, 0.5rem);
+    padding: clamp(0.25rem, 0.6vh, 0.5rem);
   }
 
   .ad-side-stack-cell {
-    height: var(--ad-side-slot-h, 10.8125rem);
-    max-height: var(--ad-side-slot-h, 10.8125rem);
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   .ad-slot-side__media {
-    height: var(--ad-side-image-h, 8.5625rem);
-    max-height: var(--ad-side-image-h, 8.5625rem);
-    min-height: var(--ad-side-image-h, 8.5625rem);
     width: 100%;
+    min-height: 0;
+    max-height: 100%;
   }
 
   .ad-side-rail--viewport-fixed .ad-side-rail__sticky--fit {
     max-height: calc(100dvh - var(--header-offset));
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
+  }
+
+  .ad-side-rail--viewport-fixed .ad-side-rail__sticky--stack,
+  .ad-side-rail--viewport-fixed .ad-side-rail__sticky--fit {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .ad-side-rail--viewport-fixed .ad-side-rail__sticky--stack::-webkit-scrollbar,
+  .ad-side-rail--viewport-fixed .ad-side-rail__sticky--fit::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 
   .ad-slot-center {

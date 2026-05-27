@@ -23,6 +23,10 @@ export const AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS =
 export const AD_SIDE_RAIL_STICKY_FIT_CLASS =
   'ad-side-rail__sticky ad-side-rail__sticky--fit'
 
+/** Боковий стек 4× — заповнює доступну висоту viewport без скролу */
+export const AD_SIDE_RAIL_STICKY_STACK_CLASS =
+  'ad-side-rail__sticky ad-side-rail__sticky--viewport ad-side-rail__sticky--stack'
+
 /** 4 ряди фіксованої висоти (--ad-side-slot-h з adSlotCssVars) */
 export const AD_SIDE_STACK_GRID_CLASS = 'ad-side-stack-grid box-border grid w-full gap-2 p-2'
 

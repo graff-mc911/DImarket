@@ -11,7 +11,7 @@ import {
   AD_SIDE_STACK_CELL_CLASS,
   AD_SIDE_STACK_GRID_CLASS,
   AD_SIDE_RAIL_STICKY_FIT_CLASS,
-  AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS,
+  AD_SIDE_RAIL_STICKY_STACK_CLASS,
   adSlotTailwind,
 } from '../lib/adSlotLayout'
 import { pageKeyFromSideAdsPage, sideSlotId, type SideIndex } from '../lib/adPlacementSlots'
@@ -59,7 +59,7 @@ function SideRailFrame({
     <aside className={`${SIDE_RAIL_CLASS} ${positionClass}${fixedClass} h-full min-h-0 ${className}`}>
       <div
         className={
-          fillViewport ? AD_SIDE_RAIL_STICKY_VIEWPORT_CLASS : AD_SIDE_RAIL_STICKY_FIT_CLASS
+          fillViewport ? AD_SIDE_RAIL_STICKY_STACK_CLASS : AD_SIDE_RAIL_STICKY_FIT_CLASS
         }
       >
         {children}
@@ -118,7 +118,7 @@ export function AdBanner({
     if (!stackCampaigns.some(Boolean)) return null
 
     return (
-      <SideRailFrame position={position} sticky={sticky} fixedViewport={fixedViewport} fillViewport={false}>
+      <SideRailFrame position={position} sticky={sticky} fixedViewport={fixedViewport} fillViewport>
         <div className={AD_SIDE_STACK_GRID_CLASS}>
           {stackCampaigns.map((campaign, index) => {
             const slotId = sideSlotId(pageKey, position, (index + 1) as SideIndex)

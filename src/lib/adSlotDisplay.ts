@@ -47,12 +47,22 @@ export function adSlotShellStyle(
   spec: AdSlotContainerSpec,
   variant: AdOverlayVariantKey,
 ): CSSProperties {
+  if (variant === 'stack') {
+    return {
+      boxSizing: 'border-box',
+      width: '100%',
+      height: '100%',
+      maxHeight: '100%',
+      minHeight: 0,
+    }
+  }
+
   const isCenter = variant === 'center'
   const isFullBleed = variant === 'leaderboard' || variant === 'mobile-inline' || variant === 'mobile-sticky'
 
   return {
     boxSizing: 'border-box',
-    width: isFullBleed ? '100%' : '100%',
+    width: '100%',
     maxWidth: isCenter ? spec.containerW : isFullBleed ? '100%' : spec.containerW,
     height: spec.containerH,
     maxHeight: spec.containerH,
@@ -60,7 +70,12 @@ export function adSlotShellStyle(
   }
 }
 
-export function adSlotImageStyle(spec: AdSlotContainerSpec): CSSProperties {
+export function adSlotImageStyle(
+  spec: AdSlotContainerSpec,
+  variant?: AdOverlayVariantKey,
+): CSSProperties | undefined {
+  if (variant === 'stack') return undefined
+
   return {
     width: '100%',
     height: spec.imageH,
