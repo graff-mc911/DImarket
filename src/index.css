@@ -30,8 +30,11 @@
     /* бокові реклами: +15% до колишніх 200/216/252px; gutter = відступ від краю екрана = між колонками */
     --ad-side-rail-width: 14.375rem;
     --layout-side-rail-inset: min(var(--ad-side-rail-width), 14vw);
+    --layout-side-rail-col: var(--layout-side-rail-inset);
+    --layout-page-pad-inline: calc(var(--layout-side-rail-col) + var(--layout-gutter));
     --layout-content-max: 80rem;
     --layout-gutter: 1rem;
+    --layout-screen-edge: max(var(--layout-gutter), env(safe-area-inset-left, 0px));
     /* бокові рейки лише на широкому десктопі (планшети Android/iPad — одна колонка) */
     --layout-side-ads-min: 80rem;
     /* відступ під фіксовану шапку (синхрон з Header spacer) */
@@ -207,14 +210,8 @@
 
   @media (min-width: 80rem) {
     .app-page-with-fixed-rails .app-page-main {
-      padding-inline: max(
-          calc(var(--layout-side-rail-inset) + var(--layout-gutter)),
-          env(safe-area-inset-left, 0px)
-        )
-        max(
-          calc(var(--layout-side-rail-inset) + var(--layout-gutter)),
-          env(safe-area-inset-right, 0px)
-        );
+      padding-inline: max(var(--layout-page-pad-inline), env(safe-area-inset-left, 0px))
+        max(var(--layout-page-pad-inline), env(safe-area-inset-right, 0px));
     }
   }
 
@@ -226,19 +223,42 @@
     .ad-side-rail--viewport-fixed {
       display: flex;
       flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
       position: fixed;
       z-index: 25;
       top: var(--header-offset);
       bottom: 0;
       pointer-events: auto;
+      --layout-content-block-w: min(
+        var(--layout-content-max),
+        100vw - 2 * var(--layout-page-pad-inline)
+      );
+      --layout-content-left: calc(
+        max(var(--layout-gutter), env(safe-area-inset-left, 0px)) + var(--layout-page-pad-inline) +
+          max(0px, (100vw - 2 * var(--layout-page-pad-inline) - var(--layout-content-block-w)) / 2)
+      );
+      --layout-content-right: calc(var(--layout-content-left) + var(--layout-content-block-w));
+      --layout-screen-edge-left: max(var(--layout-gutter), env(safe-area-inset-left, 0px));
+      --layout-screen-edge-right: max(var(--layout-gutter), env(safe-area-inset-right, 0px));
+      --layout-rail-w: min(var(--ad-side-rail-width), 14vw);
     }
 
     .ad-side-rail--viewport-fixed.ad-side-rail--left {
-      left: max(var(--layout-gutter), env(safe-area-inset-left, 0px));
+      left: calc(
+        var(--layout-screen-edge-left) +
+          (var(--layout-content-left) - var(--layout-screen-edge-left) - var(--layout-rail-w)) / 2
+      );
+      right: auto;
     }
 
     .ad-side-rail--viewport-fixed.ad-side-rail--right {
-      right: max(var(--layout-gutter), env(safe-area-inset-right, 0px));
+      right: calc(
+        var(--layout-screen-edge-right) +
+          (100vw - var(--layout-content-right) - var(--layout-screen-edge-right) - var(--layout-rail-w)) /
+            2
+      );
+      left: auto;
     }
   }
 
@@ -326,8 +346,8 @@
 
     /* Після .ad-side-rail { width:100% } — інакше fixed-рейки на body розтягуються на весь екран */
     .ad-side-rail.ad-side-rail--viewport-fixed {
-      width: min(var(--ad-side-rail-width), 14vw);
-      max-width: min(var(--ad-side-rail-width), 14vw);
+      width: var(--layout-rail-w, min(var(--ad-side-rail-width), 14vw));
+      max-width: var(--layout-rail-w, min(var(--ad-side-rail-width), 14vw));
       flex-shrink: 0;
       box-sizing: border-box;
       overflow: hidden;
@@ -388,9 +408,12 @@
   .ad-side-rail__sticky--stack {
     display: flex;
     flex-direction: column;
+    width: 100%;
     height: calc(100dvh - var(--header-offset));
     max-height: calc(100dvh - var(--header-offset));
+    margin-block: auto;
     overflow: hidden;
+    flex-shrink: 0;
   }
 
   .ad-side-stack-grid {

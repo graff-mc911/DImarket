@@ -48,12 +48,7 @@ export function SideAdRails({ page }: SideAdRailsProps) {
           stackCount={SIDE_STACK_COUNT}
           stackCampaigns={sideStacks.left}
         />
-      ) : (
-        <aside
-          className="ad-side-rail ad-side-rail--left ad-side-rail--viewport-fixed h-full min-h-0"
-          aria-hidden
-        />
-      )}
+      ) : null}
       {hasRightRail ? (
         <AdBanner
           position="right"
@@ -63,12 +58,7 @@ export function SideAdRails({ page }: SideAdRailsProps) {
           stackCount={SIDE_STACK_COUNT}
           stackCampaigns={sideStacks.right}
         />
-      ) : (
-        <aside
-          className="ad-side-rail ad-side-rail--right ad-side-rail--viewport-fixed h-full min-h-0"
-          aria-hidden
-        />
-      )}
+      ) : null}
     </>,
     document.body,
   )
