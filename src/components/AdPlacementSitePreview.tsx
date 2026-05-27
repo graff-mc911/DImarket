@@ -324,8 +324,8 @@ function DesktopWireframe({
       <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#9a8776]">
         {t('advertising.catalog.desktopWire')} · {editorLabel}
       </p>
-      <div className="grid grid-cols-[minmax(58px,72px)_1fr_minmax(58px,72px)] gap-1.5">
-        <div className="grid grid-rows-4 gap-1">
+      <div className="grid grid-cols-[minmax(58px,72px)_1fr_minmax(58px,72px)] items-start gap-1.5">
+        <div className="grid grid-rows-4 gap-1 self-start">
           {group.desktop.left.map((id) => (
             <SlotBox key={id} {...slotProps(id, `L${short(id)}`)} />
           ))}
@@ -338,7 +338,7 @@ function DesktopWireframe({
             <SlotBox {...slotProps(group.desktop.center, t('advertising.slots.centerShort'))} />
           )}
         </div>
-        <div className="grid grid-rows-4 gap-1">
+        <div className="grid grid-rows-4 gap-1 self-start">
           {group.desktop.right.map((id) => (
             <SlotBox key={id} {...slotProps(id, `R${short(id)}`)} />
           ))}

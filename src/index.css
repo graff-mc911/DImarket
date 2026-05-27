@@ -224,7 +224,7 @@
       display: flex;
       flex-direction: column;
       align-items: stretch;
-      justify-content: center;
+      justify-content: flex-start;
       position: fixed;
       z-index: 25;
       top: var(--header-offset);
@@ -404,7 +404,7 @@
     width: 100%;
     height: calc(100dvh - var(--header-offset));
     max-height: calc(100dvh - var(--header-offset));
-    margin-block: auto;
+    margin-block: 0;
     overflow: hidden;
     flex-shrink: 0;
   }

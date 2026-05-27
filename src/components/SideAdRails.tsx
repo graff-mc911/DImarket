@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { createPortal } from 'react-dom'
 import { AdBanner } from './AdBanner'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { pickSideStacksForPageWithFallback } from '../lib/adCampaigns'
@@ -21,7 +20,7 @@ function allCatalogSideSlotIds(): string[] {
   ]
 }
 
-/** Fixed бокові рейки в viewport; портал у body — не зникають при зміні маршруту */
+/** Fixed бокові рейки в viewport; рендер у app-shell (не portal), щоб футер міг бути поверх */
 export function SideAdRails({ page }: SideAdRailsProps) {
   const { loading, getForSlots } = usePaidAds()
   const sideSlots = useMemo(() => allCatalogSideSlotIds(), [])
@@ -34,19 +33,16 @@ export function SideAdRails({ page }: SideAdRailsProps) {
 
   const hasLeftRail = !loading && sideStacks.left.some(Boolean)
   const hasRightRail = !loading && sideStacks.right.some(Boolean)
-  // Для «default» (у т.ч. сторінка реклами) не фіксуємо рейки на весь viewport,
-  // щоб футер не заїжджав під бокові баннери.
-  const fixedViewport = page === 'home' || page === 'listings' || page === 'professionals'
 
-  if (typeof document === 'undefined') return null
+  if (!hasLeftRail && !hasRightRail) return null
 
-  return createPortal(
+  return (
     <>
       {hasLeftRail ? (
         <AdBanner
           position="left"
           sticky
-          fixedViewport={fixedViewport}
+          fixedViewport
           page={page}
           stackCount={SIDE_STACK_COUNT}
           stackCampaigns={sideStacks.left}
@@ -56,13 +52,12 @@ export function SideAdRails({ page }: SideAdRailsProps) {
         <AdBanner
           position="right"
           sticky
-          fixedViewport={fixedViewport}
+          fixedViewport
           page={page}
           stackCount={SIDE_STACK_COUNT}
           stackCampaigns={sideStacks.right}
         />
       ) : null}
-    </>,
-    document.body,
+    </>
   )
 }
