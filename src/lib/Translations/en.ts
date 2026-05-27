@@ -431,7 +431,6 @@ export const enTranslations = {
   'ai.admin.subtitle': 'Admin chat assistant, fraud moderation, provider status',
   'ai.admin.assistantTitle': 'Admin AI assistant',
   'ai.admin.assistantHint': 'Type commands in Ukrainian or English. Try /stats or /help. 🎤 for voice input.',
-  'ai.admin.subtitle': 'Moderation, fraud reports, provider status',
   'ai.admin.denied': 'Owner access only.',
   'ai.admin.home': 'Home',
   'ai.admin.providers': 'Providers',
