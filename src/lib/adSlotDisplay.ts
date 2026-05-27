@@ -79,6 +79,17 @@ export function adSlotShellStyle(
     }
   }
 
+  if (variant === 'center') {
+    return {
+      boxSizing: 'border-box',
+      width: '100%',
+      maxWidth: spec.containerW,
+      minHeight: 0,
+      height: 'auto',
+      marginInline: 'auto',
+    }
+  }
+
   return {
     boxSizing: 'border-box',
     width: '100%',
@@ -108,6 +119,10 @@ export function adSlotImageStyle(
   }
 
   if (variant === 'mobile-inline' || variant === 'mobile-sticky') {
+    return undefined
+  }
+
+  if (variant === 'center') {
     return undefined
   }
 
