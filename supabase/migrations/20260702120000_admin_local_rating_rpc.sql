@@ -55,8 +55,8 @@ BEGIN
     );
   END IF;
 
-  bump := greatest(0, coalesce(stars, 1)) * 0.1;
-  new_rating := least(9.99, coalesce(target.rating, 0) + bump);
+  -- Зірки = цільовий рейтинг 0–5 (5 зірок → 5.0)
+  new_rating := greatest(0, least(5, coalesce(stars, 5)));
 
   UPDATE public.profiles
   SET rating = new_rating, updated_at = now()
@@ -65,7 +65,7 @@ BEGIN
   RETURN jsonb_build_object(
     'ok', true,
     'message', '✅ ' || coalesce(target.full_name, 'Майстер') ||
-      ': +' || stars::text || ' зір. Новий рейтинг: ' || round(new_rating::numeric, 2)::text || ' / 9.99',
+      ': встановлено ' || round(new_rating::numeric, 1)::text || ' / 5 зір.',
     'full_name', target.full_name,
     'rating', new_rating
   );

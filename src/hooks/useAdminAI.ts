@@ -147,15 +147,29 @@ export function useAdminAI(lang = 'uk-UA') {
         speakText(data.reply, lang)
       }
     } catch (e) {
-      setMessages((m) => [
-        ...m,
-        {
-          id: uid(),
-          role: 'assistant',
-          content: formatAdminAiInvokeError(e),
-          timestamp: Date.now(),
-        },
-      ])
+      const retryLocal = await runLocalAdminCommand(text)
+      if (retryLocal) {
+        setMessages((m) => [
+          ...m,
+          {
+            id: uid(),
+            role: 'assistant',
+            content: retryLocal.reply,
+            table: retryLocal.table,
+            timestamp: Date.now(),
+          },
+        ])
+      } else {
+        setMessages((m) => [
+          ...m,
+          {
+            id: uid(),
+            role: 'assistant',
+            content: formatAdminAiInvokeError(e),
+            timestamp: Date.now(),
+          },
+        ])
+      }
     } finally {
       setLoading(false)
     }

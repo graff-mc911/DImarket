@@ -14,16 +14,21 @@ function rpcMessage(data: RpcResult | null, err: { message: string } | null): Ad
     if (/function.*does not exist|42883/i.test(err.message)) {
       return {
         reply:
-          '❌ Функція в базі ще не встановлена.\n\n' +
-          'У Supabase → SQL Editor виконайте файл:\n' +
-          'supabase/migrations/20260702120000_admin_local_rating_rpc.sql\n\n' +
-          'Після цього повторіть команду.',
+          '❌ Потрібно один раз виконати SQL у Supabase.\n\n' +
+          'SQL Editor → вставте файл:\n' +
+          'supabase/migrations/20260702120000_admin_local_rating_rpc.sql\n' +
+          'потім:\n' +
+          'supabase/migrations/20260702130000_fix_rating_stars_scale.sql\n\n' +
+          '→ Run. Після цього: /boost Test 5',
       }
     }
     if (/forbidden|unauthorized/i.test(err.message)) {
-      return { reply: '❌ Доступ заборонено. Увійдіть як власник сайту.' }
+      return { reply: '❌ Доступ заборонено. Увійдіть як ivan.sovban@gmail.com' }
     }
     return { reply: `❌ ${err.message}` }
+  }
+  if (data?.ok === false) {
+    return { reply: data.message ?? '❌ Помилка' }
   }
   const rows = Array.isArray(data?.rows) ? (data.rows as Record<string, unknown>[]) : undefined
   return {
@@ -41,7 +46,7 @@ export function parseLocalAdminCommand(text: string): {
   const t = text.trim()
   const lower = t.toLowerCase()
 
-  const boostSlash = t.match(/^\/boost\s+(\S+)\s+(\d+(?:\.\d+)?)$/i)
+  const boostSlash = t.match(/^\/boost\s+(\S+)\s+(\d+(?:[.,]\d+)?)$/i)
   if (boostSlash) {
     return { type: 'boost', search: boostSlash[1], stars: Number(boostSlash[2]) }
   }
@@ -52,13 +57,44 @@ export function parseLocalAdminCommand(text: string): {
   }
 
   const boostPhrase = lower.match(
-    /(?:додай|додати|підніми|підвищ|надай)\s+(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|балів|бали|бал)(?:\s+(?:майстр[ауі]?|користувач[ауі]?))?\s+(.+)/,
+    /(?:додай|додати|підніми|підвищ|надай|встанови)\s+(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?)(?:\s+(?:майстр[ауі]?|користувач[ауі]?))?\s+(.+)/i,
   )
   if (boostPhrase) {
     return {
       type: 'boost',
       search: boostPhrase[2].replace(/[.!?]+$/, '').trim(),
       stars: Number(boostPhrase[1].replace(',', '.')),
+    }
+  }
+
+  const starsFirst = lower.match(
+    /(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?).{0,40}?(?:майстр[ауі]?|користувач[ауі]?)\s+([a-zа-яіїєґ0-9_-]+)/i,
+  )
+  if (starsFirst) {
+    return {
+      type: 'boost',
+      search: starsFirst[2],
+      stars: Number(starsFirst[1].replace(',', '.')),
+    }
+  }
+
+  const nameFirst = lower.match(
+    /(?:майстр[ауі]?|користувач[ауі]?)\s+([a-zа-яіїєґ0-9_-]+).{0,40}?(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?)/i,
+  )
+  if (nameFirst) {
+    return {
+      type: 'boost',
+      search: nameFirst[1],
+      stars: Number(nameFirst[2].replace(',', '.')),
+    }
+  }
+
+  const onlyStars = lower.match(/^(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?)\s*(?:майстр[ауі]?\s+)?(.+)?$/i)
+  if (onlyStars && onlyStars[2]) {
+    return {
+      type: 'boost',
+      search: onlyStars[2].trim(),
+      stars: Number(onlyStars[1].replace(',', '.')),
     }
   }
 
@@ -72,6 +108,11 @@ export function parseLocalAdminCommand(text: string): {
     return { type: 'verify', search: verify[1].trim() }
   }
 
+  if (/\btest\b/i.test(lower) && /\d/.test(lower) && /зір|star/i.test(lower)) {
+    const n = lower.match(/(\d+(?:[.,]\d+)?)/)?.[1]
+    if (n) return { type: 'boost', search: 'Test', stars: Number(n.replace(',', '.')) }
+  }
+
   return null
 }
 
@@ -82,7 +123,7 @@ export async function runLocalAdminCommand(text: string): Promise<AdminAiChatRes
   if (cmd.type === 'boost' && cmd.search) {
     const { data, error } = await supabase.rpc('admin_boost_master_rating', {
       search_name: cmd.search,
-      stars: cmd.stars ?? 1,
+      stars: cmd.stars ?? 5,
     })
     const row =
       data && typeof data === 'object' && (data as RpcResult).ok
