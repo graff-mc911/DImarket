@@ -178,15 +178,15 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'category.handymanDesc': 'Servicios generales de mantenimiento',
   'category.materials': 'Materiales',
   'category.materialsDesc': 'Materiales de construccion en venta',
-  'category.tools': 'Transport & Delivery',
-  'category.toolsDesc': 'Herramientas y equipos',
+  'category.tools': 'Transporte y logística',
+  'category.toolsDesc': 'Entrega de materiales, mudanzas, reubicación y transporte',
   'category.name.construction': 'Construccion',
   'category.name.renovation': 'Renovacion',
   'category.name.electrical': 'taller de reparación de automóviles',
   'category.name.plumbing': 'Fontaneria',
   'category.name.handyman': 'Manitas',
   'category.name.materials': 'Materiales',
-  'category.name.tools': 'Transport & Delivery',
+  'category.name.tools': 'Transporte y logística',
 
   // Картка оголошення: тип, ціна, перегляди, статус premium.
   'listing.serviceNeeded': 'Servicio solicitado',
