@@ -1,7 +1,13 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createAdminClient, publishListing, uploadTelegramPhoto } from './publish.ts'
 import {
+  buildCategoryPicks,
+  findPickByCallback,
+  type CategoryPick,
+} from './categories.ts'
+import {
   applyCategoryPick,
+  applyWorkGroupPick,
   emptyDraft,
   needsContact,
   processText,
@@ -39,21 +45,6 @@ type SessionRow = {
   status: string
 }
 
-const PRIORITY_SLUGS = [
-  'construction',
-  'renovation',
-  'cleaning',
-  'electrical',
-  'tools',
-  'handyman',
-  'plumbing',
-  'furniture',
-  'legal-notary',
-  'accounting-finance',
-  'vacancies',
-  'sell-rent',
-]
-
 async function tgApi(token: string, method: string, body: Record<string, unknown>) {
   const res = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
     method: 'POST',
@@ -85,15 +76,20 @@ function mainKeyboard(locale: BotLocale) {
   }
 }
 
-function categoryInlineKeyboard(categories: CategoryRow[], locale: BotLocale) {
+function categoryInlineKeyboard(picks: CategoryPick[], locale: BotLocale) {
   const rows: { text: string; callback_data: string }[][] = []
-  for (let i = 0; i < categories.length; i += 2) {
+  for (let i = 0; i < picks.length; i += 2) {
     const row: { text: string; callback_data: string }[] = []
-    for (let j = i; j < Math.min(i + 2, categories.length); j++) {
-      const c = categories[j]
-      const name = categoryLabel(c.slug, locale, c.name)
-      const label = `${c.icon || ''} ${name}`.trim().slice(0, 60)
-      row.push({ text: label, callback_data: `cat:${c.slug}` })
+    for (let j = i; j < Math.min(i + 2, picks.length); j++) {
+      const p = picks[j]
+      if (p.kind === 'category') {
+        const name = categoryLabel(p.row.slug, locale, p.row.name)
+        const label = `${p.row.icon || ''} ${name}`.trim().slice(0, 60)
+        row.push({ text: label, callback_data: `cat:${p.row.slug}` })
+      } else {
+        const label = `${p.icon} ${p.label}`.trim().slice(0, 60)
+        row.push({ text: label, callback_data: `work:${p.slug}` })
+      }
     }
     rows.push(row)
   }
@@ -113,22 +109,13 @@ function confirmInlineKeyboard(locale: BotLocale) {
   }
 }
 
-async function loadCategories(admin: ReturnType<typeof createAdminClient>): Promise<CategoryRow[]> {
+async function loadDbCategories(admin: ReturnType<typeof createAdminClient>): Promise<CategoryRow[]> {
   const { data } = await admin!
     .from('categories')
     .select('id, slug, name, icon')
+    .is('parent_id', null)
     .order('name')
-  const all = (data ?? []) as CategoryRow[]
-  const bySlug = new Map(all.map((c) => [c.slug, c]))
-  const ordered: CategoryRow[] = []
-  for (const slug of PRIORITY_SLUGS) {
-    const c = bySlug.get(slug)
-    if (c) ordered.push(c)
-  }
-  for (const c of all) {
-    if (!ordered.some((o) => o.id === c.id)) ordered.push(c)
-  }
-  return ordered.slice(0, 12)
+  return (data ?? []) as CategoryRow[]
 }
 
 async function getSession(
@@ -163,7 +150,8 @@ async function handleFlowReply(
   reply: ReturnType<typeof processText>,
   admin: ReturnType<typeof createAdminClient>,
   session: SessionRow,
-  categories: CategoryRow[],
+  dbCategories: CategoryRow[],
+  picks: CategoryPick[],
   from?: TgUser,
 ) {
   if (reply.publish) {
@@ -212,7 +200,7 @@ async function handleFlowReply(
 
   const extra =
     reply.step === 'category'
-      ? categoryInlineKeyboard(categories, locale)
+      ? categoryInlineKeyboard(picks, locale)
       : reply.step === 'confirm'
         ? confirmInlineKeyboard(locale)
         : mainKeyboard(locale)
@@ -252,7 +240,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const categories = await loadCategories(admin)
+    const dbCategories = await loadDbCategories(admin)
 
     if (update.callback_query) {
       const cq = update.callback_query
@@ -277,19 +265,19 @@ Deno.serve(async (req: Request) => {
 
       const data = cq.data || ''
 
-      if (data.startsWith('cat:')) {
-        const slug = data.slice(4)
-        const cat = categories.find((c) => c.slug === slug)
-        if (cat) {
-          const reply = applyCategoryPick(session.draft, cat, locale)
-          await handleFlowReply(token, chatId, locale, reply, admin, session, categories, cq.from)
-        }
+      const pick = findPickByCallback(picks, data)
+      if (pick) {
+        const reply =
+          pick.kind === 'work'
+            ? applyWorkGroupPick(session.draft, pick, dbCategories, locale)
+            : applyCategoryPick(session.draft, pick.row, locale)
+        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, cq.from)
       } else if (data === 'confirm:yes') {
-        const reply = processText('confirm', session.draft, 'yes', locale, categories)
-        await handleFlowReply(token, chatId, locale, reply, admin, session, categories, cq.from)
+        const reply = processText('confirm', session.draft, 'yes', locale, dbCategories, picks)
+        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, cq.from)
       } else if (data === 'confirm:no') {
-        const reply = processText('confirm', session.draft, 'no', locale, categories)
-        await handleFlowReply(token, chatId, locale, reply, admin, session, categories, cq.from)
+        const reply = processText('confirm', session.draft, 'no', locale, dbCategories, picks)
+        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, cq.from)
       }
 
       await tgApi(token, 'answerCallbackQuery', { callback_query_id: cq.id })
@@ -302,6 +290,7 @@ Deno.serve(async (req: Request) => {
     const chatId = msg.chat.id
     const from = msg.from
     const locale = normalizeLocale(from?.language_code)
+    const picks = buildCategoryPicks(dbCategories, locale)
     const text = (msg.text || msg.caption || '').trim()
 
     let session = await getSession(admin, chatId)
@@ -360,8 +349,8 @@ Deno.serve(async (req: Request) => {
         await saveSession(admin, { chat_id: chatId, step: 'contact', draft, locale })
         await sendMessage(token, chatId, t(locale, 'askContact'), mainKeyboard(locale))
       } else {
-        const reply = processText('photos', draft, 'skip', locale, categories)
-        await handleFlowReply(token, chatId, locale, reply, admin, session, categories, from)
+        const reply = processText('photos', draft, 'skip', locale, dbCategories, picks)
+        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, from)
       }
       return new Response('ok')
     }
@@ -379,7 +368,7 @@ Deno.serve(async (req: Request) => {
         status: 'active',
       })
       await sendMessage(token, chatId, start.text, {
-        ...categoryInlineKeyboard(categories, locale),
+        ...categoryInlineKeyboard(picks, locale),
         ...mainKeyboard(locale),
       })
       return new Response('ok')
@@ -396,8 +385,8 @@ Deno.serve(async (req: Request) => {
     }
 
     const step = session.step
-    const reply = processText(step, session.draft, text, locale, categories)
-    await handleFlowReply(token, chatId, locale, reply, admin, session, categories, from)
+    const reply = processText(step, session.draft, text, locale, dbCategories, picks)
+    await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, from)
 
     return new Response('ok')
   } catch (e) {

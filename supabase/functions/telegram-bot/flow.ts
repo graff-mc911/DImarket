@@ -1,3 +1,4 @@
+import { matchPickByText, type CategoryPick } from './categories.ts'
 import { categoryLabel, t, type BotLocale } from './i18n.ts'
 
 export type BotStep =
@@ -15,6 +16,8 @@ export type ListingDraft = {
   categoryId?: string
   categorySlug?: string
   categoryName?: string
+  /** Група видів робіт (басейни, HVAC, …) — як на головній сторінці */
+  workGroupSlug?: string
   location?: string
   price?: number | null
   currency?: string
@@ -80,9 +83,11 @@ export function needsContact(draft: ListingDraft): boolean {
 }
 
 export function buildTitle(draft: ListingDraft, locale: BotLocale): string {
-  const cat = draft.categorySlug
-    ? categoryLabel(draft.categorySlug, locale, draft.categoryName || '')
-    : ''
+  const cat = draft.categoryName?.trim()
+    ? draft.categoryName
+    : draft.categorySlug
+      ? categoryLabel(draft.categorySlug, locale, draft.categoryName || '')
+      : ''
   const city = draft.location?.split(',')[0]?.trim() || ''
   const parts = [cat, city].filter(Boolean)
   if (parts.length) return parts.join(' — ')
@@ -96,12 +101,28 @@ export type FlowReply = {
   publish?: boolean
 }
 
+export function applyWorkGroupPick(
+  draft: ListingDraft,
+  pick: Extract<CategoryPick, { kind: 'work' }>,
+  dbCategories: CategoryRow[],
+  locale: BotLocale,
+): FlowReply {
+  const next = { ...draft, imageUrls: [...(draft.imageUrls ?? [])] }
+  const parent = dbCategories.find((c) => c.slug === pick.parentCategory)
+  next.categoryId = parent?.id
+  next.categorySlug = pick.parentCategory
+  next.workGroupSlug = pick.slug
+  next.categoryName = pick.label
+  return { text: t(locale, 'askCity'), step: 'city', draft: next }
+}
+
 export function processText(
   step: BotStep,
   draft: ListingDraft,
   text: string,
   locale: BotLocale,
   categories: CategoryRow[],
+  picks?: CategoryPick[],
 ): FlowReply {
   const msg = text.trim()
   const next = { ...draft, imageUrls: [...(draft.imageUrls ?? [])] }
@@ -119,14 +140,21 @@ export function processText(
   switch (step) {
     case 'idle':
     case 'category': {
+      if (picks?.length) {
+        const pick = matchPickByText(msg, picks, locale)
+        if (!pick) {
+          return { text: t(locale, 'categoryUnknown'), step: 'category', draft: next }
+        }
+        if (pick.kind === 'work') {
+          return applyWorkGroupPick(next, pick, categories, locale)
+        }
+        return applyCategoryPick(next, pick.row, locale)
+      }
       const cat = matchCategory(msg, categories, locale)
       if (!cat) {
         return { text: t(locale, 'categoryUnknown'), step: 'category', draft: next }
       }
-      next.categoryId = cat.id
-      next.categorySlug = cat.slug
-      next.categoryName = cat.name
-      return { text: t(locale, 'askCity'), step: 'city', draft: next }
+      return applyCategoryPick(next, cat, locale)
     }
     case 'city':
       if (msg.length < 2) return { text: t(locale, 'cityTooShort'), step: 'city', draft: next }
@@ -178,9 +206,11 @@ export function processText(
 }
 
 function confirmReply(draft: ListingDraft, locale: BotLocale): FlowReply {
-  const cat = draft.categorySlug
-    ? categoryLabel(draft.categorySlug, locale, draft.categoryName || draft.categorySlug)
-    : '—'
+  const cat =
+    draft.categoryName?.trim() ||
+    (draft.categorySlug
+      ? categoryLabel(draft.categorySlug, locale, draft.categoryName || draft.categorySlug)
+      : '—')
   return {
     text: t(locale, 'confirm', {
       category: cat,
@@ -201,9 +231,10 @@ export function applyCategoryPick(
   locale: BotLocale,
 ): FlowReply {
   const next = { ...draft, imageUrls: [...(draft.imageUrls ?? [])] }
-  next.categoryId = cat.id
+  next.categoryId = cat.id.startsWith('local-') ? undefined : cat.id
   next.categorySlug = cat.slug
-  next.categoryName = cat.name
+  next.categoryName = categoryLabel(cat.slug, locale, cat.name)
+  next.workGroupSlug = undefined
   return { text: t(locale, 'askCity'), step: 'city', draft: next }
 }
 

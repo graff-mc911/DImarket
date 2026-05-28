@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2'
+import { WORK_GROUP_SUB_SLUGS } from './categories.ts'
 import { buildTitle, type ListingDraft } from './flow.ts'
 import type { BotLocale } from './i18n.ts'
 
@@ -24,10 +25,26 @@ export async function publishListing(
     draft.description.trim() +
     (draft.telegramUsername ? `\n\nTelegram: @${draft.telegramUsername}` : '')
 
+  let categoryId = draft.categoryId || null
+  if (!categoryId && draft.categorySlug) {
+    const { data: catRow } = await admin
+      .from('categories')
+      .select('id')
+      .eq('slug', draft.categorySlug)
+      .maybeSingle()
+    categoryId = catRow?.id ?? null
+  }
+
+  const subcategorySlugs =
+    draft.workGroupSlug && WORK_GROUP_SUB_SLUGS[draft.workGroupSlug]
+      ? WORK_GROUP_SUB_SLUGS[draft.workGroupSlug]
+      : []
+
   const listingData = {
     title: buildTitle(draft, locale),
     description,
-    category_id: draft.categoryId || null,
+    category_id: categoryId,
+    subcategory_slugs: subcategorySlugs,
     listing_type: 'service_request' as const,
     price: draft.price ?? null,
     currency: draft.currency || 'EUR',
