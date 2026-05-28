@@ -238,7 +238,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'home.featuredWork.hvacDesc': 'Кондиціонери, вентиляція, теплові насоси, опалення',
   'home.featuredWork.windowsTitle': 'Вікна',
   'home.featuredWork.windowsDesc': 'Монтаж, ПВХ, алюміній, регулювання, заміна склопакетів',
-  'home.featuredWork.designTitle': 'Дизайн',
+  'home.featuredWork.designTitle': 'Проектування / інженерія/Дизайн',
   'home.featuredWork.poolsDesc': 'Будівництво, ремонт і обслуговування басейнів',
   'home.featuredWork.solarDesc': 'Сонячні панелі, інвертори, акумулятори, монтаж',
   'home.featuredWork.smartHomeDesc': 'Автоматизація, освітлення та безпека',
