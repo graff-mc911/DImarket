@@ -16,6 +16,14 @@ import {
   type CategoryRow,
   type ListingDraft,
 } from './flow.ts'
+import { loadGeoTree } from './geo.ts'
+import {
+  applyCity,
+  applyCountry,
+  applyRegion,
+  keyboardForGeoStep,
+  resolveCountryByIndex,
+} from './geoFlow.ts'
 import { categoryLabel, normalizeLocale, t, type BotLocale } from './i18n.ts'
 
 type TgUser = { id: number; first_name?: string; username?: string; language_code?: string }
@@ -212,14 +220,60 @@ async function handleFlowReply(
     status: 'active',
   })
 
+  const geoKb = keyboardForGeoStep(reply.step, reply.draft, geoTree)
   const extra =
     reply.step === 'category'
       ? categoryInlineKeyboard(picks, locale)
       : reply.step === 'confirm'
         ? confirmInlineKeyboard(locale)
-        : mainKeyboard(locale)
+        : geoKb
+          ? geoKb
+          : mainKeyboard(locale)
 
   await sendMessage(token, chatId, reply.text, extra)
+}
+
+function handleGeoCallback(
+  data: string,
+  draft: ListingDraft,
+  geoTree: Awaited<ReturnType<typeof loadGeoTree>>,
+  locale: BotLocale,
+): ReturnType<typeof processText> | null {
+  if (data.startsWith('geo:c:')) {
+    const idx = parseInt(data.slice(6), 10)
+    const country = resolveCountryByIndex(geoTree, idx)
+    if (!country) return null
+    return applyCountry(draft, country, geoTree, locale)
+  }
+  if (data.startsWith('geo:rp:')) {
+    const page = parseInt(data.slice(7), 10)
+    return {
+      text: t(locale, 'askRegion'),
+      step: 'region',
+      draft: { ...draft, imageUrls: [...(draft.imageUrls ?? [])], geoRegionPage: page },
+    }
+  }
+  if (data.startsWith('geo:r:')) {
+    const idx = parseInt(data.slice(6), 10)
+    const region = draft.geoRegionList?.[idx]
+    if (!region) return null
+    return applyRegion(draft, region, geoTree, locale)
+  }
+  if (data.startsWith('geo:cp:')) {
+    const page = parseInt(data.slice(7), 10)
+    return {
+      text: t(locale, 'askCityPick'),
+      step: 'city',
+      draft: { ...draft, imageUrls: [...(draft.imageUrls ?? [])], geoCityPage: page },
+    }
+  }
+  if (data.startsWith('geo:city:')) {
+    const idx = parseInt(data.slice(9), 10)
+    const city = draft.geoCityList?.[idx]
+    if (!city) return null
+    return applyCity(draft, city, locale)
+  }
+  return null
 }
 
 Deno.serve(async (req: Request) => {
@@ -278,6 +332,7 @@ Deno.serve(async (req: Request) => {
         } satisfies SessionRow)
 
       const data = cq.data || ''
+      const picks = buildCategoryPicks(dbCategories, locale)
 
       const pick = findPickByCallback(picks, data)
       if (pick) {
@@ -285,13 +340,18 @@ Deno.serve(async (req: Request) => {
           pick.kind === 'work'
             ? applyWorkGroupPick(session.draft, pick, dbCategories, locale)
             : applyCategoryPick(session.draft, pick.row, locale)
-        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, cq.from)
+        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, geoTree, cq.from)
+      } else if (data.startsWith('geo:')) {
+        const reply = handleGeoCallback(data, session.draft, geoTree, locale)
+        if (reply) {
+          await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, geoTree, cq.from)
+        }
       } else if (data === 'confirm:yes') {
-        const reply = processText('confirm', session.draft, 'yes', locale, dbCategories, picks)
-        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, cq.from)
+        const reply = processText('confirm', session.draft, 'yes', locale, dbCategories, picks, geoTree)
+        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, geoTree, cq.from)
       } else if (data === 'confirm:no') {
-        const reply = processText('confirm', session.draft, 'no', locale, dbCategories, picks)
-        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, cq.from)
+        const reply = processText('confirm', session.draft, 'no', locale, dbCategories, picks, geoTree)
+        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, geoTree, cq.from)
       }
 
       await tgApi(token, 'answerCallbackQuery', { callback_query_id: cq.id })
@@ -363,8 +423,8 @@ Deno.serve(async (req: Request) => {
         await saveSession(admin, { chat_id: chatId, step: 'contact', draft, locale })
         await sendMessage(token, chatId, t(locale, 'askContact'), mainKeyboard(locale))
       } else {
-        const reply = processText('photos', draft, 'skip', locale, dbCategories, picks)
-        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, from)
+        const reply = processText('photos', draft, 'skip', locale, dbCategories, picks, geoTree)
+        await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, geoTree, from)
       }
       return new Response('ok')
     }
@@ -399,8 +459,8 @@ Deno.serve(async (req: Request) => {
     }
 
     const step = session.step
-    const reply = processText(step, session.draft, text, locale, dbCategories, picks)
-    await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, from)
+    const reply = processText(step, session.draft, text, locale, dbCategories, picks, geoTree)
+    await handleFlowReply(token, chatId, locale, reply, admin, session, dbCategories, picks, geoTree, from)
 
     return new Response('ok')
   } catch (e) {

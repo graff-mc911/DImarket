@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { supabase }            from '../lib/supabase'
 import { useApp }              from '../contexts/AppContext'
+import { listingLocationMatches, parseListingLocation } from '../lib/listingLocation'
 import { navigateTo }          from '../lib/navigation'
 import { ListingCard }         from '../components/ListingCard'
 import { CenterPageAd }        from '../components/CenterPageAd'
@@ -113,6 +114,15 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     void loadInitialData()
   }, [])
 
+  // Майстри за замовчуванням бачать оголошення свого міста
+  useEffect(() => {
+    if (!user || !profile?.location) return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('location')) return
+    const parsed = parseListingLocation(profile.location)
+    if (parsed?.city) setLocationQuery(parsed.city)
+  }, [user?.id, profile?.location])
+
   // Завантаження всіх оголошень і категорій
   const loadInitialData = async () => {
     setLoading(true)
@@ -186,10 +196,10 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
       )
     }
 
-    // Фільтр локації
+    // Фільтр локації (місто / область / країна)
     if (normLocation) {
-      result = result.filter(l =>
-        (l.location?.toLowerCase() || '').includes(normLocation)
+      result = result.filter((l) =>
+        listingLocationMatches(normLocation, l.location || ''),
       )
     }
 

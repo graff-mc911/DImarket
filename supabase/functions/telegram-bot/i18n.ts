@@ -19,6 +19,15 @@ type MsgKey =
   | 'categoryUnknown'
   | 'askCity'
   | 'cityTooShort'
+  | 'askCountry'
+  | 'askRegion'
+  | 'askCityPick'
+  | 'pickCountryButton'
+  | 'pickRegionButton'
+  | 'cityUnknown'
+  | 'cityPickRequired'
+  | 'regionEmpty'
+  | 'cityEmpty'
   | 'askBudget'
   | 'budgetInvalid'
   | 'askDeadline'
@@ -50,6 +59,15 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     categoryUnknown: 'Не знайшов категорію. Оберіть кнопку або номер зі списку.',
     askCity: 'Місто або регіон (наприклад: Варшава, Краків):',
     cityTooShort: 'Вкажіть місто хоча б 2 символи.',
+    askCountry: '📍 Оберіть країну (обовʼязково для пошуку майстра в вашому місті):',
+    askRegion: 'Оберіть область / регіон:',
+    askCityPick: 'Оберіть населений пункт (місто або село) зі списку — так майстри з вашого міста побачать оголошення:',
+    pickCountryButton: 'Оберіть країну кнопкою нижче.',
+    pickRegionButton: 'Оберіть область кнопкою нижче.',
+    cityUnknown: 'Не знайшов таке місто в обраній області. Оберіть з кнопок або введіть точну назву зі списку.',
+    cityPickRequired: 'Спочатку оберіть область і місто з кнопок.',
+    regionEmpty: 'Для цієї країни немає регіонів у каталозі. Спробуйте іншу країну.',
+    cityEmpty: 'Для цього регіону немає міст у каталозі. Оберіть інший регіон.',
     askBudget: 'Бюджет (EUR/USD) або «пропустити»:',
     budgetInvalid: 'Вкажіть число або «пропустити».',
     askDeadline: 'Термін (днів): 7, 14, 30 або «пропустити» (30 днів):',
@@ -81,6 +99,15 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     categoryUnknown: 'Категория не найдена. Выберите кнопку или номер.',
     askCity: 'Город или регион (например: Варшава, Краков):',
     cityTooShort: 'Укажите город (минимум 2 символа).',
+    askCountry: '📍 Выберите страну (чтобы мастера из вашего города увидели объявление):',
+    askRegion: 'Выберите область / регион:',
+    askCityPick: 'Выберите населённый пункт из списка (город или село):',
+    pickCountryButton: 'Выберите страну кнопкой ниже.',
+    pickRegionButton: 'Выберите область кнопкой ниже.',
+    cityUnknown: 'Такого города нет в выбранной области. Выберите из кнопок.',
+    cityPickRequired: 'Сначала выберите область и город.',
+    regionEmpty: 'Нет регионов для этой страны.',
+    cityEmpty: 'Нет городов для этого региона.',
     askBudget: 'Бюджет или «пропустить»:',
     budgetInvalid: 'Укажите число или «пропустить».',
     askDeadline: 'Срок (дней): 7, 14, 30 или «пропустить» (30):',
@@ -112,6 +139,15 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     categoryUnknown: 'Category not found. Use a button or number.',
     askCity: 'City or area (e.g. Warsaw, Berlin):',
     cityTooShort: 'City must be at least 2 characters.',
+    askCountry: '📍 Pick country (required so local pros see your listing):',
+    askRegion: 'Pick region / state:',
+    askCityPick: 'Pick your city or village from the list:',
+    pickCountryButton: 'Use the country buttons below.',
+    pickRegionButton: 'Use the region buttons below.',
+    cityUnknown: 'City not found in this region. Pick from the buttons.',
+    cityPickRequired: 'Pick region and city from the buttons first.',
+    regionEmpty: 'No regions for this country.',
+    cityEmpty: 'No cities for this region.',
     askBudget: 'Budget (optional) — number or «skip»:',
     budgetInvalid: 'Enter a number or «skip».',
     askDeadline: 'Duration in days: 7, 14, 30 or «skip» (30):',
@@ -142,6 +178,15 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     categoryUnknown: 'Nie rozpoznano kategorii.',
     askCity: 'Miasto (np. Warszawa):',
     cityTooShort: 'Podaj miasto (min. 2 znaki).',
+    askCountry: '📍 Wybierz kraj:',
+    askRegion: 'Wybierz województwo / region:',
+    askCityPick: 'Wybierz miasto lub wieś z listy:',
+    pickCountryButton: 'Wybierz kraj przyciskiem.',
+    pickRegionButton: 'Wybierz region przyciskiem.',
+    cityUnknown: 'Nie znaleziono miasta. Wybierz z listy.',
+    cityPickRequired: 'Najpierw wybierz region i miasto.',
+    regionEmpty: 'Brak regionów.',
+    cityEmpty: 'Brak miast.',
     askBudget: 'Budżet lub «pomiń»:',
     budgetInvalid: 'Liczba lub «pomiń».',
     askDeadline: 'Termin (dni): 7, 14, 30 lub «pomiń»:',
@@ -172,6 +217,15 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     categoryUnknown: 'Kategorie nicht erkannt.',
     askCity: 'Stadt:',
     cityTooShort: 'Stadt zu kurz.',
+    askCountry: '📍 Land wählen:',
+    askRegion: 'Region wählen:',
+    askCityPick: 'Stadt/Gemeinde aus der Liste:',
+    pickCountryButton: 'Land per Knopf wählen.',
+    pickRegionButton: 'Region per Knopf wählen.',
+    cityUnknown: 'Stadt nicht gefunden.',
+    cityPickRequired: 'Zuerst Region und Stadt wählen.',
+    regionEmpty: 'Keine Regionen.',
+    cityEmpty: 'Keine Städte.',
     askBudget: 'Budget oder «überspringen»:',
     budgetInvalid: 'Zahl oder «überspringen».',
     askDeadline: 'Tage: 7, 14, 30 oder überspringen:',
@@ -201,6 +255,15 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     categoryUnknown: 'Categoría no encontrada.',
     askCity: 'Ciudad:',
     cityTooShort: 'Ciudad demasiado corta.',
+    askCountry: '📍 Elige país:',
+    askRegion: 'Elige región:',
+    askCityPick: 'Elige ciudad o pueblo de la lista:',
+    pickCountryButton: 'Usa los botones de país.',
+    pickRegionButton: 'Usa los botones de región.',
+    cityUnknown: 'Ciudad no encontrada.',
+    cityPickRequired: 'Elige región y ciudad primero.',
+    regionEmpty: 'Sin regiones.',
+    cityEmpty: 'Sin ciudades.',
     askBudget: 'Presupuesto o «omitir»:',
     budgetInvalid: 'Número u «omitir».',
     askDeadline: 'Días: 7, 14, 30 u omitir:',

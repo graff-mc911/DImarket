@@ -1,9 +1,13 @@
 import { matchPickByText, type CategoryPick } from './categories.ts'
+import { matchCityInRegion, type GeoTree } from './geo.ts'
+import { startCountryStep } from './geoFlow.ts'
 import { categoryLabel, t, type BotLocale } from './i18n.ts'
 
 export type BotStep =
   | 'idle'
   | 'category'
+  | 'country'
+  | 'region'
   | 'city'
   | 'budget'
   | 'deadline'
@@ -88,7 +92,7 @@ export function buildTitle(draft: ListingDraft, locale: BotLocale): string {
     : draft.categorySlug
       ? categoryLabel(draft.categorySlug, locale, draft.categoryName || '')
       : ''
-  const city = draft.location?.split(',')[0]?.trim() || ''
+  const city = draft.locationCity?.trim() || draft.location?.split(',')[0]?.trim() || ''
   const parts = [cat, city].filter(Boolean)
   if (parts.length) return parts.join(' — ')
   return (draft.description || '').trim().slice(0, 80) || 'Job request'
@@ -113,7 +117,7 @@ export function applyWorkGroupPick(
   next.categorySlug = pick.parentCategory
   next.workGroupSlug = pick.slug
   next.categoryName = pick.label
-  return { text: t(locale, 'askCity'), step: 'city', draft: next }
+  return startCountryStep(next, locale)
 }
 
 export function processText(
@@ -156,10 +160,25 @@ export function processText(
       }
       return applyCategoryPick(next, cat, locale)
     }
-    case 'city':
-      if (msg.length < 2) return { text: t(locale, 'cityTooShort'), step: 'city', draft: next }
-      next.location = msg
+    case 'country':
+      return { text: t(locale, 'pickCountryButton'), step: 'country', draft: next }
+    case 'region':
+      return { text: t(locale, 'pickRegionButton'), step: 'region', draft: next }
+    case 'city': {
+      if (!next.locationCountry || !next.locationRegion) {
+        return startCountryStep(next, locale)
+      }
+      if (!geoTree) {
+        return { text: t(locale, 'cityPickRequired'), step: 'city', draft: next }
+      }
+      const matched = matchCityInRegion(msg, geoTree, next.locationCountry, next.locationRegion)
+      if (!matched) {
+        return { text: t(locale, 'cityUnknown'), step: 'city', draft: next }
+      }
+      next.locationCity = matched
+      next.location = [matched, next.locationRegion, next.locationCountry].join(', ')
       return { text: t(locale, 'askBudget'), step: 'budget', draft: next }
+    }
     case 'budget': {
       const budget = parseBudget(msg)
       if (budget === null && !SKIP.test(msg)) {
@@ -235,7 +254,7 @@ export function applyCategoryPick(
   next.categorySlug = cat.slug
   next.categoryName = categoryLabel(cat.slug, locale, cat.name)
   next.workGroupSlug = undefined
-  return { text: t(locale, 'askCity'), step: 'city', draft: next }
+  return startCountryStep(next, locale)
 }
 
 export function startNewListing(locale: BotLocale): FlowReply {

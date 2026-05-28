@@ -14,7 +14,9 @@ export async function publishListing(
   if (!draft.description?.trim() || draft.description.trim().length < 15) {
     return { ok: false, error: 'description' }
   }
-  if (!draft.location?.trim()) return { ok: false, error: 'location' }
+  if (!draft.location?.trim() || !draft.locationCity?.trim() || !draft.locationCountry?.trim()) {
+    return { ok: false, error: 'location' }
+  }
   if (!draft.contactPhone?.trim() && !draft.contactEmail?.trim()) {
     return { ok: false, error: 'contact' }
   }
@@ -56,6 +58,7 @@ export async function publishListing(
     price: draft.price ?? null,
     currency: draft.currency || 'EUR',
     location: draft.location.trim(),
+    // city stored in canonical "City, Region, Country" — matches profiles.location
     visibility_radius: 'city' as const,
     contact_name: draft.contactName?.trim() || 'Telegram client',
     contact_phone: draft.contactPhone?.trim() || null,
@@ -76,6 +79,14 @@ export async function publishListing(
   if (error || !listing?.id) {
     console.error('telegram-bot publish:', error)
     return { ok: false, error: error?.message || 'insert_failed' }
+  }
+
+  if (draft.locationCountry && draft.locationCity) {
+    await admin.rpc('register_geo_location', {
+      p_country: draft.locationCountry,
+      p_region: draft.locationRegion || 'Інші',
+      p_city: draft.locationCity,
+    }).catch((e) => console.warn('register_geo_location:', e))
   }
 
   const urls = (draft.imageUrls ?? []).map((u) => u.trim()).filter(Boolean)
