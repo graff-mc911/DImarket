@@ -41,7 +41,7 @@ type MsgKey =
 
 const M: Record<BotLocale, Record<MsgKey, string>> = {
   uk: {
-    welcome: '👋 Вітаємо в DiMarket!',
+    welcome: '👋 Вітаємо в DImarket!',
     promo:
       'Безкоштовна платформа будівельних послуг.\nСайт: https://dimarket.app\n\nНатисніть «Подати оголошення», щоб майстри побачили ваше замовлення.',
     newListing: 'Почнемо нове оголошення. Оберіть категорію:',
@@ -72,7 +72,7 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnNo: '❌ Ні',
   },
   ru: {
-    welcome: '👋 Добро пожаловать в DiMarket!',
+    welcome: '👋 Добро пожаловать в DImarket!',
     promo:
       'Бесплатная платформа строительных услуг.\nСайт: https://dimarket.app\n\nНажмите «Разместить объявление», чтобы мастера увидели ваш заказ.',
     newListing: 'Создадим объявление. Выберите категорию:',
@@ -103,7 +103,7 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnNo: '❌ Нет',
   },
   en: {
-    welcome: '👋 Welcome to DiMarket!',
+    welcome: '👋 Welcome to DImarket!',
     promo:
       'Free construction services marketplace.\nhttps://dimarket.app\n\nTap «Post a job» to publish your request for professionals.',
     newListing: 'Let’s create your listing. Pick a category:',
@@ -134,7 +134,7 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnNo: '❌ No',
   },
   pl: {
-    welcome: '👋 Witamy w DiMarket!',
+    welcome: '👋 Witamy w DImarket!',
     promo: 'Darmowa platforma budowlana.\nhttps://dimarket.app\n\nKliknij «Dodaj ogłoszenie».',
     newListing: 'Nowe ogłoszenie. Wybierz kategorię:',
     cancelled: 'Anulowano. /start lub «Dodaj ogłoszenie».',
@@ -164,7 +164,7 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnNo: '❌ Nie',
   },
   de: {
-    welcome: '👋 Willkommen bei DiMarket!',
+    welcome: '👋 Willkommen bei DImarket!',
     promo: 'Kostenlose Bau-Plattform.\nhttps://dimarket.app',
     newListing: 'Neues Inserat. Kategorie wählen:',
     cancelled: 'Abgebrochen. /start',
@@ -193,7 +193,7 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnNo: '❌ Nein',
   },
   es: {
-    welcome: '👋 ¡Bienvenido a DiMarket!',
+    welcome: '👋 ¡Bienvenido a DImarket!',
     promo: 'Plataforma gratuita de construcción.\nhttps://dimarket.app',
     newListing: 'Nuevo anuncio. Elige categoría:',
     cancelled: 'Cancelado. /start',

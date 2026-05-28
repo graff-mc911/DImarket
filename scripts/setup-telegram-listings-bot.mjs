@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Webhook для бота оголошень DiMarket (прийом заявок у Telegram → listings).
+ * Webhook для бота оголошень DImarket (прийом заявок у Telegram → listings).
  *
  * Потрібно в .env.local:
  *   TELEGRAM_BOT_TOKEN=...        (від @BotFather)
@@ -119,6 +119,15 @@ const dep = spawnSync(
   { stdio: 'inherit', shell: true, cwd: root },
 )
 if (dep.status !== 0) process.exit(dep.status ?? 1)
+
+console.log('Брендинг бота (DImarket + аватар DI)…')
+const brand = spawnSync('node', ['scripts/update-telegram-bot-branding.mjs', token], {
+  stdio: 'inherit',
+  cwd: root,
+})
+if (brand.status !== 0) {
+  console.warn('Брендинг не оновлено — запустіть: node scripts/update-telegram-bot-branding.mjs')
+}
 
 console.log(`
 Готово.
