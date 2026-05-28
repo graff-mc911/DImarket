@@ -1418,10 +1418,4 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'verification.status.pending': 'В ожидании',
   'verification.status.verified': 'Проверено',
   'verification.status.rejected': 'Отклоненный',
-  'home.noCategories': 'Скоро здесь появятся категории.',
-  'professional.contact': 'Контакт',
-  'register.fullName': 'Полное имя',
-  'professionals.nameSkillService': 'Имя, навык или услуга',
-  'route.messagesTitle': 'Здесь будут появляться прямые сообщения',
-  'advertising.placementsTitle': 'Где может появляться реклама',
 }
