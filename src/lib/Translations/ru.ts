@@ -411,6 +411,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'ai.admin.fraudQueue': 'Очередь подозрительных',
   'ai.admin.noReports': 'Открытьх отчётов нет.',
   'marketing.admin.title': 'AI маркетинг-агент',
+  'marketing.admin.shortTitle': 'Маркетинг AI',
   'marketing.admin.subtitle': 'Автономные мультиязычные кампании для DiMarket',
   'marketing.admin.denied': 'Только для владельца.',
   'marketing.admin.home': 'На главную',

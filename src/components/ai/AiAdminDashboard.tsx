@@ -46,10 +46,10 @@ export function AiAdminDashboard() {
   const channels = getMessagingChannelStatus()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <AdminAIAssistantInline />
 
-      <div className="glass-card p-6">
+      <div className="glass-card p-4 sm:p-6">
         <div className="flex items-center gap-3">
           <Shield className="h-8 w-8 text-[#6366f1]" />
           <div>

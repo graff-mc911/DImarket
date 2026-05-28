@@ -38,6 +38,7 @@ import { JobRequestChat } from './pages/JobRequestChat'
 import { AiAdmin } from './pages/AiAdmin'
 import { MarketingAgentAdmin } from './pages/MarketingAgentAdmin'
 import { AiChatWidget } from './components/ai/AiChatWidget'
+import { AdminOwnerTools } from './components/AdminAI/AdminOwnerTools'
 import { Checkout }     from './pages/Checkout'
 import { BoostProfile } from './pages/BoostProfile'
 import { Verification } from './pages/Verification'
@@ -116,6 +117,7 @@ function App() {
             </>
           )}
           <AiChatWidget />
+          <AdminOwnerTools />
         </div>
       </PaidAdsProvider>
     </AppProvider>

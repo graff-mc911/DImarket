@@ -145,24 +145,24 @@ export function MarketingAgentDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="glass-card p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Megaphone className="h-8 w-8 text-[#6366f1]" />
-            <div>
-              <h1 className="text-2xl font-extrabold text-[#2f2a24]">{t('marketing.admin.title')}</h1>
-              <p className="text-sm text-[#6f665d]">{t('marketing.admin.subtitle')}</p>
-            <p className="mt-1 text-xs text-[#9a8776]">{t('marketing.admin.blogHint')}</p>
+    <div className="space-y-4 pb-6 sm:space-y-6">
+      <div className="glass-card p-4 sm:p-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-start gap-3">
+            <Megaphone className="h-7 w-7 shrink-0 text-[#6366f1] sm:h-8 sm:w-8" />
+            <div className="min-w-0">
+              <h1 className="text-lg font-extrabold text-[#2f2a24] sm:text-2xl">{t('marketing.admin.title')}</h1>
+              <p className="text-xs text-[#6f665d] sm:text-sm">{t('marketing.admin.subtitle')}</p>
+              <p className="mt-1 hidden text-xs text-[#9a8776] sm:block">{t('marketing.admin.blogHint')}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
             {config?.is_running ? (
               <button
                 type="button"
                 disabled={busy}
                 onClick={() => void saveConfig({ is_running: false })}
-                className="inline-flex items-center gap-2 rounded-full border border-[#fca5a5] px-4 py-2 text-sm font-semibold text-[#b91c1c]"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#fca5a5] px-4 py-2.5 text-sm font-semibold text-[#b91c1c] sm:w-auto"
               >
                 <Square className="h-4 w-4" />
                 {t('marketing.admin.stop')}
@@ -172,7 +172,7 @@ export function MarketingAgentDashboard() {
                 type="button"
                 disabled={busy}
                 onClick={() => void saveConfig({ is_running: true })}
-                className="btn-primary inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm"
+                className="btn-primary inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm sm:w-auto"
               >
                 <Play className="h-4 w-4" />
                 {t('marketing.admin.start')}
@@ -190,7 +190,7 @@ export function MarketingAgentDashboard() {
                   setBusy(false)
                 }
               }}
-              className="inline-flex items-center gap-2 rounded-full border border-[#c7d2fe] bg-white px-4 py-2 text-sm font-semibold text-[#4338ca]"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#c7d2fe] bg-white px-4 py-2.5 text-sm font-semibold text-[#4338ca] sm:w-auto"
             >
               <Sparkles className="h-4 w-4" />
               {t('marketing.admin.runNow')}
@@ -199,13 +199,13 @@ export function MarketingAgentDashboard() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 border-b border-[var(--glass-border)] pb-2">
+      <div className="-mx-1 flex gap-1.5 overflow-x-auto border-b border-[var(--glass-border)] px-1 pb-2 sm:mx-0 sm:flex-wrap sm:gap-2">
         {(['control', 'preview', 'analytics'] as const).map((id) => (
           <button
             key={id}
             type="button"
             onClick={() => setTab(id)}
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold ${
+            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold sm:px-4 sm:text-sm ${
               tab === id ? 'bg-[#6366f1] text-white' : 'text-[#6f665d] hover:bg-[#f5f0eb]'
             }`}
           >
@@ -215,8 +215,8 @@ export function MarketingAgentDashboard() {
       </div>
 
       {tab === 'control' && config && (
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="glass-card space-y-4 p-6">
+        <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
+          <div className="glass-card space-y-3 p-4 sm:space-y-4 sm:p-6">
             <h2 className="flex items-center gap-2 text-lg font-bold text-[#2f2a24]">
               <Globe className="h-5 w-5 text-[#6366f1]" />
               {t('marketing.admin.markets')}
@@ -278,8 +278,8 @@ export function MarketingAgentDashboard() {
             />
           </div>
 
-          <div className="glass-card space-y-4 p-6">
-            <h2 className="text-lg font-bold text-[#2f2a24]">{t('marketing.admin.platforms')}</h2>
+          <div className="glass-card space-y-3 p-4 sm:space-y-4 sm:p-6">
+            <h2 className="text-base font-bold text-[#2f2a24] sm:text-lg">{t('marketing.admin.platforms')}</h2>
             <div className="flex flex-wrap gap-2">
               {ALL_PLATFORMS.map((p) => (
                 <button

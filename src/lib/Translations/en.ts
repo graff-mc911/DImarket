@@ -446,6 +446,7 @@ export const enTranslations = {
   'ai.admin.fraudQueue': 'Suspicious queue',
   'ai.admin.noReports': 'No open reports.',
   'marketing.admin.title': 'AI Marketing Agent',
+  'marketing.admin.shortTitle': 'Marketing AI',
   'marketing.admin.subtitle': 'Autonomous multilingual campaigns for DiMarket',
   'marketing.admin.denied': 'Owner access only.',
   'marketing.admin.home': 'Home',

@@ -448,6 +448,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'ai.admin.fraudQueue': 'Черга підозрілих',
   'ai.admin.noReports': 'Відкритих звітів немає.',
   'marketing.admin.title': 'AI маркетинг-агент',
+  'marketing.admin.shortTitle': 'Маркетинг AI',
   'marketing.admin.subtitle': 'Автономні багатомовні кампанії для DiMarket',
   'marketing.admin.denied': 'Лише для власника.',
   'marketing.admin.home': 'На головну',

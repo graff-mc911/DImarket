@@ -879,10 +879,20 @@ export function Header() {
                     </button>
 
                     {isSiteOwner && (
-                      <button onClick={() => goTo('/dashboard')} type="button" className={mobileNavItemClass}>
-                        <ClipboardList className="h-5 w-5" />
-                        <span>{t('header.dashboard')}</span>
-                      </button>
+                      <>
+                        <button onClick={() => goTo('/dashboard')} type="button" className={mobileNavItemClass}>
+                          <ClipboardList className="h-5 w-5" />
+                          <span>{t('header.dashboard')}</span>
+                        </button>
+                        <button onClick={() => goTo('/admin/ai')} type="button" className={mobileNavItemClass}>
+                          <Bot className="h-5 w-5" />
+                          <span>{t('ai.admin.title')}</span>
+                        </button>
+                        <button onClick={() => goTo('/admin/marketing-agent')} type="button" className={mobileNavItemClass}>
+                          <Megaphone className="h-5 w-5" />
+                          <span>{t('marketing.admin.title')}</span>
+                        </button>
+                      </>
                     )}
 
                     <button

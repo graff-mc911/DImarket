@@ -10,17 +10,17 @@ export function AdminAIAssistantInline() {
   const ai = useAdminAI(lang)
 
   return (
-    <section className="overflow-hidden rounded-[24px] border border-[rgba(201,109,44,0.35)] shadow-[0_8px_32px_rgba(67,44,26,0.12)]">
-      <div className="border-b border-[rgba(201,109,44,0.2)] bg-[rgba(255,248,241,0.85)] px-5 py-4">
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#c96d2c] text-white">
-            <Bot className="h-5 w-5" />
+    <section className="overflow-hidden rounded-2xl border border-[rgba(201,109,44,0.35)] shadow-[0_8px_32px_rgba(67,44,26,0.12)] sm:rounded-[24px]">
+      <div className="border-b border-[rgba(201,109,44,0.2)] bg-[rgba(255,248,241,0.85)] px-3 py-3 sm:px-5 sm:py-4">
+        <div className="flex items-start gap-2.5 sm:gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#c96d2c] text-white sm:h-10 sm:w-10">
+            <Bot className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
-          <div>
-            <h2 className="text-lg font-extrabold text-[#2f2a24]">
+          <div className="min-w-0">
+            <h2 className="text-base font-extrabold text-[#2f2a24] sm:text-lg">
               {t('ai.admin.assistantTitle')}
             </h2>
-            <p className="mt-1 text-sm text-[#6f665d]">{t('ai.admin.assistantHint')}</p>
+            <p className="mt-0.5 text-xs text-[#6f665d] sm:mt-1 sm:text-sm">{t('ai.admin.assistantHint')}</p>
           </div>
         </div>
       </div>
@@ -34,8 +34,8 @@ export function AdminAIAssistantInline() {
         dismissAlert={ai.dismissAlert}
         sendMessage={ai.sendMessage}
         navigateHistory={ai.navigateHistory}
-        className="min-h-[420px]"
-        style={{ height: 'min(420px, 55vh)' }}
+        className="min-h-[min(360px,52dvh)]"
+        style={{ height: 'min(360px, 52dvh)' }}
       />
     </section>
   )

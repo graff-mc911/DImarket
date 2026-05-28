@@ -19,7 +19,7 @@ export function MarketingAgentAdmin() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className="mx-auto max-w-5xl px-3 py-4 pb-24 sm:px-4 sm:py-8 sm:pb-8">
       <MarketingAgentDashboard />
     </div>
   )
