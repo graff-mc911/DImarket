@@ -80,6 +80,20 @@ export function Checkout() {
     referenceId: string,
     metadata: Record<string, string>
   ) => {
+    const sessionId = metadata?.session_id
+    if (sessionId) {
+      const { data: existingPayment } = await supabase
+        .from('payments')
+        .select('id')
+        .eq('stripe_session_id', sessionId)
+        .eq('status', 'completed')
+        .limit(1)
+        .maybeSingle()
+
+      // Webhook may already activate and record payment.
+      if (existingPayment?.id) return
+    }
+
     const now         = new Date()
     const durationDays = parseInt(metadata?.duration_days || '30')
     const expiresAt   = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000).toISOString()
@@ -141,6 +155,7 @@ export function Checkout() {
       reference_id:        referenceId || null,
       amount:              parseFloat(metadata?.amount_total || '0') / 100,
       currency:            metadata?.currency || 'eur',
+      stripe_payment_intent_id: metadata?.payment_intent_id || null,
       stripe_session_id:   metadata?.session_id,
       status:              'completed',
     })

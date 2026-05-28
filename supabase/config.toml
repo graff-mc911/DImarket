@@ -14,7 +14,7 @@ max_rows = 1000
 [db]
 port = 54322
 shadow_port = 54320
-major_version = 15
+major_version = 17
 
 [db.pooler]
 enabled = false
@@ -48,6 +48,9 @@ verify_jwt = true
 
 [functions.verify-checkout-session]
 verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false
 
 [functions.delete-account]
 verify_jwt = true

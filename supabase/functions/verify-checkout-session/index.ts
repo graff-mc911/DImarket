@@ -76,6 +76,10 @@ Deno.serve(async (req: Request) => {
       description: meta.description ?? '',
       metadata: {
         session_id: session.id,
+        payment_intent_id:
+          typeof session.payment_intent === 'string'
+            ? session.payment_intent
+            : session.payment_intent?.id ?? '',
         duration_days: meta.duration_days ?? '30',
         amount_total: String(amountTotal),
         currency,
