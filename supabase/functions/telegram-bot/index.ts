@@ -160,7 +160,21 @@ async function handleFlowReply(
     if (from?.username) draft.telegramUsername = from.username
     if (!draft.contactName && from?.first_name) draft.contactName = from.first_name
 
-    const result = await publishListing(admin!, draft, locale, siteUrl)
+    const telegramUserId = from?.id ?? session.telegram_user_id
+    const result = await publishListing(
+      admin!,
+      draft,
+      locale,
+      siteUrl,
+      telegramUserId
+        ? {
+            telegramUserId,
+            telegramChatId: chatId,
+            contactName: draft.contactName,
+            contactPhone: draft.contactPhone,
+          }
+        : null,
+    )
     if (!result.ok) {
       await sendMessage(token, chatId, t(locale, 'publishError'), mainKeyboard(locale))
       return

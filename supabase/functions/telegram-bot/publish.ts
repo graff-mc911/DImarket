@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2'
+import { ensureTelegramAuthor, type TelegramAuthorContext } from './author.ts'
 import { WORK_GROUP_SUB_SLUGS } from './categories.ts'
 import { buildTitle, type ListingDraft } from './flow.ts'
 import type { BotLocale } from './i18n.ts'
@@ -8,6 +9,7 @@ export async function publishListing(
   draft: ListingDraft,
   locale: BotLocale,
   siteUrl: string,
+  telegram?: TelegramAuthorContext | null,
 ): Promise<{ ok: true; listingId: string; link: string } | { ok: false; error: string }> {
   if (!draft.description?.trim() || draft.description.trim().length < 15) {
     return { ok: false, error: 'description' }
@@ -40,6 +42,11 @@ export async function publishListing(
       ? WORK_GROUP_SUB_SLUGS[draft.workGroupSlug]
       : []
 
+  let authorId: string | null = null
+  if (telegram?.telegramUserId) {
+    authorId = await ensureTelegramAuthor(admin, telegram)
+  }
+
   const listingData = {
     title: buildTitle(draft, locale),
     description,
@@ -53,7 +60,7 @@ export async function publishListing(
     contact_name: draft.contactName?.trim() || 'Telegram client',
     contact_phone: draft.contactPhone?.trim() || null,
     contact_email: draft.contactEmail?.trim() || null,
-    author_id: null,
+    author_id: authorId,
     duration_days: duration,
     expires_at: expiresAt.toISOString(),
     is_premium: false,

@@ -40,6 +40,8 @@
     "marketing:cron": "node scripts/marketing-cron-invoke.mjs",
     "marketing:telegram": "node scripts/setup-telegram-marketing.mjs",
     "db:apply-telegram-bot": "node scripts/apply-telegram-bot-migration.mjs",
+    "db:apply-telegram-authors": "node scripts/apply-telegram-authors-migration.mjs",
+    "db:backfill-telegram-authors": "node scripts/backfill-telegram-listing-authors.mjs",
     "deploy:telegram-bot": "npx supabase functions deploy telegram-bot --project-ref wjlfvajloxkevggwjgtk",
     "telegram:setup": "node scripts/setup-telegram-listings-bot.mjs",
     "db:apply-admin-ai": "node scripts/apply-admin-ai-migration.mjs",
