@@ -337,13 +337,13 @@ function DesktopWireframe({
       <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#9a8776]">
         {t('advertising.catalog.desktopWire')} · {editorLabel}
       </p>
-      <div className="grid grid-cols-[minmax(82px,112px)_minmax(92px,0.75fr)_minmax(82px,112px)] items-start gap-2">
+      <div className="grid grid-cols-[minmax(94px,129px)_minmax(106px,0.85fr)_minmax(94px,129px)] items-start gap-2.5">
         <div className="grid grid-rows-4 gap-1 self-start">
           {group.desktop.left.map((id) => (
             <SlotBox key={id} {...slotProps(id, `L${short(id)}`)} />
           ))}
         </div>
-        <div className="flex min-h-[120px] flex-col gap-1.5">
+        <div className="flex min-h-[138px] flex-col gap-2">
           <div className="rounded-md border border-dashed border-[rgba(148,163,184,0.45)] bg-white/50 px-2 py-3 text-center text-[10px] font-semibold text-[#6f665d]">
             {t('advertising.catalog.contentArea')}
           </div>
