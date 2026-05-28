@@ -187,7 +187,6 @@ function SlotBox({
       ) : active && interactive && !hasSlotMedia ? (
         <span className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 bg-[rgba(238,242,255,0.35)] text-[#6366f1] opacity-80 group-hover:opacity-100">
           <Upload className="h-3 w-3" />
-          <span className="text-[7px] font-bold">{t('advertising.slotStudio.tapUpload')}</span>
         </span>
       ) : null}
       <span
@@ -338,13 +337,13 @@ function DesktopWireframe({
       <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#9a8776]">
         {t('advertising.catalog.desktopWire')} · {editorLabel}
       </p>
-      <div className="grid grid-cols-[minmax(58px,72px)_1fr_minmax(58px,72px)] items-start gap-1.5">
+      <div className="grid grid-cols-[minmax(82px,112px)_minmax(92px,0.75fr)_minmax(82px,112px)] items-start gap-2">
         <div className="grid grid-rows-4 gap-1 self-start">
           {group.desktop.left.map((id) => (
             <SlotBox key={id} {...slotProps(id, `L${short(id)}`)} />
           ))}
         </div>
-        <div className="flex min-h-[140px] flex-col gap-1.5">
+        <div className="flex min-h-[120px] flex-col gap-1.5">
           <div className="rounded-md border border-dashed border-[rgba(148,163,184,0.45)] bg-white/50 px-2 py-3 text-center text-[10px] font-semibold text-[#6f665d]">
             {t('advertising.catalog.contentArea')}
           </div>
@@ -393,7 +392,7 @@ function MobileWireframe({
   const isActive = (id: string) => selected.includes(id)
 
   return (
-    <div className="mx-auto w-full max-w-[220px] rounded-[22px] border-2 border-[#2f2a24] bg-[#faf8f5] p-2 shadow-lg">
+    <div className="mx-auto w-full max-w-[280px] rounded-[22px] border-2 border-[#2f2a24] bg-[#faf8f5] p-2.5 shadow-lg">
       <p className="mb-2 text-center text-[9px] font-bold uppercase tracking-wide text-[#9a8776]">
         {t('advertising.catalog.mobileWire')} · {editorLabel}
       </p>
@@ -551,7 +550,7 @@ export function AdPlacementSitePreview({
         <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.catalog.tapToSelect')}</p>
       )}
 
-      <div className={compact ? 'grid gap-3 sm:grid-cols-[1fr_auto]' : 'grid gap-4 lg:grid-cols-[1.2fr_0.8fr]'}>
+      <div className={compact ? 'grid gap-3 sm:grid-cols-[1.1fr_0.9fr]' : 'grid gap-4 lg:grid-cols-[1.1fr_0.9fr]'}>
         <div>
           <div className="mb-1.5 flex items-center gap-2 text-[10px] font-bold text-[#5f5a54]">
             <Monitor className="h-3.5 w-3.5" />
@@ -572,7 +571,7 @@ export function AdPlacementSitePreview({
             onSlotReplaceRequest={onSlotReplaceRequest}
           />
         </div>
-        <div className={compact ? 'sm:max-w-[180px]' : ''}>
+        <div className={compact ? 'sm:max-w-[280px]' : ''}>
           <div className="mb-1.5 flex items-center gap-2 text-[10px] font-bold text-[#5f5a54]">
             <Smartphone className="h-3.5 w-3.5" />
             {t('advertising.slots.mobileTitle')}

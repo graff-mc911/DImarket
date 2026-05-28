@@ -309,56 +309,12 @@ export function AdPerSlotMediaEditor({
 
       {hidePagePicker ? (
         <>
-        <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,200px)]">
-          <div className="min-w-0">
-            {onSelectedSlotsChange ? (
-              <AdPlacementSitePreview {...previewProps} onChange={onSelectedSlotsChange} />
-            ) : (
-              <AdPlacementSitePreview {...previewProps} />
-            )}
-          </div>
-          <aside className="rounded-[12px] border border-[rgba(148,163,184,0.18)] bg-white/35 p-2">
-            {focusedSlotId ? (
-              <p className="text-[10px] font-semibold text-[#2f2a24]">
-                {formatSlotLabel(focusedSlotId, t)}
-              </p>
-            ) : (
-              <p className="text-[10px] text-[#9a8776]">{t('advertising.slotStudio.focusHint')}</p>
-            )}
-            {focusedSlotId && !focusedHasMedia ? (
-              <button
-                type="button"
-                onClick={() => openFilePicker(focusedSlotId, false)}
-                disabled={isBusy}
-                className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-full bg-[#6366f1] px-2 py-1 text-[10px] font-semibold text-white"
-              >
-                <Upload className="h-3 w-3" />
-                {t('advertising.slotStudio.uploadHere')}
-              </button>
-            ) : null}
-            {focusedHasMedia && focusedSlotId ? (
-              <div className="mt-2 max-h-[240px] overflow-y-auto">
-                <AdMediaEditor
-                  compact
-                  singleImageOnly
-                  showAnimationControls
-                  fixedLayoutKey={focusedLayout}
-                  mediaType={focusedEntry.mediaType}
-                  primaryUrl={focusedEntry.mediaUrl}
-                  slideUrls={[focusedEntry.mediaUrl]}
-                  style={focusedEntry.mediaStyle}
-                  onStyleChange={(mediaStyle) => {
-                    if (!focusedSlotId) return
-                    patchSlotStyle(focusedSlotId, mediaStyle)
-                  }}
-                  onSlideUrlsChange={() => {}}
-                  onPrimaryUrlChange={() => {}}
-                  onUploadFiles={async () => {}}
-                  onClearMedia={() => void slotUpload.clearSlot(focusedSlotId)}
-                />
-              </div>
-            ) : null}
-          </aside>
+        <div className="min-w-0">
+          {onSelectedSlotsChange ? (
+            <AdPlacementSitePreview {...previewProps} onChange={onSelectedSlotsChange} />
+          ) : (
+            <AdPlacementSitePreview {...previewProps} />
+          )}
         </div>
         {slotsWithMediaOnPage.length > 0 ? (
           <div className="rounded-[12px] border border-[rgba(148,163,184,0.18)] bg-white/35 p-2.5">
