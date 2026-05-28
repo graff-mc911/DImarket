@@ -53,6 +53,10 @@ if (env.GOOGLE_VISION_API_KEY?.trim()) {
 }
 if (env.TELEGRAM_BOT_TOKEN?.trim()) args.push(`TELEGRAM_BOT_TOKEN=${env.TELEGRAM_BOT_TOKEN.trim()}`)
 if (env.TELEGRAM_CHANNEL_ID?.trim()) args.push(`TELEGRAM_CHANNEL_ID=${env.TELEGRAM_CHANNEL_ID.trim()}`)
+if (env.TELEGRAM_WEBHOOK_SECRET?.trim()) {
+  args.push(`TELEGRAM_WEBHOOK_SECRET=${env.TELEGRAM_WEBHOOK_SECRET.trim()}`)
+}
+if (env.SITE_URL?.trim()) args.push(`SITE_URL=${env.SITE_URL.trim()}`)
 if (env.ANTHROPIC_API_KEY?.trim()) args.push(`ANTHROPIC_API_KEY=${env.ANTHROPIC_API_KEY.trim()}`)
 if (env.ANTHROPIC_MODEL?.trim()) args.push(`ANTHROPIC_MODEL=${env.ANTHROPIC_MODEL.trim()}`)
 if (env.DEEPL_API_KEY?.trim()) args.push(`DEEPL_API_KEY=${env.DEEPL_API_KEY.trim()}`)
