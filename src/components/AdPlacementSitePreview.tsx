@@ -271,6 +271,7 @@ function DesktopWireframe({
   group,
   editorLabel,
   selected,
+  compact,
   t,
   draftMediaUrl,
   slotMedia,
@@ -284,6 +285,7 @@ function DesktopWireframe({
   group: EditorWireframeGroup
   editorLabel: string
   selected: string[]
+  compact: boolean
   t: (key: TranslationKey) => string
   draftMediaUrl?: string | null
   slotMedia?: SlotMediaMap
@@ -333,17 +335,23 @@ function DesktopWireframe({
   }
 
   return (
-    <div className="rounded-[18px] border border-white/45 bg-[rgba(248,250,252,0.65)] p-3">
+    <div className={'rounded-[18px] border border-white/45 bg-[rgba(248,250,252,0.65)] ' + (compact ? 'p-4' : 'p-3')}>
       <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#9a8776]">
         {t('advertising.catalog.desktopWire')} · {editorLabel}
       </p>
-      <div className="grid grid-cols-[minmax(108px,148px)_minmax(122px,0.98fr)_minmax(108px,148px)] items-start gap-3">
+      <div
+        className={
+          compact
+            ? 'grid grid-cols-[minmax(128px,176px)_minmax(150px,1.15fr)_minmax(128px,176px)] items-start gap-3.5'
+            : 'grid grid-cols-[minmax(108px,148px)_minmax(122px,0.98fr)_minmax(108px,148px)] items-start gap-3'
+        }
+      >
         <div className="grid grid-rows-4 gap-1 self-start">
           {group.desktop.left.map((id) => (
             <SlotBox key={id} {...slotProps(id, `L${short(id)}`)} />
           ))}
         </div>
-        <div className="flex min-h-[159px] flex-col gap-2.5">
+        <div className={'flex flex-col ' + (compact ? 'min-h-[184px] gap-3' : 'min-h-[159px] gap-2.5')}>
           <div className="rounded-md border border-dashed border-[rgba(148,163,184,0.45)] bg-white/50 px-2 py-3 text-center text-[10px] font-semibold text-[#6f665d]">
             {t('advertising.catalog.contentArea')}
           </div>
@@ -556,20 +564,25 @@ export function AdPlacementSitePreview({
             <Monitor className="h-3.5 w-3.5" />
             {t('advertising.slots.desktopTitle')}
           </div>
-          <DesktopWireframe
-            group={wireframe}
-            editorLabel={editorLabel}
-            selected={selected}
-            t={t}
-            draftMediaUrl={draftMediaUrl}
-            slotMedia={slotMedia}
-            focusedSlotId={focusedSlotId}
-            interactive={interactive}
-            onToggle={toggle}
-            onSlotClear={onSlotClear}
-            onSlotUploadRequest={onSlotUploadRequest}
-            onSlotReplaceRequest={onSlotReplaceRequest}
-          />
+          <div className={compact ? 'overflow-x-auto pb-1' : ''}>
+            <div className={compact ? 'min-w-[760px]' : ''}>
+              <DesktopWireframe
+                group={wireframe}
+                editorLabel={editorLabel}
+                selected={selected}
+                compact={compact}
+                t={t}
+                draftMediaUrl={draftMediaUrl}
+                slotMedia={slotMedia}
+                focusedSlotId={focusedSlotId}
+                interactive={interactive}
+                onToggle={toggle}
+                onSlotClear={onSlotClear}
+                onSlotUploadRequest={onSlotUploadRequest}
+                onSlotReplaceRequest={onSlotReplaceRequest}
+              />
+            </div>
+          </div>
         </div>
         <div className={compact ? 'sm:max-w-[280px]' : ''}>
           <div className="mb-1.5 flex items-center gap-2 text-[10px] font-bold text-[#5f5a54]">
