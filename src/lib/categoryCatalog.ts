@@ -9,6 +9,7 @@ import { SELL_RENT_WORK_GROUPS } from './sellRentWorkGroups'
 
 export type LocalizedLabel = {
   uk: string
+  [locale: string]: string | undefined
   ru?: string
   en?: string
 }
@@ -127,8 +128,12 @@ export function getSubcategoryDef(categorySlug: string, subSlug: string): Subcat
 }
 
 export function labelFor(entry: LocalizedLabel, locale: string): string {
-  if (locale === 'ru' && entry.ru) return entry.ru
-  if (locale === 'en' && entry.en) return entry.en
+  const normalized = locale.toLowerCase()
+  if (entry[normalized]) return entry[normalized] as string
+  const baseLocale = normalized.split('-')[0]
+  if (entry[baseLocale]) return entry[baseLocale] as string
+  if (entry.en) return entry.en
+  if (entry.ru) return entry.ru
   return entry.uk
 }
 
