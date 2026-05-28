@@ -124,7 +124,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'category.constructionDesc': 'Nova construcao e projetos de edificacao',
   'category.renovation': 'Renovacao',
   'category.renovationDesc': 'Renovacao e remodelacao da casa',
-  'category.electrical': 'Auto repair shop',
+  'category.electrical': 'Oficina de automóveis',
   'category.electricalDesc': 'Trabalhos eletricos e reparacoes',
   'category.plumbing': 'Canalizacao',
   'category.plumbingDesc': 'Servicos e instalacoes de canalizacao',
@@ -136,7 +136,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'category.toolsDesc': 'Ferramentas e equipamentos',
   'category.name.construction': 'Construcao',
   'category.name.renovation': 'Renovacao',
-  'category.name.electrical': 'Auto repair shop',
+  'category.name.electrical': 'Oficina de automóveis',
   'category.name.plumbing': 'Canalizacao',
   'category.name.handyman': 'Biscateiro',
   'category.name.materials': 'Materiais',
@@ -216,7 +216,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.contactInfo': 'Informacao de contacto',
   'createAd.yourName': 'O seu nome',
   'createAd.phone': 'Telefone',
-  'createAd.email': 'Email',
+  'createAd.email': 'E-mail',
   'createAd.contactNote': 'Indique pelo menos telefone ou email',
   'createAd.contactRule':
     'Adicione telefone ou email para que os profissionais o possam contactar.',
@@ -257,14 +257,14 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'createAd.radius.region': 'Regiao',
   'createAd.radius.country': 'Pais',
   'createAd.radius.state': 'Estado',
-  'createAd.radius.land': 'Land (DE)',
+  'createAd.radius.land': 'Terreno (DE)',
   'createAd.radius.global': 'Todos os utilizadores',
 
   // Вхід
   'login.title': 'Entrar',
   'login.subtitle': 'Gerencie seu perfil',
   'login.email': 'Endereco de email',
-  'login.emailPlaceholder': 'you@example.com',
+  'login.emailPlaceholder': 'você@exemplo.com',
   'login.password': 'Palavra-passe',
   'login.passwordPlaceholder': '********',
   'login.signIn': 'Entrar',
@@ -397,7 +397,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'visibility.region': 'Regiao',
   'visibility.country': 'Pais',
   'visibility.state': 'Estado',
-  'visibility.land': 'Land (DE)',
+  'visibility.land': 'Terreno (DE)',
   'visibility.global': 'Todos os utilizadores',
 
   // Службові сторінки-заглушки
@@ -454,7 +454,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'footerStats.loading': 'A carregar estatisticas...',
   'footerStats.empty': 'Ainda nao existem dados suficientes para construir o ranking de paises.',
   'footerStats.score': 'Pontuacao',
-  'footerStats.prosShort': 'Pros',
+  'footerStats.prosShort': 'Prós',
   'footerStats.jobsShort': 'Trabalhos',
   'footerStats.repliesShort': 'Respostas',
 
@@ -500,8 +500,8 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
     'Descreva o pedido de forma simples: vamos guardar a mensagem e voltar a ela sem perder os detalhes.',
   'contact.nameLabel': 'Nome',
   'contact.namePlaceholder': 'O seu nome',
-  'contact.emailLabel': 'Email',
-  'contact.emailPlaceholder': 'your@email.com',
+  'contact.emailLabel': 'E-mail',
+  'contact.emailPlaceholder': 'seu@email.com',
   'contact.phoneLabel': 'Telefone',
   'contact.phonePlaceholder': '+351 ...',
   'contact.subjectLabel': 'Assunto',
@@ -565,7 +565,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'professionalDetail.backToProfessionals':
     'Voltar aos profissionais',
   'professionalDetail.back': 'Voltar aos profissionais',
-  'professionalDetail.website': 'Website',
+  'professionalDetail.website': 'Site',
   'professionalDetail.browseListings': 'Ver anuncios',
 
   // Панель власника
@@ -785,7 +785,7 @@ export const ptTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.bioLabel': 'Bio / Descricao',
   'settings.bioPlaceholder':
     'Fale aos clientes sobre a sua experiencia e os seus servicos...',
-  'settings.websiteLabel': 'Website',
+  'settings.websiteLabel': 'Site',
   'settings.profilePhotoLabel': 'URL da foto de perfil',
   'settings.profilePhotoAlt': 'Pre-visualizacao do perfil',
   'settings.portfolioTitle': 'Imagens do portfolio',
