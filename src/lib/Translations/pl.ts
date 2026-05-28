@@ -177,15 +177,15 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'category.handymanDesc': 'Ogólne uslugi fachowca',
   'category.materials': 'Materialy',
   'category.materialsDesc': 'Materialy budowlane na sprzedaz',
-  'category.tools': 'Transport & Delivery',
-  'category.toolsDesc': 'Narzedzia i wyposazenie',
+  'category.tools': 'Transport i logistyka',
+  'category.toolsDesc': 'Dostawa materialow, przewoz, przeprowadzki i logistyka',
   'category.name.construction': 'Budowa',
   'category.name.renovation': 'Remont',
   'category.name.electrical': 'Warsztat samochodowy',
   'category.name.plumbing': 'Hydraulika',
   'category.name.handyman': 'Zlota raczka',
   'category.name.materials': 'Materialy',
-  'category.name.tools': 'Transport & Delivery',
+  'category.name.tools': 'Transport i logistyka',
 
   // Картка оголошення: тип, ціна, перегляди, статус premium.
   'listing.serviceNeeded': 'Szukam uslugi',
