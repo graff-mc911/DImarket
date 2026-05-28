@@ -486,7 +486,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                 {t('listings.loadingRequests')}
               </div>
             ) : filteredListings.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
                 {filteredListings.map((listing, index) => (
                   <Fragment key={listing.id}>
                     <ListingCard listing={listing} />
@@ -495,7 +495,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                         variant="inline"
                         page="listings"
                         inlineIndex={((((index + 1) / 4) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
-                        outerClassName="md:col-span-2 2xl:col-span-3"
+                        outerClassName="col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5"
                       />
                     )}
                   </Fragment>

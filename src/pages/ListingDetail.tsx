@@ -22,7 +22,6 @@ import {
   Heart,
   Mail,
   MapPin,
-  MessageCircle,
   Phone,
   Star,
   User,
@@ -32,6 +31,7 @@ import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
 import type { ListingWithImages, Profile } from '../lib/types'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
+import { ListingInlineChat } from '../components/listing/ListingInlineChat'
 
 interface ListingDetailProps {
   listingId: string
@@ -135,17 +135,6 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
     } finally {
       setSavingItem(false)
     }
-  }
-
-  // Написати автору — відкриває чат
-  const contactAuthor = () => {
-    if (!user) { navigateTo('/login'); return }
-    if (!listing?.author_id) return
-
-    sessionStorage.setItem('conversation_with', listing.author_id)
-    sessionStorage.setItem('conversation_listing', listingId)
-    sessionStorage.removeItem('open_conversation')
-    navigateTo('/messages')
   }
 
   // Форматування ціни
@@ -378,6 +367,10 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
                       <ContractorMatches listingId={listing.id} />
                     )}
 
+                  {listing.author_id && (
+                    <ListingInlineChat listingId={listing.id} authorId={listing.author_id} />
+                  )}
+
                   {/* Термін і перегляди */}
                   <div
                     className="mt-5 flex items-center justify-between border-t pt-4 text-xs"
@@ -438,18 +431,6 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
                     )}
                   </div>
 
-                  {/* Кнопка написати автору через чат */}
-                  {user && listing.author_id && user.id !== listing.author_id && (
-                    <button
-                      type="button"
-                      onClick={contactAuthor}
-                      className="btn-primary mt-5 w-full justify-center rounded-full"
-                    >
-                      <MessageCircle className="h-4 w-4" />
-                      Написати автору
-                    </button>
-                  )}
-
                   {/* Кнопка збереження */}
                   {user && (
                     <button
@@ -469,16 +450,6 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
                     </button>
                   )}
 
-                  {/* Якщо не авторизований */}
-                  {!user && (
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('/login')}
-                      className="btn-secondary mt-5 w-full justify-center rounded-full"
-                    >
-                      Увійти щоб написати
-                    </button>
-                  )}
                 </div>
 
                 {/* Профіль автора */}

@@ -250,6 +250,13 @@ export const enTranslations = {
   'listing.contactForPrice': 'Contact for price',
   'listing.daysLeft': 'days left',
   'listing.views': 'views',
+  'listing.chatTitle': 'Messages',
+  'listing.chatPrivateHint': 'Only you and the other person in this listing thread can see these messages.',
+  'listing.chatLogin': 'Sign in to send a message',
+  'listing.chatEmpty': 'Write the first message',
+  'listing.chatPlaceholder': 'Your message…',
+  'listing.chatSend': 'Send',
+  'listing.chatOwner': 'Listing owner',
   'listing.premium': 'PREMIUM',
   'listing.constructionService': 'Construction service',
   'listing.locationNotSpecified': 'Location not specified',
@@ -595,7 +602,7 @@ export const enTranslations = {
 
   // Каталог оголошень: нові ключі.
   'listings.eyebrow': 'Job requests',
-  'listings.simpleTitle': 'Construction jobs from clients',
+  'listings.simpleTitle': 'Active listings',
   'listings.simpleDescription':
     'Browse active client requests, filter by category or place, and reply directly when a job matches your skills.',
   'listings.whatNeedsToBeDone': 'What needs to be done?',

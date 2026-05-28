@@ -9,19 +9,18 @@
 // ============================================================
 
 import { useState, useEffect } from 'react'
-import { Calendar, Globe, Heart, MapPin, Star } from 'lucide-react'
+import { Calendar, Heart, MapPin, Star } from 'lucide-react'
 import { supabase }          from '../lib/supabase'
 import { useApp }            from '../contexts/AppContext'
 import { navigateTo }        from '../lib/navigation'
 import type { ListingWithImages } from '../lib/types'
-import { formatSubcategoriesSummary } from '../lib/categoryCatalog'
 
 interface ListingCardProps {
   listing: ListingWithImages
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
-  const { user, currency, t, language } = useApp()
+  const { user, currency, t } = useApp()
 
   // Чи збережено це оголошення поточним користувачем
   const [isSaved, setIsSaved]         = useState(false)
@@ -118,20 +117,6 @@ export function ListingCard({ listing }: ListingCardProps) {
     return colors[type] || 'rgba(71,85,105,0.85)'
   }
 
-  // Локалізована мітка радіусу видимості
-  const getVisibilityLabel = (radius: string) => {
-    const labels: Record<string, string> = {
-      city:     t('visibility.city'),
-      district: t('visibility.district'),
-      region:   t('visibility.region'),
-      country:  t('visibility.country'),
-      state:    t('visibility.state'),
-      land:     t('visibility.land'),
-      global:   t('visibility.global'),
-    }
-    return labels[radius] || radius
-  }
-
   // Скільки днів залишилось
   const daysRemaining = Math.ceil(
     (new Date(listing.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
@@ -161,7 +146,7 @@ export function ListingCard({ listing }: ListingCardProps) {
           navigateTo('/listing/' + listing.id)
         }
       }}
-      className="group relative cursor-pointer overflow-hidden rounded-[24px] border text-left transition-all duration-300 hover:-translate-y-0.5"
+      className="listing-card-compact group relative cursor-pointer overflow-hidden rounded-[14px] border text-left transition-all duration-300 hover:-translate-y-0.5"
       style={{
         background: 'var(--glass-bg)',
         borderColor: listing.is_premium
@@ -176,21 +161,21 @@ export function ListingCard({ listing }: ListingCardProps) {
     >
       {/* Преміум смужка зверху */}
       {listing.is_premium && (
-        <div className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white" style={{ background: 'linear-gradient(90deg, #c96d2c, #e8964a)' }}>
-          <Star className="h-3 w-3 fill-current" />
+        <div className="flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white" style={{ background: 'linear-gradient(90deg, #c96d2c, #e8964a)' }}>
+          <Star className="h-2.5 w-2.5 fill-current" />
           {t('listing.premium')}
         </div>
       )}
 
       {/* Promoted смужка зверху */}
       {isPromoted && !listing.is_premium && (
-        <div className="px-3 py-1.5 text-xs font-bold text-white" style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }}>
+        <div className="px-2 py-0.5 text-[10px] font-bold text-white" style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }}>
           ⬆ Рекомендоване
         </div>
       )}
 
       {/* Зображення */}
-      <div className="relative h-48 overflow-hidden bg-[rgba(255,248,241,0.5)]">
+      <div className="relative h-[88px] overflow-hidden bg-[rgba(255,248,241,0.5)]">
         <img
           src={primaryImage}
           alt={listing.title}
@@ -200,7 +185,7 @@ export function ListingCard({ listing }: ListingCardProps) {
 
         {/* Бейдж типу оголошення */}
         <div
-          className="absolute left-2 top-2 rounded-lg px-2 py-1 text-xs font-bold text-white backdrop-blur-sm"
+          className="absolute left-1.5 top-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm"
           style={{ background: getListingTypeBg(listing.listing_type) }}
         >
           {getListingTypeLabel(listing.listing_type)}
@@ -213,13 +198,13 @@ export function ListingCard({ listing }: ListingCardProps) {
             onClick={toggleSave}
             disabled={savingInProgress}
             title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
-            className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50"
+            className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50"
             style={{
               background: isSaved ? 'rgba(239,68,68,0.9)' : 'rgba(255,255,255,0.85)',
             }}
           >
             <Heart
-              className="h-4 w-4"
+              className="h-3 w-3"
               style={{
                 color: isSaved ? '#fff' : '#ef4444',
                 fill: isSaved ? '#fff' : 'none',
@@ -230,72 +215,55 @@ export function ListingCard({ listing }: ListingCardProps) {
       </div>
 
       {/* Контент */}
-      <div className="p-4">
+      <div className="p-2.5">
 
         {/* Назва */}
         <h3
-          className="mb-2 line-clamp-2 text-base font-bold transition-colors duration-200"
+          className="mb-1 line-clamp-2 text-xs font-bold leading-snug transition-colors duration-200"
           style={{ color: 'var(--ink-900)' }}
         >
           {listing.title}
         </h3>
 
         {/* Опис */}
-        <p className="muted-text mb-3 line-clamp-2 text-sm">
+        <p className="muted-text mb-1.5 line-clamp-1 text-[11px] leading-snug">
           {listing.description}
         </p>
 
         {/* Локація і ціна */}
-        <div className="mb-2 space-y-1.5">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-1 text-sm" style={{ color: 'var(--ink-500)' }}>
-              <MapPin className="h-3.5 w-3.5 shrink-0" />
+        <div className="mb-1 space-y-0.5">
+          <div className="flex items-center justify-between gap-1">
+            <div className="flex min-w-0 items-center gap-0.5 text-[11px]" style={{ color: 'var(--ink-500)' }}>
+              <MapPin className="h-3 w-3 shrink-0" />
               <span className="truncate">
                 {listing.location || t('listing.locationNotSpecified')}
               </span>
             </div>
-            <div className="shrink-0 text-base font-bold" style={{ color: 'var(--accent-700)' }}>
+            <div className="shrink-0 text-xs font-bold" style={{ color: 'var(--accent-700)' }}>
               {formatPrice(listing.price)}
             </div>
           </div>
-
-          {/* Радіус видимості */}
-          {listing.visibility_radius && (
-            <div className="flex items-center gap-1 text-xs" style={{ color: 'var(--ink-500)' }}>
-              <Globe className="h-3 w-3 shrink-0" />
-              <span>{getVisibilityLabel(listing.visibility_radius)}</span>
-            </div>
-          )}
         </div>
 
-        {/* Категорія та види робіт */}
+        {/* Категорія */}
         {listing.category && (
-          <div className="mb-2 space-y-1">
+          <div className="mb-1">
             <div
-              className="inline-block rounded-lg px-2 py-0.5 text-xs font-semibold"
+              className="inline-block rounded-md px-1.5 py-0.5 text-[10px] font-semibold"
               style={{ background: 'rgba(199,138,96,0.12)', color: 'var(--accent-700)' }}
             >
               {listing.category.name}
             </div>
-            {listing.subcategory_slugs?.length > 0 && (
-              <p className="text-[11px] leading-snug" style={{ color: 'var(--ink-500)' }}>
-                {formatSubcategoriesSummary(
-                  listing.category.slug,
-                  listing.subcategory_slugs,
-                  language.code,
-                )}
-              </p>
-            )}
           </div>
         )}
 
         {/* Нижній рядок: термін і перегляди */}
         <div
-          className="flex items-center justify-between border-t pt-2.5 text-xs"
+          className="flex items-center justify-between border-t pt-1.5 text-[10px]"
           style={{ borderColor: 'var(--glass-border)', color: 'var(--ink-500)' }}
         >
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
+          <div className="flex items-center gap-0.5">
+            <Calendar className="h-2.5 w-2.5" />
             <span style={daysRemaining <= 3 && daysRemaining > 0 ? { color: '#b91c1c' } : {}}>
               {getDaysLabel()}
             </span>

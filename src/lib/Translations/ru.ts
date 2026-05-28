@@ -567,7 +567,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
 
   // Listings new keys
   'listings.eyebrow': 'Заявки на работу',
-  'listings.simpleTitle': 'Строительные заявки от клиентов',
+  'listings.simpleTitle': 'Активные объявления',
   'listings.simpleDescription':
     'Просматривайте активнет клиентские заявки, фильтруйте за категориею или местом и отпоотайте напрямую, коли робои подходит под ваши навыки.',
   'listings.whatNeedsToBeDone': 'Что нужно сделать?',

@@ -252,6 +252,13 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'listing.contactForPrice': 'Ціна за домовленістю',
   'listing.daysLeft': 'днів',
   'listing.views': 'переглядів',
+  'listing.chatTitle': 'Переписка',
+  'listing.chatPrivateHint': 'Повідомлення бачать лише ви та співрозмовник по цьому оголошенню.',
+  'listing.chatLogin': 'Увійдіть, щоб написати',
+  'listing.chatEmpty': 'Напишіть перше повідомлення',
+  'listing.chatPlaceholder': 'Ваше повідомлення…',
+  'listing.chatSend': 'Надіслати',
+  'listing.chatOwner': 'Власник оголошення',
   'listing.premium': 'ПРЕМІУМ',
   'listing.constructionService': 'Будівельна послуга',
   'listing.locationNotSpecified': 'Локацію не вказано',
@@ -597,7 +604,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
 
   // Listings new keys
   'listings.eyebrow': 'Запити на роботу',
-  'listings.simpleTitle': 'Будівельні запити від клієнтів',
+  'listings.simpleTitle': 'Активні оголошення',
   'listings.simpleDescription':
     'Переглядайте активні клієнтські запити, фільтруйте за категорією або місцем і відповідайте напряму, коли робота підходить під ваші навички.',
   'listings.whatNeedsToBeDone': 'Що потрібно зробити?',

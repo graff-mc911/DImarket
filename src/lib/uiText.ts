@@ -73,7 +73,7 @@ const enUiText = {
 
   // Listings
   'listings.eyebrow': 'Job requests',
-  'listings.simpleTitle': 'Construction jobs from clients',
+  'listings.simpleTitle': 'Active listings',
   'listings.simpleDescription':
     'Browse active client requests, filter by category or place, and reply directly when a job matches your skills.',
   'listings.whatNeedsToBeDone': 'What needs to be done?',
@@ -280,7 +280,7 @@ const ukUiText: Record<string, string> = {
 
   // Listings
   'listings.eyebrow': 'Запити на роботу',
-  'listings.simpleTitle': 'Будівельні запити від клієнтів',
+  'listings.simpleTitle': 'Активні оголошення',
   'listings.simpleDescription':
     'Переглядайте активні клієнтські запити, фільтруйте за категорією або місцем і відповідайте напряму, коли робота підходить під ваші навички.',
   'listings.whatNeedsToBeDone': 'Що потрібно зробити?',
