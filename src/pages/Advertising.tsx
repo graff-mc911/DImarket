@@ -977,8 +977,21 @@ function CampaignCard({ campaign, formatter, t, onEdit }: {
   const data      = campaign as any
   const displayPlacements = (data.placements?.length ? data.placements : [campaign.placement]) as string[]
   const countries  = data.countries  ?? (campaign.country_name ? [campaign.country_name] : [])
-  const regions    = data.regions    ?? (campaign.region_name  ? [campaign.region_name]  : [])
-  const cities     = data.cities     ?? (campaign.city_name    ? [campaign.city_name]    : [])
+  const fallbackRegions = typeof campaign.region_name === 'string'
+    ? campaign.region_name.split(',').map((item) => item.trim()).filter(Boolean)
+    : []
+  const fallbackCities = typeof campaign.city_name === 'string'
+    ? campaign.city_name.split(',').map((item) => item.trim()).filter(Boolean)
+    : []
+  const regions    = Array.isArray(data.regions) && data.regions.length > 0 ? data.regions : fallbackRegions
+  const cities     = Array.isArray(data.cities) && data.cities.length > 0 ? data.cities : fallbackCities
+  const amountValue =
+    typeof data.price_total === 'number'
+      ? data.price_total
+      : typeof data.price_paid === 'number'
+        ? data.price_paid
+        : null
+  const amountCurrency = String(data.currency ?? data.currency_paid ?? 'EUR').toUpperCase()
 
   return (
     <div className="glass-card p-4">
@@ -1018,7 +1031,7 @@ function CampaignCard({ campaign, formatter, t, onEdit }: {
           {getGeoSummary((data.geo_scope ?? 'global') as GeoMode, countries, regions, cities, undefined, t)}
         </p>
         <p><span className="font-medium text-[#5f5a54]">{t('advertising.myCampaigns.amount')}: </span>
-          {data.price_total ? data.price_total + ' ' + (data.currency ?? 'EUR') : '—'}
+          {amountValue !== null ? amountValue + ' ' + amountCurrency : '—'}
         </p>
         <p><span className="font-medium text-[#5f5a54]">{t('advertising.myCampaigns.created')}: </span>
           {campaign.created_at ? formatter.format(new Date(campaign.created_at)) : '—'}
