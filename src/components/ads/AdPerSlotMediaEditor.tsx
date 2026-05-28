@@ -28,6 +28,7 @@ import { SlotAnimationPicker } from './SlotAnimationPicker'
 
 type AdPerSlotMediaEditorProps = {
   selectedSlots: string[]
+  unavailableSlots?: Record<string, string>
   onSelectedSlotsChange?: (slots: string[]) => void
   slotMedia: SlotMediaMap
   onSlotMediaChange: (next: SlotMediaMap) => void
@@ -57,6 +58,7 @@ function normalizeSlotMediaMap(map: SlotMediaMap): SlotMediaMap {
 
 export function AdPerSlotMediaEditor({
   selectedSlots,
+  unavailableSlots,
   onSelectedSlotsChange,
   slotMedia,
   onSlotMediaChange,
@@ -242,6 +244,7 @@ export function AdPerSlotMediaEditor({
     compact: true as const,
     hidePageTabs: true as const,
     selected: selectedSlots,
+    unavailableSlots,
     slotMedia: slotMedia,
     focusedSlotId,
     onFocusSlot: (id: string | null) => {

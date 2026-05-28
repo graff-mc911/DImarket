@@ -39,6 +39,7 @@ function interpolateTranslation(
 
 type AdPlacementSitePreviewProps = {
   selected: string[]
+  unavailableSlots?: Record<string, string>
   onChange?: (slots: string[]) => void
   editorPage?: PlacementEditorPageId
   onEditorPageChange?: (page: PlacementEditorPageId) => void
@@ -85,6 +86,8 @@ function slotSizeLabels(
 
 function SlotBox({
   active,
+  unavailable = false,
+  unavailableReason,
   focused,
   label,
   title,
@@ -103,6 +106,8 @@ function SlotBox({
   onReplaceRequest,
 }: {
   active: boolean
+  unavailable?: boolean
+  unavailableReason?: string
   focused?: boolean
   label: string
   title: string
@@ -150,11 +155,15 @@ function SlotBox({
     'group relative flex min-h-[28px] w-full items-center justify-center overflow-hidden rounded-md border px-0.5 py-1 text-center text-[9px] font-bold leading-tight transition ' +
     (focused
       ? 'border-[#6366f1] ring-2 ring-[rgba(99,102,241,0.45)] shadow-md'
+      : unavailable
+        ? 'border-[rgba(249,115,22,0.6)] bg-[rgba(251,146,60,0.22)] text-[#9a3412] shadow-[0_0_0_1px_rgba(249,115,22,0.2)]'
       : active
         ? 'border-[rgba(99,102,241,0.55)] bg-[rgba(99,102,241,0.22)] text-[#312e81] shadow-[0_0_0_1px_rgba(99,102,241,0.2)]'
         : 'border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.45)] text-[#7a7168]') +
     (interactive
-      ? ' cursor-pointer hover:brightness-95'
+      ? unavailable
+        ? ' cursor-not-allowed'
+        : ' cursor-pointer hover:brightness-95'
       : '') +
     ' ' +
     aspectClass +
@@ -165,6 +174,7 @@ function SlotBox({
     aspectClass || !slotHeightPx
       ? undefined
       : { height: slotHeightPx, minHeight: slotHeightPx }
+  const slotTitle = unavailable && unavailableReason ? `${title}\n${unavailableReason}` : title
 
   const inner = (
     <>
@@ -188,6 +198,8 @@ function SlotBox({
         <span className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 bg-[rgba(238,242,255,0.35)] text-[#6366f1] opacity-80 group-hover:opacity-100">
           <Upload className="h-3 w-3" />
         </span>
+      ) : unavailable ? (
+        <span className="absolute inset-0 bg-[rgba(251,146,60,0.2)]" />
       ) : null}
       <span
         className={
@@ -242,7 +254,7 @@ function SlotBox({
   if (!interactive) {
     return (
       <div
-        title={title}
+        title={slotTitle}
         className={baseClass}
         style={heightStyle}
         data-slot-id={slotId || undefined}
@@ -255,11 +267,12 @@ function SlotBox({
   return (
     <button
       type="button"
-      title={title}
+      title={slotTitle}
+        aria-disabled={unavailable}
       style={heightStyle}
       aria-pressed={active}
       data-slot-id={slotId || undefined}
-      onClick={onToggle}
+      onClick={unavailable ? undefined : onToggle}
       className={baseClass}
     >
       {inner}
@@ -271,6 +284,7 @@ function DesktopWireframe({
   group,
   editorLabel,
   selected,
+  unavailableSlots,
   compact,
   t,
   draftMediaUrl,
@@ -285,6 +299,7 @@ function DesktopWireframe({
   group: EditorWireframeGroup
   editorLabel: string
   selected: string[]
+  unavailableSlots: Record<string, string>
   compact: boolean
   t: (key: TranslationKey) => string
   draftMediaUrl?: string | null
@@ -315,6 +330,8 @@ function DesktopWireframe({
     return {
       slotId: id,
       active: isActive(id),
+      unavailable: Boolean(unavailableSlots[id]),
+      unavailableReason: unavailableSlots[id],
       focused: focusedSlotId === id,
       label,
       sizeShort: sizes?.short,
@@ -374,6 +391,7 @@ function MobileWireframe({
   group,
   editorLabel,
   selected,
+  unavailableSlots,
   t,
   draftMediaUrl,
   slotMedia,
@@ -387,6 +405,7 @@ function MobileWireframe({
   group: EditorWireframeGroup
   editorLabel: string
   selected: string[]
+  unavailableSlots: Record<string, string>
   t: (key: TranslationKey) => string
   draftMediaUrl?: string | null
   slotMedia?: SlotMediaMap
@@ -424,6 +443,8 @@ function MobileWireframe({
               <SlotBox
                 slotId={id}
                 active={isActive(id)}
+                unavailable={Boolean(unavailableSlots[id])}
+                unavailableReason={unavailableSlots[id]}
                 focused={focusedSlotId === id}
                 label={label}
                 sizeShort={sizes?.short}
@@ -463,6 +484,7 @@ function MobileWireframe({
 
 export function AdPlacementSitePreview({
   selected,
+  unavailableSlots,
   onChange,
   editorPage: editorPageProp,
   onEditorPageChange,
@@ -476,6 +498,7 @@ export function AdPlacementSitePreview({
   compact = false,
   hidePageTabs = false,
 }: AdPlacementSitePreviewProps) {
+  const blockedMap = unavailableSlots ?? {}
   const { t } = useApp()
   const interactive = Boolean(onChange)
   const [internalEditorPage, setInternalEditorPage] = useState<PlacementEditorPageId>('home')
@@ -570,6 +593,7 @@ export function AdPlacementSitePreview({
                 group={wireframe}
                 editorLabel={editorLabel}
                 selected={selected}
+                unavailableSlots={blockedMap}
                 compact={compact}
                 t={t}
                 draftMediaUrl={draftMediaUrl}
@@ -593,6 +617,7 @@ export function AdPlacementSitePreview({
             group={wireframe}
             editorLabel={editorLabel}
             selected={selected}
+            unavailableSlots={blockedMap}
             t={t}
             draftMediaUrl={draftMediaUrl}
             slotMedia={slotMedia}

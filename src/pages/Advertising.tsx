@@ -61,6 +61,7 @@ import { isSiteOwner } from '../lib/siteOwner'
 import { ownerManagedReviewNote } from '../lib/ownerAdCampaign'
 import { formatSupabaseError } from '../lib/supabaseErrors'
 import {
+  expandLegacyPlacements,
   formatSlotLabel,
   sideSlotId,
   slotToLegacyPlacement,
@@ -74,6 +75,23 @@ type FeedbackState = { type: 'success' | 'error'; text: string }
 
 const PRICE_PER_CITY_PER_WEEK = 25
 const AD_GUIDE_START_KEY = 'dimarket_ad_guide_start'
+
+type OccupiedCampaign = Pick<
+  AdCampaign,
+  | 'id'
+  | 'title'
+  | 'placement'
+  | 'placements'
+  | 'geo_scope'
+  | 'country_name'
+  | 'region_name'
+  | 'city_name'
+  | 'countries'
+  | 'cities'
+  | 'starts_at'
+  | 'ends_at'
+  | 'status'
+>
 
 type AdGuideStep = {
   key: 'placements' | 'title' | 'desc' | 'link' | 'geo' | 'price' | 'preview' | 'submit'
@@ -132,6 +150,40 @@ const AD_GUIDE_STEPS: AdGuideStep[] = [
     text: 'Натисніть цю кнопку, щоб створити кампанію і перейти до оплати Stripe.',
   },
 ]
+
+function normalizeTokenSet(items: string[]): Set<string> {
+  return new Set(items.map((item) => item.trim().toLowerCase()).filter(Boolean))
+}
+
+function splitCommaValues(raw: string | null | undefined): string[] {
+  if (!raw) return []
+  return raw.split(',').map((item) => item.trim()).filter(Boolean)
+}
+
+function intersectsSet(a: Set<string>, b: Set<string>): boolean {
+  if (a.size === 0 || b.size === 0) return false
+  for (const value of a) {
+    if (b.has(value)) return true
+  }
+  return false
+}
+
+function campaignsDateOverlap(
+  campaignStartIso: string | null | undefined,
+  campaignEndIso: string | null | undefined,
+  desiredStartIso: string,
+  desiredEndIso: string,
+): boolean {
+  const desiredStart = new Date(desiredStartIso).getTime()
+  const desiredEnd = new Date(desiredEndIso).getTime()
+  if (!Number.isFinite(desiredStart) || !Number.isFinite(desiredEnd)) return false
+
+  const campaignStart = campaignStartIso ? new Date(campaignStartIso).getTime() : desiredStart
+  const campaignEnd = campaignEndIso ? new Date(campaignEndIso).getTime() : Number.POSITIVE_INFINITY
+  if (!Number.isFinite(campaignStart)) return false
+
+  return campaignStart <= desiredEnd && desiredStart <= campaignEnd
+}
 
 
 // ── Головний компонент ─────────────────────────────────────────────────────────
@@ -228,6 +280,7 @@ export function Advertising() {
 
   // Кампанії
   const [campaigns, setCampaigns]               = useState<AdCampaign[]>([])
+  const [occupiedCampaigns, setOccupiedCampaigns] = useState<OccupiedCampaign[]>([])
   const [loadingCampaigns, setLoadingCampaigns] = useState(false)
   const [saving, setSaving]                     = useState(false)
   const [feedback, setFeedback]                 = useState<FeedbackState | null>(null)
@@ -274,10 +327,97 @@ export function Advertising() {
 
   const totalPrice = billingUnits * PRICE_PER_CITY_PER_WEEK * selectedSlots.length * durationWeeks
 
+  const desiredStartsAtIso = useMemo(() => {
+    const now = new Date()
+    return startsAt ? new Date(startsAt).toISOString() : now.toISOString()
+  }, [startsAt])
+
+  const desiredEndsAtIso = useMemo(() => {
+    const base = startsAt ? new Date(startsAt) : new Date()
+    const end = endsAt
+      ? new Date(endsAt)
+      : new Date(base.getTime() + durationWeeks * 7 * 24 * 60 * 60 * 1000)
+    return end.toISOString()
+  }, [startsAt, endsAt, durationWeeks])
+
+  const unavailableSlotsMap = useMemo(() => {
+    if (!user || occupiedCampaigns.length === 0) return {} as Record<string, string>
+
+    const selectedCountriesSet = normalizeTokenSet(selectedCountries)
+    const selectedRegionsSet = normalizeTokenSet(selectedRegions)
+    const selectedCitiesSet = normalizeTokenSet(targetCities)
+    const blocked: Record<string, string> = {}
+
+    const overlapsGeo = (campaign: OccupiedCampaign): boolean => {
+      const campaignScope = (campaign.geo_scope || 'global') as GeoMode | 'country'
+      if (geoMode === 'global' || campaignScope === 'global') return true
+
+      const campaignCountries = normalizeTokenSet(campaign.countries ?? (campaign.country_name ? [campaign.country_name] : []))
+      const campaignRegions = normalizeTokenSet(splitCommaValues(campaign.region_name))
+      const campaignCities = normalizeTokenSet(campaign.cities ?? splitCommaValues(campaign.city_name))
+
+      if (geoMode === 'countries') {
+        return intersectsSet(selectedCountriesSet, campaignCountries)
+      }
+      if (geoMode === 'regions') {
+        return intersectsSet(selectedRegionsSet, campaignRegions) || intersectsSet(selectedCountriesSet, campaignCountries)
+      }
+      return intersectsSet(selectedCitiesSet, campaignCities) || intersectsSet(selectedRegionsSet, campaignRegions)
+    }
+
+    for (const campaign of occupiedCampaigns) {
+      if (!campaignsDateOverlap(campaign.starts_at, campaign.ends_at, desiredStartsAtIso, desiredEndsAtIso)) continue
+      if (!overlapsGeo(campaign)) continue
+
+      const slotIds = campaign.placements?.length
+        ? campaign.placements
+        : expandLegacyPlacements([campaign.placement])
+
+      const geoLabel =
+        campaign.city_name ||
+        campaign.region_name ||
+        campaign.country_name ||
+        (campaign.geo_scope === 'global' ? t('advertising.geo.worldwide') : '')
+
+      const fromLabel = campaign.starts_at ? new Date(campaign.starts_at).toLocaleDateString('uk-UA') : '—'
+      const toLabel = campaign.ends_at ? new Date(campaign.ends_at).toLocaleDateString('uk-UA') : '—'
+      const reason = `${campaign.title}${geoLabel ? ` · ${geoLabel}` : ''} · ${fromLabel} — ${toLabel}`
+
+      for (const slotId of slotIds) {
+        if (!blocked[slotId]) blocked[slotId] = reason
+      }
+    }
+
+    return blocked
+  }, [
+    desiredEndsAtIso,
+    desiredStartsAtIso,
+    geoMode,
+    occupiedCampaigns,
+    selectedCountries,
+    selectedRegions,
+    t,
+    targetCities,
+    user,
+  ])
+
   const ownerAccount = useMemo(
     () => isSiteOwner(profile, user?.email),
     [profile, user?.email],
   )
+
+  useEffect(() => {
+    const allowed = selectedSlots.filter((slotId) => !unavailableSlotsMap[slotId])
+    if (allowed.length === selectedSlots.length) return
+    if (allowed.length > 0) {
+      setSelectedSlots(allowed)
+      return
+    }
+    const fallback = selectedSlots.find((slotId) => !unavailableSlotsMap[slotId]) ?? sideSlotId('home', 'right', 1)
+    if (!unavailableSlotsMap[fallback]) {
+      setSelectedSlots([fallback])
+    }
+  }, [selectedSlots, unavailableSlotsMap])
 
   // Завантажуємо географію з бази при старті
   useEffect(() => {
@@ -288,6 +428,11 @@ export function Advertising() {
   useEffect(() => {
     if (user) void loadOwnCampaigns()
     else setCampaigns([])
+  }, [user])
+
+  useEffect(() => {
+    if (user) void loadOccupiedCampaigns()
+    else setOccupiedCampaigns([])
   }, [user])
 
   const loadGeoData = async () => {
@@ -319,6 +464,22 @@ export function Advertising() {
       setCampaigns([])
     } finally {
       setLoadingCampaigns(false)
+    }
+  }
+
+  const loadOccupiedCampaigns = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('ad_campaigns')
+        .select('id,title,placement,placements,geo_scope,country_name,region_name,city_name,countries,cities,starts_at,ends_at,status')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setOccupiedCampaigns((data as OccupiedCampaign[] | null) ?? [])
+    } catch (err) {
+      console.error('Помилка завантаження зайнятих слотів:', err)
+      setOccupiedCampaigns([])
     }
   }
 
@@ -600,6 +761,7 @@ export function Advertising() {
                 hideHeader
                 hidePagePicker
                 selectedSlots={selectedSlots}
+                unavailableSlots={unavailableSlotsMap}
                 onSelectedSlotsChange={handleSlotsChange}
                 slotMedia={slotMedia}
                 onSlotMediaChange={setSlotMedia}
