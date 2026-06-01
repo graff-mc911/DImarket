@@ -60,7 +60,7 @@ type ListingsProps = {
 }
 
 export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
-  const { t } = useApp()
+  const { t, user, profile } = useApp()
 
   const [allListings, setAllListings]   = useState<ListingWithImages[]>([])
   const [categories, setCategories]     = useState<Category[]>([])
