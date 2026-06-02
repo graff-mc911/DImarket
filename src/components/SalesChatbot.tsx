@@ -21,12 +21,12 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
     sendMessage,
   } = useSalesChat()
 
+  const [input, setInput] = useState('')
+  const scrollRef = useRef<HTMLDivElement>(null)
+
   if (adWizardActive) {
     return <AdWizardChatbot compact={compact} className={className} />
   }
-
-  const [input, setInput] = useState('')
-  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })

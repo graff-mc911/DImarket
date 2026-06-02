@@ -185,7 +185,23 @@ export function getCampaignMediaType(campaign: AdCampaign): 'image' | 'gif' | 'v
   return 'image'
 }
 
-export function getCampaignPosterUrl(campaign: AdCampaign): string {
+export function getCampaignPosterUrl(
+  campaign: AdCampaign & { slot_media?: unknown },
+): string {
+  const slotMap = campaign.slot_media
+  if (slotMap && typeof slotMap === 'object') {
+    for (const val of Object.values(slotMap as Record<string, unknown>)) {
+      if (!val || typeof val !== 'object') continue
+      const o = val as Record<string, unknown>
+      const url = String(o.mediaUrl ?? '').trim()
+      const slides = Array.isArray(o.slideUrls)
+        ? o.slideUrls.map(String).filter(Boolean)
+        : []
+      const pick = slides[0] || url
+      if (pick) return pick
+    }
+  }
+
   if (campaign.image_url?.trim()) return campaign.image_url.trim()
   const mediaUrl = campaign.media_url || ''
   const ytId = parseYoutubeVideoId(mediaUrl)

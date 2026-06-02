@@ -3,6 +3,7 @@ import { Copy, Trash2, Upload } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { AdMediaEditor } from '../AdMediaEditor'
 import { AdPlacementSitePreview } from '../AdPlacementSitePreview'
+import { AdPlacementCompactMap } from './AdPlacementCompactMap'
 import { AdPlacementPagesBar } from './AdPlacementPagesBar'
 import { AD_MEDIA_ACCEPT } from '../../lib/adMediaStorage'
 import {
@@ -106,13 +107,12 @@ export function AdPerSlotMediaEditor({
       ),
     [previewWireframe],
   )
-  const slotsWithMediaOnPage = useMemo(
-    () =>
-      pageSlotIds.filter(
-        (id) => selectedSlots.includes(id) && slotMediaEntryHasMedia(slotMedia[id]),
-      ),
-    [pageSlotIds, selectedSlots, slotMedia],
-  )
+  const slotsWithMediaOnPage = useMemo(() => {
+    const ids = hidePagePicker
+      ? selectedSlots
+      : pageSlotIds.filter((id) => selectedSlots.includes(id))
+    return ids.filter((id) => slotMediaEntryHasMedia(slotMedia[id]))
+  }, [hidePagePicker, pageSlotIds, selectedSlots, slotMedia])
 
   const patchSlotStyle = (slotId: string, mediaStyle: AdMediaStyle) => {
     const entry = slotMediaRef.current[slotId] ?? emptySlotMediaEntry()
@@ -240,13 +240,12 @@ export function AdPerSlotMediaEditor({
   const focusedLayout = focusedSlotId ? layoutKeyFromSlotId(focusedSlotId) : 'center'
   const isBusy = slotUpload.isUploading
 
-  const previewProps = {
-    compact: !hidePagePicker,
-    hidePageTabs: hidePagePicker,
-    selected: selectedSlots,
+  const mapProps = {
+    selectedSlots,
     unavailableSlots,
-    slotMedia: slotMedia,
+    slotMedia,
     focusedSlotId,
+    onChange: onSelectedSlotsChange,
     onFocusSlot: (id: string | null) => {
       if (id) {
         if (hidePagePicker) setInternalPage(editorPageFromSlotId(id))
@@ -256,8 +255,25 @@ export function AdPerSlotMediaEditor({
       setSlotHint(null)
     },
     onSlotClear: (id: string) => void slotUpload.clearSlot(id),
-    onSlotUploadRequest: (id: string) => openFilePicker(id, false),
-    onSlotReplaceRequest: (id: string) => openFilePicker(id, true),
+    onSlotUploadRequest: onSelectedSlotsChange
+      ? (id: string) => openFilePicker(id, false)
+      : undefined,
+    onSlotReplaceRequest: onSelectedSlotsChange
+      ? (id: string) => openFilePicker(id, true)
+      : undefined,
+  }
+
+  const previewProps = {
+    compact: !hidePagePicker,
+    hidePageTabs: hidePagePicker,
+    selected: selectedSlots,
+    unavailableSlots,
+    slotMedia: slotMedia,
+    focusedSlotId,
+    onFocusSlot: mapProps.onFocusSlot,
+    onSlotClear: mapProps.onSlotClear,
+    onSlotUploadRequest: mapProps.onSlotUploadRequest,
+    onSlotReplaceRequest: mapProps.onSlotReplaceRequest,
     editorPage: previewPage,
     onEditorPageChange,
   }
@@ -310,15 +326,54 @@ export function AdPerSlotMediaEditor({
         </p>
       )}
 
+      {selectedSlots.length === 0 && (
+        <p className="rounded-[12px] border border-[rgba(245,158,11,0.35)] bg-[rgba(255,251,235,0.95)] px-3 py-2 text-sm font-semibold text-[#b45309]">
+          {t('advertising.slotMedia.selectSlotsFirst')}
+        </p>
+      )}
+
       {hidePagePicker ? (
         <>
-        <div className="min-w-0 overflow-x-auto pb-1">
-          {onSelectedSlotsChange ? (
-            <AdPlacementSitePreview {...previewProps} onChange={onSelectedSlotsChange} />
-          ) : (
-            <AdPlacementSitePreview {...previewProps} />
-          )}
-        </div>
+        <AdPlacementCompactMap {...mapProps} />
+        {focusedSlotId && onSelectedSlotsChange && (
+          <div className="flex flex-wrap items-center gap-2 rounded-[14px] border border-white/40 bg-white/30 px-3 py-2">
+            <span className="text-xs font-semibold text-[#2f2a24]">
+              {formatSlotLabel(focusedSlotId, t)}
+            </span>
+            {!focusedHasMedia ? (
+              <button
+                type="button"
+                onClick={() => openFilePicker(focusedSlotId, false)}
+                disabled={isBusy}
+                className="inline-flex items-center gap-1 rounded-full bg-[#6366f1] px-3 py-1 text-[11px] font-semibold text-white disabled:opacity-50"
+              >
+                <Upload className="h-3 w-3" />
+                {isBusy ? '…' : t('advertising.slotStudio.uploadHere')}
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => openFilePicker(focusedSlotId, true)}
+                  disabled={isBusy}
+                  className="inline-flex items-center gap-1 rounded-full bg-[#6366f1] px-3 py-1 text-[11px] font-semibold text-white disabled:opacity-50"
+                >
+                  <Upload className="h-3 w-3" />
+                  {isBusy ? '…' : t('advertising.slotStudio.replace')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void slotUpload.clearSlot(focusedSlotId)}
+                  disabled={isBusy}
+                  className="inline-flex items-center gap-1 rounded-full border border-[rgba(239,68,68,0.35)] bg-white px-3 py-1 text-[11px] font-semibold text-[#b91c1c] disabled:opacity-50"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  {t('advertising.slotStudio.removeMedia')}
+                </button>
+              </>
+            )}
+          </div>
+        )}
         {slotsWithMediaOnPage.length > 0 ? (
           <div className="rounded-[12px] border border-[rgba(148,163,184,0.18)] bg-white/35 p-2.5">
             <p className="text-[10px] font-bold uppercase tracking-wide text-[#6f665d]">

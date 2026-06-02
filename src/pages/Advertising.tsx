@@ -748,45 +748,44 @@ export function Advertising() {
           </div>
         </section>
 
-        <section id="ad-placements" className={`glass-card mt-6 min-w-0 overflow-hidden p-4 md:p-5 ${guideClass('placements')}`}>
+        <section id="ad-placements" className={`glass-card mt-6 min-w-0 p-4 md:p-5 ${guideClass('placements')}`}>
           <h2 className="text-lg font-extrabold text-[#2f2a24] md:text-xl">
             {t('advertising.placementsSection.title')}
           </h2>
           <p className="mt-1 text-xs leading-5 text-[#6f665d]">
             {t('advertising.placementsSection.desc')}
           </p>
-          {user ? (
-            <div className="mt-3 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-2.5 md:p-3">
-              <AdPerSlotMediaEditor
-                hideHeader
-                hidePagePicker
-                selectedSlots={selectedSlots}
-                unavailableSlots={unavailableSlotsMap}
-                onSelectedSlotsChange={handleSlotsChange}
-                slotMedia={slotMedia}
-                onSlotMediaChange={setSlotMedia}
-                fallbackMediaUrl={mediaUrl}
-                fallbackSlideUrls={slideUrls}
-                fallbackMediaType={mediaType}
-                fallbackMediaStyle={mediaStyle}
-                onFallbackMediaUrl={setMediaUrl}
-                onFallbackSlideUrls={setSlideUrls}
-                onFallbackMediaType={setMediaType}
-                onFallbackMediaStyle={setMediaStyle}
-              />
-            </div>
-          ) : (
-            <p className="mt-4 text-sm text-[#6f665d]">
-              {t('advertising.form.loginRequired')}{' '}
-              <button
-                type="button"
-                onClick={() => navigateTo('/login')}
-                className="font-semibold text-[#6366f1] hover:underline"
-              >
-                {t('advertising.form.loginBtn')}
-              </button>
-            </p>
-          )}
+          <div className="mt-3 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-2.5 md:p-3">
+            <AdPerSlotMediaEditor
+              hideHeader
+              hidePagePicker
+              selectedSlots={selectedSlots}
+              unavailableSlots={unavailableSlotsMap}
+              onSelectedSlotsChange={user ? handleSlotsChange : undefined}
+              slotMedia={slotMedia}
+              onSlotMediaChange={setSlotMedia}
+              fallbackMediaUrl={mediaUrl}
+              fallbackSlideUrls={slideUrls}
+              fallbackMediaType={mediaType}
+              fallbackMediaStyle={mediaStyle}
+              onFallbackMediaUrl={setMediaUrl}
+              onFallbackSlideUrls={setSlideUrls}
+              onFallbackMediaType={setMediaType}
+              onFallbackMediaStyle={setMediaStyle}
+            />
+            {!user && (
+              <p className="mt-3 text-sm text-[#6f665d]">
+                {t('advertising.form.loginRequired')}{' '}
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/login')}
+                  className="font-semibold text-[#6366f1] hover:underline"
+                >
+                  {t('advertising.form.loginBtn')}
+                </button>
+              </p>
+            )}
+          </div>
         </section>
 
         <section className="mt-6 grid gap-6 xl:grid-cols-[1.12fr_0.88fr]">

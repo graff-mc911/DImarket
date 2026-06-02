@@ -133,7 +133,6 @@ export function AdBanner({
                   slotId={slotId}
                   variant="stack"
                   className={adSlotTailwind.sideStackSlot}
-                  showDescription
                 />
               ) : null}
             </div>
