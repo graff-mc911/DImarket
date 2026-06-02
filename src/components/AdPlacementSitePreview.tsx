@@ -129,12 +129,6 @@ function SlotBox({
     : active && draftMediaUrl
       ? draftMediaUrl
       : null
-  const layoutKey = slotId ? layoutKeyFromSlotId(slotId) : 'center'
-  const slideUrls = previewUrl
-    ? resolveSlideUrls(previewUrl, slotEntry?.mediaStyle)
-    : []
-  const shouldAnimate =
-    slideUrls.length > 1 && slotEntry?.mediaType !== 'video'
 
   const labelBlock = (
     <span className="flex flex-col items-center gap-0.5 leading-tight">
