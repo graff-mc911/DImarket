@@ -13,6 +13,15 @@ export function parseListingLocation(location: string): {
   }
 }
 
+/** City label for cards (first segment of "City, Region, Country"). */
+export function listingCityLabel(location: string | null | undefined): string {
+  if (!location?.trim()) return ''
+  const parsed = parseListingLocation(location)
+  if (parsed?.city) return parsed.city
+  const first = location.split(',')[0]?.trim()
+  return first || location.trim()
+}
+
 export function listingLocationMatches(filter: string, listingLocation: string): boolean {
   const f = filter.trim().toLowerCase()
   if (!f) return true

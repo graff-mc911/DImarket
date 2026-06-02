@@ -496,17 +496,24 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                 {t('listings.loadingRequests')}
               </div>
             ) : filteredListings.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+              <div className="listing-feed overflow-hidden rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.42)] shadow-[0_1px_0_rgba(255,255,255,0.8)_inset]">
                 {filteredListings.map((listing, index) => (
                   <Fragment key={listing.id}>
-                    <ListingCard listing={listing} />
-                    {(index + 1) % 4 === 0 && index < filteredListings.length - 1 && (
-                      <MobileAdBanner
-                        variant="inline"
-                        page="listings"
-                        inlineIndex={((((index + 1) / 4) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
-                        outerClassName="col-span-2 sm:col-span-3 lg:col-span-4 2xl:col-span-5"
-                      />
+                    <ListingCard
+                      listing={listing}
+                      isLast={
+                        index === filteredListings.length - 1 &&
+                        (index + 1) % 6 !== 0
+                      }
+                    />
+                    {(index + 1) % 6 === 0 && index < filteredListings.length - 1 && (
+                      <div className="border-b border-[var(--glass-border)] px-3 py-3 sm:px-4">
+                        <MobileAdBanner
+                          variant="inline"
+                          page="listings"
+                          inlineIndex={((((index + 1) / 6) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
+                        />
+                      </div>
                     )}
                   </Fragment>
                 ))}

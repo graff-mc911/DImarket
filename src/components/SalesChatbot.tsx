@@ -3,6 +3,7 @@ import { Loader2, Send } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { messageDisplayContent } from '../lib/ai/formatBotReply'
 import { useSalesChat } from '../hooks/useSalesChat'
+import { AdWizardChatbot } from './ai/AdWizardChatbot'
 
 type SalesChatbotProps = {
   compact?: boolean
@@ -16,8 +17,13 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
     loading,
     publishing,
     error,
+    adWizardActive,
     sendMessage,
   } = useSalesChat()
+
+  if (adWizardActive) {
+    return <AdWizardChatbot compact={compact} className={className} />
+  }
 
   const [input, setInput] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)

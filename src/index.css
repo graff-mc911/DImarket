@@ -192,6 +192,17 @@
     background-color: var(--bg-canvas);
   }
 
+  /** Вертикальний список оголошень (стиль svoii.biz) */
+  .listing-feed {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .listing-card-row:focus-visible {
+    outline: 2px solid rgba(169, 105, 66, 0.45);
+    outline-offset: -2px;
+  }
+
   /** Fixed side rails + scrollable main (header/footer лишаються з App) */
   .app-page-with-fixed-rails {
     position: relative;

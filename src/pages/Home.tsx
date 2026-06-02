@@ -6,13 +6,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
-  Clock3,
   ClipboardList,
-  MapPin,
   Search,
   ShieldCheck,
   Users,
 } from 'lucide-react'
+import { ListingCard } from '../components/ListingCard'
 import { ProfessionalCard } from '../components/ProfessionalCard'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
@@ -35,7 +34,7 @@ interface PlatformStats {
 }
 
 export function Home() {
-  const { currency, language, t } = useApp()
+  const { language, t } = useApp()
 
   const [categories, setCategories] = useState<Category[]>([])
   const [professionals, setProfessionals] = useState<Profile[]>([])
@@ -130,11 +129,6 @@ export function Home() {
     if (legacyValue !== legacyKey) return legacyValue
 
     return category.name
-  }
-
-  const getListingCategoryName = (job: ListingWithImages) => {
-    if (!job.category) return t('home.unknownCategory')
-    return getCategoryName(job.category)
   }
 
   const displayCategories = useMemo(
@@ -302,19 +296,12 @@ export function Home() {
           {loading ? (
             <LoadingBlock text={t('home.loading')} />
           ) : jobs.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {jobs.map((job) => (
-                <HomeJobCard
+            <div className="listing-feed overflow-hidden rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.42)]">
+              {jobs.map((job, index) => (
+                <ListingCard
                   key={job.id}
-                  job={job}
-                  categoryLabel={getListingCategoryName(job)}
-                  currencySymbol={currency.symbol}
-                  locale={language.code}
-                  budgetLabel={t('home.budgetLabel')}
-                  activeLabel={t('home.activeLabel')}
-                  noBudgetLabel={t('listing.contactForPrice')}
-                  noLocationLabel={t('home.noLocation')}
-                  unknownCategoryLabel={t('home.unknownCategory')}
+                  listing={job}
+                  isLast={index === jobs.length - 1}
                 />
               ))}
             </div>
@@ -442,100 +429,6 @@ function SectionHeader({
         <ArrowRight className="h-4 w-4" />
       </button>
     </div>
-  )
-}
-
-function HomeJobCard({
-  job,
-  categoryLabel,
-  currencySymbol,
-  locale,
-  budgetLabel,
-  activeLabel,
-  noBudgetLabel,
-  noLocationLabel,
-  unknownCategoryLabel,
-}: {
-  job: ListingWithImages
-  categoryLabel: string
-  currencySymbol: string
-  locale: string
-  budgetLabel: string
-  activeLabel: string
-  noBudgetLabel: string
-  noLocationLabel: string
-  unknownCategoryLabel: string
-}) {
-  const createdLabel = new Intl.DateTimeFormat(locale, {
-    day: 'numeric',
-    month: 'short',
-  }).format(new Date(job.created_at))
-
-  const budgetValue = job.price
-    ? `${currencySymbol}${job.price.toLocaleString()}`
-    : noBudgetLabel
-
-  const primaryImage = job.images?.[0]?.image_url || null
-
-  return (
-    <button
-      onClick={() => navigateTo(`/listing/${job.id}`)}
-      type="button"
-      className="glass-card card-hover-lift group w-full min-w-0 overflow-hidden p-5 text-left"
-    >
-      {primaryImage ? (
-        <img
-          src={primaryImage}
-          alt={job.title}
-          className="mb-4 h-44 w-full rounded-[20px] object-cover"
-        />
-      ) : (
-        <div className="mb-4 flex h-44 w-full items-center justify-center rounded-[20px] border border-[var(--glass-border)] bg-[linear-gradient(135deg,rgba(255,248,241,0.72),rgba(244,210,180,0.46))] text-[var(--accent-700)]">
-          <ClipboardList className="h-10 w-10" />
-        </div>
-      )}
-
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <span className="inline-flex rounded-full border border-[var(--glass-border)] bg-[rgba(255,252,248,0.38)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--accent-700)]">
-            {categoryLabel || unknownCategoryLabel}
-          </span>
-
-          <h3 className="mt-4 line-clamp-2 text-[0.98rem] font-bold tracking-[-0.02em] text-[var(--ink-900)] transition group-hover:text-[var(--accent-700)] md:text-[1.02rem]">
-            {job.title}
-          </h3>
-        </div>
-
-        <span className="shrink-0 rounded-full border border-[rgba(111,145,125,0.18)] bg-[rgba(111,145,125,0.08)] px-3 py-1 text-[10px] font-semibold text-[#4d755e]">
-          {activeLabel}
-        </span>
-      </div>
-
-      <p className="muted-text mt-3 line-clamp-3 text-[13px]">
-        {job.description}
-      </p>
-
-      <div className="mt-4 space-y-2 text-[13px] text-[var(--ink-700)]">
-        <div className="flex items-center gap-2">
-          <MapPin className="h-4 w-4 text-[var(--accent-700)]" />
-          <span>{job.location || noLocationLabel}</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Clock3 className="h-4 w-4 text-[var(--accent-700)]" />
-          <span>{createdLabel}</span>
-        </div>
-      </div>
-
-      <div className="mt-5 flex items-center justify-between border-t border-[var(--glass-border)] pt-4">
-        <span className="text-[13px] text-[var(--ink-500)]">
-          {budgetLabel}
-        </span>
-        <span className="text-[15px] font-bold text-[var(--ink-900)]">
-          {budgetValue}
-        </span>
-      </div>
-    </button>
   )
 }
 
