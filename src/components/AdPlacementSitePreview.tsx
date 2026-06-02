@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { ImagePlus, Monitor, Smartphone, Upload, X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
-import { AdMediaDisplay } from './AdMediaDisplay'
 import { formatSlotLabel } from '../lib/adPlacementSlots'
 import { getSlotDefinition } from '../lib/adPlacementCatalog'
 import {
@@ -19,14 +18,12 @@ import {
   type AdSlotContainerSpec,
 } from '../lib/adSlotContainerSpecs'
 import {
-  layoutKeyFromSlotId,
   slotMediaEntryHasMedia,
   type SlotMediaEntry,
   type SlotMediaMap,
 } from '../lib/adSlotMedia'
 import type { TranslationKey } from '../lib/i18n'
 import { wireframeMobileInlineHeightPx, wireframeSlotHeightPx, wireframeWideAspectClass } from '../lib/adSlotDisplay'
-import { resolveSlideUrls } from '../lib/adMediaStyle'
 
 function interpolateTranslation(
   template: string,
@@ -178,21 +175,16 @@ function SlotBox({
 
   const inner = (
     <>
-      {previewUrl && hasSlotMedia ? (
-        <AdMediaDisplay
-          key={previewUrl}
-          src={previewUrl}
-          mediaType={slotEntry!.mediaType}
-          style={slotEntry!.mediaStyle}
-          layoutKey={layoutKey}
-          className="absolute inset-0 h-full w-full"
-          animateSlides={shouldAnimate}
-        />
-      ) : previewUrl ? (
+      {previewUrl ? (
         <img
           src={previewUrl}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover bg-[#1a1816]/80"
+          className="absolute inset-0 z-0 h-full w-full bg-[#1a1816] object-cover"
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.src =
+              'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=80'
+          }}
         />
       ) : active && interactive && !hasSlotMedia ? (
         <span className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 bg-[rgba(238,242,255,0.35)] text-[#6366f1] opacity-80 group-hover:opacity-100">
@@ -587,8 +579,8 @@ export function AdPlacementSitePreview({
             <Monitor className="h-3.5 w-3.5" />
             {t('advertising.slots.desktopTitle')}
           </div>
-          <div className={compact ? 'overflow-x-auto pb-1' : ''}>
-            <div className={compact ? 'min-w-[760px]' : ''}>
+          <div className="overflow-x-auto pb-1">
+            <div className={compact ? 'min-w-[min(100%,760px)]' : 'min-w-0'}>
               <DesktopWireframe
                 group={wireframe}
                 editorLabel={editorLabel}

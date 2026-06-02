@@ -186,6 +186,19 @@ function AdCampaignMedia({
         ? resolved.media_type
         : 'image'
 
+  if (!imageSrc.trim()) {
+    return (
+      <div
+        className={imageClass}
+        style={adaptiveImageStyle}
+      >
+        <div className="flex h-full min-h-[4.5rem] w-full items-center justify-center bg-[linear-gradient(135deg,rgba(71,85,105,0.35),rgba(51,65,85,0.5))]">
+          <Megaphone className="h-5 w-5 text-white/70" />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={imageClass} style={adaptiveImageStyle}>
       <AdMediaDisplay

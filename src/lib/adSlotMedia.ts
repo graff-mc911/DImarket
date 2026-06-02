@@ -129,22 +129,42 @@ export function slotMediaMapFromCampaign(
   return parseSlotMediaMap(campaign.slot_media)
 }
 
+function firstSlotMediaEntry(map: SlotMediaMap): SlotMediaEntry | null {
+  for (const entry of Object.values(map)) {
+    if (slotMediaEntryHasMedia(entry)) return normalizeSlotMediaEntry(entry!)
+  }
+  return null
+}
+
 export function mediaStateFromCampaignAndSlot(
   campaign: AdCampaign & { slot_media?: unknown; media_style?: unknown },
   slotId?: string,
 ): AdCampaignMediaState {
+  const map = parseSlotMediaMap(campaign.slot_media)
+
   if (slotId) {
-    const map = parseSlotMediaMap(campaign.slot_media)
     const entry = map[slotId]
     if (slotMediaEntryHasMedia(entry)) {
+      const norm = normalizeSlotMediaEntry(entry!)
       return {
-        mediaUrl: entry!.slideUrls[0] || entry!.mediaUrl,
-        slideUrls: entry!.slideUrls.length ? entry!.slideUrls : [entry!.mediaUrl],
-        mediaStyle: entry!.mediaStyle,
-        mediaType: entry!.mediaType,
+        mediaUrl: norm.slideUrls[0] || norm.mediaUrl,
+        slideUrls: norm.slideUrls.length ? norm.slideUrls : [norm.mediaUrl],
+        mediaStyle: norm.mediaStyle,
+        mediaType: norm.mediaType,
       }
     }
   }
+
+  const anySlot = firstSlotMediaEntry(map)
+  if (anySlot) {
+    return {
+      mediaUrl: anySlot.slideUrls[0] || anySlot.mediaUrl,
+      slideUrls: anySlot.slideUrls.length ? anySlot.slideUrls : [anySlot.mediaUrl],
+      mediaStyle: anySlot.mediaStyle,
+      mediaType: anySlot.mediaType,
+    }
+  }
+
   return mediaStateFromCampaign(campaign)
 }
 

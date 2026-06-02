@@ -709,7 +709,7 @@ export function Advertising() {
 
   return (
     <div className="py-8 pb-24 lg:pb-8">
-      <div className="w-full min-w-0">
+      <div className="layout-page-content min-w-0">
 
         {/* ===== Hero секція (компактна ~50% висоти) ===== */}
         <section className="glass-panel p-4 md:p-5">
@@ -748,7 +748,7 @@ export function Advertising() {
           </div>
         </section>
 
-        <section id="ad-placements" className={`glass-card mt-6 p-4 md:p-5 ${guideClass('placements')}`}>
+        <section id="ad-placements" className={`glass-card mt-6 min-w-0 overflow-hidden p-4 md:p-5 ${guideClass('placements')}`}>
           <h2 className="text-lg font-extrabold text-[#2f2a24] md:text-xl">
             {t('advertising.placementsSection.title')}
           </h2>

@@ -241,8 +241,8 @@ export function AdPerSlotMediaEditor({
   const isBusy = slotUpload.isUploading
 
   const previewProps = {
-    compact: true as const,
-    hidePageTabs: true as const,
+    compact: !hidePagePicker,
+    hidePageTabs: hidePagePicker,
     selected: selectedSlots,
     unavailableSlots,
     slotMedia: slotMedia,
@@ -312,7 +312,7 @@ export function AdPerSlotMediaEditor({
 
       {hidePagePicker ? (
         <>
-        <div className="min-w-0">
+        <div className="min-w-0 overflow-x-auto pb-1">
           {onSelectedSlotsChange ? (
             <AdPlacementSitePreview {...previewProps} onChange={onSelectedSlotsChange} />
           ) : (
