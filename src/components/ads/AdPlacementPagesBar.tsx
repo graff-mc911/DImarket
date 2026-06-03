@@ -9,14 +9,20 @@ type AdPlacementPagesBarProps = {
   activePage: PlacementEditorPageId
   onPageChange: (page: PlacementEditorPageId) => void
   selectedSlots: string[]
+  /** За замовчуванням — усі сторінки каталогу; для купівлі — лише home / listings / professionals */
+  pageIds?: PlacementEditorPageId[]
 }
 
 export function AdPlacementPagesBar({
   activePage,
   onPageChange,
   selectedSlots,
+  pageIds,
 }: AdPlacementPagesBarProps) {
   const { t } = useApp()
+  const pages = pageIds
+    ? PLACEMENT_EDITOR_PAGES.filter((p) => pageIds.includes(p.id))
+    : PLACEMENT_EDITOR_PAGES
 
   return (
     <div className="rounded-[14px] border border-white/40 bg-white/25 p-3">
@@ -24,7 +30,7 @@ export function AdPlacementPagesBar({
         {t('advertising.places.pagesLabel')}
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
-        {PLACEMENT_EDITOR_PAGES.map((page) => {
+        {pages.map((page) => {
           const count = slotCountForEditorPage(page.id, selectedSlots)
           const active = activePage === page.id
           return (

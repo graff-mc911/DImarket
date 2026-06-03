@@ -755,7 +755,7 @@ export function Advertising() {
           <p className="mt-1 text-xs leading-5 text-[#6f665d]">
             {t('advertising.placementsSection.desc')}
           </p>
-          <div className="mt-3 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-2.5 md:p-3">
+          <div className="mt-3 min-w-0 overflow-x-clip rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-2.5 md:p-3">
             <AdPerSlotMediaEditor
               hideHeader
               hidePagePicker

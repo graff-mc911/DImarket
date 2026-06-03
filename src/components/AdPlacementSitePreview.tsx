@@ -51,6 +51,8 @@ type AdPlacementSitePreviewProps = {
   compact?: boolean
   /** Сторінки перемикаються зовні (AdPlacementPagesBar) */
   hidePageTabs?: boolean
+  /** Компактна схема купівлі (/advertising): вужча сітка, без моб. wireframe на телефоні */
+  purchaseLayout?: boolean
 }
 
 function slotSizeLabels(
@@ -156,7 +158,7 @@ function SlotBox({
         ? ' cursor-not-allowed'
         : ' cursor-pointer hover:brightness-95'
       : '') +
-    ' ' +
+    ' touch-manipulation ' +
     aspectClass +
     ' ' +
     className
@@ -272,6 +274,7 @@ function DesktopWireframe({
   selected,
   unavailableSlots,
   compact,
+  purchaseLayout = false,
   t,
   draftMediaUrl,
   slotMedia,
@@ -287,6 +290,7 @@ function DesktopWireframe({
   selected: string[]
   unavailableSlots: Record<string, string>
   compact: boolean
+  purchaseLayout?: boolean
   t: (key: TranslationKey) => string
   draftMediaUrl?: string | null
   slotMedia?: SlotMediaMap
@@ -338,14 +342,21 @@ function DesktopWireframe({
   }
 
   return (
-    <div className={'rounded-[18px] border border-white/45 bg-[rgba(248,250,252,0.65)] ' + (compact ? 'p-4' : 'p-3')}>
+    <div
+      className={
+        'rounded-[18px] border border-white/45 bg-[rgba(248,250,252,0.65)] ' +
+        (compact ? (purchaseLayout ? 'p-2 sm:p-3 md:p-4' : 'p-4') : 'p-3')
+      }
+    >
       <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#9a8776]">
         {t('advertising.catalog.desktopWire')} · {editorLabel}
       </p>
       <div
         className={
           compact
-            ? 'grid grid-cols-[minmax(128px,176px)_minmax(150px,1.15fr)_minmax(128px,176px)] items-start gap-3.5'
+            ? purchaseLayout
+              ? 'grid w-full max-w-full grid-cols-[minmax(2.75rem,1fr)_minmax(4.25rem,1.35fr)_minmax(2.75rem,1fr)] items-start gap-1.5 sm:grid-cols-[minmax(5.5rem,1fr)_minmax(6.75rem,1.25fr)_minmax(5.5rem,1fr)] sm:gap-2.5 md:grid-cols-[minmax(128px,176px)_minmax(150px,1.15fr)_minmax(128px,176px)] md:gap-3.5'
+              : 'grid grid-cols-[minmax(128px,176px)_minmax(150px,1.15fr)_minmax(128px,176px)] items-start gap-3.5'
             : 'grid grid-cols-[minmax(108px,148px)_minmax(122px,0.98fr)_minmax(108px,148px)] items-start gap-3'
         }
       >
@@ -483,6 +494,7 @@ export function AdPlacementSitePreview({
   onSlotReplaceRequest,
   compact = false,
   hidePageTabs = false,
+  purchaseLayout = false,
 }: AdPlacementSitePreviewProps) {
   const blockedMap = unavailableSlots ?? {}
   const { t } = useApp()
@@ -567,20 +579,30 @@ export function AdPlacementSitePreview({
         <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.catalog.tapToSelect')}</p>
       )}
 
-      <div className={compact ? 'grid gap-3 sm:grid-cols-[1.1fr_0.9fr]' : 'grid gap-4 lg:grid-cols-[1.1fr_0.9fr]'}>
-        <div>
+      <div
+        className={
+          purchaseLayout
+            ? 'grid gap-3 max-lg:grid-cols-1 lg:grid-cols-[1.1fr_0.9fr]'
+            : compact
+              ? 'grid gap-3 sm:grid-cols-[1.1fr_0.9fr]'
+              : 'grid gap-4 lg:grid-cols-[1.1fr_0.9fr]'
+        }
+      >
+        <div className="min-w-0">
           <div className="mb-1.5 flex items-center gap-2 text-[10px] font-bold text-[#5f5a54]">
             <Monitor className="h-3.5 w-3.5" />
             {t('advertising.slots.desktopTitle')}
           </div>
-          <div className="overflow-x-auto pb-1">
-            <div className={compact ? 'min-w-[min(100%,760px)]' : 'min-w-0'}>
+          <div className={purchaseLayout ? 'min-w-0' : 'overflow-x-auto pb-1'}>
+            <div className={compact && !purchaseLayout ? 'min-w-[min(100%,760px)]' : 'w-full min-w-0 max-w-full'}>
               <DesktopWireframe
+                purchaseLayout={purchaseLayout}
                 group={wireframe}
                 editorLabel={editorLabel}
                 selected={selected}
                 unavailableSlots={blockedMap}
                 compact={compact}
+                purchaseLayout={purchaseLayout}
                 t={t}
                 draftMediaUrl={draftMediaUrl}
                 slotMedia={slotMedia}
@@ -594,7 +616,15 @@ export function AdPlacementSitePreview({
             </div>
           </div>
         </div>
-        <div className={compact ? 'sm:max-w-[280px]' : ''}>
+        <div
+          className={
+            purchaseLayout
+              ? 'hidden min-w-0 lg:block lg:max-w-[280px]'
+              : compact
+                ? 'sm:max-w-[280px]'
+                : ''
+          }
+        >
           <div className="mb-1.5 flex items-center gap-2 text-[10px] font-bold text-[#5f5a54]">
             <Smartphone className="h-3.5 w-3.5" />
             {t('advertising.slots.mobileTitle')}
