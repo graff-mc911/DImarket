@@ -349,7 +349,7 @@ export function Header() {
             className="w-full py-1.5"
             style={{ background: style.bg, borderBottom: '1px solid ' + style.border }}
           >
-            <div className="layout-page-gutter">
+            <div className="px-[max(var(--layout-gutter),env(safe-area-inset-left,0px))]">
               <div className="global-announcement-marquee">
                 <div className="global-announcement-marquee__track">
                   {[0, 1].map((dup) => (
@@ -374,14 +374,14 @@ export function Header() {
       })()}
 
       {/* ===== Основна шапка (фіксована) ===== */}
-      <header className="layout-page-gutter w-full pb-2 pt-2">
+      <header className="w-full">
         <div
           className={
-            'w-full rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl ' +
+            'w-full rounded-none border-b border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl ' +
             (mobileMenuOpen ? 'xl:overflow-visible max-xl:flex max-xl:max-h-[100dvh] max-xl:flex-col max-xl:overflow-hidden' : '')
           }
         >
-          <div className="shrink-0 px-3 py-2 md:px-4 md:py-2.5">
+          <div className="shrink-0 px-[max(var(--layout-gutter),env(safe-area-inset-left,0px))] py-2 md:px-[max(1.25rem,var(--layout-gutter))] md:py-2.5">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
 
               {/* Логотип */}
@@ -749,7 +749,7 @@ export function Header() {
 
           {/* Мобільне меню */}
           {mobileMenuOpen && (
-            <div className="min-h-0 shrink-0 px-3 pb-2 pt-3 xl:hidden">
+            <div className="min-h-0 shrink-0 px-[max(var(--layout-gutter),env(safe-area-inset-left,0px))] pb-2 pt-3 xl:hidden">
               <div className="mobile-nav-menu">
                 <div className="mobile-nav-menu__scroll">
                 <div className="mb-3 flex justify-center">
