@@ -49,12 +49,12 @@ const variantStyles: Record<
   }
 > = {
   stack: {
-    shell: 'flex h-full w-full min-h-0 flex-col overflow-hidden',
-    image: 'ad-slot-side__media w-full shrink-0 overflow-hidden',
-    text: 'shrink-0 px-1.5 py-0.5',
+    shell: 'grid h-full w-full min-h-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden',
+    image: 'ad-slot-side__media ad-slot-side__media--stack-flex w-full min-h-0 overflow-hidden',
+    text: 'ad-side-stack-card__text shrink-0 px-1.5 py-1',
     brand: 'text-[9px]',
     title: 'text-[10px] line-clamp-1 leading-tight',
-    meta: 'text-[9px] line-clamp-2 leading-tight',
+    meta: 'text-[10px] line-clamp-2 leading-snug',
   },
   legacy: {
     shell: adSlotTailwind.sideLegacy,
@@ -276,23 +276,25 @@ export function AdOverlayCard({
   )
   const textOnImage = Boolean(slotState.mediaStyle.textOverlay) && !isLeaderboard
   const slotSpec = resolveAdSlotSpec(slotId, variant)
-  const shellStyle: CSSProperties | undefined = slotSpec
-    ? adSlotShellStyle(slotSpec, variant)
-    : undefined
-  const imageStyle: CSSProperties | undefined = slotSpec
-    ? adSlotImageStyle(slotSpec, variant)
-    : undefined
+  const shellStyle: CSSProperties | undefined =
+    slotSpec && variant !== 'stack' ? adSlotShellStyle(slotSpec, variant) : undefined
+  const imageStyle: CSSProperties | undefined =
+    variant === 'stack'
+      ? { width: '100%', height: '100%', minHeight: 0, maxHeight: '100%' }
+      : slotSpec
+        ? adSlotImageStyle(slotSpec, variant)
+        : undefined
 
   return (
     <a
       href={campaign.link_url}
       target="_blank"
       rel="noreferrer sponsored"
-      className={`group flex flex-col overflow-hidden ${adOverlayGlow} ${styles.shell} ${className}`}
+      className={`group overflow-hidden ${adOverlayGlow} ${styles.shell} ${variant !== 'stack' ? 'flex flex-col' : ''} ${className}`}
       style={shellStyle}
       onClick={() => void trackAdClick(campaign.id)}
     >
-      <div className="relative min-h-0 shrink-0">
+      <div className={`relative ${variant === 'stack' ? 'min-h-0 h-full' : 'min-h-0 shrink-0'}`}>
         <AdCampaignMedia
           campaign={campaign}
           slotId={slotId}

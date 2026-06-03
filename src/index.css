@@ -455,6 +455,17 @@
     flex-shrink: 0;
   }
 
+  /** Боковий стек: зображення займає решту висоти ряду, текст — окремий ряд сітки */
+  .ad-slot-side__media.ad-slot-side__media--stack-flex {
+    height: 100%;
+    max-height: 100%;
+    flex-shrink: 1;
+  }
+
+  .ad-side-stack-card__text {
+    min-height: 2.625rem;
+  }
+
   .ad-side-rail--viewport-fixed .ad-side-rail__sticky--fit {
     max-height: calc(100dvh - var(--header-offset));
     overflow: hidden;
