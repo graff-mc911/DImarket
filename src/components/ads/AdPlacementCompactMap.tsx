@@ -51,7 +51,7 @@ function PageWireframeBlock({
   const count = selectedSlots.filter((id) => id.startsWith(`${meta.adPageKey}_`)).length
 
   return (
-    <div className="min-w-0 overflow-hidden rounded-[14px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-2.5">
+    <div className="relative isolate min-w-0 overflow-hidden rounded-[14px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-2.5">
       <div className="mb-2 flex items-baseline justify-between gap-2">
         <p className="text-[11px] font-extrabold text-[#2f2a24]">
           {t(meta.labelKey)}
@@ -80,7 +80,7 @@ function PageWireframeBlock({
   )
 }
 
-/** Компактна схема: на мобільному — одна сторінка з перемикачем; на md+ — Home / Listings / Professionals */
+/** Компактна схема купівлі: перемикач сторінок + одна схема (без дубля на desktop) */
 export function AdPlacementCompactMap({
   selectedSlots,
   unavailableSlots,
@@ -92,14 +92,14 @@ export function AdPlacementCompactMap({
   onSlotUploadRequest,
   onSlotReplaceRequest,
 }: AdPlacementCompactMapProps) {
-  const [mobilePage, setMobilePage] = useState<PlacementEditorPageId>('home')
+  const [activePage, setActivePage] = useState<PlacementEditorPageId>('home')
 
   useEffect(() => {
-    if (focusedSlotId) setMobilePage(editorPageFromSlotId(focusedSlotId))
+    if (focusedSlotId) setActivePage(editorPageFromSlotId(focusedSlotId))
   }, [focusedSlotId])
 
   const handleFocusSlot = (slotId: string | null) => {
-    if (slotId) setMobilePage(editorPageFromSlotId(slotId))
+    if (slotId) setActivePage(editorPageFromSlotId(slotId))
     onFocusSlot?.(slotId)
   }
 
@@ -116,24 +116,14 @@ export function AdPlacementCompactMap({
   }
 
   return (
-    <div className="min-w-0 space-y-2.5">
-      <div className="min-w-0 md:hidden">
-        <AdPlacementPagesBar
-          activePage={mobilePage}
-          onPageChange={setMobilePage}
-          selectedSlots={selectedSlots}
-          pageIds={PURCHASE_EDITOR_PAGES}
-        />
-        <div className="mt-2">
-          <PageWireframeBlock pageId={mobilePage} {...shared} />
-        </div>
-      </div>
-
-      <div className="hidden min-w-0 space-y-2.5 md:block">
-        {PURCHASE_EDITOR_PAGES.map((pageId) => (
-          <PageWireframeBlock key={pageId} pageId={pageId} {...shared} />
-        ))}
-      </div>
+    <div className="relative isolate min-w-0 space-y-2.5">
+      <AdPlacementPagesBar
+        activePage={activePage}
+        onPageChange={setActivePage}
+        selectedSlots={selectedSlots}
+        pageIds={PURCHASE_EDITOR_PAGES}
+      />
+      <PageWireframeBlock pageId={activePage} {...shared} />
     </div>
   )
 }

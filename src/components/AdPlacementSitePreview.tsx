@@ -582,7 +582,7 @@ export function AdPlacementSitePreview({
       <div
         className={
           purchaseLayout
-            ? 'grid gap-3 max-lg:grid-cols-1 lg:grid-cols-[1.1fr_0.9fr]'
+            ? 'flex min-w-0 flex-col gap-3'
             : compact
               ? 'grid gap-3 sm:grid-cols-[1.1fr_0.9fr]'
               : 'grid gap-4 lg:grid-cols-[1.1fr_0.9fr]'
@@ -593,7 +593,7 @@ export function AdPlacementSitePreview({
             <Monitor className="h-3.5 w-3.5" />
             {t('advertising.slots.desktopTitle')}
           </div>
-          <div className={purchaseLayout ? 'min-w-0' : 'overflow-x-auto pb-1'}>
+          <div className={purchaseLayout ? 'min-w-0 overflow-x-auto pb-1' : 'overflow-x-auto pb-1'}>
             <div className={compact && !purchaseLayout ? 'min-w-[min(100%,760px)]' : 'w-full min-w-0 max-w-full'}>
               <DesktopWireframe
                 group={wireframe}
@@ -618,7 +618,7 @@ export function AdPlacementSitePreview({
         <div
           className={
             purchaseLayout
-              ? 'hidden min-w-0 lg:block lg:max-w-[280px]'
+              ? 'min-w-0 max-w-full lg:max-w-[320px]'
               : compact
                 ? 'sm:max-w-[280px]'
                 : ''
