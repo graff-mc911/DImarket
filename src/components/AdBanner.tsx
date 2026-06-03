@@ -112,7 +112,9 @@ export function AdBanner({
     }
   }, [loading, stackCount, stackCampaigns, primaryCampaign, secondaryCampaign])
 
-  if (loading) return null
+  const hasStackMedia = stackCount && stackCount >= 2 && stackCampaigns.some(Boolean)
+
+  if (loading && !hasStackMedia && !primaryCampaign && !secondaryCampaign) return null
 
   if (stackCount && stackCount >= 2) {
     if (!stackCampaigns.some(Boolean)) return null

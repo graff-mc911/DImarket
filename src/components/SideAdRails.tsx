@@ -61,23 +61,28 @@ export function SideAdRailsLayout({ children }: SideAdRailsLayoutProps) {
   const lockedStacksRef = useRef<ReturnType<typeof pickSideStacksForPageWithFallback> | null>(null)
 
   const sideStacks = useMemo(() => {
-    if (loading) return lockedStacksRef.current ?? emptySideStacks()
-
-    if (lockedStacksRef.current && sideStacksHaveMedia(lockedStacksRef.current)) {
+    if (loading && lockedStacksRef.current && sideStacksHaveMedia(lockedStacksRef.current)) {
       return lockedStacksRef.current
     }
+    if (loading) return emptySideStacks()
 
     const next = pickSideStacksForPageWithFallback(
       sideCampaigns,
       SIDE_STACK_COUNT,
       PERSISTENT_SIDE_PAGE,
     )
-    lockedStacksRef.current = next
-    return next
+    if (sideStacksHaveMedia(next)) {
+      lockedStacksRef.current = next
+    }
+    return sideStacksHaveMedia(next)
+      ? next
+      : lockedStacksRef.current && sideStacksHaveMedia(lockedStacksRef.current)
+        ? lockedStacksRef.current
+        : next
   }, [sideCampaigns, loading])
 
-  const hasLeftRail = !loading && sideStacks.left.some(Boolean)
-  const hasRightRail = !loading && sideStacks.right.some(Boolean)
+  const hasLeftRail = sideStacks.left.some(Boolean)
+  const hasRightRail = sideStacks.right.some(Boolean)
 
   return (
     <div className="layout-with-side-ads flex-1">

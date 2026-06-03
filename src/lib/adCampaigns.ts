@@ -259,6 +259,19 @@ function fillSideStack(
     out[i] = pickCampaignForSlot(legacyPool, slotId)
   }
 
+  /** Якщо є хоча б одна кампанія з боковими слотами — заповнити порожні ряди (один рекламодавець на всі R/L) */
+  const sidePool = all.filter((c) =>
+    getCampaignPlacements(c).some((p) => p.includes('_side_') || p === 'sidebar'),
+  )
+  const filler =
+    sidePool.find((c) => getCampaignPlacements(c).some((p) => p.startsWith(`${pageKey}_side_`))) ??
+    sidePool[0]
+  if (filler) {
+    for (let i = 0; i < count; i++) {
+      if (!out[i]) out[i] = filler
+    }
+  }
+
   return out
 }
 
@@ -484,7 +497,7 @@ export async function fetchPaidAdCampaigns(
     (c) => !isDemoAdCampaign(c),
   )
 
-  const visible = rows.filter(isPaidCampaign)
+  const visible = rows.filter((c) => isPaidCampaign(c) && isCampaignInSchedule(c))
 
   const filtered =
     slots.length === 0
