@@ -54,7 +54,7 @@ const variantStyles: Record<
     text: 'shrink-0 px-1.5 py-0.5',
     brand: 'text-[9px]',
     title: 'text-[10px] line-clamp-1 leading-tight',
-    meta: 'text-[9px] line-clamp-1 leading-tight',
+    meta: 'text-[9px] line-clamp-2 leading-tight',
   },
   legacy: {
     shell: adSlotTailwind.sideLegacy,
@@ -258,7 +258,7 @@ export function AdOverlayCard({
   campaign,
   variant,
   className = '',
-  showDescription = false,
+  showDescription = variant === 'stack',
   showGeo = false,
   imageOnly = false,
   slotId,

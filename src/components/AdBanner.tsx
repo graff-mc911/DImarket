@@ -132,6 +132,7 @@ export function AdBanner({
                   campaign={campaign}
                   slotId={slotId}
                   variant="stack"
+                  showDescription
                   className={adSlotTailwind.sideStackSlot}
                 />
               ) : null}

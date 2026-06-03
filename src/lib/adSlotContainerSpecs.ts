@@ -37,7 +37,8 @@ export function adSideStackRowHeightPx(railWidthPx = AD_SIDE_RAIL_WIDTH_PX.xl): 
 
 const sideRowH = adSideStackRowHeightPx()
 const sideRailW = AD_SIDE_RAIL_WIDTH_PX.xl
-const sideImageH = Math.max(96, sideRowH - 36)
+/** ~56px під бренд + заголовок + опис (2 рядки) */
+const sideImageH = Math.max(88, sideRowH - 56)
 
 const SIDE_SPEC: AdSlotContainerSpec = {
   zone: 'side_left',
