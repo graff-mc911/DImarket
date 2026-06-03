@@ -596,7 +596,6 @@ export function AdPlacementSitePreview({
           <div className={purchaseLayout ? 'min-w-0' : 'overflow-x-auto pb-1'}>
             <div className={compact && !purchaseLayout ? 'min-w-[min(100%,760px)]' : 'w-full min-w-0 max-w-full'}>
               <DesktopWireframe
-                purchaseLayout={purchaseLayout}
                 group={wireframe}
                 editorLabel={editorLabel}
                 selected={selected}
