@@ -463,7 +463,13 @@
   }
 
   .ad-side-stack-card__text {
-    min-height: 2.625rem;
+    min-height: 1.3125rem;
+  }
+
+  .ad-side-stack-desc {
+    margin-top: 0.0625rem;
+    max-height: 1.15em;
+    overflow: hidden;
   }
 
   .ad-side-rail--viewport-fixed .ad-side-rail__sticky--fit {

@@ -46,15 +46,17 @@ const variantStyles: Record<
     brand: string
     title: string
     meta: string
+    textInner?: string
   }
 > = {
   stack: {
     shell: 'grid h-full w-full min-h-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden',
     image: 'ad-slot-side__media ad-slot-side__media--stack-flex w-full min-h-0 overflow-hidden',
-    text: 'ad-side-stack-card__text shrink-0 px-1.5 py-1',
-    brand: 'text-[9px]',
-    title: 'text-[10px] line-clamp-1 leading-tight',
-    meta: 'text-[10px] line-clamp-2 leading-snug',
+    text: 'ad-side-stack-card__text shrink-0 px-1.5 py-0.5',
+    textInner: 'space-y-0 leading-[1.15]',
+    brand: 'text-[8px] leading-none',
+    title: 'text-[9px] line-clamp-1 leading-[1.1]',
+    meta: 'ad-side-stack-desc text-[9px] line-clamp-1 leading-[1.15]',
   },
   legacy: {
     shell: adSlotTailwind.sideLegacy,
@@ -230,7 +232,7 @@ function AdTextContent({
   const desc = description?.trim()
 
   return (
-    <div className="space-y-0.5 leading-tight">
+    <div className={styles.textInner ?? 'space-y-0.5 leading-tight'}>
       {brand && (
         <p className={`font-bold uppercase tracking-[0.08em] text-[var(--ink-500)] ${styles.brand}`}>
           {brand}
