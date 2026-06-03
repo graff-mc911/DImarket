@@ -4,11 +4,11 @@
  */
 export const AD_SIDE_STACK_ROWS = 4
 
-/** Ширина бокової колонки (px), +15% від 200 / 216 / 252 */
+/** Ширина бокової колонки (px), +20% до попередніх 230 / 248 / 290 */
 export const AD_SIDE_RAIL_WIDTH_PX = {
-  lg: 230,
-  xl: 248,
-  '2xl': 290,
+  lg: 276,
+  xl: 298,
+  '2xl': 348,
 } as const
 
 /** Відступ між 4 боковими блоками = відступ від країв колонки (px) */
@@ -30,7 +30,7 @@ export const AD_SIDE_RAIL_STICKY_STACK_CLASS =
 /** 4 ряди фіксованої висоти (--ad-side-slot-h з adSlotCssVars) */
 export const AD_SIDE_STACK_GRID_CLASS = 'ad-side-stack-grid box-border grid w-full gap-2 p-2'
 
-/** Комірка сітки = containerH на схемі (248×{h}) */
+/** Комірка сітки = containerH на схемі (298×{h}) */
 export const AD_SIDE_STACK_CELL_CLASS = 'ad-side-stack-cell min-w-0 w-full overflow-hidden'
 
 /** Класичний боковий банер (legacy) */

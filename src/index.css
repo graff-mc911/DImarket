@@ -27,9 +27,9 @@
     --accent-500: #c78a60;
     --accent-soft: rgba(169, 105, 66, 0.08);
     --mint-soft: rgba(111, 145, 125, 0.1);
-    /* бокові реклами: +15% до колишніх 200/216/252px; gutter = відступ від краю екрана = між колонками */
-    --ad-side-rail-width: 14.375rem;
-    --layout-side-rail-inset: min(var(--ad-side-rail-width), 14vw);
+    /* бокові реклами: 276 / 298 / 348px; gutter = відступ від краю екрана = між колонками */
+    --ad-side-rail-width: 17.25rem;
+    --layout-side-rail-inset: min(var(--ad-side-rail-width), 16.8vw);
     --layout-side-rail-col: var(--layout-side-rail-inset);
     --layout-page-pad-inline: calc(var(--layout-side-rail-col) + var(--layout-gutter));
     --layout-content-max: 80rem;
@@ -78,13 +78,13 @@
   @media (min-width: 80rem) {
     :root {
       --layout-gutter: 1.5rem;
-      --ad-side-rail-width: 15.5rem;
+      --ad-side-rail-width: 18.6rem;
     }
   }
 
   @media (min-width: 96rem) {
     :root {
-      --ad-side-rail-width: 18.125rem;
+      --ad-side-rail-width: 21.75rem;
     }
   }
 
@@ -241,7 +241,7 @@
       top: var(--header-offset);
       bottom: 0;
       pointer-events: auto;
-      --layout-rail-w: min(var(--ad-side-rail-width), 14vw);
+      --layout-rail-w: min(var(--ad-side-rail-width), 16.8vw);
       /* Як у .app-page-main + .layout-page-content (без подвійного gutter) */
       --layout-pad-left: max(var(--layout-page-pad-inline), env(safe-area-inset-left, 0px));
       --layout-pad-right: max(var(--layout-page-pad-inline), env(safe-area-inset-right, 0px));
@@ -282,9 +282,9 @@
   @media (min-width: 80rem) {
     .layout-with-side-ads {
       grid-template-columns:
-        minmax(0, min(var(--ad-side-rail-width), 12vw))
+        minmax(0, min(var(--ad-side-rail-width), 14.4vw))
         minmax(0, 1fr)
-        minmax(0, min(var(--ad-side-rail-width), 12vw));
+        minmax(0, min(var(--ad-side-rail-width), 14.4vw));
     }
   }
 
@@ -358,8 +358,8 @@
 
     /* Після .ad-side-rail { width:100% } — інакше fixed-рейки на body розтягуються на весь екран */
     .ad-side-rail.ad-side-rail--viewport-fixed {
-      width: var(--layout-rail-w, min(var(--ad-side-rail-width), 14vw));
-      max-width: var(--layout-rail-w, min(var(--ad-side-rail-width), 14vw));
+      width: var(--layout-rail-w, min(var(--ad-side-rail-width), 16.8vw));
+      max-width: var(--layout-rail-w, min(var(--ad-side-rail-width), 16.8vw));
       flex-shrink: 0;
       box-sizing: border-box;
       overflow: hidden;

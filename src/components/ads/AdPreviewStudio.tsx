@@ -23,9 +23,7 @@ import {
   type AdMediaStyle,
   type AdSlideshowTransition,
 } from '../../lib/adMediaStyle'
-import {
-  wireframeSlotFileSizeShort,
-} from '../../lib/adSlotContainerSpecs'
+import { wireframeSlotFileSizeShort } from '../../lib/adSlotContainerSpecs'
 import { containerSpecForOverlayVariant } from '../../lib/adSlotDisplay'
 import {
   slotMediaEntryHasMedia,
@@ -77,7 +75,7 @@ function collectSlideUrls(
 function previewMaxWidthClass(layout: AdBannerLayoutKey): string {
   switch (layout) {
     case 'side':
-      return 'mx-auto w-full max-w-[248px]'
+      return 'mx-auto w-full max-w-[298px]'
     case 'center':
       return 'mx-auto w-full max-w-[720px]'
     case 'leaderboard':
