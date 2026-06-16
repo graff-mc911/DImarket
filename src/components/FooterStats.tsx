@@ -16,6 +16,7 @@ interface FooterStatsData {
   total_listings_created: number
   total_successful_listings: number
   total_professionals: number
+  countries_count: number
   country_ranking: CountryRankingItem[]
   updated_at: string | null
 }
@@ -25,8 +26,26 @@ const EMPTY_STATS: FooterStatsData = {
   total_listings_created: 0,
   total_successful_listings: 0,
   total_professionals: 0,
+  countries_count: 0,
   country_ranking: [],
   updated_at: null,
+}
+
+function normalizeCountryRanking(raw: unknown): CountryRankingItem[] {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .map((item) => {
+      if (!item || typeof item !== 'object') return null
+      const row = item as Record<string, unknown>
+      return {
+        country: String(row.country ?? '').trim(),
+        score: Number(row.score ?? 0),
+        professionals: Number(row.professionals ?? 0),
+        listings: Number(row.listings ?? 0),
+        responses: Number(row.responses ?? 0),
+      }
+    })
+    .filter((item): item is CountryRankingItem => Boolean(item?.country))
 }
 
 const localeMap: Record<string, string> = {
@@ -86,21 +105,21 @@ export function FooterStats({ compact = false }: { compact?: boolean }) {
 
       if (!rpcError && publicStats && typeof publicStats === 'object') {
         const row = publicStats as Record<string, unknown>
-        const { data: cached } = await supabase
-          .from('app_site_stats')
-          .select('country_ranking, updated_at')
-          .eq('id', 1)
-          .maybeSingle()
+        const countryRanking = normalizeCountryRanking(row.country_ranking)
 
         setStats({
           total_visits: Number(row.total_visits ?? 0),
           total_listings_created: Number(row.total_listings_created ?? 0),
           total_successful_listings: Number(row.total_successful_listings ?? 0),
           total_professionals: Number(row.total_professionals ?? 0),
-          country_ranking: Array.isArray(cached?.country_ranking)
-            ? cached.country_ranking
-            : [],
-          updated_at: cached?.updated_at ?? null,
+          countries_count: Number(
+            row.countries_count ?? countryRanking.length ?? 0,
+          ),
+          country_ranking: countryRanking,
+          updated_at:
+            typeof row.updated_at === 'string'
+              ? row.updated_at
+              : null,
         })
         return
       }
@@ -137,12 +156,15 @@ export function FooterStats({ compact = false }: { compact?: boolean }) {
         return
       }
 
+      const countryRanking = normalizeCountryRanking(data.country_ranking)
+
       setStats({
         total_visits: data.total_visits || 0,
         total_listings_created: data.total_listings_created || 0,
         total_successful_listings: data.total_successful_listings || 0,
         total_professionals: liveProfessionals ?? data.total_professionals ?? 0,
-        country_ranking: Array.isArray(data.country_ranking) ? data.country_ranking : [],
+        countries_count: countryRanking.length,
+        country_ranking: countryRanking,
         updated_at: data.updated_at || null,
       })
     } catch (error) {
@@ -186,7 +208,7 @@ export function FooterStats({ compact = false }: { compact?: boolean }) {
     {
       icon: Globe2,
       label: t('footerStats.countries'),
-      value: stats.country_ranking.length,
+      value: stats.countries_count || stats.country_ranking.length,
       color: 'text-indigo-600',
     },
   ]
