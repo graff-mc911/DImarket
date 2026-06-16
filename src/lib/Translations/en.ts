@@ -270,6 +270,9 @@ export const enTranslations = {
   'professional.global': 'Global',
   'professional.profileInProgress':
     'Construction professional profile is being completed.',
+  'professional.activityNotSpecified': 'Primary trade not specified',
+  'professional.activityLabel': 'Activity',
+  'professional.companyBadge': 'Company',
 
   // Створення оголошення: форма запиту, локація, контакти, фото, статуси.
   'createAd.title': 'Create a construction job request',

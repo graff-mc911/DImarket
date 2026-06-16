@@ -272,6 +272,9 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'professional.global': 'Глобально',
   'professional.profileInProgress':
     'Профіль будівельного майстра ще наповнюється.',
+  'professional.activityNotSpecified': 'Вид діяльності не вказано',
+  'professional.activityLabel': 'Вид діяльності',
+  'professional.companyBadge': 'Компанія',
 
   // Create Ad
   'createAd.title': 'Створити будівельний запит на роботу',

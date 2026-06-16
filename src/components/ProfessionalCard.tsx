@@ -6,6 +6,13 @@ import {
   categorySlugForSubcategory,
   formatSubcategoriesSummary,
 } from '../lib/categoryCatalog'
+import {
+  formatProfessionalCardTitle,
+  isCompanyProfile,
+  isGenericPlaceholderBio,
+  resolvePrimaryActivityLabels,
+  resolveProfessionalActivityLine,
+} from '../lib/professionalDisplay'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -44,32 +51,55 @@ export function ProfessionalCard({
     return t(key as never)
   }
 
+  const translateCategory = (category: Category) => {
+    const newKey = `category.name.${category.slug}`
+    const newValue = translateUnsafe(newKey)
+    if (newValue !== newKey) return newValue
+
+    const legacyKey = `category.${category.slug}`
+    const legacyValue = translateUnsafe(legacyKey)
+    if (legacyValue !== legacyKey) return legacyValue
+
+    return category.name
+  }
+
   const skills = (professional.professional_categories || [])
     .map((item) => {
       const category = item.category
-
-      if (!category) {
-        return null
-      }
-
-      const newKey = `category.name.${category.slug}`
-      const newValue = translateUnsafe(newKey)
-
-      if (newValue !== newKey) {
-        return newValue
-      }
-
-      const legacyKey = `category.${category.slug}`
-      const legacyValue = translateUnsafe(legacyKey)
-
-      if (legacyValue !== legacyKey) {
-        return legacyValue
-      }
-
-      return category.name
+      if (!category) return null
+      return translateCategory(category)
     })
     .filter(Boolean)
     .slice(0, compact ? 2 : 3) as string[]
+
+  const displayName = formatProfessionalCardTitle(
+    professional,
+    t('professional.defaultName'),
+  )
+  const isCompany = isCompanyProfile(professional)
+  const primaryActivities = resolvePrimaryActivityLabels(
+    professional,
+    language.code,
+    translateCategory,
+    compact ? 2 : 3,
+  )
+  const rawActivityLine = resolveProfessionalActivityLine(
+    professional,
+    language.code,
+    translateCategory,
+    '',
+    compact ? 2 : 4,
+  )
+  const hasSpecifiedActivity = primaryActivities.length > 0 || Boolean(rawActivityLine)
+  const activityLine =
+    primaryActivities.length > 0
+      ? primaryActivities.join(' · ')
+      : rawActivityLine || t('professional.activityNotSpecified')
+  const showCompactBio =
+    compact &&
+    !hasSpecifiedActivity &&
+    Boolean(professional.bio?.trim()) &&
+    !isGenericPlaceholderBio(professional.bio)
 
   const workSlugs = professional.work_subcategory_slugs ?? []
   const workCatSlug =
@@ -112,11 +142,11 @@ export function ProfessionalCard({
           {avatarUrl ? (
             <img
               src={avatarUrl}
-              alt={professional.full_name || t('professional.defaultName')}
+              alt={displayName}
               className={avatarClass}
             />
           ) : (
-            <div className={avatarFallbackClass}>{getInitials(professional.full_name)}</div>
+            <div className={avatarFallbackClass}>{getInitials(displayName)}</div>
           )}
 
           <div className="min-w-0 flex-1">
@@ -128,16 +158,63 @@ export function ProfessionalCard({
               }
             >
               <div className="min-w-0">
-                <div className="flex min-w-0 items-center gap-1">
-                  <h3
-                    className={
-                      compact
-                        ? 'pro-card__name truncate font-bold text-[var(--ink-900)]'
-                        : 'truncate text-xl font-extrabold text-[#2f2a24]'
-                    }
-                  >
-                    {professional.full_name || t('professional.defaultName')}
-                  </h3>
+                <div className="flex min-w-0 items-start gap-1">
+                  <div className="min-w-0 flex-1">
+                    {isCompany && (
+                      <span className="pro-card__role-badge mb-0.5 inline-block rounded-full bg-[rgba(169,105,66,0.12)] px-1.5 py-px text-[0.5625rem] font-bold uppercase tracking-wide text-[var(--accent-700)]">
+                        {t('professional.companyBadge')}
+                      </span>
+                    )}
+                    <h3
+                      className={
+                        compact
+                          ? 'pro-card__name font-bold text-[var(--ink-900)]'
+                          : 'truncate text-xl font-extrabold text-[#2f2a24]'
+                      }
+                      title={displayName}
+                    >
+                      {displayName}
+                    </h3>
+                    {compact && (
+                      <p className="pro-card__activity-label mt-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--ink-500)]">
+                        {t('professional.activityLabel')}
+                      </p>
+                    )}
+                    {!(compact && primaryActivities.length > 0) && (
+                      <p
+                        className={
+                          compact
+                            ? `pro-card__activity font-semibold ${
+                                hasSpecifiedActivity
+                                  ? 'text-[var(--accent-700)]'
+                                  : 'text-[var(--ink-500)] italic'
+                              }`
+                            : `mt-1 text-sm font-semibold leading-snug ${
+                                hasSpecifiedActivity
+                                  ? 'text-[var(--accent-700)]'
+                                  : 'text-[var(--ink-500)]'
+                              }`
+                        }
+                        title={activityLine}
+                      >
+                        {hasSpecifiedActivity
+                          ? activityLine
+                          : t('professional.activityNotSpecified')}
+                      </p>
+                    )}
+                    {compact && primaryActivities.length > 0 && (
+                      <div className="pro-card__tags mt-1 flex flex-wrap gap-1">
+                        {primaryActivities.map((label) => (
+                          <span
+                            key={`${professional.id}-${label}`}
+                            className="pro-card__chip rounded-full bg-[rgba(169,105,66,0.12)] font-semibold text-[var(--accent-700)]"
+                          >
+                            {label}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
                   {showStatusBadges && isVerified && (
                     <ShieldCheck
@@ -210,35 +287,17 @@ export function ProfessionalCard({
         </div>
       )}
 
-      {compact && (skills.length > 0 || workTypesSummary) && (
-        <div className="pro-card__tags flex flex-wrap">
-          {skills.map((skill) => (
-            <span
-              key={`${professional.id}-${skill}`}
-              className="pro-card__chip rounded-full bg-[rgba(242,171,116,0.16)] font-semibold text-[#9a5525]"
-            >
-              {skill}
-            </span>
-          ))}
-          {workTypesSummary && (
-            <span className="pro-card__chip rounded-full bg-[rgba(99,102,241,0.12)] font-semibold text-[#4338ca]">
-              {workTypesSummary}
-            </span>
-          )}
-        </div>
+      {compact && showCompactBio && (
+        <p className="pro-card__bio muted-text line-clamp-2">{professional.bio}</p>
       )}
 
-      <p
-        className={
-          compact
-            ? 'pro-card__bio muted-text line-clamp-2'
-            : 'mt-4 line-clamp-4 text-sm leading-6 text-[#6f665d]'
-        }
-      >
-        {professional.bio ||
-          emptyBioLabel ||
-          t('professional.profileInProgress')}
-      </p>
+      {!compact && (
+        <p className="mt-4 line-clamp-4 text-sm leading-6 text-[#6f665d]">
+          {professional.bio ||
+            emptyBioLabel ||
+            t('professional.profileInProgress')}
+        </p>
+      )}
 
       <div
         className={
