@@ -4,6 +4,7 @@ import { AdOverlayCard } from './AdOverlayCard'
 import { sideSlotIdsForPage } from '../lib/adPlacementCatalog'
 import {
   pickCampaignsForSideStack,
+  campaignRendersInSlot,
   trackAdImpression,
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
@@ -105,19 +106,43 @@ export function AdBanner({
     if (loading) return
     const toTrack =
       stackCount && stackCount >= 2
-        ? stackCampaigns.filter(Boolean)
+        ? stackCampaigns.filter(
+            (c, index) =>
+              c &&
+              campaignRendersInSlot(
+                c,
+                sideSlotId(pageKey, position, (index + 1) as SideIndex),
+              ),
+          )
         : [primaryCampaign, secondaryCampaign].filter(Boolean)
     for (const c of toTrack) {
       if (c) void trackAdImpression(c.id)
     }
   }, [loading, stackCount, stackCampaigns, primaryCampaign, secondaryCampaign])
 
-  const hasStackMedia = stackCount && stackCount >= 2 && stackCampaigns.some(Boolean)
+  const hasStackMedia =
+    stackCount &&
+    stackCount >= 2 &&
+    stackCampaigns.some((campaign, index) =>
+      campaign
+        ? campaignRendersInSlot(
+            campaign,
+            sideSlotId(pageKey, position, (index + 1) as SideIndex),
+          )
+        : false,
+    )
 
   if (loading && !hasStackMedia && !primaryCampaign && !secondaryCampaign) return null
 
   if (stackCount && stackCount >= 2) {
-    if (!stackCampaigns.some(Boolean)) return null
+    if (!stackCampaigns.some((campaign, index) =>
+      campaign
+        ? campaignRendersInSlot(
+            campaign,
+            sideSlotId(pageKey, position, (index + 1) as SideIndex),
+          )
+        : false,
+    )) return null
 
     return (
       <SideRailFrame position={position} sticky={sticky} fixedViewport={fixedViewport} fillViewport>
@@ -129,7 +154,7 @@ export function AdBanner({
               key={campaign ? `${campaign.id}-${index}` : `empty-${index}`}
               className={AD_SIDE_STACK_CELL_CLASS}
             >
-              {campaign ? (
+              {campaign && campaignRendersInSlot(campaign, slotId) ? (
                 <AdOverlayCard
                   campaign={campaign}
                   slotId={slotId}

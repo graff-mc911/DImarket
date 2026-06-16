@@ -3,9 +3,11 @@ import { AdBanner } from './AdBanner'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import {
   pickSideStacksForPageWithFallback,
+  campaignRendersInSlot,
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
 import { sideSlotIdsForPage } from '../lib/adPlacementCatalog'
+import { sideSlotId, type SideIndex } from '../lib/adPlacementSlots'
 
 const SIDE_STACK_COUNT = 4
 /** Один набір слотів/креативів для всіх маршрутів — без «стрибків» між сторінками */
@@ -38,7 +40,18 @@ function sideStacksHaveMedia(stacks: {
   left: (AdCampaignWithAdvertiser | null)[]
   right: (AdCampaignWithAdvertiser | null)[]
 }): boolean {
-  return [...stacks.left, ...stacks.right].some(Boolean)
+  const page = PERSISTENT_SIDE_PAGE
+  const left = stacks.left.some(
+    (campaign, index) =>
+      campaign &&
+      campaignRendersInSlot(campaign, sideSlotId(page, 'left', (index + 1) as SideIndex)),
+  )
+  const right = stacks.right.some(
+    (campaign, index) =>
+      campaign &&
+      campaignRendersInSlot(campaign, sideSlotId(page, 'right', (index + 1) as SideIndex)),
+  )
+  return left || right
 }
 
 function EmptySideRail({ position }: { position: 'left' | 'right' }) {

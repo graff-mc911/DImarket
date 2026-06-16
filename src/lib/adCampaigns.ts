@@ -68,6 +68,42 @@ const SLOT_FALLBACKS: Partial<Record<AdPlacement, AdPlacement[]>> = {
   footer: ['footer', 'sidebar', 'home', 'listings'],
 }
 
+/** Кампанія призначена саме для цього слота (exact ID або легасі-тег, без «чужих» зон). */
+export function campaignOwnsSlot(campaign: AdCampaign, slotId: string): boolean {
+  const placements = getCampaignPlacements(campaign)
+  if (placements.includes(slotId)) return true
+  if (campaignUsesGranularPlacements(campaign)) return false
+  return campaignMatchesSlot(campaign, slotId)
+}
+
+function slotMediaEntryUrl(entry: unknown): string {
+  if (!entry || typeof entry !== 'object') return ''
+  const o = entry as Record<string, unknown>
+  const mediaUrl = String(o.mediaUrl ?? '').trim()
+  const slides = Array.isArray(o.slideUrls)
+    ? o.slideUrls.map(String).filter(Boolean)
+    : []
+  return slides[0] || mediaUrl
+}
+
+/** Чи є у кампанії креатив саме для цього слота (без підміни з інших банерів). */
+export function campaignRendersInSlot(campaign: AdCampaign, slotId: string): boolean {
+  if (!campaignOwnsSlot(campaign, slotId)) return false
+
+  const raw = campaign.slot_media
+  if (!raw || typeof raw !== 'object') {
+    return Boolean(campaign.image_url?.trim() || campaign.media_url?.trim())
+  }
+
+  const map = raw as Record<string, unknown>
+  const granularKeys = Object.keys(map).filter((key) => slotMediaEntryUrl(map[key]))
+  if (granularKeys.length === 0) {
+    return Boolean(campaign.image_url?.trim() || campaign.media_url?.trim())
+  }
+
+  return Boolean(slotMediaEntryUrl(map[slotId]))
+}
+
 export function campaignMatchesSlot(campaign: AdCampaign, slot: AdPlacement | string): boolean {
   const placements = getCampaignPlacements(campaign)
   if (placements.includes(slot)) return true
@@ -187,18 +223,25 @@ export function getCampaignMediaType(campaign: AdCampaign): 'image' | 'gif' | 'v
 
 export function getCampaignPosterUrl(
   campaign: AdCampaign & { slot_media?: unknown },
+  slotId?: string,
 ): string {
   const slotMap = campaign.slot_media
   if (slotMap && typeof slotMap === 'object') {
-    for (const val of Object.values(slotMap as Record<string, unknown>)) {
-      if (!val || typeof val !== 'object') continue
-      const o = val as Record<string, unknown>
-      const url = String(o.mediaUrl ?? '').trim()
-      const slides = Array.isArray(o.slideUrls)
-        ? o.slideUrls.map(String).filter(Boolean)
-        : []
-      const pick = slides[0] || url
+    const map = slotMap as Record<string, unknown>
+    const granularKeys = Object.keys(map).filter((key) => slotMediaEntryUrl(map[key]))
+
+    if (slotId) {
+      const pick = slotMediaEntryUrl(map[slotId])
       if (pick) return pick
+      if (granularKeys.length > 0) {
+        if (!campaignOwnsSlot(campaign, slotId)) return AD_MEDIA_FALLBACK
+        return campaign.image_url?.trim() || AD_MEDIA_FALLBACK
+      }
+    } else {
+      for (const val of Object.values(map)) {
+        const pick = slotMediaEntryUrl(val)
+        if (pick) return pick
+      }
     }
   }
 
@@ -213,8 +256,11 @@ export function getCampaignPosterUrl(
 }
 
 /** У банерах на сайті — лише статичне зображення (без автовідео) */
-export function getPublicBannerImageUrl(campaign: AdCampaign): string {
-  return getCampaignPosterUrl(campaign)
+export function getPublicBannerImageUrl(
+  campaign: AdCampaign,
+  slotId?: string,
+): string {
+  return getCampaignPosterUrl(campaign, slotId)
 }
 
 export function getCampaignMediaUrl(campaign: AdCampaign): string {
@@ -248,28 +294,18 @@ function fillSideStack(
   for (let i = 0; i < count; i++) {
     const slotId = sideSlotId(pageKey, side, (i + 1) as SideIndex)
 
-    /** Куплений слот — лише exact match (home_side_r1 → тільки R1) */
-    const exactOwner = all.find((c) => getCampaignPlacements(c).includes(slotId))
+    /** Куплений слот — exact match + креатив саме для цього ряду */
+    const exactOwner = all.find(
+      (c) => getCampaignPlacements(c).includes(slotId) && campaignRendersInSlot(c, slotId),
+    )
     if (exactOwner) {
       out[i] = exactOwner
       continue
     }
 
     /** Легасі placement (sidebar, home…) — старі кампанії без гранульованих ID */
-    out[i] = pickCampaignForSlot(legacyPool, slotId)
-  }
-
-  /** Якщо є хоча б одна кампанія з боковими слотами — заповнити порожні ряди (один рекламодавець на всі R/L) */
-  const sidePool = all.filter((c) =>
-    getCampaignPlacements(c).some((p) => p.includes('_side_') || p === 'sidebar'),
-  )
-  const filler =
-    sidePool.find((c) => getCampaignPlacements(c).some((p) => p.startsWith(`${pageKey}_side_`))) ??
-    sidePool[0]
-  if (filler) {
-    for (let i = 0; i < count; i++) {
-      if (!out[i]) out[i] = filler
-    }
+    const legacyPick = pickCampaignForSlot(legacyPool, slotId)
+    out[i] = legacyPick && campaignRendersInSlot(legacyPick, slotId) ? legacyPick : null
   }
 
   return out
@@ -342,14 +378,14 @@ export function pickCenterHeroCampaign(
 
   const centerId = centerSlotId(page)
   const slotPick = pickCampaignForSlot(all, centerId)
-  if (slotPick) return slotPick
+  if (slotPick && campaignRendersInSlot(slotPick, centerId)) return slotPick
 
   const legacyCenter = all.find(
     (c) =>
       !campaignUsesGranularPlacements(c) &&
       (getCampaignPlacements(c).includes('footer') || campaignMatchesSlot(c, centerId)),
   )
-  return legacyCenter ?? null
+  return legacyCenter && campaignRendersInSlot(legacyCenter, centerId) ? legacyCenter : null
 }
 
 /** @deprecated використовуйте pickCenterHeroCampaign */

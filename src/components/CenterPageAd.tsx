@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard } from './AdOverlayCard'
-import { pickCenterHeroCampaign, pickMobileCampaign, getCampaignPlacements, trackAdImpression } from '../lib/adCampaigns'
+import { pickCenterHeroCampaign, pickMobileCampaign, getCampaignPlacements, campaignRendersInSlot, trackAdImpression } from '../lib/adCampaigns'
 import { centerSlotId, mobileInlineSlotId, pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
 import type { SideAdsPage } from './PageWithSideAds'
 
@@ -37,6 +37,8 @@ export function CenterPageAd({ page, className = '' }: CenterPageAdProps) {
 
   const slotId =
     slotIds.find((id) => getCampaignPlacements(campaign).includes(id)) ?? slotIds[0]
+
+  if (!campaignRendersInSlot(campaign, slotId)) return null
 
   return (
     <section className={`hidden md:block ${className}`}>

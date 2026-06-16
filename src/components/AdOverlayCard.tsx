@@ -159,7 +159,7 @@ function AdCampaignMedia({
   const measuredSource =
     slotState.slideUrls[0] ||
     slotState.mediaUrl ||
-    getPublicBannerImageUrl(resolved)
+    (slotId ? '' : getPublicBannerImageUrl(resolved))
   const shouldAdaptRatio =
     (variant === 'leaderboard' || variant === 'mobile-inline' || variant === 'center') &&
     (slotState.mediaType === 'image' || slotState.mediaType === 'gif')
@@ -178,7 +178,7 @@ function AdCampaignMedia({
   const imageSrc =
     slotState.slideUrls[0] ||
     slotState.mediaUrl ||
-    getPublicBannerImageUrl(resolved)
+    (slotId ? '' : getPublicBannerImageUrl(resolved))
   const mediaStyle = slotState.mediaStyle
   const layoutKey = layoutKeyFromOverlayVariant(variant)
   const mediaType =

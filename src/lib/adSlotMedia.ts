@@ -1,6 +1,8 @@
 import type { AdCampaign } from './types'
+import { campaignOwnsSlot } from './adCampaigns'
 import {
   buildCampaignMediaFields,
+  emptyCampaignMediaState,
   mediaStateFromCampaign,
   type AdCampaignMediaState,
 } from './adCampaignMedia'
@@ -136,6 +138,16 @@ function firstSlotMediaEntry(map: SlotMediaMap): SlotMediaEntry | null {
   return null
 }
 
+function mediaStateFromSlotEntry(entry: SlotMediaEntry): AdCampaignMediaState {
+  const norm = normalizeSlotMediaEntry(entry)
+  return {
+    mediaUrl: norm.slideUrls[0] || norm.mediaUrl,
+    slideUrls: norm.slideUrls.length ? norm.slideUrls : [norm.mediaUrl],
+    mediaStyle: norm.mediaStyle,
+    mediaType: norm.mediaType,
+  }
+}
+
 export function mediaStateFromCampaignAndSlot(
   campaign: AdCampaign & { slot_media?: unknown; media_style?: unknown },
   slotId?: string,
@@ -145,24 +157,20 @@ export function mediaStateFromCampaignAndSlot(
   if (slotId) {
     const entry = map[slotId]
     if (slotMediaEntryHasMedia(entry)) {
-      const norm = normalizeSlotMediaEntry(entry!)
-      return {
-        mediaUrl: norm.slideUrls[0] || norm.mediaUrl,
-        slideUrls: norm.slideUrls.length ? norm.slideUrls : [norm.mediaUrl],
-        mediaStyle: norm.mediaStyle,
-        mediaType: norm.mediaType,
-      }
+      return mediaStateFromSlotEntry(entry!)
     }
+
+    const granularKeys = Object.keys(map).filter((key) => slotMediaEntryHasMedia(map[key]))
+    if (granularKeys.length > 0 || !campaignOwnsSlot(campaign, slotId)) {
+      return emptyCampaignMediaState()
+    }
+
+    return mediaStateFromCampaign(campaign)
   }
 
   const anySlot = firstSlotMediaEntry(map)
   if (anySlot) {
-    return {
-      mediaUrl: anySlot.slideUrls[0] || anySlot.mediaUrl,
-      slideUrls: anySlot.slideUrls.length ? anySlot.slideUrls : [anySlot.mediaUrl],
-      mediaStyle: anySlot.mediaStyle,
-      mediaType: anySlot.mediaType,
-    }
+    return mediaStateFromSlotEntry(anySlot)
   }
 
   return mediaStateFromCampaign(campaign)
