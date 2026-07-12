@@ -1,22 +1,9 @@
 // ============================================================
-// Listings.tsx — Каталог оголошень
-//
-// Додано порівняно з оригіналом:
-// 1. Фільтр типу оголошення (всі / послуга / продаж / шукаю)
-// 2. Сортування (новіші / дешевші / дорожчі / більше переглядів)
-// 3. Фільтр максимальної ціни
-// 4. Promoted оголошення показуються вгорі
-// Весь оригінальний код пошуку і категорій збережено.
+// Listings.tsx — Каталог оголошень (Amazon-style sidebar + grid)
 // ============================================================
 
 import { Fragment, useEffect, useMemo, useState } from 'react'
-import {
-  MapPin,
-  PlusCircle,
-  Search,
-  SlidersHorizontal,
-  X,
-} from 'lucide-react'
+import { MapPin, PlusCircle, Search, X } from 'lucide-react'
 import { supabase }            from '../lib/supabase'
 import { useApp }              from '../contexts/AppContext'
 import { listingLocationMatches, parseListingLocation } from '../lib/listingLocation'
@@ -36,10 +23,7 @@ import {
   subcategorySlugsForGroup,
 } from '../lib/categoryCatalog'
 
-// Типи оголошень для фільтру — ключі перекладу в listings.type*
-
 type ListingsProps = {
-  /** Фіксована категорія для окремих сторінок (/vacancies, /sell-rent). */
   fixedCategorySlug?: SiteCategorySlug
 }
 
@@ -72,17 +56,15 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
   const [categories, setCategories]     = useState<Category[]>([])
   const [loading, setLoading]           = useState(true)
 
-  // Фільтри
   const [searchQuery, setSearchQuery]         = useState('')
   const [locationQuery, setLocationQuery]     = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedType, setSelectedType]       = useState('')
   const [maxPrice, setMaxPrice]               = useState('')
   const [sortBy, setSortBy]                   = useState('newest')
-  const [showFilters, setShowFilters]         = useState(false)
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([])
 
-  // Синхронізація фільтрів з URL при навігації
   useEffect(() => {
     const syncFiltersFromUrl = () => {
       const params = new URLSearchParams(window.location.search)
@@ -120,7 +102,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     void loadInitialData()
   }, [])
 
-  // Майстри за замовчуванням бачать оголошення свого міста
   useEffect(() => {
     if (!user || !profile?.location) return
     const params = new URLSearchParams(window.location.search)
@@ -129,7 +110,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     if (parsed?.city) setLocationQuery(parsed.city)
   }, [user?.id, profile?.location])
 
-  // Завантаження всіх оголошень і категорій
   const loadInitialData = async () => {
     setLoading(true)
     try {
@@ -137,7 +117,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
 
       const [categoriesResult, listingsResult] = await Promise.all([
         supabase.from('categories').select('*').order('name'),
-
         supabase
           .from('listings')
           .select('*, images:listing_images(*), category:categories(*)')
@@ -153,7 +132,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     }
   }
 
-  // Переклад назви категорії з fallback
   const translateCategory = (category: Category) => {
     const newKey   = 'category.name.' + category.slug
     const newValue = t(newKey)
@@ -166,7 +144,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     return category.name
   }
 
-  // Фільтрація і сортування оголошень
   const filteredListings = useMemo(() => {
     let result = [...allListings]
 
@@ -174,7 +151,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     const normLocation = locationQuery.trim().toLowerCase()
     const maxPriceNum  = maxPrice ? parseFloat(maxPrice) : null
 
-    // Фільтр категорії
     if (selectedCategory) {
       result = result.filter(l =>
         l.category?.slug === selectedCategory || l.category_id === selectedCategory
@@ -188,12 +164,10 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
       })
     }
 
-    // Фільтр типу оголошення
     if (selectedType) {
       result = result.filter(l => l.listing_type === selectedType)
     }
 
-    // Фільтр пошуку (назва, опис, категорія)
     if (normSearch) {
       result = result.filter(l =>
         (l.title?.toLowerCase() || '').includes(normSearch) ||
@@ -202,23 +176,19 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
       )
     }
 
-    // Фільтр локації (місто / область / країна)
     if (normLocation) {
       result = result.filter((l) =>
         listingLocationMatches(normLocation, l.location || ''),
       )
     }
 
-    // Фільтр максимальної ціни
     if (maxPriceNum !== null) {
       result = result.filter(l => l.price === null || l.price <= maxPriceNum)
     }
 
-    // Promoted оголошення завжди вгорі
     const promoted   = result.filter(l => (l as any).is_promoted === true)
     const regular    = result.filter(l => (l as any).is_promoted !== true)
 
-    // Сортування звичайних оголошень
     const sortFn = (a: ListingWithImages, b: ListingWithImages) => {
       switch (sortBy) {
         case 'oldest':
@@ -229,7 +199,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
           return (b.price ?? -1) - (a.price ?? -1)
         case 'views':
           return (b.views_count || 0) - (a.views_count || 0)
-        default: // newest
+        default:
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       }
     }
@@ -237,7 +207,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     return [...promoted, ...regular.sort(sortFn)]
   }, [allListings, searchQuery, locationQuery, selectedCategory, selectedSubcategories, selectedType, maxPrice, sortBy])
 
-  // Кількість активних фільтрів для індикатора
   const activeFiltersCount = [
     searchQuery,
     locationQuery,
@@ -250,7 +219,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     ? categoryPagePath(fixedCategorySlug)
     : '/listings'
 
-  // Застосовуємо фільтри до URL
   const applyFiltersToUrl = () => {
     const params = new URLSearchParams()
     if (searchQuery.trim())   params.set('search',   searchQuery.trim())
@@ -260,9 +228,9 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     const query = params.toString()
     const base = listingsBasePath.split('?')[0]
     navigateTo(query ? `${base}?${query}` : base)
+    setMobileFiltersOpen(false)
   }
 
-  // Скидаємо всі фільтри
   const resetFilters = () => {
     setSearchQuery('')
     setLocationQuery('')
@@ -272,300 +240,246 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     setSortBy('newest')
     setSelectedSubcategories([])
     navigateTo(listingsBasePath.split('?')[0])
+    setMobileFiltersOpen(false)
   }
 
+  const workCategorySlug = fixedCategorySlug || selectedCategory
+
+  const filtersPanel = (
+    <>
+      <h2 className="text-base font-bold text-[var(--ink-900)]">{t('listings.filtersButton')}</h2>
+
+      <form
+        onSubmit={(e) => { e.preventDefault(); applyFiltersToUrl() }}
+        className="mt-3 space-y-0"
+      >
+        <div className="amazon-filter-group">
+          <label>{t('listings.whatNeedsToBeDone')}</label>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder={t('home.headerSearchPlaceholder')}
+            className="input-glass h-9 text-sm"
+          />
+        </div>
+
+        <div className="amazon-filter-group">
+          <label>{t('listings.cityOrCountry')}</label>
+          <input
+            type="text"
+            value={locationQuery}
+            onChange={e => setLocationQuery(e.target.value)}
+            placeholder={t('listings.cityOrCountry')}
+            className="input-glass h-9 text-sm"
+          />
+        </div>
+
+        {!fixedCategorySlug && (
+          <div className="amazon-filter-group">
+            <label>{t('listings.categoryLabel')}</label>
+            <select
+              value={selectedCategory}
+              onChange={e => setSelectedCategory(e.target.value)}
+              className="select-glass h-9 text-sm"
+            >
+              <option value="">{t('listings.allCategoriesSimple')}</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.slug}>
+                  {translateCategory(cat)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        <div className="amazon-filter-group">
+          <label>{t('listings.filterTypePrefix').replace(/:\s*$/, '') || 'Тип'}</label>
+          <select
+            value={selectedType}
+            onChange={e => setSelectedType(e.target.value)}
+            className="select-glass h-9 text-sm"
+          >
+            {listingTypes.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="amazon-filter-group">
+          <label>Максимальна ціна</label>
+          <input
+            type="number"
+            min="0"
+            value={maxPrice}
+            onChange={e => setMaxPrice(e.target.value)}
+            placeholder="Без обмеження"
+            className="input-glass h-9 text-sm"
+          />
+        </div>
+
+        <div className="amazon-filter-group">
+          <label>{t('listings.sortNewest').split(' ').slice(-1).join(' ') || 'Сортування'}</label>
+          <select
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value)}
+            className="select-glass h-9 text-sm"
+          >
+            {sortOptions.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <button type="submit" className="btn-primary mt-3 w-full py-2 text-sm">
+          {t('listings.findRequests')}
+        </button>
+
+        {activeFiltersCount > 0 && (
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="btn-secondary mt-2 w-full py-2 text-sm"
+          >
+            {t('listings.clearFiltersSimple')}
+          </button>
+        )}
+      </form>
+    </>
+  )
+
   return (
-    <div className="py-8 pb-24 lg:pb-8">
-            {/* Шапка з пошуком */}
-            <section className="glass-panel mb-6 p-6 md:p-7 xl:p-8">
-              <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-                <div className="max-w-3xl">
-                  <h1 className="font-[var(--font-display)] text-[1.72rem] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--ink-900)] md:text-[2rem] xl:text-[2.2rem]">
-                    {categoryPageMeta?.title ?? t('listings.simpleTitle')}
-                  </h1>
-                </div>
-                <button
-                  onClick={() => navigateTo('/create-ad')}
-                  type="button"
-                  className="btn-primary rounded-full px-5 text-sm"
-                >
-                  <PlusCircle className="h-4 w-4" />
+    <div className="py-6 pb-24 lg:pb-8">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold text-[var(--ink-900)] md:text-2xl">
+            {categoryPageMeta?.title ?? t('listings.simpleTitle')}
+          </h1>
+          <p className="mt-1 text-sm text-[var(--ink-600)]">
+            {loading
+              ? t('listings.loadingRequests')
+              : `${filteredListings.length} ${t('listings.countSuffix')}`}
+          </p>
+        </div>
+        <button
+          onClick={() => navigateTo('/create-ad')}
+          type="button"
+          className="btn-primary px-4 py-2 text-sm"
+        >
+          <PlusCircle className="h-4 w-4" />
+          {t('header.createAd')}
+        </button>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setMobileFiltersOpen(v => !v)}
+        className="btn-secondary mb-4 w-full py-2 text-sm lg:hidden"
+      >
+        {t('listings.filtersButton')}
+        {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
+      </button>
+
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+        <aside className={`amazon-filter-sidebar w-full lg:w-[220px] lg:shrink-0 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
+          {filtersPanel}
+        </aside>
+
+        <main className="min-w-0 flex-1">
+          {workCategorySlug && categoryHasWorkSubcategories(workCategorySlug) && (
+            <div className="amazon-section-card mb-4">
+              <ConstructionWorkTypesPanel
+                categorySlug={workCategorySlug}
+                selected={selectedSubcategories}
+                onChange={setSelectedSubcategories}
+              />
+            </div>
+          )}
+
+          {activeFiltersCount > 0 && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {searchQuery && (
+                <FilterTag label={'Пошук: ' + searchQuery} onRemove={() => setSearchQuery('')} />
+              )}
+              {locationQuery && (
+                <FilterTag label={'Місто: ' + locationQuery} onRemove={() => setLocationQuery('')} />
+              )}
+              {selectedCategory && !fixedCategorySlug && (
+                <FilterTag
+                  label={'Категорія: ' + (categories.find(c => c.slug === selectedCategory)?.name || selectedCategory)}
+                  onRemove={() => setSelectedCategory('')}
+                />
+              )}
+              {selectedType && (
+                <FilterTag
+                  label={listingTypes.find(opt => opt.value === selectedType)?.label || selectedType}
+                  onRemove={() => setSelectedType('')}
+                />
+              )}
+              {maxPrice && (
+                <FilterTag label={'Макс. ціна: ' + maxPrice} onRemove={() => setMaxPrice('')} />
+              )}
+            </div>
+          )}
+
+          <CenterPageAd page="listings" className="mb-4" />
+          <MobileAdBanner variant="horizontal" page="listings" outerClassName="mb-4" />
+
+          {loading ? (
+            <div className="amazon-section-card p-8 text-center text-[var(--ink-500)]">
+              {t('listings.loadingRequests')}
+            </div>
+          ) : filteredListings.length > 0 ? (
+            <div className="product-grid">
+              {filteredListings.map((listing, index) => (
+                <Fragment key={listing.id}>
+                  <ListingCard listing={listing} />
+                  {(index + 1) % 8 === 0 && index < filteredListings.length - 1 && (
+                    <div className="col-span-full py-2">
+                      <MobileAdBanner
+                        variant="inline"
+                        page="listings"
+                        inlineIndex={((((index + 1) / 8) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
+                      />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </div>
+          ) : (
+            <div className="amazon-section-card p-10 text-center">
+              <h2 className="text-lg font-bold text-[var(--ink-900)]">
+                {t('listings.emptyTitle')}
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--ink-600)]">
+                {t('listings.emptyText')}
+              </p>
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <button onClick={resetFilters} type="button" className="btn-secondary text-sm">
+                  {t('listings.clearFiltersSimple')}
+                </button>
+                <button onClick={() => navigateTo('/create-ad')} type="button" className="btn-primary text-sm">
                   {t('header.createAd')}
                 </button>
               </div>
-
-              {/* Рядок пошуку */}
-              <form
-                onSubmit={e => { e.preventDefault(); applyFiltersToUrl() }}
-                className="mt-7 grid gap-3 xl:grid-cols-[minmax(0,1fr)_220px_156px_156px]"
-              >
-                <div className="relative">
-                  <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder={t('listings.whatNeedsToBeDone')}
-                    className="input-glass h-[50px] pl-11"
-                  />
-                </div>
-                <div className="relative">
-                  <MapPin className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
-                  <input
-                    type="text"
-                    value={locationQuery}
-                    onChange={e => setLocationQuery(e.target.value)}
-                    placeholder={t('listings.cityOrCountry')}
-                    className="input-glass h-[50px] pl-11"
-                  />
-                </div>
-                <button type="submit" className="btn-primary h-[50px] rounded-full px-5 text-sm">
-                  {t('listings.findRequests')}
-                </button>
-                <button
-                  onClick={() => setShowFilters(v => !v)}
-                  type="button"
-                  className="btn-secondary h-[50px] rounded-full px-5 text-sm"
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                  {activeFiltersCount > 0
-                    ? t('listings.filtersButton') + ' (' + activeFiltersCount + ')'
-                    : t('listings.filtersButton')}
-                </button>
-              </form>
-
-              {(() => {
-                const cat = fixedCategorySlug || selectedCategory
-                if (!cat || !categoryHasWorkSubcategories(cat)) return null
-                return (
-                  <ConstructionWorkTypesPanel
-                    categorySlug={cat}
-                    selected={selectedSubcategories}
-                    onChange={setSelectedSubcategories}
-                  />
-                )
-              })()}
-
-              {/* Розширені фільтри */}
-              {showFilters && (
-                <div className="mt-4 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.34)] p-4 backdrop-blur-md">
-                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-
-                    {!fixedCategorySlug && (
-                      <div>
-                        <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
-                          {t('listings.categoryLabel')}
-                        </label>
-                        <select
-                          value={selectedCategory}
-                          onChange={e => setSelectedCategory(e.target.value)}
-                          className="select-glass"
-                        >
-                          <option value="">{t('listings.allCategoriesSimple')}</option>
-                          {categories.map(cat => (
-                            <option key={cat.id} value={cat.slug}>
-                              {translateCategory(cat)}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
-
-                    {/* Тип оголошення */}
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
-                        Тип оголошення
-                      </label>
-                      <select
-                        value={selectedType}
-                        onChange={e => setSelectedType(e.target.value)}
-                        className="select-glass"
-                      >
-                        {listingTypes.map(opt => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Максимальна ціна */}
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
-                        Максимальна ціна
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        value={maxPrice}
-                        onChange={e => setMaxPrice(e.target.value)}
-                        placeholder="Без обмеження"
-                        className="input-glass"
-                      />
-                    </div>
-
-                    {/* Сортування */}
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
-                        Сортування
-                      </label>
-                      <select
-                        value={sortBy}
-                        onChange={e => setSortBy(e.target.value)}
-                        className="select-glass"
-                      >
-                        {sortOptions.map(opt => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Кнопка скидання */}
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={resetFilters}
-                      type="button"
-                      className="btn-ghost rounded-full px-0 text-sm"
-                    >
-                      <X className="h-4 w-4" />
-                      {t('listings.clearFiltersSimple')}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Активні фільтри — теги */}
-              {activeFiltersCount > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {searchQuery && (
-                    <FilterTag
-                      label={'Пошук: ' + searchQuery}
-                      onRemove={() => setSearchQuery('')}
-                    />
-                  )}
-                  {locationQuery && (
-                    <FilterTag
-                      label={'Місто: ' + locationQuery}
-                      onRemove={() => setLocationQuery('')}
-                    />
-                  )}
-                  {selectedCategory && !fixedCategorySlug && (
-                    <FilterTag
-                      label={'Категорія: ' + (categories.find(c => c.slug === selectedCategory)?.name || selectedCategory)}
-                      onRemove={() => setSelectedCategory('')}
-                    />
-                  )}
-                  {selectedType && (
-                    <FilterTag
-                      label={t('listings.filterTypePrefix') + (listingTypes.find(opt => opt.value === selectedType)?.label || selectedType)}
-                      onRemove={() => setSelectedType('')}
-                    />
-                  )}
-                  {maxPrice && (
-                    <FilterTag
-                      label={'Макс. ціна: ' + maxPrice}
-                      onRemove={() => setMaxPrice('')}
-                    />
-                  )}
-                </div>
-              )}
-            </section>
-
-            <CenterPageAd page="listings" className="my-4" />
-
-            <MobileAdBanner variant="horizontal" page="listings" />
-
-            {/* Лічильник результатів */}
-            <div className="mb-4 mt-6 flex flex-wrap items-center justify-between gap-3">
-              <div className="text-[13px] font-semibold text-[var(--ink-700)] md:text-sm">
-                {loading
-                  ? t('listings.loadingRequests')
-                  : filteredListings.length + ' ' + t('listings.countSuffix')}
-              </div>
-              {activeFiltersCount > 0 && !loading && (
-                <button
-                  onClick={resetFilters}
-                  type="button"
-                  className="btn-ghost rounded-full px-0 text-[13px] md:text-sm"
-                >
-                  {t('listings.clearFiltersSimple')}
-                </button>
-              )}
             </div>
+          )}
 
-            {/* Список оголошень */}
-            {loading ? (
-              <div className="glass-card p-8 text-center text-[var(--ink-500)]">
-                {t('listings.loadingRequests')}
-              </div>
-            ) : filteredListings.length > 0 ? (
-              <div className="product-grid">
-                {filteredListings.map((listing, index) => (
-                  <Fragment key={listing.id}>
-                    <ListingCard listing={listing} />
-                    {(index + 1) % 8 === 0 && index < filteredListings.length - 1 && (
-                      <div className="col-span-full py-2">
-                        <MobileAdBanner
-                          variant="inline"
-                          page="listings"
-                          inlineIndex={((((index + 1) / 8) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
-                        />
-                      </div>
-                    )}
-                  </Fragment>
-                ))}
-              </div>
-            ) : (
-              <div className="glass-card p-10 text-center">
-                <h2 className="font-[var(--font-display)] text-[1.25rem] font-bold tracking-[-0.02em] text-[var(--ink-900)] md:text-[1.45rem]">
-                  {t('listings.emptyTitle')}
-                </h2>
-                <p className="mx-auto mt-3 max-w-2xl text-[13px] leading-6 text-[var(--ink-700)] md:text-[14px]">
-                  {t('listings.emptyText')}
-                </p>
-                <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                  <button
-                    onClick={resetFilters}
-                    type="button"
-                    className="btn-secondary rounded-full text-sm"
-                  >
-                    {t('listings.clearFiltersSimple')}
-                  </button>
-                  <button
-                    onClick={() => navigateTo('/create-ad')}
-                    type="button"
-                    className="btn-primary rounded-full text-sm"
-                  >
-                    {t('header.createAd')}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <MobileAdBanner variant="inline" page="listings" inlineIndex={2} outerClassName="mt-6" />
+          <MobileAdBanner variant="inline" page="listings" inlineIndex={2} outerClassName="mt-6" />
+        </main>
+      </div>
     </div>
   )
 }
 
-// Тег активного фільтру з кнопкою видалення
 function FilterTag({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span
-      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
-      style={{
-        background:  'rgba(199,138,96,0.12)',
-        color:       'var(--accent-700)',
-        border:      '1px solid rgba(199,138,96,0.25)',
-      }}
-    >
+    <span className="inline-flex items-center gap-1.5 rounded-sm border border-[#d5d9d9] bg-white px-2 py-1 text-xs font-medium text-[var(--ink-700)]">
       {label}
       <button
         type="button"
         onClick={onRemove}
-        className="flex h-4 w-4 items-center justify-center rounded-full transition hover:bg-[rgba(199,138,96,0.2)]"
+        className="flex h-4 w-4 items-center justify-center rounded-sm hover:bg-[#f7fafa]"
       >
         <X className="h-2.5 w-2.5" />
       </button>

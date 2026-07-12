@@ -14,8 +14,6 @@
 import { useEffect, useState } from 'react'
 import {
   ArrowLeft,
-  Bookmark,
-  BookmarkCheck,
   Calendar,
   Eye,
   Globe,
@@ -236,300 +234,230 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
   )
 
   return (
-    <div className="py-8 pb-24 lg:pb-8">
-          <div className="space-y-5">
+    <div className="py-6 pb-24 lg:pb-8">
+      <button
+        type="button"
+        onClick={() => navigateTo('/listings')}
+        className="amazon-link mb-4 inline-flex items-center gap-1 text-sm"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t('listing.backToListings')}
+      </button>
 
-            {/* Кнопка назад */}
-            <button
-              type="button"
-              onClick={() => navigateTo('/listings')}
-              className="btn-ghost rounded-full"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t('listing.backToListings')}
-            </button>
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-6">
+        {/* Ліва колонка: фото + опис */}
+        <div>
+          <div className="amazon-pdp-image">
+            <div className="relative aspect-square overflow-hidden bg-[#f7fafa] sm:aspect-[4/3]">
+              <img
+                src={images[activeImage]}
+                alt={listing.title}
+                className="h-full w-full object-contain"
+              />
+              <div
+                className="absolute left-3 top-3 rounded-sm px-2 py-1 text-xs font-bold text-white"
+                style={{ background: getTypeBg(listing.listing_type) }}
+              >
+                {getTypeLabel(listing.listing_type)}
+              </div>
+              {listing.is_premium && (
+                <div className="absolute right-3 top-3 flex items-center gap-1 rounded-sm bg-[#cc0c39] px-2 py-1 text-xs font-bold text-white">
+                  <Star className="h-3 w-3 fill-current" />
+                  {t('listing.premium')}
+                </div>
+              )}
+            </div>
 
-            {/* Преміум бейдж */}
-            {listing.is_premium && (
-              <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-white"
-                style={{ background: 'linear-gradient(90deg,#c96d2c,#e8964a)' }}>
-                <Star className="h-3.5 w-3.5 fill-current" />
-                {t('listing.premium')}
+            {images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto border-t border-[#e7e7e7] p-3">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setActiveImage(i)}
+                    className="h-14 w-14 shrink-0 overflow-hidden rounded-sm border-2 transition"
+                    style={{
+                      borderColor: i === activeImage ? '#e77600' : '#d5d9d9',
+                      opacity: i === activeImage ? 1 : 0.7,
+                    }}
+                  >
+                    <img src={img} alt={'Фото ' + (i + 1)} className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 lg:hidden">
+            <h1 className="text-xl font-normal leading-snug text-[var(--ink-900)]">{listing.title}</h1>
+            <p className="mt-2 text-2xl font-normal text-[var(--ink-900)]">{formatPrice(listing.price)}</p>
+          </div>
+
+          <div className="amazon-section-card mt-4">
+            <h2 className="text-lg font-bold text-[var(--ink-900)]">Про оголошення</h2>
+            <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-[var(--ink-700)]">
+              {listing.description}
+            </p>
+
+            <div className="amazon-pdp-divider" />
+
+            <div className="grid gap-2 text-sm text-[var(--ink-600)] sm:grid-cols-2">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 shrink-0" />
+                <span>{listing.location}</span>
+              </div>
+              {listing.visibility_radius && (
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 shrink-0" />
+                  <span>{getVisibilityLabel(listing.visibility_radius)}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 shrink-0" />
+                <span style={daysLeft <= 3 && daysLeft > 0 ? { color: '#b91c1c' } : {}}>
+                  {daysLeft > 0 ? 'Ще ' + daysLeft + ' ' + t('listing.daysLeft') : 'Термін завершився'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 shrink-0" />
+                <span>{listing.views_count} {t('listing.views')}</span>
+              </div>
+            </div>
+
+            {listing.listing_type === 'service_request' && user?.id === listing.author_id && (
+              <div className="mt-4">
+                <ContractorMatches listingId={listing.id} />
               </div>
             )}
 
-            {/* Основний блок: фото + деталі */}
-            <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-
-              {/* Ліва колонка: фото */}
-              <div className="glass-card overflow-hidden">
-
-                {/* Головне фото */}
-                <div className="relative aspect-video overflow-hidden bg-[rgba(255,248,241,0.4)]">
-                  <img
-                    src={images[activeImage]}
-                    alt={listing.title}
-                    className="h-full w-full object-cover"
-                  />
-
-                  {/* Бейдж типу оголошення */}
-                  <div
-                    className="absolute left-3 top-3 rounded-lg px-2.5 py-1 text-xs font-bold text-white backdrop-blur-sm"
-                    style={{ background: getTypeBg(listing.listing_type) }}
-                  >
-                    {getTypeLabel(listing.listing_type)}
-                  </div>
-
-                  {/* Кнопка збереження */}
-                  {user && (
-                    <button
-                      type="button"
-                      onClick={toggleSave}
-                      disabled={savingItem}
-                      title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
-                      className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full backdrop-blur-sm transition hover:scale-110 active:scale-95"
-                      style={{
-                        background: isSaved ? 'rgba(239,68,68,0.9)' : 'rgba(255,255,255,0.85)',
-                      }}
-                    >
-                      {isSaved
-                        ? <BookmarkCheck className="h-4 w-4 text-white" />
-                        : <Bookmark className="h-4 w-4" style={{ color: 'var(--accent-700)' }} />}
-                    </button>
-                  )}
-                </div>
-
-                {/* Мініатюри фото (якщо більше одного) */}
-                {images.length > 1 && (
-                  <div className="flex gap-2 overflow-x-auto p-3">
-                    {images.map((img, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setActiveImage(i)}
-                        className="h-16 w-16 shrink-0 overflow-hidden rounded-[12px] transition"
-                        style={{
-                          border: i === activeImage
-                            ? '2px solid var(--accent-700)'
-                            : '2px solid transparent',
-                          opacity: i === activeImage ? 1 : 0.6,
-                        }}
-                      >
-                        <img src={img} alt={'Фото ' + (i + 1)} className="h-full w-full object-cover" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Опис */}
-                <div className="p-5">
-                  <h1 className="mb-3 text-xl font-extrabold tracking-[-0.02em]"
-                    style={{ color: 'var(--ink-900)' }}>
-                    {listing.title}
-                  </h1>
-
-                  {/* Ціна */}
-                  {listing.price !== null && (
-                    <div className="mb-4 text-2xl font-extrabold" style={{ color: 'var(--accent-700)' }}>
-                      {formatPrice(listing.price)}
-                    </div>
-                  )}
-
-                  {/* Метадані */}
-                  <div className="mb-4 flex flex-wrap gap-x-4 gap-y-2 text-sm" style={{ color: 'var(--ink-500)' }}>
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="h-4 w-4 shrink-0" />
-                      <span>{listing.location}</span>
-                    </div>
-                    {listing.visibility_radius && (
-                      <div className="flex items-center gap-1.5">
-                        <Globe className="h-4 w-4 shrink-0" />
-                        <span>{getVisibilityLabel(listing.visibility_radius)}</span>
-                      </div>
-                    )}
-                    {listing.category && (
-                      <span
-                        className="rounded-full px-3 py-0.5 text-xs font-semibold"
-                        style={{ background: 'rgba(199,138,96,0.12)', color: 'var(--accent-700)' }}
-                      >
-                        {listing.category.name}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Повний опис */}
-                  <p className="muted-text whitespace-pre-wrap leading-relaxed text-sm">
-                    {listing.description}
-                  </p>
-
-                  {listing.listing_type === 'service_request' &&
-                    user?.id === listing.author_id && (
-                      <ContractorMatches listingId={listing.id} />
-                    )}
-
-                  {listing.author_id && (
-                    <ListingInlineChat listingId={listing.id} authorId={listing.author_id} />
-                  )}
-
-                  {/* Термін і перегляди */}
-                  <div
-                    className="mt-5 flex items-center justify-between border-t pt-4 text-xs"
-                    style={{ borderColor: 'var(--glass-border)', color: 'var(--ink-400)' }}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <span style={daysLeft <= 3 && daysLeft > 0 ? { color: '#b91c1c' } : {}}>
-                        {daysLeft > 0 ? 'Ще ' + daysLeft + ' ' + t('listing.daysLeft') : 'Термін завершився'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Eye className="h-3.5 w-3.5" />
-                      <span>{listing.views_count} {t('listing.views')}</span>
-                    </div>
-                  </div>
-                </div>
+            {listing.author_id && (
+              <div className="mt-4">
+                <ListingInlineChat listingId={listing.id} authorId={listing.author_id} />
               </div>
+            )}
+          </div>
+        </div>
 
-              {/* Права колонка: контакти + автор */}
-              <div className="space-y-4">
+        {/* Права колонка: buy box */}
+        <aside className="amazon-buy-box amazon-buy-box--sticky mt-4 lg:mt-0">
+          <h1 className="hidden text-xl font-normal leading-snug text-[var(--ink-900)] lg:block">
+            {listing.title}
+          </h1>
 
-                {/* Блок контактів */}
-                <div className="glass-card p-5">
-                  <h2 className="mb-4 text-base font-extrabold" style={{ color: 'var(--ink-900)' }}>
-                    Контакти
-                  </h2>
+          <div className="mt-2 flex items-center gap-1">
+            {[1, 2, 3, 4].map((i) => (
+              <Star key={i} className="amazon-star h-4 w-4 fill-current" />
+            ))}
+            <Star className="amazon-star h-4 w-4 fill-current opacity-40" />
+            <span className="ml-1 text-sm amazon-link">{listing.views_count} {t('listing.views')}</span>
+          </div>
 
-                  <div className="space-y-3">
-                    {/* Ім'я контакту */}
-                    <div className="flex items-center gap-2.5 text-sm" style={{ color: 'var(--ink-700)' }}>
-                      <User className="h-4 w-4 shrink-0" style={{ color: 'var(--accent-500)' }} />
-                      <span>{listing.contact_name}</span>
-                    </div>
+          <p className="mt-2 text-3xl font-normal text-[var(--ink-900)]">
+            {formatPrice(listing.price)}
+          </p>
 
-                    {/* Телефон */}
-                    {contactPhone && (
-                      <a
-                        href={contactPhone}
-                        className="flex items-center gap-2.5 text-sm font-semibold transition"
-                        style={{ color: 'var(--accent-700)' }}
-                      >
-                        <Phone className="h-4 w-4 shrink-0" />
-                        {listing.contact_phone}
-                      </a>
-                    )}
+          {listing.category && (
+            <p className="mt-1 text-sm text-[var(--ink-600)]">{listing.category.name}</p>
+          )}
 
-                    {/* Email */}
-                    {contactEmail && (
-                      <a
-                        href={contactEmail}
-                        className="flex items-center gap-2.5 text-sm transition"
-                        style={{ color: 'var(--ink-700)' }}
-                      >
-                        <Mail className="h-4 w-4 shrink-0" style={{ color: 'var(--accent-500)' }} />
-                        <span className="truncate">{listing.contact_email}</span>
-                      </a>
-                    )}
-                  </div>
+          <div className="amazon-pdp-divider" />
 
-                  {/* Кнопка збереження */}
-                  {user && (
-                    <button
-                      type="button"
-                      onClick={toggleSave}
-                      disabled={savingItem}
-                      className="mt-3 flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-semibold transition"
-                      style={isSaved
-                        ? { background: 'rgba(239,68,68,0.10)', color: '#b91c1c' }
-                        : { background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', color: 'var(--ink-700)' }}
-                    >
-                      <Heart
-                        className="h-4 w-4"
-                        style={{ fill: isSaved ? '#b91c1c' : 'none', color: isSaved ? '#b91c1c' : 'var(--ink-500)' }}
-                      />
-                      {isSaved ? 'В збережених' : 'Зберегти'}
-                    </button>
-                  )}
+          <div className="space-y-2">
+            {user ? (
+              <button
+                type="button"
+                onClick={toggleSave}
+                disabled={savingItem}
+                className="btn-primary w-full py-2.5 text-sm"
+              >
+                <Heart className="h-4 w-4" style={{ fill: isSaved ? 'currentColor' : 'none' }} />
+                {isSaved ? 'В збережених' : 'Зберегти оголошення'}
+              </button>
+            ) : (
+              <button type="button" onClick={() => navigateTo('/login')} className="btn-primary w-full py-2.5 text-sm">
+                Увійти для контакту
+              </button>
+            )}
+            <button type="button" onClick={() => navigateTo('/create-ad')} className="btn-secondary w-full py-2.5 text-sm">
+              Створити схоже оголошення
+            </button>
+          </div>
 
-                </div>
+          <div className="amazon-pdp-divider" />
 
-                {/* Профіль автора */}
-                {author && (
-                  <div className="glass-card p-5">
-                    <h2 className="mb-4 text-base font-extrabold" style={{ color: 'var(--ink-900)' }}>
-                      Про автора
-                    </h2>
-
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('/professional/' + author.id)}
-                      className="flex w-full items-center gap-3 text-left"
-                    >
-                      {/* Аватар автора */}
-                      {author.profile_photo || author.avatar_url ? (
-                        <img
-                          src={author.profile_photo || author.avatar_url || ''}
-                          alt={author.full_name || ''}
-                          className="h-12 w-12 shrink-0 rounded-[14px] object-cover"
-                        />
-                      ) : (
-                        <div
-                          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] text-sm font-bold"
-                          style={{ background: 'rgba(199,138,96,0.15)', color: 'var(--accent-700)' }}
-                        >
-                          {authorInitials}
-                        </div>
-                      )}
-
-                      <div className="min-w-0">
-                        <p className="truncate font-bold text-sm" style={{ color: 'var(--ink-900)' }}>
-                          {author.full_name || 'Автор'}
-                        </p>
-                        {author.rating > 0 && (
-                          <div className="mt-0.5 flex items-center gap-1 text-xs" style={{ color: '#c78a60' }}>
-                            <Star className="h-3.5 w-3.5 fill-current" />
-                            <span className="font-semibold">{author.rating.toFixed(1)}</span>
-                            <span style={{ color: 'var(--ink-400)' }}>({author.total_reviews})</span>
-                          </div>
-                        )}
-                        {author.location && (
-                          <div className="mt-0.5 flex items-center gap-1 text-xs" style={{ color: 'var(--ink-400)' }}>
-                            <MapPin className="h-3 w-3" />
-                            <span>{author.location}</span>
-                          </div>
-                        )}
-                      </div>
-                    </button>
-
-                    {/* Опис автора */}
-                    {author.bio && (
-                      <p className="muted-text mt-3 line-clamp-3 text-xs leading-relaxed">
-                        {author.bio}
-                      </p>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('/professional/' + author.id)}
-                      className="btn-ghost mt-4 w-full justify-center rounded-full text-sm"
-                    >
-                      Переглянути профіль
-                    </button>
-                  </div>
-                )}
-
-                {/* Дата публікації */}
-                <div className="glass-card p-4 text-center">
-                  <p className="muted-text text-xs">
-                    Опубліковано {formatDate(listing.created_at)}
-                  </p>
-                  <p className="muted-text mt-1 text-xs">
-                    ID: <code className="rounded bg-[rgba(0,0,0,0.05)] px-1">{listing.id.slice(0, 8)}...</code>
-                  </p>
-                </div>
-
+          <div>
+            <h3 className="text-sm font-bold text-[var(--ink-900)]">Контакти</h3>
+            <div className="mt-2 space-y-2 text-sm text-[var(--ink-700)]">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-[var(--accent-600)]" />
+                <span>{listing.contact_name}</span>
               </div>
+              {contactPhone && (
+                <a href={contactPhone} className="amazon-link flex items-center gap-2 font-medium">
+                  <Phone className="h-4 w-4" />
+                  {listing.contact_phone}
+                </a>
+              )}
+              {contactEmail && (
+                <a href={contactEmail} className="amazon-link flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  <span className="truncate">{listing.contact_email}</span>
+                </a>
+              )}
             </div>
           </div>
+
+          {author && (
+            <>
+              <div className="amazon-pdp-divider" />
+              <div>
+                <h3 className="text-sm font-bold text-[var(--ink-900)]">Про автора</h3>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/professional/' + author.id)}
+                  className="mt-2 flex w-full items-center gap-3 text-left"
+                >
+                  {author.profile_photo || author.avatar_url ? (
+                    <img
+                      src={author.profile_photo || author.avatar_url || ''}
+                      alt={author.full_name || ''}
+                      className="h-12 w-12 shrink-0 rounded-sm object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-[#f7fafa] text-sm font-bold text-[var(--accent-600)]">
+                      {authorInitials}
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-sm text-[var(--ink-900)]">
+                      {author.full_name || 'Автор'}
+                    </p>
+                    {author.rating > 0 && (
+                      <div className="mt-0.5 flex items-center gap-1 text-xs">
+                        <Star className="amazon-star h-3 w-3 fill-current" />
+                        <span>{author.rating.toFixed(1)}</span>
+                        <span className="text-[var(--ink-500)]">({author.total_reviews})</span>
+                      </div>
+                    )}
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/professional/' + author.id)}
+                  className="amazon-link mt-2 text-sm"
+                >
+                  Переглянути профіль →
+                </button>
+              </div>
+            </>
+          )}
+
+          <div className="amazon-pdp-divider" />
+          <p className="text-xs text-[var(--ink-500)]">
+            Опубліковано {formatDate(listing.created_at)}
+          </p>
+        </aside>
+      </div>
     </div>
   )
 }

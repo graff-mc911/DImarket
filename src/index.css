@@ -1866,6 +1866,57 @@
     @apply rounded-md border border-[#d5d9d9] bg-white p-4;
   }
 
+  .amazon-filter-sidebar {
+    @apply rounded-md border border-[#d5d9d9] bg-white p-4;
+  }
+
+  .amazon-filter-sidebar h2 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin-bottom: 0.75rem;
+  }
+
+  .amazon-filter-group {
+    @apply border-b border-[#e7e7e7] py-3 last:border-b-0;
+  }
+
+  .amazon-filter-group label {
+    @apply mb-1.5 block text-xs font-bold text-[var(--ink-900)];
+  }
+
+  .amazon-buy-box {
+    @apply rounded-md border border-[#d5d9d9] bg-white p-4;
+    box-shadow: 0 2px 5px rgba(15, 17, 17, 0.08);
+  }
+
+  .amazon-buy-box--sticky {
+    position: sticky;
+    top: calc(var(--header-offset) + 1rem);
+    align-self: start;
+  }
+
+  .amazon-pdp-image {
+    @apply overflow-hidden rounded-md border border-[#d5d9d9] bg-white;
+  }
+
+  .amazon-pdp-divider {
+    @apply my-4 border-t border-[#e7e7e7];
+  }
+
+  .amazon-link {
+    color: var(--accent-600);
+  }
+
+  .amazon-link:hover {
+    color: #c7511f;
+    text-decoration: underline;
+  }
+
+  .amazon-star {
+    color: #ffa41c;
+  }
+
   .amazon-footer-back {
     background: #37475a;
     color: #ffffff;

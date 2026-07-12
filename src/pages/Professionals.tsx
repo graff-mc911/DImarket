@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { MapPin, Search, SlidersHorizontal, Star } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Profile, Category } from '../lib/types'
 import { ProfessionalCard } from '../components/ProfessionalCard'
@@ -35,7 +34,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [sortBy, setSortBy] = useState<'rating' | 'reviews' | 'newest'>('rating')
-  const [showFilters, setShowFilters] = useState(false)
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [minRating, setMinRating] = useState(0)
   const [locationFilter, setLocationFilter] = useState('')
   const [selectedWorkTypes, setSelectedWorkTypes] = useState<string[]>([])
@@ -172,226 +171,180 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
   }
 
   return (
-    <div className="py-8 pb-24 lg:pb-8">
-            <section className="glass-panel mb-6 p-5 md:p-6">
-              <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-                <div className="max-w-3xl">
-                  <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
-                    {isCompanyCatalog
-                      ? t('companies.simpleTitle')
-                      : t('professionals.simpleTitle')}
-                  </h1>
-                  {!isCompanyCatalog && (
-                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
-                      {t('professionals.mastersOnlyHint')}{' '}
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/companies')}
-                        className="font-semibold text-[var(--accent-700)] underline-offset-2 hover:underline"
-                      >
-                        {t('companies.browseLink')}
-                      </button>
-                    </p>
-                  )}
-                  {isCompanyCatalog && (
-                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
-                      {t('companies.catalogHint')}{' '}
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('/professionals')}
-                        className="font-semibold text-[var(--accent-700)] underline-offset-2 hover:underline"
-                      >
-                        {t('professionals.browseLink')}
-                      </button>
-                    </p>
-                  )}
-                </div>
+    <div className="py-6 pb-24 lg:pb-8">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold text-[var(--ink-900)] md:text-2xl">
+            {isCompanyCatalog ? t('companies.simpleTitle') : t('professionals.simpleTitle')}
+          </h1>
+          <p className="mt-1 text-sm text-[var(--ink-600)]">
+            {loading
+              ? t('professionals.loadingSimple')
+              : `${filteredProfessionals.length} ${
+                  isCompanyCatalog ? t('companies.countSuffix') : t('professionals.countSuffix')
+                }`}
+          </p>
+          {!isCompanyCatalog && (
+            <p className="mt-1 text-xs text-[var(--ink-500)]">
+              {t('professionals.mastersOnlyHint')}{' '}
+              <button type="button" onClick={() => navigateTo('/companies')} className="amazon-link font-medium">
+                {t('companies.browseLink')}
+              </button>
+            </p>
+          )}
+          {isCompanyCatalog && (
+            <p className="mt-1 text-xs text-[var(--ink-500)]">
+              {t('companies.catalogHint')}{' '}
+              <button type="button" onClick={() => navigateTo('/professionals')} className="amazon-link font-medium">
+                {t('professionals.browseLink')}
+              </button>
+            </p>
+          )}
+        </div>
+        <button onClick={() => navigateTo('/create-ad')} type="button" className="btn-primary px-4 py-2 text-sm">
+          {t('professionals.postJob')}
+        </button>
+      </div>
 
-                <button
-                  onClick={() => navigateTo('/create-ad')}
-                  type="button"
-                  className="btn-secondary rounded-full"
-                >
-                  {t('professionals.postJob')}
-                </button>
-              </div>
+      <button
+        type="button"
+        onClick={() => setMobileFiltersOpen(v => !v)}
+        className="btn-secondary mb-4 w-full py-2 text-sm lg:hidden"
+      >
+        {t('professionals.filtersButton')}
+        {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
+      </button>
 
-              <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_220px_160px]">
-                <div className="relative sm:col-span-2 xl:col-span-1">
-                  <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#b59a84]" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                    placeholder={t('professionals.nameSkillService')}
-                    className="input-glass h-14 pl-12"
-                  />
-                </div>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+        <aside className={`amazon-filter-sidebar w-full lg:w-[220px] lg:shrink-0 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
+          <h2 className="text-base font-bold text-[var(--ink-900)]">{t('professionals.filtersButton')}</h2>
 
-                <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#b59a84]" />
-                  <input
-                    type="text"
-                    value={locationFilter}
-                    onChange={(event) => setLocationFilter(event.target.value)}
-                    placeholder={t('professionals.cityOrCountry')}
-                    className="input-glass h-14 pl-12"
-                  />
-                </div>
-
-                <button
-                  onClick={() => setShowFilters((value) => !value)}
-                  type="button"
-                  className="btn-outline h-14 rounded-[20px] sm:col-span-2 xl:col-span-1"
-                >
-                  <SlidersHorizontal className="h-5 w-5" />
-                  {activeFiltersCount > 0
-                    ? `${t('professionals.filtersButton')} (${activeFiltersCount})`
-                    : t('professionals.filtersButton')}
-                </button>
-              </div>
-
-              {showFilters && (
-                <div className="mt-4 rounded-[26px] border border-white/70 bg-white/45 p-4">
-                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                        {t('professionals.categoryLabel')}
-                      </label>
-                      <select
-                        value={selectedCategory}
-                        onChange={(event) => setSelectedCategory(event.target.value)}
-                        className="select-glass bg-white/80"
-                      >
-                        <option value="">{t('professionals.allCategoriesSimple')}</option>
-
-                        {categories.map((category) => (
-                          <option key={category.id} value={category.slug}>
-                            {translateCategory(category)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                        {t('professionals.sortLabel')}
-                      </label>
-                      <select
-                        value={sortBy}
-                        onChange={(event) =>
-                          setSortBy(event.target.value as 'rating' | 'reviews' | 'newest')
-                        }
-                        className="select-glass bg-white/80"
-                      >
-                        <option value="rating">{t('professionals.sortRating')}</option>
-                        <option value="reviews">{t('professionals.sortReviews')}</option>
-                        <option value="newest">{t('professionals.sortNewest')}</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                        {t('professionals.minRatingLabel')}
-                      </label>
-                      <select
-                        value={minRating}
-                        onChange={(event) => setMinRating(Number(event.target.value))}
-                        className="select-glass bg-white/80"
-                      >
-                        <option value="0">{t('professionals.anyRatingSimple')}</option>
-                        <option value="3">3+</option>
-                        <option value="4">4+</option>
-                        <option value="4.5">4.5+</option>
-                      </select>
-                    </div>
-
-                    <div className="flex items-end">
-                      <button
-                        onClick={resetFilters}
-                        type="button"
-                        className="btn-ghost justify-start rounded-full px-0 md:justify-center"
-                      >
-                        {t('professionals.clearFiltersSimple')}
-                      </button>
-                    </div>
-                  </div>
-
-                  <ConstructionWorkTypesPanel
-                    categorySlug="construction"
-                    selected={selectedWorkTypes}
-                    onChange={setSelectedWorkTypes}
-                  />
-                </div>
-              )}
-            </section>
-
-            <CenterPageAd page="professionals" className="my-4" />
-
-            <MobileAdBanner variant="horizontal" page="professionals" outerClassName="mb-4" />
-
-            <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-[#6f665d]">
-              <Star className="h-4 w-4 text-[#c3912c]" />
-              <span>
-                {loading
-                  ? t('professionals.loadingSimple')
-                  : `${filteredProfessionals.length} ${
-                      isCompanyCatalog
-                        ? t('companies.countSuffix')
-                        : t('professionals.countSuffix')
-                    }`}
-              </span>
+          <div className="mt-3 space-y-0">
+            <div className="amazon-filter-group">
+              <label>{t('professionals.nameSkillService')}</label>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="input-glass h-9 text-sm"
+              />
             </div>
 
-            {loading ? (
-              <div className="glass-card p-8 text-center text-[#7a7168]">
-                {t('professionals.loadingSimple')}
-              </div>
-            ) : filteredProfessionals.length > 0 ? (
-              <div className="pros-grid--compact">
-                {filteredProfessionals.map((professional, index) => (
-                  <div key={professional.id}>
-                    <ProfessionalCard professional={professional} />
+            <div className="amazon-filter-group">
+              <label>{t('professionals.cityOrCountry')}</label>
+              <input
+                type="text"
+                value={locationFilter}
+                onChange={(e) => setLocationFilter(e.target.value)}
+                className="input-glass h-9 text-sm"
+              />
+            </div>
 
-                    {(index + 1) % 6 === 0 && index < filteredProfessionals.length - 1 && (
-                      <MobileAdBanner
-                        variant="inline"
-                        page="professionals"
-                        inlineIndex={1}
-                        outerClassName="mt-6"
-                      />
-                    )}
-                  </div>
+            <div className="amazon-filter-group">
+              <label>{t('professionals.categoryLabel')}</label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="select-glass h-9 text-sm"
+              >
+                <option value="">{t('professionals.allCategoriesSimple')}</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.slug}>
+                    {translateCategory(category)}
+                  </option>
                 ))}
-              </div>
-            ) : (
-              <div className="glass-card p-10 text-center">
-                <h2 className="text-xl font-extrabold text-[#2f2a24]">
-                  {t('professionals.emptyTitle')}
-                </h2>
-                <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[#6f665d]">
-                  {t('professionals.emptyText')}
-                </p>
-                <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                  <button
-                    onClick={resetFilters}
-                    type="button"
-                    className="btn-secondary rounded-full"
-                  >
-                    {t('professionals.clearFiltersSimple')}
-                  </button>
-                  <button
-                    onClick={() => navigateTo('/register')}
-                    type="button"
-                    className="btn-primary rounded-full"
-                  >
-                    {t('professionals.registerAsProfessional')}
-                  </button>
-                </div>
-              </div>
-            )}
+              </select>
+            </div>
 
-            <MobileAdBanner variant="inline" page="professionals" inlineIndex={2} outerClassName="mt-8" />
+            <div className="amazon-filter-group">
+              <label>{t('professionals.sortLabel')}</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'rating' | 'reviews' | 'newest')}
+                className="select-glass h-9 text-sm"
+              >
+                <option value="rating">{t('professionals.sortRating')}</option>
+                <option value="reviews">{t('professionals.sortReviews')}</option>
+                <option value="newest">{t('professionals.sortNewest')}</option>
+              </select>
+            </div>
+
+            <div className="amazon-filter-group">
+              <label>{t('professionals.minRatingLabel')}</label>
+              <select
+                value={minRating}
+                onChange={(e) => setMinRating(Number(e.target.value))}
+                className="select-glass h-9 text-sm"
+              >
+                <option value="0">{t('professionals.anyRatingSimple')}</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+                <option value="4.5">4.5+</option>
+              </select>
+            </div>
+
+            {activeFiltersCount > 0 && (
+              <button onClick={resetFilters} type="button" className="btn-secondary mt-3 w-full py-2 text-sm">
+                {t('professionals.clearFiltersSimple')}
+              </button>
+            )}
+          </div>
+        </aside>
+
+        <main className="min-w-0 flex-1">
+          <div className="amazon-section-card mb-4">
+            <ConstructionWorkTypesPanel
+              categorySlug="construction"
+              selected={selectedWorkTypes}
+              onChange={setSelectedWorkTypes}
+            />
+          </div>
+
+          <CenterPageAd page="professionals" className="mb-4" />
+          <MobileAdBanner variant="horizontal" page="professionals" outerClassName="mb-4" />
+
+          {loading ? (
+            <div className="amazon-section-card p-8 text-center text-[var(--ink-500)]">
+              {t('professionals.loadingSimple')}
+            </div>
+          ) : filteredProfessionals.length > 0 ? (
+            <div className="product-grid">
+              {filteredProfessionals.map((professional, index) => (
+                <div key={professional.id}>
+                  <ProfessionalCard professional={professional} />
+                  {(index + 1) % 6 === 0 && index < filteredProfessionals.length - 1 && (
+                    <MobileAdBanner
+                      variant="inline"
+                      page="professionals"
+                      inlineIndex={1}
+                      outerClassName="mt-6"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="amazon-section-card p-10 text-center">
+              <h2 className="text-lg font-bold text-[var(--ink-900)]">
+                {t('professionals.emptyTitle')}
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--ink-600)]">
+                {t('professionals.emptyText')}
+              </p>
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <button onClick={resetFilters} type="button" className="btn-secondary text-sm">
+                  {t('professionals.clearFiltersSimple')}
+                </button>
+                <button onClick={() => navigateTo('/register')} type="button" className="btn-primary text-sm">
+                  {t('professionals.registerAsProfessional')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          <MobileAdBanner variant="inline" page="professionals" inlineIndex={2} outerClassName="mt-8" />
+        </main>
+      </div>
     </div>
   )
 }
