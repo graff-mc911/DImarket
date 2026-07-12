@@ -22,6 +22,7 @@ import {
   Hammer,
   LogOut,
   Megaphone,
+  MapPin,
   Menu,
   MessageSquare,
   PlusCircle,
@@ -38,6 +39,7 @@ import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
 import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
 import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
+import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
@@ -194,6 +196,10 @@ export function Header() {
 
   const isSiteOwner  = profile?.is_site_owner === true || isOwnerEmail(user?.email)
   const accountLabel = profile?.full_name || t('header.account')
+  const deliverCity = LAUNCH_MARKETS[0]?.city ?? 'Darmstadt'
+  const accountGreeting = user && profile?.full_name
+    ? profile.full_name.split(' ')[0]
+    : t('header.signIn')
 
   // Навігаційні пункти
   const navItems: NavItem[] = [
@@ -439,6 +445,19 @@ export function Header() {
                 <Logo variant="text" size="header" inverted />
               </button>
 
+              {/* Deliver to (Amazon) */}
+              <button
+                type="button"
+                onClick={() => goTo('/listings')}
+                className="amazon-header-block hidden shrink-0 lg:flex"
+              >
+                <span className="amazon-header-block__top">{t('header.deliverTo')}</span>
+                <span className="amazon-header-block__bottom flex items-center gap-0.5">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {deliverCity}
+                </span>
+              </button>
+
               {/* Пошук Amazon-style */}
               <form
                 onSubmit={handleSearchSubmit}
@@ -474,19 +493,17 @@ export function Header() {
                 </div>
               </form>
 
-              {/* Десктоп: права панель */}
-              <div className="hidden items-center gap-1 sm:flex">
+              {/* Amazon: мова, акаунт, замовлення, збережене */}
+              <div className="hidden items-center gap-0 sm:flex">
 
-                {/* Вибір мови */}
                 <div ref={languageRef} className="relative">
                   <button
                     onClick={() => { setLanguageOpen(o => !o); setCurrencyOpen(false); setAccountOpen(false); setCategoriesOpen(false) }}
                     type="button"
-                    className={textButtonClass(languageOpen)}
+                    className="amazon-header-lang"
                   >
                     <Globe className="h-4 w-4" />
                     <span>{language.code.toUpperCase()}</span>
-                    <ChevronDown className="h-4 w-4 text-current" />
                   </button>
                   {languageOpen && (
                     <div className={dropdownPanelClass} style={{ maxHeight: '320px', overflowY: 'auto' }}>
@@ -506,211 +523,162 @@ export function Header() {
                   )}
                 </div>
 
-                {/* Вибір валюти */}
-                <div ref={currencyRef} className="relative">
+                <div ref={accountRef} className="relative">
                   <button
-                    onClick={() => { setCurrencyOpen(o => !o); setLanguageOpen(false); setAccountOpen(false); setCategoriesOpen(false) }}
+                    onClick={() => {
+                      if (user && profile) {
+                        setAccountOpen(o => !o)
+                        setLanguageOpen(false)
+                        setCurrencyOpen(false)
+                        setCategoriesOpen(false)
+                      } else {
+                        goTo('/login')
+                      }
+                    }}
                     type="button"
-                    className={textButtonClass(currencyOpen)}
+                    className="amazon-header-block"
                   >
-                    <span className="text-base">{currency.symbol}</span>
-                    <span>{currency.code}</span>
-                    <ChevronDown className="h-4 w-4 text-current" />
+                    <span className="amazon-header-block__top">
+                      {user ? `${t('header.hello')}, ${accountGreeting}` : `${t('header.hello')}, ${t('header.signIn')}`}
+                    </span>
+                    <span className="amazon-header-block__bottom">{t('header.accountLists')}</span>
                   </button>
-                  {currencyOpen && (
-                    <div className={dropdownPanelClass} style={{ maxHeight: '320px', overflowY: 'auto' }}>
+
+                  {user && profile && accountOpen && (
+                    <div className={dropdownPanelClass}>
+                      <button onClick={() => goTo('/profile')} type="button" className={dropdownItemClass}>
+                        <User className="mr-2 inline h-4 w-4" />
+                        {t('header.myProfile')}
+                      </button>
+                      <button onClick={() => goTo('/settings')} type="button" className={dropdownItemClass}>
+                        <Settings className="mr-2 inline h-4 w-4" />
+                        {t('header.settings')}
+                      </button>
+                      {(profile?.user_role === 'professional' || profile?.user_role === 'company') && (
+                        <button onClick={() => goTo('/verification')} type="button" className={dropdownItemClass}>
+                          <Shield className="mr-2 inline h-4 w-4" />
+                          {t('verification.menu')}
+                        </button>
+                      )}
+                      <button onClick={() => goTo('/my-listings')} type="button" className={dropdownItemClass}>
+                        <FileText className="mr-2 inline h-4 w-4" />
+                        {t('header.myListings') || 'Мої оголошення'}
+                      </button>
+                      <button onClick={() => goTo('/favorites')} type="button" className={dropdownItemClass}>
+                        <Bookmark className="mr-2 inline h-4 w-4" />
+                        {t('header.favorites')}
+                      </button>
+                      <button onClick={() => goTo('/messages')} type="button" className={dropdownItemClass}>
+                        <MessageSquare className="mr-2 inline h-4 w-4" />
+                        {t('header.messages')}
+                        {unreadCount > 0 && (
+                          <span className="ml-2 rounded-full px-1.5 py-0.5 text-xs font-bold text-white"
+                            style={{ background: 'var(--accent-700)' }}>
+                            {unreadCount}
+                          </span>
+                        )}
+                      </button>
+                      <div className="my-1 border-t border-[#e7e7e7]" />
+                      <p className="px-3 py-1 text-[10px] font-bold uppercase text-[var(--ink-500)]">{t('header.currency')}</p>
                       {CURRENCIES.map(curr => (
                         <button
                           key={curr.code}
-                          onClick={() => { setCurrency(curr); setCurrencyOpen(false) }}
+                          onClick={() => { setCurrency(curr); setAccountOpen(false) }}
                           type="button"
                           className={currency.code === curr.code
                             ? dropdownItemClass + ' text-[var(--accent-700)]'
                             : dropdownItemClass}
                         >
-                          <span className="font-bold">{curr.symbol}</span> {curr.code} - {curr.name}
+                          <span className="font-bold">{curr.symbol}</span> {curr.code}
                         </button>
                       ))}
+                      {isSiteOwner && user && (
+                        <>
+                          <div className="my-1 border-t border-[#e7e7e7]" />
+                          <button onClick={() => goTo('/dashboard')} type="button" className={dropdownItemClass}>
+                            <ClipboardList className="mr-2 inline h-4 w-4" />
+                            {t('header.dashboard')}
+                          </button>
+                          <button onClick={() => goTo('/admin/ai')} type="button" className={dropdownItemClass}>
+                            <Bot className="mr-2 inline h-4 w-4" />
+                            {t('ai.admin.title')}
+                          </button>
+                        </>
+                      )}
+                      {user && profile && (
+                        <>
+                          <div className="my-1 border-t border-[#e7e7e7]" />
+                          <button
+                            onClick={handleSignOut}
+                            type="button"
+                            className="flex w-full items-center gap-2 rounded-sm px-3 py-2.5 text-left text-sm font-semibold text-[#c7511f]"
+                          >
+                            <LogOut className="h-4 w-4" />
+                            <span>{t('header.signOut')}</span>
+                          </button>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
 
-                {user && <NotificationCenter />}
-
-                {/* Іконка повідомлень з лічильником */}
-                {user && (
-                  <button
-                    type="button"
-                    onClick={() => goTo('/messages')}
-                    className={textButtonClass(isActiveRoute('/messages')) + ' relative'}
-                    title="Повідомлення"
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    {unreadCount > 0 && (
-                      <span
-                        className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                        style={{ background: 'var(--accent-700)' }}
-                      >
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                      </span>
-                    )}
-                  </button>
-                )}
-
-                {/* Іконка збережених */}
-                {user && (
-                  <button
-                    type="button"
-                    onClick={() => goTo('/favorites')}
-                    className={textButtonClass(isActiveRoute('/favorites'))}
-                    title="Збережені"
-                  >
-                    <Bookmark className="h-4 w-4" />
-                  </button>
-                )}
-
-                {/* Акаунт */}
-                {user && profile ? (
-                  <div ref={accountRef} className="relative">
-                    <button
-                      onClick={() => { setAccountOpen(o => !o); setLanguageOpen(false); setCurrencyOpen(false); setCategoriesOpen(false) }}
-                      type="button"
-                      className={textButtonClass(accountOpen) + ' max-w-[240px]'}
-                    >
-                      <User className="h-4 w-4 shrink-0" />
-                      <span className="truncate">{accountLabel}</span>
-                      <ChevronDown className="h-4 w-4 shrink-0 text-current" />
-                    </button>
-
-                    {accountOpen && (
-                      <div className={dropdownPanelClass}>
-                        <button onClick={() => goTo('/profile')} type="button" className={dropdownItemClass}>
-                          <User className="mr-2 inline h-4 w-4" />
-                          {t('header.myProfile')}
-                        </button>
-                        <button onClick={() => goTo('/settings')} type="button" className={dropdownItemClass}>
-                          <Settings className="mr-2 inline h-4 w-4" />
-                          {t('header.settings')}
-                        </button>
-                        {(profile?.user_role === 'professional' || profile?.user_role === 'company') && (
-                          <button onClick={() => goTo('/verification')} type="button" className={dropdownItemClass}>
-                            <Shield className="mr-2 inline h-4 w-4" />
-                            {t('verification.menu')}
-                          </button>
-                        )}
-                        <button onClick={() => goTo('/my-listings')} type="button" className={dropdownItemClass}>
-                          <FileText className="mr-2 inline h-4 w-4" />
-                          {t('header.myListings') || 'Мої оголошення'}
-                        </button>
-                        <button onClick={() => goTo('/favorites')} type="button" className={dropdownItemClass}>
-                          <Bookmark className="mr-2 inline h-4 w-4" />
-                          {t('header.favorites')}
-                        </button>
-                        <button onClick={() => goTo('/messages')} type="button" className={dropdownItemClass}>
-                          <MessageSquare className="mr-2 inline h-4 w-4" />
-                          {t('header.messages')}
-                          {unreadCount > 0 && (
-                            <span className="ml-2 rounded-full px-1.5 py-0.5 text-xs font-bold text-white"
-                              style={{ background: 'var(--accent-700)' }}>
-                              {unreadCount}
-                            </span>
-                          )}
-                        </button>
-
-                        {isSiteOwner && (
-                          <>
-                            <button onClick={() => goTo('/dashboard')} type="button" className={dropdownItemClass}>
-                              <ClipboardList className="mr-2 inline h-4 w-4" />
-                              {t('header.dashboard')}
-                            </button>
-                            <button onClick={() => goTo('/admin/ai')} type="button" className={dropdownItemClass}>
-                              <Bot className="mr-2 inline h-4 w-4" />
-                              {t('ai.admin.title')}
-                            </button>
-                            <button onClick={() => goTo('/admin/marketing-agent')} type="button" className={dropdownItemClass}>
-                              <Megaphone className="mr-2 inline h-4 w-4" />
-                              {t('marketing.admin.title')}
-                            </button>
-                          </>
-                        )}
-
-                        <div className="my-2 border-t border-[var(--glass-border)]" />
-
-                        <button
-                          onClick={handleSignOut}
-                          type="button"
-                          className="flex w-full items-center gap-2 rounded-[18px] px-4 py-3 text-left text-sm font-semibold text-[#a04b39] transition-all hover:text-[#c2614a]"
-                        >
-                          <LogOut className="h-4 w-4" />
-                          <span>{t('header.signOut')}</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <button onClick={() => goTo('/login')} type="button" className={textButtonClass()}>
-                    {t('header.signIn')}
-                  </button>
-                )}
-
                 <button
-                  onClick={() => goTo('/assistant/job')}
                   type="button"
-                  className="btn-outline hidden px-4 py-2 text-xs xl:inline-flex"
+                  onClick={() => goTo(user ? '/messages' : '/login')}
+                  className="amazon-header-block hidden md:flex"
                 >
-                  <Bot className="h-4 w-4" />
-                  {t('header.aiAssistant')}
+                  <span className="amazon-header-block__top">{t('header.returns')}</span>
+                  <span className="amazon-header-block__bottom">{t('header.orders')}</span>
                 </button>
 
-                <button onClick={() => goTo('/create-ad')} type="button" className="btn-primary hidden px-3 py-1.5 text-xs lg:inline-flex">
-                  <PlusCircle className="h-4 w-4" />
-                  {t('header.postJob')}
+                <button
+                  type="button"
+                  onClick={() => goTo(user ? '/favorites' : '/login')}
+                  className="amazon-header-cart"
+                >
+                  <span className="amazon-header-cart__icon">
+                    <Bookmark className="h-7 w-7" />
+                    <span className="amazon-header-cart__count">0</span>
+                  </span>
+                  <span className="amazon-header-block__bottom hidden sm:inline">{t('header.saved')}</span>
                 </button>
               </div>
 
-              {/* Мобільні кнопки */}
-              <div className="flex shrink-0 items-center gap-1.5 sm:hidden">
-                <OnlineVisitorsPill count={onlineVisitors} className="hidden min-[400px]:inline-flex" />
-
-                {/* Повідомлення (мобільний) */}
-                {user && (
-                  <button
-                    type="button"
-                    onClick={() => goTo('/messages')}
-                    className="relative flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-700)]"
-                  >
-                    <MessageSquare className="h-5 w-5" />
-                    {unreadCount > 0 && (
-                      <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                        style={{ background: 'var(--accent-700)' }}>
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                      </span>
-                    )}
-                  </button>
-                )}
+              {/* Мобільні кнопки — Amazon: акаунт + збережене + меню */}
+              <div className="flex shrink-0 items-center gap-0.5 sm:hidden">
+                <button
+                  type="button"
+                  onClick={() => goTo(user ? '/profile' : '/login')}
+                  className="amazon-header-block px-1 py-0.5"
+                >
+                  <span className="amazon-header-block__top text-[10px]">{t('header.signIn')}</span>
+                  <span className="amazon-header-block__bottom text-xs">{t('header.account')}</span>
+                </button>
 
                 <button
-                  onClick={() => goTo('/create-ad')}
                   type="button"
-                  className="btn-primary px-2.5 py-1.5 text-xs sm:px-3"
+                  onClick={() => goTo(user ? '/favorites' : '/login')}
+                  className="amazon-header-cart px-1"
                 >
-                  <PlusCircle className="h-4 w-4" />
-                  <span className="hidden min-[430px]:inline">{t('header.postJob')}</span>
+                  <span className="amazon-header-cart__icon">
+                    <Bookmark className="h-6 w-6" />
+                    <span className="amazon-header-cart__count text-sm">0</span>
+                  </span>
                 </button>
 
                 <button
                   onClick={() => { setMobileMenuOpen(o => !o); closeDropdowns() }}
                   type="button"
                   aria-expanded={mobileMenuOpen}
-                  className={mobileIconButtonClass + (mobileMenuOpen ? ' text-[var(--accent-700)]' : '')}
+                  className={mobileIconButtonClass + (mobileMenuOpen ? ' text-[#ff9900]' : '')}
                 >
                   {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </button>
               </div>
             </div>
 
-            {/* Amazon subnav — горизонтальні категорії */}
-            <div className="site-header-subnav mt-1.5 hidden sm:block">
+            {/* Amazon subnav */}
+            <div className="site-header-subnav mt-1 hidden sm:block">
               <div className="amazon-dept-scroll px-3 py-1 md:px-4">
                 <div ref={categoriesRef} className="relative shrink-0">
                   <button
@@ -725,7 +693,7 @@ export function Header() {
                     className="amazon-dept-link flex items-center gap-1 font-bold"
                   >
                     <Menu className="h-4 w-4" />
-                    <span>{t('header.categories')}</span>
+                    <span>{t('header.all')}</span>
                   </button>
                   {categoriesOpen && (
                     <div className={categoriesDropdownClass} role="menu">
@@ -733,6 +701,10 @@ export function Header() {
                     </div>
                   )}
                 </div>
+
+                <button type="button" onClick={() => goTo('/listings')} className="amazon-dept-link">
+                  {t('header.todaysDeals')}
+                </button>
 
                 {navItems.map((item) => (
                   <button
@@ -745,20 +717,17 @@ export function Header() {
                   </button>
                 ))}
 
+                <button type="button" onClick={() => goTo('/create-ad')} className="amazon-dept-link">
+                  {t('header.sell')}
+                </button>
+
+                <button type="button" onClick={() => goTo('/contact')} className="amazon-dept-link">
+                  {t('header.customerService')}
+                </button>
+
                 <button type="button" onClick={goToHowItWorks} className="amazon-dept-link">
                   {t('footer.howItWorks')}
                 </button>
-
-                {categoryGroups.flatMap((g) => g.tiles).slice(0, 10).map((tile) => (
-                  <button
-                    key={tile.id}
-                    type="button"
-                    onClick={() => goTo(tile.path)}
-                    className="amazon-dept-link"
-                  >
-                    {tile.label}
-                  </button>
-                ))}
               </div>
             </div>
 

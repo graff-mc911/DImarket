@@ -16,28 +16,8 @@ export function adPageForPath(path: string): SideAdsPage {
   return 'default'
 }
 
-/** Бокові рейки лише там, де вони є в макеті сторінки */
-export function pathUsesSideAdRails(path: string): boolean {
-  if (
-    path === '/listings' ||
-    path === '/vacancies' ||
-    path === '/sell-rent' ||
-    path === '/professionals' ||
-    path === '/companies' ||
-    path === '/contact' ||
-    path === '/create-ad' ||
-    path === '/assistant/job' ||
-    path === '/for-professionals' ||
-    path === '/for-companies' ||
-    path === '/for-advertisers' ||
-    path === '/advertising' ||
-    path === '/advertise'
-  ) {
-    return true
-  }
-  if (path.startsWith('/listing/') || path.startsWith('/professional/')) return true
-  const parts = path.split('/').filter(Boolean)
-  if (parts.length === 3 && isSeoLocale(parts[0])) return true
+/** Amazon layout: без бокових рекламних рейок */
+export function pathUsesSideAdRails(_path: string): boolean {
   return false
 }
 

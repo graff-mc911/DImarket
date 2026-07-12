@@ -8,8 +8,7 @@ import { AppProvider }         from './contexts/AppContext'
 import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
-import { PageWithSideAds, pathUsesSideAdRails } from './components/PageWithSideAds'
-import { SideAdRailsLayout } from './components/SideAdRails'
+import { PageWithSideAds } from './components/PageWithSideAds'
 import { bindPathListener }    from './lib/navigation'
 
 // --- Публічні сторінки ---
@@ -110,29 +109,16 @@ function App() {
     }
   }
 
-  const showSideAds = pathUsesSideAdRails(path)
-
   return (
     <AppProvider>
       <PaidAdsProvider>
         <div className="app-shell min-h-screen flex flex-col">
           <Header />
-          {showSideAds ? (
-            <SideAdRailsLayout>
-              <main className="min-w-0 flex-1">
-                <PageWithSideAds inSideAdsGrid>{getPage()}</PageWithSideAds>
-              </main>
-              <Footer />
-            </SideAdRailsLayout>
-          ) : (
-            <>
-              <main className="flex-1">
-                <PageWithSideAds>{getPage()}</PageWithSideAds>
-              </main>
-              <Footer />
-            </>
-          )}
-          <AiChatWidget />
+          <main className="flex-1">
+            <PageWithSideAds>{getPage()}</PageWithSideAds>
+          </main>
+          <Footer />
+          {path.startsWith('/admin') && <AiChatWidget />}
         </div>
       </PaidAdsProvider>
     </AppProvider>
