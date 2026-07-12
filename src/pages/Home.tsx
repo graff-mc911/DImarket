@@ -18,6 +18,7 @@ import {
   Users,
   Wrench,
 } from 'lucide-react'
+import { CategoryCircleTile } from '../components/CategoryCircleTile'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import { HOME_CATEGORY_TILES } from '../lib/homeCategoryTiles'
 import { ProfessionalCard } from '../components/ProfessionalCard'
@@ -222,47 +223,16 @@ export function Home() {
 
       <section className="pt-2 pb-6">
         <div className="layout-page-content">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-5 sm:overflow-visible sm:px-0">
             {HOME_CATEGORY_TILES.map((tile) => {
               const Icon = tile.icon
               return (
-                <button
+                <CategoryCircleTile
                   key={tile.id}
-                  type="button"
+                  icon={Icon}
+                  label={t(tile.labelKey)}
                   onClick={() => navigateTo(tile.path)}
-                  className="trust-card group flex flex-col items-start p-5 text-left transition hover:border-[var(--line-strong)]"
-                >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[rgba(184,115,51,0.1)] text-[var(--brand-copper)]">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-4 text-base font-bold text-[var(--ink-900)] group-hover:text-[var(--brand-primary)]">
-                    {t(tile.labelKey)}
-                  </h3>
-                  <p className="mt-1 text-xs text-[var(--ink-500)]">
-                    {prosCountLabel(stats.professionals)}
-                  </p>
-                </button>
-              )
-            })}
-          </div>
-
-          <div className="mt-4 flex gap-3 overflow-x-auto pb-1 md:hidden">
-            {HOME_CATEGORY_TILES.map((tile) => {
-              const Icon = tile.icon
-              return (
-                <button
-                  key={`m-${tile.id}`}
-                  type="button"
-                  onClick={() => navigateTo(tile.path)}
-                  className="flex shrink-0 flex-col items-center gap-1.5"
-                >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--glass-border)] bg-white text-[var(--brand-primary)]">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="max-w-[4.5rem] truncate text-[10px] font-semibold text-[var(--ink-700)]">
-                    {t(tile.labelKey)}
-                  </span>
-                </button>
+                />
               )
             })}
           </div>

@@ -31,7 +31,8 @@ const sizes = {
   },
 } as const
 
-const wordmarkFont = 'var(--font-sans), Inter, system-ui, sans-serif'
+const wordmarkFont = 'var(--font-logo), "Libre Bodoni", "Didot", "Bodoni MT", Georgia, serif'
+const marketFont = 'var(--font-sans), Inter, system-ui, sans-serif'
 
 function Wordmark({
   className = '',
@@ -41,12 +42,25 @@ function Wordmark({
   animated?: boolean
 }) {
   return (
-    <div
-      className={`font-bold tracking-[-0.04em] ${className}`}
-      style={{ fontFamily: wordmarkFont }}
-    >
-      <span className={animated ? 'logo-build-letter logo-build-letter--di logo-di-metallic' : 'logo-di-metallic'}>DI</span>
-      <span className={animated ? 'logo-build-letter logo-build-letter--market text-[var(--ink-900)]' : 'text-[var(--ink-900)]'}>market</span>
+    <div className={`inline-flex items-baseline tracking-[-0.03em] ${className}`}>
+      <span
+        className={`logo-letter-d font-bold ${animated ? 'logo-build-letter logo-build-letter--d' : ''}`}
+        style={{ fontFamily: wordmarkFont }}
+      >
+        D
+      </span>
+      <span
+        className={`logo-letter-i font-bold ${animated ? 'logo-build-letter logo-build-letter--i' : ''}`}
+        style={{ fontFamily: wordmarkFont }}
+      >
+        I
+      </span>
+      <span
+        className={`font-semibold text-[var(--ink-900)] ${animated ? 'logo-build-letter logo-build-letter--market' : ''}`}
+        style={{ fontFamily: marketFont }}
+      >
+        market
+      </span>
     </div>
   )
 }
