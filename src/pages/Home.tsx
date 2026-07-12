@@ -221,7 +221,10 @@ export function Home() {
 
       <section className="pt-2 pb-6">
         <div className="layout-page-content">
-          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-5 sm:overflow-visible sm:px-0">
+          <h2 className="mb-4 text-center text-lg font-bold text-[var(--ink-900)] md:text-xl">
+            {t('home.popularCategoriesTitle')}
+          </h2>
+          <div className="mx-auto grid max-w-md grid-cols-3 justify-items-center gap-x-2 gap-y-5 sm:max-w-3xl sm:grid-cols-6 sm:gap-x-4">
             {HOME_CATEGORY_TILES.map((tile) => {
               const Icon = tile.icon
               return (
