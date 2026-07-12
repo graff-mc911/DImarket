@@ -19,7 +19,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="text-center md:col-span-2 md:text-left lg:col-span-1">
             <button type="button" onClick={() => go('/')} className="text-left">
-              <Logo variant="text" size="md" animated />
+              <Logo variant="text" size="md" />
             </button>
             <p className="mx-auto mt-3 max-w-xs text-sm leading-6 text-[var(--ink-600)] md:mx-0">
               {t('footer.tagline')}
