@@ -1,6 +1,9 @@
 import type { LucideIcon } from 'lucide-react'
 import {
+  Armchair,
+  Briefcase,
   Building2,
+  Calculator,
   Droplets,
   Flame,
   Grid3x3,
@@ -10,8 +13,10 @@ import {
   Package,
   Paintbrush,
   Ruler,
+  Scale,
   Sparkles,
   Sun,
+  Tag,
   Thermometer,
   Truck,
   Waves,
@@ -28,7 +33,6 @@ import {
 import {
   categoryLabel,
   categoryPagePath,
-  SITE_CATEGORY_CONFIG,
   type SiteCategorySlug,
 } from './siteCategories'
 
@@ -36,8 +40,13 @@ export interface HomeCategoryTile {
   id: string
   label: string
   path: string
-  icon?: LucideIcon
-  emoji?: string
+  icon: LucideIcon
+}
+
+export interface HomeCategoryGroup {
+  id: string
+  titleKey: TranslationKey
+  tiles: HomeCategoryTile[]
 }
 
 const WORK_GROUP_ICONS: Record<string, LucideIcon> = {
@@ -73,17 +82,17 @@ const WORK_GROUP_ICONS: Record<string, LucideIcon> = {
   'equipment-rental': Package,
 }
 
-/** Пріоритетні категорії — показуються першими на головній. */
-const PRIORITY_TILE_IDS = [
-  'construction:electro',
-  'construction:plumbing',
-  'construction:painting',
-  'construction:tiling',
-  'cleaning:cleaning',
-  'site:renovation',
-]
+const SITE_CATEGORY_ICONS: Record<string, LucideIcon> = {
+  renovation: Hammer,
+  construction: Building2,
+  handyman: Wrench,
+  furniture: Armchair,
+  'legal-notary': Scale,
+  'accounting-finance': Calculator,
+  vacancies: Briefcase,
+  'sell-rent': Tag,
+}
 
-/** Додаткові розділи сайту (окрім груп робіт з каталогу). */
 const EXTRA_SITE_SLUGS = [
   'renovation',
   'construction',
@@ -95,43 +104,106 @@ const EXTRA_SITE_SLUGS = [
   'sell-rent',
 ] as const
 
-const SITE_EXTRA_EMOJI: Record<string, string> = {
-  renovation: '🔨',
-}
+/** Логічні групи та фіксований порядок плиток на головній. */
+const HOME_CATEGORY_GROUP_DEFS: {
+  id: string
+  titleKey: TranslationKey
+  tileIds: string[]
+}[] = [
+  {
+    id: 'popular',
+    titleKey: 'home.categoryGroup.popular',
+    tileIds: [
+      'construction:electro',
+      'construction:plumbing',
+      'construction:painting',
+      'construction:tiling',
+      'cleaning:cleaning',
+      'site:renovation',
+    ],
+  },
+  {
+    id: 'finishing',
+    titleKey: 'home.categoryGroup.finishing',
+    tileIds: [
+      'construction:demolition',
+      'construction:plastering',
+      'construction:wallpaper',
+      'construction:drywall',
+      'construction:flooring',
+      'construction:windows',
+      'construction:carpentry',
+    ],
+  },
+  {
+    id: 'building',
+    titleKey: 'home.categoryGroup.building',
+    tileIds: [
+      'site:construction',
+      'construction:foundation',
+      'construction:concrete',
+      'construction:masonry',
+      'construction:roofing',
+      'construction:facade',
+      'construction:earthworks',
+    ],
+  },
+  {
+    id: 'engineering',
+    titleKey: 'home.categoryGroup.engineering',
+    tileIds: [
+      'construction:hvac',
+      'construction:insulation',
+      'construction:solar',
+      'construction:smart-home',
+    ],
+  },
+  {
+    id: 'outdoor',
+    titleKey: 'home.categoryGroup.outdoor',
+    tileIds: ['construction:landscaping', 'construction:pools'],
+  },
+  {
+    id: 'metal-glass',
+    titleKey: 'home.categoryGroup.metalGlass',
+    tileIds: ['construction:welding', 'construction:metal', 'construction:glass'],
+  },
+  {
+    id: 'services',
+    titleKey: 'home.categoryGroup.services',
+    tileIds: [
+      'tools:logistics',
+      'site:handyman',
+      'sell-rent:equipment-rental',
+    ],
+  },
+  {
+    id: 'other',
+    titleKey: 'home.categoryGroup.other',
+    tileIds: [
+      'construction:design-engineering',
+      'site:furniture',
+      'site:legal-notary',
+      'site:accounting-finance',
+      'site:vacancies',
+      'site:sell-rent',
+    ],
+  },
+]
 
 function tileIcon(groupSlug: string): LucideIcon {
   return WORK_GROUP_ICONS[groupSlug] ?? Wrench
 }
 
-function sortTiles(tiles: HomeCategoryTile[]): HomeCategoryTile[] {
-  const priorityIndex = new Map(PRIORITY_TILE_IDS.map((id, index) => [id, index]))
-  return [...tiles].sort((a, b) => {
-    const aPriority = priorityIndex.get(a.id)
-    const bPriority = priorityIndex.get(b.id)
-    if (aPriority != null && bPriority != null) return aPriority - bPriority
-    if (aPriority != null) return -1
-    if (bPriority != null) return 1
-    return a.label.localeCompare(b.label, undefined, { sensitivity: 'base' })
-  })
-}
-
-/** Усі категорії для головної та меню шапки. */
-export function buildHomeCategoryTiles(
+function buildTileIndex(
   locale: string,
   t: (key: TranslationKey) => string,
-): HomeCategoryTile[] {
-  const tiles: HomeCategoryTile[] = []
-  const seen = new Set<string>()
-
-  const add = (tile: HomeCategoryTile) => {
-    if (seen.has(tile.id)) return
-    seen.add(tile.id)
-    tiles.push(tile)
-  }
+): Map<string, HomeCategoryTile> {
+  const index = new Map<string, HomeCategoryTile>()
 
   for (const cat of SERVICE_CATEGORY_CATALOG) {
     for (const group of cat.groups ?? []) {
-      add({
+      index.set(`${cat.slug}:${group.slug}`, {
         id: `${cat.slug}:${group.slug}`,
         label: labelFor(group.label, locale),
         path: listingsPathForWorkGroup(group.slug, cat.slug),
@@ -141,18 +213,36 @@ export function buildHomeCategoryTiles(
   }
 
   for (const slug of EXTRA_SITE_SLUGS) {
-    const cfg = SITE_CATEGORY_CONFIG[slug as SiteCategorySlug]
-    add({
+    index.set(`site:${slug}`, {
       id: `site:${slug}`,
       label: categoryLabel(slug, t),
       path: categoryPagePath(slug),
-      emoji: SITE_EXTRA_EMOJI[slug] ?? cfg?.icon,
-      icon: slug === 'construction' ? Building2 : slug === 'handyman' ? Wrench : undefined,
+      icon: SITE_CATEGORY_ICONS[slug] ?? Wrench,
     })
   }
 
-  return sortTiles(tiles)
+  return index
 }
 
-/** @deprecated використовуйте buildHomeCategoryTiles */
-export const HOME_CATEGORY_TILES = buildHomeCategoryTiles('en', (key) => key)
+export function buildHomeCategoryGroups(
+  locale: string,
+  t: (key: TranslationKey) => string,
+): HomeCategoryGroup[] {
+  const index = buildTileIndex(locale, t)
+
+  return HOME_CATEGORY_GROUP_DEFS.map((group) => ({
+    id: group.id,
+    titleKey: group.titleKey,
+    tiles: group.tileIds
+      .map((id) => index.get(id))
+      .filter((tile): tile is HomeCategoryTile => tile != null),
+  })).filter((group) => group.tiles.length > 0)
+}
+
+/** Плоский список у тому ж порядку, що й групи (меню шапки). */
+export function buildHomeCategoryTiles(
+  locale: string,
+  t: (key: TranslationKey) => string,
+): HomeCategoryTile[] {
+  return buildHomeCategoryGroups(locale, t).flatMap((group) => group.tiles)
+}

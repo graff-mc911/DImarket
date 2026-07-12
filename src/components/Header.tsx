@@ -37,7 +37,7 @@ import { useApp }      from '../contexts/AppContext'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
 import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
-import { buildHomeCategoryTiles } from '../lib/homeCategoryTiles'
+import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { TrustStrip } from './TrustStrip'
@@ -351,23 +351,33 @@ export function Header() {
   const mobileCategoryItemClass =
     'rounded-[16px] px-4 py-2.5 text-left text-sm font-semibold text-[var(--ink-700)] transition hover:bg-white/50 hover:text-[var(--accent-700)]'
 
-  const categoryTiles = useMemo(
-    () => buildHomeCategoryTiles(language.code, t),
+  const categoryGroups = useMemo(
+    () => buildHomeCategoryGroups(language.code, t),
     [language.code, t],
   )
 
   const renderCategoryMenu = (itemClass: string, role?: 'menuitem') => (
     <>
-      {categoryTiles.map((tile) => (
-        <button
-          key={tile.id}
-          type="button"
-          role={role}
-          onClick={() => goTo(tile.path)}
-          className={itemClass}
-        >
-          {tile.label}
-        </button>
+      {categoryGroups.map((group, groupIndex) => (
+        <div key={group.id}>
+          {groupIndex > 0 && (
+            <div className="my-1 border-t border-[var(--glass-border)]" aria-hidden />
+          )}
+          <p className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--ink-500)]">
+            {t(group.titleKey)}
+          </p>
+          {group.tiles.map((tile) => (
+            <button
+              key={tile.id}
+              type="button"
+              role={role}
+              onClick={() => goTo(tile.path)}
+              className={itemClass}
+            >
+              {tile.label}
+            </button>
+          ))}
+        </div>
       ))}
       <div className="my-1 border-t border-[var(--glass-border)]" aria-hidden />
       <button

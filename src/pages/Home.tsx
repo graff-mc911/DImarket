@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { CategoryCircleTile } from '../components/CategoryCircleTile'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
-import { buildHomeCategoryTiles } from '../lib/homeCategoryTiles'
+import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { ProfessionalCard } from '../components/ProfessionalCard'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
@@ -47,8 +47,8 @@ interface PlatformStats {
 
 export function Home() {
   const { language, t } = useApp()
-  const categoryTiles = useMemo(
-    () => buildHomeCategoryTiles(language.code, t),
+  const categoryGroups = useMemo(
+    () => buildHomeCategoryGroups(language.code, t),
     [language.code, t],
   )
 
@@ -225,18 +225,26 @@ export function Home() {
 
       <section className="pt-2 pb-6">
         <div className="layout-page-content">
-          <h2 className="mb-4 text-center text-lg font-bold text-[var(--ink-900)] md:text-xl">
+          <h2 className="mb-6 text-center text-lg font-bold text-[var(--ink-900)] md:text-xl">
             {t('home.allCategoriesTitle')}
           </h2>
-          <div className="mx-auto grid max-w-6xl grid-cols-3 justify-items-center gap-x-3 gap-y-5 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
-            {categoryTiles.map((tile) => (
-              <CategoryCircleTile
-                key={tile.id}
-                icon={tile.icon}
-                emoji={tile.emoji}
-                label={tile.label}
-                onClick={() => navigateTo(tile.path)}
-              />
+          <div className="mx-auto flex max-w-5xl flex-col gap-8">
+            {categoryGroups.map((group) => (
+              <div key={group.id}>
+                <h3 className="mb-3 text-center text-xs font-bold uppercase tracking-[0.14em] text-[var(--ink-500)] md:text-left">
+                  {t(group.titleKey)}
+                </h3>
+                <div className="grid grid-cols-3 justify-items-center gap-x-2 gap-y-5 sm:grid-cols-4 md:grid-cols-6">
+                  {group.tiles.map((tile) => (
+                    <CategoryCircleTile
+                      key={tile.id}
+                      icon={tile.icon}
+                      label={tile.label}
+                      onClick={() => navigateTo(tile.path)}
+                    />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
