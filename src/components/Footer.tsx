@@ -49,6 +49,16 @@ export function Footer() {
 
   return (
     <footer className="relative z-10 mt-auto w-full">
+      <div className="amazon-footer-back py-4 text-center md:hidden">
+        <button
+          type="button"
+          onClick={scrollTop}
+          className="text-sm font-medium text-white hover:underline"
+        >
+          ↑ {t('footer.backToTop') || 'Back to top'}
+        </button>
+      </div>
+
       {/* Мобільний футер: тільки лічильники + копірайт */}
       <div className="amazon-footer-main layout-page-gutter py-8 md:hidden">
         <div className="layout-page-content">

@@ -6,13 +6,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
-  Bot,
   Building2,
   ClipboardList,
   HardHat,
   Megaphone,
   Search,
-  Star,
   Users,
 } from 'lucide-react'
 import { CategoryCircleTile } from '../components/CategoryCircleTile'
@@ -137,71 +135,85 @@ export function Home() {
   }
 
   const [heroCity] = useState(LAUNCH_MARKETS[0]?.city ?? 'Darmstadt')
+  const popularGroup = categoryGroups.find((g) => g.id === 'popular') ?? categoryGroups[0]
 
   return (
     <div className="home-page">
-      {/* Amazon-style hero banner */}
-      <section className="pb-4 pt-3">
-        <div className="layout-page-content">
-          <div className="amazon-section-card overflow-hidden bg-gradient-to-r from-[#232f3e] to-[#37475a] p-6 text-white md:p-8">
-            <h1 className="text-xl font-bold md:text-3xl">
-              {t('home.heroTrustTitle')}
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#dddddd] md:text-base">
-              {t('home.heroTrustSubtitle')}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <button type="button" onClick={() => navigateTo('/listings')} className="btn-primary px-5 py-2 text-sm">
-                {t('home.search')}
-              </button>
-              <button type="button" onClick={() => navigateTo('/create-ad')} className="btn-secondary px-5 py-2 text-sm">
-                {t('home.postJobFree')}
-              </button>
-              <button type="button" onClick={() => navigateTo('/assistant/job')} className="btn-outline px-5 py-2 text-sm">
-                <Bot className="h-4 w-4" />
-                {t('home.heroAiCta')}
-              </button>
-            </div>
-            <p className="mt-4 text-sm text-[#cccccc]">
-              <Star className="mr-1 inline h-4 w-4 fill-[#ffa41c] text-[#ffa41c]" />
-              {t('home.heroSocialProof')
-                .replace('{rating}', '4.8')
-                .replace('{pros}', stats.professionals > 0 ? `${stats.professionals}+` : '120+')}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="pb-6">
-        <div className="layout-page-content">
+      {/* Amazon: широкий банер + білі картки поверх */}
+      <section className="amazon-home-hero relative pb-4">
+        <div className="amazon-home-hero__strip" aria-hidden />
+        <div className="layout-page-content relative z-10 space-y-4 pt-3 md:space-y-6 md:-mt-28">
           <div className="amazon-section-card">
-            <h2 className="mb-4 text-lg font-bold text-[var(--ink-900)]">
-              {t('home.allCategoriesTitle')}
-            </h2>
-            <div className="flex flex-col gap-6">
-              {categoryGroups.map((group) => (
-                <div key={group.id}>
-                  <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-[var(--ink-500)]">
-                    {t(group.titleKey)}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                    {group.tiles.map((tile) => (
-                      <CategoryCircleTile
-                        key={tile.id}
-                        icon={tile.icon}
-                        label={tile.label}
-                        onClick={() => navigateTo(tile.path)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <SectionHeader
+              title={t('home.recentJobsTitle')}
+              buttonText={t('home.allRequests')}
+              onClick={() => navigateTo('/listings')}
+            />
+            {loading ? (
+              <LoadingBlock text={t('home.loading')} />
+            ) : jobs.length > 0 ? (
+              <div className="product-grid mt-3">
+                {jobs.slice(0, 4).map((job) => (
+                  <ListingCard key={job.id} listing={job} />
+                ))}
+              </div>
+            ) : (
+              <EmptyBlock text={t('home.noJobs')} />
+            )}
           </div>
+
+          <div className="amazon-section-card">
+            <SectionHeader
+              title={t('home.topProsInCity').replace('{city}', heroCity)}
+              buttonText={t('home.allPros')}
+              onClick={() => navigateTo('/professionals')}
+            />
+            {loading ? (
+              <LoadingBlock text={t('home.loading')} />
+            ) : professionals.length > 0 ? (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {professionals.map((professional) => (
+                  <ProfessionalCard
+                    key={professional.id}
+                    professional={professional}
+                    compact
+                    showStatusBadges
+                    emptyBioLabel={t('home.noBio')}
+                  />
+                ))}
+              </div>
+            ) : (
+              <EmptyBlock text={t('home.noProfessionals')} />
+            )}
+          </div>
+
+          {popularGroup && (
+            <div className="amazon-section-card">
+              <SectionHeader
+                title={t('home.allCategoriesTitle')}
+                buttonText={t('listings.title')}
+                onClick={() => navigateTo('/listings')}
+              />
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+                {popularGroup.tiles.map((tile) => (
+                  <CategoryCircleTile
+                    key={tile.id}
+                    icon={tile.icon}
+                    label={tile.label}
+                    onClick={() => navigateTo(tile.path)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
-      <section id="how-it-works" className="scroll-mt-28 pb-6">
+      <div className="layout-page-content pb-6 md:hidden">
+        <MobileAdBanner variant="inline" page="home" inlineIndex={1} />
+      </div>
+
+      <section id="how-it-works" className="scroll-mt-28 hidden pb-6 lg:block">
         <div className="layout-page-content">
           <div className="amazon-section-card">
             <h2 className="text-lg font-bold text-[var(--ink-900)] md:text-xl">
@@ -233,61 +245,7 @@ export function Home() {
         </div>
       </section>
 
-      <section className="pb-6">
-        <div className="layout-page-content">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="amazon-section-card">
-              <SectionHeader
-                title={t('home.topProsInCity').replace('{city}', heroCity)}
-                buttonText={t('home.allPros')}
-                onClick={() => navigateTo('/professionals')}
-              />
-              {loading ? (
-                <LoadingBlock text={t('home.loading')} />
-              ) : professionals.length > 0 ? (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {professionals.map((professional) => (
-                    <ProfessionalCard
-                      key={professional.id}
-                      professional={professional}
-                      compact
-                      showStatusBadges
-                      emptyBioLabel={t('home.noBio')}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <EmptyBlock text={t('home.noProfessionals')} />
-              )}
-            </div>
-
-            <div className="amazon-section-card">
-              <SectionHeader
-                title={t('home.recentJobsTitle')}
-                buttonText={t('home.allRequests')}
-                onClick={() => navigateTo('/listings')}
-              />
-              {loading ? (
-                <LoadingBlock text={t('home.loading')} />
-              ) : jobs.length > 0 ? (
-                <div className="product-grid mt-3">
-                  {jobs.slice(0, 4).map((job) => (
-                    <ListingCard key={job.id} listing={job} />
-                  ))}
-                </div>
-              ) : (
-                <EmptyBlock text={t('home.noJobs')} />
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="layout-page-content pb-6 md:hidden">
-        <MobileAdBanner variant="inline" page="home" inlineIndex={1} />
-      </div>
-
-      <section className="pb-6 pt-2">
+      <section className="hidden pb-6 pt-2 lg:block">
         <div className="layout-page-content">
           <div className="amazon-section-card flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <p className="text-sm font-semibold text-[var(--ink-900)]">{t('home.audienceTitle')}</p>
@@ -309,7 +267,9 @@ export function Home() {
         </div>
       </section>
 
-      <LaunchCitiesBanner />
+      <div className="hidden lg:block">
+        <LaunchCitiesBanner />
+      </div>
     </div>
   )
 }

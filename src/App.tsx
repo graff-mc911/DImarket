@@ -39,7 +39,6 @@ import { JobRequestChat } from './pages/JobRequestChat'
 import { AiAdmin } from './pages/AiAdmin'
 import { MarketingAgentAdmin } from './pages/MarketingAgentAdmin'
 import { AiChatWidget } from './components/ai/AiChatWidget'
-import { MobileBottomNav } from './components/MobileBottomNav'
 import { Checkout }     from './pages/Checkout'
 import { BoostProfile } from './pages/BoostProfile'
 import { Verification } from './pages/Verification'
@@ -116,7 +115,7 @@ function App() {
   return (
     <AppProvider>
       <PaidAdsProvider>
-        <div className="app-shell min-h-screen flex flex-col pb-[calc(3.75rem+env(safe-area-inset-bottom,0px))] xl:pb-0">
+        <div className="app-shell min-h-screen flex flex-col">
           <Header />
           {showSideAds ? (
             <SideAdRailsLayout>
@@ -134,7 +133,6 @@ function App() {
             </>
           )}
           <AiChatWidget />
-          <MobileBottomNav />
         </div>
       </PaidAdsProvider>
     </AppProvider>
