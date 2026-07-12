@@ -14,6 +14,7 @@ export type JobRequestDraft = {
   description?: string
   categoryId?: string
   categorySlug?: string
+  subcategorySlugs?: string[]
   location?: string
   price?: number | null
   currency?: string

@@ -18,6 +18,7 @@ import {
   isRegistrationCountry,
   sortedRegistrationCountries,
 } from '../lib/registrationGeoData'
+import { applyReferralCode } from '../lib/referrals'
 import {
   catalogCitiesForRegion,
   fetchGeoCatalogForCountry,
@@ -61,6 +62,7 @@ export function Register() {
   const [autoDetected, setAutoDetected] = useState(false)
   const [manualRegion, setManualRegion] = useState(false)
   const [manualCity, setManualCity] = useState(false)
+  const [referralCode, setReferralCode] = useState('')
 
   const sortedCountries = sortedRegistrationCountries()
   const availableRegions = countryCatalog?.regions.map((r) => r.name) ?? []
@@ -80,6 +82,8 @@ export function Register() {
     ) {
       setSelectedRole(role)
     }
+    const ref = params.get('ref')
+    if (ref) setReferralCode(ref.trim())
   }, [])
 
   useEffect(() => {
@@ -224,6 +228,13 @@ export function Register() {
             { onConflict: 'id' },
           )
           if (profileError) throw profileError
+        }
+
+        if (
+          referralCode &&
+          (selectedRole === 'professional' || selectedRole === 'company')
+        ) {
+          void applyReferralCode(referralCode, authData.user.id)
         }
 
         const marketingRole =

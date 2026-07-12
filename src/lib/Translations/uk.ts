@@ -1293,6 +1293,30 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'onboarding.advertiser.phone': 'Контактний телефон',
   'onboarding.advertiser.exploreAds': 'Відкрити сторінку реклами',
   'onboarding.advertiser.openAds': 'Налаштувати рекламу',
+
+  'referral.title': 'Запросити колегу',
+  'referral.description':
+    'Поділіться посиланням — коли майстер або компанія зареєструється, обом {days} днів підняття в каталозі.',
+  'referral.invites': 'колег приєдналось',
+  'referral.copy': 'Копіювати посилання',
+  'referral.copied': 'Скопійовано',
+
+  'seo.eyebrow': 'Локальні послуги',
+  'seo.title': '{trade} у {city}',
+  'seo.description':
+    'Майстри {trade} та запити на роботу в {city}, {region}. Безкоштовна реєстрація на DImarket.',
+  'seo.prosTitle': 'Майстри ({trade}) у {city}',
+  'seo.jobsTitle': 'Запити на роботу в {city}',
+  'seo.emptyPros': 'Поки немає профілів — станьте першим майстром у місті.',
+  'seo.emptyJobs': 'Поки немає запитів — опублікуйте роботу або зареєструйтесь.',
+  'seo.notFound': 'Сторінку не знайдено',
+
+  'seo.trade.electrician': 'Електрик',
+  'seo.trade.plumber': 'Сантехнік',
+  'seo.trade.painter': 'Маляр',
+  'seo.trade.tiler': 'Плиточник',
+  'seo.trade.handyman': 'Майстер',
+  'seo.trade.renovation': 'Ремонт',
   'professional.featured': 'Рекомендований',
   'professional.verified': 'Верифікований',
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Loader2, MapPin, Upload, X } from 'lucide-react'
+import { runMatchingForListing, listingCityFromLocation } from '../lib/matching/persistMatches'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { Category, Listing } from '../lib/types'
@@ -11,6 +12,7 @@ import {
   syncPickerWithCategoryId,
 } from '../components/CategorySubcategoryPicker'
 import {
+  categorySlugForSubcategory,
   emptyPickerValue,
   getCategoryDef,
   type CategoryPickerValue,
@@ -213,6 +215,16 @@ export function CreateAd() {
           console.error('Image insert failed:', imagesError)
         }
       }
+
+      const categorySlug =
+        categories.find((c) => c.id === categoryId)?.slug ||
+        categorySlugForSubcategory(categoryPicker.subcategorySlugs[0] ?? '')
+
+      void runMatchingForListing(listing.id, {
+        city: listingCityFromLocation(listing.location),
+        categorySlug,
+        subcategorySlugs: categoryPicker.subcategorySlugs,
+      })
 
       setSuccess(true)
 

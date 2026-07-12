@@ -53,9 +53,8 @@ export async function publishJobRequestFromDraft(
     expires_at: expiresAt.toISOString(),
     is_premium: false,
     status: 'active' as const,
+    subcategory_slugs: draft.subcategorySlugs ?? [],
   }
-
-  const { data: listing, error: listingError } = await supabase
     .from('listings')
     .insert(listingData)
     .select()
@@ -82,6 +81,7 @@ export async function publishJobRequestFromDraft(
   const city = draft.location?.split(',')[0]?.trim()
   void runMatchingForListing(listing.id, {
     categorySlug: draft.categorySlug,
+    subcategorySlugs: draft.subcategorySlugs,
     city,
     language: undefined,
   })

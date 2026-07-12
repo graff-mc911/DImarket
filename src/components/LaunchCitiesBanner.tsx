@@ -3,6 +3,8 @@ import { ArrowRight, MapPin, TrendingUp } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
+import { launchSeoLinks } from '../lib/seoRoutes'
+import { navigateTo } from '../lib/navigation'
 import { fetchLaunchMarketHealth, type MarketHealthRow } from '../lib/marketStats'
 
 export function LaunchCitiesBanner() {
@@ -61,6 +63,19 @@ export function LaunchCitiesBanner() {
           <p className="mt-3 text-xs leading-5 text-[var(--ink-500)]">
             {t('launch.globalNote')}
           </p>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {launchSeoLinks().slice(0, 6).map((link) => (
+              <button
+                key={link.path}
+                type="button"
+                onClick={() => navigateTo(link.path)}
+                className="rounded-full border border-[var(--glass-border)] bg-white/50 px-2.5 py-1 text-[10px] font-semibold text-[var(--accent-700)] hover:bg-white/80"
+              >
+                {link.city} · {link.trade}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>

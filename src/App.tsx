@@ -44,7 +44,8 @@ import { BoostProfile } from './pages/BoostProfile'
 import { Verification } from './pages/Verification'
 import { ForProfessionals } from './pages/ForProfessionals'
 import { ForCompanies }     from './pages/ForCompanies'
-import { ForAdvertisers }   from './pages/ForAdvertisers'
+import { SeoMarketLanding } from './pages/SeoMarketLanding'
+import { isSeoLocale } from './lib/seoRoutes'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -67,6 +68,14 @@ function App() {
     // Динамічні маршрути
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
+
+    // SEO: /de/darmstadt/elektriker
+    if (
+      parts.length === 3 &&
+      isSeoLocale(parts[0])
+    ) {
+      return <SeoMarketLanding parts={parts} />
+    }
 
     switch (path) {
       case '/':              return <Home />

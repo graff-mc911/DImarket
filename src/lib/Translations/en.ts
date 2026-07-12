@@ -1284,6 +1284,30 @@ export const enTranslations = {
   'onboarding.advertiser.phone': 'Contact phone',
   'onboarding.advertiser.exploreAds': 'Open advertising page',
   'onboarding.advertiser.openAds': 'Set up advertising',
+
+  'referral.title': 'Invite a colleague',
+  'referral.description':
+    'Share your link — when a master or company registers, you both get {days} days of profile boost in the catalog.',
+  'referral.invites': 'colleagues joined',
+  'referral.copy': 'Copy invite link',
+  'referral.copied': 'Copied',
+
+  'seo.eyebrow': 'Local services',
+  'seo.title': '{trade} in {city}',
+  'seo.description':
+    'Find trusted {trade} professionals and active job requests in {city}, {region}. Free registration on DImarket.',
+  'seo.prosTitle': '{trade} professionals in {city}',
+  'seo.jobsTitle': 'Job requests in {city}',
+  'seo.emptyPros': 'No profiles yet — be the first master in this city.',
+  'seo.emptyJobs': 'No active requests yet — post a job or register as a professional.',
+  'seo.notFound': 'Page not found',
+
+  'seo.trade.electrician': 'Electrician',
+  'seo.trade.plumber': 'Plumber',
+  'seo.trade.painter': 'Painter',
+  'seo.trade.tiler': 'Tiler',
+  'seo.trade.handyman': 'Handyman',
+  'seo.trade.renovation': 'Renovation',
   'language.ru': 'Russian',
   'currency.rub': 'Russian Ruble',
   'professional.featured': 'Featured',

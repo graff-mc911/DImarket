@@ -21,7 +21,9 @@ import { supabase } from '../lib/supabase'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { CategorySubcategoryPicker } from '../components/CategorySubcategoryPicker'
 import { OnboardingChecklist } from '../components/OnboardingChecklist'
+import { ReferralPanel } from '../components/ReferralPanel'
 import { buildOnboardingState } from '../lib/onboardingProgress'
+import { syncProfessionalCategoriesFromWorkSlugs } from '../lib/syncProfessionalCategories'
 import type { Profile } from '../lib/types'
 
 function profileSaveErrorMessage(err: unknown): string {
@@ -256,6 +258,13 @@ export function Settings() {
           is_professional: isProfessional,
         })
         if (insertError) throw insertError
+      }
+
+      if (isProfessional && workSubcategories.subcategorySlugs.length > 0) {
+        await syncProfessionalCategoriesFromWorkSlugs(
+          currentUserId,
+          workSubcategories.subcategorySlugs,
+        )
       }
 
       setFullName(normalizedFullName)
@@ -504,6 +513,14 @@ export function Settings() {
                   <OnboardingChecklist
                     state={onboardingState}
                     role={userRole as 'professional' | 'company' | 'advertiser'}
+                  />
+                )}
+
+              {(userRole === 'professional' || userRole === 'company') &&
+                currentUserId && (
+                  <ReferralPanel
+                    userId={currentUserId}
+                    role={userRole as 'professional' | 'company'}
                   />
                 )}
 

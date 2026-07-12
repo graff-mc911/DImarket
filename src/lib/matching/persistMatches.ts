@@ -1,5 +1,9 @@
 import { supabase } from '../supabase'
 import { rankProfessionals, type MatchingCriteria } from '../bots/matching/rank'
+import {
+  filterNotifyCandidates,
+  notifyJobMatchProfessionals,
+} from './notifyMatches'
 
 export async function runMatchingForListing(
   listingId: string,
@@ -27,6 +31,11 @@ export async function runMatchingForListing(
     matches: ranked,
   })
   if (matchErr && matchErr.code !== '42P01') console.error('ai_matches:', matchErr)
+
+  const notifyIds = filterNotifyCandidates(ranked, criteria)
+  if (notifyIds.length) {
+    await notifyJobMatchProfessionals(listingId, notifyIds)
+  }
 }
 
 export async function fetchMatchScoresForListing(listingId: string) {
@@ -43,4 +52,8 @@ export async function fetchMatchScoresForListing(listingId: string) {
     return []
   }
   return data ?? []
+}
+
+export function listingCityFromLocation(location: string | null | undefined): string | undefined {
+  return location?.split(',')[0]?.trim() || undefined
 }

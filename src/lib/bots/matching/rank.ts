@@ -3,6 +3,7 @@ import type { RankedMatch } from '../types'
 
 export type MatchingCriteria = {
   categorySlug?: string
+  subcategorySlugs?: string[]
   city?: string
   country?: string
   radiusKm?: number
@@ -23,7 +24,25 @@ type ProfileRow = {
   trust_score: number | null
   is_verified: boolean | null
   is_premium: boolean | null
+  work_subcategory_slugs?: string[] | null
   professional_categories?: { category_id: string; category?: { slug: string } | null }[]
+}
+
+function subcategoryOverlap(
+  listingSlugs: string[] | undefined,
+  profileSlugs: string[] | null | undefined,
+): { exact: boolean; group: boolean } {
+  if (!listingSlugs?.length || !profileSlugs?.length) {
+    return { exact: false, group: false }
+  }
+  const exact = listingSlugs.some((s) => profileSlugs.includes(s))
+  if (exact) return { exact: true, group: true }
+
+  const listingGroups = new Set(
+    listingSlugs.map((s) => s.split('-')[0]).filter(Boolean),
+  )
+  const group = profileSlugs.some((s) => listingGroups.has(s.split('-')[0]))
+  return { exact: false, group }
 }
 
 function locationScore(profileLoc: string | null, city: string, country?: string): number {
@@ -63,6 +82,18 @@ function scoreProfile(p: ProfileRow, criteria: MatchingCriteria): RankedMatch {
       score += 20
       reasons.push('category_match')
     }
+  }
+
+  const subOverlap = subcategoryOverlap(
+    criteria.subcategorySlugs,
+    p.work_subcategory_slugs,
+  )
+  if (subOverlap.exact) {
+    score += 25
+    reasons.push('subcategory_match')
+  } else if (subOverlap.group) {
+    score += 15
+    reasons.push('trade_group_match')
   }
 
   if (criteria.language && p.preferred_language === criteria.language) {
@@ -105,6 +136,7 @@ export async function rankProfessionals(
       `
       id, full_name, location, rating, total_reviews, response_rate,
       preferred_language, trust_score, is_verified, is_premium,
+      work_subcategory_slugs,
       professional_categories(category_id, category:categories(slug))
     `,
     )
