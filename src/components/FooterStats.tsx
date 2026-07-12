@@ -75,7 +75,7 @@ const localeMap: Record<string, string> = {
   ja: 'ja-JP',
 }
 
-export function FooterStats({ compact = false }: { compact?: boolean }) {
+export function FooterStats({ compact = false, standalone = false }: { compact?: boolean; standalone?: boolean }) {
   const { t, language } = useApp()
 
   // Основний стан статистики, який показується у футері.
@@ -215,7 +215,7 @@ export function FooterStats({ compact = false }: { compact?: boolean }) {
 
   if (compact) {
     return (
-      <section className="mt-8 border-t border-[#3a4553] pt-6 text-center">
+      <section className={`text-center ${standalone ? '' : 'mt-8 border-t border-[#3a4553] pt-6'}`}>
         <div className="grid grid-cols-2 justify-items-center gap-x-3 gap-y-4 sm:grid-cols-3 lg:grid-cols-5">
           {statCards.map((card) => (
             <div
