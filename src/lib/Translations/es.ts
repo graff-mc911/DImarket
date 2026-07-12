@@ -191,6 +191,7 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'home.noCategories': 'Las categorias apareceran aqui pronto.',
   'home.noLocation': 'Ubicacion no especificada',
   'home.budgetLabel': 'Presupuesto',
+  'home.budgetOnRequest': 'Presupuesto a convenir',
   'home.activeLabel': 'Activo',
   'home.unknownCategory': 'Servicio de construccion',
   'home.noBio': 'El perfil del profesional de construccion se esta completando.',

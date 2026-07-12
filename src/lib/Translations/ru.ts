@@ -188,6 +188,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'home.noCategories': "Категории скоро появятся здесь.",
   'home.noLocation': 'Локация не указана',
   'home.budgetLabel': 'Бюджет',
+  'home.budgetOnRequest': 'Бюджет по договоренности',
   'home.activeLabel': 'Активно',
   'home.unknownCategory': 'Строительная услуга',
   'home.noBio': 'Профиль строительного мастера ещё заполняется.',

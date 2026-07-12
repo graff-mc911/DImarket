@@ -192,6 +192,7 @@ export const enTranslations = {
   'home.noCategories': 'Categories will appear here soon.',
   'home.noLocation': 'Location not specified',
   'home.budgetLabel': 'Budget',
+  'home.budgetOnRequest': 'Budget on request',
   'home.activeLabel': 'Active',
   'home.unknownCategory': 'Construction service',
   'home.noBio': 'Construction professional profile is being completed.',

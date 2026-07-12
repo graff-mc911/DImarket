@@ -193,6 +193,7 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'home.noCategories': 'Kategorien erscheinen hier bald.',
   'home.noLocation': 'Standort nicht angegeben',
   'home.budgetLabel': 'Budget',
+  'home.budgetOnRequest': 'Budget nach Vereinbarung',
   'home.activeLabel': 'Aktiv',
   'home.unknownCategory': 'Baudienstleistung',
   'home.noBio': 'Das Profil dieses Bauprofis wird noch vervollstaendigt.',

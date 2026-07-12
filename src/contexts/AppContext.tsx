@@ -28,8 +28,14 @@ const AppContext = createContext<AppContextType | undefined>(undefined)
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [currency, setCurrency] = useState<typeof CURRENCIES[number]>(CURRENCIES[0])
-  const [language, setLanguage] = useState<typeof LANGUAGES[number]>(LANGUAGES[0])
+  const [currency, setCurrency] = useState<typeof CURRENCIES[number]>(() => {
+    const saved = localStorage.getItem('dimarket_currency')
+    return CURRENCIES.find((c) => c.code === saved) ?? CURRENCIES[0]
+  })
+  const [language, setLanguage] = useState<typeof LANGUAGES[number]>(() => {
+    const saved = localStorage.getItem('dimarket_language')
+    return LANGUAGES.find((l) => l.code === saved) ?? LANGUAGES[0]
+  })
 
   useEffect(() => {
     // Читаємо лише нові ключі бренду DImarket

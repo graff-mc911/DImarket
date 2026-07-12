@@ -36,7 +36,7 @@ interface HomeProfessional extends Profile {
   }[]
 }
 import { LaunchCitiesBanner } from '../components/LaunchCitiesBanner'
-import { isLaunchExampleListing, mergeLaunchExampleRequests } from '../lib/launchSeedRequests'
+import { isLaunchExampleListing, getLaunchExampleTitleKey, mergeLaunchExampleRequests } from '../lib/launchSeedRequests'
 import type { TranslationKey } from '../lib/i18n'
 
 interface PlatformStats {
@@ -46,9 +46,10 @@ interface PlatformStats {
 }
 
 export function Home() {
-  const { t } = useApp()
+  const { language, t } = useApp()
 
   const [professionals, setProfessionals] = useState<HomeProfessional[]>([])
+  const [rawJobs, setRawJobs] = useState<ListingWithImages[]>([])
   const [jobs, setJobs] = useState<ListingWithImages[]>([])
   const [stats, setStats] = useState<PlatformStats>({
     professionals: 0,
@@ -61,7 +62,9 @@ export function Home() {
     void loadHomeData()
   }, [])
 
-  const tr = (key: string) => t(key as TranslationKey)
+  useEffect(() => {
+    setJobs(mergeLaunchExampleRequests(rawJobs, (key) => t(key as TranslationKey)))
+  }, [rawJobs, language.code, t])
 
   const loadHomeData = async () => {
     setLoading(true)
@@ -108,9 +111,7 @@ export function Home() {
       setProfessionals((professionalsResult.data as HomeProfessional[] | null) ?? [])
 
       const realJobs = (jobsResult.data as ListingWithImages[] | null) ?? []
-      setJobs(
-        mergeLaunchExampleRequests(realJobs, (key) => tr(key)),
-      )
+      setRawJobs(realJobs)
 
       const { count: profCount } = await supabase
         .from('profiles')
@@ -145,9 +146,6 @@ export function Home() {
     }
     navigateTo('/listings?search=' + encodeURIComponent(parts.join(' ')))
   }
-
-  const prosCountLabel = (n: number) =>
-    t('home.tile.prosCount').replace('{count}', String(Math.max(n, 3)))
 
   return (
     <div className="home-page">
@@ -385,6 +383,9 @@ function CompactJobCard({
   t: (key: TranslationKey) => string
 }) {
   const isExample = isLaunchExampleListing(job)
+  const titleKey = job.id ? getLaunchExampleTitleKey(job.id) : null
+  const title =
+    titleKey != null ? t(titleKey as TranslationKey) : job.title
   const budget =
     job.price != null
       ? `€${job.price}`
@@ -400,7 +401,7 @@ function CompactJobCard({
         <Wrench className="h-4 w-4" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-[var(--ink-900)]">{job.title}</p>
+        <p className="truncate text-sm font-semibold text-[var(--ink-900)]">{title}</p>
         <p className="truncate text-xs text-[var(--ink-500)]">{job.location}</p>
         <p className="mt-0.5 text-xs font-medium text-[var(--brand-primary)]">{budget}</p>
       </div>

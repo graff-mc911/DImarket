@@ -19,6 +19,10 @@ interface SeedRequestDef {
   location: string
 }
 
+export function getLaunchExampleTitleKey(listingId: string): string | null {
+  return SEED_REQUESTS.find((seed) => seed.id === listingId)?.titleKey ?? null
+}
+
 const SEED_REQUESTS: SeedRequestDef[] = [
   {
     id: 'launch-example-de-darmstadt-1',

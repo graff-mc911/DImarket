@@ -194,6 +194,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'home.noCategories': "Категорії з'являться тут незабаром.",
   'home.noLocation': 'Локацію не вказано',
   'home.budgetLabel': 'Бюджет',
+  'home.budgetOnRequest': 'Бюджет за домовленістю',
   'home.activeLabel': 'Активно',
   'home.unknownCategory': 'Будівельна послуга',
   'home.noBio': 'Профіль будівельного майстра ще наповнюється.',
