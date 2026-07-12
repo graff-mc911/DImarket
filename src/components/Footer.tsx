@@ -39,7 +39,7 @@ export function Footer() {
               </p>
             </div>
 
-            <div>
+            <div className="hidden md:block">
               <h3 className="text-sm font-bold text-white">
                 {t('footer.forProfessionals')}
               </h3>
@@ -62,7 +62,7 @@ export function Footer() {
               </ul>
             </div>
 
-            <div>
+            <div className="hidden md:block">
               <h3 className="text-sm font-bold text-white">
                 {t('footer.forCompanies')}
               </h3>
@@ -85,7 +85,7 @@ export function Footer() {
               </ul>
             </div>
 
-            <div>
+            <div className="hidden md:block">
               <h3 className="text-sm font-bold text-white">{t('footer.legal')}</h3>
               <ul className="mt-3 space-y-2">
                 <li>
