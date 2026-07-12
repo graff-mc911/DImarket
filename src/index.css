@@ -1567,19 +1567,20 @@
     letter-spacing: -0.06em;
     background: linear-gradient(
       180deg,
-      #5c3d1e 0%,
-      #8b5a2b 18%,
-      #d4af37 42%,
-      #f5e6b8 52%,
-      #c9a227 68%,
-      #8b5a2b 88%,
-      #4a3018 100%
+      #5c3317 0%,
+      #8b4513 14%,
+      #b87333 32%,
+      #cd7f32 48%,
+      #e8a87c 56%,
+      #b87333 72%,
+      #a0522d 88%,
+      #6b3a1f 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    filter: drop-shadow(0 1px 1px rgba(92, 61, 30, 0.2));
+    filter: drop-shadow(0 1px 1px rgba(184, 115, 51, 0.28));
   }
 
   .logo-di-metallic {

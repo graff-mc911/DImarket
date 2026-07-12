@@ -215,18 +215,18 @@ export function FooterStats({ compact = false }: { compact?: boolean }) {
 
   if (compact) {
     return (
-      <section className="border-t border-[rgba(148,163,184,0.18)] pt-4 text-center">
+      <section className="mt-8 border-t border-[var(--glass-border)] pt-6 text-center">
         <div className="grid grid-cols-2 justify-items-center gap-x-3 gap-y-4 sm:grid-cols-3 lg:grid-cols-5">
           {statCards.map((card) => (
             <div
               key={card.label}
-              className="flex w-full max-w-[11rem] flex-col items-center gap-1.5 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.35)] px-3 py-3"
+              className="flex w-full max-w-[11rem] flex-col items-center gap-1.5 rounded-2xl border border-[var(--glass-border)] bg-white px-3 py-3 shadow-[0_1px_3px_rgba(26,26,26,0.04)]"
             >
-              <card.icon className={`h-6 w-6 shrink-0 ${card.color}`} />
-              <span className="text-center text-[11px] font-medium leading-snug text-[#6f665d] sm:text-xs">
+              <card.icon className={`h-5 w-5 shrink-0 ${card.color}`} />
+              <span className="text-center text-[11px] font-medium leading-snug text-[var(--ink-600)] sm:text-xs">
                 {card.label}
               </span>
-              <span className="text-xl font-extrabold leading-none text-[#2f2a24] sm:text-2xl">
+              <span className="text-xl font-extrabold leading-none text-[var(--ink-900)] sm:text-2xl">
                 {loading ? '…' : formatNumber(card.value)}
               </span>
             </div>
