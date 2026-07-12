@@ -47,6 +47,7 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'footer.contactButton': 'Contactanos',
   'footer.forCompanies': 'Para empresas',
   'footer.privacy': 'Privacidad',
+  'footer.legal': 'Legal',
   'footer.impressum': 'Aviso legal',
   'footer.terms': 'Terminos',
   'footer.adsTitle': 'Publicidad',

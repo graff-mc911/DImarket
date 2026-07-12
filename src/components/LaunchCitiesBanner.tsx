@@ -42,8 +42,8 @@ export function LaunchCitiesBanner() {
         <div className="mt-3 flex flex-wrap gap-2">
           {LAUNCH_MARKETS.map((market) => {
             const row = statsByMarket.get(market.id)
-            const pros = loading ? '…' : String(row?.professionals ?? 0)
-            const jobs = loading ? '…' : String(row?.activeRequests ?? 0)
+            const pros = row?.professionals ?? 0
+            const jobs = row?.activeRequests ?? 0
             return (
               <button
                 key={market.id}
@@ -52,9 +52,13 @@ export function LaunchCitiesBanner() {
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--ink-700)] transition hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]"
               >
                 <span>{market.city}</span>
-                <span className="text-[10px] font-medium text-[var(--ink-500)]">
-                  {pros} · {jobs}
-                </span>
+                {loading ? (
+                  <span className="inline-block h-3 w-14 animate-pulse rounded-full bg-[var(--line)]" />
+                ) : (
+                  <span className="text-[10px] font-medium text-[var(--ink-500)]">
+                    {pros} {t('launch.metricMasters')} · {jobs} {t('launch.metricRequests')}
+                  </span>
+                )}
               </button>
             )
           })}
@@ -63,9 +67,9 @@ export function LaunchCitiesBanner() {
               key={link.path}
               type="button"
               onClick={() => navigateTo(link.path)}
-              className="rounded-full border border-dashed border-[var(--glass-border)] px-2.5 py-1 text-[10px] font-semibold text-[var(--ink-500)] hover:text-[var(--brand-primary)]"
+              className="rounded-full border border-dashed border-[var(--glass-border)] px-2.5 py-1 text-[10px] font-semibold text-[var(--ink-500)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]"
             >
-              {link.city} · {link.trade}
+              {link.city} · {t(link.labelKey)}
             </button>
           ))}
         </div>

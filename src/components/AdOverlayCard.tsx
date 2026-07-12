@@ -3,7 +3,7 @@ import { Megaphone } from 'lucide-react'
 import {
   getGeoTargetLabel,
   getPublicBannerImageUrl,
-  resolveAdDisplayCopy,
+  localizeAdDisplayCopy,
   trackAdClick,
   type AdCampaignWithAdvertiser,
 } from '../lib/adCampaigns'
@@ -266,7 +266,7 @@ export function AdOverlayCard({
   slotId,
 }: AdOverlayCardProps) {
   const { t } = useApp()
-  const { brand, title } = resolveAdDisplayCopy(campaign)
+  const { brand, title } = localizeAdDisplayCopy(campaign, t)
   const styles = variantStyles[variant]
   const isLeaderboard = variant === 'leaderboard' || imageOnly
   const showDesc = showDescription && Boolean(campaign.description?.trim())

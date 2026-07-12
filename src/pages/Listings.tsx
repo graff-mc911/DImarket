@@ -36,23 +36,7 @@ import {
   subcategorySlugsForGroup,
 } from '../lib/categoryCatalog'
 
-// Типи оголошень для фільтру
-const LISTING_TYPES = [
-  { value: '',                label: 'Всі типи' },
-  { value: 'service_request', label: 'Потрібна послуга' },
-  { value: 'service_offer',   label: 'Пропоную послугу' },
-  { value: 'item_sale',       label: 'Продаж' },
-  { value: 'item_wanted',     label: 'Шукаю / Куплю' },
-]
-
-// Варіанти сортування
-const SORT_OPTIONS = [
-  { value: 'newest',    label: 'Новіші' },
-  { value: 'oldest',    label: 'Старіші' },
-  { value: 'price_asc', label: 'Дешевші' },
-  { value: 'price_desc',label: 'Дорожчі' },
-  { value: 'views',     label: 'Популярні' },
-]
+// Типи оголошень для фільтру — ключі перекладу в listings.type*
 
 type ListingsProps = {
   /** Фіксована категорія для окремих сторінок (/vacancies, /sell-rent). */
@@ -61,6 +45,28 @@ type ListingsProps = {
 
 export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
   const { t, user, profile } = useApp()
+
+  const listingTypes = useMemo(
+    () => [
+      { value: '', label: t('listings.allTypes') },
+      { value: 'service_request', label: t('listings.typeServiceRequest') },
+      { value: 'service_offer', label: t('listings.typeServiceOffer') },
+      { value: 'item_sale', label: t('listings.typeItemSale') },
+      { value: 'item_wanted', label: t('listings.typeItemWanted') },
+    ],
+    [t],
+  )
+
+  const sortOptions = useMemo(
+    () => [
+      { value: 'newest', label: t('listings.sortNewest') },
+      { value: 'oldest', label: t('listings.sortOldest') },
+      { value: 'price_asc', label: t('listings.sortPriceAsc') },
+      { value: 'price_desc', label: t('listings.sortPriceDesc') },
+      { value: 'views', label: t('listings.sortViews') },
+    ],
+    [t],
+  )
 
   const [allListings, setAllListings]   = useState<ListingWithImages[]>([])
   const [categories, setCategories]     = useState<Category[]>([])
@@ -375,7 +381,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                         onChange={e => setSelectedType(e.target.value)}
                         className="select-glass"
                       >
-                        {LISTING_TYPES.map(opt => (
+                        {listingTypes.map(opt => (
                           <option key={opt.value} value={opt.value}>
                             {opt.label}
                           </option>
@@ -408,7 +414,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                         onChange={e => setSortBy(e.target.value)}
                         className="select-glass"
                       >
-                        {SORT_OPTIONS.map(opt => (
+                        {sortOptions.map(opt => (
                           <option key={opt.value} value={opt.value}>
                             {opt.label}
                           </option>
@@ -454,7 +460,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                   )}
                   {selectedType && (
                     <FilterTag
-                      label={'Тип: ' + (LISTING_TYPES.find(t => t.value === selectedType)?.label || selectedType)}
+                      label={t('listings.filterTypePrefix') + (listingTypes.find(opt => opt.value === selectedType)?.label || selectedType)}
                       onRemove={() => setSelectedType('')}
                     />
                   )}

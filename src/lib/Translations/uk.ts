@@ -52,6 +52,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'footer.contactButton': 'Звʼязатися з нами',
   'footer.forCompanies': 'Для компаній',
   'footer.privacy': 'Конфіденційність',
+  'footer.legal': 'Правове',
   'footer.impressum': 'Impressum',
   'footer.terms': 'Умови',
   'footer.adsTitle': 'Реклама',
@@ -669,6 +670,12 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'listings.typeServiceOffer': 'Пропоную послугу',
   'listings.typeItemSale': 'Продаж',
   'listings.typeItemWanted': 'Куплю',
+  'listings.sortNewest': 'Новіші',
+  'listings.sortOldest': 'Старіші',
+  'listings.sortPriceAsc': 'Дешевші',
+  'listings.sortPriceDesc': 'Дорожчі',
+  'listings.sortViews': 'Популярні',
+  'listings.filterTypePrefix': 'Тип: ',
   'listings.search': 'Пошук',
 
   // Listings new keys

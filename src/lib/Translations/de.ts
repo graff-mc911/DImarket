@@ -48,6 +48,7 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'footer.contactButton': 'Kontakt aufnehmen',
   'footer.forCompanies': 'Fuer Unternehmen',
   'footer.privacy': 'Datenschutz',
+  'footer.legal': 'Rechtliches',
   'footer.impressum': 'Impressum',
   'footer.terms': 'AGB',
   'footer.adsTitle': 'Werbung',

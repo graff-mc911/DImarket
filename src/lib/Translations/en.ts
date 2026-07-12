@@ -58,6 +58,7 @@ export const enTranslations = {
   'footer.contactButton': 'Contact us',
   'footer.forCompanies': 'For companies',
   'footer.privacy': 'Privacy',
+  'footer.legal': 'Legal',
   'footer.impressum': 'Impressum',
   'footer.terms': 'Terms',
   'footer.legalRight': '',
@@ -667,6 +668,12 @@ export const enTranslations = {
   'listings.typeServiceOffer': 'Service Offered',
   'listings.typeItemSale': 'For Sale',
   'listings.typeItemWanted': 'Wanted',
+  'listings.sortNewest': 'Newest',
+  'listings.sortOldest': 'Oldest',
+  'listings.sortPriceAsc': 'Cheapest',
+  'listings.sortPriceDesc': 'Most expensive',
+  'listings.sortViews': 'Most viewed',
+  'listings.filterTypePrefix': 'Type: ',
   'listings.search': 'Search',
 
   // Каталог оголошень: нові ключі.

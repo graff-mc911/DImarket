@@ -72,7 +72,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-bold text-[var(--ink-900)]">Legal</h3>
+            <h3 className="text-sm font-bold text-[var(--ink-900)]">{t('footer.legal')}</h3>
             <ul className="mt-3 space-y-2">
               <li>
                 <button type="button" onClick={() => go('/contact')} className={linkClass}>

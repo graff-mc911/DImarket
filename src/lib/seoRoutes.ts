@@ -102,8 +102,20 @@ export function seoPath(locale: SeoLocale, citySlug: string, tradeSlug: string):
   return `/${locale}/${citySlug.toLowerCase()}/${tradeSlug.toLowerCase()}`
 }
 
-export function launchSeoLinks(): Array<{ path: string; locale: SeoLocale; city: string; trade: string }> {
-  const links: Array<{ path: string; locale: SeoLocale; city: string; trade: string }> = []
+export function launchSeoLinks(): Array<{
+  path: string
+  locale: SeoLocale
+  city: string
+  trade: string
+  labelKey: string
+}> {
+  const links: Array<{
+    path: string
+    locale: SeoLocale
+    city: string
+    trade: string
+    labelKey: string
+  }> = []
   const launchCities = [
     { slug: 'darmstadt', marketId: 'de-darmstadt' },
     { slug: 'alicante', marketId: 'es-alicante' },
@@ -122,6 +134,7 @@ export function launchSeoLinks(): Array<{ path: string; locale: SeoLocale; city:
         locale,
         city: market.city,
         trade: tradeSlug,
+        labelKey: trades[tradeSlug].labelKey,
       })
     }
   }

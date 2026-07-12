@@ -509,6 +509,25 @@ export function resolveAdDisplayCopy(campaign: AdCampaignWithAdvertiser): {
   return { brand, title }
 }
 
+const GENERIC_PLACEHOLDER_TITLE_PATTERNS = [
+  /^this will be your advertisement\.?$/i,
+  /^banner will appear here$/i,
+  /^your ad(vertisement)? here$/i,
+]
+
+/** Локалізує заглушки реклами з англомовної БД під мову інтерфейсу. */
+export function localizeAdDisplayCopy(
+  campaign: AdCampaignWithAdvertiser,
+  t: (key: TranslationKey) => string,
+): { brand: string; title: string } {
+  const copy = resolveAdDisplayCopy(campaign)
+  const normalized = copy.title.trim()
+  if (GENERIC_PLACEHOLDER_TITLE_PATTERNS.some((pattern) => pattern.test(normalized))) {
+    return { brand: '', title: t('advertising.preview.placeholder') }
+  }
+  return copy
+}
+
 export function getGeoTargetLabel(
   campaign: AdCampaign,
   t: (key: TranslationKey) => string,

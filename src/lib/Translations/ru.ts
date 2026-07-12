@@ -46,6 +46,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'footer.contactButton': 'Связаться с нами',
   'footer.forCompanies': 'Для компаний',
   'footer.privacy': 'Конфиденциальность',
+  'footer.legal': 'Правовая информация',
   'footer.impressum': 'Impressum',
   'footer.terms': 'Условия',
   'footer.adsTitle': 'Реклама',
