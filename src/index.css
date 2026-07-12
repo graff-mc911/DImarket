@@ -5,35 +5,42 @@
 @layer base {
   :root {
     color-scheme: light;
-    --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+    --font-sans: "Inter", "Amazon Ember", "Segoe UI", Arial, sans-serif;
     --font-logo: "Libre Bodoni", "Didot", "Bodoni MT", Georgia, serif;
-    --font-display: "Inter", "Segoe UI", system-ui, sans-serif;
-    --bg-canvas: #fafaf8;
+    --font-display: "Inter", "Amazon Ember", "Segoe UI", Arial, sans-serif;
+    --bg-canvas: #eaeded;
     --bg-soft: #ffffff;
     --bg-glass-top: #ffffff;
-    --bg-glass-bottom: #f5f5f3;
+    --bg-glass-bottom: #f7fafa;
     --glass-bg: #ffffff;
     --panel: #ffffff;
     --panel-strong: #ffffff;
-    --line: #e8e4df;
-    --line-strong: #d4cfc8;
-    --glass-border: #e8e4df;
-    --glass-border-strong: #d4cfc8;
+    --line: #d5d9d9;
+    --line-strong: #bbb;
+    --glass-border: #d5d9d9;
+    --glass-border-strong: #bbb;
     --glass-highlight: rgba(255, 255, 255, 0.9);
-    --ink-900: #1a1a1a;
-    --ink-700: #5c5c5c;
-    --ink-500: #8a8a8a;
-    --brand-primary: #1b4d3e;
-    --brand-primary-hover: #153d32;
-    --brand-copper: #c4784a;
-    --brand-copper-light: #d4af37;
-    --brand-ai: #3d5a80;
-    --brand-verified: #2d6a4f;
-    --accent-700: #1b4d3e;
-    --accent-600: #226352;
-    --accent-500: #2d7a66;
-    --accent-soft: rgba(27, 77, 62, 0.08);
-    --mint-soft: rgba(45, 106, 79, 0.1);
+    --ink-900: #0f1111;
+    --ink-800: #1a1a1a;
+    --ink-700: #565959;
+    --ink-600: #6f7373;
+    --ink-500: #888c8c;
+    --ink-400: #a2a6a6;
+    --header-bg: #131921;
+    --header-nav-bg: #232f3e;
+    --brand-primary: #ff9900;
+    --brand-primary-hover: #e88b00;
+    --brand-cta: #ffd814;
+    --brand-cta-hover: #f7ca00;
+    --brand-copper: #b87333;
+    --brand-copper-light: #cd7f32;
+    --brand-ai: #007185;
+    --brand-verified: #067d62;
+    --accent-700: #c7511f;
+    --accent-600: #007185;
+    --accent-500: #ff9900;
+    --accent-soft: rgba(255, 153, 0, 0.1);
+    --mint-soft: rgba(6, 125, 98, 0.1);
     /* бокові реклами: 276 / 298 / 348px; gutter = відступ від краю екрана = між колонками */
     --ad-side-rail-width: 17.25rem;
     --layout-side-rail-inset: min(var(--ad-side-rail-width), 16.8vw);
@@ -199,7 +206,48 @@
     background-color: var(--bg-canvas);
   }
 
-  /** Вертикальний список оголошень (стиль svoii.biz) */
+  /** Сітка карток товарів (Amazon-style) */
+  .product-grid {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 640px) {
+    .product-grid {
+      gap: 1rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .product-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .product-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  .product-card {
+    @apply flex h-full flex-col rounded-md border border-[#d5d9d9] bg-white p-3 transition-shadow duration-200;
+  }
+
+  .product-card:hover {
+    box-shadow: 0 2px 5px rgba(15, 17, 17, 0.15);
+  }
+
+  .product-card:focus-visible {
+    outline: 2px solid #ff9900;
+    outline-offset: 2px;
+  }
+
+  /** Вертикальний список оголошень (legacy) */
   .listing-feed {
     width: 100%;
     min-width: 0;
@@ -1511,8 +1559,8 @@
   .glass-card {
     background: var(--panel);
     border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(26, 26, 26, 0.04);
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 3px rgba(15, 17, 17, 0.06);
   }
 
   .glass-panel {
@@ -1520,8 +1568,8 @@
     overflow: hidden;
     background: var(--panel);
     border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(26, 26, 26, 0.04);
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 3px rgba(15, 17, 17, 0.06);
   }
 
   .glass-panel::before {
@@ -1600,64 +1648,65 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
-    background: var(--brand-primary);
-    color: #ffffff;
-    box-shadow: 0 1px 2px rgba(27, 77, 62, 0.2);
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
+    background: linear-gradient(180deg, #f7dfa5 0%, #f0c14b 100%);
+    color: #0f1111;
+    border: 1px solid #a88734;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
   }
 
   .btn-primary:hover {
-    background: var(--brand-primary-hover);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(27, 77, 62, 0.18);
+    background: linear-gradient(180deg, #f5d78e 0%, #e7b731 100%);
+    color: #0f1111;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
     text-shadow: none;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
     background: #ffffff;
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
-    box-shadow: none;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
   }
 
   .btn-secondary:hover {
-    background: #f5f5f3;
+    background: #f7fafa;
     color: var(--ink-900);
     border-color: var(--line-strong);
     text-shadow: none;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
-    background: transparent;
-    color: var(--brand-ai);
-    border: 1px solid rgba(61, 90, 128, 0.35);
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
+    background: #ffffff;
+    color: var(--ink-900);
+    border: 1px solid var(--glass-border);
     box-shadow: none;
   }
 
   .btn-outline:hover {
-    background: rgba(61, 90, 128, 0.06);
-    color: var(--brand-ai);
+    background: #f7fafa;
+    color: var(--ink-900);
     text-shadow: none;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200;
     color: var(--ink-700);
     background: transparent;
     box-shadow: none;
   }
 
   .btn-ghost:hover {
-    background: rgba(26, 26, 26, 0.04);
-    color: var(--brand-primary);
+    background: rgba(15, 17, 17, 0.04);
+    color: var(--accent-600);
     text-shadow: none;
   }
 
   .input-glass,
   .select-glass {
-    @apply w-full rounded-xl px-4 py-3 outline-none transition-all duration-200;
+    @apply w-full rounded-md px-4 py-3 outline-none transition-all duration-200;
     background: #ffffff;
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
@@ -1670,12 +1719,12 @@
 
   .input-glass:focus,
   .select-glass:focus {
-    border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(27, 77, 62, 0.1);
+    border-color: #e77600;
+    box-shadow: 0 0 0 3px rgba(231, 118, 0, 0.2);
   }
 
   .input-hero {
-    @apply w-full rounded-xl px-4 py-3 outline-none transition-all duration-200;
+    @apply w-full rounded-md px-4 py-3 outline-none transition-all duration-200;
     background: #ffffff;
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
@@ -1686,14 +1735,150 @@
   }
 
   .input-hero:focus {
-    border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(27, 77, 62, 0.1);
+    border-color: #e77600;
+    box-shadow: 0 0 0 3px rgba(231, 118, 0, 0.2);
   }
 
   .site-header-shell {
+    background: var(--header-bg);
+    border-bottom: none;
+    color: #ffffff;
+  }
+
+  .site-header-subnav {
+    background: var(--header-nav-bg);
+    color: #ffffff;
+  }
+
+  .site-header-shell .header-link {
+    color: #ffffff;
+  }
+
+  .site-header-shell .header-link:hover,
+  .site-header-subnav .header-link:hover {
+    color: #ffffff;
+    outline: 1px solid #ffffff;
+    outline-offset: 1px;
+  }
+
+  .site-header-shell .header-link--active {
+    color: #ff9900;
+  }
+
+  .site-header-shell .logo-letter-d,
+  .site-header-shell .logo-inverted-market {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff;
+    background: none;
+    filter: none;
+  }
+
+  .amazon-search-bar {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .amazon-search-inner {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.375rem;
     background: #ffffff;
-    border-bottom: 1px solid var(--glass-border);
-    box-shadow: 0 1px 0 rgba(26, 26, 26, 0.04);
+  }
+
+  .amazon-search-cat {
+    display: none;
+    border: none;
+    border-right: 1px solid #cdcdcd;
+    background: #f3f3f3;
+    color: #0f1111;
+    padding: 0 0.75rem;
+    font-size: 0.75rem;
+    max-width: 8rem;
+    cursor: pointer;
+  }
+
+  @media (min-width: 640px) {
+    .amazon-search-cat {
+      display: block;
+    }
+  }
+
+  .amazon-search-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    padding: 0 0.75rem;
+    font-size: 0.875rem;
+    color: #0f1111;
+    outline: none;
+    height: 2.5rem;
+  }
+
+  .amazon-search-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    flex-shrink: 0;
+    border: none;
+    background: #febd69;
+    color: #0f1111;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .amazon-search-submit:hover {
+    background: #f3a847;
+  }
+
+  .amazon-dept-scroll {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .amazon-dept-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .amazon-dept-link {
+    flex-shrink: 0;
+    white-space: nowrap;
+    border-radius: 0.125rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #ffffff;
+    transition: outline 0.1s;
+  }
+
+  .amazon-dept-link:hover {
+    outline: 1px solid #ffffff;
+  }
+
+  .amazon-section-card {
+    @apply rounded-md border border-[#d5d9d9] bg-white p-4;
+  }
+
+  .amazon-footer-back {
+    background: #37475a;
+    color: #ffffff;
+  }
+
+  .amazon-footer-main {
+    background: #232f3e;
+    color: #dddddd;
+  }
+
+  .amazon-footer-bottom {
+    background: var(--header-bg);
+    color: #999999;
   }
 
   .trust-strip {

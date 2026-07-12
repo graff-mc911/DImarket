@@ -1,5 +1,5 @@
 // ============================================================
-// ListingCard.tsx — Картка оголошення (горизонтальний ряд, як svoii.biz)
+// ListingCard.tsx — Картка оголошення (Amazon product card)
 // ============================================================
 
 import { useState, useEffect } from 'react'
@@ -13,11 +13,13 @@ import type { ListingWithImages } from '../lib/types'
 
 interface ListingCardProps {
   listing: ListingWithImages
-  /** Останній елемент у списку — без нижньої межі */
+  /** @deprecated grid cards no longer use row borders */
   isLast?: boolean
+  /** Вертикальна картка (Amazon) або горизонтальний ряд */
+  variant?: 'grid' | 'row'
 }
 
-export function ListingCard({ listing, isLast = false }: ListingCardProps) {
+export function ListingCard({ listing, isLast = false, variant = 'grid' }: ListingCardProps) {
   const { user, currency, t } = useApp()
 
   const [isSaved, setIsSaved]         = useState(false)
@@ -116,6 +118,45 @@ export function ListingCard({ listing, isLast = false }: ListingCardProps) {
     navigateTo('/listing/' + listing.id)
   }
 
+  if (variant === 'row') {
+    return (
+      <article
+        role="button"
+        tabIndex={0}
+        onClick={goToListing}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            goToListing()
+          }
+        }}
+        className={[
+          'listing-card-row group flex w-full min-w-0 cursor-pointer gap-3 px-3 py-3.5 text-left transition-colors sm:gap-4 sm:px-4 sm:py-4',
+          'hover:bg-white active:bg-white',
+          isLast ? '' : 'border-b border-[var(--glass-border)]',
+        ].join(' ')}
+      >
+        <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-md bg-[#f7fafa] sm:h-[96px] sm:w-[96px]">
+          <img
+            src={primaryImage}
+            alt=""
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            loading="lazy"
+          />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col justify-center">
+          <h3 className="line-clamp-2 text-[15px] font-medium leading-snug text-[var(--ink-900)] sm:text-base">
+            {listing.title}
+          </h3>
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px]">
+            <span className="font-bold text-[var(--ink-900)]">{formatPrice(listing.price)}</span>
+            <span className="text-[var(--ink-500)]">{city}</span>
+          </div>
+        </div>
+      </article>
+    )
+  }
+
   return (
     <article
       role="button"
@@ -127,14 +168,9 @@ export function ListingCard({ listing, isLast = false }: ListingCardProps) {
           goToListing()
         }
       }}
-      className={[
-        'listing-card-row group flex w-full min-w-0 cursor-pointer gap-3 px-3 py-3.5 text-left transition-colors sm:gap-4 sm:px-4 sm:py-4',
-        'hover:bg-[rgba(255,252,248,0.72)] active:bg-[rgba(255,248,241,0.9)]',
-        isLast ? '' : 'border-b border-[var(--glass-border)]',
-      ].join(' ')}
+      className="product-card group cursor-pointer text-left"
     >
-      {/* Фото */}
-      <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[18px] bg-[rgba(255,248,241,0.6)] sm:h-[96px] sm:w-[96px] sm:rounded-[20px]">
+      <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-[#f7fafa]">
         <img
           src={primaryImage}
           alt=""
@@ -143,77 +179,69 @@ export function ListingCard({ listing, isLast = false }: ListingCardProps) {
         />
 
         {listing.is_premium && (
-          <span
-            className="absolute left-1.5 top-1.5 flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[9px] font-bold text-white shadow-sm"
-            style={{ background: 'linear-gradient(90deg, #c96d2c, #e8964a)' }}
-          >
+          <span className="absolute left-1.5 top-1.5 flex items-center gap-0.5 rounded-sm bg-[#cc0c39] px-1.5 py-0.5 text-[9px] font-bold text-white">
             <Star className="h-2.5 w-2.5 fill-current" />
             {t('listing.premium')}
           </span>
         )}
 
         {isPromoted && !listing.is_premium && (
-          <span
-            className="absolute left-1.5 top-1.5 rounded-md px-1.5 py-0.5 text-[9px] font-bold text-white shadow-sm"
-            style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }}
-          >
+          <span className="absolute left-1.5 top-1.5 rounded-sm bg-[#ff9900] px-1.5 py-0.5 text-[9px] font-bold text-[#0f1111]">
             ↑
           </span>
         )}
+
+        <button
+          type="button"
+          onClick={toggleSave}
+          disabled={savingInProgress}
+          title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
+          className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[var(--ink-500)] shadow-sm transition hover:bg-white disabled:opacity-50"
+          style={isSaved ? { color: '#ef4444' } : undefined}
+        >
+          <Heart
+            className="h-4 w-4"
+            style={{
+              fill: isSaved ? 'currentColor' : 'none',
+              color: isSaved ? '#ef4444' : 'var(--ink-500)',
+            }}
+          />
+        </button>
       </div>
 
-      {/* Текст */}
-      <div className="flex min-w-0 flex-1 flex-col justify-center">
-        <div className="mb-0.5 flex items-start justify-between gap-2">
-          <p className="min-w-0 truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">
-            {categoryLabel}
-          </p>
+      <p className="mt-2 line-clamp-1 text-[11px] text-[var(--ink-500)]">{categoryLabel}</p>
 
-          <div className="flex shrink-0 items-center gap-0.5">
-            <button
-              type="button"
-              onClick={toggleSave}
-              disabled={savingInProgress}
-              title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-500)] transition hover:bg-[rgba(36,27,20,0.06)] active:scale-95 disabled:opacity-50"
-              style={isSaved ? { color: '#ef4444' } : undefined}
-            >
-              <Heart
-                className="h-[18px] w-[18px]"
-                style={{
-                  fill: isSaved ? 'currentColor' : 'none',
-                  color: isSaved ? '#ef4444' : 'var(--ink-500)',
-                }}
-              />
-            </button>
-          </div>
-        </div>
+      <h3 className="mt-0.5 line-clamp-2 min-h-[2.5rem] text-sm font-normal leading-snug text-[var(--ink-900)]">
+        {listing.title}
+      </h3>
 
-        <h3 className="line-clamp-2 text-[15px] font-bold leading-snug tracking-[-0.02em] text-[var(--ink-900)] sm:text-base">
-          {listing.title}
-        </h3>
+      {isExample && (
+        <span className="mt-1 inline-flex w-fit rounded-sm bg-[rgba(0,113,133,0.1)] px-1.5 py-0.5 text-[10px] font-bold uppercase text-[#007185]">
+          {t('launch.exampleBadge')}
+        </span>
+      )}
 
-        {isExample && (
-          <span className="mt-1 inline-flex w-fit rounded-full bg-[rgba(99,102,241,0.12)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#4338ca]">
-            {t('launch.exampleBadge')}
-          </span>
-        )}
+      <div className="mt-1 flex items-center gap-0.5 text-[#ffa41c]">
+        {[1, 2, 3, 4].map((i) => (
+          <Star key={i} className="h-3 w-3 fill-current" />
+        ))}
+        <Star className="h-3 w-3 fill-current opacity-40" />
+        <span className="ml-1 text-xs text-[var(--accent-600)]">{listing.views_count || 0}</span>
+      </div>
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px] text-[var(--ink-700)]">
-          <span className="font-semibold text-[var(--accent-700)]">
-            {formatPrice(listing.price)}
-          </span>
+      <p className="mt-1 text-lg font-bold leading-none text-[var(--ink-900)]">
+        {formatPrice(listing.price)}
+      </p>
 
-          <span className="inline-flex items-center gap-1 text-[var(--ink-500)]">
-            <Eye className="h-3.5 w-3.5 shrink-0" />
-            <span>{listing.views_count}</span>
-          </span>
-
-          <span className="inline-flex min-w-0 items-center gap-1 text-[var(--ink-500)]">
-            <MapPin className="h-3.5 w-3.5 shrink-0 text-[var(--accent-600)]" />
-            <span className="truncate">{city}</span>
-          </span>
-        </div>
+      <div className="mt-1 flex flex-wrap items-center gap-x-2 text-[11px] text-[var(--ink-500)]">
+        <span className="inline-flex items-center gap-0.5">
+          <Eye className="h-3 w-3 shrink-0" />
+          {listing.views_count}
+        </span>
+        <span className="inline-flex min-w-0 items-center gap-0.5">
+          <MapPin className="h-3 w-3 shrink-0" />
+          <span className="truncate">{city}</span>
+        </span>
       </div>
     </article>
   )

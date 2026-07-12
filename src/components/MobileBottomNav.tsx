@@ -31,7 +31,7 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="mobile-bottom-nav fixed inset-x-0 bottom-0 z-40 border-t border-[var(--glass-border)] bg-white xl:hidden"
+      className="mobile-bottom-nav fixed inset-x-0 bottom-0 z-40 border-t border-[#3a4553] bg-[#232f3e] text-white xl:hidden"
       aria-label={t('nav.mobileNavigation')}
     >
       <div className="mx-auto flex h-[3.75rem] max-w-lg items-stretch px-2 pb-[env(safe-area-inset-bottom,0px)]">
@@ -53,7 +53,7 @@ export function MobileBottomNav() {
           className="relative -top-3 mx-1 flex flex-1 flex-col items-center justify-end"
           aria-label={t('nav.post')}
         >
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--brand-primary)] text-white shadow-[0_4px_14px_rgba(27,77,62,0.35)]">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#ff9900] text-[#0f1111] shadow-[0_4px_14px_rgba(255,153,0,0.35)]">
             <Plus className="h-6 w-6" strokeWidth={2.5} />
           </span>
         </button>
@@ -90,7 +90,7 @@ function NavItem({
       type="button"
       onClick={onClick}
       className={`flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition ${
-        active ? 'text-[var(--brand-primary)]' : 'text-[var(--ink-500)]'
+        active ? 'text-[#ff9900]' : 'text-[#cccccc]'
       }`}
     >
       {icon}

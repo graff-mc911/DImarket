@@ -40,7 +40,6 @@ import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
 import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
-import { TrustStrip } from './TrustStrip'
 import { NotificationCenter } from './notifications/NotificationCenter'
 
 interface NavItem {
@@ -282,27 +281,24 @@ export function Header() {
 
   const navTextClass = (active: boolean, nowrap = false) =>
     [
-      'relative inline-flex items-center gap-1.5 pb-1 text-sm font-semibold transition-all duration-300',
+      'amazon-dept-link header-link',
       nowrap ? 'shrink-0 whitespace-nowrap' : '',
-      active
-        ? 'text-[var(--accent-700)] [text-shadow:0_0_14px_rgba(196,122,61,0.18)]'
-        : 'text-[var(--ink-700)] ' + hoverGlowClass,
+      active ? 'header-link--active' : '',
     ].join(' ')
 
   const bottomNavGapClass = 'gap-7'
 
   const textButtonClass = (active = false) =>
-    ['inline-flex items-center gap-1.5 rounded-full border-0 bg-transparent px-1.5 py-1 text-sm font-semibold shadow-none outline-none',
-      active
-        ? 'text-[var(--accent-700)] [text-shadow:0_0_14px_rgba(196,122,61,0.18)]'
-        : 'text-[var(--ink-700)] ' + hoverGlowClass,
+    [
+      'header-link inline-flex items-center gap-1.5 rounded-sm border-0 bg-transparent px-1.5 py-1 text-sm font-medium shadow-none outline-none',
+      active ? 'header-link--active' : '',
     ].join(' ')
 
   const createButtonClass =
-    'inline-flex items-center gap-1.5 rounded-full border-0 bg-transparent px-1.5 py-1 text-sm font-semibold text-[var(--ink-800)] shadow-none outline-none transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_16px_rgba(196,122,61,0.22)]'
+    'header-link inline-flex items-center gap-1.5 rounded-sm border-0 bg-transparent px-1.5 py-1 text-sm font-medium shadow-none outline-none'
 
   const mobileIconButtonClass =
-    'flex h-8 w-8 items-center justify-center rounded-full border-0 bg-transparent text-[var(--ink-700)] shadow-none outline-none transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_16px_rgba(196,122,61,0.22)] sm:h-9 sm:w-9'
+    'header-link flex h-8 w-8 items-center justify-center rounded-sm border-0 bg-transparent shadow-none outline-none sm:h-9 sm:w-9'
 
   const showAnnouncement = announcements.length > 0
 
@@ -337,19 +333,19 @@ export function Header() {
   }, [showAnnouncement, mobileMenuOpen, user, unreadCount, language.code, currency.code])
 
   const dropdownPanelClass =
-    'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.94)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] backdrop-blur-xl'
+    'absolute right-0 top-full mt-2 w-64 rounded-md border border-[#d5d9d9] bg-white p-2 shadow-[0_4px_12px_rgba(15,17,17,0.15)]'
 
   const categoriesDropdownClass =
-    'absolute left-1/2 top-full z-50 mt-2 w-80 max-h-[min(28rem,70vh)] -translate-x-1/2 overflow-y-auto rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.96)] p-2 shadow-[0_18px_42px_rgba(67,44,26,0.12)] backdrop-blur-xl'
+    'absolute left-0 top-full z-50 mt-1 w-80 max-h-[min(28rem,70vh)] overflow-y-auto rounded-md border border-[#d5d9d9] bg-white p-2 shadow-[0_4px_12px_rgba(15,17,17,0.15)]'
 
   const dropdownItemClass =
-    'block w-full rounded-[18px] px-4 py-3 text-left text-sm font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
+    'block w-full rounded-sm px-3 py-2.5 text-left text-sm text-[var(--ink-900)] transition hover:bg-[#f7fafa]'
 
   const mobileNavItemClass =
-    'flex w-full items-center gap-3 rounded-[20px] px-4 py-3 text-left text-base font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
+    'flex w-full items-center gap-3 rounded-md px-4 py-3 text-left text-base font-medium text-[var(--ink-900)] transition hover:bg-[#f7fafa]'
 
   const mobileCategoryItemClass =
-    'rounded-[16px] px-4 py-2.5 text-left text-sm font-semibold text-[var(--ink-700)] transition hover:bg-white/50 hover:text-[var(--accent-700)]'
+    'rounded-sm px-4 py-2.5 text-left text-sm font-medium text-[var(--ink-700)] transition hover:bg-[#f7fafa]'
 
   const categoryGroups = useMemo(
     () => buildHomeCategoryGroups(language.code, t),
@@ -440,28 +436,46 @@ export function Header() {
 
               {/* Логотип */}
               <button onClick={() => goTo('/')} type="button" className="shrink-0 text-left">
-                <Logo variant="text" size="header" />
+                <Logo variant="text" size="header" inverted />
               </button>
 
-              {/* Пошук (десктоп) */}
+              {/* Пошук Amazon-style */}
               <form
                 onSubmit={handleSearchSubmit}
-                className="hidden min-w-0 flex-1 items-center xl:flex xl:max-w-[620px]"
+                className="amazon-search-bar mx-2 hidden min-w-0 flex-1 sm:flex sm:max-w-3xl"
               >
-                <div className="relative w-full">
-                  <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
+                <div className="amazon-search-inner">
+                  <select
+                    className="amazon-search-cat"
+                    defaultValue="all"
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      if (val && val !== 'all') goTo(val)
+                    }}
+                  >
+                    <option value="all">{t('listings.allCategories')}</option>
+                    {categoryGroups.flatMap((g) => g.tiles).slice(0, 14).map((tile) => (
+                      <option key={tile.id} value={tile.path}>
+                        {tile.label}
+                      </option>
+                    ))}
+                  </select>
                   <input
-                    type="text"
+                    type="search"
                     value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('home.headerSearchPlaceholder')}
-                    className="input-glass h-10 rounded-xl pl-10 pr-3 text-sm"
+                    className="amazon-search-input"
                   />
+                  <button type="submit" className="amazon-search-submit" aria-label={t('home.search')}>
+                    <Search className="h-5 w-5" />
+                  </button>
                 </div>
               </form>
 
               {/* Десктоп: права панель */}
-              <div className="hidden items-center gap-2 xl:flex">
+              <div className="hidden items-center gap-1 sm:flex">
 
                 {/* Вибір мови */}
                 <div ref={languageRef} className="relative">
@@ -648,14 +662,14 @@ export function Header() {
                   {t('header.aiAssistant')}
                 </button>
 
-                <button onClick={() => goTo('/create-ad')} type="button" className="btn-primary px-4 py-2 text-xs">
+                <button onClick={() => goTo('/create-ad')} type="button" className="btn-primary hidden px-3 py-1.5 text-xs lg:inline-flex">
                   <PlusCircle className="h-4 w-4" />
                   {t('header.postJob')}
                 </button>
               </div>
 
               {/* Мобільні кнопки */}
-              <div className="flex shrink-0 items-center gap-1.5 xl:hidden">
+              <div className="flex shrink-0 items-center gap-1.5 sm:hidden">
                 <OnlineVisitorsPill count={onlineVisitors} className="hidden min-[400px]:inline-flex" />
 
                 {/* Повідомлення (мобільний) */}
@@ -695,144 +709,75 @@ export function Header() {
               </div>
             </div>
 
-            {/* Десктопна навігація (промпт 3) */}
-            <nav className="mt-2 hidden w-full items-center justify-center gap-6 border-t border-[var(--glass-border)] pt-2 xl:flex">
-              <div ref={categoriesRef} className="relative shrink-0">
-                <button
-                  onClick={() => {
-                    setCategoriesOpen((o) => !o)
-                    setLanguageOpen(false)
-                    setCurrencyOpen(false)
-                    setAccountOpen(false)
-                  }}
-                  type="button"
-                  aria-expanded={categoriesOpen}
-                  className={navTextClass(categoriesOpen, true)}
-                >
-                  <span>{t('header.categories')}</span>
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-200 ${categoriesOpen ? 'rotate-180' : ''}`}
-                  />
+            {/* Amazon subnav — горизонтальні категорії */}
+            <div className="site-header-subnav mt-1.5 hidden sm:block">
+              <div className="amazon-dept-scroll px-3 py-1 md:px-4">
+                <div ref={categoriesRef} className="relative shrink-0">
+                  <button
+                    onClick={() => {
+                      setCategoriesOpen((o) => !o)
+                      setLanguageOpen(false)
+                      setCurrencyOpen(false)
+                      setAccountOpen(false)
+                    }}
+                    type="button"
+                    aria-expanded={categoriesOpen}
+                    className="amazon-dept-link flex items-center gap-1 font-bold"
+                  >
+                    <Menu className="h-4 w-4" />
+                    <span>{t('header.categories')}</span>
+                  </button>
+                  {categoriesOpen && (
+                    <div className={categoriesDropdownClass} role="menu">
+                      {renderCategoryMenu(dropdownItemClass, 'menuitem')}
+                    </div>
+                  )}
+                </div>
+
+                {navItems.map((item) => (
+                  <button
+                    key={item.path}
+                    type="button"
+                    onClick={() => goTo(item.path)}
+                    className={navTextClass(isActiveRoute(item.path), true)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+
+                <button type="button" onClick={goToHowItWorks} className="amazon-dept-link">
+                  {t('footer.howItWorks')}
                 </button>
-                {categoriesOpen && (
-                  <div className={categoriesDropdownClass} role="menu">
-                    {renderCategoryMenu(dropdownItemClass, 'menuitem')}
-                  </div>
-                )}
+
+                {categoryGroups.flatMap((g) => g.tiles).slice(0, 10).map((tile) => (
+                  <button
+                    key={tile.id}
+                    type="button"
+                    onClick={() => goTo(tile.path)}
+                    className="amazon-dept-link"
+                  >
+                    {tile.label}
+                  </button>
+                ))}
               </div>
-
-              {navItems.map((item) => (
-                <button
-                  key={item.path}
-                  onClick={() => goTo(item.path)}
-                  type="button"
-                  className={navTextClass(isActiveRoute(item.path), true)}
-                >
-                  <span>{item.label}</span>
-                </button>
-              ))}
-
-              <button type="button" onClick={goToHowItWorks} className={navTextClass(false, true)}>
-                <span>{t('footer.howItWorks')}</span>
-              </button>
-            </nav>
-
-            {/* Додаткова навігація — планшет / мобільний ряд під шапкою */}
-            <nav
-              className={
-                'mt-2 hidden w-full flex-wrap items-center justify-center overflow-visible border-t border-[var(--glass-border)] pt-2 max-xl:flex max-lg:hidden ' +
-                bottomNavGapClass
-              }
-            >
-              {navItems.map(item => (
-                <button
-                  key={item.path}
-                  onClick={() => goTo(item.path)}
-                  type="button"
-                  className={navTextClass(isActiveRoute(item.path), true)}
-                >
-                  <span>{item.label}</span>
-                  <span
-                    className={
-                      'absolute bottom-0 left-0 h-[2px] rounded-full bg-[var(--accent-700)] transition-all duration-300 ' +
-                      (isActiveRoute(item.path) ? 'w-full opacity-100' : 'w-0 opacity-0')
-                    }
-                  />
-                </button>
-              ))}
-
-              <div ref={categoriesRef} className="relative shrink-0">
-                <button
-                  onClick={() => {
-                    setCategoriesOpen((o) => !o)
-                    setLanguageOpen(false)
-                    setCurrencyOpen(false)
-                    setAccountOpen(false)
-                  }}
-                  type="button"
-                  aria-expanded={categoriesOpen}
-                  aria-haspopup="menu"
-                  className={navTextClass(categoriesOpen, true)}
-                >
-                  <span>{t('header.categories')}</span>
-                  <ChevronDown
-                    className={
-                      'h-4 w-4 transition-transform duration-200 ' +
-                      (categoriesOpen ? 'rotate-180' : '')
-                    }
-                  />
-                </button>
-                {categoriesOpen && (
-                  <div className={categoriesDropdownClass} role="menu">
-                    {renderCategoryMenu(dropdownItemClass, 'menuitem')}
-                  </div>
-                )}
-              </div>
-
-              {centerNavItems.map(item => (
-                <button
-                  key={item.path + item.label}
-                  onClick={() => goTo(item.path)}
-                  type="button"
-                  className={navTextClass(isActiveRoute(item.path), true)}
-                >
-                  <span>{item.label}</span>
-                  <span
-                    className={
-                      'absolute bottom-0 left-0 h-[2px] rounded-full bg-[var(--accent-700)] transition-all duration-300 ' +
-                      (isActiveRoute(item.path) ? 'w-full opacity-100' : 'w-0 opacity-0')
-                    }
-                  />
-                </button>
-              ))}
-
-              <button
-                onClick={() => goTo('/listings')}
-                type="button"
-                className={textButtonClass(isActiveRoute('/listings')) + ' shrink-0 whitespace-nowrap'}
-              >
-                {t('listings.title')}
-              </button>
-
-              <OnlineVisitorsPill count={onlineVisitors} />
-            </nav>
+            </div>
 
             {/* Пошук (мобільний) */}
-            <form onSubmit={handleSearchSubmit} className="mt-2.5 xl:hidden">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--ink-500)]" />
+            <form onSubmit={handleSearchSubmit} className="amazon-search-bar mt-2 sm:hidden">
+              <div className="amazon-search-inner">
                 <input
-                  type="text"
+                  type="search"
                   value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('home.headerSearchPlaceholder')}
-                  className="input-glass h-12 rounded-full pl-11 pr-4"
+                  className="amazon-search-input"
                 />
+                <button type="submit" className="amazon-search-submit" aria-label={t('home.search')}>
+                  <Search className="h-5 w-5" />
+                </button>
               </div>
             </form>
           </div>
-
-          <TrustStrip />
 
           {/* Мобільне меню */}
           {mobileMenuOpen && (
@@ -1024,14 +969,14 @@ function OnlineVisitorsPill({
   return (
     <div
       className={
-        'inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--glass-border)] bg-[rgba(255,255,255,0.45)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ink-700)] sm:text-xs ' +
+        'inline-flex shrink-0 items-center gap-1.5 rounded-sm border border-[#3a4553] bg-[#37475a] px-2.5 py-1 text-[11px] font-medium text-white sm:text-xs ' +
         className
       }
       aria-live="polite"
     >
       <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-500" aria-hidden />
       <span className="whitespace-nowrap">{t('header.onlineVisitors')}</span>
-      <span className="tabular-nums font-extrabold text-[var(--accent-700)]">{formatted}</span>
+      <span className="tabular-nums font-extrabold text-[#ff9900]">{formatted}</span>
     </div>
   )
 }

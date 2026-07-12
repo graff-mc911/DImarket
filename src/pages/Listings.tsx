@@ -502,22 +502,16 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                 {t('listings.loadingRequests')}
               </div>
             ) : filteredListings.length > 0 ? (
-              <div className="listing-feed overflow-hidden rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.42)] shadow-[0_1px_0_rgba(255,255,255,0.8)_inset]">
+              <div className="product-grid">
                 {filteredListings.map((listing, index) => (
                   <Fragment key={listing.id}>
-                    <ListingCard
-                      listing={listing}
-                      isLast={
-                        index === filteredListings.length - 1 &&
-                        (index + 1) % 6 !== 0
-                      }
-                    />
-                    {(index + 1) % 6 === 0 && index < filteredListings.length - 1 && (
-                      <div className="border-b border-[var(--glass-border)] px-3 py-3 sm:px-4">
+                    <ListingCard listing={listing} />
+                    {(index + 1) % 8 === 0 && index < filteredListings.length - 1 && (
+                      <div className="col-span-full py-2">
                         <MobileAdBanner
                           variant="inline"
                           page="listings"
-                          inlineIndex={((((index + 1) / 6) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
+                          inlineIndex={((((index + 1) / 8) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
                         />
                       </div>
                     )}

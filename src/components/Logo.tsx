@@ -5,6 +5,8 @@ interface LogoProps {
   className?: string
   animated?: boolean
   shimmer?: boolean
+  /** Білий wordmark для темної шапки (Amazon-style) */
+  inverted?: boolean
 }
 
 const sizes = {
@@ -37,14 +39,16 @@ const marketFont = 'var(--font-sans), Inter, system-ui, sans-serif'
 function Wordmark({
   className = '',
   animated = false,
+  inverted = false,
 }: {
   className?: string
   animated?: boolean
+  inverted?: boolean
 }) {
   return (
     <div className={`inline-flex items-baseline tracking-[-0.03em] ${className}`}>
       <span
-        className={`logo-letter-d font-bold ${animated ? 'logo-build-letter logo-build-letter--d' : ''}`}
+        className={`logo-letter-d font-bold ${inverted ? 'logo-inverted-d' : ''} ${animated ? 'logo-build-letter logo-build-letter--d' : ''}`}
         style={{ fontFamily: wordmarkFont }}
       >
         D
@@ -56,7 +60,7 @@ function Wordmark({
         I
       </span>
       <span
-        className={`font-semibold text-[var(--ink-900)] ${animated ? 'logo-build-letter logo-build-letter--market' : ''}`}
+        className={`font-semibold ${inverted ? 'logo-inverted-market' : 'text-[var(--ink-900)]'} ${animated ? 'logo-build-letter logo-build-letter--market' : ''}`}
         style={{ fontFamily: marketFont }}
       >
         market
@@ -94,6 +98,7 @@ export function Logo({
   className = '',
   animated = false,
   shimmer = false,
+  inverted = false,
 }: LogoProps) {
   const current = sizes[size]
   const shimmerClass = shimmer ? 'logo-shimmer' : ''
@@ -105,7 +110,7 @@ export function Logo({
         aria-label="DImarket logo"
         className={animated ? `logo-construction relative ${className}` : className}
       >
-        <Wordmark className={`${current.title} ${shimmerClass}`.trim()} animated={animated} />
+        <Wordmark className={`${current.title} ${shimmerClass}`.trim()} animated={animated} inverted={inverted} />
         {animated && <ConstructionScene />}
       </div>
     )
@@ -117,7 +122,7 @@ export function Logo({
       role="img"
       aria-label="DImarket logo"
     >
-      <Wordmark className={`${current.title} ${shimmerClass}`.trim()} animated={animated} />
+      <Wordmark className={`${current.title} ${shimmerClass}`.trim()} animated={animated} inverted={inverted} />
       {animated && <ConstructionScene />}
       {current.subtitle !== 'hidden' && (
         <div className={`${current.subtitle} mt-1.5 uppercase tracking-[0.22em] text-[#5C4D41]`}>

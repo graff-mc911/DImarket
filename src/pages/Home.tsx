@@ -8,17 +8,15 @@ import {
   ArrowRight,
   Bot,
   Building2,
-  ChevronDown,
   ClipboardList,
   HardHat,
-  MapPin,
   Megaphone,
   Search,
   Star,
   Users,
-  Wrench,
 } from 'lucide-react'
 import { CategoryCircleTile } from '../components/CategoryCircleTile'
+import { ListingCard } from '../components/ListingCard'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { ProfessionalCard } from '../components/ProfessionalCard'
@@ -138,124 +136,78 @@ export function Home() {
     }
   }
 
-  const [heroService, setHeroService] = useState('')
-  const [heroCity, setHeroCity] = useState(LAUNCH_MARKETS[0]?.city ?? 'Darmstadt')
-
-  const handleHeroSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    const parts = [heroService.trim(), heroCity.trim()].filter(Boolean)
-    if (!parts.length) {
-      navigateTo('/listings')
-      return
-    }
-    navigateTo('/listings?search=' + encodeURIComponent(parts.join(' ')))
-  }
+  const [heroCity] = useState(LAUNCH_MARKETS[0]?.city ?? 'Darmstadt')
 
   return (
     <div className="home-page">
-      <section className="pb-6 pt-4">
+      {/* Amazon-style hero banner */}
+      <section className="pb-4 pt-3">
         <div className="layout-page-content">
-            <h1 className="text-center text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-4xl">
+          <div className="amazon-section-card overflow-hidden bg-gradient-to-r from-[#232f3e] to-[#37475a] p-6 text-white md:p-8">
+            <h1 className="text-xl font-bold md:text-3xl">
               {t('home.heroTrustTitle')}
             </h1>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-base leading-7 text-[var(--ink-700)]">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#dddddd] md:text-base">
               {t('home.heroTrustSubtitle')}
             </p>
-
-            <form
-              onSubmit={handleHeroSearch}
-              className="mx-auto mt-6 flex max-w-3xl flex-col gap-3 md:flex-row md:items-stretch"
-            >
-              <div className="relative min-w-0 flex-[1.4]">
-                <Wrench className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--brand-copper)]" />
-                <input
-                  type="search"
-                  value={heroService}
-                  onChange={(e) => setHeroService(e.target.value)}
-                  placeholder={t('home.whatServicePlaceholder')}
-                  className="input-hero h-12 w-full pl-12 text-base"
-                />
-              </div>
-              <div className="relative min-w-0 flex-1">
-                <MapPin className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--brand-copper)]" />
-                <select
-                  value={heroCity}
-                  onChange={(e) => setHeroCity(e.target.value)}
-                  className="input-hero h-12 w-full appearance-none pl-12 pr-10 text-base"
-                >
-                  {LAUNCH_MARKETS.map((m) => (
-                    <option key={m.id} value={m.city}>
-                      {m.city}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
-              </div>
-              <button type="submit" className="btn-primary h-12 shrink-0 px-10 md:min-w-[8.5rem]">
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button type="button" onClick={() => navigateTo('/listings')} className="btn-primary px-5 py-2 text-sm">
                 {t('home.search')}
               </button>
-            </form>
-
-            <div className="mt-4 flex flex-col items-center gap-3">
-              <button
-                type="button"
-                onClick={() => navigateTo('/assistant/job')}
-                className="btn-outline px-5 py-2.5 text-sm"
-              >
+              <button type="button" onClick={() => navigateTo('/create-ad')} className="btn-secondary px-5 py-2 text-sm">
+                {t('home.postJobFree')}
+              </button>
+              <button type="button" onClick={() => navigateTo('/assistant/job')} className="btn-outline px-5 py-2 text-sm">
                 <Bot className="h-4 w-4" />
                 {t('home.heroAiCta')}
               </button>
-              <button
-                type="button"
-                onClick={() => navigateTo('/create-ad')}
-                className="btn-primary h-12 w-full max-w-3xl md:hidden"
-              >
-                {t('home.postJobFree')}
-              </button>
             </div>
-
-            <p className="mt-5 text-center text-sm font-medium text-[var(--ink-600)]">
-              <Star className="mr-1 inline h-4 w-4 fill-[var(--brand-copper-light)] text-[var(--brand-copper)]" />
+            <p className="mt-4 text-sm text-[#cccccc]">
+              <Star className="mr-1 inline h-4 w-4 fill-[#ffa41c] text-[#ffa41c]" />
               {t('home.heroSocialProof')
                 .replace('{rating}', '4.8')
                 .replace('{pros}', stats.professionals > 0 ? `${stats.professionals}+` : '120+')}
             </p>
-        </div>
-      </section>
-
-      <section className="pt-2 pb-6">
-        <div className="layout-page-content">
-          <h2 className="mb-6 text-center text-lg font-bold text-[var(--ink-900)] md:text-xl">
-            {t('home.allCategoriesTitle')}
-          </h2>
-          <div className="mx-auto flex max-w-5xl flex-col gap-8">
-            {categoryGroups.map((group) => (
-              <div key={group.id}>
-                <h3 className="mb-3 text-center text-xs font-bold uppercase tracking-[0.14em] text-[var(--ink-500)]">
-                  {t(group.titleKey)}
-                </h3>
-                <div className="grid grid-cols-3 justify-items-center gap-x-2 gap-y-5 sm:grid-cols-4 md:grid-cols-6">
-                  {group.tiles.map((tile) => (
-                    <CategoryCircleTile
-                      key={tile.id}
-                      icon={tile.icon}
-                      label={tile.label}
-                      onClick={() => navigateTo(tile.path)}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
-      <section id="how-it-works" className="scroll-mt-28 pb-8">
+      <section className="pb-6">
         <div className="layout-page-content">
-          <h2 className="text-center text-xl font-bold text-[var(--ink-900)] md:text-2xl">
-            {t('home.howItWorksTitle')}
-          </h2>
-          <div className="mt-6 flex flex-col items-stretch gap-4 md:flex-row md:items-start md:justify-center md:gap-2">
+          <div className="amazon-section-card">
+            <h2 className="mb-4 text-lg font-bold text-[var(--ink-900)]">
+              {t('home.allCategoriesTitle')}
+            </h2>
+            <div className="flex flex-col gap-6">
+              {categoryGroups.map((group) => (
+                <div key={group.id}>
+                  <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-[var(--ink-500)]">
+                    {t(group.titleKey)}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                    {group.tiles.map((tile) => (
+                      <CategoryCircleTile
+                        key={tile.id}
+                        icon={tile.icon}
+                        label={tile.label}
+                        onClick={() => navigateTo(tile.path)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" className="scroll-mt-28 pb-6">
+        <div className="layout-page-content">
+          <div className="amazon-section-card">
+            <h2 className="text-lg font-bold text-[var(--ink-900)] md:text-xl">
+              {t('home.howItWorksTitle')}
+            </h2>
+            <div className="mt-4 flex flex-col items-stretch gap-4 md:flex-row md:items-start md:gap-2">
             <HowItWorksStep
               step="1"
               title={t('home.howStep1Title')}
@@ -277,13 +229,14 @@ export function Home() {
               icon={<Users className="h-5 w-5" />}
             />
           </div>
+          </div>
         </div>
       </section>
 
-      <section className="pb-8">
+      <section className="pb-6">
         <div className="layout-page-content">
-          <div className="grid gap-8 lg:grid-cols-2">
-            <div>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="amazon-section-card">
               <SectionHeader
                 title={t('home.topProsInCity').replace('{city}', heroCity)}
                 buttonText={t('home.allPros')}
@@ -308,7 +261,7 @@ export function Home() {
               )}
             </div>
 
-            <div>
+            <div className="amazon-section-card">
               <SectionHeader
                 title={t('home.recentJobsTitle')}
                 buttonText={t('home.allRequests')}
@@ -317,9 +270,9 @@ export function Home() {
               {loading ? (
                 <LoadingBlock text={t('home.loading')} />
               ) : jobs.length > 0 ? (
-                <div className="space-y-2">
-                  {jobs.slice(0, 5).map((job) => (
-                    <CompactJobCard key={job.id} job={job} t={t} />
+                <div className="product-grid mt-3">
+                  {jobs.slice(0, 4).map((job) => (
+                    <ListingCard key={job.id} listing={job} />
                   ))}
                 </div>
               ) : (
@@ -334,9 +287,9 @@ export function Home() {
         <MobileAdBanner variant="inline" page="home" inlineIndex={1} />
       </div>
 
-      <section className="pb-8 pt-2">
+      <section className="pb-6 pt-2">
         <div className="layout-page-content">
-          <div className="trust-card flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between md:p-5">
+          <div className="amazon-section-card flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <p className="text-sm font-semibold text-[var(--ink-900)]">{t('home.audienceTitle')}</p>
             <div className="flex flex-wrap gap-2">
               <button type="button" onClick={() => navigateTo('/for-professionals')} className="btn-secondary px-4 py-2 text-xs">
