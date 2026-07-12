@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   CheckCircle2,
   Pencil,
@@ -10,6 +10,7 @@ import {
 import { supabase } from '../lib/supabase'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdPerSlotMediaEditor } from './ads/AdPerSlotMediaEditor'
+import { AdGeoTargeting } from './AdGeoTargeting'
 import { AdCampaignDraftPreview } from './AdCopyFields'
 import {
   emptyCampaignMediaState,
@@ -27,9 +28,24 @@ import { editorPageFromSlots, type PlacementEditorPageId } from '../lib/adPlacem
 import { formatSupabaseError } from '../lib/supabaseErrors'
 import {
   buildOwnerCampaignPayload,
+  campaignToOwnerForm,
+  getOwnerCampaignGeoLabel,
+  getOwnerCampaignScheduleLabel,
+  isOwnerCampaignExpiredInSchedule,
+  isOwnerManagedCampaign,
+  ownerManagedReviewNote,
   OWNER_SLOT_PRESETS,
+  toOwnerLocalInput,
   type OwnerAdFormValues,
 } from '../lib/ownerAdCampaign'
+import {
+  fallbackAdGeoCatalog,
+  fetchAdGeoCatalog,
+  isGeoSelectionValid,
+  resolveTargetCities,
+  type AdGeoCountry,
+  type GeoMode,
+} from '../lib/adGeoCatalog'
 import type { AdCampaign } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { isDemoAdCampaign } from '../lib/demoAdCampaigns'
@@ -58,37 +74,12 @@ const EMPTY_FORM: OwnerAdFormValues = {
   mediaType: 'image',
   selectedSlots: [sideSlotId('home', 'right', 1)],
   geoScope: 'global',
+  selectedCountries: [],
+  selectedRegions: [],
+  selectedCities: [],
   status: 'active',
   startsAt: '',
   endsAt: '',
-}
-
-function toLocalInput(iso: string | null | undefined): string {
-  if (!iso) return ''
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return ''
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-
-function campaignToForm(c: AdCampaign): OwnerAdFormValues {
-  const slots =
-    (c.placements || []).filter(Boolean).length > 0
-      ? (c.placements as string[])
-      : [sideSlotId('home', 'right', 1)]
-
-  return {
-    title: c.title,
-    description: c.description || '',
-    linkUrl: c.link_url,
-    mediaUrl: c.media_url || c.image_url,
-    mediaType: (c.media_type as OwnerAdFormValues['mediaType']) || 'image',
-    selectedSlots: slots,
-    geoScope: 'global',
-    status: c.status,
-    startsAt: toLocalInput(c.starts_at),
-    endsAt: toLocalInput(c.ends_at),
-  }
 }
 
 export function OwnerAdManager({
@@ -112,6 +103,26 @@ export function OwnerAdManager({
   const [saving, setSaving] = useState(false)
   const [placementPreviewPage, setPlacementPreviewPage] = useState<PlacementEditorPageId>('home')
   const [slotMedia, setSlotMedia] = useState<SlotMediaMap>({})
+  const [geoData, setGeoData] = useState<AdGeoCountry[]>([])
+  const [geoLoading, setGeoLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    setGeoLoading(true)
+    void fetchAdGeoCatalog()
+      .then((data) => {
+        if (!cancelled) setGeoData(data.length > 0 ? data : fallbackAdGeoCatalog())
+      })
+      .catch(() => {
+        if (!cancelled) setGeoData(fallbackAdGeoCatalog())
+      })
+      .finally(() => {
+        if (!cancelled) setGeoLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   function pageKeyFromSlots(slots: string[]): AdPageKey {
     // Legacy ключ сторінки потрібен для sideSlotId() та існуючих слотів у власному менеджері.
@@ -150,7 +161,7 @@ export function OwnerAdManager({
 
   const openCreate = () => {
     setEditingId(null)
-    setForm({ ...EMPTY_FORM, startsAt: toLocalInput(new Date().toISOString()) })
+    setForm({ ...EMPTY_FORM, startsAt: toOwnerLocalInput(new Date().toISOString()) })
     setPlacementPreviewPage('home')
     setSlotMedia({})
     applyMediaState(emptyCampaignMediaState())
@@ -159,7 +170,7 @@ export function OwnerAdManager({
 
   const openEdit = (campaign: AdCampaign) => {
     setEditingId(campaign.id)
-    const nextForm = campaignToForm(campaign)
+    const nextForm = campaignToOwnerForm(campaign)
     setForm(nextForm)
     setPlacementPreviewPage(previewEditorPageFromSlots(nextForm.selectedSlots))
     setSlotMedia(slotMediaMapFromCampaign(campaign))
@@ -198,14 +209,37 @@ export function OwnerAdManager({
       onError('Оберіть хоча б один блок для показу')
       return
     }
+    if (
+      !isGeoSelectionValid(
+        form.geoScope,
+        form.selectedCountries,
+        form.selectedRegions,
+        form.selectedCities,
+      )
+    ) {
+      onError('Оберіть географію показу реклами')
+      return
+    }
+    if (form.startsAt && form.endsAt && new Date(form.endsAt) < new Date(form.startsAt)) {
+      onError('Дата завершення не може бути раніше початку')
+      return
+    }
 
     setSaving(true)
     try {
+      const targetCities = resolveTargetCities(
+        form.geoScope,
+        geoData,
+        form.selectedCountries,
+        form.selectedRegions,
+        form.selectedCities,
+      )
       const payload = buildOwnerCampaignPayload(
         { ...form, slotMedia: ensureSlotMediaForSelection(form.selectedSlots, slotMedia) },
         ownerId,
         editingCampaign,
         mediaState,
+        targetCities,
       )
 
       if (editingId) {
@@ -256,10 +290,16 @@ export function OwnerAdManager({
 
   const handleReject = async (campaignId: string) => {
     setCampaignActionId(campaignId)
+    const campaign = ownerCampaigns.find((c) => c.id === campaignId)
     try {
       const { error } = await supabase
         .from('ad_campaigns')
-        .update({ status: 'rejected', review_note: 'Відхилено власником' })
+        .update({
+          status: 'rejected',
+          review_note: isOwnerManagedCampaign(campaign ?? ({} as AdCampaign))
+            ? ownerManagedReviewNote('скасовано власником')
+            : 'Відхилено власником',
+        })
         .eq('id', campaignId)
       if (error) throw error
       onNotice('Рекламу вимкнено.')
@@ -439,7 +479,64 @@ export function OwnerAdManager({
                 value={form.endsAt}
                 onChange={(e) => setForm((p) => ({ ...p, endsAt: e.target.value }))}
               />
+              <span className="mt-1 block text-xs text-[#7a7168]">
+                Залиште порожнім — показ до скасування власником
+              </span>
             </label>
+          </div>
+
+          <div className="mt-5 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.2)] p-3 md:p-4">
+            <p className="text-sm font-semibold text-[#2f2a24]">Географія показу</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(['global', 'countries', 'regions', 'cities'] as GeoMode[]).map((mode) => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() =>
+                    setForm((p) => ({
+                      ...p,
+                      geoScope: mode,
+                      selectedCountries: mode === 'global' ? [] : p.selectedCountries,
+                      selectedRegions: mode === 'global' || mode === 'countries' ? [] : p.selectedRegions,
+                      selectedCities: mode === 'cities' ? p.selectedCities : [],
+                    }))
+                  }
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                    form.geoScope === mode
+                      ? 'bg-[rgba(99,102,241,0.16)] text-[#4338ca]'
+                      : 'bg-[rgba(148,163,184,0.12)] text-[#64748b]'
+                  }`}
+                >
+                  {mode === 'global'
+                    ? 'Увесь світ'
+                    : mode === 'countries'
+                      ? 'Країни'
+                      : mode === 'regions'
+                        ? 'Регіони'
+                        : 'Міста'}
+                </button>
+              ))}
+            </div>
+            {geoLoading ? (
+              <p className="mt-3 text-sm text-[#7a7168]">Завантаження каталогу локацій…</p>
+            ) : form.geoScope === 'global' ? (
+              <p className="mt-3 text-sm text-[#7a7168]">Реклама показується відвідувачам з усіх регіонів.</p>
+            ) : (
+              <div className="mt-3">
+                <AdGeoTargeting
+                  geoMode={form.geoScope}
+                  geoData={geoData}
+                  selectedCountries={form.selectedCountries}
+                  selectedRegions={form.selectedRegions}
+                  selectedCities={form.selectedCities}
+                  onCountriesChange={(values) =>
+                    setForm((p) => ({ ...p, selectedCountries: values }))
+                  }
+                  onRegionsChange={(values) => setForm((p) => ({ ...p, selectedRegions: values }))}
+                  onCitiesChange={(values) => setForm((p) => ({ ...p, selectedCities: values }))}
+                />
+              </div>
+            )}
           </div>
 
           <label className="mt-4 block text-sm md:max-w-xs">
@@ -562,6 +659,9 @@ function CampaignRow({
 }) {
   const slots = (campaign.placements || []).filter(Boolean) as string[]
   const thumb = campaign.image_url || campaign.media_url
+  const scheduleExpired = isOwnerCampaignExpiredInSchedule(campaign)
+  const scheduleLabel = getOwnerCampaignScheduleLabel(campaign)
+  const geoLabel = getOwnerCampaignGeoLabel(campaign)
 
   return (
     <div className="rounded-[24px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4">
@@ -572,11 +672,20 @@ function CampaignRow({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-lg font-extrabold text-[#2f2a24]">{campaign.title}</h3>
-            <StatusChip status={campaign.status} />
+            <StatusChip status={campaign.status} scheduleExpired={scheduleExpired} />
           </div>
           {campaign.description && (
             <p className="mt-2 line-clamp-2 text-sm text-[#6f665d]">{campaign.description}</p>
           )}
+          <p
+            className={`mt-2 text-xs font-medium ${
+              scheduleExpired ? 'text-[#b45309]' : 'text-[#7a7168]'
+            }`}
+          >
+            {scheduleLabel}
+            {scheduleExpired && ' — не показується на сайті'}
+          </p>
+          <p className="mt-1 text-xs text-[#7a7168]">Географія: {geoLabel}</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {slots.length > 0 ? (
               slots.map((slot) => (
@@ -615,7 +724,7 @@ function CampaignRow({
               className="text-[#b91c1c] bg-[rgba(239,68,68,0.12)]"
             >
               <XCircle className="h-4 w-4" />
-              Вимкнути
+              Скасувати показ
             </ActionBtn>
           )}
           <ActionBtn
@@ -655,7 +764,20 @@ function ActionBtn({
   )
 }
 
-function StatusChip({ status }: { status: AdCampaign['status'] }) {
+function StatusChip({
+  status,
+  scheduleExpired = false,
+}: {
+  status: AdCampaign['status']
+  scheduleExpired?: boolean
+}) {
+  if (scheduleExpired) {
+    return (
+      <span className="rounded-full bg-[rgba(245,158,11,0.14)] px-2.5 py-0.5 text-xs font-semibold text-[#b45309]">
+        Термін закінчився
+      </span>
+    )
+  }
   const styles: Record<string, string> = {
     active: 'bg-[rgba(34,197,94,0.14)] text-[#15803d]',
     pending_review: 'bg-[rgba(245,158,11,0.14)] text-[#b45309]',

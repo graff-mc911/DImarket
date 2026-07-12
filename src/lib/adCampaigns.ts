@@ -171,31 +171,51 @@ export function matchesViewerGeo(
   viewerCity?: string | null,
   viewerCountry?: string | null,
 ): boolean {
-  const scope = campaign.geo_scope
-  if (!scope || scope === 'global' || scope === 'countries') return true
+  const scope = (campaign.geo_scope || 'global').toLowerCase()
+  if (!scope || scope === 'global') return true
 
-  const city = viewerCity?.trim().toLowerCase()
-  const country = viewerCountry?.trim().toLowerCase()
+  const city = viewerCity?.trim().toLowerCase() || ''
+  const country = viewerCountry?.trim().toLowerCase() || ''
+
+  const campaignCountries = normalizeGeoTokens(
+    campaign.countries?.length
+      ? campaign.countries
+      : campaign.country_name
+        ? [campaign.country_name]
+        : [],
+  )
+  const campaignRegions = normalizeGeoTokens(splitCommaGeoValues(campaign.region_name))
+  const campaignCities = normalizeGeoTokens(
+    campaign.cities?.length ? campaign.cities : splitCommaGeoValues(campaign.city_name),
+  )
 
   if (scope === 'country' || scope === 'countries') {
-    const target = (campaign.country_name || '').toLowerCase()
-    return !target || !country || target === country
+    if (!country) return false
+    return campaignCountries.size === 0 || campaignCountries.has(country)
   }
 
   if (scope === 'region' || scope === 'regions') {
-    return true
+    if (!country && !city) return false
+    if (country && campaignCountries.has(country)) return true
+    if (city && campaignCities.has(city)) return true
+    return false
   }
 
   if (scope === 'city' || scope === 'cities') {
-    const cities = (campaign.cities || []).map((c) => c.toLowerCase())
-    if (cities.length === 0) {
-      const one = (campaign.city_name || '').toLowerCase()
-      return !one || !city || one === city
-    }
-    return !city || cities.includes(city)
+    if (!city) return false
+    return campaignCities.size === 0 || campaignCities.has(city)
   }
 
   return true
+}
+
+function normalizeGeoTokens(items: string[]): Set<string> {
+  return new Set(items.map((item) => item.trim().toLowerCase()).filter(Boolean))
+}
+
+function splitCommaGeoValues(raw: string | null | undefined): string[] {
+  if (!raw?.trim()) return []
+  return raw.split(',').map((item) => item.trim()).filter(Boolean)
 }
 
 export function sortPaidCampaigns(a: AdCampaign, b: AdCampaign): number {

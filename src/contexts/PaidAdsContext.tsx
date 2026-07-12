@@ -13,6 +13,8 @@ import {
   type AdCampaignWithAdvertiser,
   type AdPlacement,
 } from '../lib/adCampaigns'
+import { detectViewerCountryOnce, getViewerGeo } from '../lib/viewerGeo'
+import { useApp } from './AppContext'
 
 type PaidAdsContextValue = {
   campaigns: AdCampaignWithAdvertiser[]
@@ -25,17 +27,25 @@ type PaidAdsContextValue = {
 const PaidAdsContext = createContext<PaidAdsContextValue | null>(null)
 
 export function PaidAdsProvider({ children }: { children: ReactNode }) {
+  const { profile } = useApp()
   const [campaigns, setCampaigns] = useState<AdCampaignWithAdvertiser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    detectViewerCountryOnce()
+  }, [])
 
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
+      const { city, country } = getViewerGeo(profile)
       const paid = await fetchPaidAdCampaigns({
         slots: [],
         limit: 48,
+        viewerCity: city,
+        viewerCountry: country,
       })
       setCampaigns(paid)
       if (paid.length === 0) {
@@ -49,7 +59,7 @@ export function PaidAdsProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [profile])
 
   useEffect(() => {
     void load()
