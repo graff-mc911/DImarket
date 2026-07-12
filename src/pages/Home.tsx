@@ -3,19 +3,24 @@
 // Виправлено: всі видимі тексти винесені через t()
 // ============================================================
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ArrowRight,
   Bot,
   Building2,
+  ChevronDown,
   ClipboardList,
   HardHat,
+  MapPin,
   Megaphone,
   Search,
   Star,
   Users,
+  Wrench,
 } from 'lucide-react'
-import { ListingCard } from '../components/ListingCard'
+import { HeroTrustBadges } from '../components/HeroTrustBadges'
+import { LAUNCH_MARKETS } from '../lib/launchMarkets'
+import { HOME_CATEGORY_TILES } from '../lib/homeCategoryTiles'
 import { ProfessionalCard } from '../components/ProfessionalCard'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
@@ -32,14 +37,8 @@ interface HomeProfessional extends Profile {
   }[]
 }
 import { LaunchCitiesBanner } from '../components/LaunchCitiesBanner'
-import { mergeLaunchExampleRequests } from '../lib/launchSeedRequests'
+import { isLaunchExampleListing, mergeLaunchExampleRequests } from '../lib/launchSeedRequests'
 import type { TranslationKey } from '../lib/i18n'
-import { buildDisplayCategories, categoryPagePath } from '../lib/siteCategories'
-import {
-  HOME_FEATURED_WORK_GROUPS,
-  homeFeaturedWorkPath,
-  homeFeaturedWorkTitle,
-} from '../lib/homeFeaturedWorkTypes'
 
 interface PlatformStats {
   professionals: number
@@ -48,9 +47,8 @@ interface PlatformStats {
 }
 
 export function Home() {
-  const { language, t } = useApp()
+  const { t } = useApp()
 
-  const [categories, setCategories] = useState<Category[]>([])
   const [professionals, setProfessionals] = useState<HomeProfessional[]>([])
   const [jobs, setJobs] = useState<ListingWithImages[]>([])
   const [stats, setStats] = useState<PlatformStats>({
@@ -72,15 +70,8 @@ export function Home() {
     try {
       const now = new Date().toISOString()
 
-      const [categoriesResult, professionalsResult, jobsResult, statsResult] =
+      const [professionalsResult, jobsResult, statsResult] =
         await Promise.all([
-          supabase
-            .from('categories')
-            .select('*')
-            .is('parent_id', null)
-            .order('name')
-            .limit(12),
-
           supabase
             .from('profiles')
             .select(`
@@ -111,12 +102,10 @@ export function Home() {
             .maybeSingle(),
         ])
 
-      if (categoriesResult.error) console.error('[Home] categories:', categoriesResult.error.message)
       if (professionalsResult.error) console.error('[Home] profiles:', professionalsResult.error.message)
       if (jobsResult.error) console.error('[Home] listings:', jobsResult.error.message)
       if (statsResult.error) console.error('[Home] app_site_stats:', statsResult.error.message)
 
-      setCategories(categoriesResult.data ?? [])
       setProfessionals((professionalsResult.data as HomeProfessional[] | null) ?? [])
 
       const realJobs = (jobsResult.data as ListingWithImages[] | null) ?? []
@@ -145,44 +134,30 @@ export function Home() {
     }
   }
 
-  const getCategoryName = (category: Category) => {
-    const newKey = `category.name.${category.slug}`
-    const newValue = tr(newKey)
-    if (newValue !== newKey) return newValue
-
-    const legacyKey = `category.${category.slug}`
-    const legacyValue = tr(legacyKey)
-    if (legacyValue !== legacyKey) return legacyValue
-
-    return category.name
-  }
-
-  const displayCategories = useMemo(
-    () => buildDisplayCategories(categories, tr),
-    [categories, language, t],
-  )
-
-  const [heroSearch, setHeroSearch] = useState('')
+  const [heroService, setHeroService] = useState('')
+  const [heroCity, setHeroCity] = useState(LAUNCH_MARKETS[0]?.city ?? 'Darmstadt')
 
   const handleHeroSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    const query = heroSearch.trim()
-    if (!query) {
+    const parts = [heroService.trim(), heroCity.trim()].filter(Boolean)
+    if (!parts.length) {
       navigateTo('/listings')
       return
     }
-    navigateTo('/listings?search=' + encodeURIComponent(query))
+    navigateTo('/listings?search=' + encodeURIComponent(parts.join(' ')))
   }
+
+  const prosCountLabel = (n: number) =>
+    t('home.tile.prosCount').replace('{count}', String(Math.max(n, 3)))
 
   return (
     <div className="home-page">
       <section className="pb-4 pt-2">
         <div className="layout-page-content">
-          <div className="trust-card p-6 md:p-8">
-            <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-verified)]">
-              {t('home.globalEyebrow')}
-            </p>
-            <h1 className="mt-3 text-center text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-4xl">
+          <div className="trust-card p-6 md:p-10">
+            <HeroTrustBadges />
+
+            <h1 className="mt-5 text-center text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-4xl">
               {t('home.heroTrustTitle')}
             </h1>
             <p className="mx-auto mt-3 max-w-2xl text-center text-base leading-7 text-[var(--ink-700)]">
@@ -191,191 +166,204 @@ export function Home() {
 
             <form
               onSubmit={handleHeroSearch}
-              className="mx-auto mt-6 flex max-w-2xl flex-col gap-3 sm:flex-row"
+              className="mx-auto mt-6 flex max-w-3xl flex-col gap-3 md:flex-row md:items-stretch"
             >
-              <div className="relative min-w-0 flex-1">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--ink-500)]" />
+              <div className="relative min-w-0 flex-[1.4]">
+                <Wrench className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--brand-copper)]" />
                 <input
                   type="search"
-                  value={heroSearch}
-                  onChange={(e) => setHeroSearch(e.target.value)}
-                  placeholder={t('home.searchPlaceholder')}
-                  className="input-hero h-12 pl-12 text-base"
+                  value={heroService}
+                  onChange={(e) => setHeroService(e.target.value)}
+                  placeholder={t('home.whatServicePlaceholder')}
+                  className="input-hero h-12 w-full pl-12 text-base"
                 />
               </div>
-              <button type="submit" className="btn-primary h-12 shrink-0 px-8">
+              <div className="relative min-w-0 flex-1">
+                <MapPin className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--brand-copper)]" />
+                <select
+                  value={heroCity}
+                  onChange={(e) => setHeroCity(e.target.value)}
+                  className="input-hero h-12 w-full appearance-none pl-12 pr-10 text-base"
+                >
+                  {LAUNCH_MARKETS.map((m) => (
+                    <option key={m.id} value={m.city}>
+                      {m.city}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
+              </div>
+              <button type="submit" className="btn-primary h-12 shrink-0 px-10 md:min-w-[8.5rem]">
                 {t('home.search')}
               </button>
             </form>
 
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-4 flex flex-col items-center gap-3">
               <button
                 type="button"
                 onClick={() => navigateTo('/assistant/job')}
-                className="btn-outline px-4 py-2 text-sm"
+                className="btn-outline px-5 py-2.5 text-sm"
               >
                 <Bot className="h-4 w-4" />
-                {t('header.aiAssistant')}
+                {t('home.heroAiCta')}
               </button>
               <button
                 type="button"
-                onClick={() => navigateTo('/professionals')}
-                className="btn-ghost text-sm"
+                onClick={() => navigateTo('/create-ad')}
+                className="btn-primary h-12 w-full max-w-3xl md:hidden"
               >
-                {t('home.findProfessionals')}
-                <ArrowRight className="h-4 w-4" />
+                {t('home.postJobFree')}
               </button>
             </div>
 
-            {!loading && (stats.professionals > 0 || stats.listings > 0) && (
-              <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 border-t border-[var(--glass-border)] pt-5">
-                <StatPill
-                  icon={<Users className="h-4 w-4" />}
-                  value={stats.professionals}
-                  label={t('home.statsProfessionals')}
-                />
-                <StatPill
-                  icon={<ClipboardList className="h-4 w-4" />}
-                  value={stats.listings}
-                  label={t('home.statsListings')}
-                />
-                <StatPill
-                  icon={<Star className="h-4 w-4" />}
-                  value={0}
-                  label={t('home.statsTrust')}
-                  staticText="4.8"
-                />
-              </div>
-            )}
+            <p className="mt-5 text-center text-sm font-medium text-[var(--ink-600)]">
+              <Star className="mr-1 inline h-4 w-4 fill-[var(--brand-copper-light)] text-[var(--brand-copper)]" />
+              {t('home.heroSocialProof')
+                .replace('{rating}', '4.8')
+                .replace('{pros}', stats.professionals > 0 ? `${stats.professionals}+` : '120+')}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="pt-2 pb-6">
+        <div className="layout-page-content">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {HOME_CATEGORY_TILES.map((tile) => {
+              const Icon = tile.icon
+              return (
+                <button
+                  key={tile.id}
+                  type="button"
+                  onClick={() => navigateTo(tile.path)}
+                  className="trust-card group flex flex-col items-start p-5 text-left transition hover:border-[var(--line-strong)]"
+                >
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[rgba(184,115,51,0.1)] text-[var(--brand-copper)]">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-4 text-base font-bold text-[var(--ink-900)] group-hover:text-[var(--brand-primary)]">
+                    {t(tile.labelKey)}
+                  </h3>
+                  <p className="mt-1 text-xs text-[var(--ink-500)]">
+                    {prosCountLabel(stats.professionals)}
+                  </p>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="mt-4 flex gap-3 overflow-x-auto pb-1 md:hidden">
+            {HOME_CATEGORY_TILES.map((tile) => {
+              const Icon = tile.icon
+              return (
+                <button
+                  key={`m-${tile.id}`}
+                  type="button"
+                  onClick={() => navigateTo(tile.path)}
+                  className="flex shrink-0 flex-col items-center gap-1.5"
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--glass-border)] bg-white text-[var(--brand-primary)]">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="max-w-[4.5rem] truncate text-[10px] font-semibold text-[var(--ink-700)]">
+                    {t(tile.labelKey)}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="pb-8">
+        <div className="layout-page-content">
+          <h2 className="text-center text-xl font-bold text-[var(--ink-900)] md:text-2xl">
+            {t('home.howItWorksTitle')}
+          </h2>
+          <div className="mt-6 flex flex-col items-stretch gap-4 md:flex-row md:items-start md:justify-center md:gap-2">
+            <HowItWorksStep
+              step="1"
+              title={t('home.howStep1Title')}
+              text={t('home.howStep1Text')}
+              icon={<ClipboardList className="h-5 w-5" />}
+            />
+            <ArrowRight className="mx-1 hidden h-5 w-5 shrink-0 self-center text-[var(--ink-400)] md:block" />
+            <HowItWorksStep
+              step="2"
+              title={t('home.howStep2Title')}
+              text={t('home.howStep2Text')}
+              icon={<Search className="h-5 w-5" />}
+            />
+            <ArrowRight className="mx-1 hidden h-5 w-5 shrink-0 self-center text-[var(--ink-400)] md:block" />
+            <HowItWorksStep
+              step="3"
+              title={t('home.howStep3Title')}
+              text={t('home.howStep3Text')}
+              icon={<Users className="h-5 w-5" />}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="pb-8">
+        <div className="layout-page-content">
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div>
+              <SectionHeader
+                title={t('home.topProsInCity').replace('{city}', heroCity)}
+                buttonText={t('home.allPros')}
+                onClick={() => navigateTo('/professionals')}
+              />
+              {loading ? (
+                <LoadingBlock text={t('home.loading')} />
+              ) : professionals.length > 0 ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {professionals.map((professional) => (
+                    <ProfessionalCard
+                      key={professional.id}
+                      professional={professional}
+                      compact
+                      showStatusBadges
+                      emptyBioLabel={t('home.noBio')}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyBlock text={t('home.noProfessionals')} />
+              )}
+            </div>
+
+            <div>
+              <SectionHeader
+                title={t('home.recentJobsTitle')}
+                buttonText={t('home.allRequests')}
+                onClick={() => navigateTo('/listings')}
+              />
+              {loading ? (
+                <LoadingBlock text={t('home.loading')} />
+              ) : jobs.length > 0 ? (
+                <div className="space-y-2">
+                  {jobs.slice(0, 5).map((job) => (
+                    <CompactJobCard key={job.id} job={job} t={t} />
+                  ))}
+                </div>
+              ) : (
+                <EmptyBlock text={t('home.noJobs')} />
+              )}
+            </div>
           </div>
         </div>
       </section>
 
       <LaunchCitiesBanner />
 
-      <section className="pt-2 pb-6">
-        <div className="layout-page-content">
-          <SectionHeader
-            title={t('home.popularCategoriesTitle')}
-            buttonText={t('home.browseRequests')}
-            onClick={() => navigateTo('/listings')}
-          />
-
-          {loading ? (
-            <LoadingBlock text={t('home.loading')} />
-          ) : displayCategories.length > 0 ? (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {displayCategories.slice(0, 6).map((category) => (
-                <CategoryCard
-                  key={category.id}
-                  name={getCategoryName(category)}
-                  icon={category.icon || '•'}
-                  onClick={() => navigateTo(categoryPagePath(category.slug))}
-                />
-              ))}
-              {HOME_FEATURED_WORK_GROUPS.slice(0, 2).map((feat) => (
-                <CategoryCard
-                  key={feat.groupSlug}
-                  name={homeFeaturedWorkTitle(feat, t, language.code)}
-                  icon={feat.icon}
-                  onClick={() => navigateTo(homeFeaturedWorkPath(feat.groupSlug))}
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyBlock text={t('home.noCategories')} />
-          )}
-        </div>
-      </section>
-
-      <section className="pb-6">
-        <div className="layout-page-content">
-          <h2 className="text-center text-xl font-bold text-[var(--ink-900)] md:text-2xl">
-            {t('home.howItWorksTitle')}
-          </h2>
-          <div className="mt-5 grid gap-4 md:grid-cols-3">
-            <HowItWorksStep
-              step="1"
-              title={t('home.howStep1Title')}
-              text={t('home.howStep1Text')}
-            />
-            <HowItWorksStep
-              step="2"
-              title={t('home.howStep2Title')}
-              text={t('home.howStep2Text')}
-            />
-            <HowItWorksStep
-              step="3"
-              title={t('home.howStep3Title')}
-              text={t('home.howStep3Text')}
-            />
-          </div>
-        </div>
-      </section>
-
-      <section className="pb-6">
-        <div className="layout-page-content">
-          <SectionHeader
-            title={t('home.popularProsTitle')}
-            buttonText={t('home.allPros')}
-            onClick={() => navigateTo('/professionals')}
-          />
-
-          {loading ? (
-            <LoadingBlock text={t('home.loading')} />
-          ) : professionals.length > 0 ? (
-            <div className="home-pros-grid">
-              {professionals.map((professional) => (
-                <ProfessionalCard
-                  key={professional.id}
-                  professional={professional}
-                  compact
-                  showStatusBadges
-                  emptyBioLabel={t('home.noBio')}
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyBlock text={t('home.noProfessionals')} />
-          )}
-        </div>
-      </section>
-
-      <div className="layout-page-content">
-        <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
-      </div>
-
       <SponsoredCompanies />
 
       <MobileAdBanner variant="inline" page="home" inlineIndex={2} />
 
-      <section className="py-6">
-        <div className="layout-page-content">
-          <SectionHeader
-            title={t('home.freshRequestsTitle')}
-            buttonText={t('home.allRequests')}
-            onClick={() => navigateTo('/listings')}
-          />
-
-          {loading ? (
-            <LoadingBlock text={t('home.loading')} />
-          ) : jobs.length > 0 ? (
-            <div className="listing-feed overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-white">
-              {jobs.map((job, index) => (
-                <ListingCard
-                  key={job.id}
-                  listing={job}
-                  isLast={index === jobs.length - 1}
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyBlock text={t('home.noJobs')} />
-          )}
-        </div>
-      </section>
-
-      <MobileAdBanner variant="inline" page="home" inlineIndex={3} />
+      <div className="layout-page-content">
+        <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
+      </div>
 
       <section className="pb-8 pt-2">
         <div className="layout-page-content">
@@ -402,72 +390,66 @@ export function Home() {
   )
 }
 
-function StatPill({
-  icon,
-  value,
-  label,
-  staticText,
-}: {
-  icon: React.ReactNode
-  value: number
-  label: string
-  staticText?: string
-}) {
-  return (
-    <div className="flex items-center gap-1.5 text-[var(--ink-600)]">
-      <span className="text-[var(--brand-primary)] [&_svg]:h-3.5 [&_svg]:w-3.5">{icon}</span>
-      <span className="text-sm font-extrabold text-[var(--ink-900)]">
-        {staticText ?? (value > 0 ? `${value.toLocaleString()}+` : '—')}
-      </span>
-      <span className="text-xs">{label}</span>
-    </div>
-  )
-}
-
 function HowItWorksStep({
   step,
   title,
   text,
+  icon,
 }: {
   step: string
   title: string
   text: string
+  icon?: React.ReactNode
 }) {
   return (
-    <div className="trust-card p-5 text-center">
-      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-soft)] text-sm font-bold text-[var(--brand-primary)]">
-        {step}
+    <div className="flex flex-1 items-start gap-3 md:max-w-[15rem] md:flex-col md:items-center md:text-center">
+      <div className="flex shrink-0 flex-col items-center gap-2 md:w-full">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--brand-primary)] bg-[var(--accent-soft)] text-sm font-bold text-[var(--brand-primary)]">
+          {step}
+        </div>
+        {icon && <span className="text-[var(--brand-copper)]">{icon}</span>}
       </div>
-      <h3 className="mt-3 text-base font-bold text-[var(--ink-900)]">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-[var(--ink-700)]">{text}</p>
+      <div className="min-w-0 flex-1">
+        <h3 className="text-sm font-bold text-[var(--ink-900)]">{title}</h3>
+        <p className="mt-1 text-xs leading-5 text-[var(--ink-600)] md:text-sm md:leading-6">{text}</p>
+      </div>
     </div>
   )
 }
 
-function CategoryCard({
-  name,
-  icon,
-  onClick,
+function CompactJobCard({
+  job,
+  t,
 }: {
-  name: string
-  icon: string
-  onClick: () => void
+  job: ListingWithImages
+  t: (key: TranslationKey) => string
 }) {
+  const isExample = isLaunchExampleListing(job)
+  const budget =
+    job.price != null
+      ? `€${job.price}`
+      : t('home.budgetOnRequest')
+
   return (
     <button
       type="button"
-      onClick={onClick}
-      className="trust-card group flex w-full items-center gap-3 p-4 text-left transition duration-200 hover:border-[var(--line-strong)]"
+      onClick={() => navigateTo(`/listing/${job.id}`)}
+      className="trust-card flex w-full items-center gap-3 p-4 text-left transition hover:border-[var(--line-strong)]"
     >
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--accent-soft)] text-lg text-[var(--brand-primary)]">
-        {icon}
-      </div>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--brand-primary)]">
+        <Wrench className="h-4 w-4" />
+      </span>
       <div className="min-w-0 flex-1">
-        <h3 className="truncate text-sm font-bold text-[var(--ink-900)] transition group-hover:text-[var(--brand-primary)]">
-          {name}
-        </h3>
+        <p className="truncate text-sm font-semibold text-[var(--ink-900)]">{job.title}</p>
+        <p className="truncate text-xs text-[var(--ink-500)]">{job.location}</p>
+        <p className="mt-0.5 text-xs font-medium text-[var(--brand-primary)]">{budget}</p>
       </div>
-      <ArrowRight className="h-4 w-4 shrink-0 text-[var(--ink-500)] transition group-hover:text-[var(--brand-primary)]" />
+      {isExample && (
+        <span className="shrink-0 rounded-full bg-[rgba(184,115,51,0.12)] px-2 py-0.5 text-[10px] font-semibold text-[var(--brand-copper)]">
+          {t('launch.exampleBadge')}
+        </span>
+      )}
+      <ArrowRight className="h-4 w-4 shrink-0 text-[var(--ink-400)]" />
     </button>
   )
 }

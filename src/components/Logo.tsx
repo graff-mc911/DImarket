@@ -31,7 +31,7 @@ const sizes = {
   },
 } as const
 
-const wordmarkFont = "Georgia, 'Times New Roman', Times, serif"
+const wordmarkFont = 'var(--font-sans), Inter, system-ui, sans-serif'
 
 function Wordmark({
   className = '',
@@ -42,7 +42,7 @@ function Wordmark({
 }) {
   return (
     <div
-      className={`font-medium tracking-[-0.03em] ${className}`}
+      className={`font-bold tracking-[-0.04em] ${className}`}
       style={{ fontFamily: wordmarkFont }}
     >
       <span className={animated ? 'logo-build-letter logo-build-letter--di logo-di-metallic' : 'logo-di-metallic'}>DI</span>

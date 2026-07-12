@@ -1556,11 +1556,19 @@
   }
 
   .logo-di-metallic {
-    background: linear-gradient(135deg, #a66332 0%, #d4af37 42%, #b87333 78%, #c9a227 100%);
+    background: linear-gradient(
+      125deg,
+      #8b5a2b 0%,
+      #d4af37 35%,
+      #f0d875 50%,
+      #b87333 70%,
+      #c9a227 100%
+    );
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+    filter: drop-shadow(0 1px 0 rgba(139, 90, 43, 0.15));
   }
 
   .btn-primary {

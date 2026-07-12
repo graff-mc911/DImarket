@@ -43,7 +43,6 @@ import {
   headerCategoryLabel,
 } from '../lib/siteCategories'
 import { Logo }        from './Logo'
-import { TrustStrip }  from './TrustStrip'
 import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
 
@@ -389,7 +388,7 @@ export function Header() {
 
               {/* Логотип */}
               <button onClick={() => goTo('/')} type="button" className="shrink-0 text-left">
-                <Logo variant="text" size="header" shimmer />
+                <Logo variant="text" size="header" />
               </button>
 
               {/* Пошук (десктоп) */}
@@ -403,7 +402,7 @@ export function Header() {
                     type="text"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    placeholder={t('home.search')}
+                    placeholder={t('home.headerSearchPlaceholder')}
                     className="input-glass h-10 rounded-xl pl-10 pr-3 text-sm"
                   />
                 </div>
@@ -584,7 +583,7 @@ export function Header() {
                   </div>
                 ) : (
                   <button onClick={() => goTo('/login')} type="button" className={textButtonClass()}>
-                    {t('header.professionalLogin')}
+                    {t('header.signIn')}
                   </button>
                 )}
 
@@ -644,12 +643,10 @@ export function Header() {
               </div>
             </div>
 
-            <TrustStrip />
-
-            {/* Нижня навігаційна панель (десктоп) — однаковий gap між усіма пунктами */}
+            {/* Додаткова навігація — прихована на десктопі (як у макеті) */}
             <nav
               className={
-                'mt-2 hidden w-full flex-wrap items-center justify-center overflow-visible border-t border-[var(--glass-border)] pt-2 xl:flex ' +
+                'mt-2 hidden w-full flex-wrap items-center justify-center overflow-visible border-t border-[var(--glass-border)] pt-2 max-xl:flex ' +
                 bottomNavGapClass
               }
             >
@@ -744,7 +741,7 @@ export function Header() {
                   type="text"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  placeholder={t('home.search')}
+                  placeholder={t('home.headerSearchPlaceholder')}
                   className="input-glass h-12 rounded-full pl-11 pr-4"
                 />
               </div>
