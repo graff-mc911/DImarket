@@ -127,7 +127,22 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'home.registerAsProfessional': 'Als Fachkraft registrieren',
 
   // Головна сторінка: нові ключі для актуального hero-блоку, категорій, запитів і майстрів.
-  'home.globalEyebrow': 'Globale Baudienstleistungen',
+  'home.globalEyebrow': 'Vertrauenswuerdiger lokaler Dienstleistungsmarktplatz',
+  'home.heroTrustTitle': 'Finden Sie einen vertrauenswuerdigen Fachmann in Ihrer Naehe',
+  'home.heroTrustSubtitle':
+    'Elektriker, Sanitaer, Maler — kostenlos inserieren, fuer Handwerker fuer immer gratis.',
+  'home.howItWorksTitle': 'So funktioniert es',
+  'home.howStep1Title': 'Auftrag beschreiben',
+  'home.howStep1Text': 'Suchen Sie nach Gewerk und Stadt oder nutzen Sie den KI-Assistenten.',
+  'home.howStep2Title': 'Passende Profis erhalten',
+  'home.howStep2Text': 'Wir benachrichtigen verifizierte Fachleute in Ihrer Region.',
+  'home.howStep3Title': 'Auswaehlen & chatten',
+  'home.howStep3Text': 'Profile vergleichen, Bewertungen lesen und direkt kontaktieren.',
+  'home.statsTrust': 'Durchschnittsbewertung',
+  'trust.freeForPros': '100% kostenlos fuer Handwerker',
+  'trust.verified': 'Verifizierte Profile',
+  'trust.reviews': 'Echte Bewertungen',
+  'trust.markets': 'DE · ES · UK · PL · RU',
   'home.heroSimpleTitle':
     'Finden Sie einen Handwerker fuer Reparatur-, Montage- oder Bauarbeiten.',
   'home.heroSimpleDescription':
@@ -990,14 +1005,6 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.step2.title': 'Geografie auswählen',
   'advertising.step3.text': 'Kampagne wird mit dem Status ausstehende Zahlung erstellt.',
   'advertising.step3.title': 'Zur Zahlung',
-    'home.howItWorksTitle': 'So funktioniert es',
-  'home.howItWorksText': 'Drei einfache Schritte, um einen Handwerker zu finden oder Aufträge zu bekommen',
-  'home.howStep1Title': 'Konto erstellen',
-  'home.howStep1Text': 'Wählen Sie Ihre Rolle: Kunde, Fachkraft oder Unternehmen. Füllen Sie Ihr Profil mit Beschreibung und Arbeitsfotos aus.',
-  'home.howStep2Title': 'Finden oder veröffentlichen',
-  'home.howStep2Text': 'Kunden veröffentlichen Arbeitsanfragen. Fachkräfte finden Aufträge und antworten direkt.',
-  'home.howStep3Title': 'Direkt vereinbaren',
-  'home.howStep3Text': 'Kommunizieren Sie über den integrierten Chat ohne Zwischenhändler. Hinterlassen Sie nach der Arbeit Bewertungen.',
   'home.statsProfessionals': 'Fachkräfte',
   'home.statsListings': 'aktive Anzeigen',
   'home.statsLanguages': 'Oberflächensprachen',

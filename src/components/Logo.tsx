@@ -45,9 +45,8 @@ function Wordmark({
       className={`font-medium tracking-[-0.03em] ${className}`}
       style={{ fontFamily: wordmarkFont }}
     >
-      <span className={animated ? 'logo-build-letter logo-build-letter--d text-[#2B231D]' : 'text-[#2B231D]'}>D</span>
-      <span className={animated ? 'logo-build-letter logo-build-letter--i text-[#A66332]' : 'text-[#A66332]'}>I</span>
-      <span className={animated ? 'logo-build-letter logo-build-letter--market text-[#2B231D]' : 'text-[#2B231D]'}>market</span>
+      <span className={animated ? 'logo-build-letter logo-build-letter--di logo-di-metallic' : 'logo-di-metallic'}>DI</span>
+      <span className={animated ? 'logo-build-letter logo-build-letter--market text-[var(--ink-900)]' : 'text-[var(--ink-900)]'}>market</span>
     </div>
   )
 }

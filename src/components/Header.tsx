@@ -43,6 +43,7 @@ import {
   headerCategoryLabel,
 } from '../lib/siteCategories'
 import { Logo }        from './Logo'
+import { TrustStrip }  from './TrustStrip'
 import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
 
@@ -376,10 +377,10 @@ export function Header() {
       })()}
 
       {/* ===== Основна шапка (фіксована) ===== */}
-      <header className="w-full">
+      <header className="site-header-shell w-full">
         <div
           className={
-            'w-full rounded-none border-b border-[var(--glass-border)] bg-[rgba(255,252,248,0.88)] shadow-[0_10px_28px_rgba(67,44,26,0.06)] backdrop-blur-xl ' +
+            'w-full ' +
             (mobileMenuOpen ? 'xl:overflow-visible max-xl:flex max-xl:max-h-[100dvh] max-xl:flex-col max-xl:overflow-hidden' : '')
           }
         >
@@ -403,7 +404,7 @@ export function Header() {
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     placeholder={t('home.search')}
-                    className="input-glass h-9 rounded-full pl-10 pr-3 text-sm"
+                    className="input-glass h-10 rounded-xl pl-10 pr-3 text-sm"
                   />
                 </div>
               </form>
@@ -590,16 +591,15 @@ export function Header() {
                 <button
                   onClick={() => goTo('/assistant/job')}
                   type="button"
-                  className="hidden items-center gap-1.5 rounded-full border border-[rgba(99,102,241,0.35)] bg-white/60 px-3 py-2 text-xs font-semibold text-[#6366f1] xl:inline-flex"
+                  className="btn-outline hidden px-4 py-2 text-xs xl:inline-flex"
                 >
                   <Bot className="h-4 w-4" />
                   {t('header.aiAssistant')}
                 </button>
 
-                {/* Кнопка "Подати оголошення" */}
-                <button onClick={() => goTo('/create-ad')} type="button" className={createButtonClass}>
+                <button onClick={() => goTo('/create-ad')} type="button" className="btn-primary px-4 py-2 text-xs">
                   <PlusCircle className="h-4 w-4" />
-                  {t('header.createAd')}
+                  {t('header.postJob')}
                 </button>
               </div>
 
@@ -627,10 +627,10 @@ export function Header() {
                 <button
                   onClick={() => goTo('/create-ad')}
                   type="button"
-                  className="inline-flex items-center gap-1 rounded-full border-0 bg-transparent px-1.5 py-1 text-xs font-semibold text-[var(--ink-800)] shadow-none outline-none sm:gap-1.5 sm:px-2 sm:text-sm"
+                  className="btn-primary px-2.5 py-1.5 text-xs sm:px-3"
                 >
-                  <PlusCircle className="h-5 w-5" />
-                  <span className="hidden min-[430px]:inline">{t('header.createAd')}</span>
+                  <PlusCircle className="h-4 w-4" />
+                  <span className="hidden min-[430px]:inline">{t('header.postJob')}</span>
                 </button>
 
                 <button
@@ -643,6 +643,8 @@ export function Header() {
                 </button>
               </div>
             </div>
+
+            <TrustStrip />
 
             {/* Нижня навігаційна панель (десктоп) — однаковий gap між усіма пунктами */}
             <nav

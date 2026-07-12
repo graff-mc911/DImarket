@@ -124,7 +124,22 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'home.registerAsProfessional': 'Zarejestruj sie jako fachowiec',
 
   // Головна сторінка: нові ключі для актуального hero-блоку, категорій, запитів і майстрів.
-  'home.globalEyebrow': 'Globalne uslugi budowlane',
+  'home.globalEyebrow': 'Zaufany lokalny marketplace uslug',
+  'home.heroTrustTitle': 'Znajdz sprawdzonego fachowca w poblizu',
+  'home.heroTrustSubtitle':
+    'Elektrycy, hydraulicy, malarze — darmowe ogloszenie, zawsze bezplatnie dla fachowcow.',
+  'home.howItWorksTitle': 'Jak to dziala',
+  'home.howStep1Title': 'Opisz zlecenie',
+  'home.howStep1Text': 'Szukaj po branzy i miescie lub popros asystenta AI o draft zapytania.',
+  'home.howStep2Title': 'Otrzymaj dopasowanych fachowcow',
+  'home.howStep2Text': 'Powiadamiamy zweryfikowanych specjalistow w Twojej okolicy.',
+  'home.howStep3Title': 'Wybierz i napisz',
+  'home.howStep3Text': 'Porownaj profile, przeczytaj opinie i skontaktuj sie bezposrednio.',
+  'home.statsTrust': 'srednia ocena',
+  'trust.freeForPros': '100% darmowe dla fachowcow',
+  'trust.verified': 'Zweryfikowane profile',
+  'trust.reviews': 'Prawdziwe opinie',
+  'trust.markets': 'DE · ES · UK · PL · RU',
   'home.heroSimpleTitle':
     'Znajdz fachowca do naprawy, montazu lub prac budowlanych.',
   'home.heroSimpleDescription':
@@ -794,16 +809,8 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.error.deleteAccount': 'Nie udalo sie usunac konta.',
   'settings.success.profileSaved': 'Profil zostal pomyslnie zaktualizowany!',
   'settings.success.passwordChanged': 'Haslo zostalo pomyslnie zmienione!',
-  'settings.confirm.deleteAccount':
-    'Czy na pewno chcesz usunac konto? Tej operacji nie mozna cofnac.',
-    'home.howItWorksTitle': 'Jak to działa',
-  'home.howItWorksText': 'Trzy proste kroki, aby znaleźć specjalistę lub zdobyć zlecenia',
-  'home.howStep1Title': 'Utwórz konto',
-  'home.howStep1Text': 'Wybierz rolę: klient, specjalista lub firma. Uzupełnij profil opisem i zdjęciami prac.',
-  'home.howStep2Title': 'Znajdź lub opublikuj',
-  'home.howStep2Text': 'Klienci publikują zlecenia. Specjaliści znajdują pracę i odpowiadają bezpośrednio.',
-  'home.howStep3Title': 'Ustal bezpośrednio',
-  'home.howStep3Text': 'Komunikuj się przez wbudowany czat bez pośredników. Zostaw opinie po pracy.',
+    'settings.confirm.deleteAccount':
+      'Czy na pewno chcesz usunac konto? Tej operacji nie mozna cofnac.',
   'home.statsProfessionals': 'specjalistów',
   'home.statsListings': 'aktywnych ogłoszeń',
   'home.statsLanguages': 'języków interfejsu',

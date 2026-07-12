@@ -124,7 +124,22 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'home.registerAsProfessional': 'Registrarse como profesional',
 
   // Головна сторінка: нові ключі для актуального hero-блоку, категорій, запитів і майстрів.
-  'home.globalEyebrow': 'Servicios de construccion globales',
+  'home.globalEyebrow': 'Marketplace local de confianza',
+  'home.heroTrustTitle': 'Encuentra un profesional de confianza cerca de ti',
+  'home.heroTrustSubtitle':
+    'Electricistas, fontaneros, pintores — publicar gratis, siempre gratis para profesionales.',
+  'home.howItWorksTitle': 'Como funciona',
+  'home.howStep1Title': 'Describe el trabajo',
+  'home.howStep1Text': 'Busca por oficio y ciudad o deja que el asistente IA redacte tu solicitud.',
+  'home.howStep2Title': 'Recibe profesionales',
+  'home.howStep2Text': 'Avisamos a profesionales verificados en tu zona que encajan con el trabajo.',
+  'home.howStep3Title': 'Elige y chatea',
+  'home.howStep3Text': 'Compara perfiles, lee reseñas y contacta al profesional adecuado.',
+  'home.statsTrust': 'valoracion media',
+  'trust.freeForPros': '100% gratis para profesionales',
+  'trust.verified': 'Perfiles verificados',
+  'trust.reviews': 'Resenas reales',
+  'trust.markets': 'DE · ES · UK · PL · RU',
   'home.heroSimpleTitle':
     'Encuentra un maestro para reparacion, instalacion o trabajos de construccion.',
   'home.heroSimpleDescription':
@@ -795,16 +810,8 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.error.deleteAccount': 'No se pudo eliminar la cuenta.',
   'settings.success.profileSaved': 'Perfil actualizado correctamente.',
   'settings.success.passwordChanged': 'Contrasena cambiada correctamente.',
-  'settings.confirm.deleteAccount':
-    'Estas seguro de que quieres eliminar tu cuenta? Esta accion no se puede deshacer.',
-    'home.howItWorksTitle': 'Cómo funciona',
-  'home.howItWorksText': 'Tres pasos simples para encontrar un profesional o conseguir trabajos',
-  'home.howStep1Title': 'Crear cuenta',
-  'home.howStep1Text': 'Elige tu rol: cliente, profesional o empresa. Completa tu perfil con descripción y fotos de trabajos.',
-  'home.howStep2Title': 'Buscar o publicar',
-  'home.howStep2Text': 'Los clientes publican solicitudes. Los profesionales encuentran trabajos y responden directamente.',
-  'home.howStep3Title': 'Acordar directamente',
-  'home.howStep3Text': 'Comunícate mediante el chat integrado sin intermediarios. Deja reseñas después del trabajo.',
+    'settings.confirm.deleteAccount':
+      'Estas seguro de que quieres eliminar tu cuenta? Esta accion no se puede deshacer.',
   'home.statsProfessionals': 'profesionales',
   'home.statsListings': 'anuncios activos',
   'home.statsLanguages': 'idiomas de interfaz',

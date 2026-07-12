@@ -6,12 +6,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
+  Bot,
   Building2,
   ClipboardList,
   HardHat,
   Megaphone,
   Search,
-  ShieldCheck,
+  Star,
   Users,
 } from 'lucide-react'
 import { ListingCard } from '../components/ListingCard'
@@ -161,142 +162,96 @@ export function Home() {
     [categories, language, t],
   )
 
+  const [heroSearch, setHeroSearch] = useState('')
+
+  const handleHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    const query = heroSearch.trim()
+    if (!query) {
+      navigateTo('/listings')
+      return
+    }
+    navigateTo('/listings?search=' + encodeURIComponent(query))
+  }
+
   return (
     <div className="home-page">
-      <section className="pb-3 pt-0">
+      <section className="pb-4 pt-2">
         <div className="layout-page-content">
-          <div className="glass-panel fade-rise rounded-[22px] p-4 md:p-6">
-            <div className="flex flex-col items-center text-center">
-              <div className="eyebrow gap-1.5 px-2.5 py-1 text-[11px]">
-                <ShieldCheck className="h-3 w-3" />
-                <span>{t('home.globalEyebrow')}</span>
+          <div className="trust-card p-6 md:p-8">
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-verified)]">
+              {t('home.globalEyebrow')}
+            </p>
+            <h1 className="mt-3 text-center text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-4xl">
+              {t('home.heroTrustTitle')}
+            </h1>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-base leading-7 text-[var(--ink-700)]">
+              {t('home.heroTrustSubtitle')}
+            </p>
+
+            <form
+              onSubmit={handleHeroSearch}
+              className="mx-auto mt-6 flex max-w-2xl flex-col gap-3 sm:flex-row"
+            >
+              <div className="relative min-w-0 flex-1">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--ink-500)]" />
+                <input
+                  type="search"
+                  value={heroSearch}
+                  onChange={(e) => setHeroSearch(e.target.value)}
+                  placeholder={t('home.searchPlaceholder')}
+                  className="input-hero h-12 pl-12 text-base"
+                />
               </div>
+              <button type="submit" className="btn-primary h-12 shrink-0 px-8">
+                {t('home.search')}
+              </button>
+            </form>
 
-              <div className="mt-3 max-w-3xl">
-                <h1 className="font-[var(--font-display)] text-[1.15rem] font-bold leading-[1.1] tracking-[-0.035em] text-[var(--ink-900)] md:text-[1.35rem] xl:text-[1.5rem]">
-                  {t('home.heroSimpleTitle')}
-                </h1>
-              </div>
-
-              <nav
-                className="home-hero__category-chips mt-4 hidden w-full max-w-2xl flex-wrap justify-center gap-2 md:flex"
-                aria-label={t('home.popularCategoriesTitle')}
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => navigateTo('/assistant/job')}
+                className="btn-outline px-4 py-2 text-sm"
               >
-                {displayCategories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => navigateTo(categoryPagePath(category.slug))}
-                    type="button"
-                    className="stat-chip px-2.5 py-1 text-[11px]"
-                  >
-                    {getCategoryName(category)}
-                  </button>
-                ))}
-                {HOME_FEATURED_WORK_GROUPS.map((feat) => (
-                  <button
-                    key={feat.groupSlug}
-                    onClick={() => navigateTo(homeFeaturedWorkPath(feat.groupSlug))}
-                    type="button"
-                    className="rounded-full border border-[rgba(99,102,241,0.28)] bg-[rgba(99,102,241,0.08)] px-2.5 py-1 text-[11px] font-semibold text-[#4338ca] transition hover:bg-[rgba(99,102,241,0.14)]"
-                  >
-                    {homeFeaturedWorkTitle(feat, t, language.code)}
-                  </button>
-                ))}
-              </nav>
-
-              <nav
-                className="mt-3 flex w-full max-w-xl flex-wrap justify-center gap-x-5 gap-y-2"
-                aria-label={t('footer.platformTitleSimple')}
+                <Bot className="h-4 w-4" />
+                {t('header.aiAssistant')}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigateTo('/professionals')}
+                className="btn-ghost text-sm"
               >
-                <button
-                  onClick={() => navigateTo('/professionals')}
-                  type="button"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--accent-700)] transition hover:text-[var(--ink-900)]"
-                >
-                  <span>{t('home.findProfessionals')}</span>
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => navigateTo('/listings')}
-                  type="button"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--ink-700)] transition hover:text-[var(--accent-700)]"
-                >
-                  <span>{t('home.browseRequests')}</span>
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => navigateTo('/create-ad')}
-                  type="button"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--ink-700)] transition hover:text-[var(--accent-700)]"
-                >
-                  <span>{t('header.createAd')}</span>
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => navigateTo('/assistant/job')}
-                  type="button"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6366f1] transition hover:text-[var(--accent-700)]"
-                >
-                  <span>{t('header.aiAssistant')}</span>
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              </nav>
-
-              {!loading && (stats.professionals > 0 || stats.listings > 0) && (
-                <div className="mt-4 flex w-full flex-wrap justify-center gap-x-5 gap-y-2 border-t border-[var(--glass-border)] pt-4">
-                  <StatPill
-                    icon={<Users className="h-4 w-4" />}
-                    value={stats.professionals}
-                    label={t('home.statsProfessionals')}
-                  />
-                  <StatPill
-                    icon={<ClipboardList className="h-4 w-4" />}
-                    value={stats.listings}
-                    label={t('home.statsListings')}
-                  />
-                  <StatPill
-                    icon={<ShieldCheck className="h-4 w-4" />}
-                    value={stats.countries}
-                    label={t('home.statsLanguages')}
-                  />
-                </div>
-              )}
+                {t('home.findProfessionals')}
+                <ArrowRight className="h-4 w-4" />
+              </button>
             </div>
+
+            {!loading && (stats.professionals > 0 || stats.listings > 0) && (
+              <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 border-t border-[var(--glass-border)] pt-5">
+                <StatPill
+                  icon={<Users className="h-4 w-4" />}
+                  value={stats.professionals}
+                  label={t('home.statsProfessionals')}
+                />
+                <StatPill
+                  icon={<ClipboardList className="h-4 w-4" />}
+                  value={stats.listings}
+                  label={t('home.statsListings')}
+                />
+                <StatPill
+                  icon={<Star className="h-4 w-4" />}
+                  value={0}
+                  label={t('home.statsTrust')}
+                  staticText="4.8"
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       <LaunchCitiesBanner />
-
-      <section className="pb-2 pt-2">
-        <div className="layout-page-content">
-          <div className="glass-panel rounded-[22px] p-4 md:p-5">
-            <h2 className="text-center text-lg font-extrabold text-[var(--ink-900)]">
-              {t('home.audienceTitle')}
-            </h2>
-            <div className="mt-4 grid gap-3 md:grid-cols-3">
-              <AudienceCard
-                icon={<HardHat className="h-5 w-5" />}
-                title={t('home.audienceProfessional')}
-                text={t('home.audienceProfessionalDesc')}
-                onClick={() => navigateTo('/for-professionals')}
-              />
-              <AudienceCard
-                icon={<Building2 className="h-5 w-5" />}
-                title={t('home.audienceCompany')}
-                text={t('home.audienceCompanyDesc')}
-                onClick={() => navigateTo('/for-companies')}
-              />
-              <AudienceCard
-                icon={<Megaphone className="h-5 w-5" />}
-                title={t('home.audienceAdvertiser')}
-                text={t('home.audienceAdvertiserDesc')}
-                onClick={() => navigateTo('/for-advertisers')}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
 
       <section className="pt-2 pb-6">
         <div className="layout-page-content">
@@ -309,8 +264,8 @@ export function Home() {
           {loading ? (
             <LoadingBlock text={t('home.loading')} />
           ) : displayCategories.length > 0 ? (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {displayCategories.map((category) => (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {displayCategories.slice(0, 6).map((category) => (
                 <CategoryCard
                   key={category.id}
                   name={getCategoryName(category)}
@@ -318,13 +273,12 @@ export function Home() {
                   onClick={() => navigateTo(categoryPagePath(category.slug))}
                 />
               ))}
-              {HOME_FEATURED_WORK_GROUPS.map((feat) => (
+              {HOME_FEATURED_WORK_GROUPS.slice(0, 2).map((feat) => (
                 <CategoryCard
                   key={feat.groupSlug}
                   name={homeFeaturedWorkTitle(feat, t, language.code)}
                   icon={feat.icon}
                   onClick={() => navigateTo(homeFeaturedWorkPath(feat.groupSlug))}
-                  accent="indigo"
                 />
               ))}
             </div>
@@ -334,43 +288,32 @@ export function Home() {
         </div>
       </section>
 
-      <div className="layout-page-content">
-        <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
-      </div>
-
-      <SponsoredCompanies />
-
-      <MobileAdBanner variant="inline" page="home" inlineIndex={2} />
-
-      <section className="py-6">
+      <section className="pb-6">
         <div className="layout-page-content">
-          <SectionHeader
-            title={t('home.freshRequestsTitle')}
-            buttonText={t('home.allRequests')}
-            onClick={() => navigateTo('/listings')}
-          />
-
-          {loading ? (
-            <LoadingBlock text={t('home.loading')} />
-          ) : jobs.length > 0 ? (
-            <div className="listing-feed overflow-hidden rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.42)]">
-              {jobs.map((job, index) => (
-                <ListingCard
-                  key={job.id}
-                  listing={job}
-                  isLast={index === jobs.length - 1}
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyBlock text={t('home.noJobs')} />
-          )}
+          <h2 className="text-center text-xl font-bold text-[var(--ink-900)] md:text-2xl">
+            {t('home.howItWorksTitle')}
+          </h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            <HowItWorksStep
+              step="1"
+              title={t('home.howStep1Title')}
+              text={t('home.howStep1Text')}
+            />
+            <HowItWorksStep
+              step="2"
+              title={t('home.howStep2Title')}
+              text={t('home.howStep2Text')}
+            />
+            <HowItWorksStep
+              step="3"
+              title={t('home.howStep3Title')}
+              text={t('home.howStep3Text')}
+            />
+          </div>
         </div>
       </section>
 
-      <MobileAdBanner variant="inline" page="home" inlineIndex={3} />
-
-      <section className="pb-14 pt-6">
+      <section className="pb-6">
         <div className="layout-page-content">
           <SectionHeader
             title={t('home.popularProsTitle')}
@@ -398,7 +341,63 @@ export function Home() {
         </div>
       </section>
 
-      <MobileAdBanner variant="inline" page="home" inlineIndex={4} />
+      <div className="layout-page-content">
+        <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
+      </div>
+
+      <SponsoredCompanies />
+
+      <MobileAdBanner variant="inline" page="home" inlineIndex={2} />
+
+      <section className="py-6">
+        <div className="layout-page-content">
+          <SectionHeader
+            title={t('home.freshRequestsTitle')}
+            buttonText={t('home.allRequests')}
+            onClick={() => navigateTo('/listings')}
+          />
+
+          {loading ? (
+            <LoadingBlock text={t('home.loading')} />
+          ) : jobs.length > 0 ? (
+            <div className="listing-feed overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-white">
+              {jobs.map((job, index) => (
+                <ListingCard
+                  key={job.id}
+                  listing={job}
+                  isLast={index === jobs.length - 1}
+                />
+              ))}
+            </div>
+          ) : (
+            <EmptyBlock text={t('home.noJobs')} />
+          )}
+        </div>
+      </section>
+
+      <MobileAdBanner variant="inline" page="home" inlineIndex={3} />
+
+      <section className="pb-8 pt-2">
+        <div className="layout-page-content">
+          <div className="trust-card flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between md:p-5">
+            <p className="text-sm font-semibold text-[var(--ink-900)]">{t('home.audienceTitle')}</p>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" onClick={() => navigateTo('/for-professionals')} className="btn-secondary px-4 py-2 text-xs">
+                <HardHat className="h-4 w-4" />
+                {t('home.audienceProfessional')}
+              </button>
+              <button type="button" onClick={() => navigateTo('/for-companies')} className="btn-secondary px-4 py-2 text-xs">
+                <Building2 className="h-4 w-4" />
+                {t('home.audienceCompany')}
+              </button>
+              <button type="button" onClick={() => navigateTo('/for-advertisers')} className="btn-ghost px-3 py-2 text-xs">
+                <Megaphone className="h-4 w-4" />
+                {t('home.audienceAdvertiser')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
@@ -407,18 +406,40 @@ function StatPill({
   icon,
   value,
   label,
+  staticText,
 }: {
   icon: React.ReactNode
   value: number
   label: string
+  staticText?: string
 }) {
   return (
     <div className="flex items-center gap-1.5 text-[var(--ink-600)]">
-      <span className="text-[var(--accent-600)] [&_svg]:h-3.5 [&_svg]:w-3.5">{icon}</span>
+      <span className="text-[var(--brand-primary)] [&_svg]:h-3.5 [&_svg]:w-3.5">{icon}</span>
       <span className="text-sm font-extrabold text-[var(--ink-900)]">
-        {value > 0 ? `${value.toLocaleString()}+` : '—'}
+        {staticText ?? (value > 0 ? `${value.toLocaleString()}+` : '—')}
       </span>
       <span className="text-xs">{label}</span>
+    </div>
+  )
+}
+
+function HowItWorksStep({
+  step,
+  title,
+  text,
+}: {
+  step: string
+  title: string
+  text: string
+}) {
+  return (
+    <div className="trust-card p-5 text-center">
+      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-soft)] text-sm font-bold text-[var(--brand-primary)]">
+        {step}
+      </div>
+      <h3 className="mt-3 text-base font-bold text-[var(--ink-900)]">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-[var(--ink-700)]">{text}</p>
     </div>
   )
 }
@@ -427,35 +448,26 @@ function CategoryCard({
   name,
   icon,
   onClick,
-  accent = 'default',
 }: {
   name: string
   icon: string
   onClick: () => void
-  accent?: 'default' | 'indigo'
 }) {
-  const iconWrapClass =
-    accent === 'indigo'
-      ? 'border border-[rgba(99,102,241,0.22)] bg-[rgba(99,102,241,0.08)] text-[#4338ca]'
-      : 'border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] text-[var(--accent-700)]'
-
   return (
     <button
       type="button"
       onClick={onClick}
-      className="glass-card group flex w-full items-center gap-3 p-3 text-left transition duration-300 hover:-translate-y-0.5"
+      className="trust-card group flex w-full items-center gap-3 p-4 text-left transition duration-200 hover:border-[var(--line-strong)]"
     >
-      <div
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px] text-base ${iconWrapClass}`}
-      >
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--accent-soft)] text-lg text-[var(--brand-primary)]">
         {icon}
       </div>
       <div className="min-w-0 flex-1">
-        <h3 className="truncate text-sm font-bold tracking-[-0.02em] text-[var(--ink-900)] transition group-hover:text-[var(--accent-700)]">
+        <h3 className="truncate text-sm font-bold text-[var(--ink-900)] transition group-hover:text-[var(--brand-primary)]">
           {name}
         </h3>
       </div>
-      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[var(--ink-500)] transition group-hover:text-[var(--accent-700)]" />
+      <ArrowRight className="h-4 w-4 shrink-0 text-[var(--ink-500)] transition group-hover:text-[var(--brand-primary)]" />
     </button>
   )
 }
@@ -502,34 +514,5 @@ function EmptyBlock({ text }: { text: string }) {
     <div className="glass-card p-8 text-center text-[var(--ink-500)]">
       {text}
     </div>
-  )
-}
-
-function AudienceCard({
-  icon,
-  title,
-  text,
-  onClick,
-}: {
-  icon: React.ReactNode
-  title: string
-  text: string
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="glass-card group flex h-full flex-col items-start p-4 text-left transition duration-300 hover:-translate-y-0.5"
-    >
-      <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.5)] text-[var(--accent-700)]">
-        {icon}
-      </span>
-      <h3 className="mt-3 text-base font-extrabold text-[var(--ink-900)]">{title}</h3>
-      <p className="mt-1 flex-1 text-sm leading-6 text-[var(--ink-600)]">{text}</p>
-      <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--accent-700)]">
-        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-      </span>
-    </button>
   )
 }
