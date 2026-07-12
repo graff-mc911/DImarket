@@ -24,6 +24,13 @@ export const enTranslations = {
   'header.onlineVisitors': 'Visitors online',
   'header.brandTagline': 'Free construction platform',
 
+  'nav.home': 'Home',
+  'nav.search': 'Search',
+  'nav.messages': 'Messages',
+  'nav.profile': 'Profile',
+  'nav.post': 'Post a job',
+  'nav.mobileNavigation': 'Mobile navigation',
+
   // Футер: основні посилання, підтримка, реклама і правовий текст.
   'footer.tagline':
     'Connect with trusted construction professionals and find quality materials.',
@@ -613,6 +620,18 @@ export const enTranslations = {
   'register.phonePlaceholder': '+1 234 567 8900',
   'register.locationPlaceholder': 'City, State',
   'register.createAccount': 'Create Account',
+  'register.continue': 'Continue',
+  'register.back': 'Back',
+  'register.stepOf': 'Step {step} of {total}',
+  'register.step1Title': 'Who are you?',
+  'register.step2Title': 'Your account',
+  'register.step3Title': 'Your location',
+  'register.joinHeadline': 'Join DImarket',
+  'register.joinSubtext': 'Free forever for professionals and companies',
+  'register.proBanner': '✓ Free registration · ✓ No commission · ✓ Get job alerts',
+  'register.trustGdpr': 'Your data is protected · GDPR compliant',
+  'register.referralLabel': 'Invite code (optional)',
+  'register.referralPlaceholder': 'Colleague invite code',
   'register.creating': 'Creating Account...',
   'register.success': 'Account created! Redirecting...',
   'register.alreadyHave': 'Already have an account?',

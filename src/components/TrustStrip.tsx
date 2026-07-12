@@ -12,7 +12,7 @@ export function TrustStrip() {
   ]
 
   return (
-    <div className="trust-strip hidden w-full py-2 md:block">
+    <div className="trust-strip w-full py-2">
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 px-4 text-center">
         {items.map((item, index) => (
           <span key={item} className="inline-flex items-center gap-1.5">

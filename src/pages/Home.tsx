@@ -18,7 +18,6 @@ import {
   Users,
   Wrench,
 } from 'lucide-react'
-import { HeroTrustBadges } from '../components/HeroTrustBadges'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import { HOME_CATEGORY_TILES } from '../lib/homeCategoryTiles'
 import { ProfessionalCard } from '../components/ProfessionalCard'
@@ -26,7 +25,6 @@ import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { MobileAdBanner } from '../components/MobileAdBanner'
-import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import type { Category, ListingWithImages, Profile } from '../lib/types'
 import { LANGUAGES } from '../lib/types'
 
@@ -152,12 +150,9 @@ export function Home() {
 
   return (
     <div className="home-page">
-      <section className="pb-4 pt-2">
+      <section className="pb-6 pt-4">
         <div className="layout-page-content">
-          <div className="trust-card p-6 md:p-10">
-            <HeroTrustBadges />
-
-            <h1 className="mt-5 text-center text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-4xl">
+            <h1 className="text-center text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-4xl">
               {t('home.heroTrustTitle')}
             </h1>
             <p className="mx-auto mt-3 max-w-2xl text-center text-base leading-7 text-[var(--ink-700)]">
@@ -222,7 +217,6 @@ export function Home() {
                 .replace('{rating}', '4.8')
                 .replace('{pros}', stats.professionals > 0 ? `${stats.professionals}+` : '120+')}
             </p>
-          </div>
         </div>
       </section>
 
@@ -275,7 +269,7 @@ export function Home() {
         </div>
       </section>
 
-      <section className="pb-8">
+      <section id="how-it-works" className="scroll-mt-28 pb-8">
         <div className="layout-page-content">
           <h2 className="text-center text-xl font-bold text-[var(--ink-900)] md:text-2xl">
             {t('home.howItWorksTitle')}
@@ -355,14 +349,8 @@ export function Home() {
         </div>
       </section>
 
-      <LaunchCitiesBanner />
-
-      <SponsoredCompanies />
-
-      <MobileAdBanner variant="inline" page="home" inlineIndex={2} />
-
-      <div className="layout-page-content">
-        <MobileAdBanner variant="horizontal" page="home" inlineIndex={1} />
+      <div className="layout-page-content pb-6 md:hidden">
+        <MobileAdBanner variant="inline" page="home" inlineIndex={1} />
       </div>
 
       <section className="pb-8 pt-2">
@@ -386,6 +374,8 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      <LaunchCitiesBanner />
     </div>
   )
 }

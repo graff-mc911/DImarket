@@ -120,7 +120,7 @@ export function AiChatWidget() {
         onClick={handleFabClick}
         aria-expanded={open}
         aria-haspopup="dialog"
-        className="pointer-events-auto fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))] flex h-14 w-14 touch-manipulation items-center justify-center rounded-full bg-[#6366f1] text-white shadow-lg transition hover:scale-105 active:scale-95"
+        className="pointer-events-auto fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))] hidden h-14 w-14 touch-manipulation items-center justify-center rounded-full bg-[var(--brand-ai)] text-white shadow-lg transition hover:scale-105 active:scale-95 xl:flex"
         aria-label={t('ai.widget.open')}
       >
         {open ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}

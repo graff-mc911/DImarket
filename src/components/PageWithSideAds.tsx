@@ -19,7 +19,6 @@ export function adPageForPath(path: string): SideAdsPage {
 /** Бокові рейки лише там, де вони є в макеті сторінки */
 export function pathUsesSideAdRails(path: string): boolean {
   if (
-    path === '/' ||
     path === '/listings' ||
     path === '/vacancies' ||
     path === '/sell-rent' ||

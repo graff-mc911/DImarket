@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { Building2, ChevronDown, Globe, HardHat, Loader, Megaphone, User, UserPlus } from 'lucide-react'
+import { Building2, ChevronDown, Globe, HardHat, Loader, Megaphone, Shield, User } from 'lucide-react'
 import { PasswordField } from '../components/PasswordField'
+import { Logo } from '../components/Logo'
 import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
 import {
   ensureUserProfile,
@@ -63,6 +64,8 @@ export function Register() {
   const [manualRegion, setManualRegion] = useState(false)
   const [manualCity, setManualCity] = useState(false)
   const [referralCode, setReferralCode] = useState('')
+  const [step, setStep] = useState(1)
+  const totalSteps = 3
 
   const sortedCountries = sortedRegistrationCountries()
   const availableRegions = countryCatalog?.regions.map((r) => r.name) ?? []
@@ -281,272 +284,424 @@ export function Register() {
     return ''
   }
 
-  return (
-    <div className="py-10">
-      <div className="mx-auto flex max-w-lg items-center justify-center">
-        <div className="w-full space-y-6">
-          <div className="glass-panel p-6 md:p-8">
+  const validateStep2 = () => {
+    const trimmedEmail = email.trim().toLowerCase()
+    if (selectedRole === 'company' && !companyName.trim()) {
+      setError(t('register.companyName'))
+      return false
+    }
+    if (!fullName.trim() && selectedRole !== 'company') {
+      setError(t('register.fullName'))
+      return false
+    }
+    if (!trimmedEmail) {
+      setError(t('auth.error.invalidEmail'))
+      return false
+    }
+    if (password.length < 6) {
+      setError(t('auth.error.passwordTooShort'))
+      return false
+    }
+    setError('')
+    return true
+  }
 
-            {/* Вибір мови */}
-            <div className="mb-4 flex items-center justify-end gap-2">
+  const goNextStep = () => {
+    setError('')
+    if (step === 2 && !validateStep2()) return
+    setStep((s) => Math.min(totalSteps, s + 1))
+  }
+
+  const goPrevStep = () => {
+    setError('')
+    setStep((s) => Math.max(1, s - 1))
+  }
+
+  const stepTitle = () => {
+    if (step === 1) return t('register.step1Title')
+    if (step === 2) return t('register.step2Title')
+    return t('register.step3Title')
+  }
+
+  return (
+    <div className="py-8 md:py-12">
+      <div className="layout-page-content mx-auto max-w-lg">
+        <div className="trust-card p-6 md:p-8">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <Logo variant="text" size="sm" />
+            <div className="flex items-center gap-2">
               <Globe className="h-4 w-4 text-[var(--ink-500)]" />
               <select
                 value={language.code}
-                onChange={e => {
-                  const lang = LANGUAGES.find(l => l.code === e.target.value)
+                onChange={(e) => {
+                  const lang = LANGUAGES.find((l) => l.code === e.target.value)
                   if (lang) setLanguage(lang)
                 }}
-                className="select-glass py-1 text-xs"
+                className="input-glass py-1 text-xs"
                 style={{ width: 'auto', minWidth: '120px' }}
               >
-                {LANGUAGES.map(lang => (
-                  <option key={lang.code} value={lang.code}>{lang.name}</option>
+                {LANGUAGES.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.name}
+                  </option>
                 ))}
               </select>
             </div>
+          </div>
 
-            {/* Заголовок */}
-            <div className="text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[linear-gradient(135deg,rgba(201,109,44,0.92),rgba(154,85,37,0.92))] text-white shadow-[0_18px_35px_rgba(15,23,42,0.18)]">
-                <UserPlus className="h-8 w-8" />
-              </div>
-              <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
-                {t('register.title')}
-              </h1>
+          <div className="text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-500)]">
+              {t('register.stepOf').replace('{step}', String(step)).replace('{total}', String(totalSteps))}
+            </p>
+            <h1 className="mt-2 text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-3xl">
+              {step === 1 ? t('register.joinHeadline') : stepTitle()}
+            </h1>
+            <p className="mt-2 text-sm leading-6 text-[var(--ink-600)]">
+              {step === 1 ? t('register.joinSubtext') : t('register.subtitle')}
+            </p>
+          </div>
+
+          <div className="mt-4 flex gap-2">
+            {Array.from({ length: totalSteps }, (_, i) => (
+              <span
+                key={i}
+                className={`h-1 flex-1 rounded-full ${i < step ? 'bg-[var(--brand-primary)]' : 'bg-[var(--line)]'}`}
+              />
+            ))}
+          </div>
+
+          {error && (
+            <div className="mt-5 rounded-xl border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
+              {error}
             </div>
+          )}
+          {success && (
+            <div className="mt-5 rounded-xl border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
+              {confirmEmail ? t('register.confirmEmail') : t('register.success')}
+            </div>
+          )}
 
-            {error && (
-              <div className="mt-5 rounded-[20px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="mt-5 rounded-[20px] border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
-                {confirmEmail ? t('register.confirmEmail') : t('register.success')}
-              </div>
-            )}
-
-            <form onSubmit={handleRegister} className="mt-6 space-y-5 text-left">
-
-              {/* Вибір ролі */}
-              <div>
-                <label className="mb-3 block text-sm font-bold text-[#2f2a24]">
-                  {t('register.whoAreYou')}
-                </label>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {ROLE_OPTIONS.map(option => (
-                    <button key={option.role} type="button" data-testid={`register-role-${option.role}`}
+          <form onSubmit={handleRegister} className="mt-6 space-y-5 text-left">
+            {step === 1 && (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  {ROLE_OPTIONS.map((option) => (
+                    <button
+                      key={option.role}
+                      type="button"
+                      data-testid={`register-role-${option.role}`}
                       onClick={() => setSelectedRole(option.role)}
-                      className="flex flex-col items-center gap-2 rounded-[20px] border p-3 text-center transition-all"
-                      style={{
-                        borderColor: selectedRole === option.role ? 'var(--accent-700)' : 'var(--glass-border)',
-                        background:  selectedRole === option.role ? 'rgba(199,138,96,0.12)' : 'rgba(255,255,255,0.4)',
-                        color:       selectedRole === option.role ? 'var(--accent-700)' : 'var(--ink-600)',
-                      }}>
-                      <div className="flex h-10 w-10 items-center justify-center rounded-[14px]"
-                        style={{ background: selectedRole === option.role ? 'rgba(199,138,96,0.18)' : 'rgba(148,163,184,0.12)' }}>
+                      className={`flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition ${
+                        selectedRole === option.role
+                          ? 'border-[var(--brand-primary)] bg-[var(--accent-soft)]'
+                          : 'border-[var(--glass-border)] bg-white hover:border-[var(--line-strong)]'
+                      }`}
+                    >
+                      <span
+                        className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                          selectedRole === option.role
+                            ? 'bg-[rgba(27,77,62,0.12)] text-[var(--brand-primary)]'
+                            : 'bg-[var(--bg-glass-bottom)] text-[var(--ink-600)]'
+                        }`}
+                      >
                         {option.icon}
-                      </div>
-                      <span className="text-xs font-bold leading-tight">{option.title}</span>
-                      <span className="text-[10px] leading-tight" style={{ color: 'var(--ink-500)' }}>
-                        {option.description}
                       </span>
+                      <span className="text-sm font-bold text-[var(--ink-900)]">{option.title}</span>
+                      <span className="text-xs leading-5 text-[var(--ink-500)]">{option.description}</span>
                     </button>
                   ))}
                 </div>
-              </div>
 
-              {/* Назва компанії */}
-              {selectedRole === 'company' && (
+                {(selectedRole === 'professional' || selectedRole === 'company') && (
+                  <div className="rounded-xl border border-[rgba(45,106,79,0.2)] bg-[rgba(45,106,79,0.08)] px-4 py-3 text-xs leading-5 text-[var(--brand-verified)]">
+                    {t('register.proBanner')}
+                  </div>
+                )}
+
+                <button type="button" onClick={goNextStep} className="btn-primary w-full justify-center">
+                  {t('register.continue')}
+                </button>
+              </>
+            )}
+
+            {step === 2 && (
+              <>
+                {selectedRole === 'company' && (
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
+                      {t('register.companyName')} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      className="input-glass"
+                      placeholder={t('register.companyNamePlaceholder')}
+                    />
+                  </div>
+                )}
+
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                    {t('register.companyName')} *
+                  <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
+                    {selectedRole === 'company' ? t('register.representativeName') : t('register.fullName')} *
                   </label>
-                  <input type="text" required value={companyName} onChange={e => setCompanyName(e.target.value)}
-                    className="input-glass" placeholder={t('register.companyNamePlaceholder')} />
-                </div>
-              )}
-
-              {/* Ім'я */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                  {selectedRole === 'company' ? t('register.representativeName') : t('register.fullName')} *
-                </label>
-                <input type="text" required value={fullName} onChange={e => setFullName(e.target.value)}
-                  className="input-glass" placeholder={t('register.fullNamePlaceholder')} />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">{t('login.email')} *</label>
-                <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                  className="input-glass" placeholder={t('login.emailPlaceholder')} />
-              </div>
-
-              <PasswordField
-                label={t('login.password')}
-                value={password}
-                onChange={setPassword}
-                placeholder={t('login.passwordPlaceholder')}
-                required
-                minLength={6}
-                hint={t('register.passwordMin')}
-                autoComplete="new-password"
-              />
-
-              {/* Телефон */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">{t('createAd.phone')}</label>
-                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
-                  className="input-glass" placeholder={t('register.phonePlaceholder')} />
-              </div>
-
-              {/* Географія */}
-              <div className="space-y-3">
-                <label className="block text-sm font-bold text-[#2f2a24]">
-                  {t('register.yourLocation')}
-                </label>
-
-                {geoLoading && (
-                  <div className="flex items-center gap-2 text-xs text-[var(--ink-500)]">
-                    <Loader className="h-3 w-3 animate-spin" />
-                    {t('register.detectingLocation')}
-                  </div>
-                )}
-
-                {/* Країна */}
-                <div className="relative">
-                  <select value={country} onChange={e => handleCountryChange(e.target.value)}
-                    className="input-glass appearance-none pr-10">
-                    <option value="">{t('register.selectCountry')}</option>
-                    {sortedCountries.map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
-                </div>
-
-                {autoDetected && country && (
-                  <p className="text-xs text-[var(--ink-500)]">
-                    🌍 {t('register.locationAutoDetected')}
-                  </p>
-                )}
-
-                {country && catalogLoading && (
-                  <div className="flex items-center gap-2 text-xs text-[var(--ink-500)]">
-                    <Loader className="h-3 w-3 animate-spin" />
-                    {t('register.catalogLoading')}
-                  </div>
-                )}
-
-                {country && !catalogLoading && (
-                  <p className="text-xs leading-5 text-[var(--ink-500)]">{t('register.geoFromUsers')}</p>
-                )}
-
-                {country && availableRegions.length > 0 && !manualRegion && (
-                  <div className="relative">
-                    <select value={region} onChange={e => handleRegionChange(e.target.value)}
-                      className="input-glass appearance-none pr-10">
-                      <option value="">{t('register.selectRegion')}</option>
-                      {availableRegions.map(r => (
-                        <option key={r} value={r}>{r}</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
-                  </div>
-                )}
-
-                {country && (manualRegion || availableRegions.length === 0) && (
-                  <input
-                    type="text"
-                    value={region}
-                    onChange={e => { setRegion(e.target.value); setCity(''); setManualCity(false) }}
-                    className="input-glass"
-                    placeholder={t('register.regionPlaceholder')}
-                  />
-                )}
-
-                {country && availableRegions.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => { setManualRegion(v => !v); setRegion(''); setCity(''); setManualCity(false) }}
-                    className="text-xs underline"
-                    style={{ color: 'var(--accent-700)' }}
-                  >
-                    {manualRegion ? t('register.selectRegion') : t('register.regionNotInList')}
-                  </button>
-                )}
-
-                {country && (region || manualRegion || availableRegions.length === 0) && !manualCity && availableCities.length > 0 && (
-                  <div className="relative">
-                    <select value={city} onChange={e => setCity(e.target.value)}
-                      className="input-glass appearance-none pr-10">
-                      <option value="">{t('register.selectCity')}</option>
-                      {availableCities.map(c => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
-                  </div>
-                )}
-
-                {country && (region || manualRegion || availableRegions.length === 0) && (manualCity || availableCities.length === 0) && (
                   <input
                     type="text"
                     required
-                    value={city}
-                    onChange={e => setCity(e.target.value)}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                     className="input-glass"
-                    placeholder={t('register.cityPlaceholder')}
+                    placeholder={t('register.fullNamePlaceholder')}
                   />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">{t('login.email')} *</label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="input-glass"
+                    placeholder={t('login.emailPlaceholder')}
+                  />
+                </div>
+
+                <PasswordField
+                  label={t('login.password')}
+                  value={password}
+                  onChange={setPassword}
+                  placeholder={t('login.passwordPlaceholder')}
+                  required
+                  minLength={6}
+                  hint={t('register.passwordMin')}
+                  autoComplete="new-password"
+                />
+
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">{t('createAd.phone')}</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="input-glass"
+                    placeholder={t('register.phonePlaceholder')}
+                  />
+                </div>
+
+                <div className="flex gap-2">
+                  <button type="button" onClick={goPrevStep} className="btn-secondary flex-1 justify-center">
+                    {t('register.back')}
+                  </button>
+                  <button type="button" onClick={goNextStep} className="btn-primary flex-1 justify-center">
+                    {t('register.continue')}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {step === 3 && (
+              <>
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold text-[var(--ink-900)]">
+                    {t('register.yourLocation')}
+                  </label>
+
+                  {geoLoading && (
+                    <div className="flex items-center gap-2 text-xs text-[var(--ink-500)]">
+                      <Loader className="h-3 w-3 animate-spin" />
+                      {t('register.detectingLocation')}
+                    </div>
+                  )}
+
+                  <div className="relative">
+                    <select
+                      value={country}
+                      onChange={(e) => handleCountryChange(e.target.value)}
+                      className="input-glass appearance-none pr-10"
+                    >
+                      <option value="">{t('register.selectCountry')}</option>
+                      {sortedCountries.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
+                  </div>
+
+                  {autoDetected && country && (
+                    <p className="text-xs text-[var(--ink-500)]">🌍 {t('register.locationAutoDetected')}</p>
+                  )}
+
+                  {country && catalogLoading && (
+                    <div className="flex items-center gap-2 text-xs text-[var(--ink-500)]">
+                      <Loader className="h-3 w-3 animate-spin" />
+                      {t('register.catalogLoading')}
+                    </div>
+                  )}
+
+                  {country && !catalogLoading && (
+                    <p className="text-xs leading-5 text-[var(--ink-500)]">{t('register.geoFromUsers')}</p>
+                  )}
+
+                  {country && availableRegions.length > 0 && !manualRegion && (
+                    <div className="relative">
+                      <select
+                        value={region}
+                        onChange={(e) => handleRegionChange(e.target.value)}
+                        className="input-glass appearance-none pr-10"
+                      >
+                        <option value="">{t('register.selectRegion')}</option>
+                        {availableRegions.map((r) => (
+                          <option key={r} value={r}>
+                            {r}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
+                    </div>
+                  )}
+
+                  {country && (manualRegion || availableRegions.length === 0) && (
+                    <input
+                      type="text"
+                      value={region}
+                      onChange={(e) => {
+                        setRegion(e.target.value)
+                        setCity('')
+                        setManualCity(false)
+                      }}
+                      className="input-glass"
+                      placeholder={t('register.regionPlaceholder')}
+                    />
+                  )}
+
+                  {country && availableRegions.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setManualRegion((v) => !v)
+                        setRegion('')
+                        setCity('')
+                        setManualCity(false)
+                      }}
+                      className="text-xs text-[var(--brand-primary)] underline"
+                    >
+                      {manualRegion ? t('register.selectRegion') : t('register.regionNotInList')}
+                    </button>
+                  )}
+
+                  {country &&
+                    (region || manualRegion || availableRegions.length === 0) &&
+                    !manualCity &&
+                    availableCities.length > 0 && (
+                      <div className="relative">
+                        <select
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          className="input-glass appearance-none pr-10"
+                        >
+                          <option value="">{t('register.selectCity')}</option>
+                          {availableCities.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-500)]" />
+                      </div>
+                    )}
+
+                  {country &&
+                    (region || manualRegion || availableRegions.length === 0) &&
+                    (manualCity || availableCities.length === 0) && (
+                      <input
+                        type="text"
+                        required
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        className="input-glass"
+                        placeholder={t('register.cityPlaceholder')}
+                      />
+                    )}
+
+                  {country && region && availableCities.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setManualCity((v) => !v)
+                        setCity('')
+                      }}
+                      className="text-xs text-[var(--brand-primary)] underline"
+                    >
+                      {manualCity ? t('register.selectCity') : t('register.cityNotInList')}
+                    </button>
+                  )}
+                </div>
+
+                {(selectedRole === 'professional' || selectedRole === 'company') && (
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
+                      {t('register.referralLabel')}
+                    </label>
+                    <input
+                      type="text"
+                      value={referralCode}
+                      onChange={(e) => setReferralCode(e.target.value)}
+                      className="input-glass"
+                      placeholder={t('register.referralPlaceholder')}
+                    />
+                  </div>
                 )}
 
-                {country && region && availableCities.length > 0 && (
+                <div className="rounded-xl bg-[var(--accent-soft)] p-3 text-xs leading-relaxed text-[var(--ink-600)]">
+                  {hintIcon()} {hintText()}
+                </div>
+
+                <div className="flex gap-2">
+                  <button type="button" onClick={goPrevStep} className="btn-secondary flex-1 justify-center">
+                    {t('register.back')}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading || (success && !confirmEmail)}
+                    className="btn-primary flex-1 justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {loading ? t('register.creating') : t('register.createAccount')}
+                  </button>
+                </div>
+
+                {confirmEmail && success && (
                   <button
                     type="button"
-                    onClick={() => { setManualCity(v => !v); setCity('') }}
-                    className="text-xs underline"
-                    style={{ color: 'var(--accent-700)' }}
+                    onClick={() => navigateTo('/login')}
+                    className="btn-secondary w-full justify-center text-sm"
                   >
-                    {manualCity ? t('register.selectCity') : t('register.cityNotInList')}
+                    {t('footer.signIn')}
                   </button>
                 )}
-              </div>
+              </>
+            )}
+          </form>
 
-              {/* Підказка */}
-              <div className="rounded-[16px] p-3 text-xs leading-relaxed"
-                style={{ background: 'rgba(199,138,96,0.08)', color: 'var(--ink-600)' }}>
-                {hintIcon()} {hintText()}
-              </div>
+          <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-[var(--ink-500)]">
+            <Shield className="h-3.5 w-3.5 text-[var(--brand-verified)]" />
+            {t('register.trustGdpr')}
+          </p>
 
+          <div className="mt-4 text-center">
+            <p className="text-sm text-[var(--ink-600)]">
+              {t('register.alreadyHave')}{' '}
               <button
-                type="submit"
-                disabled={loading || (success && !confirmEmail)}
-                className="btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={() => navigateTo('/login')}
+                type="button"
+                className="font-semibold text-[var(--brand-primary)]"
               >
-                {loading ? t('register.creating') : t('register.createAccount')}
+                {t('footer.signIn')}
               </button>
-
-              {confirmEmail && success && (
-                <button
-                  type="button"
-                  onClick={() => navigateTo('/login')}
-                  className="btn-secondary w-full justify-center text-sm"
-                >
-                  {t('footer.signIn')}
-                </button>
-              )}
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-[#6f665d]">
-                {t('register.alreadyHave')}{' '}
-                <button onClick={() => navigateTo('/login')} type="button"
-                  className="font-semibold text-[#2f2a24] transition hover:text-[#9a5525]">
-                  {t('footer.signIn')}
-                </button>
-              </p>
-            </div>
+            </p>
           </div>
         </div>
       </div>

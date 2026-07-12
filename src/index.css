@@ -24,7 +24,7 @@
     --ink-500: #8a8a8a;
     --brand-primary: #1b4d3e;
     --brand-primary-hover: #153d32;
-    --brand-copper: #b87333;
+    --brand-copper: #c4784a;
     --brand-copper-light: #d4af37;
     --brand-ai: #3d5a80;
     --brand-verified: #2d6a4f;
@@ -1674,6 +1674,16 @@
     color: var(--ink-700);
     font-size: 0.75rem;
     font-weight: 500;
+  }
+
+  .mobile-bottom-nav {
+    box-shadow: 0 -1px 0 rgba(26, 26, 26, 0.06);
+  }
+
+  @media (max-width: 1279px) {
+    .ai-chat-widget-layer {
+      display: none;
+    }
   }
 
   .input-hero:focus {

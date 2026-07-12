@@ -44,6 +44,7 @@ import {
 } from '../lib/siteCategories'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
+import { TrustStrip } from './TrustStrip'
 import { NotificationCenter } from './notifications/NotificationCenter'
 
 interface NavItem {
@@ -236,6 +237,18 @@ export function Header() {
   const goTo = (path: string) => {
     closeAllMenus()
     navigateTo(path)
+  }
+
+  const goToHowItWorks = () => {
+    closeAllMenus()
+    if (window.location.pathname === '/') {
+      document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
+    navigateTo('/')
+    window.setTimeout(() => {
+      document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 150)
   }
 
   const handleSignOut = async () => {
@@ -643,10 +656,62 @@ export function Header() {
               </div>
             </div>
 
-            {/* Додаткова навігація — прихована на десктопі (як у макеті) */}
+            {/* Десктопна навігація (промпт 3) */}
+            <nav className="mt-2 hidden w-full items-center justify-center gap-6 border-t border-[var(--glass-border)] pt-2 xl:flex">
+              <div ref={categoriesRef} className="relative shrink-0">
+                <button
+                  onClick={() => {
+                    setCategoriesOpen((o) => !o)
+                    setLanguageOpen(false)
+                    setCurrencyOpen(false)
+                    setAccountOpen(false)
+                  }}
+                  type="button"
+                  aria-expanded={categoriesOpen}
+                  className={navTextClass(categoriesOpen, true)}
+                >
+                  <span>{t('header.categories')}</span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform duration-200 ${categoriesOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {categoriesOpen && (
+                  <div className={categoriesDropdownClass} role="menu">
+                    {SITE_CATEGORY_SLUGS.map((slug) => (
+                      <button
+                        key={slug}
+                        type="button"
+                        role="menuitem"
+                        onClick={() => goTo(categoryPagePath(slug))}
+                        className={dropdownItemClass}
+                      >
+                        {headerCategoryLabel(slug, t)}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {navItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => goTo(item.path)}
+                  type="button"
+                  className={navTextClass(isActiveRoute(item.path), true)}
+                >
+                  <span>{item.label}</span>
+                </button>
+              ))}
+
+              <button type="button" onClick={goToHowItWorks} className={navTextClass(false, true)}>
+                <span>{t('footer.howItWorks')}</span>
+              </button>
+            </nav>
+
+            {/* Додаткова навігація — планшет / мобільний ряд під шапкою */}
             <nav
               className={
-                'mt-2 hidden w-full flex-wrap items-center justify-center overflow-visible border-t border-[var(--glass-border)] pt-2 max-xl:flex ' +
+                'mt-2 hidden w-full flex-wrap items-center justify-center overflow-visible border-t border-[var(--glass-border)] pt-2 max-xl:flex max-lg:hidden ' +
                 bottomNavGapClass
               }
             >
@@ -747,6 +812,8 @@ export function Header() {
               </div>
             </form>
           </div>
+
+          <TrustStrip />
 
           {/* Мобільне меню */}
           {mobileMenuOpen && (
