@@ -12,6 +12,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   Bell,
+  Building2,
   Bookmark,
   Bot,
   ChevronDown,
@@ -201,6 +202,7 @@ export function Header() {
   // Навігаційні пункти
   const navItems: NavItem[] = [
     { label: t('header.findProfessionals'), path: '/professionals', icon: Hammer },
+    { label: t('header.findCompanies'), path: '/companies', icon: Building2 },
   ]
 
   /** Центр нижньої панелі шапки — посилання з футера (між «Знайти майстрів» і «Перегляд оголошень») */

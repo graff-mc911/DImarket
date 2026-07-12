@@ -20,6 +20,7 @@ import { VerificationAdminPanel } from '../components/verification/VerificationA
 import { AdCampaign, Announcement, FeedbackMessage, Message, Profile } from '../lib/types'
 import { isSiteOwner } from '../lib/siteOwner'
 import { OwnerAdManager } from '../components/OwnerAdManager'
+import { OwnerMarketHealth } from '../components/OwnerMarketHealth'
 
 interface OwnerStats {
   totalVisits: number
@@ -515,6 +516,8 @@ export function Dashboard() {
               </div>
 
               {/* Верхній рядок ключових owner-метрик. */}
+              <OwnerMarketHealth />
+
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {statCards.map((card) => (
                   <div

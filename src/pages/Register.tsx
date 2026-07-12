@@ -70,6 +70,19 @@ export function Register() {
       : []
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const role = params.get('role')
+    if (
+      role === 'client' ||
+      role === 'professional' ||
+      role === 'company' ||
+      role === 'advertiser'
+    ) {
+      setSelectedRole(role)
+    }
+  }, [])
+
+  useEffect(() => {
     const detect = async () => {
       try {
         const res = await fetch('https://ipapi.co/json/')

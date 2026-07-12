@@ -6,7 +6,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
+  Building2,
   ClipboardList,
+  HardHat,
+  Megaphone,
   Search,
   ShieldCheck,
   Users,
@@ -19,6 +22,16 @@ import { navigateTo } from '../lib/navigation'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import type { Category, ListingWithImages, Profile } from '../lib/types'
+import { LANGUAGES } from '../lib/types'
+
+interface HomeProfessional extends Profile {
+  professional_categories?: {
+    category_id: string
+    category?: Category | null
+  }[]
+}
+import { LaunchCitiesBanner } from '../components/LaunchCitiesBanner'
+import { mergeLaunchExampleRequests } from '../lib/launchSeedRequests'
 import type { TranslationKey } from '../lib/i18n'
 import { buildDisplayCategories, categoryPagePath } from '../lib/siteCategories'
 import {
@@ -37,7 +50,7 @@ export function Home() {
   const { language, t } = useApp()
 
   const [categories, setCategories] = useState<Category[]>([])
-  const [professionals, setProfessionals] = useState<Profile[]>([])
+  const [professionals, setProfessionals] = useState<HomeProfessional[]>([])
   const [jobs, setJobs] = useState<ListingWithImages[]>([])
   const [stats, setStats] = useState<PlatformStats>({
     professionals: 0,
@@ -69,8 +82,15 @@ export function Home() {
 
           supabase
             .from('profiles')
-            .select('*')
+            .select(`
+              *,
+              professional_categories(
+                category_id,
+                category:categories(*)
+              )
+            `)
             .eq('is_professional', true)
+            .eq('user_role', 'professional')
             .order('rating', { ascending: false })
             .limit(4),
 
@@ -96,13 +116,18 @@ export function Home() {
       if (statsResult.error) console.error('[Home] app_site_stats:', statsResult.error.message)
 
       setCategories(categoriesResult.data ?? [])
-      setProfessionals(professionalsResult.data ?? [])
-      setJobs((jobsResult.data as ListingWithImages[] | null) ?? [])
+      setProfessionals((professionalsResult.data as HomeProfessional[] | null) ?? [])
+
+      const realJobs = (jobsResult.data as ListingWithImages[] | null) ?? []
+      setJobs(
+        mergeLaunchExampleRequests(realJobs, (key) => tr(key)),
+      )
 
       const { count: profCount } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
         .eq('is_professional', true)
+        .neq('user_role', 'company')
 
       const { count: listCount } = await supabase
         .from('listings')
@@ -112,7 +137,7 @@ export function Home() {
       setStats({
         professionals: profCount || statsResult.data?.total_professionals || 0,
         listings: listCount || statsResult.data?.total_listings_created || 0,
-        countries: 25,
+        countries: LANGUAGES.length,
       })
     } finally {
       setLoading(false)
@@ -236,6 +261,38 @@ export function Home() {
                   />
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <LaunchCitiesBanner />
+
+      <section className="pb-2 pt-2">
+        <div className="layout-page-content">
+          <div className="glass-panel rounded-[22px] p-4 md:p-5">
+            <h2 className="text-center text-lg font-extrabold text-[var(--ink-900)]">
+              {t('home.audienceTitle')}
+            </h2>
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              <AudienceCard
+                icon={<HardHat className="h-5 w-5" />}
+                title={t('home.audienceProfessional')}
+                text={t('home.audienceProfessionalDesc')}
+                onClick={() => navigateTo('/for-professionals')}
+              />
+              <AudienceCard
+                icon={<Building2 className="h-5 w-5" />}
+                title={t('home.audienceCompany')}
+                text={t('home.audienceCompanyDesc')}
+                onClick={() => navigateTo('/for-companies')}
+              />
+              <AudienceCard
+                icon={<Megaphone className="h-5 w-5" />}
+                title={t('home.audienceAdvertiser')}
+                text={t('home.audienceAdvertiserDesc')}
+                onClick={() => navigateTo('/for-advertisers')}
+              />
             </div>
           </div>
         </div>
@@ -445,5 +502,34 @@ function EmptyBlock({ text }: { text: string }) {
     <div className="glass-card p-8 text-center text-[var(--ink-500)]">
       {text}
     </div>
+  )
+}
+
+function AudienceCard({
+  icon,
+  title,
+  text,
+  onClick,
+}: {
+  icon: React.ReactNode
+  title: string
+  text: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="glass-card group flex h-full flex-col items-start p-4 text-left transition duration-300 hover:-translate-y-0.5"
+    >
+      <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.5)] text-[var(--accent-700)]">
+        {icon}
+      </span>
+      <h3 className="mt-3 text-base font-extrabold text-[var(--ink-900)]">{title}</h3>
+      <p className="mt-1 flex-1 text-sm leading-6 text-[var(--ink-600)]">{text}</p>
+      <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--accent-700)]">
+        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+      </span>
+    </button>
   )
 }

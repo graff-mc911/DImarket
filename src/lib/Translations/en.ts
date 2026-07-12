@@ -4,6 +4,7 @@ export const enTranslations = {
   // Шапка сайту: навігація, акаунт, мова, валюта.
   'header.browse': 'Browse',
   'header.findProfessionals': 'Find Professionals',
+  'header.findCompanies': 'Companies',
   'header.professionalLogin': 'Professional Login',
   'header.createAd': 'Create Ad',
   'header.myProfile': 'My Profile',
@@ -1162,6 +1163,127 @@ export const enTranslations = {
   'home.statsProfessionals': 'professionals',
   'home.statsListings': 'active listings',
   'home.statsLanguages': 'interface languages',
+
+  'launch.eyebrow': 'Launch markets',
+  'launch.title': 'Growing in Darmstadt, Alicante & Madrid',
+  'launch.description':
+    'We are building local supply and demand in these cities first — DImarket works globally wherever you register.',
+  'launch.registerCta': 'Join in your city',
+  'launch.globalNote':
+    'Your city is not listed? Register anyway — the platform works wherever masters, companies, and clients sign up.',
+  'launch.metricMasters': 'Masters',
+  'launch.metricCompanies': 'Companies',
+  'launch.metricRequests': 'Requests',
+  'launch.freeForPros': 'Free for masters and companies',
+  'launch.exampleBadge': 'Example request',
+
+  'launch.seed.darmstadt.electric': 'Electrician needed for apartment rewiring',
+  'launch.seed.darmstadt.electricDesc':
+    'Looking for a certified electrician in Darmstadt for partial rewiring and new outlets.',
+  'launch.seed.darmstadt.bathroom': 'Bathroom renovation — tiles and plumbing',
+  'launch.seed.darmstadt.bathroomDesc':
+    'Need a team for bathroom refresh: new tiles, sink, and shower installation.',
+  'launch.seed.alicante.plumbing': 'Plumber for kitchen leak in Alicante',
+  'launch.seed.alicante.plumbingDesc':
+    'Urgent fix for a kitchen pipe leak. Prefer a local plumber with references.',
+  'launch.seed.alicante.paint': 'Interior painting — 3-bedroom flat',
+  'launch.seed.alicante.paintDesc':
+    'Looking for a painter for walls and ceilings before summer season.',
+  'launch.seed.madrid.renovation': 'Full flat renovation in Madrid',
+  'launch.seed.madrid.renovationDesc':
+    'Seeking a renovation company for 85 m² apartment: layout, flooring, kitchen.',
+  'launch.seed.madrid.hvac': 'Air conditioning installation',
+  'launch.seed.madrid.hvacDesc':
+    'Need HVAC installation for a living room and two bedrooms.',
+
+  'companies.simpleTitle': 'Construction companies',
+  'companies.catalogHint': 'Firms and teams with corporate profiles.',
+  'companies.browseLink': 'Browse companies',
+  'companies.countSuffix': 'companies',
+  'professionals.mastersOnlyHint': 'Individual masters and craftsmen.',
+  'professionals.browseLink': 'Browse masters',
+
+  'home.audienceTitle': 'Join DImarket',
+  'home.audienceProfessional': 'I am a master',
+  'home.audienceProfessionalDesc': 'Free profile, local job requests, reviews.',
+  'home.audienceCompany': 'I am a company',
+  'home.audienceCompanyDesc': 'Corporate profile, B2B visibility, team showcase.',
+  'home.audienceAdvertiser': 'I want to advertise',
+  'home.audienceAdvertiserDesc': 'Geo-targeted banners next to live demand.',
+
+  'landing.signIn': 'Sign in',
+  'landing.benefitsTitle': 'Why DImarket',
+  'landing.stepsTitle': 'How to start',
+  'landing.launchCitiesTitle': 'Active launch cities',
+  'landing.finalCtaTitle': 'Register in your city',
+  'landing.finalCtaText':
+    'DImarket is global — your location from registration is where you work and get clients.',
+
+  'landing.pro.eyebrow': 'For masters',
+  'landing.pro.title': 'Get job requests in your city',
+  'landing.pro.subtitle':
+    'Free profile on a global platform. Clients post work — you respond directly. Works in Darmstadt, Alicante, Madrid, and anywhere you register.',
+  'landing.pro.cta': 'Register as a master',
+  'landing.pro.freeNote': '100% free for masters — no subscriptions, no commissions.',
+  'landing.pro.benefit1': 'Job requests from clients in your city and categories',
+  'landing.pro.benefit2': 'Portfolio, reviews, and verification badge',
+  'landing.pro.benefit3': 'Built-in chat — agree directly, no middlemen',
+  'landing.pro.benefit4': 'Interface in DE, ES, EN, UK, PL, RU for diaspora',
+  'landing.pro.step1': 'Create a free account and select your city',
+  'landing.pro.step2': 'Complete profile: photo, skills, portfolio',
+  'landing.pro.step3': 'Respond to requests and get reviews',
+  'landing.pro.launchPitch':
+    'We are actively growing supply and demand in Darmstadt (DE), Alicante and Madrid (ES).',
+
+  'landing.company.eyebrow': 'For companies',
+  'landing.company.title': 'Show your construction business locally',
+  'landing.company.subtitle':
+    'Separate company catalog, corporate profile, and B2B visibility. Free registration — platform revenue is advertising only.',
+  'landing.company.cta': 'Register your company',
+  'landing.company.freeNote': 'Free company profile — grow visibility before paid options.',
+  'landing.company.benefit1': 'Dedicated /companies catalog separate from individual masters',
+  'landing.company.benefit2': 'Company badge, team info, and service categories',
+  'landing.company.benefit3': 'Reach clients and B2B requests in your region',
+  'landing.company.benefit4': 'Multilingual interface for international teams',
+  'landing.company.step1': 'Register as a company with your city',
+  'landing.company.step2': 'Add description, contacts, and work categories',
+  'landing.company.step3': 'Receive requests and build reputation',
+  'landing.company.launchPitch':
+    'Launch focus: construction firms in Darmstadt, Alicante, and Madrid.',
+
+  'landing.advertiser.eyebrow': 'For advertisers',
+  'landing.advertiser.title': 'Reach buyers at the moment of search',
+  'landing.advertiser.subtitle':
+    'Banner ads with geo-targeting: city, country, or global. Show your brand next to job requests and professional listings.',
+  'landing.advertiser.cta': 'Register as advertiser',
+  'landing.advertiser.freeNote': 'Self-serve campaigns with geo and slot selection.',
+  'landing.advertiser.benefit1': 'Geo-targeting: Darmstadt, Alicante, Madrid, or worldwide',
+  'landing.advertiser.benefit2': 'Multiple slots: home, listings, professionals, mobile',
+  'landing.advertiser.benefit3': 'Impressions and clicks analytics',
+  'landing.advertiser.benefit4': 'Construction audience — active demand, not cold traffic',
+  'landing.advertiser.step1': 'Create advertiser account',
+  'landing.advertiser.step2': 'Upload creative and pick placements + geo',
+  'landing.advertiser.step3': 'Launch campaign and track performance',
+  'landing.advertiser.launchPitch':
+    'City packages available for DE/ES launch markets while the platform scales globally.',
+
+  'onboarding.eyebrow': 'Getting started',
+  'onboarding.progress': 'steps completed',
+  'onboarding.readyBadge': 'Ready for orders',
+  'onboarding.freeNote': 'Free — complete profile to get more contacts',
+  'onboarding.pro.title': 'Master profile checklist',
+  'onboarding.company.title': 'Company profile checklist',
+  'onboarding.advertiser.title': 'Advertiser setup',
+  'onboarding.pro.photo': 'Add profile photo',
+  'onboarding.pro.bio': 'Write bio (at least 20 characters)',
+  'onboarding.pro.categories': 'Select work categories',
+  'onboarding.pro.location': 'Confirm your city',
+  'onboarding.pro.phone': 'Add phone number',
+  'onboarding.advertiser.name': 'Company or contact name',
+  'onboarding.advertiser.location': 'Your market location',
+  'onboarding.advertiser.phone': 'Contact phone',
+  'onboarding.advertiser.exploreAds': 'Open advertising page',
+  'onboarding.advertiser.openAds': 'Set up advertising',
   'language.ru': 'Russian',
   'currency.rub': 'Russian Ruble',
   'professional.featured': 'Featured',

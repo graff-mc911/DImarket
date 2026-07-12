@@ -7,6 +7,7 @@ import { Eye, Heart, MapPin, Star } from 'lucide-react'
 import { supabase }          from '../lib/supabase'
 import { useApp }            from '../contexts/AppContext'
 import { navigateTo }        from '../lib/navigation'
+import { isLaunchExampleListing } from '../lib/launchSeedRequests'
 import { listingCityLabel }  from '../lib/listingLocation'
 import type { ListingWithImages } from '../lib/types'
 
@@ -105,7 +106,15 @@ export function ListingCard({ listing, isLast = false }: ListingCardProps) {
   const city =
     listingCityLabel(listing.location) || t('listing.locationNotSpecified')
 
-  const goToListing = () => navigateTo('/listing/' + listing.id)
+  const isExample = isLaunchExampleListing(listing)
+
+  const goToListing = () => {
+    if (isExample) {
+      navigateTo('/assistant/job')
+      return
+    }
+    navigateTo('/listing/' + listing.id)
+  }
 
   return (
     <article
@@ -183,6 +192,12 @@ export function ListingCard({ listing, isLast = false }: ListingCardProps) {
         <h3 className="line-clamp-2 text-[15px] font-bold leading-snug tracking-[-0.02em] text-[var(--ink-900)] sm:text-base">
           {listing.title}
         </h3>
+
+        {isExample && (
+          <span className="mt-1 inline-flex w-fit rounded-full bg-[rgba(99,102,241,0.12)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#4338ca]">
+            {t('launch.exampleBadge')}
+          </span>
+        )}
 
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px] text-[var(--ink-700)]">
           <span className="font-semibold text-[var(--accent-700)]">

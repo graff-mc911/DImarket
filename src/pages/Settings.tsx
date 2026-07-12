@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Bell,
   DollarSign,
@@ -20,11 +20,9 @@ import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { CategorySubcategoryPicker } from '../components/CategorySubcategoryPicker'
-import {
-  categorySlugForSubcategory,
-  emptyPickerValue,
-  type CategoryPickerValue,
-} from '../lib/categoryCatalog'
+import { OnboardingChecklist } from '../components/OnboardingChecklist'
+import { buildOnboardingState } from '../lib/onboardingProgress'
+import type { Profile } from '../lib/types'
 
 function profileSaveErrorMessage(err: unknown): string {
   if (err && typeof err === 'object' && 'message' in err) {
@@ -72,10 +70,18 @@ export function Settings() {
   const [currentPassword, setCurrentPassword] = useState('')
   const [reauthNonce, setReauthNonce] = useState('')
   const [passwordNeedsNonce, setPasswordNeedsNonce] = useState(false)
-  const [canChangePassword, setCanChangePassword] = useState(true)
+  const [userRole, setUserRole] = useState<string>('client')
+  const [advertiserVisitedAds, setAdvertiserVisitedAds] = useState(false)
 
   useEffect(() => {
     void bootstrapSettings()
+    try {
+      setAdvertiserVisitedAds(
+        localStorage.getItem('dimarket_onboarding_visited_ads') === '1',
+      )
+    } catch {
+      /* ignore */
+    }
   }, [user])
 
   const resetProfileForm = () => {
@@ -169,6 +175,7 @@ export function Settings() {
       setProfilePhoto(data.profile_photo ?? '')
       setPortfolioImages(Array.isArray(data.portfolio_images) ? data.portfolio_images : [])
       setIsProfessional(Boolean(data.is_professional))
+      setUserRole(data.user_role ?? 'client')
       const workSlugs = Array.isArray(data.work_subcategory_slugs)
         ? data.work_subcategory_slugs
         : []
@@ -413,6 +420,40 @@ export function Settings() {
     }
   }
 
+  const onboardingState = useMemo(() => {
+    if (!currentUserId) return null
+    const role = userRole
+    if (role !== 'professional' && role !== 'company' && role !== 'advertiser') {
+      return null
+    }
+
+    const draftProfile = {
+      id: currentUserId,
+      full_name: fullName,
+      bio,
+      phone,
+      location,
+      profile_photo: profilePhoto,
+    } as Profile
+
+    return buildOnboardingState({
+      profile: draftProfile,
+      workSubcategoryCount: workSubcategories.subcategorySlugs.length,
+      role,
+      advertiserVisitedAds,
+    })
+  }, [
+    advertiserVisitedAds,
+    bio,
+    currentUserId,
+    fullName,
+    location,
+    phone,
+    profilePhoto,
+    userRole,
+    workSubcategories.subcategorySlugs.length,
+  ])
+
   if (loading) {
     return (
       <div className="layout-page-content py-10">
@@ -455,6 +496,16 @@ export function Settings() {
                   {feedback.text}
                 </div>
               )}
+
+              {onboardingState &&
+                (userRole === 'professional' ||
+                  userRole === 'company' ||
+                  userRole === 'advertiser') && (
+                  <OnboardingChecklist
+                    state={onboardingState}
+                    role={userRole as 'professional' | 'company' | 'advertiser'}
+                  />
+                )}
 
               <div className="space-y-6">
                 <form onSubmit={handleSaveProfile} className="glass-card p-5 md:p-6">

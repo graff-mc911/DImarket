@@ -15,6 +15,7 @@ import { bindPathListener }    from './lib/navigation'
 // --- Публічні сторінки ---
 import { Home }               from './pages/Home'
 import { Professionals }      from './pages/Professionals'
+import { Companies }          from './pages/Companies'
 import { Listings }           from './pages/Listings'
 import { ListingDetail }      from './pages/ListingDetail'
 import { ProfessionalDetail } from './pages/ProfessionalDetail'
@@ -41,6 +42,9 @@ import { AiChatWidget } from './components/ai/AiChatWidget'
 import { Checkout }     from './pages/Checkout'
 import { BoostProfile } from './pages/BoostProfile'
 import { Verification } from './pages/Verification'
+import { ForProfessionals } from './pages/ForProfessionals'
+import { ForCompanies }     from './pages/ForCompanies'
+import { ForAdvertisers }   from './pages/ForAdvertisers'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -67,6 +71,7 @@ function App() {
     switch (path) {
       case '/':              return <Home />
       case '/professionals': return <Professionals />
+      case '/companies':     return <Companies />
       case '/listings':      return <Listings />
       case '/vacancies':     return <Listings fixedCategorySlug="vacancies" />
       case '/sell-rent':     return <Listings fixedCategorySlug="sell-rent" />
@@ -88,6 +93,9 @@ function App() {
       case '/admin/marketing-agent': return <MarketingAgentAdmin />
       case '/checkout':      return <Checkout />      // 🆕 Після оплати Stripe
       case '/boost':         return <BoostProfile />  // 🆕 Просування профілю
+      case '/for-professionals': return <ForProfessionals />
+      case '/for-companies':     return <ForCompanies />
+      case '/for-advertisers':   return <ForAdvertisers />
       case '/verification':  return <Verification />
       default:               return <Home />
     }

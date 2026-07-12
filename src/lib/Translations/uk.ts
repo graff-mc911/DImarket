@@ -4,6 +4,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   // Header
   'header.browse': 'Огляд',
   'header.findProfessionals': 'Знайти майстрів',
+  'header.findCompanies': 'Компанії',
   'header.professionalLogin': 'Увійти',
   'header.createAd': 'Створити оголошення',
   'header.myProfile': 'Мій профіль',
@@ -1171,6 +1172,127 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'home.statsProfessionals': 'майстрів',
   'home.statsListings': 'активних оголошень',
   'home.statsLanguages': 'мов інтерфейсу',
+
+  'launch.eyebrow': 'Запуск ринків',
+  'launch.title': 'Розвиваємо Darmstadt, Alicante та Madrid',
+  'launch.description':
+    'Спочатку наповнюємо ці міста — DImarket працює глобально там, де ви зареєструвались.',
+  'launch.registerCta': 'Приєднатись у своєму місті',
+  'launch.globalNote':
+    'Вашого міста немає в списку? Реєструйтесь — платформа працює всюди, де є майстри, компанії та клієнти.',
+  'launch.metricMasters': 'Майстри',
+  'launch.metricCompanies': 'Компанії',
+  'launch.metricRequests': 'Запити',
+  'launch.freeForPros': 'Безкоштовно для майстрів і компаній',
+  'launch.exampleBadge': 'Приклад запиту',
+
+  'launch.seed.darmstadt.electric': 'Потрібен електрик для перепланування квартири',
+  'launch.seed.darmstadt.electricDesc':
+    'Шукаю сертифікованого електрика в Darmstadt для часткової заміни проводки.',
+  'launch.seed.darmstadt.bathroom': 'Ремонт ванної — плитка та сантехніка',
+  'launch.seed.darmstadt.bathroomDesc':
+    'Потрібна бригада для оновлення ванної: плитка, умивальник, душ.',
+  'launch.seed.alicante.plumbing': 'Сантехнік для протічки на кухні в Alicante',
+  'launch.seed.alicante.plumbingDesc':
+    'Терміновий ремонт труби на кухні. Бажано місцевий майстер з відгуками.',
+  'launch.seed.alicante.paint': 'Фарбування інтерʼєру — 3-кімнатна квартира',
+  'launch.seed.alicante.paintDesc':
+    'Шукаю маляра для стін і стелі перед сезоном.',
+  'launch.seed.madrid.renovation': 'Повний ремонт квартири в Madrid',
+  'launch.seed.madrid.renovationDesc':
+    'Потрібна компанія для ремонту 85 м²: планування, підлога, кухня.',
+  'launch.seed.madrid.hvac': 'Встановлення кондиціонерів',
+  'launch.seed.madrid.hvacDesc':
+    'Потрібен монтаж клімату для вітальні та двох спалень.',
+
+  'companies.simpleTitle': 'Будівельні компанії',
+  'companies.catalogHint': 'Фірми та бригади з корпоративним профілем.',
+  'companies.browseLink': 'Переглянути компанії',
+  'companies.countSuffix': 'компаній',
+  'professionals.mastersOnlyHint': 'Окремі майстри та ремісники.',
+  'professionals.browseLink': 'Переглянути майстрів',
+
+  'home.audienceTitle': 'Приєднуйтесь до DImarket',
+  'home.audienceProfessional': 'Я майстер',
+  'home.audienceProfessionalDesc': 'Безкоштовний профіль, локальні запити, відгуки.',
+  'home.audienceCompany': 'Я компанія',
+  'home.audienceCompanyDesc': 'Корпоративний профіль, B2B-видимість, команда.',
+  'home.audienceAdvertiser': 'Хочу рекламу',
+  'home.audienceAdvertiserDesc': 'Гео-банери поруч із живим попитом.',
+
+  'landing.signIn': 'Увійти',
+  'landing.benefitsTitle': 'Чому DImarket',
+  'landing.stepsTitle': 'Як почати',
+  'landing.launchCitiesTitle': 'Активні міста запуску',
+  'landing.finalCtaTitle': 'Реєстрація у вашому місті',
+  'landing.finalCtaText':
+    'DImarket глобальний — локація з реєстрації це місце, де ви працюєте.',
+
+  'landing.pro.eyebrow': 'Для майстрів',
+  'landing.pro.title': 'Отримуйте запити у своєму місті',
+  'landing.pro.subtitle':
+    'Безкоштовний профіль на глобальній платформі. Клієнти публікують роботу — ви відповідаєте напряму.',
+  'landing.pro.cta': 'Зареєструватись як майстер',
+  'landing.pro.freeNote': '100% безкоштовно — без підписок і комісій.',
+  'landing.pro.benefit1': 'Запити від клієнтів у вашому місті та категоріях',
+  'landing.pro.benefit2': 'Портфоліо, відгуки та бейдж верифікації',
+  'landing.pro.benefit3': 'Вбудований чат — домовляйтесь без посередників',
+  'landing.pro.benefit4': 'Інтерфейс DE, ES, EN, UK, PL, RU для діаспори',
+  'landing.pro.step1': 'Створіть безкоштовний акаунт і вкажіть місто',
+  'landing.pro.step2': 'Заповніть профіль: фото, навички, портфоліо',
+  'landing.pro.step3': 'Відповідайте на запити та збирайте відгуки',
+  'landing.pro.launchPitch':
+    'Активно розвиваємо Darmstadt (DE), Alicante та Madrid (ES).',
+
+  'landing.company.eyebrow': 'Для компаній',
+  'landing.company.title': 'Покажіть будівельний бізнес локально',
+  'landing.company.subtitle':
+    'Окремий каталог компаній, корпоративний профіль і B2B-видимість. Реєстрація безкоштовна.',
+  'landing.company.cta': 'Зареєструвати компанію',
+  'landing.company.freeNote': 'Безкоштовний профіль компанії.',
+  'landing.company.benefit1': 'Окремий каталог /companies від майстрів',
+  'landing.company.benefit2': 'Бейдж компанії, команда та категорії робіт',
+  'landing.company.benefit3': 'Клієнти та B2B-запити у вашому регіоні',
+  'landing.company.benefit4': 'Багатомовний інтерфейс для міжнародних команд',
+  'landing.company.step1': 'Реєстрація як компанія з вашим містом',
+  'landing.company.step2': 'Опис, контакти та категорії послуг',
+  'landing.company.step3': 'Отримуйте запити та будуйте репутацію',
+  'landing.company.launchPitch':
+    'Фокус запуску: будівельні фірми в Darmstadt, Alicante, Madrid.',
+
+  'landing.advertiser.eyebrow': 'Для рекламодавців',
+  'landing.advertiser.title': 'Охоплюйте покупців у момент пошуку',
+  'landing.advertiser.subtitle':
+    'Банери з гео-таргетингом: місто, країна або світ. Поруч із запитами та каталогом майстрів.',
+  'landing.advertiser.cta': 'Зареєструватись як рекламодавець',
+  'landing.advertiser.freeNote': 'Самостійне розміщення з вибором гео та слотів.',
+  'landing.advertiser.benefit1': 'Гео: Darmstadt, Alicante, Madrid або весь світ',
+  'landing.advertiser.benefit2': 'Слоти: головна, оголошення, майстри, мобільні',
+  'landing.advertiser.benefit3': 'Аналітика показів і кліків',
+  'landing.advertiser.benefit4': 'Будівельна аудиторія — активний попит',
+  'landing.advertiser.step1': 'Створіть акаунт рекламодавця',
+  'landing.advertiser.step2': 'Завантажте креатив і оберіть гео',
+  'landing.advertiser.step3': 'Запустіть кампанію та відстежуйте результат',
+  'landing.advertiser.launchPitch':
+    'Пакети по містах для DE/ES на етапі запуску.',
+
+  'onboarding.eyebrow': 'Старт',
+  'onboarding.progress': 'кроків виконано',
+  'onboarding.readyBadge': 'Готовий до замовлень',
+  'onboarding.freeNote': 'Безкоштовно — заповніть профіль для більше контактів',
+  'onboarding.pro.title': 'Чеклист профілю майстра',
+  'onboarding.company.title': 'Чеклист профілю компанії',
+  'onboarding.advertiser.title': 'Налаштування рекламодавця',
+  'onboarding.pro.photo': 'Додайте фото профілю',
+  'onboarding.pro.bio': 'Напишіть опис (мінімум 20 символів)',
+  'onboarding.pro.categories': 'Оберіть категорії робіт',
+  'onboarding.pro.location': 'Підтвердіть місто',
+  'onboarding.pro.phone': 'Додайте телефон',
+  'onboarding.advertiser.name': 'Назва компанії або контакт',
+  'onboarding.advertiser.location': 'Ваш ринок / локація',
+  'onboarding.advertiser.phone': 'Контактний телефон',
+  'onboarding.advertiser.exploreAds': 'Відкрити сторінку реклами',
+  'onboarding.advertiser.openAds': 'Налаштувати рекламу',
   'professional.featured': 'Рекомендований',
   'professional.verified': 'Верифікований',
 

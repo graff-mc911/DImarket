@@ -18,8 +18,15 @@ interface ProfessionalWithCategories extends Profile {
   professional_categories?: ProfessionalCategoryLink[]
 }
 
-export function Professionals() {
+export type ProfessionalCatalog = 'masters' | 'companies'
+
+interface ProfessionalsProps {
+  catalog?: ProfessionalCatalog
+}
+
+export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
   const { t } = useApp()
+  const isCompanyCatalog = catalog === 'companies'
 
   const [professionals, setProfessionals] = useState<ProfessionalWithCategories[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -36,7 +43,7 @@ export function Professionals() {
   useEffect(() => {
     void loadCategories()
     void loadProfessionals()
-  }, [])
+  }, [catalog])
 
   const loadCategories = async () => {
     const { data } = await supabase.from('categories').select('*').order('name')
@@ -57,6 +64,7 @@ export function Professionals() {
           )
         `)
         .eq('is_professional', true)
+        .eq('user_role', isCompanyCatalog ? 'company' : 'professional')
         .order('rating', { ascending: false })
         .order('total_reviews', { ascending: false })
 
@@ -169,8 +177,34 @@ export function Professionals() {
               <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
                 <div className="max-w-3xl">
                   <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
-                    {t('professionals.simpleTitle')}
+                    {isCompanyCatalog
+                      ? t('companies.simpleTitle')
+                      : t('professionals.simpleTitle')}
                   </h1>
+                  {!isCompanyCatalog && (
+                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                      {t('professionals.mastersOnlyHint')}{' '}
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/companies')}
+                        className="font-semibold text-[var(--accent-700)] underline-offset-2 hover:underline"
+                      >
+                        {t('companies.browseLink')}
+                      </button>
+                    </p>
+                  )}
+                  {isCompanyCatalog && (
+                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                      {t('companies.catalogHint')}{' '}
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/professionals')}
+                        className="font-semibold text-[var(--accent-700)] underline-offset-2 hover:underline"
+                      >
+                        {t('professionals.browseLink')}
+                      </button>
+                    </p>
+                  )}
                 </div>
 
                 <button
@@ -301,7 +335,11 @@ export function Professionals() {
               <span>
                 {loading
                   ? t('professionals.loadingSimple')
-                  : `${filteredProfessionals.length} ${t('professionals.countSuffix')}`}
+                  : `${filteredProfessionals.length} ${
+                      isCompanyCatalog
+                        ? t('companies.countSuffix')
+                        : t('professionals.countSuffix')
+                    }`}
               </span>
             </div>
 
