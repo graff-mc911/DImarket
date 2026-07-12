@@ -175,6 +175,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'home.cityOrCountry': 'Місто або країна',
   'home.postJob': 'Опублікувати запит',
   'home.popularCategoriesTitle': 'Популярні категорії',
+  'home.allCategoriesTitle': 'Усі категорії',
   'home.popularCategoriesText': '',
   'home.browseRequests': 'Переглянути запити',
   'home.freshRequestsTitle': 'Свіжі запити на роботу',

@@ -169,6 +169,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'home.cityOrCountry': 'Город или страна',
   'home.postJob': 'Опубликовать заявку',
   'home.popularCategoriesTitle': 'Популярные категории',
+  'home.allCategoriesTitle': 'Все категории',
   'home.popularCategoriesText': '',
   'home.browseRequests': 'Посмотреть заявки',
   'home.freshRequestsTitle': 'Свежие заявки на работу',

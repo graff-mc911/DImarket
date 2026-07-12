@@ -169,6 +169,7 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'home.cityOrCountry': 'Ciudad o pais',
   'home.postJob': 'Publicar trabajo',
   'home.popularCategoriesTitle': 'Categorias populares',
+  'home.allCategoriesTitle': 'Todas las categorias',
   'home.popularCategoriesText':
     'Las areas de construccion y renovacion mas solicitadas en Dimarket.',
   'home.browseRequests': 'Ver solicitudes de trabajo',

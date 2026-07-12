@@ -173,6 +173,7 @@ export const enTranslations = {
   'home.cityOrCountry': 'City or country',
   'home.postJob': 'Post job',
   'home.popularCategoriesTitle': 'Popular categories',
+  'home.allCategoriesTitle': 'All categories',
   'home.popularCategoriesText': '',
   'home.browseRequests': 'Browse job requests',
   'home.freshRequestsTitle': 'Fresh job requests',

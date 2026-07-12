@@ -3,7 +3,7 @@
 // Виправлено: всі видимі тексти винесені через t()
 // ============================================================
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
   Bot,
@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { CategoryCircleTile } from '../components/CategoryCircleTile'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
-import { HOME_CATEGORY_TILES } from '../lib/homeCategoryTiles'
+import { buildHomeCategoryTiles } from '../lib/homeCategoryTiles'
 import { ProfessionalCard } from '../components/ProfessionalCard'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
@@ -47,6 +47,10 @@ interface PlatformStats {
 
 export function Home() {
   const { language, t } = useApp()
+  const categoryTiles = useMemo(
+    () => buildHomeCategoryTiles(language.code, t),
+    [language.code, t],
+  )
 
   const [professionals, setProfessionals] = useState<HomeProfessional[]>([])
   const [rawJobs, setRawJobs] = useState<ListingWithImages[]>([])
@@ -222,20 +226,18 @@ export function Home() {
       <section className="pt-2 pb-6">
         <div className="layout-page-content">
           <h2 className="mb-4 text-center text-lg font-bold text-[var(--ink-900)] md:text-xl">
-            {t('home.popularCategoriesTitle')}
+            {t('home.allCategoriesTitle')}
           </h2>
-          <div className="mx-auto grid max-w-md grid-cols-3 justify-items-center gap-x-2 gap-y-5 sm:max-w-3xl sm:grid-cols-6 sm:gap-x-4">
-            {HOME_CATEGORY_TILES.map((tile) => {
-              const Icon = tile.icon
-              return (
-                <CategoryCircleTile
-                  key={tile.id}
-                  icon={Icon}
-                  label={t(tile.labelKey)}
-                  onClick={() => navigateTo(tile.path)}
-                />
-              )
-            })}
+          <div className="mx-auto grid max-w-6xl grid-cols-3 justify-items-center gap-x-3 gap-y-5 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+            {categoryTiles.map((tile) => (
+              <CategoryCircleTile
+                key={tile.id}
+                icon={tile.icon}
+                emoji={tile.emoji}
+                label={tile.label}
+                onClick={() => navigateTo(tile.path)}
+              />
+            ))}
           </div>
         </div>
       </section>

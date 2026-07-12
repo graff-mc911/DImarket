@@ -171,6 +171,7 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'home.cityOrCountry': 'Stadt oder Land',
   'home.postJob': 'Anfrage veroeffentlichen',
   'home.popularCategoriesTitle': 'Beliebte Kategorien',
+  'home.allCategoriesTitle': 'Alle Kategorien',
   'home.popularCategoriesText':
     'Die gefragtesten Bereiche fuer Bau und Renovierung auf Dimarket.',
   'home.browseRequests': 'Arbeitsanfragen durchsuchen',

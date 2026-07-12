@@ -37,7 +37,7 @@ import { useApp }      from '../contexts/AppContext'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
 import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
-import { HOME_CATEGORY_TILES } from '../lib/homeCategoryTiles'
+import { buildHomeCategoryTiles } from '../lib/homeCategoryTiles'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { TrustStrip } from './TrustStrip'
@@ -340,7 +340,7 @@ export function Header() {
     'absolute right-0 top-full mt-3 w-64 rounded-[24px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.94)] p-2.5 shadow-[0_22px_50px_rgba(67,44,26,0.10)] backdrop-blur-xl'
 
   const categoriesDropdownClass =
-    'absolute left-1/2 top-full z-50 mt-2 w-72 max-h-[min(22rem,60vh)] -translate-x-1/2 overflow-y-auto rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.96)] p-2 shadow-[0_18px_42px_rgba(67,44,26,0.12)] backdrop-blur-xl'
+    'absolute left-1/2 top-full z-50 mt-2 w-80 max-h-[min(28rem,70vh)] -translate-x-1/2 overflow-y-auto rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.96)] p-2 shadow-[0_18px_42px_rgba(67,44,26,0.12)] backdrop-blur-xl'
 
   const dropdownItemClass =
     'block w-full rounded-[18px] px-4 py-3 text-left text-sm font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
@@ -351,9 +351,14 @@ export function Header() {
   const mobileCategoryItemClass =
     'rounded-[16px] px-4 py-2.5 text-left text-sm font-semibold text-[var(--ink-700)] transition hover:bg-white/50 hover:text-[var(--accent-700)]'
 
+  const categoryTiles = useMemo(
+    () => buildHomeCategoryTiles(language.code, t),
+    [language.code, t],
+  )
+
   const renderCategoryMenu = (itemClass: string, role?: 'menuitem') => (
     <>
-      {HOME_CATEGORY_TILES.map((tile) => (
+      {categoryTiles.map((tile) => (
         <button
           key={tile.id}
           type="button"
@@ -361,7 +366,7 @@ export function Header() {
           onClick={() => goTo(tile.path)}
           className={itemClass}
         >
-          {t(tile.labelKey)}
+          {tile.label}
         </button>
       ))}
       <div className="my-1 border-t border-[var(--glass-border)]" aria-hidden />

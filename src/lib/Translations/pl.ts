@@ -169,6 +169,7 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'home.cityOrCountry': 'Miasto lub kraj',
   'home.postJob': 'Dodaj zlecenie',
   'home.popularCategoriesTitle': 'Popularne kategorie',
+  'home.allCategoriesTitle': 'Wszystkie kategorie',
   'home.popularCategoriesText':
     'Najczesciej poszukiwane kierunki prac budowlanych i remontowych na Dimarket.',
   'home.browseRequests': 'Przegladaj zlecenia',
