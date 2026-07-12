@@ -1,7 +1,10 @@
 import { supabase } from '../supabase'
 import type { Listing } from '../types'
 import { buildDraftTitle, type JobRequestDraft } from './jobRequestDraft'
-import { runMatchingForListing } from '../matching/persistMatches'
+import {
+  runMatchingForListing,
+  listingCityFromLocation,
+} from '../matching/persistMatches'
 
 export type PublishJobRequestInput = {
   draft: JobRequestDraft
@@ -11,7 +14,7 @@ export type PublishJobRequestInput = {
 }
 
 export type PublishJobRequestResult =
-  | { ok: true; listing: Listing }
+  | { ok: true; listing: Listing; matchCount: number }
   | { ok: false; error: string }
 
 export function validateJobRequestDraft(
@@ -55,6 +58,8 @@ export async function publishJobRequestFromDraft(
     status: 'active' as const,
     subcategory_slugs: draft.subcategorySlugs ?? [],
   }
+
+  const { data: listing, error: listingError } = await supabase
     .from('listings')
     .insert(listingData)
     .select()
@@ -78,13 +83,12 @@ export async function publishJobRequestFromDraft(
     if (imagesError) console.error('listing_images insert:', imagesError)
   }
 
-  const city = draft.location?.split(',')[0]?.trim()
-  void runMatchingForListing(listing.id, {
+  const matchResult = await runMatchingForListing(listing.id, {
     categorySlug: draft.categorySlug,
     subcategorySlugs: draft.subcategorySlugs,
-    city,
+    city: listingCityFromLocation(listing.location),
     language: undefined,
   })
 
-  return { ok: true, listing }
+  return { ok: true, listing, matchCount: matchResult.notifiedCount }
 }

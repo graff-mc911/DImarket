@@ -47,6 +47,9 @@ type MsgKey =
   | 'btnSkip'
   | 'btnYes'
   | 'btnNo'
+  | 'linkSuccess'
+  | 'linkInvalid'
+  | 'linkError'
 
 const M: Record<BotLocale, Record<MsgKey, string>> = {
   uk: {
@@ -88,6 +91,9 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnSkip: 'Пропустити',
     btnYes: '✅ Так',
     btnNo: '❌ Ні',
+    linkSuccess: '✅ Telegram підключено! Ви отримуватимете сповіщення про нові замовлення.',
+    linkInvalid: '❌ Код не знайдено. Скопіюйте код із Налаштувань → Telegram на dimarket.app.',
+    linkError: '⚠️ Помилка привʼязки. Спробуйте пізніше.',
   },
   ru: {
     welcome: '👋 Добро пожаловать в DImarket!',
@@ -128,6 +134,9 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnSkip: 'Пропустить',
     btnYes: '✅ Да',
     btnNo: '❌ Нет',
+    linkSuccess: '✅ Telegram подключён! Вы будете получать уведомления о новых заказах.',
+    linkInvalid: '❌ Код не найден. Скопируйте код из Настроек → Telegram на dimarket.app.',
+    linkError: '⚠️ Ошибка привязки. Попробуйте позже.',
   },
   en: {
     welcome: '👋 Welcome to DImarket!',
@@ -168,8 +177,10 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnSkip: 'Skip',
     btnYes: '✅ Yes',
     btnNo: '❌ No',
+    linkSuccess: '✅ Telegram linked! You will receive alerts for new job matches.',
+    linkInvalid: '❌ Code not found. Copy the code from Settings → Telegram on dimarket.app.',
+    linkError: '⚠️ Link failed. Try again later.',
   },
-  pl: {
     welcome: '👋 Witamy w DImarket!',
     promo: 'Darmowa platforma budowlana.\nhttps://dimarket.app\n\nKliknij «Dodaj ogłoszenie».',
     newListing: 'Nowe ogłoszenie. Wybierz kategorię:',
@@ -207,8 +218,10 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnSkip: 'Pomiń',
     btnYes: '✅ Tak',
     btnNo: '❌ Nie',
+    linkSuccess: '✅ Telegram połączony! Otrzymasz powiadomienia o nowych zleceniach.',
+    linkInvalid: '❌ Nie znaleziono kodu. Skopiuj kod z Ustawień → Telegram na dimarket.app.',
+    linkError: '⚠️ Błąd połączenia. Spróbuj później.',
   },
-  de: {
     welcome: '👋 Willkommen bei DImarket!',
     promo: 'Kostenlose Bau-Plattform.\nhttps://dimarket.app',
     newListing: 'Neues Inserat. Kategorie wählen:',
@@ -245,8 +258,10 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnSkip: 'Überspringen',
     btnYes: '✅ Ja',
     btnNo: '❌ Nein',
+    linkSuccess: '✅ Telegram verbunden! Sie erhalten Benachrichtigungen zu neuen Aufträgen.',
+    linkInvalid: '❌ Code nicht gefunden. Kopieren Sie den Code aus Einstellungen → Telegram.',
+    linkError: '⚠️ Verknüpfung fehlgeschlagen. Bitte später erneut versuchen.',
   },
-  es: {
     welcome: '👋 ¡Bienvenido a DImarket!',
     promo: 'Plataforma gratuita de construcción.\nhttps://dimarket.app',
     newListing: 'Nuevo anuncio. Elige categoría:',
@@ -283,8 +298,10 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     btnSkip: 'Omitir',
     btnYes: '✅ Sí',
     btnNo: '❌ No',
+    linkSuccess: '✅ ¡Telegram vinculado! Recibirás alertas de nuevos trabajos.',
+    linkInvalid: '❌ Código no encontrado. Copia el código desde Ajustes → Telegram en dimarket.app.',
+    linkError: '⚠️ Error al vincular. Inténtalo más tarde.',
   },
-}
 
 export function t(locale: BotLocale, key: MsgKey, params?: Record<string, string>): string {
   let s = M[locale]?.[key] ?? M.en[key]

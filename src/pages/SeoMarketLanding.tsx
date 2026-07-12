@@ -8,6 +8,7 @@ import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { locationMatchesMarket } from '../lib/launchMarkets'
 import type { ListingWithImages, Profile } from '../lib/types'
+import { priceGuideForMarketTrade } from '../lib/cityPriceGuides'
 import {
   parseSeoPath,
   subcategorySlugsForGroup,
@@ -114,6 +115,7 @@ export function SeoMarketLanding({ parts }: SeoMarketLandingProps) {
   }
 
   const tradeLabel = t(route.trade.labelKey)
+  const priceGuide = priceGuideForMarketTrade(route.market.id, route.trade.groupSlug)
   const fill = (template: string) =>
     template
       .replace('{trade}', tradeLabel)
@@ -156,6 +158,22 @@ export function SeoMarketLanding({ parts }: SeoMarketLandingProps) {
           {route.market.city}, {route.market.region}, {route.market.countryCode}
         </p>
       </section>
+
+      {priceGuide && (
+        <section className="mt-6 glass-card p-5 md:p-6">
+          <h2 className="text-lg font-extrabold text-[var(--ink-900)]">
+            {fill(t('priceGuide.title'))}
+          </h2>
+          <p className="mt-2 text-2xl font-extrabold text-[var(--accent-700)]">
+            €{priceGuide.minEur}–{priceGuide.maxEur}
+            <span className="ml-2 text-sm font-semibold text-[var(--ink-500)]">
+              {t(priceGuide.unitKey)}
+            </span>
+          </p>
+          <p className="mt-2 text-sm text-[var(--ink-600)]">{t(priceGuide.noteKey)}</p>
+          <p className="mt-2 text-xs text-[var(--ink-500)]">{t('priceGuide.disclaimer')}</p>
+        </section>
+      )}
 
       <section className="mt-6">
         <div className="mb-3 flex items-center gap-2">

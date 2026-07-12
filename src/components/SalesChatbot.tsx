@@ -4,6 +4,7 @@ import { useApp } from '../contexts/AppContext'
 import { messageDisplayContent } from '../lib/ai/formatBotReply'
 import { useSalesChat } from '../hooks/useSalesChat'
 import { AdWizardChatbot } from './ai/AdWizardChatbot'
+import { TopMatchCards } from './matching/TopMatchCards'
 
 type SalesChatbotProps = {
   compact?: boolean
@@ -17,6 +18,8 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
     loading,
     publishing,
     error,
+    listingId,
+    topMatches,
     adWizardActive,
     sendMessage,
   } = useSalesChat()
@@ -70,6 +73,9 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
             <Loader2 className="h-4 w-4 animate-spin" />
             {publishing ? t('salesBot.publishing') : t('salesBot.thinking')}
           </div>
+        )}
+        {topMatches.length > 0 && (
+          <TopMatchCards matches={topMatches} listingId={listingId} compact />
         )}
       </div>
 

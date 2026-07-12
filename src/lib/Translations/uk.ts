@@ -409,7 +409,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'salesBot.confirm':
     'Підсумок:\n• Категорія: {{category}}\n• Місто: {{city}}\n• Бюджет: {{budget}}\n• Днів у стрічці: {{deadline}}\n• Фото: {{photos}}\n• Опис: {{description}}\n\nОпублікувати? (так / ні)',
   'salesBot.confirmHint': 'Напишіть «так» для публікації або «ні», щоб змінити опис.',
-  'salesBot.published': 'Готово! Оголошення опубліковано. ID: {{id}}',
+  'salesBot.published': 'Готово! Оголошення опубліковано. Повідомлено {{count}} майстрів. ID: {{id}}',
   'header.aiAssistant': 'AI-помічник',
 
   'ai.widget.open': 'Відкрити AI-помічник',
@@ -848,6 +848,12 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'settings.preferencesTitle':      'Мова та валюта',
   'settings.notificationsTitle':    'Сповіщення',
   'settings.notificationsText':     'Отримувати повідомлення про нові запити та листи',
+  'settings.telegramTitle':         'Сповіщення в Telegram',
+  'settings.telegramText':          'Надішліть команду нашому боту, щоб отримувати миттєві сповіщення про замовлення.',
+  'settings.telegramLinked':        'Telegram підключено',
+  'settings.telegramCopy':          'Скопіювати команду /link',
+  'settings.digestTitle':           'Щотижневий email-дайджест',
+  'settings.digestText':            'Підсумок нових замовлень у вашому місті щопонеділка',
   'settings.saveChanges':           'Зберегти',
   'settings.saving':                'Збереження...',
   'settings.changePasswordTitle':   'Змінити пароль',
@@ -1317,6 +1323,15 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'seo.trade.tiler': 'Плиточник',
   'seo.trade.handyman': 'Майстер',
   'seo.trade.renovation': 'Ремонт',
+
+  'priceGuide.title': 'Типові ціни на {trade} у {city}',
+  'priceGuide.unit.hour': 'за годину',
+  'priceGuide.unit.sqm': 'за м²',
+  'priceGuide.note.electro': 'Включає виїзд у межах міста; матеріали окремо.',
+  'priceGuide.note.plumbing': 'Аварійні виклики у вихідні можуть коштувати дорожче.',
+  'priceGuide.note.painting': 'Ціна залежить від підготовки поверхні та кількості шарів.',
+  'priceGuide.note.tiling': 'Стандартна керамічна плитка; натуральний камінь дорожче.',
+  'priceGuide.disclaimer': 'Орієнтовні діапазони для launch-міст — уточнюйте кошторис під ваш проєкт.',
   'professional.featured': 'Рекомендований',
   'professional.verified': 'Верифікований',
 
@@ -1395,6 +1410,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'matching.suggested': 'Рекомендовані підрядники',
   'matching.verified': 'Верифікований',
   'matching.viewProfile': 'Профіль',
+  'matching.topThreeTitle': 'Топ-{count} майстрів для вашого замовлення',
 
   'verification.menu': 'Верифікація',
   'verification.title': 'Верифікація підрядника',

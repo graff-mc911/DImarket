@@ -1,0 +1,77 @@
+import { Star } from 'lucide-react'
+import { useApp } from '../../contexts/AppContext'
+import { navigateTo } from '../../lib/navigation'
+
+export type TopMatchRow = {
+  score: number
+  contractor?: {
+    id: string
+    full_name: string | null
+    location: string | null
+    rating: number | null
+    total_reviews: number | null
+    is_verified: boolean | null
+  } | null
+}
+
+interface TopMatchCardsProps {
+  matches: TopMatchRow[]
+  listingId?: string | null
+  compact?: boolean
+}
+
+export function TopMatchCards({ matches, listingId, compact = false }: TopMatchCardsProps) {
+  const { t } = useApp()
+  const rows = matches.filter((m) => m.contractor?.id).slice(0, 3)
+  if (!rows.length) return null
+
+  return (
+    <div
+      className={`rounded-[16px] border border-[rgba(99,102,241,0.22)] bg-[rgba(99,102,241,0.06)] ${
+        compact ? 'p-3' : 'p-4'
+      }`}
+    >
+      <p className="text-sm font-extrabold text-[#4338ca]">
+        {t('matching.topThreeTitle').replace('{count}', String(rows.length))}
+      </p>
+      <ul className="mt-2 space-y-2">
+        {rows.map((row) => {
+          const c = row.contractor!
+          return (
+            <li
+              key={c.id}
+              className="flex items-center justify-between gap-2 rounded-xl border border-white/70 bg-white/70 px-3 py-2"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-[var(--ink-900)]">
+                  {c.full_name}
+                </p>
+                <p className="truncate text-[11px] text-[var(--ink-500)]">{c.location}</p>
+                <div className="mt-0.5 flex items-center gap-1 text-[11px] text-amber-600">
+                  <Star className="h-3 w-3 fill-current" />
+                  {c.rating ?? 0} ({c.total_reviews ?? 0})
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigateTo(`/professional/${c.id}`)}
+                className="shrink-0 text-xs font-semibold text-[#4338ca] underline"
+              >
+                {t('matching.viewProfile')}
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+      {listingId && (
+        <button
+          type="button"
+          onClick={() => navigateTo(`/listing/${listingId}`)}
+          className="mt-2 text-xs font-semibold text-[var(--accent-700)] underline"
+        >
+          {t('salesBot.viewListing')}
+        </button>
+      )}
+    </div>
+  )
+}

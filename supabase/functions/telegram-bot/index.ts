@@ -160,6 +160,7 @@ async function handleFlowReply(
   session: SessionRow,
   dbCategories: CategoryRow[],
   picks: CategoryPick[],
+  geoTree: Awaited<ReturnType<typeof loadGeoTree>>,
   from?: TgUser,
 ) {
   if (reply.publish) {
@@ -309,6 +310,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const dbCategories = await loadDbCategories(admin)
+    const geoTree = await loadGeoTree(admin)
 
     if (update.callback_query) {
       const cq = update.callback_query
@@ -409,6 +411,27 @@ Deno.serve(async (req: Request) => {
         status: 'active',
       })
       await sendMessage(token, chatId, t(locale, 'cancelled'), mainKeyboard(locale))
+      return new Response('ok')
+    }
+
+    const linkMatch = text.match(/^\/link(?:@\w+)?\s+(\S+)/i)
+    if (linkMatch) {
+      const code = linkMatch[1].trim()
+      const { data: linked, error: linkErr } = await admin!.rpc('link_telegram_by_code', {
+        p_code: code,
+        p_chat_id: chatId,
+      })
+      if (linkErr) {
+        console.error('link_telegram_by_code:', linkErr.message)
+        await sendMessage(token, chatId, t(locale, 'linkError'), mainKeyboard(locale))
+        return new Response('ok')
+      }
+      await sendMessage(
+        token,
+        chatId,
+        linked ? t(locale, 'linkSuccess') : t(locale, 'linkInvalid'),
+        mainKeyboard(locale),
+      )
       return new Response('ok')
     }
 

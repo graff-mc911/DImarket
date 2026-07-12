@@ -8,6 +8,8 @@ import {
   type SalesBotStep,
 } from '../lib/ai/jobRequestDraft'
 import { publishJobRequestFromDraft, validateJobRequestDraft } from '../lib/ai/publishJobRequest'
+import { fetchMatchScoresForListing } from '../lib/matching/persistMatches'
+import type { TopMatchRow } from '../components/matching/TopMatchCards'
 import {
   appendJobLeadMessage,
   createJobLeadSession,
@@ -89,6 +91,7 @@ export function useSalesChat() {
   const [publishing, setPublishing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [listingId, setListingId] = useState<string | null>(null)
+  const [topMatches, setTopMatches] = useState<TopMatchRow[]>([])
   const [quickReplies, setQuickReplies] = useState<string[]>([])
   const [adWizardActive, setAdWizardActive] = useState(false)
   const initialized = useRef(false)
@@ -249,6 +252,9 @@ export function useSalesChat() {
           }
 
           setListingId(result.listing.id)
+          const scores = await fetchMatchScoresForListing(result.listing.id, 3)
+          setTopMatches(scores as TopMatchRow[])
+
           if (sessionIdRef.current) {
             const title = buildDraftTitle(turn.draft, catLabel)
             await recordPublishedJob(
@@ -263,7 +269,10 @@ export function useSalesChat() {
           const doneTurn = {
             ...turn,
             replyKey: 'salesBot.published' as const,
-            replyParams: { id: result.listing.id },
+            replyParams: {
+              id: result.listing.id,
+              count: String(scores.length || result.matchCount || 0),
+            },
             step: 'done' as const,
             canPublish: false,
           }
@@ -306,6 +315,7 @@ export function useSalesChat() {
   const resetChat = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEY)
     setListingId(null)
+    setTopMatches([])
     setError(null)
     const initial = getInitialTurn(botContext)
     setMessages([assistantMessage(initial, t)])
@@ -323,6 +333,7 @@ export function useSalesChat() {
     publishing,
     error,
     listingId,
+    topMatches,
     quickReplies,
     adWizardActive,
     setAdWizardActive,

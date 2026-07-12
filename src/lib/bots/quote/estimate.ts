@@ -18,6 +18,13 @@ const CITY_MULTIPLIER: Record<string, number> = {
   warszawa: 1.1,
   berlin: 1.2,
   münchen: 1.25,
+  darmstadt: 1.18,
+  frankfurt: 1.22,
+  hamburg: 1.2,
+  alicante: 1.05,
+  madrid: 1.15,
+  valencia: 1.08,
+  barcelona: 1.12,
 }
 
 export type QuoteInput = {

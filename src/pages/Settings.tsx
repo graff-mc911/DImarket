@@ -22,6 +22,7 @@ import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { CategorySubcategoryPicker } from '../components/CategorySubcategoryPicker'
 import { OnboardingChecklist } from '../components/OnboardingChecklist'
 import { ReferralPanel } from '../components/ReferralPanel'
+import { TelegramLinkPanel } from '../components/TelegramLinkPanel'
 import { buildOnboardingState } from '../lib/onboardingProgress'
 import { syncProfessionalCategoriesFromWorkSlugs } from '../lib/syncProfessionalCategories'
 import type { Profile } from '../lib/types'
@@ -64,6 +65,8 @@ export function Settings() {
   )
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
+  const [emailDigestEnabled, setEmailDigestEnabled] = useState(true)
+  const [telegramChatId, setTelegramChatId] = useState<number | null>(null)
   const [preferredLanguage, setPreferredLanguage] = useState<LanguageOption['code']>(language.code)
   const [preferredCurrency, setPreferredCurrency] = useState<CurrencyOption['code']>(currency.code)
 
@@ -190,6 +193,8 @@ export function Settings() {
         subcategorySlugs: workSlugs,
       })
       setNotificationsEnabled(data.notifications_enabled !== false)
+      setEmailDigestEnabled((data as Profile & { email_digest_enabled?: boolean }).email_digest_enabled !== false)
+      setTelegramChatId((data as Profile & { telegram_chat_id?: number | null }).telegram_chat_id ?? null)
       setPreferredLanguage(nextLanguage)
       setPreferredCurrency(nextCurrency)
     } catch (error) {
@@ -236,6 +241,7 @@ export function Settings() {
         profile_photo: normalizedProfilePhoto || null,
         portfolio_images: normalizedPortfolioImages,
         notifications_enabled: notificationsEnabled,
+        email_digest_enabled: emailDigestEnabled,
         preferred_language: preferredLanguage,
         preferred_currency: preferredCurrency,
         work_subcategory_slugs: isProfessional ? workSubcategories.subcategorySlugs : [],
@@ -726,6 +732,15 @@ export function Settings() {
                         <div className="h-6 w-11 rounded-full bg-gray-200 transition peer-checked:bg-[#c96d2c] peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[rgba(201,109,44,0.18)] after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white" />
                       </label>
                     </div>
+
+                    {isProfessional && currentUserId && (
+                      <TelegramLinkPanel
+                        userId={currentUserId}
+                        telegramChatId={telegramChatId}
+                        emailDigestEnabled={emailDigestEnabled}
+                        onDigestChange={setEmailDigestEnabled}
+                      />
+                    )}
                   </div>
 
                   <div className="mt-8 flex justify-end">
