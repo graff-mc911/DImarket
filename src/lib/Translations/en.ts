@@ -41,6 +41,7 @@ export const enTranslations = {
   'footer.signIn': 'Login',
   'footer.register': 'Register',
   'footer.howItWorks': 'How It Works',
+  'footer.backToTop': 'Back to top',
   'footer.allRightsReserved': 'All rights reserved.',
   'footer.brandText':
     'Dimarket is a free global platform for construction services where clients post work and professionals respond directly.',

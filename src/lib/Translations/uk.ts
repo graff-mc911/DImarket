@@ -39,6 +39,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'footer.signIn': 'Увійти',
   'footer.register': 'Реєстрація',
   'footer.howItWorks': 'Як це працює',
+  'footer.backToTop': 'Нагору',
   'footer.allRightsReserved': 'Усі права захищені.',
   'footer.brandText':
     'Dimarket — це безкоштовна глобальна платформа будівельних послуг, де клієнти публікують роботу, а майстри відповідають напряму.',
