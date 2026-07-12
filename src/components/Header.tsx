@@ -37,11 +37,7 @@ import { useApp }      from '../contexts/AppContext'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
 import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
-import {
-  SITE_CATEGORY_SLUGS,
-  categoryPagePath,
-  headerCategoryLabel,
-} from '../lib/siteCategories'
+import { HOME_CATEGORY_TILES } from '../lib/homeCategoryTiles'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { TrustStrip } from './TrustStrip'
@@ -351,6 +347,34 @@ export function Header() {
 
   const mobileNavItemClass =
     'flex w-full items-center gap-3 rounded-[20px] px-4 py-3 text-left text-base font-semibold text-[var(--ink-700)] transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_12px_rgba(196,122,61,0.16)]'
+
+  const mobileCategoryItemClass =
+    'rounded-[16px] px-4 py-2.5 text-left text-sm font-semibold text-[var(--ink-700)] transition hover:bg-white/50 hover:text-[var(--accent-700)]'
+
+  const renderCategoryMenu = (itemClass: string, role?: 'menuitem') => (
+    <>
+      {HOME_CATEGORY_TILES.map((tile) => (
+        <button
+          key={tile.id}
+          type="button"
+          role={role}
+          onClick={() => goTo(tile.path)}
+          className={itemClass}
+        >
+          {t(tile.labelKey)}
+        </button>
+      ))}
+      <div className="my-1 border-t border-[var(--glass-border)]" aria-hidden />
+      <button
+        type="button"
+        role={role}
+        onClick={() => goTo('/listings')}
+        className={itemClass + ' text-[var(--accent-700)]'}
+      >
+        {t('listings.allCategories')}
+      </button>
+    </>
+  )
 
   return (
     <>
@@ -677,17 +701,7 @@ export function Header() {
                 </button>
                 {categoriesOpen && (
                   <div className={categoriesDropdownClass} role="menu">
-                    {SITE_CATEGORY_SLUGS.map((slug) => (
-                      <button
-                        key={slug}
-                        type="button"
-                        role="menuitem"
-                        onClick={() => goTo(categoryPagePath(slug))}
-                        className={dropdownItemClass}
-                      >
-                        {headerCategoryLabel(slug, t)}
-                      </button>
-                    ))}
+                    {renderCategoryMenu(dropdownItemClass, 'menuitem')}
                   </div>
                 )}
               </div>
@@ -755,17 +769,7 @@ export function Header() {
                 </button>
                 {categoriesOpen && (
                   <div className={categoriesDropdownClass} role="menu">
-                    {SITE_CATEGORY_SLUGS.map((slug) => (
-                      <button
-                        key={slug}
-                        type="button"
-                        role="menuitem"
-                        onClick={() => goTo(categoryPagePath(slug))}
-                        className={dropdownItemClass}
-                      >
-                        {headerCategoryLabel(slug, t)}
-                      </button>
-                    ))}
+                    {renderCategoryMenu(dropdownItemClass, 'menuitem')}
                   </div>
                 )}
               </div>
@@ -848,16 +852,7 @@ export function Header() {
                     {t('header.categories')}
                   </p>
                   <div className="grid gap-1 px-1 pb-2">
-                    {SITE_CATEGORY_SLUGS.map((slug) => (
-                      <button
-                        key={slug}
-                        type="button"
-                        onClick={() => goTo(categoryPagePath(slug))}
-                        className="rounded-[16px] px-4 py-2.5 text-left text-sm font-semibold text-[var(--ink-700)] transition hover:bg-white/50 hover:text-[var(--accent-700)]"
-                      >
-                        {headerCategoryLabel(slug, t)}
-                      </button>
-                    ))}
+                    {renderCategoryMenu(mobileCategoryItemClass)}
                   </div>
 
                   <button onClick={() => goTo('/listings')} type="button" className={mobileNavItemClass}>
