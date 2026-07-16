@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { ImagePlus, Plus, RotateCcw, X } from 'lucide-react'
+import { ImagePlus, Plus, X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import {
   AD_BANNER_LAYOUT_KEYS,
@@ -10,7 +10,6 @@ import {
   AD_SLIDESHOW_TRANSITIONS,
   clearLayoutPrefs,
   layoutHasPrefs,
-  LAYOUT_DEFAULT_TRANSITION,
   resolveDisplayMode,
   resolveLayoutPrefs,
   resolveLayoutTransition,

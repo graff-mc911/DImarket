@@ -2,8 +2,6 @@ import type { AdCampaign } from './types'
 import { buildCampaignMediaFields, type AdCampaignMediaState } from './adCampaignMedia'
 import {
   buildFullCampaignMediaFields,
-  ensureSlotMediaForSelection,
-  slotMediaMapFromCampaign,
   type SlotMediaMap,
 } from './adSlotMedia'
 import { slotToLegacyPlacement } from './adPlacementSlots'
@@ -81,7 +79,7 @@ export function campaignToOwnerForm(c: AdCampaign): OwnerAdFormValues {
   const slots =
     (c.placements || []).filter(Boolean).length > 0
       ? (c.placements as string[])
-      : ['home_side_r1']
+      : ['home_center']
 
   return {
     title: c.title,
@@ -142,7 +140,7 @@ export function buildOwnerCampaignPayload(
           media_type: values.mediaType,
         }),
     link_url: values.linkUrl.trim(),
-    placement: slotToLegacyPlacement(values.selectedSlots[0] || 'home_side_r1'),
+    placement: slotToLegacyPlacement(values.selectedSlots[0] || 'home_center'),
     placements: values.selectedSlots,
     geo_scope: values.geoScope,
     countries: values.selectedCountries,
@@ -171,19 +169,10 @@ export function buildOwnerCampaignPayload(
 }
 
 export const OWNER_SLOT_PRESETS: { label: string; slots: string[] }[] = [
-  {
-    label: 'Головна — горизонтальний банер (після hero)',
-    slots: ['home_mob_inline_1', 'home_center', 'home_side_r1'],
-  },
-  { label: 'Головна — центральний блок', slots: ['home_center', 'home_mob_inline_1'] },
-  { label: 'Головна — бокові L1–L4', slots: ['home_side_l1', 'home_side_l2', 'home_side_l3', 'home_side_l4'] },
-  { label: 'Головна — бокові R1–R4', slots: ['home_side_r1', 'home_side_r2', 'home_side_r3', 'home_side_r4'] },
-  { label: 'Головна — бокова колонка зліва (1-й)', slots: ['home_side_l1'] },
-  { label: 'Головна — бокова колонка справа (1-й)', slots: ['home_side_r1'] },
-  { label: 'Головна — широкий мобільний банер', slots: ['home_mob_inline_1'] },
-  {
-    label: 'Оголошення — горизонтальний банер',
-    slots: ['listings_mob_inline_1', 'listings_side_r1'],
-  },
-  { label: 'Оголошення — бокова колонка', slots: ['listings_side_r1'] },
+  { label: 'Головна — центр + топ-банер', slots: ['home_center', 'home_mob_inline_1'] },
+  { label: 'Головна — центральний блок', slots: ['home_center'] },
+  { label: 'Головна — широкий топ-банер', slots: ['home_mob_inline_1'] },
+  { label: 'Оголошення — топ + у стрічці', slots: ['listings_mob_inline_1', 'listings_mob_inline_2'] },
+  { label: 'Фахівці — топ + у стрічці', slots: ['professionals_mob_inline_1', 'professionals_mob_inline_2'] },
+  { label: 'Картка оголошення / фахівця', slots: ['default_mob_inline_1'] },
 ]

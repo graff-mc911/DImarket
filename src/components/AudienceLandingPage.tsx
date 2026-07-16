@@ -3,7 +3,6 @@ import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import type { AudienceLandingConfig } from '../lib/audienceLanding'
-import { MobileAdBanner } from './MobileAdBanner'
 
 interface AudienceLandingPageProps {
   config: AudienceLandingConfig
@@ -47,8 +46,6 @@ export function AudienceLandingPage({ config }: AudienceLandingPageProps) {
           {t(config.freeNoteKey)}
         </p>
       </section>
-
-      <MobileAdBanner variant="horizontal" page="default" outerClassName="my-4" />
 
       <section className="mt-6 grid gap-4 md:grid-cols-2">
         <div className="glass-panel p-5 md:p-6">

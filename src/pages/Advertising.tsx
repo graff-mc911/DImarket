@@ -15,22 +15,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Building2,
   CalendarRange,
-  ChevronDown,
-  Film,
   Globe2,
-  ImagePlus,
   Link2,
   LogIn,
-  MapPin,
   Megaphone,
   Pencil,
-  Play,
-  type LucideIcon,
 } from 'lucide-react'
 import { supabase }    from '../lib/supabase'
 import { navigateTo }  from '../lib/navigation'
 import { useApp }      from '../contexts/AppContext'
 import { AdCampaign }  from '../lib/types'
+import type { TranslationKey } from '../lib/i18n'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
 import { AdGeoTargeting } from '../components/AdGeoTargeting'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
@@ -63,10 +58,9 @@ import { formatSupabaseError } from '../lib/supabaseErrors'
 import {
   expandLegacyPlacements,
   formatSlotLabel,
-  sideSlotId,
+  centerSlotId,
   slotToLegacyPlacement,
 } from '../lib/adPlacementSlots'
-import { editorPageFromSlots, type PlacementEditorPageId } from '../lib/adPlacementPages'
 
 // ── Типи ──────────────────────────────────────────────────────────────────────
 type MediaType      = 'image' | 'gif' | 'video'
@@ -209,9 +203,8 @@ export function Advertising() {
         return sanitizeSlotsForPurchase(JSON.parse(raw) as string[])
       }
     } catch { /* ignore */ }
-    return [sideSlotId('home', 'right', 1)]
+    return [centerSlotId('home')]
   })
-  const [placementPreviewPage, setPlacementPreviewPage] = useState<PlacementEditorPageId>('home')
 
   const handleSlotsChange = useCallback((slots: string[]) => {
     const clean = sanitizeSlotsForPurchase(slots)
@@ -233,8 +226,6 @@ export function Advertising() {
   const [mediaStyle, setMediaStyle] = useState<AdMediaStyle>(DEFAULT_AD_MEDIA_STYLE)
   const [editingCampaignId, setEditingCampaignId] = useState<string | null>(null)
   const [slotMedia, setSlotMedia] = useState<SlotMediaMap>({})
-
-  const hasBannerMedia = Boolean(mediaUrl.trim() || slideUrls.length)
 
   const previewMediaReady = useMemo(
     () =>
@@ -413,7 +404,7 @@ export function Advertising() {
       setSelectedSlots(allowed)
       return
     }
-    const fallback = selectedSlots.find((slotId) => !unavailableSlotsMap[slotId]) ?? sideSlotId('home', 'right', 1)
+    const fallback = selectedSlots.find((slotId) => !unavailableSlotsMap[slotId]) ?? centerSlotId('home')
     if (!unavailableSlotsMap[fallback]) {
       setSelectedSlots([fallback])
     }
@@ -526,10 +517,9 @@ export function Advertising() {
     const slots =
       data.placements && data.placements.length > 0
         ? sanitizeSlotsForPurchase(data.placements)
-        : [sideSlotId('home', 'right', 1)]
+        : [centerSlotId('home')]
     setSelectedSlots(slots)
     setSlotMedia(slotMediaMapFromCampaign(campaign as AdCampaign & { slot_media?: unknown }))
-    setPlacementPreviewPage(editorPageFromSlots(slots))
     const media = mediaStateFromCampaign(campaign)
     setMediaUrl(media.mediaUrl)
     setSlideUrls(media.slideUrls)
@@ -548,9 +538,8 @@ export function Advertising() {
   const resetForm = () => {
     setEditingCampaignId(null)
     setTitle(''); setDescription(''); setLinkUrl('')
-    setSelectedSlots([sideSlotId('home', 'right', 1)])
+    setSelectedSlots([centerSlotId('home')])
     setSlotMedia({})
-    setPlacementPreviewPage('home')
     setGeoMode('global'); setSelectedCountries([]); setSelectedRegions([]); setSelectedCities([])
     setDurationWeeks(1)
     setMediaType('image')
@@ -562,7 +551,7 @@ export function Advertising() {
 
   const ensureAdvertiserProfile = async () => {
     if (!user) return
-    const { error } = await supabase.from('profiles').upsert(
+    const { error } = await (supabase.from('profiles') as any).upsert(
       {
         id: user.id,
         full_name:
@@ -637,8 +626,7 @@ export function Advertising() {
       }
 
       if (editingCampaignId) {
-        const { error } = await supabase
-          .from('ad_campaigns')
+        const { error } = await (supabase.from('ad_campaigns') as any)
           .update(row)
           .eq('id', editingCampaignId)
           .eq('advertiser_id', user.id)
@@ -650,7 +638,7 @@ export function Advertising() {
         return
       }
 
-      const { error } = await supabase.from('ad_campaigns').insert({
+      const { error } = await (supabase.from('ad_campaigns') as any).insert({
         advertiser_id: user.id,
         ...row,
         status: campaignStatus,
@@ -675,8 +663,7 @@ export function Advertising() {
         return
       }
 
-      const { data: newCampaign } = await supabase
-        .from('ad_campaigns')
+      const { data: newCampaign } = await (supabase.from('ad_campaigns') as any)
         .select('id')
         .eq('advertiser_id', user.id)
         .eq('status', 'pending_payment')
@@ -881,7 +868,7 @@ export function Advertising() {
                           className={'rounded-[18px] border px-4 py-3 text-sm font-bold transition ' + (geoMode === mode
                             ? 'border-[#6366f1] bg-[rgba(99,102,241,0.12)] text-[#6366f1]'
                             : 'border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.45)] text-[#6f665d]')}>
-                          {t('advertising.geo.' + mode)}
+                          {t(('advertising.geo.' + mode) as TranslationKey)}
                         </button>
                       ))}
                     </div>
@@ -1132,7 +1119,7 @@ export function Advertising() {
 function CampaignCard({ campaign, formatter, t, onEdit }: {
   campaign:        AdCampaign
   formatter:       Intl.DateTimeFormat
-  t:               (key: string) => string
+  t:               (key: TranslationKey) => string
   onEdit:          () => void
 }) {
   const data      = campaign as any
@@ -1165,7 +1152,7 @@ function CampaignCard({ campaign, formatter, t, onEdit }: {
           <div className="mt-1 flex flex-wrap gap-1">
             {displayPlacements.slice(0, 6).map((p: string) => (
               <span key={p} className="rounded-full bg-[rgba(148,163,184,0.12)] px-2 py-0.5 text-xs text-[#64748b]">
-                {formatSlotLabel(p, t as (key: import('../lib/i18n').TranslationKey) => string)}
+                {formatSlotLabel(p, t)}
               </span>
             ))}
             {displayPlacements.length > 6 && (
@@ -1211,7 +1198,7 @@ function PreviewRow({ label, value }: { label: string; value: string }) {
   )
 }
 
-function StatusBadge({ status, t }: { status: string | null | undefined; t: (k: string) => string }) {
+function StatusBadge({ status, t }: { status: string | null | undefined; t: (k: TranslationKey) => string }) {
   const s = status ?? 'draft'
   const styles: Record<string, string> = {
     draft:           'bg-[rgba(148,163,184,0.14)] text-[#475569]',
@@ -1225,7 +1212,7 @@ function StatusBadge({ status, t }: { status: string | null | undefined; t: (k: 
   }
   return (
     <span className={'inline-flex self-start rounded-full px-3 py-1 text-xs font-semibold ' + (styles[s] ?? styles.draft)}>
-      {t('advertising.status.' + s)}
+      {t(('advertising.status.' + s) as TranslationKey)}
     </span>
   )
 }
@@ -1237,7 +1224,7 @@ function getGeoSummary(
   regions: string[],
   cities: string[],
   billingUnits: number | undefined,
-  t: (k: string) => string,
+  t: (k: TranslationKey) => string,
 ): string {
   const cityCount = geoMode === 'global' ? (billingUnits ?? Math.max(cities.length, 1)) : cities.length
   if (geoMode === 'global') return t('advertising.geo.worldwide') + ' · ' + cityCount + ' ' + t('advertising.geo.citiesCount')

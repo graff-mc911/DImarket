@@ -14,7 +14,6 @@ import {
   AD_SLOT_CONTAINER_SPECS,
   containerSpecForZone,
   wireframeSlotFileSizeShort,
-  wireframeSlotSizeShort,
   type AdSlotContainerSpec,
 } from '../lib/adSlotContainerSpecs'
 import {
@@ -341,6 +340,15 @@ function DesktopWireframe({
     }
   }
 
+  const hasSides = group.desktop.left.length > 0 || group.desktop.right.length > 0
+  const gridClass = hasSides
+    ? compact
+      ? purchaseLayout
+        ? 'grid w-full max-w-full grid-cols-[minmax(2.75rem,1fr)_minmax(4.25rem,1.35fr)_minmax(2.75rem,1fr)] items-start gap-1.5 sm:grid-cols-[minmax(5.5rem,1fr)_minmax(6.75rem,1.25fr)_minmax(5.5rem,1fr)] sm:gap-2.5 md:grid-cols-[minmax(128px,176px)_minmax(150px,1.15fr)_minmax(128px,176px)] md:gap-3.5'
+        : 'grid grid-cols-[minmax(128px,176px)_minmax(150px,1.15fr)_minmax(128px,176px)] items-start gap-3.5'
+      : 'grid grid-cols-[minmax(108px,148px)_minmax(122px,0.98fr)_minmax(108px,148px)] items-start gap-3'
+    : 'grid grid-cols-1 items-start gap-3'
+
   return (
     <div
       className={
@@ -351,20 +359,14 @@ function DesktopWireframe({
       <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#9a8776]">
         {t('advertising.catalog.desktopWire')} · {editorLabel}
       </p>
-      <div
-        className={
-          compact
-            ? purchaseLayout
-              ? 'grid w-full max-w-full grid-cols-[minmax(2.75rem,1fr)_minmax(4.25rem,1.35fr)_minmax(2.75rem,1fr)] items-start gap-1.5 sm:grid-cols-[minmax(5.5rem,1fr)_minmax(6.75rem,1.25fr)_minmax(5.5rem,1fr)] sm:gap-2.5 md:grid-cols-[minmax(128px,176px)_minmax(150px,1.15fr)_minmax(128px,176px)] md:gap-3.5'
-              : 'grid grid-cols-[minmax(128px,176px)_minmax(150px,1.15fr)_minmax(128px,176px)] items-start gap-3.5'
-            : 'grid grid-cols-[minmax(108px,148px)_minmax(122px,0.98fr)_minmax(108px,148px)] items-start gap-3'
-        }
-      >
-        <div className="grid grid-rows-4 gap-1 self-start">
-          {group.desktop.left.map((id) => (
-            <SlotBox key={id} {...slotProps(id, `L${short(id)}`)} />
-          ))}
-        </div>
+      <div className={gridClass}>
+        {hasSides ? (
+          <div className="grid grid-rows-4 gap-1 self-start">
+            {group.desktop.left.map((id) => (
+              <SlotBox key={id} {...slotProps(id, `L${short(id)}`)} />
+            ))}
+          </div>
+        ) : null}
         <div className={'flex flex-col ' + (compact ? 'min-h-[184px] gap-3' : 'min-h-[159px] gap-2.5')}>
           <div className="rounded-md border border-dashed border-[rgba(148,163,184,0.45)] bg-white/50 px-2 py-3 text-center text-[10px] font-semibold text-[#6f665d]">
             {t('advertising.catalog.contentArea')}
@@ -372,12 +374,22 @@ function DesktopWireframe({
           {group.desktop.center && (
             <SlotBox {...slotProps(group.desktop.center, t('advertising.slots.centerShort'))} />
           )}
+          {!group.desktop.center && group.mobile.inline[0] ? (
+            <SlotBox
+              {...slotProps(
+                group.mobile.inline[0],
+                t('advertising.catalog.leaderboard'),
+              )}
+            />
+          ) : null}
         </div>
-        <div className="grid grid-rows-4 gap-1 self-start">
-          {group.desktop.right.map((id) => (
-            <SlotBox key={id} {...slotProps(id, `R${short(id)}`)} />
-          ))}
-        </div>
+        {hasSides ? (
+          <div className="grid grid-rows-4 gap-1 self-start">
+            {group.desktop.right.map((id) => (
+              <SlotBox key={id} {...slotProps(id, `R${short(id)}`)} />
+            ))}
+          </div>
+        ) : null}
       </div>
       <p className="mt-2 text-[10px] leading-snug text-[#7a7168]">{t('advertising.catalog.desktopNote')}</p>
     </div>
@@ -430,7 +442,6 @@ function MobileWireframe({
           const label = isLeader ? t('advertising.catalog.leaderboard') : `#${def?.row ?? i + 1}`
           const spec = def ? containerSpecForZone(def.zone) : null
           const sizes = spec ? slotSizeLabels(spec, t) : null
-          const isWide = def?.zone === 'center' || def?.zone === 'mob_leaderboard'
           const mobH =
             spec && def?.zone === 'mob_inline'
               ? wireframeMobileInlineHeightPx(spec.containerH)
@@ -506,10 +517,6 @@ export function AdPlacementSitePreview({
   const editorMeta = getPlacementEditorPage(editorPage)
   const editorLabel = t(editorMeta.labelKey)
 
-  const switchPage = (next: PlacementEditorPageId) => {
-    if (onEditorPageChange) onEditorPageChange(next)
-    else setInternalEditorPage(next)
-  }
 
   const pageSlotIds = useMemo(() => wireframe.desktop.left.concat(
     wireframe.desktop.right,
@@ -523,9 +530,9 @@ export function AdPlacementSitePreview({
   )
 
   const syncEditorPageForSlot = (slotId: string) => {
-    if (onEditorPageChange) {
-      onEditorPageChange(editorPageFromSlotId(slotId))
-    }
+    const next = editorPageFromSlotId(slotId)
+    if (onEditorPageChange) onEditorPageChange(next)
+    else setInternalEditorPage(next)
   }
 
   const toggle = (slotId: string) => {

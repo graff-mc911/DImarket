@@ -9,7 +9,13 @@ import {
 } from '../../lib/adPlacementPages'
 import type { SlotMediaMap } from '../../lib/adSlotMedia'
 
-const PURCHASE_EDITOR_PAGES: PlacementEditorPageId[] = ['home', 'listings', 'professionals']
+const PURCHASE_EDITOR_PAGES: PlacementEditorPageId[] = [
+  'home',
+  'listings',
+  'professionals',
+  'listing-detail',
+  'professional-detail',
+]
 
 type AdPlacementCompactMapProps = {
   selectedSlots: string[]

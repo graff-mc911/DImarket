@@ -4,6 +4,8 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { CategoryCircleTile } from '../components/CategoryCircleTile'
+import { MobileAdBanner } from '../components/MobileAdBanner'
+import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { supabase } from '../lib/supabase'
@@ -167,6 +169,11 @@ export function Home() {
         </button>
         <div className="amazon-hero-carousel__fade" aria-hidden />
       </section>
+
+      <div className="layout-page-gutter">
+        <MobileAdBanner variant="horizontal" page="home" outerClassName="mt-4 mb-2" />
+        <SponsoredCompanies />
+      </div>
 
       <div className="amazon-home-deck-wrap">
         <div className="amazon-home-deck amazon-home-deck--quad">

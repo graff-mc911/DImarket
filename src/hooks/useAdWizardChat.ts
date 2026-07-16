@@ -16,7 +16,6 @@ import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
-import { formatSlotLabel } from '../lib/adPlacementSlots'
 
 export type AdWizardStep =
   | 'slot_pick'
@@ -67,7 +66,7 @@ function emptyDraft(): AdWizardDraft {
 }
 
 export function useAdWizardChat() {
-  const { user, t } = useApp()
+  const { user } = useApp()
   const [step, setStep] = useState<AdWizardStep>('slot_pick')
   const [draft, setDraft] = useState<AdWizardDraft>(emptyDraft)
   const [messages, setMessages] = useState<AdWizardMessage[]>([

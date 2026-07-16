@@ -106,7 +106,6 @@ export function AdBannerMediaForm({
                 src={slideUrls[0] || mediaUrl}
                 mediaType={mediaType}
                 style={mediaStyle}
-                layoutKey={layoutKey}
                 className="h-48 w-full"
                 animateSlides={(mediaStyle.slideshow?.urls?.length ?? 0) > 1}
               />

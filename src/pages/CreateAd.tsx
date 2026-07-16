@@ -4,7 +4,6 @@ import { runMatchingForListing, listingCityFromLocation } from '../lib/matching/
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { Category, Listing } from '../lib/types'
-import { MobileAdBanner } from '../components/MobileAdBanner'
 import { getCurrentLocation, searchLocations, LocationSuggestion } from '../lib/geocoding'
 import { navigateTo } from '../lib/navigation'
 import {
@@ -250,8 +249,6 @@ export function CreateAd() {
               <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
                 {t('createAd.heroTitle')}
               </h1>
-
-              <MobileAdBanner variant="horizontal" page="default" outerClassName="mt-6" />
 
               {error && (
                 <div className="mt-6 rounded-[22px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
@@ -572,8 +569,6 @@ export function CreateAd() {
 
                   <p className="text-xs text-[#7a7168]">{t('createAd.imageHelp')}</p>
                 </section>
-
-                <MobileAdBanner variant="inline" page="default" inlineIndex={2} />
 
                 <button
                   type="submit"

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { Profile, Category } from '../lib/types'
 import { ProfessionalCard } from '../components/ProfessionalCard'
-import { CenterPageAd } from '../components/CenterPageAd'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -300,7 +299,6 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
             />
           </div>
 
-          <CenterPageAd page="professionals" className="mb-4" />
           <MobileAdBanner variant="horizontal" page="professionals" outerClassName="mb-4" />
 
           {loading ? (
@@ -312,11 +310,11 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
               {filteredProfessionals.map((professional, index) => (
                 <div key={professional.id}>
                   <ProfessionalCard professional={professional} />
-                  {(index + 1) % 6 === 0 && index < filteredProfessionals.length - 1 && (
+                  {(index + 1) % 8 === 0 && index < filteredProfessionals.length - 1 && (
                     <MobileAdBanner
                       variant="inline"
                       page="professionals"
-                      inlineIndex={1}
+                      inlineIndex={2}
                       outerClassName="mt-6"
                     />
                   )}
@@ -342,7 +340,6 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
             </div>
           )}
 
-          <MobileAdBanner variant="inline" page="professionals" inlineIndex={2} outerClassName="mt-8" />
         </main>
       </div>
     </div>

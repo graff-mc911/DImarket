@@ -3,13 +3,12 @@
 // ============================================================
 
 import { Fragment, useEffect, useMemo, useState } from 'react'
-import { MapPin, PlusCircle, Search, X } from 'lucide-react'
+import { PlusCircle, X } from 'lucide-react'
 import { supabase }            from '../lib/supabase'
 import { useApp }              from '../contexts/AppContext'
 import { listingLocationMatches, parseListingLocation } from '../lib/listingLocation'
 import { navigateTo }          from '../lib/navigation'
 import { ListingCard }         from '../components/ListingCard'
-import { CenterPageAd }        from '../components/CenterPageAd'
 import { MobileAdBanner }      from '../components/MobileAdBanner'
 import type { Category, ListingWithImages } from '../lib/types'
 import {
@@ -422,7 +421,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
             </div>
           )}
 
-          <CenterPageAd page="listings" className="mb-4" />
           <MobileAdBanner variant="horizontal" page="listings" outerClassName="mb-4" />
 
           {loading ? (
@@ -439,7 +437,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                       <MobileAdBanner
                         variant="inline"
                         page="listings"
-                        inlineIndex={((((index + 1) / 8) | 0) % 4) + 1 as 1 | 2 | 3 | 4}
+                        inlineIndex={2}
                       />
                     </div>
                   )}
@@ -464,8 +462,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
               </div>
             </div>
           )}
-
-          <MobileAdBanner variant="inline" page="listings" inlineIndex={2} outerClassName="mt-6" />
         </main>
       </div>
     </div>

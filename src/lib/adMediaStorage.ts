@@ -1,7 +1,6 @@
 import { supabase } from './supabase'
 import { formatSupabaseError } from './supabaseErrors'
 import type { AdMediaStyle } from './adMediaStyle'
-import type { SlotMediaEntry } from './adSlotMedia'
 
 const BUCKET = 'ad-media'
 const MAX_FILE_MB = 20

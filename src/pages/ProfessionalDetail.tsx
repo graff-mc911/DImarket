@@ -30,6 +30,7 @@ import {
 import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
+import { MobileAdBanner } from '../components/MobileAdBanner'
 import type { Profile, Review } from '../lib/types'
 import { ReviewFormV2 } from '../components/reviews/ReviewFormV2'
 
@@ -38,15 +39,11 @@ interface ProfessionalDetailProps {
 }
 
 // Тип форми відгуку
-interface ReviewForm {
-  rating: number
-  comment: string
-}
 
 type ActiveTab = 'about' | 'portfolio' | 'reviews'
 
 export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
-  const { user, profile: myProfile, t } = useApp()
+  const { user } = useApp()
 
   const [profile, setProfile]           = useState<Profile | null>(null)
   const [reviews, setReviews]           = useState<Review[]>([])
@@ -60,10 +57,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
   const [savingProfile, setSavingProfile] = useState(false)
 
   // Форма відгуку
-  const [reviewForm, setReviewForm]     = useState<ReviewForm>({ rating: 5, comment: '' })
-  const [submittingReview, setSubmitting] = useState(false)
   const [reviewSuccess, setReviewSuccess] = useState(false)
-  const [reviewError, setReviewError]   = useState('')
 
   useEffect(() => {
     void loadProfile()
@@ -145,59 +139,6 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
     }
   }
 
-  // Відправка відгуку
-  const submitReview = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!user) { navigateTo('/login'); return }
-    if (!reviewForm.comment.trim()) {
-      setReviewError('Напишіть коментар')
-      return
-    }
-
-    setSubmitting(true)
-    setReviewError('')
-
-    try {
-      const { error } = await supabase.from('reviews').insert({
-        professional_id: profileId,
-        reviewer_id:     user.id,
-        reviewer_name:   myProfile?.full_name || 'Користувач',
-        reviewer_email:  user.email,
-        reviewer_role:   myProfile?.is_professional ? 'professional' : 'client',
-        rating:          reviewForm.rating,
-        comment:         reviewForm.comment.trim(),
-        is_approved:     true,
-        is_hidden:       false,
-      })
-
-      if (error) throw error
-
-      // Додаємо відгук локально
-      setReviews(prev => [{
-        id:              Date.now().toString(),
-        professional_id: profileId,
-        reviewer_id:     user.id,
-        reviewer_name:   myProfile?.full_name || 'Користувач',
-        reviewer_email:  user.email || null,
-        reviewer_role:   myProfile?.is_professional ? 'professional' : 'client',
-        rating:          reviewForm.rating,
-        comment:         reviewForm.comment.trim(),
-        listing_id:      null,
-        is_approved:     true,
-        is_hidden:       false,
-        created_at:      new Date().toISOString(),
-      } as any, ...prev])
-
-      setReviewForm({ rating: 5, comment: '' })
-      setReviewSuccess(true)
-      setTimeout(() => setReviewSuccess(false), 4000)
-    } catch (e) {
-      console.error('Помилка відгуку:', e)
-      setReviewError('Помилка збереження відгуку. Спробуйте ще раз.')
-    } finally {
-      setSubmitting(false)
-    }
-  }
 
   // Початок розмови з майстром
   const startConversation = () => {
@@ -543,6 +484,8 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           </div>
         </aside>
       </div>
+
+      <MobileAdBanner variant="horizontal" page="default" outerClassName="mt-6" />
     </div>
   )
 }

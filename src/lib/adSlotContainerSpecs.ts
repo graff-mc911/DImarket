@@ -1,7 +1,6 @@
 import type { SlotZone } from './adPlacementCatalog'
 import {
   AD_CENTER_MIN_MD_PX,
-  AD_CENTER_MIN_PX,
   AD_LEADERBOARD_ASPECT,
   AD_LEADERBOARD_DISPLAY_H_PX,
   AD_MOBILE_INLINE_IMAGE_PX,
@@ -28,7 +27,7 @@ export type AdSlotContainerSpec = {
 }
 
 /** Висота одного бокового ряду (4 слоти в sticky-колонці). */
-export function adSideStackRowHeightPx(railWidthPx = AD_SIDE_RAIL_WIDTH_PX.xl): number {
+export function adSideStackRowHeightPx(_railWidthPx = AD_SIDE_RAIL_WIDTH_PX.xl): number {
   const stickyH = SIDE_REF_VIEWPORT_H - SIDE_REF_HEADER_PX
   const inner =
     stickyH - 16 - AD_SIDE_STACK_GAP_PX * (AD_SIDE_STACK_ROWS - 1)

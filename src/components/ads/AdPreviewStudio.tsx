@@ -142,7 +142,7 @@ export function AdPreviewStudio({
     media_type: mediaType,
     media_style: stylePayload,
     advertiser: null,
-  } as AdCampaignWithAdvertiser
+  } as unknown as AdCampaignWithAdvertiser
 
   const patchStyle = (next: AdMediaStyle) => {
     onMediaStyleChange?.(next)
@@ -197,7 +197,7 @@ export function AdPreviewStudio({
       </div>
 
       <p className="mb-2 text-center text-[10px] font-semibold tabular-nums text-[#9a8776]">
-        {t('advertising.previewStudio.containerSize')}: {wireframeSlotFileSizeShort(spec)}
+        {t('advertising.previewStudio.containerSize')}: {spec ? wireframeSlotFileSizeShort(spec) : '—'}
         <span className="block text-[9px] font-normal opacity-80">
           {t('advertising.previewStudio.fileSizeHint')}
         </span>

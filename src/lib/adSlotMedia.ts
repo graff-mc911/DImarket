@@ -6,7 +6,6 @@ import {
   mediaStateFromCampaign,
   type AdCampaignMediaState,
 } from './adCampaignMedia'
-import { layoutKeyFromOverlayVariant } from './adBannerLayouts'
 import type { AdBannerLayoutKey } from './adBannerLayouts'
 import { getSlotDefinition } from './adPlacementCatalog'
 import {

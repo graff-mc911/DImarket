@@ -36,7 +36,7 @@ export function mobileInlineSlotId(page: AdPageKey, index: InlineIndex): string 
 }
 
 export function pageKeyFromSideAdsPage(
-  page?: 'home' | 'listings' | 'professionals' | 'default',
+  page?: 'home' | 'listings' | 'professionals' | 'companies' | 'default',
 ): AdPageKey {
   if (page === 'home') return 'home'
   if (page === 'listings') return 'listings'
@@ -44,7 +44,7 @@ export function pageKeyFromSideAdsPage(
   return 'default'
 }
 
-export function pageKeyFromMobilePage(page?: 'home' | 'listings' | 'professionals' | 'default'): AdPageKey {
+export function pageKeyFromMobilePage(page?: 'home' | 'listings' | 'professionals' | 'companies' | 'default'): AdPageKey {
   if (page === 'home') return 'home'
   if (page === 'listings') return 'listings'
   if (page === 'professionals') return 'professionals'
@@ -115,13 +115,13 @@ export const SLOT_LABEL_KEYS: Record<string, TranslationKey> = {}
 
 for (const page of AD_PAGE_KEYS) {
   for (const i of SIDE_INDEXES) {
-    SLOT_LABEL_KEYS[sideSlotId(page, 'left', i)] = 'advertising.slots.sideRow'
-    SLOT_LABEL_KEYS[sideSlotId(page, 'right', i)] = 'advertising.slots.sideRow'
+    SLOT_LABEL_KEYS[sideSlotId(page, 'left', i)] = 'advertising.slots.sideLeft'
+    SLOT_LABEL_KEYS[sideSlotId(page, 'right', i)] = 'advertising.slots.sideRight'
   }
   SLOT_LABEL_KEYS[centerSlotId(page)] = 'advertising.slots.center'
   SLOT_LABEL_KEYS[mobileStickySlotId(page)] = 'advertising.slots.mobSticky'
   for (const i of INLINE_INDEXES) {
-    SLOT_LABEL_KEYS[mobileInlineSlotId(page, i)] = 'advertising.slots.mobInline'
+    SLOT_LABEL_KEYS[mobileInlineSlotId(page, i)] = 'advertising.slots.mobInlinePrefix'
   }
 }
 
@@ -172,21 +172,15 @@ export function expandLegacyPlacements(legacy: string[]): string[] {
             : ['default']
 
     for (const page of pages) {
-      if (tag === 'sidebar' || tag === 'home' || tag === 'listings') {
-        for (const side of ['left', 'right'] as const) {
-          for (const i of SIDE_INDEXES) out.add(sideSlotId(page, side, i))
-        }
-      }
       if (tag === 'footer' || tag === 'home') {
         out.add(centerSlotId(page))
       }
-      if (tag === 'mobile_sticky') {
+      if (tag === 'sidebar' || tag === 'home' || tag === 'listings' || tag === 'mobile_sticky') {
         out.add(mobileInlineSlotId(page, 1))
-        for (const i of INLINE_INDEXES) out.add(mobileInlineSlotId(page, i))
       }
     }
   }
-  if (out.size === 0) out.add(sideSlotId('home', 'right', 1))
+  if (out.size === 0) out.add(centerSlotId('home'))
   return [...out]
 }
 

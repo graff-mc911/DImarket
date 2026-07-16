@@ -31,6 +31,7 @@ import { getListingThemeImageUrl } from '../lib/listingThemeImage'
 import type { ListingWithImages, Profile } from '../lib/types'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
 import { ListingInlineChat } from '../components/listing/ListingInlineChat'
+import { MobileAdBanner } from '../components/MobileAdBanner'
 
 interface ListingDetailProps {
   listingId: string
@@ -459,6 +460,8 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
           </p>
         </aside>
       </div>
+
+      <MobileAdBanner variant="horizontal" page="default" outerClassName="mt-6" />
     </div>
   )
 }

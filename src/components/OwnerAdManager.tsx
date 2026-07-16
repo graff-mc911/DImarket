@@ -19,10 +19,8 @@ import {
 } from '../lib/adCampaignMedia'
 import { DEFAULT_AD_MEDIA_STYLE, type AdMediaStyle } from '../lib/adMediaStyle'
 import {
-  AD_PAGE_KEYS,
   formatSlotLabel,
-  sideSlotId,
-  type AdPageKey,
+  centerSlotId,
 } from '../lib/adPlacementSlots'
 import { editorPageFromSlots, type PlacementEditorPageId } from '../lib/adPlacementPages'
 import { formatSupabaseError } from '../lib/supabaseErrors'
@@ -72,7 +70,7 @@ const EMPTY_FORM: OwnerAdFormValues = {
   linkUrl: '',
   mediaUrl: '',
   mediaType: 'image',
-  selectedSlots: [sideSlotId('home', 'right', 1)],
+  selectedSlots: [centerSlotId('home')],
   geoScope: 'global',
   selectedCountries: [],
   selectedRegions: [],
@@ -123,14 +121,6 @@ export function OwnerAdManager({
       cancelled = true
     }
   }, [])
-
-  function pageKeyFromSlots(slots: string[]): AdPageKey {
-    // Legacy ключ сторінки потрібен для sideSlotId() та існуючих слотів у власному менеджері.
-    for (const p of AD_PAGE_KEYS) {
-      if (slots.some((id) => id.startsWith(`${p}_`))) return p
-    }
-    return 'home'
-  }
 
   function previewEditorPageFromSlots(slots: string[]): PlacementEditorPageId {
     return editorPageFromSlots(slots)
@@ -243,11 +233,11 @@ export function OwnerAdManager({
       )
 
       if (editingId) {
-        const { error } = await supabase.from('ad_campaigns').update(payload).eq('id', editingId)
+        const { error } = await (supabase.from('ad_campaigns') as any).update(payload).eq('id', editingId)
         if (error) throw error
         onNotice('Рекламу оновлено.')
       } else {
-        const { error } = await supabase.from('ad_campaigns').insert({
+        const { error } = await (supabase.from('ad_campaigns') as any).insert({
           ...payload,
           impressions: 0,
           clicks: 0,
@@ -269,8 +259,7 @@ export function OwnerAdManager({
   const handleApprove = async (campaignId: string) => {
     setCampaignActionId(campaignId)
     try {
-      const { error } = await supabase
-        .from('ad_campaigns')
+      const { error } = await (supabase.from('ad_campaigns') as any)
         .update({
           status: 'active',
           approved_by: ownerId,
@@ -292,8 +281,7 @@ export function OwnerAdManager({
     setCampaignActionId(campaignId)
     const campaign = ownerCampaigns.find((c) => c.id === campaignId)
     try {
-      const { error } = await supabase
-        .from('ad_campaigns')
+      const { error } = await (supabase.from('ad_campaigns') as any)
         .update({
           status: 'rejected',
           review_note: isOwnerManagedCampaign(campaign ?? ({} as AdCampaign))

@@ -9,7 +9,6 @@ import {
 } from '../lib/adCampaigns'
 import { campaignWithSlotMedia, mediaStateFromCampaignAndSlot } from '../lib/adSlotMedia'
 import { layoutKeyFromOverlayVariant } from '../lib/adBannerLayouts'
-import { parseAdMediaStyle } from '../lib/adMediaStyle'
 import { AdMediaDisplay } from './AdMediaDisplay'
 import { useApp } from '../contexts/AppContext'
 import { AD_TEXT_PANEL_CLASS, adSlotTailwind } from '../lib/adSlotLayout'
