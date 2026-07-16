@@ -27,6 +27,7 @@ import {
 import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
+import { getListingThemeImageUrl } from '../lib/listingThemeImage'
 import type { ListingWithImages, Profile } from '../lib/types'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
 import { ListingInlineChat } from '../components/listing/ListingInlineChat'
@@ -223,10 +224,10 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
     )
   }
 
-  // Фото оголошення
+  // Фото оголошення або тематична заглушка за видом робіт
   const images = listing.images?.length > 0
     ? listing.images.map(img => img.image_url)
-    : ['https://images.pexels.com/photos/1249611/pexels-photo-1249611.jpeg?auto=compress&cs=tinysrgb&w=1200']
+    : [getListingThemeImageUrl(listing, 1200)]
 
   // Скільки днів залишилось
   const daysLeft = Math.ceil(

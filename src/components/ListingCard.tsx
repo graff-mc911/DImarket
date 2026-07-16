@@ -9,6 +9,7 @@ import { useApp }            from '../contexts/AppContext'
 import { navigateTo }        from '../lib/navigation'
 import { isLaunchExampleListing } from '../lib/launchSeedRequests'
 import { listingCityLabel }  from '../lib/listingLocation'
+import { getListingDisplayImage } from '../lib/listingThemeImage'
 import type { ListingWithImages } from '../lib/types'
 
 interface ListingCardProps {
@@ -98,9 +99,7 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
     return labels[type] || type
   }
 
-  const primaryImage =
-    listing.images?.[0]?.image_url ||
-    'https://images.pexels.com/photos/1249611/pexels-photo-1249611.jpeg?auto=compress&cs=tinysrgb&w=400'
+  const primaryImage = getListingDisplayImage(listing, 400)
 
   const isPromoted = (listing as { is_promoted?: boolean }).is_promoted === true
   const categoryLabel =

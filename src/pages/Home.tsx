@@ -13,6 +13,7 @@ import type { Category, ListingWithImages, Profile } from '../lib/types'
 import { mergeLaunchExampleRequests } from '../lib/launchSeedRequests'
 import type { TranslationKey } from '../lib/i18n'
 import { listingCityLabel } from '../lib/listingLocation'
+import { getListingDisplayImage } from '../lib/listingThemeImage'
 import { formatProfessionalCardTitle } from '../lib/professionalDisplay'
 
 interface HomeProfessional extends Profile {
@@ -301,9 +302,7 @@ function JobMiniTile({
   t: (key: TranslationKey) => string
   variant?: 'mini' | 'card'
 }) {
-  const image =
-    job.images?.[0]?.image_url ||
-    'https://images.pexels.com/photos/1249611/pexels-photo-1249611.jpeg?auto=compress&cs=tinysrgb&w=400'
+  const image = getListingDisplayImage(job, 400)
 
   const go = () => navigateTo(`/listing/${job.id}`)
 
