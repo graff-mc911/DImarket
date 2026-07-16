@@ -338,11 +338,14 @@ function ProMiniTile({
   pro: HomeProfessional
   t: (key: TranslationKey) => string
 }) {
-  const avatar =
-    pro.profile_photo ||
-    pro.avatar_url ||
-    'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200'
+  const avatar = pro.profile_photo || pro.avatar_url || null
   const name = formatProfessionalCardTitle(pro, t('professional.defaultName'))
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? '')
+    .join('')
 
   return (
     <button
@@ -351,7 +354,13 @@ function ProMiniTile({
       className="amazon-mini-tile"
     >
       <div className="amazon-mini-tile__img">
-        <img src={avatar} alt="" loading="lazy" />
+        {avatar ? (
+          <img src={avatar} alt="" loading="lazy" />
+        ) : (
+          <span className="flex h-full w-full items-center justify-center bg-[#f7fafa] text-lg font-bold text-[var(--ink-500)]">
+            {initials || '?'}
+          </span>
+        )}
       </div>
       <span className="amazon-mini-tile__label line-clamp-2">{name}</span>
       {pro.location && (
