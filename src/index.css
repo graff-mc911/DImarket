@@ -559,9 +559,18 @@
 
   .ad-slot-leaderboard__media {
     width: 100%;
-    height: var(--ad-leaderboard-slot-h, 12.25rem);
-    max-height: var(--ad-leaderboard-slot-h, 12.25rem);
-    min-height: var(--ad-leaderboard-slot-h, 12.25rem);
+    height: var(--ad-leaderboard-slot-h, 6.125rem);
+    max-height: var(--ad-leaderboard-slot-h, 6.125rem);
+    min-height: var(--ad-leaderboard-slot-h, 6.125rem);
+  }
+
+  /** На вузьких екранах — трохи вищий (зручніше для тапу) */
+  @media (max-width: 767px) {
+    .ad-slot-leaderboard__media {
+      height: calc(var(--ad-leaderboard-slot-h, 6.125rem) * 1.5);
+      max-height: calc(var(--ad-leaderboard-slot-h, 6.125rem) * 1.5);
+      min-height: calc(var(--ad-leaderboard-slot-h, 6.125rem) * 1.5);
+    }
   }
 
   .ad-slot-mobile-inline__media {

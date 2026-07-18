@@ -151,6 +151,6 @@ export function wireframeWideAspectClass(
   zone: 'center' | 'mob_leaderboard' | 'mob_inline' | 'side_left' | 'side_right',
 ): string {
   if (zone === 'center') return 'aspect-[720/248] min-h-[72px] w-full'
-  if (zone === 'mob_leaderboard') return 'aspect-[2/1] min-h-[88px] w-full'
+  if (zone === 'mob_leaderboard') return 'aspect-[4/1] min-h-[48px] w-full'
   return ''
 }
