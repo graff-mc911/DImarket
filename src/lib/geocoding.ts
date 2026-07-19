@@ -1,6 +1,8 @@
 export interface LocationSuggestion {
   name: string
   displayName: string
+  country?: string
+  postalCode?: string
   lat?: number
   lon?: number
 }
@@ -47,7 +49,7 @@ export async function searchLocations(query: string): Promise<LocationSuggestion
 
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=ua&addressdetails=1&limit=5&accept-language=uk`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=8&accept-language=en`
     )
 
     const data = await response.json()
@@ -56,8 +58,11 @@ export async function searchLocations(query: string): Promise<LocationSuggestion
       name: item.address?.city ||
             item.address?.town ||
             item.address?.village ||
+            item.address?.municipality ||
             item.name,
       displayName: item.display_name,
+      country: item.address?.country || undefined,
+      postalCode: item.address?.postcode || undefined,
       lat: parseFloat(item.lat),
       lon: parseFloat(item.lon),
     })).filter((item: LocationSuggestion) => item.name)

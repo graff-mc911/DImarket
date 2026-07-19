@@ -2,6 +2,7 @@ import { ArrowRight, MapPin, ShieldCheck, Star, UserRound, Zap } from 'lucide-re
 import { Category, Profile } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { VerificationBadge } from './MatchScoreBadge'
 import {
   categorySlugForSubcategory,
   formatSubcategoriesSummary,
@@ -216,11 +217,19 @@ export function ProfessionalCard({
                     )}
                   </div>
 
-                  {showStatusBadges && isVerified && (
-                    <ShieldCheck
-                      className="pro-card__verified shrink-0 text-[#15803d]"
-                      aria-label={t('professional.verified')}
-                    />
+                  {showStatusBadges && (
+                    <div className="flex shrink-0 items-center gap-1">
+                      <VerificationBadge level={professional.verification_level} />
+                      {isVerified && (
+                        <ShieldCheck
+                          className="pro-card__verified shrink-0 text-[#15803d]"
+                          aria-label={t('professional.verified')}
+                        />
+                      )}
+                    </div>
+                  )}
+                  {!showStatusBadges && professional.verification_level && professional.verification_level !== 'none' && (
+                    <VerificationBadge level={professional.verification_level} />
                   )}
                 </div>
 

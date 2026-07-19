@@ -1,5 +1,6 @@
 import { supabase } from '../../supabase'
 import type { RankedMatch } from '../types'
+import type { VerificationLevel } from '../../types'
 
 export type MatchingCriteria = {
   categorySlug?: string
@@ -24,6 +25,8 @@ type ProfileRow = {
   trust_score: number | null
   is_verified: boolean | null
   is_premium: boolean | null
+  verification_level?: VerificationLevel | null
+  portfolio_images?: string[] | null
   work_subcategory_slugs?: string[] | null
   professional_categories?: { category_id: string; category?: { slug: string } | null }[]
 }
@@ -38,9 +41,7 @@ function subcategoryOverlap(
   const exact = listingSlugs.some((s) => profileSlugs.includes(s))
   if (exact) return { exact: true, group: true }
 
-  const listingGroups = new Set(
-    listingSlugs.map((s) => s.split('-')[0]).filter(Boolean),
-  )
+  const listingGroups = new Set(listingSlugs.map((s) => s.split('-')[0]).filter(Boolean))
   const group = profileSlugs.some((s) => listingGroups.has(s.split('-')[0]))
   return { exact: false, group }
 }
@@ -48,29 +49,42 @@ function subcategoryOverlap(
 function locationScore(profileLoc: string | null, city: string, country?: string): number {
   if (!profileLoc) return 0
   const loc = profileLoc.toLowerCase()
-  if (city && loc.includes(city.toLowerCase())) return 25
-  if (country && loc.includes(country.toLowerCase())) return 12
+  if (city && loc.includes(city.toLowerCase())) return 18
+  if (country && loc.includes(country.toLowerCase())) return 8
   return 0
 }
 
+function verificationBonus(level: VerificationLevel | null | undefined, isVerified: boolean | null): number {
+  if (level === 'gold') return 12
+  if (level === 'silver') return 8
+  if (level === 'bronze') return 4
+  if (isVerified) return 5
+  return 0
+}
+
+/**
+ * Weighted score normalized to 0–100 (Match Score %).
+ * Factors: distance/location, specialization, languages, reviews, portfolio,
+ * response time, completed jobs (reviews proxy), verification level.
+ */
 function scoreProfile(p: ProfileRow, criteria: MatchingCriteria): RankedMatch {
   const reasons: string[] = []
-  let score = 0
+  let raw = 0
 
   const rating = p.rating ?? 0
   const reviews = p.total_reviews ?? 0
-  score += Math.min(30, rating * 6)
-  score += Math.min(15, Math.log10(reviews + 1) * 10)
+  raw += Math.min(18, rating * 3.6)
+  raw += Math.min(10, Math.log10(reviews + 1) * 6)
   if (rating >= 4) reasons.push('high_rating')
   if (reviews >= 5) reasons.push('experienced')
 
   const response = p.response_rate ?? 0
-  score += Math.min(15, response * 0.15)
+  raw += Math.min(12, response * 0.12)
   if (response >= 70) reasons.push('fast_response')
 
   if (criteria.city) {
     const ls = locationScore(p.location, criteria.city, criteria.country)
-    score += ls
+    raw += ls
     if (ls > 0) reasons.push('near_location')
   }
 
@@ -79,39 +93,49 @@ function scoreProfile(p: ProfileRow, criteria: MatchingCriteria): RankedMatch {
       (pc) => pc.category?.slug === criteria.categorySlug,
     )
     if (hasCat) {
-      score += 20
+      raw += 14
       reasons.push('category_match')
     }
   }
 
-  const subOverlap = subcategoryOverlap(
-    criteria.subcategorySlugs,
-    p.work_subcategory_slugs,
-  )
+  const subOverlap = subcategoryOverlap(criteria.subcategorySlugs, p.work_subcategory_slugs)
   if (subOverlap.exact) {
-    score += 25
+    raw += 16
     reasons.push('subcategory_match')
   } else if (subOverlap.group) {
-    score += 15
+    raw += 10
     reasons.push('trade_group_match')
   }
 
-  if (criteria.language && p.preferred_language === criteria.language) {
-    score += 8
+  const langs = [
+    criteria.language,
+    ...(criteria.preferredLanguages ?? []),
+  ].filter(Boolean) as string[]
+  if (langs.length && p.preferred_language && langs.includes(p.preferred_language)) {
+    raw += 6
     reasons.push('language_match')
   }
 
-  if (p.is_verified) {
-    score += 5
-    reasons.push('verified')
+  const portfolioCount = p.portfolio_images?.length ?? 0
+  if (portfolioCount > 0) {
+    raw += Math.min(8, portfolioCount * 1.5)
+    reasons.push('portfolio')
   }
+
+  const vBonus = verificationBonus(p.verification_level, p.is_verified)
+  raw += vBonus
+  if (vBonus >= 8) reasons.push('verified_tier')
+  else if (vBonus > 0) reasons.push('verified')
+
   if (p.is_premium) {
-    score += 3
+    raw += 3
     reasons.push('premium')
   }
 
   const trust = p.trust_score ?? 50
-  score += (trust - 50) * 0.1
+  raw += Math.max(-5, Math.min(5, (trust - 50) * 0.1))
+
+  const score = Math.max(0, Math.min(100, Math.round(raw)))
 
   return {
     profileId: p.id,
@@ -120,7 +144,7 @@ function scoreProfile(p: ProfileRow, criteria: MatchingCriteria): RankedMatch {
     rating,
     totalReviews: reviews,
     responseRate: p.response_rate,
-    score: Math.round(score * 10) / 10,
+    score,
     reasons,
   }
 }
@@ -136,7 +160,7 @@ export async function rankProfessionals(
       `
       id, full_name, location, rating, total_reviews, response_rate,
       preferred_language, trust_score, is_verified, is_premium,
-      work_subcategory_slugs,
+      verification_level, portfolio_images, work_subcategory_slugs,
       professional_categories(category_id, category:categories(slug))
     `,
     )
@@ -144,7 +168,30 @@ export async function rankProfessionals(
     .order('rating', { ascending: false })
     .limit(80)
 
-  if (error || !data) return []
+  if (error || !data) {
+    // Fallback without verification_level column
+    const fallback = await supabase
+      .from('profiles')
+      .select(
+        `
+        id, full_name, location, rating, total_reviews, response_rate,
+        preferred_language, trust_score, is_verified, is_premium,
+        portfolio_images, work_subcategory_slugs,
+        professional_categories(category_id, category:categories(slug))
+      `,
+      )
+      .eq('is_professional', true)
+      .order('rating', { ascending: false })
+      .limit(80)
+
+    if (fallback.error || !fallback.data) return []
+    const ranked = (fallback.data as ProfileRow[])
+      .map((p) => scoreProfile(p, criteria))
+      .sort((a, b) => b.score - a.score)
+    return criteria.minRating
+      ? ranked.filter((m) => m.rating >= criteria.minRating!).slice(0, limit)
+      : ranked.slice(0, limit)
+  }
 
   const ranked = (data as ProfileRow[])
     .map((p) => scoreProfile(p, criteria))

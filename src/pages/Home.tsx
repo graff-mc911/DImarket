@@ -60,7 +60,7 @@ export function Home() {
         title: t('home.postJobFree'),
         subtitle: t('home.heroTrustSubtitle'),
         cta: t('header.postJob'),
-        path: '/create-ad',
+        path: '/project/new',
         bg: HERO_GRADIENTS[1],
       },
       {
@@ -238,7 +238,7 @@ export function Home() {
               <button
                 type="button"
                 className="amazon-promo-card__cta"
-                onClick={() => navigateTo('/create-ad')}
+                onClick={() => navigateTo('/project/new')}
               >
                 {t('home.postJobFree')}
               </button>

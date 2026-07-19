@@ -43,8 +43,14 @@ import { BoostProfile } from './pages/BoostProfile'
 import { Verification } from './pages/Verification'
 import { ForProfessionals } from './pages/ForProfessionals'
 import { ForCompanies }     from './pages/ForCompanies'
+import { ForAdvertisers }   from './pages/ForAdvertisers'
 import { SeoMarketLanding } from './pages/SeoMarketLanding'
 import { isSeoLocale } from './lib/seoRoutes'
+import { ProjectWizard } from './pages/ProjectWizard'
+import { ProjectMatches } from './pages/ProjectMatches'
+import { LeadFeed } from './pages/LeadFeed'
+import { QuoteBuilder } from './pages/QuoteBuilder'
+import { MyProjects } from './pages/MyProjects'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -67,6 +73,13 @@ function App() {
     // Динамічні маршрути
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
+    if (parts[0] === 'project' && parts[1] === 'new') return <ProjectWizard />
+    if (parts[0] === 'project' && parts[1] && parts[2] === 'matches') {
+      return <ProjectMatches listingId={parts[1]} />
+    }
+    if (parts[0] === 'leads' && parts[1] && parts[2] === 'quote') {
+      return <QuoteBuilder applicationId={parts[1]} />
+    }
 
     // SEO: /de/darmstadt/elektriker
     if (
@@ -96,6 +109,9 @@ function App() {
       case '/messages':      return <Messages />
       case '/favorites':     return <Favorites />
       case '/create-ad':     return <CreateAd />
+      case '/project/new':   return <ProjectWizard />
+      case '/my-projects':   return <MyProjects />
+      case '/leads':         return <LeadFeed />
       case '/assistant/job': return <JobRequestChat />
       case '/admin/ai':        return <AiAdmin />
       case '/admin/marketing-agent': return <MarketingAgentAdmin />

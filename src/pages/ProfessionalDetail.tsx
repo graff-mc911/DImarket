@@ -31,6 +31,7 @@ import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
 import { MobileAdBanner } from '../components/MobileAdBanner'
+import { VerificationBadge } from '../components/MatchScoreBadge'
 import type { Profile, Review } from '../lib/types'
 import { ReviewFormV2 } from '../components/reviews/ReviewFormV2'
 
@@ -420,6 +421,9 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
               Верифікований
             </div>
           )}
+          <div className="mt-2">
+            <VerificationBadge level={profile.verification_level} />
+          </div>
 
           {profile.location && (
             <p className="mt-2 flex items-center gap-1 text-sm text-[var(--ink-600)]">

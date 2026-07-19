@@ -27,7 +27,7 @@ export async function runMatchingForListing(
       rank_position: i + 1,
     }))
 
-    const { error } = await supabase.from('match_scores').upsert(rows, {
+    const { error } = await supabase.from('match_scores').upsert(rows as never, {
       onConflict: 'listing_id,contractor_id',
     })
     if (error) console.error('match_scores upsert:', error)
@@ -36,7 +36,7 @@ export async function runMatchingForListing(
       listing_id: listingId,
       criteria,
       matches: ranked,
-    })
+    } as never)
     if (matchErr && matchErr.code !== '42P01') console.error('ai_matches:', matchErr)
   }
 
@@ -66,7 +66,7 @@ async function invokeMatchChannelNotify(
 export async function fetchMatchScoresForListing(listingId: string, limit = 12) {
   const { data, error } = await supabase
     .from('match_scores')
-    .select('*, contractor:profiles(id, full_name, location, rating, total_reviews, is_verified)')
+    .select('*, contractor:profiles(id, full_name, location, rating, total_reviews, is_verified, verification_level, profile_photo, avatar_url)')
     .eq('listing_id', listingId)
     .order('score', { ascending: false })
     .limit(limit)

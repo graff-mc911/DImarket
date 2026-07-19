@@ -10,6 +10,7 @@ import {
 } from '../lib/verification/verification'
 
 const DOC_TYPES = [
+  { key: 'identity', labelKey: 'verification.docIdentity' },
   { key: 'business_registration', labelKey: 'verification.docBusiness' },
   { key: 'trade_license', labelKey: 'verification.docLicense' },
   { key: 'vat', labelKey: 'verification.docVat' },
@@ -88,7 +89,17 @@ export function Verification() {
         </div>
         <div>
           <h1 className="text-2xl font-extrabold text-[var(--ink-900)]">{t('verification.title')}</h1>
-          <div className="mt-3">{statusBadge()}</div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {statusBadge()}
+            {profile?.verification_level && profile.verification_level !== 'none' && (
+              <span className="rounded-full border border-[#d5d9d9] bg-[#f7fafa] px-3 py-1 text-xs font-bold uppercase">
+                {profile.verification_level} tier
+              </span>
+            )}
+          </div>
+          <p className="mt-2 text-xs text-[var(--ink-500)]">
+            Bronze: phone + email · Silver: + identity/company · Gold: + insurance + license
+          </p>
         </div>
       </div>
 

@@ -102,6 +102,7 @@ export interface Database {
           // Верифікація — платна або адміном
           is_verified: boolean | null
           verified_at: string | null
+          verification_level: 'none' | 'bronze' | 'silver' | 'gold'
 
           // Преміум профіль — платне підняття у видачі
           is_premium: boolean | null
@@ -144,6 +145,7 @@ export interface Database {
           client_total_reviews?: number | null
           is_verified?: boolean | null
           verified_at?: string | null
+          verification_level?: 'none' | 'bronze' | 'silver' | 'gold'
           is_premium?: boolean | null
           premium_expires_at?: string | null
           is_featured?: boolean | null
@@ -176,6 +178,7 @@ export interface Database {
           client_total_reviews?: number | null
           is_verified?: boolean | null
           verified_at?: string | null
+          verification_level?: 'none' | 'bronze' | 'silver' | 'gold'
           is_premium?: boolean | null
           premium_expires_at?: string | null
           is_featured?: boolean | null
@@ -232,6 +235,16 @@ export interface Database {
             | 'global'
             | null
           subcategory_slugs: string[]
+          budget_min: number | null
+          budget_max: number | null
+          deadline_type: 'flexible' | 'asap' | 'date' | null
+          deadline_at: string | null
+          urgency: 'low' | 'normal' | 'high' | 'urgent' | null
+          preferred_language: string | null
+          wizard_completed: boolean
+          postal_code: string | null
+          country_name: string | null
+          city_name: string | null
         }
         Insert: {
           id?: string
@@ -265,6 +278,16 @@ export interface Database {
             | 'global'
             | null
           subcategory_slugs?: string[]
+          budget_min?: number | null
+          budget_max?: number | null
+          deadline_type?: 'flexible' | 'asap' | 'date' | null
+          deadline_at?: string | null
+          urgency?: 'low' | 'normal' | 'high' | 'urgent' | null
+          preferred_language?: string | null
+          wizard_completed?: boolean
+          postal_code?: string | null
+          country_name?: string | null
+          city_name?: string | null
         }
         Update: {
           id?: string
@@ -298,6 +321,145 @@ export interface Database {
             | 'global'
             | null
           subcategory_slugs?: string[]
+          budget_min?: number | null
+          budget_max?: number | null
+          deadline_type?: 'flexible' | 'asap' | 'date' | null
+          deadline_at?: string | null
+          urgency?: 'low' | 'normal' | 'high' | 'urgent' | null
+          preferred_language?: string | null
+          wizard_completed?: boolean
+          postal_code?: string | null
+          country_name?: string | null
+          city_name?: string | null
+        }
+      }
+
+      project_files: {
+        Row: {
+          id: string
+          listing_id: string
+          url: string
+          storage_path: string | null
+          mime_type: string | null
+          file_name: string | null
+          kind: 'photo' | 'video' | 'pdf' | 'plan' | 'other'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          listing_id: string
+          url: string
+          storage_path?: string | null
+          mime_type?: string | null
+          file_name?: string | null
+          kind?: 'photo' | 'video' | 'pdf' | 'plan' | 'other'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          listing_id?: string
+          url?: string
+          storage_path?: string | null
+          mime_type?: string | null
+          file_name?: string | null
+          kind?: 'photo' | 'video' | 'pdf' | 'plan' | 'other'
+          created_at?: string
+        }
+      }
+
+      project_applications: {
+        Row: {
+          id: string
+          listing_id: string
+          professional_id: string
+          status: 'applied' | 'withdrawn' | 'accepted' | 'rejected'
+          message: string | null
+          saved: boolean
+          hidden: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          listing_id: string
+          professional_id: string
+          status?: 'applied' | 'withdrawn' | 'accepted' | 'rejected'
+          message?: string | null
+          saved?: boolean
+          hidden?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          listing_id?: string
+          professional_id?: string
+          status?: 'applied' | 'withdrawn' | 'accepted' | 'rejected'
+          message?: string | null
+          saved?: boolean
+          hidden?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+
+      quotes: {
+        Row: {
+          id: string
+          application_id: string
+          listing_id: string
+          professional_id: string
+          materials: unknown
+          labor: unknown
+          vat_percent: number
+          discount: number
+          currency: string
+          subtotal: number
+          total: number
+          notes: string | null
+          status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired'
+          signed_at: string | null
+          pdf_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          application_id: string
+          listing_id: string
+          professional_id: string
+          materials?: unknown
+          labor?: unknown
+          vat_percent?: number
+          discount?: number
+          currency?: string
+          subtotal?: number
+          total?: number
+          notes?: string | null
+          status?: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired'
+          signed_at?: string | null
+          pdf_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          application_id?: string
+          listing_id?: string
+          professional_id?: string
+          materials?: unknown
+          labor?: unknown
+          vat_percent?: number
+          discount?: number
+          currency?: string
+          subtotal?: number
+          total?: number
+          notes?: string | null
+          status?: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired'
+          signed_at?: string | null
+          pdf_url?: string | null
+          created_at?: string
+          updated_at?: string
         }
       }
 
@@ -811,6 +973,10 @@ export type AppSiteStats        = Database['public']['Tables']['app_site_stats']
 export type SavedItem           = Database['public']['Tables']['saved_items']['Row']
 export type Payment             = Database['public']['Tables']['payments']['Row']
 export type Announcement        = Database['public']['Tables']['announcements']['Row']
+export type ProjectFile         = Database['public']['Tables']['project_files']['Row']
+export type ProjectApplication  = Database['public']['Tables']['project_applications']['Row']
+export type Quote               = Database['public']['Tables']['quotes']['Row']
+export type VerificationLevel   = Profile['verification_level']
 
 // ============================================================
 // РОЗШИРЕНІ ТИПИ — для UI з join-ами

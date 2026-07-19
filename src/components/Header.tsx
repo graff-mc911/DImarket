@@ -15,7 +15,6 @@ import {
   Building2,
   Bookmark,
   Bot,
-  ChevronDown,
   ClipboardList,
   FileText,
   Globe,
@@ -25,12 +24,12 @@ import {
   MapPin,
   Menu,
   MessageSquare,
-  PlusCircle,
   Search,
   Settings,
   Shield,
   User,
   X,
+  Zap,
   type LucideIcon,
 } from 'lucide-react'
 import { supabase }    from '../lib/supabase'
@@ -42,7 +41,6 @@ import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
-import { NotificationCenter } from './notifications/NotificationCenter'
 
 interface NavItem {
   label: string
@@ -74,7 +72,7 @@ export function Header() {
   const [routeTick, setRouteTick]         = useState(0)
   const [searchQuery, setSearchQuery]     = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [currencyOpen, setCurrencyOpen]   = useState(false)
+  const [, setCurrencyOpen] = useState(false)
   const [languageOpen, setLanguageOpen]   = useState(false)
   const [accountOpen, setAccountOpen]     = useState(false)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
@@ -195,7 +193,6 @@ export function Header() {
   }
 
   const isSiteOwner  = profile?.is_site_owner === true || isOwnerEmail(user?.email)
-  const accountLabel = profile?.full_name || t('header.account')
   const deliverCity = LAUNCH_MARKETS[0]?.city ?? 'Darmstadt'
   const accountGreeting = user && profile?.full_name
     ? profile.full_name.split(' ')[0]
@@ -282,8 +279,6 @@ export function Header() {
   }
 
   // CSS класи (без змін від оригіналу)
-  const hoverGlowClass =
-    'transition-all duration-300 hover:text-[var(--accent-700)] hover:[text-shadow:0_0_14px_rgba(196,122,61,0.18)]'
 
   const navTextClass = (active: boolean, nowrap = false) =>
     [
@@ -292,16 +287,8 @@ export function Header() {
       active ? 'header-link--active' : '',
     ].join(' ')
 
-  const bottomNavGapClass = 'gap-7'
 
-  const textButtonClass = (active = false) =>
-    [
-      'header-link inline-flex items-center gap-1.5 rounded-sm border-0 bg-transparent px-1.5 py-1 text-sm font-medium shadow-none outline-none',
-      active ? 'header-link--active' : '',
-    ].join(' ')
 
-  const createButtonClass =
-    'header-link inline-flex items-center gap-1.5 rounded-sm border-0 bg-transparent px-1.5 py-1 text-sm font-medium shadow-none outline-none'
 
   const mobileIconButtonClass =
     'header-link flex h-8 w-8 items-center justify-center rounded-sm border-0 bg-transparent shadow-none outline-none sm:h-9 sm:w-9'
@@ -564,6 +551,18 @@ export function Header() {
                         <FileText className="mr-2 inline h-4 w-4" />
                         {t('header.myListings') || 'Мої оголошення'}
                       </button>
+                      <button onClick={() => goTo('/my-projects')} type="button" className={dropdownItemClass}>
+                        <FileText className="mr-2 inline h-4 w-4" />
+                        {t('header.myProjects' as never) || 'Мої проекти'}
+                      </button>
+                      {(profile?.is_professional ||
+                        profile?.user_role === 'professional' ||
+                        profile?.user_role === 'company') && (
+                        <button onClick={() => goTo('/leads')} type="button" className={dropdownItemClass}>
+                          <Zap className="mr-2 inline h-4 w-4" />
+                          {t('header.leads' as never) || 'Ліди'}
+                        </button>
+                      )}
                       <button onClick={() => goTo('/favorites')} type="button" className={dropdownItemClass}>
                         <Bookmark className="mr-2 inline h-4 w-4" />
                         {t('header.favorites')}
@@ -717,6 +716,9 @@ export function Header() {
                   </button>
                 ))}
 
+                <button type="button" onClick={() => goTo('/project/new')} className="amazon-dept-link">
+                  {t('header.postJob')}
+                </button>
                 <button type="button" onClick={() => goTo('/create-ad')} className="amazon-dept-link">
                   {t('header.sell')}
                 </button>
