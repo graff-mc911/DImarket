@@ -1556,6 +1556,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'verification.vat': 'ПДВ / податковий номер',
   'verification.documents': 'Документи',
   'verification.docBusiness': 'Реєстрація бізнесу',
+  'verification.docIdentity': 'Документ особи',
   'verification.docLicense': 'Ліцензія',
   'verification.docVat': 'ПДВ',
   'verification.docInsurance': 'Страхування',
