@@ -55,6 +55,8 @@ export type ProjectWizardState = {
   city: string
   postalCode: string
   locationLabel: string
+  latitude: number | null
+  longitude: number | null
   budgetMin: number
   budgetMax: number
   deadlineType: WizardDeadlineType
@@ -76,6 +78,8 @@ export const EMPTY_WIZARD_STATE: ProjectWizardState = {
   city: '',
   postalCode: '',
   locationLabel: '',
+  latitude: null,
+  longitude: null,
   budgetMin: 500,
   budgetMax: 5000,
   deadlineType: 'flexible',

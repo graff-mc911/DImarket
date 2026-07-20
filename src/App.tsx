@@ -48,7 +48,7 @@ import { SeoMarketLanding } from './pages/SeoMarketLanding'
 import { isSeoLocale } from './lib/seoRoutes'
 import { CreateProject } from './pages/CreateProject'
 import { ProjectMatches } from './pages/ProjectMatches'
-import { LeadFeed } from './pages/LeadFeed'
+import { ProjectFeed } from './pages/ProjectFeed'
 import { QuoteBuilder } from './pages/QuoteBuilder'
 import { MyProjects } from './pages/MyProjects'
 
@@ -113,7 +113,8 @@ function App() {
       case '/create-project':
       case '/project/new':   return <CreateProject />
       case '/my-projects':   return <MyProjects />
-      case '/leads':         return <LeadFeed />
+      case '/projects':
+      case '/leads':         return <ProjectFeed />
       case '/assistant/job': return <JobRequestChat />
       case '/admin/ai':        return <AiAdmin />
       case '/admin/marketing-agent': return <MarketingAgentAdmin />

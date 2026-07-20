@@ -558,9 +558,9 @@ export function Header() {
                       {(profile?.is_professional ||
                         profile?.user_role === 'professional' ||
                         profile?.user_role === 'company') && (
-                        <button onClick={() => goTo('/leads')} type="button" className={dropdownItemClass}>
+                        <button onClick={() => goTo('/projects')} type="button" className={dropdownItemClass}>
                           <Zap className="mr-2 inline h-4 w-4" />
-                          {t('header.leads' as never) || 'Ліди'}
+                          {t('header.projects' as never) || t('header.leads' as never) || 'Projects'}
                         </button>
                       )}
                       <button onClick={() => goTo('/favorites')} type="button" className={dropdownItemClass}>

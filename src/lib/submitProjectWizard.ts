@@ -84,6 +84,8 @@ export async function submitProjectWizard(
       postal_code: state.postalCode.trim() || null,
       country_name: state.country.trim() || null,
       city_name: state.city.trim() || null,
+      latitude: state.latitude,
+      longitude: state.longitude,
       visibility_radius: 'country',
     } as never)
     .select('id')

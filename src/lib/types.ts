@@ -245,6 +245,8 @@ export interface Database {
           postal_code: string | null
           country_name: string | null
           city_name: string | null
+          latitude: number | null
+          longitude: number | null
         }
         Insert: {
           id?: string
@@ -288,6 +290,8 @@ export interface Database {
           postal_code?: string | null
           country_name?: string | null
           city_name?: string | null
+          latitude?: number | null
+          longitude?: number | null
         }
         Update: {
           id?: string
@@ -331,6 +335,8 @@ export interface Database {
           postal_code?: string | null
           country_name?: string | null
           city_name?: string | null
+          latitude?: number | null
+          longitude?: number | null
         }
       }
 
@@ -372,7 +378,7 @@ export interface Database {
           id: string
           listing_id: string
           professional_id: string
-          status: 'applied' | 'withdrawn' | 'accepted' | 'rejected'
+          status: 'saved' | 'applied' | 'withdrawn' | 'accepted' | 'rejected'
           message: string | null
           saved: boolean
           hidden: boolean
@@ -383,7 +389,7 @@ export interface Database {
           id?: string
           listing_id: string
           professional_id: string
-          status?: 'applied' | 'withdrawn' | 'accepted' | 'rejected'
+          status?: 'saved' | 'applied' | 'withdrawn' | 'accepted' | 'rejected'
           message?: string | null
           saved?: boolean
           hidden?: boolean
@@ -394,7 +400,7 @@ export interface Database {
           id?: string
           listing_id?: string
           professional_id?: string
-          status?: 'applied' | 'withdrawn' | 'accepted' | 'rejected'
+          status?: 'saved' | 'applied' | 'withdrawn' | 'accepted' | 'rejected'
           message?: string | null
           saved?: boolean
           hidden?: boolean

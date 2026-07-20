@@ -31,12 +31,25 @@ export async function setApplicationSaved(
   professionalId: string,
   saved: boolean,
 ): Promise<void> {
+  const { data: existing } = await supabase
+    .from('project_applications')
+    .select('status')
+    .eq('listing_id', listingId)
+    .eq('professional_id', professionalId)
+    .maybeSingle()
+
+  const prev = (existing as { status?: string } | null)?.status
+  const keepApplied =
+    prev === 'applied' || prev === 'accepted' || prev === 'rejected'
+  const status = keepApplied ? prev! : 'saved'
+
   await supabase.from('project_applications').upsert(
     {
       listing_id: listingId,
       professional_id: professionalId,
       saved,
-      status: 'applied',
+      status,
+      hidden: false,
       updated_at: new Date().toISOString(),
     } as never,
     { onConflict: 'listing_id,professional_id' },

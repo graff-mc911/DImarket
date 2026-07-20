@@ -12,6 +12,8 @@ type LocationStepProps = {
     city?: string
     postalCode?: string
     locationLabel?: string
+    latitude?: number | null
+    longitude?: number | null
   }) => void
   labels: {
     country: string
@@ -91,6 +93,8 @@ export function LocationStep({
                         city: detail.name || city,
                         country: detail.country || country,
                         postalCode: detail.postalCode || postalCode,
+                        latitude: detail.lat ?? null,
+                        longitude: detail.lon ?? null,
                       })
                     })
                   }}
