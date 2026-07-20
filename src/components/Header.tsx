@@ -716,7 +716,7 @@ export function Header() {
                   </button>
                 ))}
 
-                <button type="button" onClick={() => goTo('/project/new')} className="amazon-dept-link">
+                <button type="button" onClick={() => goTo('/create-project')} className="amazon-dept-link">
                   {t('header.postJob')}
                 </button>
                 <button type="button" onClick={() => goTo('/create-ad')} className="amazon-dept-link">

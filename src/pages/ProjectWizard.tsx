@@ -4,7 +4,10 @@ import { navigateTo } from '../lib/navigation'
 import {
   EMPTY_WIZARD_STATE,
   PROJECT_TRADES,
+  isStepValid,
+  validateWizardStep,
   type ProjectWizardState,
+  type WizardFieldErrors,
 } from '../lib/projectWizard'
 import { submitProjectWizard } from '../lib/submitProjectWizard'
 import { WizardShell } from '../components/project-wizard/WizardShell'
@@ -14,7 +17,7 @@ import { UploadStep } from '../components/project-wizard/UploadStep'
 import { LocationStep } from '../components/project-wizard/LocationStep'
 import { BudgetStep } from '../components/project-wizard/BudgetStep'
 import { DeadlineStep } from '../components/project-wizard/DeadlineStep'
-import { ContactStep } from '../components/project-wizard/ContactStep'
+import { PreviewStep } from '../components/project-wizard/PreviewStep'
 import type { TranslationKey } from '../lib/i18n'
 
 function tw(t: (k: TranslationKey) => string, key: string, fallback: string): string {
@@ -27,11 +30,13 @@ function tw(t: (k: TranslationKey) => string, key: string, fallback: string): st
   }
 }
 
+/** Customer Project Wizard — /create-project (alias /project/new) */
 export function ProjectWizard() {
   const { user, profile, language, t } = useApp()
   const [state, setState] = useState<ProjectWizardState>(EMPTY_WIZARD_STATE)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<WizardFieldErrors>({})
 
   useEffect(() => {
     if (!profile && !user) return
@@ -40,80 +45,37 @@ export function ProjectWizard() {
       contactName: s.contactName || profile?.full_name || '',
       contactPhone: s.contactPhone || profile?.phone || '',
       contactEmail: s.contactEmail || user?.email || '',
-      preferredLanguage: s.preferredLanguage || language.code || 'uk',
+      preferredLanguage: s.preferredLanguage || language.code || 'en',
     }))
   }, [profile, user, language.code])
 
-  const patch = (p: Partial<ProjectWizardState>) => setState((s) => ({ ...s, ...p }))
-
-  const canNext = () => {
-    switch (state.step) {
-      case 1:
-        return Boolean(state.tradeId)
-      case 2:
-        return state.description.trim().length >= 20
-      case 3:
-        return true
-      case 4:
-        return Boolean(state.city.trim() || state.locationLabel.trim())
-      case 5:
-        return state.budgetMax >= state.budgetMin && state.budgetMax > 0
-      case 6:
-        return state.deadlineType !== 'date' || Boolean(state.deadlineAt)
-      case 7:
-        return Boolean(state.contactName.trim() && (state.contactEmail.trim() || state.contactPhone.trim()))
-      default:
-        return false
-    }
-  }
-
-  const submit = async () => {
-    if (!user) {
-      navigateTo('/login')
-      return
-    }
-    setBusy(true)
+  const patch = (p: Partial<ProjectWizardState>) => {
+    setState((s) => ({ ...s, ...p }))
+    setFieldErrors({})
     setError(null)
-    const trade = PROJECT_TRADES.find((x) => x.id === state.tradeId)
-    const tradeLabel = trade ? tw(t, trade.labelKey, trade.id) : 'Project'
-    const result = await submitProjectWizard(user.id, state, tradeLabel)
-    setBusy(false)
-    if ('error' in result) {
-      setError(result.error)
-      return
-    }
-    navigateTo(`/project/${result.listingId}/matches`)
   }
 
-  if (!user) {
-    return (
-      <div className="mx-auto max-w-lg py-16 text-center">
-        <h1 className="text-2xl font-bold text-[var(--ink-900)]">
-          {tw(t, 'project.wizard.loginTitle', 'Sign in to create a project')}
-        </h1>
-        <button type="button" className="btn-primary mt-6" onClick={() => navigateTo('/login')}>
-          {tw(t, 'login.title', 'Sign in')}
-        </button>
-      </div>
-    )
-  }
+  const trade = PROJECT_TRADES.find((x) => x.id === state.tradeId)
+  const tradeLabel = trade
+    ? tw(t, trade.labelKey, trade.labelEn)
+    : tw(t, 'project.wizard.category', 'Category')
 
   const titles: Record<number, { title: string; subtitle: string }> = {
     1: {
-      title: tw(t, 'project.wizard.step1.title', 'What do you need help with?'),
-      subtitle: tw(t, 'project.wizard.step1.sub', 'Choose a trade category'),
+      title: tw(t, 'project.wizard.step1.title', 'What do you need?'),
+      subtitle: tw(t, 'project.wizard.step1.sub', 'Choose a category'),
     },
     2: {
       title: tw(t, 'project.wizard.step2.title', 'Describe your project'),
-      subtitle: tw(t, 'project.wizard.step2.sub', 'The more detail, the better the matches'),
+      subtitle: tw(t, 'project.wizard.step2.sub', 'Share goals, size, and details'),
     },
     3: {
-      title: tw(t, 'project.wizard.step3.title', 'Add photos or plans'),
-      subtitle: tw(t, 'project.wizard.step3.sub', 'Optional — photos, video, or PDF'),
+      title: tw(t, 'project.wizard.step3.title', 'Add photos & plans'),
+      subtitle: tw(t, 'project.wizard.step3.sub', 'Images, video, or PDF — optional'),
     },
     4: {
-      title: tw(t, 'project.wizard.step4.title', 'Where is the project?'),
-      subtitle: tw(t, 'project.wizard.step4.sub', 'Country, city and postal code'),
+      title: tw(t, 'project.wizard.step4.title', 'Where is the work?'),
+      subtitle: tw(t, 'project.wizard.step4.sub', 'Country, city, postal code'),
     },
     5: {
       title: tw(t, 'project.wizard.step5.title', 'Budget'),
@@ -121,12 +83,68 @@ export function ProjectWizard() {
     },
     6: {
       title: tw(t, 'project.wizard.step6.title', 'When do you need it?'),
-      subtitle: tw(t, 'project.wizard.step6.sub', 'Deadline preference'),
+      subtitle: tw(t, 'project.wizard.step6.sub', 'Flexible, urgent, or a specific date'),
     },
     7: {
-      title: tw(t, 'project.wizard.step7.title', 'Contact details'),
-      subtitle: tw(t, 'project.wizard.step7.sub', 'Professionals will reach you here'),
+      title: tw(t, 'project.wizard.step7.previewTitle', 'Preview & publish'),
+      subtitle: tw(t, 'project.wizard.step7.previewSub', 'Confirm details, then publish'),
     },
+  }
+
+  const goNext = () => {
+    const errs = validateWizardStep(state.step, state)
+    if (Object.keys(errs).length) {
+      setFieldErrors(errs)
+      setError(Object.values(errs)[0] || 'Please fix the highlighted fields')
+      return
+    }
+    if (state.step < 7) {
+      patch({ step: state.step + 1 })
+      return
+    }
+    void submit()
+  }
+
+  const submit = async () => {
+    if (!user) {
+      navigateTo('/login')
+      return
+    }
+    const errs = validateWizardStep(7, state)
+    if (Object.keys(errs).length) {
+      setFieldErrors(errs)
+      setError(Object.values(errs)[0] || null)
+      return
+    }
+    setBusy(true)
+    setError(null)
+    const result = await submitProjectWizard(user.id, state, tradeLabel)
+    setBusy(false)
+    if ('error' in result) {
+      setError(result.error === 'incomplete' ? 'Please complete all required fields' : result.error)
+      return
+    }
+    navigateTo(`/project/${result.listingId}/matches`)
+  }
+
+  if (!user) {
+    return (
+      <div className="create-project-page flex min-h-[60vh] flex-col items-center justify-center bg-[#f5f5f7] px-4 text-center">
+        <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-[#1d1d1f]">
+          {tw(t, 'project.wizard.loginTitle', 'Sign in to create a project')}
+        </h1>
+        <p className="mt-2 max-w-sm text-[15px] text-[#6e6e73]">
+          Free to post. Matched with verified professionals near you.
+        </p>
+        <button
+          type="button"
+          className="mt-6 rounded-full bg-[#1d1d1f] px-7 py-3 text-[15px] font-semibold text-white"
+          onClick={() => navigateTo('/login')}
+        >
+          {tw(t, 'header.signIn', 'Sign in')}
+        </button>
+      </div>
+    )
   }
 
   const meta = titles[state.step]
@@ -139,28 +157,21 @@ export function ProjectWizard() {
       backLabel={tw(t, 'common.back', 'Back')}
       nextLabel={
         state.step === 7
-          ? tw(t, 'project.wizard.submit', 'Find professionals')
+          ? tw(t, 'project.wizard.publish', 'Publish project')
           : tw(t, 'common.continue', 'Continue')
       }
-      nextDisabled={!canNext()}
+      nextDisabled={!isStepValid(state.step, state) && state.step < 7 ? false : false}
       busy={busy}
+      error={error}
       onBack={state.step > 1 ? () => patch({ step: state.step - 1 }) : undefined}
-      onNext={() => {
-        if (state.step < 7) patch({ step: state.step + 1 })
-        else void submit()
-      }}
+      onNext={goNext}
     >
-      {error && (
-        <p className="mb-4 rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
-        </p>
-      )}
-
       {state.step === 1 && (
         <CategoryStep
           selectedId={state.tradeId}
           onSelect={(tradeId, subcategorySlug) => patch({ tradeId, subcategorySlug })}
-          t={(key) => tw(t, key, key.split('.').pop() || key)}
+          t={(key) => tw(t, key, PROJECT_TRADES.find((x) => x.labelKey === key)?.labelEn || key)}
+          error={fieldErrors.tradeId}
         />
       )}
       {state.step === 2 && (
@@ -173,6 +184,7 @@ export function ProjectWizard() {
             'I need to paint a 120m² apartment…',
           )}
           hint={tw(t, 'project.wizard.descHint', 'At least 20 characters')}
+          error={fieldErrors.description}
         />
       )}
       {state.step === 3 && (
@@ -196,6 +208,11 @@ export function ProjectWizard() {
             postal: tw(t, 'project.wizard.postal', 'Postal code'),
             search: tw(t, 'project.wizard.locationSearch', 'Search address'),
           }}
+          errors={{
+            country: fieldErrors.country,
+            city: fieldErrors.city,
+            postalCode: fieldErrors.postalCode,
+          }}
         />
       )}
       {state.step === 5 && (
@@ -208,6 +225,10 @@ export function ProjectWizard() {
             max: tw(t, 'project.wizard.budgetMax', 'Maximum €'),
             range: tw(t, 'project.wizard.budgetRange', 'Your estimated budget'),
           }}
+          errors={{
+            budgetMin: fieldErrors.budgetMin,
+            budgetMax: fieldErrors.budgetMax,
+          }}
         />
       )}
       {state.step === 6 && (
@@ -218,34 +239,39 @@ export function ProjectWizard() {
           onChange={patch}
           labels={{
             flexible: tw(t, 'project.wizard.flexible', 'Flexible'),
-            asap: tw(t, 'project.wizard.asap', 'ASAP'),
+            urgent: tw(t, 'project.wizard.asap', 'Urgent'),
             date: tw(t, 'project.wizard.specificDate', 'Specific date'),
             pickDate: tw(t, 'project.wizard.pickDate', 'Pick a date'),
           }}
+          error={fieldErrors.deadlineAt}
         />
       )}
       {state.step === 7 && (
-        <ContactStep
-          contactName={state.contactName}
-          contactPhone={state.contactPhone}
-          contactEmail={state.contactEmail}
-          preferredLanguage={state.preferredLanguage}
+        <PreviewStep
+          state={state}
+          tradeLabel={tradeLabel}
           onChange={patch}
+          errors={fieldErrors}
           labels={{
+            category: tw(t, 'project.wizard.category', 'Category'),
+            description: tw(t, 'project.wizard.description', 'Description'),
+            media: tw(t, 'project.wizard.media', 'Media'),
+            location: tw(t, 'project.wizard.location', 'Location'),
+            budget: tw(t, 'project.wizard.budget', 'Budget'),
+            deadline: tw(t, 'project.wizard.deadline', 'Deadline'),
+            contact: tw(t, 'project.wizard.contact', 'Contact'),
             name: tw(t, 'project.wizard.name', 'Name'),
             phone: tw(t, 'project.wizard.phone', 'Phone'),
             email: tw(t, 'project.wizard.email', 'Email'),
-            language: tw(t, 'project.wizard.language', 'Preferred language'),
+            files: tw(t, 'project.wizard.files', 'files'),
+            flexible: tw(t, 'project.wizard.flexible', 'Flexible'),
+            urgent: tw(t, 'project.wizard.asap', 'Urgent'),
+            date: tw(t, 'project.wizard.specificDate', 'Date'),
           }}
-          languages={[
-            { code: 'uk', label: 'Ukrainian' },
-            { code: 'en', label: 'English' },
-            { code: 'de', label: 'German' },
-            { code: 'pl', label: 'Polish' },
-            { code: 'ru', label: 'Russian' },
-          ]}
         />
       )}
     </WizardShell>
   )
 }
+
+export { ProjectWizard as CreateProject }

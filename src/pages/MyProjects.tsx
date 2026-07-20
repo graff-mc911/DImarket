@@ -45,7 +45,7 @@ export function MyProjects() {
     <div className="mx-auto max-w-3xl py-6 pb-24">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-[var(--ink-900)]">My projects</h1>
-        <button type="button" className="btn-primary text-sm" onClick={() => navigateTo('/project/new')}>
+        <button type="button" className="btn-primary text-sm" onClick={() => navigateTo('/create-project')}>
           New project
         </button>
       </div>
@@ -55,7 +55,7 @@ export function MyProjects() {
       ) : projects.length === 0 ? (
         <div className="amazon-section-card p-10 text-center">
           <p className="text-sm text-[var(--ink-600)]">You have no projects yet.</p>
-          <button type="button" className="btn-primary mt-4 text-sm" onClick={() => navigateTo('/project/new')}>
+          <button type="button" className="btn-primary mt-4 text-sm" onClick={() => navigateTo('/create-project')}>
             Create your first project
           </button>
         </div>

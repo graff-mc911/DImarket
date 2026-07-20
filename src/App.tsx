@@ -74,6 +74,7 @@ function App() {
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
     if (parts[0] === 'project' && parts[1] === 'new') return <ProjectWizard />
+    if (parts[0] === 'create-project') return <ProjectWizard />
     if (parts[0] === 'project' && parts[1] && parts[2] === 'matches') {
       return <ProjectMatches listingId={parts[1]} />
     }
@@ -109,6 +110,7 @@ function App() {
       case '/messages':      return <Messages />
       case '/favorites':     return <Favorites />
       case '/create-ad':     return <CreateAd />
+      case '/create-project':
       case '/project/new':   return <ProjectWizard />
       case '/my-projects':   return <MyProjects />
       case '/leads':         return <LeadFeed />

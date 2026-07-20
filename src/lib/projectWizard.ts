@@ -1,42 +1,39 @@
 import type { LucideIcon } from 'lucide-react'
 import {
   Bath,
-  BrickWall,
   DoorOpen,
   Droplets,
   Hammer,
   HardHat,
   Home,
-  LayoutGrid,
   Paintbrush,
   PanelsTopLeft,
   Square,
   Zap,
 } from 'lucide-react'
 
-/** Trade cards for project wizard (construction-focused) */
 export type ProjectTrade = {
   id: string
   subcategorySlug: string
   icon: LucideIcon
   labelKey: string
+  labelEn: string
 }
 
+/** Categories shown in Create Project wizard */
 export const PROJECT_TRADES: ProjectTrade[] = [
-  { id: 'painter', subcategorySlug: 'painting-interior', icon: Paintbrush, labelKey: 'project.trade.painter' },
-  { id: 'drywall', subcategorySlug: 'drywall-install', icon: PanelsTopLeft, labelKey: 'project.trade.drywall' },
-  { id: 'plaster', subcategorySlug: 'plastering-walls', icon: BrickWall, labelKey: 'project.trade.plaster' },
-  { id: 'electrician', subcategorySlug: 'electro-wiring', icon: Zap, labelKey: 'project.trade.electrician' },
-  { id: 'plumber', subcategorySlug: 'plumbing-pipes', icon: Droplets, labelKey: 'project.trade.plumber' },
-  { id: 'tiles', subcategorySlug: 'tiling-floor', icon: LayoutGrid, labelKey: 'project.trade.tiles' },
-  { id: 'roofing', subcategorySlug: 'roofing-install', icon: Home, labelKey: 'project.trade.roofing' },
-  { id: 'facade', subcategorySlug: 'facade-cladding', icon: Square, labelKey: 'project.trade.facade' },
-  { id: 'flooring', subcategorySlug: 'flooring-laminate', icon: PanelsTopLeft, labelKey: 'project.trade.flooring' },
-  { id: 'windows', subcategorySlug: 'windows-install', icon: Square, labelKey: 'project.trade.windows' },
-  { id: 'doors', subcategorySlug: 'carpentry-doors', icon: DoorOpen, labelKey: 'project.trade.doors' },
-  { id: 'kitchen', subcategorySlug: 'carpentry-furniture', icon: Hammer, labelKey: 'project.trade.kitchen' },
-  { id: 'bathroom', subcategorySlug: 'plumbing-bathroom', icon: Bath, labelKey: 'project.trade.bathroom' },
-  { id: 'general', subcategorySlug: 'design-engineering-general', icon: HardHat, labelKey: 'project.trade.general' },
+  { id: 'painter', subcategorySlug: 'painting-interior', icon: Paintbrush, labelKey: 'project.trade.painter', labelEn: 'Painting' },
+  { id: 'drywall', subcategorySlug: 'drywall-install', icon: PanelsTopLeft, labelKey: 'project.trade.drywall', labelEn: 'Drywall' },
+  { id: 'electrician', subcategorySlug: 'electro-wiring', icon: Zap, labelKey: 'project.trade.electrician', labelEn: 'Electrical' },
+  { id: 'plumber', subcategorySlug: 'plumbing-pipes', icon: Droplets, labelKey: 'project.trade.plumber', labelEn: 'Plumbing' },
+  { id: 'roofing', subcategorySlug: 'roofing-install', icon: Home, labelKey: 'project.trade.roofing', labelEn: 'Roofing' },
+  { id: 'flooring', subcategorySlug: 'flooring-laminate', icon: PanelsTopLeft, labelKey: 'project.trade.flooring', labelEn: 'Flooring' },
+  { id: 'windows', subcategorySlug: 'windows-install', icon: Square, labelKey: 'project.trade.windows', labelEn: 'Windows' },
+  { id: 'doors', subcategorySlug: 'carpentry-doors', icon: DoorOpen, labelKey: 'project.trade.doors', labelEn: 'Doors' },
+  { id: 'facade', subcategorySlug: 'facade-cladding', icon: Square, labelKey: 'project.trade.facade', labelEn: 'Facade' },
+  { id: 'kitchen', subcategorySlug: 'carpentry-furniture', icon: Hammer, labelKey: 'project.trade.kitchen', labelEn: 'Kitchen' },
+  { id: 'bathroom', subcategorySlug: 'plumbing-bathroom', icon: Bath, labelKey: 'project.trade.bathroom', labelEn: 'Bathroom' },
+  { id: 'general', subcategorySlug: 'design-engineering-general', icon: HardHat, labelKey: 'project.trade.general', labelEn: 'General Contractor' },
 ]
 
 export type WizardDeadlineType = 'flexible' | 'asap' | 'date'
@@ -87,7 +84,7 @@ export const EMPTY_WIZARD_STATE: ProjectWizardState = {
   contactName: '',
   contactPhone: '',
   contactEmail: '',
-  preferredLanguage: 'uk',
+  preferredLanguage: 'en',
 }
 
 export const WIZARD_STEP_COUNT = 7
@@ -103,4 +100,53 @@ export function fileKindFromMime(mime: string, name: string): WizardDraftFile['k
 export function wizardTitleFromTrade(tradeLabel: string, city: string): string {
   const place = city.trim() ? ` — ${city.trim()}` : ''
   return `${tradeLabel}${place}`
+}
+
+export type WizardFieldErrors = Partial<Record<string, string>>
+
+export function validateWizardStep(step: number, state: ProjectWizardState): WizardFieldErrors {
+  const errors: WizardFieldErrors = {}
+  switch (step) {
+    case 1:
+      if (!state.tradeId) errors.tradeId = 'Please choose a category'
+      break
+    case 2:
+      if (state.description.trim().length < 20) {
+        errors.description = 'Please write at least 20 characters'
+      }
+      break
+    case 3:
+      break
+    case 4:
+      if (!state.country.trim()) errors.country = 'Country is required'
+      if (!state.city.trim()) errors.city = 'City is required'
+      if (!state.postalCode.trim()) errors.postalCode = 'Postal code is required'
+      break
+    case 5:
+      if (state.budgetMin < 0) errors.budgetMin = 'Invalid minimum'
+      if (state.budgetMax <= 0) errors.budgetMax = 'Maximum budget is required'
+      if (state.budgetMax < state.budgetMin) errors.budgetMax = 'Max must be ≥ min'
+      break
+    case 6:
+      if (state.deadlineType === 'date' && !state.deadlineAt) {
+        errors.deadlineAt = 'Please pick a date'
+      }
+      break
+    case 7:
+      if (!state.contactName.trim()) errors.contactName = 'Name is required'
+      if (!state.contactEmail.trim() && !state.contactPhone.trim()) {
+        errors.contact = 'Email or phone is required'
+      }
+      if (state.contactEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.contactEmail.trim())) {
+        errors.contactEmail = 'Invalid email'
+      }
+      break
+    default:
+      break
+  }
+  return errors
+}
+
+export function isStepValid(step: number, state: ProjectWizardState): boolean {
+  return Object.keys(validateWizardStep(step, state)).length === 0
 }

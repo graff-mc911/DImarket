@@ -1,5 +1,5 @@
-import { Upload, X } from 'lucide-react'
-import { useRef } from 'react'
+import { FileText, Upload, X } from 'lucide-react'
+import { useRef, useState } from 'react'
 import { fileKindFromMime, type WizardDraftFile } from '../../lib/projectWizard'
 
 type UploadStepProps = {
@@ -9,14 +9,35 @@ type UploadStepProps = {
   help: string
 }
 
+const MAX_FILES = 12
+const MAX_MB = 25
+
 export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const [dragOver, setDragOver] = useState(false)
+  const [localError, setLocalError] = useState<string | null>(null)
 
   const addFiles = (list: FileList | null) => {
     if (!list?.length) return
+    setLocalError(null)
     const next = [...files]
     for (const file of Array.from(list)) {
-      if (next.length >= 12) break
+      if (next.length >= MAX_FILES) {
+        setLocalError(`Maximum ${MAX_FILES} files`)
+        break
+      }
+      if (file.size > MAX_MB * 1024 * 1024) {
+        setLocalError(`Each file must be under ${MAX_MB} MB`)
+        continue
+      }
+      const ok =
+        file.type.startsWith('image/') ||
+        file.type.startsWith('video/') ||
+        file.type === 'application/pdf'
+      if (!ok) {
+        setLocalError('Only images, video, and PDF are allowed')
+        continue
+      }
       next.push({
         file,
         previewUrl: URL.createObjectURL(file),
@@ -36,17 +57,29 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
   return (
     <div>
       <div
-        onDragOver={(e) => e.preventDefault()}
+        onDragOver={(e) => {
+          e.preventDefault()
+          setDragOver(true)
+        }}
+        onDragLeave={() => setDragOver(false)}
         onDrop={(e) => {
           e.preventDefault()
+          setDragOver(false)
           addFiles(e.dataTransfer.files)
         }}
         onClick={() => inputRef.current?.click()}
-        className="flex cursor-pointer flex-col items-center justify-center rounded-sm border-2 border-dashed border-[#d5d9d9] bg-[#f7fafa] px-4 py-10 text-center hover:border-[#ff9900]"
+        className={
+          'flex cursor-pointer flex-col items-center justify-center rounded-[24px] border-2 border-dashed px-4 py-12 text-center transition ' +
+          (dragOver
+            ? 'border-[#1d1d1f] bg-[#f5f5f7]'
+            : 'border-[#d2d2d7] bg-[#fafafa] hover:border-[#aeaeb2]')
+        }
       >
-        <Upload className="mb-2 h-8 w-8 text-[#565959]" />
-        <p className="text-sm font-semibold text-[var(--ink-900)]">{dropLabel}</p>
-        <p className="mt-1 text-xs text-[var(--ink-500)]">{help}</p>
+        <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm">
+          <Upload className="h-6 w-6 text-[#1d1d1f]" />
+        </div>
+        <p className="text-[15px] font-semibold text-[#1d1d1f]">{dropLabel}</p>
+        <p className="mt-1 max-w-xs text-[13px] text-[#86868b]">{help}</p>
         <input
           ref={inputRef}
           type="file"
@@ -57,21 +90,30 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
         />
       </div>
 
+      {localError ? <p className="mt-3 text-center text-[13px] text-[#c41e3a]">{localError}</p> : null}
+
       {files.length > 0 && (
-        <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {files.map((f, i) => (
-            <li key={f.previewUrl} className="relative overflow-hidden rounded-sm border border-[#d5d9d9] bg-white">
+            <li
+              key={f.previewUrl}
+              className="relative overflow-hidden rounded-[18px] border border-[#e8e8ed] bg-[#fafafa]"
+            >
               {f.kind === 'photo' ? (
                 <img src={f.previewUrl} alt="" className="aspect-square w-full object-cover" />
               ) : (
-                <div className="flex aspect-square items-center justify-center bg-[#f0f2f2] p-2 text-center text-xs font-medium text-[var(--ink-700)]">
-                  {f.file.name}
+                <div className="flex aspect-square flex-col items-center justify-center gap-2 p-3 text-center">
+                  <FileText className="h-7 w-7 text-[#6e6e73]" />
+                  <span className="line-clamp-2 text-[11px] font-medium text-[#1d1d1f]">{f.file.name}</span>
                 </div>
               )}
               <button
                 type="button"
-                onClick={() => removeAt(i)}
-                className="absolute right-1 top-1 rounded-full bg-black/55 p-1 text-white"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  removeAt(i)
+                }}
+                className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur"
               >
                 <X className="h-3.5 w-3.5" />
               </button>

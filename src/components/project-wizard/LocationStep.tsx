@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { searchLocations, type LocationSuggestion } from '../../lib/geocoding'
+import type { LocationSuggestion } from '../../lib/geocoding'
+import { autocompleteLocations, resolveLocationDetails } from '../../lib/locationAutocomplete'
 
 type LocationStepProps = {
   country: string
@@ -18,7 +19,14 @@ type LocationStepProps = {
     postal: string
     search: string
   }
+  errors?: Partial<Record<'country' | 'city' | 'postalCode', string>>
 }
+
+const fieldClass = (hasError?: string) =>
+  'w-full rounded-[14px] border bg-[#fafafa] px-4 py-3 text-[15px] text-[#1d1d1f] outline-none transition focus:bg-white ' +
+  (hasError
+    ? 'border-[#c41e3a]'
+    : 'border-[#e8e8ed] focus:border-[#1d1d1f] focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]')
 
 export function LocationStep({
   country,
@@ -27,9 +35,11 @@ export function LocationStep({
   locationLabel,
   onChange,
   labels,
+  errors = {},
 }: LocationStepProps) {
   const [query, setQuery] = useState(locationLabel)
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (query.trim().length < 2) {
@@ -37,39 +47,51 @@ export function LocationStep({
       return
     }
     const t = window.setTimeout(() => {
-      void searchLocations(query).then(setSuggestions)
-    }, 300)
+      setLoading(true)
+      void autocompleteLocations(query).then((list) => {
+        setSuggestions(list)
+        setLoading(false)
+      })
+    }, 280)
     return () => window.clearTimeout(t)
   }, [query])
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className="mb-1 block text-xs font-bold text-[var(--ink-700)]">{labels.search}</label>
+      <div className="relative">
+        <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+          {labels.search}
+        </label>
         <input
           value={query}
           onChange={(e) => {
             setQuery(e.target.value)
             onChange({ locationLabel: e.target.value })
           }}
-          className="w-full rounded-sm border border-[#888c8c] px-3 py-2.5 text-sm outline-none focus:border-[#ff9900]"
+          placeholder="Start typing an address…"
+          className={fieldClass()}
+          autoComplete="off"
         />
+        {loading && (
+          <p className="mt-1 text-[12px] text-[#86868b]">Searching…</p>
+        )}
         {suggestions.length > 0 && (
-          <ul className="mt-1 max-h-40 overflow-auto rounded-sm border border-[#d5d9d9] bg-white text-sm shadow">
-            {suggestions.slice(0, 6).map((s) => (
-              <li key={s.displayName}>
+          <ul className="absolute z-20 mt-1 max-h-52 w-full overflow-auto rounded-[16px] border border-[#e8e8ed] bg-white py-1 shadow-xl">
+            {suggestions.map((s) => (
+              <li key={s.placeId || s.displayName}>
                 <button
                   type="button"
-                  className="w-full px-3 py-2 text-left hover:bg-[#f7fafa]"
+                  className="w-full px-4 py-3 text-left text-[14px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
                   onClick={() => {
-                    setQuery(s.displayName)
-                    setSuggestions([])
-                    const parts = s.displayName.split(',').map((p) => p.trim())
-                    onChange({
-                      locationLabel: s.displayName,
-                      city: s.name || parts[0] || city,
-                      country: s.country || parts[parts.length - 1] || country,
-                      postalCode: s.postalCode || postalCode,
+                    void resolveLocationDetails(s).then((detail) => {
+                      setQuery(detail.displayName)
+                      setSuggestions([])
+                      onChange({
+                        locationLabel: detail.displayName,
+                        city: detail.name || city,
+                        country: detail.country || country,
+                        postalCode: detail.postalCode || postalCode,
+                      })
                     })
                   }}
                 >
@@ -83,28 +105,39 @@ export function LocationStep({
 
       <div className="grid gap-3 sm:grid-cols-3">
         <div>
-          <label className="mb-1 block text-xs font-bold text-[var(--ink-700)]">{labels.country}</label>
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+            {labels.country}
+          </label>
           <input
             value={country}
             onChange={(e) => onChange({ country: e.target.value })}
-            className="w-full rounded-sm border border-[#888c8c] px-3 py-2.5 text-sm outline-none focus:border-[#ff9900]"
+            className={fieldClass(errors.country)}
           />
+          {errors.country ? <p className="mt-1 text-[12px] text-[#c41e3a]">{errors.country}</p> : null}
         </div>
         <div>
-          <label className="mb-1 block text-xs font-bold text-[var(--ink-700)]">{labels.city}</label>
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+            {labels.city}
+          </label>
           <input
             value={city}
             onChange={(e) => onChange({ city: e.target.value })}
-            className="w-full rounded-sm border border-[#888c8c] px-3 py-2.5 text-sm outline-none focus:border-[#ff9900]"
+            className={fieldClass(errors.city)}
           />
+          {errors.city ? <p className="mt-1 text-[12px] text-[#c41e3a]">{errors.city}</p> : null}
         </div>
         <div>
-          <label className="mb-1 block text-xs font-bold text-[var(--ink-700)]">{labels.postal}</label>
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+            {labels.postal}
+          </label>
           <input
             value={postalCode}
             onChange={(e) => onChange({ postalCode: e.target.value })}
-            className="w-full rounded-sm border border-[#888c8c] px-3 py-2.5 text-sm outline-none focus:border-[#ff9900]"
+            className={fieldClass(errors.postalCode)}
           />
+          {errors.postalCode ? (
+            <p className="mt-1 text-[12px] text-[#c41e3a]">{errors.postalCode}</p>
+          ) : null}
         </div>
       </div>
     </div>
