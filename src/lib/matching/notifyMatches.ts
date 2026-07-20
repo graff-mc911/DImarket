@@ -31,12 +31,22 @@ export function filterNotifyCandidates(
     .filter((match) => {
       const local =
         match.reasons.includes('near_location') ||
+        match.reasons.includes('distance_close') ||
+        match.reasons.includes('within_radius') ||
+        match.reasons.includes('same_country') ||
         match.reasons.includes('subcategory_match') ||
         match.reasons.includes('trade_group_match') ||
         match.reasons.includes('category_match')
 
       if (!local) return false
-      if (hasGeo && !match.reasons.includes('near_location')) return false
+      if (
+        hasGeo &&
+        !match.reasons.some((r) =>
+          ['near_location', 'distance_close', 'within_radius', 'same_country'].includes(r),
+        )
+      ) {
+        return false
+      }
       if (
         hasTrade &&
         !match.reasons.some((r) =>
@@ -45,7 +55,7 @@ export function filterNotifyCandidates(
       ) {
         return false
       }
-      return match.score >= 20
+      return match.score >= 70
     })
     .map((m) => m.profileId)
 }

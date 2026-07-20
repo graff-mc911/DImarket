@@ -86,8 +86,9 @@ export const enTranslations = {
   'project.wizard.phone': 'Phone',
   'project.wizard.email': 'Email',
   'project.wizard.language': 'Preferred language',
-  'project.matches.title': 'Matched professionals',
-  'project.matches.sub': 'Ranked by match score for your project',
+  'project.matches.title': 'Top matched professionals',
+  'project.matches.sub':
+    'AI ranked Top 10 by distance, specialization, rating, jobs, languages, availability, verification & portfolio',
   'project.matches.viewProject': 'View project',
   'project.matches.myProjects': 'My projects',
   'project.matches.empty': 'No matches yet. Professionals will be notified.',

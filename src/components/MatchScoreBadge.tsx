@@ -1,18 +1,30 @@
 import { verificationLevelClass, verificationLevelLabel } from '../lib/verificationLevel'
 import type { VerificationLevel } from '../lib/types'
 
-export function MatchScoreBadge({ score, className = '' }: { score: number; className?: string }) {
+export function MatchScoreBadge({
+  score,
+  className = '',
+  large = false,
+}: {
+  score: number
+  className?: string
+  large?: boolean
+}) {
   const pct = Math.max(0, Math.min(100, Math.round(score)))
   const tone =
-    pct >= 90
-      ? 'bg-[#067d62] text-white'
-      : pct >= 75
+    pct >= 92
+      ? 'bg-[#248a3d] text-white'
+      : pct >= 80
         ? 'bg-[#ff9900] text-[#0f1111]'
         : 'bg-[#e7e9ec] text-[#0f1111]'
 
   return (
     <span
-      className={`inline-flex items-center rounded-sm px-2 py-0.5 text-xs font-bold tabular-nums ${tone} ${className}`}
+      className={`inline-flex items-center font-bold tabular-nums ${tone} ${
+        large
+          ? 'rounded-full px-3 py-1 text-[13px]'
+          : 'rounded-sm px-2 py-0.5 text-xs'
+      } ${className}`}
     >
       {pct}% match
     </span>

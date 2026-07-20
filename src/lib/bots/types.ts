@@ -32,6 +32,17 @@ export type AiRouterResponse<T = unknown> = {
   taskId?: string
 }
 
+export type MatchScoreBreakdown = {
+  distance: number
+  specialization: number
+  rating: number
+  completedJobs: number
+  languages: number
+  availability: number
+  verification: number
+  portfolio: number
+}
+
 export type RankedMatch = {
   profileId: string
   fullName: string
@@ -41,6 +52,12 @@ export type RankedMatch = {
   responseRate: number | null
   score: number
   reasons: string[]
+  breakdown?: MatchScoreBreakdown
+  distanceKm?: number | null
+  verificationLevel?: 'none' | 'bronze' | 'silver' | 'gold' | null
+  avatarUrl?: string | null
+  completedJobs?: number
+  availabilityStatus?: string
 }
 
 export type TranslationResult = {

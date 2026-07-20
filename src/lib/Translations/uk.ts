@@ -84,8 +84,9 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'project.wizard.phone': 'Телефон',
   'project.wizard.email': 'Email',
   'project.wizard.language': 'Бажана мова',
-  'project.matches.title': 'Підібрані майстри',
-  'project.matches.sub': 'За match score для вашого проєкту',
+  'project.matches.title': 'Топ підібраних майстрів',
+  'project.matches.sub':
+    'AI Top 10 за відстанню, спеціалізацією, рейтингом, роботами, мовами, доступністю, верифікацією та портфоліо',
   'project.matches.viewProject': 'Переглянути проєкт',
   'project.matches.myProjects': 'Мої проєкти',
   'project.matches.empty': 'Поки немає збігів. Майстрів буде сповіщено.',
