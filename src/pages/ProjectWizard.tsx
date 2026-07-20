@@ -4,7 +4,6 @@ import { navigateTo } from '../lib/navigation'
 import {
   EMPTY_WIZARD_STATE,
   PROJECT_TRADES,
-  isStepValid,
   validateWizardStep,
   type ProjectWizardState,
   type WizardFieldErrors,
@@ -160,7 +159,7 @@ export function ProjectWizard() {
           ? tw(t, 'project.wizard.publish', 'Publish project')
           : tw(t, 'common.continue', 'Continue')
       }
-      nextDisabled={!isStepValid(state.step, state) && state.step < 7 ? false : false}
+      nextDisabled={busy}
       busy={busy}
       error={error}
       onBack={state.step > 1 ? () => patch({ step: state.step - 1 }) : undefined}

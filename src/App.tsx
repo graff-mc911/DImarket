@@ -46,7 +46,7 @@ import { ForCompanies }     from './pages/ForCompanies'
 import { ForAdvertisers }   from './pages/ForAdvertisers'
 import { SeoMarketLanding } from './pages/SeoMarketLanding'
 import { isSeoLocale } from './lib/seoRoutes'
-import { ProjectWizard } from './pages/ProjectWizard'
+import { CreateProject } from './pages/CreateProject'
 import { ProjectMatches } from './pages/ProjectMatches'
 import { LeadFeed } from './pages/LeadFeed'
 import { QuoteBuilder } from './pages/QuoteBuilder'
@@ -73,8 +73,8 @@ function App() {
     // Динамічні маршрути
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
-    if (parts[0] === 'project' && parts[1] === 'new') return <ProjectWizard />
-    if (parts[0] === 'create-project') return <ProjectWizard />
+    if (parts[0] === 'project' && parts[1] === 'new') return <CreateProject />
+    if (parts[0] === 'create-project') return <CreateProject />
     if (parts[0] === 'project' && parts[1] && parts[2] === 'matches') {
       return <ProjectMatches listingId={parts[1]} />
     }
@@ -111,7 +111,7 @@ function App() {
       case '/favorites':     return <Favorites />
       case '/create-ad':     return <CreateAd />
       case '/create-project':
-      case '/project/new':   return <ProjectWizard />
+      case '/project/new':   return <CreateProject />
       case '/my-projects':   return <MyProjects />
       case '/leads':         return <LeadFeed />
       case '/assistant/job': return <JobRequestChat />

@@ -5,6 +5,7 @@ export interface LocationSuggestion {
   postalCode?: string
   lat?: number
   lon?: number
+  placeId?: string
 }
 
 export async function getCurrentLocation(): Promise<{ city: string; country: string } | null> {
