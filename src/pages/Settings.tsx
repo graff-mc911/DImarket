@@ -31,6 +31,12 @@ import {
   emptyPickerValue,
   type CategoryPickerValue,
 } from '../lib/categoryCatalog'
+import {
+  DEFAULT_NOTIFICATION_PREFS,
+  NOTIFICATION_CATEGORIES,
+  parseNotificationPrefs,
+  type NotificationPrefs,
+} from '../lib/notifications/notifications'
 import type { Profile } from '../lib/types'
 
 function profileSaveErrorMessage(err: unknown): string {
@@ -71,6 +77,9 @@ export function Settings() {
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [emailDigestEnabled, setEmailDigestEnabled] = useState(true)
+  const [notificationPrefs, setNotificationPrefs] = useState<NotificationPrefs>(
+    DEFAULT_NOTIFICATION_PREFS,
+  )
   const [telegramChatId, setTelegramChatId] = useState<number | null>(null)
   const [preferredLanguage, setPreferredLanguage] = useState<LanguageOption['code']>(language.code)
   const [preferredCurrency, setPreferredCurrency] = useState<CurrencyOption['code']>(currency.code)
@@ -198,6 +207,11 @@ export function Settings() {
       })
       setNotificationsEnabled(data.notifications_enabled !== false)
       setEmailDigestEnabled((data as Profile & { email_digest_enabled?: boolean }).email_digest_enabled !== false)
+      setNotificationPrefs(
+        parseNotificationPrefs(
+          (data as Profile & { notification_prefs?: unknown }).notification_prefs,
+        ),
+      )
       setTelegramChatId((data as Profile & { telegram_chat_id?: number | null }).telegram_chat_id ?? null)
       setPreferredLanguage(nextLanguage)
       setPreferredCurrency(nextCurrency)
@@ -242,6 +256,7 @@ export function Settings() {
         profile_photo: normalizedProfilePhoto || null,
         notifications_enabled: notificationsEnabled,
         email_digest_enabled: emailDigestEnabled,
+        notification_prefs: notificationPrefs,
         preferred_language: preferredLanguage,
         preferred_currency: preferredCurrency,
         work_subcategory_slugs: isProfessional ? workSubcategories.subcategorySlugs : [],
@@ -734,6 +749,60 @@ export function Settings() {
                         <div className="h-6 w-11 rounded-full bg-gray-200 transition peer-checked:bg-[#c96d2c] peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[rgba(201,109,44,0.18)] after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white" />
                       </label>
                     </div>
+
+                    {notificationsEnabled ? (
+                      <div className="mt-5 space-y-4 rounded-2xl border border-[rgba(190,168,150,0.28)] bg-white/50 p-4">
+                        <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
+                          Channels
+                        </p>
+                        <div className="flex flex-wrap gap-4">
+                          {(
+                            [
+                              ['inapp', 'In-app'],
+                              ['push', 'Push'],
+                              ['email', 'Email'],
+                            ] as const
+                          ).map(([key, label]) => (
+                            <label key={key} className="inline-flex items-center gap-2 text-sm text-[#2f2a24]">
+                              <input
+                                type="checkbox"
+                                checked={notificationPrefs[key]}
+                                onChange={(e) =>
+                                  setNotificationPrefs((p) => ({ ...p, [key]: e.target.checked }))
+                                }
+                              />
+                              {label}
+                            </label>
+                          ))}
+                        </div>
+                        <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
+                          Categories
+                        </p>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {NOTIFICATION_CATEGORIES.map((c) => (
+                            <label
+                              key={c.id}
+                              className="inline-flex items-center gap-2 text-sm text-[#2f2a24]"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={notificationPrefs.categories[c.id] !== false}
+                                onChange={(e) =>
+                                  setNotificationPrefs((p) => ({
+                                    ...p,
+                                    categories: {
+                                      ...p.categories,
+                                      [c.id]: e.target.checked,
+                                    },
+                                  }))
+                                }
+                              />
+                              {c.label}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
 
                     {isProfessional && currentUserId && (
                       <TelegramLinkPanel

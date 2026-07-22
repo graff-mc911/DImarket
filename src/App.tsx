@@ -56,6 +56,7 @@ import { ProCalendar } from './pages/ProCalendar'
 import { BookProfessional } from './pages/BookProfessional'
 import { CustomerDashboard } from './pages/CustomerDashboard'
 import { CostEstimator } from './pages/CostEstimator'
+import { Notifications } from './pages/Notifications'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -120,6 +121,7 @@ function App() {
       case '/cost-estimator':
       case '/estimate':      return <CostEstimator />
       case '/settings':      return <Settings />
+      case '/notifications': return <Notifications />
       case '/profile':       return <Profile />
       case '/my-listings':   return <MyListings />
       case '/messages':      return <Messages />

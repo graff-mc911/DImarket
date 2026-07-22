@@ -95,6 +95,20 @@ async function handlePaidSession(session: Stripe.Checkout.Session) {
     currency,
     durationDays: Number.isFinite(durationDays) ? durationDays : 30,
   })
+
+  try {
+    await admin.rpc('create_notification', {
+      p_user_id: userId,
+      p_type: 'payment',
+      p_title: 'Payment confirmed',
+      p_body: `Your ${paymentType.replace(/_/g, ' ')} payment of ${(amount / 100).toFixed(2)} ${String(currency || 'eur').toUpperCase()} was successful.`,
+      p_link_path: '/settings',
+      p_reference_type: 'payment',
+      p_reference_id: null,
+    })
+  } catch (e) {
+    console.error('stripe-webhook: notification error', e)
+  }
 }
 
 async function activateService(

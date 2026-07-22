@@ -1,3 +1,4 @@
+import { createNotification } from '../notifications/notifications'
 import { supabase } from '../supabase'
 import {
   normalizeMediaUrls,
@@ -149,13 +150,13 @@ export async function submitReviewV2(
       .eq('id', input.professional_id)
   }
 
-  await supabase.from('notifications').insert({
-    user_id: input.professional_id,
+  await createNotification({
+    userId: input.professional_id,
     type: 'review',
     title: 'New review',
     body: `${input.reviewer_name} left a ${rating}-star review`,
-    link_path: `/professional/${input.professional_id}`,
-  } as never)
+    linkPath: `/professional/${input.professional_id}`,
+  })
 
   return { ok: true, id: (data as { id: string } | null)?.id }
 }

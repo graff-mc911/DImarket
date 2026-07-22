@@ -1,5 +1,14 @@
-import { useEffect, useState } from 'react'
-import { Bell, Check } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  Bell,
+  CheckCheck,
+  CreditCard,
+  FileText,
+  MessageSquare,
+  ShieldCheck,
+  Star,
+  CalendarDays,
+} from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import { supabase } from '../../lib/supabase'
@@ -8,22 +17,63 @@ import {
   markAllNotificationsRead,
   markNotificationRead,
   savePushSubscription,
+  urlBase64ToUint8Array,
   vapidPublicKey,
   type AppNotification,
 } from '../../lib/notifications/notifications'
 
-export function NotificationCenter() {
+const FILTERS: { id: string; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'project', label: 'Projects' },
+  { id: 'message', label: 'Messages' },
+  { id: 'review', label: 'Reviews' },
+  { id: 'payment', label: 'Payments' },
+  { id: 'verification', label: 'Verification' },
+  { id: 'booking', label: 'Bookings' },
+]
+
+function TypeIcon({ type }: { type: string }) {
+  const cls = 'h-4 w-4 shrink-0'
+  if (type === 'message') return <MessageSquare className={cls} />
+  if (type === 'review') return <Star className={cls} />
+  if (type === 'payment') return <CreditCard className={cls} />
+  if (type === 'verification') return <ShieldCheck className={cls} />
+  if (type === 'booking') return <CalendarDays className={cls} />
+  if (type === 'quote' || type === 'project' || type === 'lead' || type === 'listing' || type === 'match') {
+    return <FileText className={cls} />
+  }
+  return <Bell className={cls} />
+}
+
+function typeLabel(type: string) {
+  if (type === 'quote' || type === 'lead' || type === 'listing' || type === 'match') return 'Project'
+  if (type === 'message') return 'Message'
+  if (type === 'review') return 'Review'
+  if (type === 'payment') return 'Payment'
+  if (type === 'verification') return 'Verification'
+  if (type === 'booking') return 'Booking'
+  return 'Update'
+}
+
+type Props = {
+  /** Compact dropdown for Header */
+  compact?: boolean
+}
+
+export function NotificationCenter({ compact = true }: Props) {
   const { user, t } = useApp()
   const [open, setOpen] = useState(false)
   const [items, setItems] = useState<AppNotification[]>([])
   const [loading, setLoading] = useState(false)
+  const [filter, setFilter] = useState('all')
+  const [pushOk, setPushOk] = useState(false)
 
-  const unread = items.filter((n) => !n.is_read).length
+  const unread = useMemo(() => items.filter((n) => !n.is_read).length, [items])
 
-  const load = async () => {
+  const load = async (typeFilter = filter) => {
     if (!user) return
     setLoading(true)
-    const rows = await fetchNotifications(user.id)
+    const rows = await fetchNotifications(user.id, 50, typeFilter)
     setItems(rows)
     setLoading(false)
   }
@@ -35,7 +85,7 @@ export function NotificationCenter() {
   useEffect(() => {
     if (!user) return
     const channel = supabase
-      .channel(`notifications:${user.id}`)
+      .channel(`notifications-center:${user.id}`)
       .on(
         'postgres_changes',
         {
@@ -46,7 +96,10 @@ export function NotificationCenter() {
         },
         (payload) => {
           const row = payload.new as AppNotification
-          setItems((prev) => [row, ...prev].slice(0, 40))
+          setItems((prev) => {
+            if (prev.some((x) => x.id === row.id)) return prev
+            return [row, ...prev].slice(0, 50)
+          })
           if (
             typeof Notification !== 'undefined' &&
             Notification.permission === 'granted' &&
@@ -69,6 +122,19 @@ export function NotificationCenter() {
           }
         },
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          const row = payload.new as AppNotification
+          setItems((prev) => prev.map((x) => (x.id === row.id ? { ...x, ...row } : x)))
+        },
+      )
       .subscribe()
     return () => {
       void supabase.removeChannel(channel)
@@ -80,18 +146,166 @@ export function NotificationCenter() {
     const key = vapidPublicKey()
     if (!key) return
     try {
+      const perm = await Notification.requestPermission()
+      if (perm !== 'granted') return
       const reg = await navigator.serviceWorker.register('/sw.js')
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(key),
-      })
+      const existing = await reg.pushManager.getSubscription()
+      const sub =
+        existing ||
+        (await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(key),
+        }))
       await savePushSubscription(user.id, sub)
+      setPushOk(true)
     } catch (e) {
       console.error('push subscribe:', e)
     }
   }
 
   if (!user) return null
+
+  const panel = (
+    <div
+      className={
+        compact
+          ? 'absolute right-0 z-[70] mt-2 w-[min(400px,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-[#e8e8ed] bg-white shadow-xl'
+          : 'mx-auto max-w-2xl overflow-hidden rounded-[22px] border border-[#e8e8ed] bg-white shadow-sm'
+      }
+    >
+      <div className="flex items-center justify-between gap-2 border-b border-[#f0f0f2] px-4 py-3">
+        <div>
+          <p className="text-[14px] font-semibold text-[#1d1d1f]">{t('notifications.title')}</p>
+          <p className="text-[11px] text-[#86868b]">
+            In-app · Push · Email · Realtime
+          </p>
+        </div>
+        <div className="flex flex-wrap justify-end gap-2">
+          <button
+            type="button"
+            className="text-[11px] font-semibold text-indigo-600"
+            onClick={() => void enablePush()}
+          >
+            {pushOk ? 'Push on' : t('notifications.enablePush')}
+          </button>
+          <button
+            type="button"
+            className="text-[11px] font-semibold text-[#86868b]"
+            onClick={() => void markAllNotificationsRead(user.id).then(() => load())}
+          >
+            <CheckCheck className="mr-0.5 inline h-3.5 w-3.5" />
+            {t('notifications.markAll')}
+          </button>
+        </div>
+      </div>
+
+      <div className="flex gap-1 overflow-x-auto border-b border-[#f0f0f2] px-3 py-2">
+        {FILTERS.map((f) => (
+          <button
+            key={f.id}
+            type="button"
+            onClick={() => {
+              setFilter(f.id)
+              void load(f.id)
+            }}
+            className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+              filter === f.id
+                ? 'bg-[#1d1d1f] text-white'
+                : 'bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed]'
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      <ul className="max-h-[min(420px,60vh)] overflow-y-auto">
+        {loading && <li className="p-4 text-sm text-slate-500">{t('common.loading')}</li>}
+        {!loading && items.length === 0 && (
+          <li className="p-8 text-center text-sm text-slate-500">{t('notifications.empty')}</li>
+        )}
+        {items.map((n) => (
+          <li key={n.id}>
+            <button
+              type="button"
+              className={`flex w-full gap-3 px-4 py-3 text-left hover:bg-[#fafafa] ${
+                !n.is_read ? 'bg-indigo-50/40' : ''
+              }`}
+              onClick={() => {
+                void markNotificationRead(n.id)
+                setItems((prev) =>
+                  prev.map((x) => (x.id === n.id ? { ...x, is_read: true } : x)),
+                )
+                if (n.link_path) navigateTo(n.link_path)
+                if (compact) setOpen(false)
+              }}
+            >
+              <span
+                className={`mt-0.5 flex h-8 w-8 items-center justify-center rounded-full ${
+                  !n.is_read ? 'bg-indigo-100 text-indigo-700' : 'bg-[#f5f5f7] text-[#86868b]'
+                }`}
+              >
+                <TypeIcon type={n.type} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-[#86868b]">
+                    {typeLabel(n.type)}
+                  </span>
+                  {!n.is_read ? (
+                    <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
+                  ) : null}
+                </span>
+                <span className="mt-0.5 block text-[13px] font-semibold text-[#1d1d1f]">
+                  {n.title}
+                </span>
+                <span className="mt-0.5 line-clamp-2 block text-[12px] text-[#6e6e73]">
+                  {n.body}
+                </span>
+                <span className="mt-1 block text-[10px] text-[#a1a1a6]">
+                  {new Date(n.created_at).toLocaleString()}
+                </span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <div className="flex items-center justify-between border-t border-[#f0f0f2] px-4 py-2.5">
+        <button
+          type="button"
+          className="text-[12px] font-semibold text-[#0066cc]"
+          onClick={() => {
+            setOpen(false)
+            navigateTo('/settings')
+          }}
+        >
+          Notification settings
+        </button>
+        {!compact ? null : (
+          <button
+            type="button"
+            className="text-[12px] font-semibold text-[#86868b]"
+            onClick={() => {
+              setOpen(false)
+              navigateTo('/notifications')
+            }}
+          >
+            Open full center
+          </button>
+        )}
+      </div>
+    </div>
+  )
+
+  if (!compact) {
+    return (
+      <div className="px-4 py-8">
+        <h1 className="mb-4 text-[22px] font-semibold text-[#1d1d1f]">Notification Center</h1>
+        {panel}
+      </div>
+    )
+  }
 
   return (
     <div className="relative">
@@ -101,74 +315,37 @@ export function NotificationCenter() {
           setOpen((o) => !o)
           void load()
         }}
-        className="relative rounded-full p-2 hover:bg-[rgba(0,0,0,0.05)]"
+        className="relative rounded-full p-2 text-white/90 hover:bg-white/10"
         aria-label={t('notifications.title')}
       >
         <Bell className="h-5 w-5" />
         {unread > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#ff9900] px-1 text-[10px] font-bold text-[#0f1111]">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
       </button>
-
-      {open && (
-        <div className="absolute right-0 z-50 mt-2 w-[min(360px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-white shadow-xl">
-          <div className="flex items-center justify-between border-b px-4 py-3">
-            <span className="font-bold text-sm">{t('notifications.title')}</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className="text-xs text-indigo-600"
-                onClick={() => void enablePush()}
-              >
-                {t('notifications.enablePush')}
-              </button>
-              <button
-                type="button"
-                className="text-xs text-slate-500"
-                onClick={() => void markAllNotificationsRead(user.id).then(load)}
-              >
-                <Check className="inline h-3.5 w-3.5" /> {t('notifications.markAll')}
-              </button>
-            </div>
-          </div>
-          <ul className="max-h-80 overflow-y-auto">
-            {loading && <li className="p-4 text-sm text-slate-500">{t('common.loading')}</li>}
-            {!loading && items.length === 0 && (
-              <li className="p-6 text-center text-sm text-slate-500">{t('notifications.empty')}</li>
-            )}
-            {items.map((n) => (
-              <li key={n.id}>
-                <button
-                  type="button"
-                  className={`w-full px-4 py-3 text-left hover:bg-slate-50 ${!n.is_read ? 'bg-indigo-50/50' : ''}`}
-                  onClick={() => {
-                    void markNotificationRead(n.id)
-                    setItems((prev) =>
-                      prev.map((x) => (x.id === n.id ? { ...x, is_read: true } : x)),
-                    )
-                    if (n.link_path) navigateTo(n.link_path)
-                    setOpen(false)
-                  }}
-                >
-                  <p className="text-sm font-semibold text-slate-900">{n.title}</p>
-                  <p className="mt-0.5 line-clamp-2 text-xs text-slate-600">{n.body}</p>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {open ? panel : null}
     </div>
   )
 }
 
-function urlBase64ToUint8Array(base64String: string) {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
-  const raw = atob(base64)
-  const arr = new Uint8Array(raw.length)
-  for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i)
-  return arr
+/** Full-page wrapper */
+export function NotificationsPage() {
+  const { user } = useApp()
+  if (!user) {
+    return (
+      <div className="px-4 py-16 text-center">
+        <p className="text-[14px] text-[#6e6e73]">Sign in to view notifications</p>
+        <button
+          type="button"
+          className="mt-4 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white"
+          onClick={() => navigateTo('/login')}
+        >
+          Log in
+        </button>
+      </div>
+    )
+  }
+  return <NotificationCenter compact={false} />
 }

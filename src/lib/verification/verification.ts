@@ -1,4 +1,5 @@
 import { supabase } from '../supabase'
+import { createNotification } from '../notifications/notifications'
 
 export type VerificationStatus = 'unverified' | 'pending' | 'verified' | 'rejected'
 
@@ -118,20 +119,20 @@ export async function adminReviewVerification(
 
   if (ver?.profile_id && action === 'approve') {
     await supabase.from('profiles').update({ is_verified: true }).eq('id', ver.profile_id)
-    await supabase.from('notifications').insert({
-      user_id: ver.profile_id,
+    await createNotification({
+      userId: ver.profile_id,
       type: 'verification',
       title: 'Verification approved',
       body: 'Your contractor verification was approved.',
-      link_path: '/verification',
+      linkPath: '/verification',
     })
   } else if (ver?.profile_id) {
-    await supabase.from('notifications').insert({
-      user_id: ver.profile_id,
+    await createNotification({
+      userId: ver.profile_id,
       type: 'verification',
       title: 'Verification update',
       body: notes || 'Your verification needs changes.',
-      link_path: '/verification',
+      linkPath: '/verification',
     })
   }
 

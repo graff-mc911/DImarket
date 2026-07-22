@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { createNotification } from './notifications/notifications'
 import type { Quote } from './types'
 import {
   buildQuotePdfHtml,
@@ -255,12 +256,13 @@ export async function notifyCustomerQuoteInApp(opts: {
   projectTitle: string
   total: number
 }): Promise<void> {
-  await supabase.from('notifications').insert({
-    user_id: opts.customerId,
-    type: 'quote_received',
+  await createNotification({
+    userId: opts.customerId,
+    type: 'quote',
     title: 'New quote received',
     body: `You received a quote of €${opts.total.toFixed(2)} for “${opts.projectTitle}”.`,
-    link_path: `/listing/${opts.listingId}`,
-    is_read: false,
-  } as never)
+    linkPath: `/listing/${opts.listingId}`,
+    referenceType: 'listing',
+    referenceId: opts.listingId,
+  })
 }

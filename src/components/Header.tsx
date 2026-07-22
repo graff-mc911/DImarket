@@ -42,6 +42,7 @@ import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
+import { NotificationCenter } from './notifications/NotificationCenter'
 
 interface NavItem {
   label: string
@@ -638,6 +639,8 @@ export function Header() {
                   )}
                 </div>
 
+                {user ? <NotificationCenter /> : null}
+
                 <button
                   type="button"
                   onClick={() => goTo(user ? '/messages' : '/login')}
@@ -662,6 +665,7 @@ export function Header() {
 
               {/* Мобільні кнопки — Amazon: акаунт + збережене + меню */}
               <div className="flex shrink-0 items-center gap-0.5 sm:hidden">
+                {user ? <NotificationCenter /> : null}
                 <button
                   type="button"
                   onClick={() => goTo(user ? '/profile' : '/login')}

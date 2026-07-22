@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { createNotification } from './notifications/notifications'
 
 export type BookingStatus = 'pending' | 'accepted' | 'declined' | 'cancelled' | 'completed'
 
@@ -209,13 +210,13 @@ export async function requestBooking(input: {
 
   if (error || !data) return { error: error?.message || 'create_failed' }
 
-  await supabase.from('notifications').insert({
-    user_id: input.professionalId,
+  await createNotification({
+    userId: input.professionalId,
     type: 'booking',
     title: 'New booking request',
     body: `${input.customerName} requested ${input.dateKey} at ${input.hour}:00`,
-    link_path: '/pro/calendar',
-  } as never)
+    linkPath: '/pro/calendar',
+  })
 
   return { booking: data as BookingRow }
 }
@@ -247,14 +248,14 @@ export async function updateBookingStatus(
   const notifyUser =
     actorId === row.professional_id ? row.customer_id : row.professional_id
   if (notifyUser) {
-    await supabase.from('notifications').insert({
-      user_id: notifyUser,
+    await createNotification({
+      userId: notifyUser,
       type: 'booking',
       title: `Booking ${status}`,
       body: `${row.customer_name} · ${new Date(row.starts_at).toLocaleString()}`,
-      link_path:
+      linkPath:
         actorId === row.professional_id ? '/customer/dashboard' : '/pro/calendar',
-    } as never)
+    })
   }
 
   if (status === 'accepted') {
