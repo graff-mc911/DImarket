@@ -1,7 +1,13 @@
 import { useState } from 'react'
-import { Star } from 'lucide-react'
+import { ImagePlus, Star, X } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { submitReviewV2 } from '../../lib/reviews/reviews'
+import {
+  REVIEW_MEDIA_ACCEPT,
+  REVIEW_MEDIA_MAX_FILES,
+  uploadReviewMedia,
+  type ReviewMediaItem,
+} from '../../lib/reviewMediaUpload'
 
 type Props = {
   professionalId: string
@@ -43,10 +49,31 @@ export function ReviewFormV2({ professionalId, listingId, onSuccess }: Props) {
   const [reliability, setReliability] = useState(5)
   const [recommend, setRecommend] = useState(true)
   const [comment, setComment] = useState('')
+  const [media, setMedia] = useState<ReviewMediaItem[]>([])
+  const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!user) return null
+
+  const onPickFiles = async (files: FileList | null) => {
+    if (!files?.length) return
+    setUploading(true)
+    setError(null)
+    try {
+      const room = REVIEW_MEDIA_MAX_FILES - media.length
+      const batch = Array.from(files).slice(0, room)
+      const uploaded: ReviewMediaItem[] = []
+      for (const file of batch) {
+        uploaded.push(await uploadReviewMedia(user.id, file))
+      }
+      setMedia((prev) => [...prev, ...uploaded].slice(0, REVIEW_MEDIA_MAX_FILES))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t('reviews.error'))
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,10 +93,13 @@ export function ReviewFormV2({ professionalId, listingId, onSuccess }: Props) {
       speed,
       reliability,
       would_recommend: recommend,
+      media_urls: media,
     })
     setSubmitting(false)
     if (!result.ok) {
-      setError(result.error === 'duplicate' ? t('reviews.duplicate') : t('reviews.error'))
+      if (result.error === 'duplicate') setError(t('reviews.duplicate'))
+      else if (result.error === 'empty') setError('Add a comment or photo/video')
+      else setError(t('reviews.error'))
       return
     }
     onSuccess?.()
@@ -94,10 +124,54 @@ export function ReviewFormV2({ professionalId, listingId, onSuccess }: Props) {
         placeholder={t('reviews.commentPlaceholder')}
         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
       />
+
+      <div>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-slate-700">Photos & videos</p>
+          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#1d1d1f] px-3 py-1.5 text-[12px] font-semibold text-white">
+            <ImagePlus className="h-3.5 w-3.5" />
+            {uploading ? 'Uploading…' : 'Add media'}
+            <input
+              type="file"
+              accept={REVIEW_MEDIA_ACCEPT}
+              multiple
+              className="hidden"
+              disabled={uploading || media.length >= REVIEW_MEDIA_MAX_FILES}
+              onChange={(e) => {
+                void onPickFiles(e.target.files)
+                e.target.value = ''
+              }}
+            />
+          </label>
+        </div>
+        {media.length > 0 ? (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {media.map((m) => (
+              <div key={m.url} className="relative h-16 w-16 overflow-hidden rounded-xl">
+                {m.type === 'video' ? (
+                  <video src={m.url} className="h-full w-full object-cover" muted />
+                ) : (
+                  <img src={m.url} alt="" className="h-full w-full object-cover" />
+                )}
+                <button
+                  type="button"
+                  className="absolute right-1 top-1 rounded-full bg-black/60 p-0.5 text-white"
+                  onClick={() => setMedia((prev) => prev.filter((x) => x.url !== m.url))}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-1 text-[12px] text-slate-500">Up to {REVIEW_MEDIA_MAX_FILES} files</p>
+        )}
+      </div>
+
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button
         type="submit"
-        disabled={submitting}
+        disabled={submitting || uploading}
         className="w-full rounded-full bg-indigo-600 py-3 text-sm font-bold text-white disabled:opacity-60"
       >
         {submitting ? t('common.loading') : t('reviews.submit')}

@@ -18,8 +18,9 @@ import {
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
-import { Profile as ProfileType, Review } from '../lib/types'
+import { Profile as ProfileType } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
+import { ReviewFeed } from '../components/reviews/ReviewFeed'
 
 function normalizeWebsiteHref(url: string | null | undefined): string {
   const trimmed = (url ?? '').trim()
@@ -33,7 +34,6 @@ export function Profile() {
 
   const [userId, setUserId] = useState<string | null>(contextUser?.id ?? null)
   const [profile, setProfile] = useState<ProfileType | null>(contextProfile)
-  const [reviews, setReviews] = useState<Review[]>([])
   const [activeListingsCount, setActiveListingsCount] = useState(0)
   const [authChecked, setAuthChecked] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -58,16 +58,6 @@ export function Profile() {
       } else {
         setProfile(null)
       }
-
-      const { data: reviewsData, error: reviewsError } = await supabase
-        .from('reviews')
-        .select('*')
-        .eq('professional_id', uid)
-        .eq('is_hidden', false)
-        .order('created_at', { ascending: false })
-
-      if (reviewsError) throw reviewsError
-      setReviews(reviewsData ?? [])
 
       const { count, error: listingsError } = await supabase
         .from('listings')
@@ -350,9 +340,9 @@ export function Profile() {
             >
               <Star className="h-4 w-4" />
               {t('profile.reviews')}
-              {reviews.length > 0 && (
+              {(profile?.total_reviews ?? 0) > 0 && (
                 <span className="rounded-full border border-[var(--glass-border)] bg-[rgba(255,252,248,0.6)] px-2 py-0.5 text-xs">
-                  {reviews.length}
+                  {profile?.total_reviews}
                 </span>
               )}
             </button>
@@ -366,39 +356,13 @@ export function Profile() {
 
           {activeTab === 'reviews' && (
             <div className="p-5">
-              {reviews.length > 0 ? (
-                <div className="space-y-3">
-                  {reviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,252,248,0.5)] p-4"
-                    >
-                      <div className="mb-2 flex items-start justify-between">
-                        <div>
-                          <div className="text-sm font-bold" style={{ color: 'var(--ink-900)' }}>
-                            {review.reviewer_name}
-                          </div>
-                          <div className="mt-0.5 text-xs" style={{ color: 'var(--ink-500)' }}>
-                            {new Date(review.created_at).toLocaleDateString('uk-UA')}
-                          </div>
-                        </div>
-                        <div className="flex">{renderStars(review.rating)}</div>
-                      </div>
-                      {review.comment && (
-                        <p className="muted-text text-sm leading-relaxed">{review.comment}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-12 text-center">
-                  <Star
-                    className="mx-auto mb-3 h-12 w-12"
-                    style={{ color: 'var(--glass-border-strong)' }}
-                  />
-                  <p className="muted-text text-sm">{t('profile.noReviews')}</p>
-                </div>
-              )}
+              {userId ? (
+                <ReviewFeed
+                  professionalId={userId}
+                  viewerId={userId}
+                  viewerName={profile?.full_name || contextUser?.email || null}
+                />
+              ) : null}
             </div>
           )}
         </div>

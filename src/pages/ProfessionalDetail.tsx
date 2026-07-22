@@ -31,23 +31,20 @@ import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { VerificationBadge } from '../components/MatchScoreBadge'
-import type { Profile, Review } from '../lib/types'
-import { ReviewFormV2 } from '../components/reviews/ReviewFormV2'
+import type { Profile } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
+import { ReviewFeed } from '../components/reviews/ReviewFeed'
 
 interface ProfessionalDetailProps {
   profileId: string
 }
 
-// Тип форми відгуку
-
 type ActiveTab = 'about' | 'portfolio' | 'reviews'
 
 export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
-  const { user } = useApp()
+  const { user, profile: viewerProfile } = useApp()
 
   const [profile, setProfile]           = useState<Profile | null>(null)
-  const [reviews, setReviews]           = useState<Review[]>([])
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState<string | null>(null)
   const [activeTab, setActiveTab]       = useState<ActiveTab>('about')
@@ -56,9 +53,6 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
   // Збереження профілю
   const [isSaved, setIsSaved]           = useState(false)
   const [savingProfile, setSavingProfile] = useState(false)
-
-  // Форма відгуку
-  const [reviewSuccess, setReviewSuccess] = useState(false)
 
   useEffect(() => {
     void loadProfile()
@@ -93,16 +87,6 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
       if (!data)  { setError('Профіль не знайдено.'); return }
 
       setProfile(data)
-
-      // Завантажуємо відгуки
-      const { data: reviewsData } = await supabase
-        .from('reviews')
-        .select('*')
-        .eq('professional_id', profileId)
-        .eq('is_hidden', false)
-        .order('created_at', { ascending: false })
-
-      if (!cancelled) setReviews(reviewsData || [])
     } catch (e) {
       if (!cancelled) setError(e instanceof Error ? e.message : 'Помилка завантаження')
     } finally {
@@ -269,7 +253,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
             {([
               { key: 'about', label: 'Про майстра' },
               { key: 'portfolio', label: 'Портфоліо' },
-              { key: 'reviews', label: 'Відгуки (' + reviews.length + ')' },
+              { key: 'reviews', label: 'Відгуки (' + (profile.total_reviews || 0) + ')' },
             ] as { key: ActiveTab; label: string }[]).map(tab => (
               <button
                 key={tab.key}
@@ -316,55 +300,16 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
             <div className="mt-4 space-y-4">
               <div className="amazon-section-card">
                 <h2 className="text-lg font-bold text-[var(--ink-900)]">Відгуки клієнтів</h2>
-                {reviews.length > 0 ? (
-                  <div className="mt-3 space-y-3">
-                    {reviews.map((review) => (
-                      <div key={review.id} className="rounded-sm border border-[#e7e7e7] p-3">
-                        <div className="mb-2 flex items-start justify-between gap-3">
-                          <div>
-                            <div className="font-medium text-sm text-[var(--ink-900)]">
-                              {review.reviewer_name}
-                            </div>
-                            <div className="mt-0.5 text-xs text-[var(--ink-500)]">
-                              {formatDate(review.created_at)}
-                            </div>
-                          </div>
-                          {renderStars(review.rating)}
-                        </div>
-                        {review.comment && (
-                          <p className="text-sm leading-relaxed text-[var(--ink-700)]">{review.comment}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="py-8 text-center">
-                    <Star className="mx-auto mb-3 h-10 w-10 text-[var(--ink-400)]" />
-                    <p className="text-sm text-[var(--ink-500)]">Відгуків ще немає</p>
-                  </div>
-                )}
-              </div>
-
-              {user && user.id !== profileId && !reviewSuccess && (
-                <ReviewFormV2
-                  professionalId={profileId}
-                  onSuccess={() => {
-                    setReviewSuccess(true)
-                    void supabase
-                      .from('reviews')
-                      .select('*')
-                      .eq('professional_id', profileId)
-                      .order('created_at', { ascending: false })
-                      .then(({ data }) => setReviews(data || []))
-                  }}
-                />
-              )}
-
-              {user && user.id !== profileId && reviewSuccess && (
-                <div className="amazon-section-card p-4">
-                  <p className="text-sm font-medium text-[#067d62]">Дякуємо! Ваш відгук збережено.</p>
+                <div className="mt-4">
+                  <ReviewFeed
+                    professionalId={profileId}
+                    viewerId={user?.id ?? null}
+                    viewerName={viewerProfile?.full_name || user?.email || null}
+                    showForm={Boolean(user && user.id !== profileId)}
+                    onSubmitted={() => void loadProfile()}
+                  />
                 </div>
-              )}
+              </div>
 
               {!user && (
                 <div className="amazon-section-card p-6 text-center">

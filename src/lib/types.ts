@@ -599,21 +599,25 @@ export interface Database {
       reviews: {
         Row: {
           id: string
-          // Кому залишили відгук
           professional_id: string
-          // Хто залишив відгук
           reviewer_id: string | null
           reviewer_name: string
           reviewer_email: string | null
-          // Роль того хто залишив відгук
           reviewer_role: 'client' | 'professional' | 'company' | null
           rating: number
           comment: string | null
-          // Пов'язане оголошення — підтверджує реальну взаємодію
           listing_id: string | null
-          // Модерація власником
           is_approved: boolean | null
           is_hidden: boolean | null
+          work_quality: number | null
+          communication: number | null
+          speed: number | null
+          reliability: number | null
+          would_recommend: boolean | null
+          moderation_flag: boolean | null
+          media_urls: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
+          like_count: number
+          is_verified_customer: boolean
           created_at: string
         }
         Insert: {
@@ -628,6 +632,15 @@ export interface Database {
           listing_id?: string | null
           is_approved?: boolean | null
           is_hidden?: boolean | null
+          work_quality?: number | null
+          communication?: number | null
+          speed?: number | null
+          reliability?: number | null
+          would_recommend?: boolean | null
+          moderation_flag?: boolean | null
+          media_urls?: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
+          like_count?: number
+          is_verified_customer?: boolean
           created_at?: string
         }
         Update: {
@@ -642,6 +655,63 @@ export interface Database {
           listing_id?: string | null
           is_approved?: boolean | null
           is_hidden?: boolean | null
+          work_quality?: number | null
+          communication?: number | null
+          speed?: number | null
+          reliability?: number | null
+          would_recommend?: boolean | null
+          moderation_flag?: boolean | null
+          media_urls?: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
+          like_count?: number
+          is_verified_customer?: boolean
+          created_at?: string
+        }
+      }
+
+      review_likes: {
+        Row: {
+          id: string
+          review_id: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          review_id: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          review_id?: string
+          user_id?: string
+          created_at?: string
+        }
+      }
+
+      review_replies: {
+        Row: {
+          id: string
+          review_id: string
+          author_id: string
+          author_name: string
+          body: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          review_id: string
+          author_id: string
+          author_name: string
+          body: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          review_id?: string
+          author_id?: string
+          author_name?: string
+          body?: string
           created_at?: string
         }
       }
