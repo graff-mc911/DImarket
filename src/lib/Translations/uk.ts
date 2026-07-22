@@ -24,8 +24,12 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'header.projects': 'Проєкти',
   'header.proDashboard': 'Кабінет майстра',
   'header.customerDashboard': 'Мій кабінет',
+  'header.costEstimator': 'Калькулятор вартості',
   'proDash.title': 'Кабінет професіонала',
   'customerDash.title': 'Ваш кабінет',
+  'costEstimator.title': 'Оцініть вартість проєкту',
+  'costEstimator.sub':
+    'Опишіть роботу, додайте фото та площу — отримайте роботу, матеріали, строки та Low / Average / Premium ціни.',
   'projects.title': 'Стрічка проєктів',
   'projects.sub': 'Нові заявки клієнтів — відгукніться, збережіть або приховайте',
   'project.trade.painter': 'Маляр',

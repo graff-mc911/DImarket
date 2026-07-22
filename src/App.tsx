@@ -53,6 +53,7 @@ import { QuoteBuilder } from './pages/QuoteBuilder'
 import { MyProjects } from './pages/MyProjects'
 import { ProDashboard } from './pages/ProDashboard'
 import { CustomerDashboard } from './pages/CustomerDashboard'
+import { CostEstimator } from './pages/CostEstimator'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -111,6 +112,8 @@ function App() {
       case '/customer/dashboard':
       case '/customer':
       case '/my':            return <CustomerDashboard />
+      case '/cost-estimator':
+      case '/estimate':      return <CostEstimator />
       case '/settings':      return <Settings />
       case '/profile':       return <Profile />
       case '/my-listings':   return <MyListings />

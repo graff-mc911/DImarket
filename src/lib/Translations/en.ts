@@ -24,8 +24,12 @@ export const enTranslations = {
   'header.projects': 'Projects',
   'header.proDashboard': 'Pro Dashboard',
   'header.customerDashboard': 'My Dashboard',
+  'header.costEstimator': 'Cost estimator',
   'proDash.title': 'Professional Dashboard',
   'customerDash.title': 'Your dashboard',
+  'costEstimator.title': 'Estimate your project cost',
+  'costEstimator.sub':
+    'Describe the work, add photos and area — get labor, materials, duration and Low / Average / Premium prices.',
   'projects.title': 'Project feed',
   'projects.sub': 'Incoming customer projects — apply, save, or hide',
   'leads.title': 'Project leads',
