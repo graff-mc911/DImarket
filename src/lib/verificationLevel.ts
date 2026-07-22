@@ -4,6 +4,8 @@ export function verificationLevelLabel(
   level: VerificationLevel | null | undefined,
 ): string {
   switch (level) {
+    case 'platinum':
+      return 'Platinum'
     case 'gold':
       return 'Gold'
     case 'silver':
@@ -19,6 +21,8 @@ export function verificationLevelClass(
   level: VerificationLevel | null | undefined,
 ): string {
   switch (level) {
+    case 'platinum':
+      return 'bg-gradient-to-r from-[#1e1b4b] to-[#4c1d95] text-white border-[#7c3aed]'
     case 'gold':
       return 'bg-[#ffd814] text-[#0f1111] border-[#f0c14b]'
     case 'silver':
@@ -39,9 +43,25 @@ export function estimateVerificationLevel(input: {
   hasCompanyDoc?: boolean
   hasInsuranceDoc?: boolean
   hasLicenseDoc?: boolean
+  hasBackgroundDoc?: boolean
+  emailVerified?: boolean
+  phoneVerified?: boolean
 }): VerificationLevel {
-  const hasPhone = Boolean(input.phone && input.phone.trim().length > 5)
-  const hasEmail = Boolean(input.email)
+  const hasPhone =
+    Boolean(input.phoneVerified) || Boolean(input.phone && input.phone.trim().length > 5)
+  const hasEmail = Boolean(input.emailVerified) || Boolean(input.email)
+  if (
+    hasPhone &&
+    hasEmail &&
+    input.isVerified &&
+    input.hasIdentityDoc &&
+    input.hasCompanyDoc &&
+    input.hasInsuranceDoc &&
+    input.hasLicenseDoc &&
+    input.hasBackgroundDoc
+  ) {
+    return 'platinum'
+  }
   if (
     hasPhone &&
     hasEmail &&

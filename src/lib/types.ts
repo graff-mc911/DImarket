@@ -102,7 +102,9 @@ export interface Database {
           // Верифікація — платна або адміном
           is_verified: boolean | null
           verified_at: string | null
-          verification_level: 'none' | 'bronze' | 'silver' | 'gold'
+          verification_level: 'none' | 'bronze' | 'silver' | 'gold' | 'platinum'
+          email_verified_at: string | null
+          phone_verified_at: string | null
 
           // Преміум профіль — платне підняття у видачі
           is_premium: boolean | null
@@ -150,7 +152,9 @@ export interface Database {
           client_total_reviews?: number | null
           is_verified?: boolean | null
           verified_at?: string | null
-          verification_level?: 'none' | 'bronze' | 'silver' | 'gold'
+          verification_level?: 'none' | 'bronze' | 'silver' | 'gold' | 'platinum'
+          email_verified_at?: string | null
+          phone_verified_at?: string | null
           is_premium?: boolean | null
           premium_expires_at?: string | null
           is_featured?: boolean | null
@@ -188,7 +192,9 @@ export interface Database {
           client_total_reviews?: number | null
           is_verified?: boolean | null
           verified_at?: string | null
-          verification_level?: 'none' | 'bronze' | 'silver' | 'gold'
+          verification_level?: 'none' | 'bronze' | 'silver' | 'gold' | 'platinum'
+          email_verified_at?: string | null
+          phone_verified_at?: string | null
           is_premium?: boolean | null
           premium_expires_at?: string | null
           is_featured?: boolean | null

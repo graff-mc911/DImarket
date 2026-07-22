@@ -1,6 +1,8 @@
 import { Star } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
+import { VerificationBadge } from '../MatchScoreBadge'
+import type { VerificationLevel } from '../../lib/types'
 
 export type TopMatchRow = {
   score: number
@@ -11,6 +13,7 @@ export type TopMatchRow = {
     rating: number | null
     total_reviews: number | null
     is_verified: boolean | null
+    verification_level?: VerificationLevel | null
   } | null
 }
 
@@ -43,9 +46,12 @@ export function TopMatchCards({ matches, listingId, compact = false }: TopMatchC
               className="flex items-center justify-between gap-2 rounded-xl border border-white/70 bg-white/70 px-3 py-2"
             >
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-[var(--ink-900)]">
-                  {c.full_name}
-                </p>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <p className="truncate text-sm font-semibold text-[var(--ink-900)]">
+                    {c.full_name}
+                  </p>
+                  <VerificationBadge level={c.verification_level} />
+                </div>
                 <p className="truncate text-[11px] text-[var(--ink-500)]">{c.location}</p>
                 <div className="mt-0.5 flex items-center gap-1 text-[11px] text-amber-600">
                   <Star className="h-3 w-3 fill-current" />

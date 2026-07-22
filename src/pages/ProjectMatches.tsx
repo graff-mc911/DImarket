@@ -49,6 +49,7 @@ const REASON_LABELS: Record<string, string> = {
   language_match: 'Language fit',
   available_now: 'Available now',
   available: 'Available',
+  verified_platinum: 'Platinum verified',
   verified_gold: 'Gold verified',
   verified_silver: 'Silver verified',
   verified_bronze: 'Bronze verified',

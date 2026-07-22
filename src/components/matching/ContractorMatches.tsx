@@ -3,6 +3,8 @@ import { Sparkles, Star } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { fetchMatchScoresForListing } from '../../lib/matching/persistMatches'
 import { navigateTo } from '../../lib/navigation'
+import { VerificationBadge } from '../MatchScoreBadge'
+import type { VerificationLevel } from '../../lib/types'
 
 type MatchRow = {
   score: number
@@ -14,6 +16,7 @@ type MatchRow = {
     rating: number | null
     total_reviews: number | null
     is_verified: boolean | null
+    verification_level?: VerificationLevel | null
   } | null
 }
 
@@ -53,16 +56,19 @@ export function ContractorMatches({ listingId }: Props) {
               className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-white/60 px-4 py-3"
             >
               <div className="min-w-0">
-                <p className="font-semibold text-slate-900">{c.full_name}</p>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <p className="font-semibold text-slate-900">{c.full_name}</p>
+                  <VerificationBadge level={c.verification_level} />
+                </div>
                 <p className="truncate text-xs text-slate-500">{c.location}</p>
                 <div className="mt-1 flex items-center gap-1 text-xs text-amber-600">
                   <Star className="h-3.5 w-3.5 fill-current" />
                   {c.rating ?? 0} ({c.total_reviews ?? 0})
-                  {c.is_verified && (
+                  {!c.verification_level && c.is_verified ? (
                     <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700">
                       {t('matching.verified')}
                     </span>
-                  )}
+                  ) : null}
                 </div>
               </div>
               <div className="shrink-0 text-right">

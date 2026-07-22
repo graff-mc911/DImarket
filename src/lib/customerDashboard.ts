@@ -18,7 +18,15 @@ export type FavoritePro = {
   savedId: string
   profile: Pick<
     Profile,
-    'id' | 'full_name' | 'location' | 'rating' | 'total_reviews' | 'profile_photo' | 'avatar_url' | 'is_verified'
+    | 'id'
+    | 'full_name'
+    | 'location'
+    | 'rating'
+    | 'total_reviews'
+    | 'profile_photo'
+    | 'avatar_url'
+    | 'is_verified'
+    | 'verification_level'
   > | null
 }
 
@@ -146,7 +154,7 @@ export async function fetchCustomerDashboardStats(
     const ids = savedRes.data.map((s) => s.item_id)
     const { data: pros } = await supabase
       .from('profiles')
-      .select('id, full_name, location, rating, total_reviews, profile_photo, avatar_url, is_verified')
+      .select('id, full_name, location, rating, total_reviews, profile_photo, avatar_url, is_verified, verification_level')
       .in('id', ids)
     const map = new Map((pros ?? []).map((p) => [p.id, p]))
     favoritePros = savedRes.data.map((s) => ({

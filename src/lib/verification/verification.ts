@@ -138,6 +138,28 @@ export async function adminReviewVerification(
   return true
 }
 
+export async function listVerificationDocTypes(verificationId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('verification_documents')
+    .select('doc_type')
+    .eq('verification_id', verificationId)
+
+  if (error || !data) return []
+  return [...new Set((data as { doc_type: string }[]).map((d) => d.doc_type))]
+}
+
+export async function markContactVerified(
+  profileId: string,
+  kind: 'email' | 'phone',
+): Promise<boolean> {
+  const patch =
+    kind === 'email'
+      ? { email_verified_at: new Date().toISOString() }
+      : { phone_verified_at: new Date().toISOString() }
+  const { error } = await supabase.from('profiles').update(patch as never).eq('id', profileId)
+  return !error
+}
+
 export async function listPendingVerifications() {
   const { data, error } = await supabase
     .from('contractor_verifications')

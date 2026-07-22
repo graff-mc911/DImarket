@@ -221,10 +221,11 @@ function scoreAvailability(p: MatchCandidate): { points: number; reason?: string
 function scoreVerification(p: MatchCandidate): { points: number; reason?: string } {
   const max = MATCH_WEIGHTS.verification
   const level = p.verification_level
-  if (level === 'gold') return { points: max, reason: 'verified_gold' }
-  if (level === 'silver') return { points: max * 0.75, reason: 'verified_silver' }
-  if (level === 'bronze') return { points: max * 0.5, reason: 'verified_bronze' }
-  if (p.is_verified) return { points: max * 0.45, reason: 'verified' }
+  if (level === 'platinum') return { points: max, reason: 'verified_platinum' }
+  if (level === 'gold') return { points: max * 0.9, reason: 'verified_gold' }
+  if (level === 'silver') return { points: max * 0.7, reason: 'verified_silver' }
+  if (level === 'bronze') return { points: max * 0.45, reason: 'verified_bronze' }
+  if (p.is_verified) return { points: max * 0.4, reason: 'verified' }
   return { points: max * 0.1 }
 }
 

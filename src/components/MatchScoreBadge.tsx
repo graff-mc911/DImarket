@@ -1,5 +1,6 @@
 import { verificationLevelClass, verificationLevelLabel } from '../lib/verificationLevel'
 import type { VerificationLevel } from '../lib/types'
+import { BadgeCheck } from 'lucide-react'
 
 export function MatchScoreBadge({
   score,
@@ -33,15 +34,30 @@ export function MatchScoreBadge({
 
 export function VerificationBadge({
   level,
+  size = 'sm',
+  showIcon = true,
+  className = '',
 }: {
   level: VerificationLevel | null | undefined
+  size?: 'sm' | 'md'
+  showIcon?: boolean
+  className?: string
 }) {
   if (!level || level === 'none') return null
+  const label = verificationLevelLabel(level)
   return (
     <span
-      className={`inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${verificationLevelClass(level)}`}
+      className={`inline-flex items-center gap-0.5 border font-bold uppercase tracking-wide ${verificationLevelClass(
+        level,
+      )} ${
+        size === 'md'
+          ? 'rounded-full px-2.5 py-1 text-[11px]'
+          : 'rounded-sm px-1.5 py-0.5 text-[10px]'
+      } ${className}`}
+      title={`${label} verified`}
     >
-      {verificationLevelLabel(level)}
+      {showIcon ? <BadgeCheck className={size === 'md' ? 'h-3.5 w-3.5' : 'h-3 w-3'} /> : null}
+      {label}
     </span>
   )
 }

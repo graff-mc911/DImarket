@@ -27,6 +27,7 @@ import {
   markNotificationRead,
 } from '../lib/notifications/notifications'
 import { AreaSparkline, BarChart, DonutProgress } from '../components/pro-dashboard/Charts'
+import { VerificationBadge } from '../components/MatchScoreBadge'
 
 function formatEuro(n: number): string {
   return `€${Math.round(n).toLocaleString()}`
@@ -520,9 +521,12 @@ export function CustomerDashboard() {
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p className={`truncate text-[14px] font-semibold ${ink}`}>
-                              {p.full_name || 'Professional'}
-                            </p>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <p className={`truncate text-[14px] font-semibold ${ink}`}>
+                                {p.full_name || 'Professional'}
+                              </p>
+                              <VerificationBadge level={p.verification_level} />
+                            </div>
                             <p className={`truncate text-[12px] ${muted}`}>
                               ★ {(p.rating ?? 0).toFixed(1)} · {p.location || 'EU'}
                             </p>
