@@ -538,6 +538,14 @@ export function Header() {
                         <User className="mr-2 inline h-4 w-4" />
                         {t('header.myProfile')}
                       </button>
+                      {!(profile?.user_role === 'professional' ||
+                        profile?.user_role === 'company' ||
+                        profile?.is_professional) && (
+                        <button onClick={() => goTo('/customer/dashboard')} type="button" className={dropdownItemClass}>
+                          <LayoutDashboard className="mr-2 inline h-4 w-4" />
+                          {t('header.customerDashboard' as never) || 'My Dashboard'}
+                        </button>
+                      )}
                       <button onClick={() => goTo('/settings')} type="button" className={dropdownItemClass}>
                         <Settings className="mr-2 inline h-4 w-4" />
                         {t('header.settings')}
@@ -852,6 +860,15 @@ export function Header() {
                       <User className="h-5 w-5" />
                       <span>{t('header.myProfile')}</span>
                     </button>
+
+                    {!(profile?.user_role === 'professional' ||
+                      profile?.user_role === 'company' ||
+                      profile?.is_professional) && (
+                      <button onClick={() => goTo('/customer/dashboard')} type="button" className={mobileNavItemClass}>
+                        <LayoutDashboard className="h-5 w-5" />
+                        <span>{t('header.customerDashboard' as never) || 'My Dashboard'}</span>
+                      </button>
+                    )}
 
                     <button onClick={() => goTo('/settings')} type="button" className={mobileNavItemClass}>
                       <Settings className="h-5 w-5" />
