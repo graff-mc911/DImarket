@@ -52,6 +52,8 @@ import { ProjectFeed } from './pages/ProjectFeed'
 import { QuoteBuilder } from './pages/QuoteBuilder'
 import { MyProjects } from './pages/MyProjects'
 import { ProDashboard } from './pages/ProDashboard'
+import { ProCalendar } from './pages/ProCalendar'
+import { BookProfessional } from './pages/BookProfessional'
 import { CustomerDashboard } from './pages/CustomerDashboard'
 import { CostEstimator } from './pages/CostEstimator'
 
@@ -76,6 +78,7 @@ function App() {
     // Динамічні маршрути
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
+    if (parts[0] === 'book' && parts[1]) return <BookProfessional profileId={parts[1]} />
     if (parts[0] === 'project' && parts[1] === 'new') return <CreateProject />
     if (parts[0] === 'create-project') return <CreateProject />
     if (parts[0] === 'project' && parts[1] && parts[2] === 'matches') {
@@ -109,6 +112,8 @@ function App() {
       case '/dashboard':     return <Dashboard />
       case '/pro/dashboard':
       case '/pro':           return <ProDashboard />
+      case '/pro/calendar':
+      case '/calendar':      return <ProCalendar />
       case '/customer/dashboard':
       case '/customer':
       case '/my':            return <CustomerDashboard />

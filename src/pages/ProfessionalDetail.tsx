@@ -380,6 +380,26 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
             </button>
           ) : null}
 
+          {user?.id !== profileId ? (
+            <button
+              type="button"
+              onClick={() => navigateTo(`/book/${profileId}`)}
+              className="btn-secondary mt-2 w-full py-2.5 text-sm"
+            >
+              <Calendar className="h-4 w-4" />
+              Book appointment
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => navigateTo('/pro/calendar')}
+              className="btn-secondary mt-2 w-full py-2.5 text-sm"
+            >
+              <Calendar className="h-4 w-4" />
+              Manage calendar
+            </button>
+          )}
+
           {user && user.id !== profileId && (
             <button
               type="button"
