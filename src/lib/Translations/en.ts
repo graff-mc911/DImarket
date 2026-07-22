@@ -22,6 +22,8 @@ export const enTranslations = {
   'header.myProjects': 'My projects',
   'header.leads': 'Leads',
   'header.projects': 'Projects',
+  'header.proDashboard': 'Pro Dashboard',
+  'proDash.title': 'Professional Dashboard',
   'projects.title': 'Project feed',
   'projects.sub': 'Incoming customer projects — apply, save, or hide',
   'leads.title': 'Project leads',

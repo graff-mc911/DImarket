@@ -19,6 +19,7 @@ import {
   FileText,
   Globe,
   Hammer,
+  LayoutDashboard,
   LogOut,
   Megaphone,
   MapPin,
@@ -547,6 +548,14 @@ export function Header() {
                           {t('verification.menu')}
                         </button>
                       )}
+                      {(profile?.is_professional ||
+                        profile?.user_role === 'professional' ||
+                        profile?.user_role === 'company') && (
+                        <button onClick={() => goTo('/pro/dashboard')} type="button" className={dropdownItemClass}>
+                          <LayoutDashboard className="mr-2 inline h-4 w-4" />
+                          {t('header.proDashboard' as never) || 'Pro Dashboard'}
+                        </button>
+                      )}
                       <button onClick={() => goTo('/my-listings')} type="button" className={dropdownItemClass}>
                         <FileText className="mr-2 inline h-4 w-4" />
                         {t('header.myListings') || 'Мої оголошення'}
@@ -848,6 +857,15 @@ export function Header() {
                       <Settings className="h-5 w-5" />
                       <span>{t('header.settings')}</span>
                     </button>
+
+                    {(profile?.is_professional ||
+                      profile?.user_role === 'professional' ||
+                      profile?.user_role === 'company') && (
+                      <button onClick={() => goTo('/pro/dashboard')} type="button" className={mobileNavItemClass}>
+                        <LayoutDashboard className="h-5 w-5" />
+                        <span>{t('header.proDashboard' as never) || 'Pro Dashboard'}</span>
+                      </button>
+                    )}
 
                     <button onClick={() => goTo('/my-listings')} type="button" className={mobileNavItemClass}>
                       <FileText className="h-5 w-5" />

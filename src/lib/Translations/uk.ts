@@ -22,6 +22,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'header.myProjects': 'Мої проекти',
   'header.leads': 'Ліди',
   'header.projects': 'Проєкти',
+  'header.proDashboard': 'Кабінет майстра',
+  'proDash.title': 'Кабінет професіонала',
   'projects.title': 'Стрічка проєктів',
   'projects.sub': 'Нові заявки клієнтів — відгукніться, збережіть або приховайте',
   'project.trade.painter': 'Маляр',

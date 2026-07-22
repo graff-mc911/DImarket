@@ -51,6 +51,7 @@ import { ProjectMatches } from './pages/ProjectMatches'
 import { ProjectFeed } from './pages/ProjectFeed'
 import { QuoteBuilder } from './pages/QuoteBuilder'
 import { MyProjects } from './pages/MyProjects'
+import { ProDashboard } from './pages/ProDashboard'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -104,6 +105,8 @@ function App() {
       case '/register':      return <Register />
       case '/auth/callback': return <AuthCallback />
       case '/dashboard':     return <Dashboard />
+      case '/pro/dashboard':
+      case '/pro':           return <ProDashboard />
       case '/settings':      return <Settings />
       case '/profile':       return <Profile />
       case '/my-listings':   return <MyListings />
