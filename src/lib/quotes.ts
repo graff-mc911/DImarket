@@ -1,5 +1,11 @@
 import { supabase } from './supabase'
 import type { Quote } from './types'
+import {
+  buildQuotePdfHtml,
+  openQuotePdfPrint,
+  uploadQuotePdfDocument,
+  type QuotePdfMeta,
+} from './quotePdf'
 
 export type QuoteLineItem = {
   id: string
@@ -10,26 +16,101 @@ export type QuoteLineItem = {
 export type QuoteDraft = {
   materials: QuoteLineItem[]
   labor: QuoteLineItem[]
+  equipment: QuoteLineItem[]
   vatPercent: number
   discount: number
   currency: string
   notes: string
 }
 
-export function calcQuoteTotals(draft: QuoteDraft): { subtotal: number; total: number } {
-  const mat = draft.materials.reduce((s, i) => s + (Number(i.amount) || 0), 0)
-  const lab = draft.labor.reduce((s, i) => s + (Number(i.amount) || 0), 0)
-  const subtotal = mat + lab
-  const afterDiscount = Math.max(0, subtotal - (Number(draft.discount) || 0))
-  const total = afterDiscount * (1 + (Number(draft.vatPercent) || 0) / 100)
+export type QuoteTotals = {
+  materials: number
+  labor: number
+  equipment: number
+  subtotal: number
+  discount: number
+  afterDiscount: number
+  vat: number
+  total: number
+}
+
+export function calcQuoteTotals(draft: QuoteDraft): QuoteTotals {
+  const materials = draft.materials.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const labor = draft.labor.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const equipment = (draft.equipment || []).reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const subtotal = materials + labor + equipment
+  const discount = Math.max(0, Number(draft.discount) || 0)
+  const afterDiscount = Math.max(0, subtotal - discount)
+  const vat = afterDiscount * ((Number(draft.vatPercent) || 0) / 100)
+  const total = afterDiscount + vat
+  const round = (n: number) => Math.round(n * 100) / 100
   return {
-    subtotal: Math.round(subtotal * 100) / 100,
-    total: Math.round(total * 100) / 100,
+    materials: round(materials),
+    labor: round(labor),
+    equipment: round(equipment),
+    subtotal: round(subtotal),
+    discount: round(discount),
+    afterDiscount: round(afterDiscount),
+    vat: round(vat),
+    total: round(total),
   }
 }
 
 export function newLine(label = ''): QuoteLineItem {
   return { id: crypto.randomUUID(), label, amount: 0 }
+}
+
+export function emptyQuoteDraft(): QuoteDraft {
+  return {
+    materials: [newLine('Materials')],
+    labor: [newLine('Labor')],
+    equipment: [newLine('Equipment')],
+    vatPercent: 20,
+    discount: 0,
+    currency: 'EUR',
+    notes: '',
+  }
+}
+
+function parseLines(raw: unknown): QuoteLineItem[] {
+  if (!Array.isArray(raw)) return []
+  return raw.map((item) => {
+    const row = item as Partial<QuoteLineItem>
+    return {
+      id: row.id || crypto.randomUUID(),
+      label: String(row.label || ''),
+      amount: Number(row.amount) || 0,
+    }
+  })
+}
+
+/** Load equipment from column or from materials tagged items */
+export function draftFromQuoteRow(row: Quote): QuoteDraft {
+  const equipmentCol = (row as Quote & { equipment?: unknown }).equipment
+  let equipment = parseLines(equipmentCol)
+  let materials = parseLines(row.materials)
+
+  // Legacy: equipment embedded in materials with [Equipment] prefix
+  if (!equipment.length) {
+    const tagged = materials.filter((l) => l.label.startsWith('[Equipment]'))
+    if (tagged.length) {
+      equipment = tagged.map((l) => ({
+        ...l,
+        label: l.label.replace(/^\[Equipment\]\s*/, ''),
+      }))
+      materials = materials.filter((l) => !l.label.startsWith('[Equipment]'))
+    }
+  }
+
+  return {
+    materials: materials.length ? materials : [newLine()],
+    labor: parseLines(row.labor).length ? parseLines(row.labor) : [newLine()],
+    equipment: equipment.length ? equipment : [newLine()],
+    vatPercent: Number(row.vat_percent) || 20,
+    discount: Number(row.discount) || 0,
+    currency: row.currency || 'EUR',
+    notes: row.notes || '',
+  }
 }
 
 export async function saveQuote(input: {
@@ -39,41 +120,56 @@ export async function saveQuote(input: {
   draft: QuoteDraft
   status: 'draft' | 'sent'
   quoteId?: string
+  pdfUrl?: string | null
 }): Promise<{ id: string } | { error: string }> {
-  const { subtotal, total } = calcQuoteTotals(input.draft)
-  const payload = {
+  const totals = calcQuoteTotals(input.draft)
+  const basePayload = {
     application_id: input.applicationId,
     listing_id: input.listingId,
     professional_id: input.professionalId,
     materials: input.draft.materials,
     labor: input.draft.labor,
+    equipment: input.draft.equipment,
     vat_percent: input.draft.vatPercent,
     discount: input.draft.discount,
     currency: input.draft.currency,
-    subtotal,
-    total,
+    subtotal: totals.subtotal,
+    total: totals.total,
     notes: input.draft.notes || null,
     status: input.status,
     updated_at: new Date().toISOString(),
+    ...(input.pdfUrl ? { pdf_url: input.pdfUrl } : {}),
   }
 
-  if (input.quoteId) {
-    const { data, error } = await supabase
-      .from('quotes')
-      .update(payload as never)
-      .eq('id', input.quoteId)
-      .select('id')
-      .single()
-    if (error || !data) return { error: error?.message || 'update_failed' }
-    return { id: (data as { id: string }).id }
+  const trySave = async (payload: Record<string, unknown>) => {
+    if (input.quoteId) {
+      return supabase
+        .from('quotes')
+        .update(payload as never)
+        .eq('id', input.quoteId)
+        .select('id')
+        .single()
+    }
+    return supabase.from('quotes').insert(payload as never).select('id').single()
   }
 
-  const { data, error } = await supabase
-    .from('quotes')
-    .insert(payload as never)
-    .select('id')
-    .single()
-  if (error || !data) return { error: error?.message || 'create_failed' }
+  let { data, error } = await trySave(basePayload)
+
+  // Fallback if equipment column missing
+  if (error && /equipment/i.test(error.message || '')) {
+    const mergedMaterials = [
+      ...input.draft.materials,
+      ...input.draft.equipment.map((l) => ({
+        ...l,
+        label: l.label.startsWith('[Equipment]') ? l.label : `[Equipment] ${l.label}`,
+      })),
+    ]
+    const fallback = { ...basePayload, materials: mergedMaterials }
+    delete (fallback as { equipment?: unknown }).equipment
+    ;({ data, error } = await trySave(fallback))
+  }
+
+  if (error || !data) return { error: error?.message || 'save_failed' }
   return { id: (data as { id: string }).id }
 }
 
@@ -92,8 +188,79 @@ export async function fetchQuoteForApplication(applicationId: string): Promise<Q
   return data as Quote | null
 }
 
-/** Print-friendly PDF via browser print dialog */
+export async function generateAndStoreQuotePdf(opts: {
+  userId: string
+  quoteId: string
+  draft: QuoteDraft
+  meta: QuotePdfMeta
+}): Promise<{ html: string; pdfUrl: string | null }> {
+  const html = buildQuotePdfHtml(opts.draft, opts.meta)
+  const pdfUrl = await uploadQuotePdfDocument(opts.userId, opts.quoteId, html)
+  if (pdfUrl) {
+    await supabase
+      .from('quotes')
+      .update({ pdf_url: pdfUrl, updated_at: new Date().toISOString() } as never)
+      .eq('id', opts.quoteId)
+  }
+  return { html, pdfUrl }
+}
+
+export function printQuotePdf(html: string): void {
+  openQuotePdfPrint(html)
+}
+
+/** @deprecated use printQuotePdf with generated HTML */
 export function printQuoteAsPdf(title: string): void {
   document.title = title
   window.print()
+}
+
+export async function emailQuoteToCustomer(opts: {
+  quoteId: string
+  toEmail: string
+  customerName?: string
+  projectTitle: string
+  total: number
+  currency: string
+  pdfUrl?: string | null
+  html?: string
+}): Promise<{ ok: boolean; error?: string }> {
+  const { data, error } = await supabase.functions.invoke('send-quote-email', {
+    body: {
+      quote_id: opts.quoteId,
+      to_email: opts.toEmail,
+      customer_name: opts.customerName,
+      project_title: opts.projectTitle,
+      total: opts.total,
+      currency: opts.currency,
+      pdf_url: opts.pdfUrl,
+      html: opts.html,
+    },
+  })
+
+  if (error) {
+    console.error('emailQuoteToCustomer:', error)
+    return { ok: false, error: error.message }
+  }
+  const payload = data as { ok?: boolean; error?: string } | null
+  if (payload && payload.ok === false) {
+    return { ok: false, error: payload.error || 'email_failed' }
+  }
+  return { ok: true }
+}
+
+export async function notifyCustomerQuoteInApp(opts: {
+  customerId: string
+  listingId: string
+  projectTitle: string
+  total: number
+}): Promise<void> {
+  await supabase.from('notifications').insert({
+    user_id: opts.customerId,
+    type: 'quote_received',
+    title: 'New quote received',
+    body: `You received a quote of €${opts.total.toFixed(2)} for “${opts.projectTitle}”.`,
+    link_path: `/listing/${opts.listingId}`,
+    is_read: false,
+  } as never)
 }

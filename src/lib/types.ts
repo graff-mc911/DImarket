@@ -427,6 +427,7 @@ export interface Database {
           professional_id: string
           materials: unknown
           labor: unknown
+          equipment: unknown
           vat_percent: number
           discount: number
           currency: string
@@ -446,6 +447,7 @@ export interface Database {
           professional_id: string
           materials?: unknown
           labor?: unknown
+          equipment?: unknown
           vat_percent?: number
           discount?: number
           currency?: string
@@ -465,6 +467,7 @@ export interface Database {
           professional_id?: string
           materials?: unknown
           labor?: unknown
+          equipment?: unknown
           vat_percent?: number
           discount?: number
           currency?: string

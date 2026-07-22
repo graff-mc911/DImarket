@@ -538,7 +538,7 @@ export function ProjectFeed() {
                           }}
                         >
                           <Send className="h-3.5 w-3.5" />
-                          {applied ? 'Applied' : 'Apply'}
+                          {applied ? 'Applied' : 'Generate Quote'}
                         </button>
                         <button
                           type="button"
@@ -574,7 +574,7 @@ export function ProjectFeed() {
                             className="ml-auto text-[13px] font-semibold text-[#0066cc]"
                             onClick={() => navigateTo(`/leads/${app.id}/quote`)}
                           >
-                            Open quote →
+                            Open Quote Builder →
                           </button>
                         ) : null}
                       </div>
