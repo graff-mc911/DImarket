@@ -1,15 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Send } from 'lucide-react'
+import { ImagePlus, Send } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
-import { ensureConversation } from '../../lib/chat/conversations'
+import { ensureConversation, setTypingIndicator } from '../../lib/chat/conversations'
 import { fetchListingConversations } from '../../lib/chat/listingConversations'
 import {
+  fetchAttachmentsForMessages,
   fetchMessages,
   markConversationRead,
   sendChatMessage,
 } from '../../lib/chat/messages'
-import type { ChatConversation, ChatMessage } from '../../lib/chat/types'
+import {
+  attachToMessage,
+  captionForAttachment,
+  CHAT_MEDIA_ACCEPT,
+  uploadChatAttachment,
+} from '../../lib/chat/attachments'
+import type { ChatConversation, ChatMessage, MessageAttachment } from '../../lib/chat/types'
 import { supabase } from '../../lib/supabase'
 
 type Props = {
@@ -25,7 +32,11 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
   const [draft, setDraft] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [typing, setTyping] = useState(false)
+  const [attachments, setAttachments] = useState<Map<string, MessageAttachment[]>>(new Map())
   const endRef = useRef<HTMLDivElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
+  const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const isOwner = user?.id === authorId
   const otherPartyId = isOwner ? active?.other_user_id : authorId
@@ -62,6 +73,8 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
   const loadMessages = useCallback(async (convId: string) => {
     const rows = await fetchMessages(convId)
     setMessages(rows)
+    const attMap = await fetchAttachmentsForMessages(rows.map((m) => m.id))
+    setAttachments(attMap)
     if (user) await markConversationRead(convId, user.id)
   }, [user])
 
@@ -100,9 +113,50 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
             if (prev.some((m) => m.id === row.id)) return prev
             return [...prev, row]
           })
+          if ((row.attachment_count ?? 0) > 0) {
+            void fetchAttachmentsForMessages([row.id]).then((map) => {
+              setAttachments((prev) => {
+                const next = new Map(prev)
+                for (const [k, v] of map) next.set(k, v)
+                return next
+              })
+            })
+          }
           if (row.recipient_id === user.id) {
             void markConversationRead(active.id, user.id)
           }
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${active.id}`,
+        },
+        (payload) => {
+          const row = payload.new as ChatMessage
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === row.id
+                ? { ...m, is_read: row.is_read, delivery_status: row.delivery_status }
+                : m,
+            ),
+          )
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'conversations',
+          filter: `id=eq.${active.id}`,
+        },
+        (payload) => {
+          const row = payload.new as { typing_user_id?: string | null }
+          setTyping(Boolean(row.typing_user_id && row.typing_user_id !== user.id))
         },
       )
       .subscribe()
@@ -112,31 +166,47 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
     }
   }, [active?.id, user])
 
+  const signalTyping = () => {
+    if (!active?.id || !user) return
+    void setTypingIndicator(active.id, user.id)
+    if (typingTimeout.current) clearTimeout(typingTimeout.current)
+    typingTimeout.current = setTimeout(() => {
+      void setTypingIndicator(active.id, null)
+    }, 2500)
+  }
+
+  const ensureActiveConversation = async () => {
+    if (!user || !otherPartyId) return null
+    let convId = active?.id
+    if (!convId) {
+      convId = await ensureConversation(otherPartyId, listingId)
+      if (!convId) return null
+      await loadThreads()
+      const refreshed = await fetchListingConversations(user.id, listingId)
+      const found = refreshed.find((c) => c.id === convId) ?? {
+        id: convId,
+        listing_id: listingId,
+        listing_title: null,
+        other_user_id: otherPartyId,
+        other_user_name: isOwner ? 'User' : t('listing.chatOwner'),
+        last_message: '',
+        last_message_at: new Date().toISOString(),
+        unread_count: 0,
+      }
+      setActive(found)
+      if (isOwner) setThreads(refreshed)
+    }
+    return convId
+  }
+
   const handleSend = async () => {
     const text = draft.trim()
     if (!text || !user || !otherPartyId || sending) return
 
     setSending(true)
     try {
-      let convId = active?.id
-      if (!convId) {
-        convId = await ensureConversation(otherPartyId, listingId)
-        if (!convId) return
-        await loadThreads()
-        const refreshed = await fetchListingConversations(user.id, listingId)
-        const found = refreshed.find((c) => c.id === convId) ?? {
-          id: convId,
-          listing_id: listingId,
-          listing_title: null,
-          other_user_id: otherPartyId,
-          other_user_name: isOwner ? 'User' : t('listing.chatOwner'),
-          last_message: '',
-          last_message_at: new Date().toISOString(),
-          unread_count: 0,
-        }
-        setActive(found)
-        if (isOwner) setThreads(refreshed)
-      }
+      const convId = await ensureActiveConversation()
+      if (!convId) return
 
       const msg = await sendChatMessage({
         conversationId: convId,
@@ -149,7 +219,39 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
       if (msg) {
         setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]))
         setDraft('')
+        void setTypingIndicator(convId, null)
       }
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const handleFile = async (file?: File) => {
+    if (!file || !user || !otherPartyId || sending) return
+    setSending(true)
+    try {
+      const convId = await ensureActiveConversation()
+      if (!convId) return
+      const upload = await uploadChatAttachment(file, convId, user.id)
+      if (!upload) return
+      const label = captionForAttachment(upload.type, file.name)
+      const msg = await sendChatMessage({
+        conversationId: convId,
+        senderId: user.id,
+        senderName: profile?.full_name || 'User',
+        recipientId: otherPartyId,
+        listingId,
+        content: label,
+      })
+      if (!msg) return
+      await attachToMessage(msg.id, { ...upload, fileName: file.name, size: file.size })
+      setMessages((prev) => [...prev, { ...msg, attachment_count: 1 }])
+      const map = await fetchAttachmentsForMessages([msg.id])
+      setAttachments((prev) => {
+        const next = new Map(prev)
+        for (const [k, v] of map) next.set(k, v)
+        return next
+      })
     } finally {
       setSending(false)
     }
@@ -205,6 +307,7 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
               <ul className="space-y-2">
                 {messages.map((msg) => {
                   const mine = msg.sender_id === user.id
+                  const atts = attachments.get(msg.id) ?? []
                   return (
                     <li
                       key={msg.id}
@@ -217,19 +320,50 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
                           color: mine ? '#fff' : 'var(--ink-800)',
                         }}
                       >
+                        {atts.map((a) =>
+                          a.attachment_type === 'image' ? (
+                            <img
+                              key={a.id}
+                              src={a.public_url}
+                              alt=""
+                              className="mb-1 max-h-32 rounded-lg object-cover"
+                            />
+                          ) : a.attachment_type === 'video' ? (
+                            <video
+                              key={a.id}
+                              src={a.public_url}
+                              controls
+                              className="mb-1 max-h-32 w-full rounded-lg"
+                            />
+                          ) : a.attachment_type === 'voice' || a.attachment_type === 'audio' ? (
+                            <audio key={a.id} src={a.public_url} controls className="mb-1 w-full" />
+                          ) : (
+                            <a
+                              key={a.id}
+                              href={a.public_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="mb-1 block underline"
+                            >
+                              {a.file_name || 'File'}
+                            </a>
+                          ),
+                        )}
                         <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                        <p
-                          className="mt-1 text-[10px] opacity-70"
-                        >
+                        <p className="mt-1 text-[10px] opacity-70">
                           {new Date(msg.created_at).toLocaleTimeString(undefined, {
                             hour: '2-digit',
                             minute: '2-digit',
                           })}
+                          {mine && (msg.is_read || msg.delivery_status === 'read') ? ' · read' : ''}
                         </p>
                       </div>
                     </li>
                   )
                 })}
+                {typing ? (
+                  <li className="text-[11px] text-emerald-600">typing…</li>
+                ) : null}
                 <div ref={endRef} />
               </ul>
             )}
@@ -239,9 +373,31 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
             className="flex items-end gap-2 border-t p-2"
             style={{ borderColor: 'var(--glass-border)' }}
           >
+            <input
+              ref={fileRef}
+              type="file"
+              className="hidden"
+              accept={CHAT_MEDIA_ACCEPT}
+              onChange={(e) => {
+                void handleFile(e.target.files?.[0])
+                e.target.value = ''
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border"
+              style={{ borderColor: 'var(--glass-border)' }}
+              aria-label="Attach"
+            >
+              <ImagePlus className="h-4 w-4" />
+            </button>
             <textarea
               value={draft}
-              onChange={(e) => setDraft(e.target.value)}
+              onChange={(e) => {
+                setDraft(e.target.value)
+                signalTyping()
+              }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()

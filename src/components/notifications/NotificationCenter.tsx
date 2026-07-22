@@ -45,7 +45,28 @@ export function NotificationCenter() {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          setItems((prev) => [payload.new as AppNotification, ...prev].slice(0, 40))
+          const row = payload.new as AppNotification
+          setItems((prev) => [row, ...prev].slice(0, 40))
+          if (
+            typeof Notification !== 'undefined' &&
+            Notification.permission === 'granted' &&
+            document.visibilityState !== 'visible'
+          ) {
+            try {
+              const n = new Notification(row.title || 'DImarket', {
+                body: row.body || '',
+                icon: '/favicon.ico',
+                tag: row.id,
+              })
+              n.onclick = () => {
+                window.focus()
+                if (row.link_path) navigateTo(row.link_path)
+                n.close()
+              }
+            } catch {
+              /* ignore */
+            }
+          }
         },
       )
       .subscribe()

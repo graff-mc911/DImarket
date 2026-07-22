@@ -1,36 +1,159 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   ArrowLeft,
+  Check,
+  CheckCheck,
   FileText,
   ImagePlus,
   MessageSquare,
+  Mic,
   Paperclip,
   Send,
+  Square,
   User,
 } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import { useChat } from '../../hooks/useChat'
-import type { ChatConversation } from '../../lib/chat/types'
+import type { ChatConversation, MessageAttachment } from '../../lib/chat/types'
+import { CHAT_MEDIA_ACCEPT } from '../../lib/chat/attachments'
+import {
+  savePushSubscription,
+  vapidPublicKey,
+} from '../../lib/notifications/notifications'
 
 type Props = {
-  /** Open thread after ensure_conversation (from listing/professional). */
   bootstrap?: { otherUserId: string; listingId?: string | null }
+}
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const raw = atob(base64)
+  const out = new Uint8Array(raw.length)
+  for (let i = 0; i < raw.length; i += 1) out[i] = raw.charCodeAt(i)
+  return out
+}
+
+function Receipt({ mine, status, isRead }: { mine: boolean; status?: string | null; isRead: boolean }) {
+  if (!mine) return null
+  const read = isRead || status === 'read'
+  const delivered = read || status === 'delivered'
+  if (read) {
+    return (
+      <span className="ml-1 inline-flex items-center gap-0.5 text-indigo-200" title="Read">
+        <CheckCheck className="h-3 w-3" />
+      </span>
+    )
+  }
+  if (delivered) {
+    return (
+      <span className="ml-1 inline-flex items-center gap-0.5 text-indigo-200" title="Delivered">
+        <CheckCheck className="h-3 w-3 opacity-70" />
+      </span>
+    )
+  }
+  return (
+    <span className="ml-1 inline-flex items-center gap-0.5 text-indigo-200" title="Sent">
+      <Check className="h-3 w-3" />
+    </span>
+  )
+}
+
+function AttachmentBlock({
+  atts,
+  mine,
+}: {
+  atts: MessageAttachment[]
+  mine: boolean
+}) {
+  return (
+    <>
+      {atts.map((a) => {
+        if (a.attachment_type === 'image') {
+          return (
+            <a key={a.id} href={a.public_url} target="_blank" rel="noreferrer">
+              <img
+                src={a.public_url}
+                alt=""
+                className="mb-2 max-h-56 rounded-xl object-cover"
+                loading="lazy"
+              />
+            </a>
+          )
+        }
+        if (a.attachment_type === 'video') {
+          return (
+            <video
+              key={a.id}
+              src={a.public_url}
+              controls
+              playsInline
+              className="mb-2 max-h-56 w-full rounded-xl bg-black"
+            />
+          )
+        }
+        if (a.attachment_type === 'voice' || a.attachment_type === 'audio') {
+          return (
+            <audio key={a.id} src={a.public_url} controls className="mb-2 w-full min-w-[200px]" />
+          )
+        }
+        return (
+          <a
+            key={a.id}
+            href={a.public_url}
+            target="_blank"
+            rel="noreferrer"
+            className={`mb-2 flex items-center gap-2 underline ${mine ? 'text-indigo-100' : ''}`}
+          >
+            <Paperclip className="h-4 w-4" />
+            {a.file_name || (a.attachment_type === 'pdf' ? 'PDF' : 'File')}
+          </a>
+        )
+      })}
+    </>
+  )
 }
 
 export function ChatMessenger({ bootstrap }: Props) {
   const { user, profile, t } = useApp()
   const [newMessage, setNewMessage] = useState('')
   const [showChat, setShowChat] = useState(false)
-  const [tableMissing, setTableMissing] = useState(false)
+  const [recording, setRecording] = useState(false)
+  const [recordError, setRecordError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const mediaRecorder = useRef<MediaRecorder | null>(null)
+  const chunks = useRef<Blob[]>([])
 
   const chat = useChat(user?.id, profile?.full_name || 'User')
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [chat.messages])
+  }, [chat.messages, chat.attachments])
+
+  useEffect(() => {
+    if (!user) return
+    void (async () => {
+      const key = vapidPublicKey()
+      if (!key || !('serviceWorker' in navigator) || !('PushManager' in window)) return
+      try {
+        const perm = await Notification.requestPermission()
+        if (perm !== 'granted') return
+        const reg = await navigator.serviceWorker.register('/sw.js')
+        const existing = await reg.pushManager.getSubscription()
+        const sub =
+          existing ||
+          (await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(key),
+          }))
+        await savePushSubscription(user.id, sub)
+      } catch (e) {
+        console.error('chat push enable:', e)
+      }
+    })()
+  }, [user?.id])
 
   useEffect(() => {
     if (!user || !bootstrap) return
@@ -89,15 +212,35 @@ export function ChatMessenger({ bootstrap }: Props) {
     await chat.sendFile(file)
   }
 
-  if (tableMissing) {
-    return (
-      <div className="py-10">
-        <div className="glass-panel mx-auto max-w-lg p-8 text-center">
-          <MessageSquare className="mx-auto h-10 w-10 text-[var(--accent-600)]" />
-          <p className="mt-4 text-sm muted-text">{t('messages.setupRequired')}</p>
-        </div>
-      </div>
-    )
+  const startRecording = async () => {
+    setRecordError(null)
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : 'audio/webm'
+      const recorder = new MediaRecorder(stream)
+      chunks.current = []
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.current.push(e.data)
+      }
+      recorder.onstop = () => {
+        stream.getTracks().forEach((t) => t.stop())
+        const blob = new Blob(chunks.current, { type: mime })
+        const file = new File([blob], `voice-${Date.now()}.webm`, { type: 'audio/webm' })
+        void chat.sendFile(file, undefined, 'voice')
+      }
+      mediaRecorder.current = recorder
+      recorder.start()
+      setRecording(true)
+    } catch {
+      setRecordError('Microphone permission required')
+    }
+  }
+
+  const stopRecording = () => {
+    mediaRecorder.current?.stop()
+    setRecording(false)
   }
 
   return (
@@ -108,7 +251,6 @@ export function ChatMessenger({ bootstrap }: Props) {
 
       <div className="glass-panel overflow-hidden rounded-[28px] border border-[var(--glass-border)] shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
         <div className="flex min-h-[520px] md:min-h-[600px]">
-          {/* Conversation list */}
           <aside
             className={`w-full shrink-0 border-r border-[var(--glass-border)] bg-[rgba(255,255,255,0.35)] md:w-[320px] lg:w-[360px] ${
               showChat ? 'hidden md:block' : 'block'
@@ -158,7 +300,6 @@ export function ChatMessenger({ bootstrap }: Props) {
             )}
           </aside>
 
-          {/* Thread */}
           <section
             className={`flex min-w-0 flex-1 flex-col bg-[rgba(255,255,255,0.5)] ${
               showChat ? 'flex' : 'hidden md:flex'
@@ -174,7 +315,7 @@ export function ChatMessenger({ bootstrap }: Props) {
                 <header className="flex items-center gap-3 border-b border-[var(--glass-border)] px-4 py-3">
                   <button
                     type="button"
-                    className="md:hidden rounded-full p-2 hover:bg-slate-100"
+                    className="rounded-full p-2 hover:bg-slate-100 md:hidden"
                     onClick={() => setShowChat(false)}
                   >
                     <ArrowLeft className="h-5 w-5" />
@@ -184,10 +325,9 @@ export function ChatMessenger({ bootstrap }: Props) {
                     {chat.active.listing_title && (
                       <p className="truncate text-xs text-indigo-600">{chat.active.listing_title}</p>
                     )}
-                    {chat.active.typing_user_id &&
-                      chat.active.typing_user_id !== user.id && (
-                        <p className="text-xs text-slate-500">{t('messages.typing')}</p>
-                      )}
+                    {chat.active.typing_user_id && chat.active.typing_user_id !== user.id ? (
+                      <p className="animate-pulse text-xs text-emerald-600">{t('messages.typing')}</p>
+                    ) : null}
                   </div>
                   {chat.active.listing_id && (
                     <button
@@ -208,6 +348,9 @@ export function ChatMessenger({ bootstrap }: Props) {
                     chat.messages.map((msg) => {
                       const mine = msg.sender_id === user.id
                       const atts = chat.attachments.get(msg.id) ?? []
+                      const hideCaption =
+                        atts.length > 0 &&
+                        /^(📷|🎬|🎤|🔊|📄|📎)/.test(msg.content.trim())
                       return (
                         <div
                           key={msg.id}
@@ -220,34 +363,21 @@ export function ChatMessenger({ bootstrap }: Props) {
                                 : 'border border-slate-200 bg-white text-slate-800'
                             }`}
                           >
-                            {atts.map((a) =>
-                              a.attachment_type === 'image' ? (
-                                <a key={a.id} href={a.public_url} target="_blank" rel="noreferrer">
-                                  <img
-                                    src={a.public_url}
-                                    alt=""
-                                    className="mb-2 max-h-48 rounded-xl object-cover"
-                                  />
-                                </a>
-                              ) : (
-                                <a
-                                  key={a.id}
-                                  href={a.public_url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="mb-2 flex items-center gap-2 underline"
-                                >
-                                  <Paperclip className="h-4 w-4" />
-                                  {a.file_name || 'File'}
-                                </a>
-                              ),
-                            )}
-                            <p className="whitespace-pre-wrap">{msg.content}</p>
+                            <AttachmentBlock atts={atts} mine={mine} />
+                            {!hideCaption ? (
+                              <p className="whitespace-pre-wrap">{msg.content}</p>
+                            ) : null}
                             <p
-                              className={`mt-1 text-[10px] ${mine ? 'text-indigo-200' : 'text-slate-400'}`}
+                              className={`mt-1 flex items-center text-[10px] ${
+                                mine ? 'text-indigo-200' : 'text-slate-400'
+                              }`}
                             >
                               {formatTime(msg.created_at)}
-                              {mine && msg.is_read && ` · ${t('messages.read')}`}
+                              <Receipt
+                                mine={mine}
+                                status={msg.delivery_status}
+                                isRead={msg.is_read}
+                              />
                             </p>
                           </div>
                         </div>
@@ -262,9 +392,15 @@ export function ChatMessenger({ bootstrap }: Props) {
                     ref={fileRef}
                     type="file"
                     className="hidden"
-                    accept="image/*,application/pdf"
-                    onChange={(e) => void handleFile(e.target.files?.[0])}
+                    accept={CHAT_MEDIA_ACCEPT}
+                    onChange={(e) => {
+                      void handleFile(e.target.files?.[0])
+                      e.target.value = ''
+                    }}
                   />
+                  {recordError ? (
+                    <p className="mb-2 text-[12px] text-red-600">{recordError}</p>
+                  ) : null}
                   <div className="flex items-end gap-2">
                     <button
                       type="button"
@@ -273,6 +409,18 @@ export function ChatMessenger({ bootstrap }: Props) {
                       title={t('messages.attach')}
                     >
                       <ImagePlus className="h-5 w-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => (recording ? stopRecording() : void startRecording())}
+                      className={`rounded-2xl border p-3 ${
+                        recording
+                          ? 'border-red-300 bg-red-50 text-red-600'
+                          : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                      title="Voice message"
+                    >
+                      {recording ? <Square className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                     </button>
                     <textarea
                       value={newMessage}

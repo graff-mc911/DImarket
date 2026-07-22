@@ -8,10 +8,16 @@ import {
 import {
   fetchMessages,
   markConversationRead,
+  markMessagesDelivered,
   sendChatMessage,
   fetchAttachmentsForMessages,
 } from '../lib/chat/messages'
-import { uploadChatAttachment, attachToMessage } from '../lib/chat/attachments'
+import {
+  uploadChatAttachment,
+  attachToMessage,
+  captionForAttachment,
+  type ChatAttachmentType,
+} from '../lib/chat/attachments'
 import type { ChatConversation, ChatMessage, MessageAttachment } from '../lib/chat/types'
 
 export function useChat(userId: string | undefined, senderName: string) {
@@ -23,6 +29,21 @@ export function useChat(userId: string | undefined, senderName: string) {
   const [loadingThread, setLoadingThread] = useState(false)
   const [sending, setSending] = useState(false)
   const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const activeIdRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    activeIdRef.current = active?.id ?? null
+  }, [active?.id])
+
+  const mergeAttachments = useCallback(async (messageIds: string[]) => {
+    if (!messageIds.length) return
+    const attMap = await fetchAttachmentsForMessages(messageIds)
+    setAttachments((prev) => {
+      const next = new Map(prev)
+      for (const [k, v] of attMap) next.set(k, v)
+      return next
+    })
+  }, [])
 
   const refreshConversations = useCallback(async () => {
     if (!userId) return
@@ -43,17 +64,21 @@ export function useChat(userId: string | undefined, senderName: string) {
       try {
         const rows = await fetchMessages(conv.id)
         setMessages(rows)
-        const attMap = await fetchAttachmentsForMessages(rows.map((m) => m.id))
-        setAttachments(attMap)
+        await mergeAttachments(rows.map((m) => m.id))
         await markConversationRead(conv.id, userId)
         setConversations((prev) =>
           prev.map((c) => (c.id === conv.id ? { ...c, unread_count: 0 } : c)),
+        )
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.recipient_id === userId ? { ...m, is_read: true, delivery_status: 'read' } : m,
+          ),
         )
       } finally {
         setLoadingThread(false)
       }
     },
-    [userId],
+    [mergeAttachments, userId],
   )
 
   const openWithParticipant = useCallback(
@@ -101,6 +126,7 @@ export function useChat(userId: string | undefined, senderName: string) {
                 : c,
             ),
           )
+          void setTypingIndicator(active.id, null)
         }
         return !!msg
       } finally {
@@ -111,13 +137,13 @@ export function useChat(userId: string | undefined, senderName: string) {
   )
 
   const sendFile = useCallback(
-    async (file: File, caption?: string) => {
+    async (file: File, caption?: string, forceType?: ChatAttachmentType) => {
       if (!userId || !active || sending) return false
       setSending(true)
       try {
-        const upload = await uploadChatAttachment(file, active.id, userId)
+        const upload = await uploadChatAttachment(file, active.id, userId, forceType)
         if (!upload) return false
-        const label = caption?.trim() || (upload.type === 'image' ? '📷 Image' : `📎 ${file.name}`)
+        const label = caption?.trim() || captionForAttachment(upload.type, file.name)
         const msg = await sendChatMessage({
           conversationId: active.id,
           senderId: userId,
@@ -132,19 +158,21 @@ export function useChat(userId: string | undefined, senderName: string) {
           fileName: file.name,
           size: file.size,
         })
-        setMessages((prev) => [...prev, msg])
-        const attMap = await fetchAttachmentsForMessages([msg.id])
-        setAttachments((prev) => {
-          const next = new Map(prev)
-          for (const [k, v] of attMap) next.set(k, v)
-          return next
-        })
+        setMessages((prev) => [...prev, { ...msg, attachment_count: 1 }])
+        await mergeAttachments([msg.id])
+        setConversations((prev) =>
+          prev.map((c) =>
+            c.id === active.id
+              ? { ...c, last_message: label, last_message_at: msg.created_at }
+              : c,
+          ),
+        )
         return true
       } finally {
         setSending(false)
       }
     },
-    [active, senderName, sending, userId],
+    [active, mergeAttachments, senderName, sending, userId],
   )
 
   const signalTyping = useCallback(() => {
@@ -181,7 +209,7 @@ export function useChat(userId: string | undefined, senderName: string) {
                   last_message: row.content,
                   last_message_at: row.created_at,
                   unread_count:
-                    active?.id === row.conversation_id
+                    activeIdRef.current === row.conversation_id
                       ? 0
                       : row.recipient_id === userId
                         ? existing.unread_count + 1
@@ -201,15 +229,53 @@ export function useChat(userId: string | undefined, senderName: string) {
             return [updated, ...rest]
           })
 
-          if (active?.id === row.conversation_id) {
+          if (activeIdRef.current === row.conversation_id) {
             setMessages((prev) => {
               if (prev.some((m) => m.id === row.id)) return prev
               return [...prev, row]
             })
+            if ((row.attachment_count ?? 0) > 0) {
+              void mergeAttachments([row.id])
+            }
             if (row.recipient_id === userId) {
               void markConversationRead(row.conversation_id, userId)
             }
+          } else if (row.recipient_id === userId && row.sender_id) {
+            void markMessagesDelivered(row.conversation_id, userId)
           }
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'messages' },
+        (payload) => {
+          const row = payload.new as ChatMessage
+          if (row.sender_id !== userId && row.recipient_id !== userId) return
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === row.id
+                ? {
+                    ...m,
+                    is_read: row.is_read,
+                    delivery_status: row.delivery_status,
+                  }
+                : m,
+            ),
+          )
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'message_attachments' },
+        (payload) => {
+          const row = payload.new as MessageAttachment
+          setAttachments((prev) => {
+            const next = new Map(prev)
+            const list = next.get(row.message_id) ?? []
+            if (list.some((a) => a.id === row.id)) return prev
+            next.set(row.message_id, [...list, row])
+            return next
+          })
         },
       )
       .on(
@@ -217,7 +283,7 @@ export function useChat(userId: string | undefined, senderName: string) {
         { event: 'UPDATE', schema: 'public', table: 'conversations' },
         (payload) => {
           const row = payload.new as { id: string; typing_user_id?: string | null }
-          if (active?.id === row.id) {
+          if (activeIdRef.current === row.id) {
             setActive((a) => (a ? { ...a, typing_user_id: row.typing_user_id } : a))
           }
         },
@@ -227,7 +293,7 @@ export function useChat(userId: string | undefined, senderName: string) {
     return () => {
       void supabase.removeChannel(channel)
     }
-  }, [userId, active?.id])
+  }, [mergeAttachments, userId])
 
   return {
     conversations,

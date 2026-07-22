@@ -21,6 +21,16 @@ export async function markConversationRead(conversationId: string, userId: strin
     .eq('is_read', false)
 }
 
+export async function markMessagesDelivered(conversationId: string, userId: string): Promise<void> {
+  await supabase
+    .from('messages')
+    .update({ delivery_status: 'delivered' })
+    .eq('conversation_id', conversationId)
+    .eq('recipient_id', userId)
+    .eq('is_read', false)
+    .eq('delivery_status', 'sent')
+}
+
 export async function sendChatMessage(input: {
   conversationId: string
   senderId: string
