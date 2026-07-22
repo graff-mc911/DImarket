@@ -19,21 +19,7 @@ import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { Profile as ProfileType, Review } from '../lib/types'
-function normalizePortfolioImages(raw: unknown): string[] {
-  if (!raw) return []
-  if (Array.isArray(raw)) {
-    return raw.filter((u): u is string => typeof u === 'string' && u.trim().length > 0)
-  }
-  if (typeof raw === 'string') {
-    try {
-      return normalizePortfolioImages(JSON.parse(raw))
-    } catch {
-      const trimmed = raw.trim()
-      return trimmed ? [trimmed] : []
-    }
-  }
-  return []
-}
+import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 
 function normalizeWebsiteHref(url: string | null | undefined): string {
   const trimmed = (url ?? '').trim()
@@ -48,7 +34,6 @@ export function Profile() {
   const [userId, setUserId] = useState<string | null>(contextUser?.id ?? null)
   const [profile, setProfile] = useState<ProfileType | null>(contextProfile)
   const [reviews, setReviews] = useState<Review[]>([])
-  const [portfolioImages, setPortfolioImages] = useState<string[]>([])
   const [activeListingsCount, setActiveListingsCount] = useState(0)
   const [authChecked, setAuthChecked] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -70,10 +55,8 @@ export function Profile() {
 
       if (profileData) {
         setProfile(profileData)
-        setPortfolioImages(normalizePortfolioImages(profileData.portfolio_images))
       } else {
         setProfile(null)
-        setPortfolioImages([])
       }
 
       const { data: reviewsData, error: reviewsError } = await supabase
@@ -131,7 +114,6 @@ export function Profile() {
       setUserId(activeUser.id)
       if (contextProfile && contextProfile.id === activeUser.id) {
         setProfile(contextProfile)
-        setPortfolioImages(normalizePortfolioImages(contextProfile.portfolio_images))
       }
 
       setAuthChecked(true)
@@ -147,7 +129,6 @@ export function Profile() {
   useEffect(() => {
     if (!userId || !contextProfile || contextProfile.id !== userId) return
     setProfile(contextProfile)
-    setPortfolioImages(normalizePortfolioImages(contextProfile.portfolio_images))
   }, [contextProfile, userId])
 
   if (!authChecked) {
@@ -355,11 +336,6 @@ export function Profile() {
             >
               <ImageIcon className="h-4 w-4" />
               {t('profile.portfolio')}
-              {portfolioImages.length > 0 && (
-                <span className="rounded-full border border-[var(--glass-border)] bg-[rgba(255,252,248,0.6)] px-2 py-0.5 text-xs">
-                  {portfolioImages.length}
-                </span>
-              )}
             </button>
 
             <button
@@ -384,45 +360,7 @@ export function Profile() {
 
           {activeTab === 'portfolio' && (
             <div className="p-5">
-              {portfolioImages.length > 0 ? (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {portfolioImages.map((url, index) => (
-                    <a
-                      key={`${url}-${index}`}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative block aspect-square overflow-hidden rounded-[18px] bg-[rgba(255,248,241,0.4)]"
-                    >
-                      <img
-                        src={url}
-                        alt={`Portfolio ${index + 1}`}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/20">
-                        <ExternalLink className="h-5 w-5 text-white opacity-0 transition-opacity group-hover:opacity-100" />
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-12 text-center">
-                  <ImageIcon
-                    className="mx-auto mb-3 h-12 w-12"
-                    style={{ color: 'var(--glass-border-strong)' }}
-                  />
-                  <p className="muted-text text-sm">{t('profile.noPortfolio')}</p>
-                  <button
-                    type="button"
-                    onClick={() => navigateTo('/settings')}
-                    className="mt-3 text-sm font-semibold transition"
-                    style={{ color: 'var(--accent-700)' }}
-                  >
-                    {t('settings.addPortfolioImage')}
-                  </button>
-                </div>
-              )}
+              <PortfolioManager profileId={userId} viewerId={userId} editable />
             </div>
           )}
 

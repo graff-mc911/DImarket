@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { PasswordField } from '../components/PasswordField'
 import { ProfileMediaPicker } from '../components/ProfileMediaPicker'
+import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 import { useApp } from '../contexts/AppContext'
 import { getAuthErrorMessage, getChangePasswordMessage } from '../lib/authMessages'
 import { changeUserPassword, userHasEmailPassword } from '../lib/changePassword'
@@ -25,6 +26,11 @@ import { ReferralPanel } from '../components/ReferralPanel'
 import { TelegramLinkPanel } from '../components/TelegramLinkPanel'
 import { buildOnboardingState } from '../lib/onboardingProgress'
 import { syncProfessionalCategoriesFromWorkSlugs } from '../lib/syncProfessionalCategories'
+import {
+  categorySlugForSubcategory,
+  emptyPickerValue,
+  type CategoryPickerValue,
+} from '../lib/categoryCatalog'
 import type { Profile } from '../lib/types'
 
 function profileSaveErrorMessage(err: unknown): string {
@@ -58,7 +64,6 @@ export function Settings() {
   const [location, setLocation] = useState('')
   const [website, setWebsite] = useState('')
   const [profilePhoto, setProfilePhoto] = useState('')
-  const [portfolioImages, setPortfolioImages] = useState<string[]>([])
   const [isProfessional, setIsProfessional] = useState(false)
   const [workSubcategories, setWorkSubcategories] = useState<CategoryPickerValue>(
     emptyPickerValue(),
@@ -75,6 +80,7 @@ export function Settings() {
   const [currentPassword, setCurrentPassword] = useState('')
   const [reauthNonce, setReauthNonce] = useState('')
   const [passwordNeedsNonce, setPasswordNeedsNonce] = useState(false)
+  const [canChangePassword, setCanChangePassword] = useState(false)
   const [userRole, setUserRole] = useState<string>('client')
   const [advertiserVisitedAds, setAdvertiserVisitedAds] = useState(false)
 
@@ -96,7 +102,6 @@ export function Settings() {
     setLocation('')
     setWebsite('')
     setProfilePhoto('')
-    setPortfolioImages([])
     setIsProfessional(false)
     setWorkSubcategories(emptyPickerValue())
     setNotificationsEnabled(true)
@@ -178,7 +183,6 @@ export function Settings() {
       setLocation(data.location ?? '')
       setWebsite(data.website ?? '')
       setProfilePhoto(data.profile_photo ?? '')
-      setPortfolioImages(Array.isArray(data.portfolio_images) ? data.portfolio_images : [])
       setIsProfessional(Boolean(data.is_professional))
       setUserRole(data.user_role ?? 'client')
       const workSlugs = Array.isArray(data.work_subcategory_slugs)
@@ -227,9 +231,6 @@ export function Settings() {
     const normalizedLocation = location.trim()
     const normalizedWebsite = website.trim()
     const normalizedProfilePhoto = profilePhoto.trim()
-    const normalizedPortfolioImages = portfolioImages
-      .map((url) => url.trim())
-      .filter(Boolean)
 
     try {
       const payload: Record<string, unknown> = {
@@ -239,7 +240,6 @@ export function Settings() {
         location: normalizedLocation || null,
         website: normalizedWebsite || null,
         profile_photo: normalizedProfilePhoto || null,
-        portfolio_images: normalizedPortfolioImages,
         notifications_enabled: notificationsEnabled,
         email_digest_enabled: emailDigestEnabled,
         preferred_language: preferredLanguage,
@@ -279,7 +279,6 @@ export function Settings() {
       setLocation(normalizedLocation)
       setWebsite(normalizedWebsite)
       setProfilePhoto(normalizedProfilePhoto)
-      setPortfolioImages(normalizedPortfolioImages)
 
       const selectedLanguage = LANGUAGES.find((item) => item.code === preferredLanguage)
       const selectedCurrency = CURRENCIES.find((item) => item.code === preferredCurrency)
@@ -646,15 +645,18 @@ export function Settings() {
                         {t('settings.portfolioTitle')}
                       </h3>
                     </div>
-
+                    <p className="mt-2 text-sm text-[#6f665d]">
+                      Unlimited photos, videos, certificates, before/after galleries, categories,
+                      likes and share.
+                    </p>
                     <div className="mt-4">
-                      <ProfileMediaPicker
-                        userId={currentUserId}
-                        label={t('settings.addPortfolioImage')}
-                        hint={t('settings.profilePhotoHint')}
-                        portfolioUrls={portfolioImages}
-                        onPortfolioChange={setPortfolioImages}
-                      />
+                      {currentUserId ? (
+                        <PortfolioManager
+                          profileId={currentUserId}
+                          viewerId={currentUserId}
+                          editable
+                        />
+                      ) : null}
                     </div>
                   </div>
 

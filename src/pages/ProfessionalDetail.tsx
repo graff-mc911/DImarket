@@ -19,7 +19,6 @@ import {
   Calendar,
   ExternalLink,
   Globe,
-  Image as ImageIcon,
   MapPin,
   MessageCircle,
   Phone,
@@ -34,6 +33,7 @@ import { MobileAdBanner } from '../components/MobileAdBanner'
 import { VerificationBadge } from '../components/MatchScoreBadge'
 import type { Profile, Review } from '../lib/types'
 import { ReviewFormV2 } from '../components/reviews/ReviewFormV2'
+import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 
 interface ProfessionalDetailProps {
   profileId: string
@@ -48,10 +48,10 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
 
   const [profile, setProfile]           = useState<Profile | null>(null)
   const [reviews, setReviews]           = useState<Review[]>([])
-  const [portfolioImages, setPortfolio] = useState<string[]>([])
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState<string | null>(null)
   const [activeTab, setActiveTab]       = useState<ActiveTab>('about')
+  const [highlightPortfolioId, setHighlightPortfolioId] = useState<string | null>(null)
 
   // Збереження профілю
   const [isSaved, setIsSaved]           = useState(false)
@@ -64,6 +64,15 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
     void loadProfile()
     if (user) void checkIfSaved()
   }, [profileId, user])
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const portfolioId = params.get('portfolio')
+    if (portfolioId) {
+      setHighlightPortfolioId(portfolioId)
+      setActiveTab('portfolio')
+    }
+  }, [profileId])
 
   // Завантаження профілю та відгуків
   const loadProfile = async () => {
@@ -84,7 +93,6 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
       if (!data)  { setError('Профіль не знайдено.'); return }
 
       setProfile(data)
-      setPortfolio(data.portfolio_images || [])
 
       // Завантажуємо відгуки
       const { data: reviewsData } = await supabase
@@ -260,7 +268,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           <div className="mt-4 flex gap-1 overflow-x-auto border-b border-[#e7e7e7]">
             {([
               { key: 'about', label: 'Про майстра' },
-              { key: 'portfolio', label: 'Портфоліо (' + portfolioImages.filter(Boolean).length + ')' },
+              { key: 'portfolio', label: 'Портфоліо' },
               { key: 'reviews', label: 'Відгуки (' + reviews.length + ')' },
             ] as { key: ActiveTab; label: string }[]).map(tab => (
               <button
@@ -294,31 +302,13 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           {activeTab === 'portfolio' && (
             <div className="amazon-section-card mt-4">
               <h2 className="text-lg font-bold text-[var(--ink-900)]">Портфоліо</h2>
-              {portfolioImages.filter(Boolean).length > 0 ? (
-                <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {portfolioImages.filter(Boolean).map((url, i) => (
-                    <a
-                      key={i}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative block aspect-square overflow-hidden rounded-sm border border-[#d5d9d9] bg-[#f7fafa]"
-                    >
-                      <img
-                        src={url}
-                        alt={'Робота ' + (i + 1)}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-10 text-center">
-                  <ImageIcon className="mx-auto mb-3 h-12 w-12 text-[var(--ink-400)]" />
-                  <p className="text-sm text-[var(--ink-500)]">Портфоліо ще не додано</p>
-                </div>
-              )}
+              <div className="mt-4">
+                <PortfolioManager
+                  profileId={profileId}
+                  viewerId={user?.id ?? null}
+                  highlightItemId={highlightPortfolioId}
+                />
+              </div>
             </div>
           )}
 

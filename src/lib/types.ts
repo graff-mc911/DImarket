@@ -524,26 +524,68 @@ export interface Database {
           profile_id: string
           title: string
           description: string | null
-          image_url: string
+          image_url: string | null
+          video_url: string | null
+          before_url: string | null
+          after_url: string | null
+          media_type: 'image' | 'video' | 'certificate' | 'before_after'
+          category_slug: string | null
+          like_count: number
           display_order: number
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
           profile_id: string
           title: string
           description?: string | null
-          image_url: string
+          image_url?: string | null
+          video_url?: string | null
+          before_url?: string | null
+          after_url?: string | null
+          media_type?: 'image' | 'video' | 'certificate' | 'before_after'
+          category_slug?: string | null
+          like_count?: number
           display_order?: number
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           profile_id?: string
           title?: string
           description?: string | null
-          image_url?: string
+          image_url?: string | null
+          video_url?: string | null
+          before_url?: string | null
+          after_url?: string | null
+          media_type?: 'image' | 'video' | 'certificate' | 'before_after'
+          category_slug?: string | null
+          like_count?: number
           display_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+
+      portfolio_likes: {
+        Row: {
+          id: string
+          portfolio_item_id: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          portfolio_item_id: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          portfolio_item_id?: string
+          user_id?: string
           created_at?: string
         }
       }
