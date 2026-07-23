@@ -55,6 +55,7 @@ import { ProDashboard } from './pages/ProDashboard'
 import { ProCalendar } from './pages/ProCalendar'
 import { BookProfessional } from './pages/BookProfessional'
 import { CustomerDashboard } from './pages/CustomerDashboard'
+import { AdminPanel } from './pages/AdminPanel'
 import { CostEstimator } from './pages/CostEstimator'
 import { Notifications } from './pages/Notifications'
 
@@ -111,6 +112,8 @@ function App() {
       case '/register':      return <Register />
       case '/auth/callback': return <AuthCallback />
       case '/dashboard':     return <Dashboard />
+      case '/admin':
+      case '/admin/panel':   return <AdminPanel />
       case '/pro/dashboard':
       case '/pro':           return <ProDashboard />
       case '/pro/calendar':

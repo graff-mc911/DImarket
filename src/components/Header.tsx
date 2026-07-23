@@ -612,6 +612,10 @@ export function Header() {
                       {isSiteOwner && user && (
                         <>
                           <div className="my-1 border-t border-[#e7e7e7]" />
+                          <button onClick={() => goTo('/admin')} type="button" className={dropdownItemClass}>
+                            <ClipboardList className="mr-2 inline h-4 w-4" />
+                            Admin Panel
+                          </button>
                           <button onClick={() => goTo('/dashboard')} type="button" className={dropdownItemClass}>
                             <ClipboardList className="mr-2 inline h-4 w-4" />
                             {t('header.dashboard')}
@@ -619,6 +623,10 @@ export function Header() {
                           <button onClick={() => goTo('/admin/ai')} type="button" className={dropdownItemClass}>
                             <Bot className="mr-2 inline h-4 w-4" />
                             {t('ai.admin.title')}
+                          </button>
+                          <button onClick={() => goTo('/admin/marketing-agent')} type="button" className={dropdownItemClass}>
+                            <Megaphone className="mr-2 inline h-4 w-4" />
+                            Marketing Agent
                           </button>
                         </>
                       )}
@@ -916,6 +924,10 @@ export function Header() {
 
                     {isSiteOwner && (
                       <>
+                        <button onClick={() => goTo('/admin')} type="button" className={mobileNavItemClass}>
+                          <ClipboardList className="h-5 w-5" />
+                          <span>Admin Panel</span>
+                        </button>
                         <button onClick={() => goTo('/dashboard')} type="button" className={mobileNavItemClass}>
                           <ClipboardList className="h-5 w-5" />
                           <span>{t('header.dashboard')}</span>
