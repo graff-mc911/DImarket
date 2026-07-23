@@ -40,6 +40,8 @@ import { MarketingAgentAdmin } from './pages/MarketingAgentAdmin'
 import { AiChatWidget } from './components/ai/AiChatWidget'
 import { Checkout }     from './pages/Checkout'
 import { BoostProfile } from './pages/BoostProfile'
+import { Pricing } from './pages/Pricing'
+import { Billing } from './pages/Billing'
 import { Verification } from './pages/Verification'
 import { ForProfessionals } from './pages/ForProfessionals'
 import { ForCompanies }     from './pages/ForCompanies'
@@ -138,8 +140,11 @@ function App() {
       case '/assistant/job': return <JobRequestChat />
       case '/admin/ai':        return <AiAdmin />
       case '/admin/marketing-agent': return <MarketingAgentAdmin />
-      case '/checkout':      return <Checkout />      // 🆕 Після оплати Stripe
-      case '/boost':         return <BoostProfile />  // 🆕 Просування профілю
+      case '/checkout':      return <Checkout />
+      case '/boost':         return <BoostProfile />
+      case '/pricing':
+      case '/plans':         return <Pricing />
+      case '/billing':       return <Billing />
       case '/for-professionals': return <ForProfessionals />
       case '/for-companies':     return <ForCompanies />
       case '/for-advertisers':   return <ForAdvertisers />

@@ -81,6 +81,8 @@ Deno.serve(async (req: Request) => {
             ? session.payment_intent
             : session.payment_intent?.id ?? '',
         duration_days: meta.duration_days ?? '30',
+        credits: meta.credits ?? '0',
+        plan_id: meta.plan_id ?? '',
         amount_total: String(amountTotal),
         currency,
       },

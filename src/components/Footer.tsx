@@ -50,6 +50,7 @@ export function Footer() {
       title: t('footer.getToKnow'),
       links: [
         { label: t('footer.howItWorks'), path: '/for-professionals' },
+        { label: 'Pricing', path: '/pricing' },
         { label: t('footer.advertisingLink'), path: '/advertising' },
         { label: t('footer.contactLink'), path: '/contact' },
       ],

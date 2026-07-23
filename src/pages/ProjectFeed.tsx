@@ -51,6 +51,7 @@ export function ProjectFeed() {
   const [busyId, setBusyId] = useState<string | null>(null)
   const [livePulse, setLivePulse] = useState(false)
   const [newCount, setNewCount] = useState(0)
+  const [sponsoredIds, setSponsoredIds] = useState<Set<string>>(new Set())
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const filtersRef = useRef(filters)
   const originRef = useRef(origin)
@@ -94,17 +95,38 @@ export function ProjectFeed() {
       })
 
       setItems((prev) => {
-        if (opts.reset) return res.items
-        const seen = new Set(prev.map((p) => p.id))
-        return [...prev, ...res.items.filter((i) => !seen.has(i.id))]
+        const merged = opts.reset
+          ? res.items
+          : (() => {
+              const seen = new Set(prev.map((p) => p.id))
+              return [...prev, ...res.items.filter((i) => !seen.has(i.id))]
+            })()
+        return [...merged].sort((a, b) => {
+          const as = sponsoredIds.has(a.id) ? 1 : 0
+          const bs = sponsoredIds.has(b.id) ? 1 : 0
+          return bs - as
+        })
       })
       setHasMore(res.hasMore)
       setOffset(opts.nextOffset + res.items.length)
       setLoading(false)
       setLoadingMore(false)
     },
-    [user, isPro],
+    [user, isPro, sponsoredIds],
   )
+
+  useEffect(() => {
+    void (async () => {
+      const { data } = await (supabase as any)
+        .from('sponsored_projects')
+        .select('listing_id')
+        .eq('status', 'active')
+        .gt('expires_at', new Date().toISOString())
+      setSponsoredIds(
+        new Set(((data ?? []) as Array<{ listing_id: string }>).map((r) => r.listing_id)),
+      )
+    })()
+  }, [])
 
   useEffect(() => {
     if (!user || !isPro) return
@@ -481,6 +503,11 @@ export function ProjectFeed() {
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
+                            {sponsoredIds.has(project.id) ? (
+                              <span className="rounded-full bg-amber-500 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
+                                Sponsored
+                              </span>
+                            ) : null}
                             <span className="rounded-full bg-[#1d1d1f] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
                               {project.tradeLabel || 'Project'}
                             </span>

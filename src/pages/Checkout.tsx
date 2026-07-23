@@ -99,7 +99,6 @@ export function Checkout() {
     const expiresAt   = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000).toISOString()
 
     switch (paymentType) {
-      // Активуємо преміум профіль
       case 'premium_profile':
         await supabase
           .from('profiles')
@@ -107,7 +106,13 @@ export function Checkout() {
           .eq('id', user!.id)
         break
 
-      // Активуємо верифікований бейдж
+      case 'featured_profile':
+        await supabase
+          .from('profiles')
+          .update({ is_featured: true, featured_expires_at: expiresAt })
+          .eq('id', user!.id)
+        break
+
       case 'verified_badge':
         await supabase
           .from('profiles')
@@ -115,7 +120,6 @@ export function Checkout() {
           .eq('id', user!.id)
         break
 
-      // Активуємо виділене оголошення
       case 'featured_listing':
         if (referenceId) {
           await supabase
@@ -126,7 +130,24 @@ export function Checkout() {
         }
         break
 
-      // Активуємо рекламну кампанію
+      case 'sponsored_project':
+        if (referenceId) {
+          await (supabase as any).from('sponsored_projects').insert({
+            listing_id: referenceId,
+            sponsor_user_id: user!.id,
+            status: 'active',
+            expires_at: expiresAt,
+            stripe_session_id: sessionId || null,
+          })
+        }
+        break
+
+      case 'lead_credits':
+      case 'subscription':
+      case 'google_ads':
+        // Fulfilled by stripe-webhook (service role).
+        break
+
       case 'ad_campaign':
         if (referenceId) {
           const amountEur =
@@ -148,11 +169,19 @@ export function Checkout() {
         console.warn('Невідомий тип оплати:', paymentType)
     }
 
+    const uuidRef =
+      referenceId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        referenceId,
+      )
+        ? referenceId
+        : null
+
     // Записуємо платіж в таблицю payments
     await supabase.from('payments').insert({
       user_id:             user!.id,
       payment_type:        paymentType,
-      reference_id:        referenceId || null,
+      reference_id:        uuidRef,
       amount:              parseFloat(metadata?.amount_total || '0') / 100,
       currency:            metadata?.currency || 'eur',
       stripe_payment_intent_id: metadata?.payment_intent_id || null,
@@ -165,8 +194,13 @@ export function Checkout() {
   const getSuccessMessage = () => {
     switch (paymentType) {
       case 'premium_profile':   return 'Ваш профіль тепер преміум — він показується вгорі каталогу майстрів!'
+      case 'featured_profile':  return 'Featured profile activated — you stand out in the catalog!'
       case 'verified_badge':    return 'Верифікований бейдж активовано — зелена галочка з\'явиться на вашому профілі!'
       case 'featured_listing':  return 'Оголошення виділено — воно показуватиметься першим у каталозі!'
+      case 'sponsored_project': return 'Sponsored project is live in the pro lead feed!'
+      case 'lead_credits':      return 'Lead credits added to your wallet!'
+      case 'subscription':      return 'Subscription active — your plan entitlements are unlocked!'
+      case 'google_ads':        return 'Google Ads request received — our team will follow up!'
       case 'ad_campaign':       return 'Рекламна кампанія активована — ваш банер вже показується користувачам!'
       default:                  return 'Оплата успішна! Послуга активована.'
     }

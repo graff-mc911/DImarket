@@ -37,6 +37,7 @@ export function BoostProfile() {
         amount:       eurosToCents(pkg.price_eur),
         currency:     'eur',
         description:  pkg.name,
+        duration_days: pkg.duration_days,
       })
 
       // Перенаправляємо на Stripe Checkout

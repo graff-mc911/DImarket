@@ -13,6 +13,10 @@ type CheckoutBody = {
   success_url?: string
   cancel_url?: string
   duration_days?: number
+  credits?: number
+  mode?: 'payment' | 'subscription'
+  billing_interval?: 'month' | 'year'
+  plan_id?: string
 }
 
 Deno.serve(async (req: Request) => {
@@ -61,38 +65,89 @@ Deno.serve(async (req: Request) => {
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2024-11-20.acacia' })
+    const admin = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    )
 
     const origin = req.headers.get('origin') ?? 'http://localhost:5173'
     const successUrl = body.success_url ?? `${origin}/checkout`
-    const cancelUrl = body.cancel_url ?? `${origin}${new URL(req.url).pathname}`
+    const cancelUrl = body.cancel_url ?? `${origin}/pricing`
+
+    const mode = body.mode === 'subscription' || body.payment_type === 'subscription'
+      ? 'subscription'
+      : 'payment'
 
     const durationDays = String(body.duration_days ?? defaultDurationDays(body.payment_type))
+    const planId = body.plan_id || body.reference_id || ''
+    const interval = body.billing_interval === 'year' ? 'year' : 'month'
+
+    // Reuse Stripe customer when possible
+    let customerId: string | undefined
+    const { data: profile } = await admin
+      .from('profiles')
+      .select('stripe_customer_id, full_name')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (profile?.stripe_customer_id) {
+      customerId = profile.stripe_customer_id
+    } else {
+      const customer = await stripe.customers.create({
+        email: user.email || undefined,
+        name: profile?.full_name || undefined,
+        metadata: { user_id: user.id },
+      })
+      customerId = customer.id
+      await admin.from('profiles').update({ stripe_customer_id: customer.id }).eq('id', user.id)
+    }
+
+    const metadata: Record<string, string> = {
+      payment_type: body.payment_type,
+      reference_id: body.reference_id || '',
+      user_id: body.user_id,
+      duration_days: durationDays,
+      description: body.description.slice(0, 500),
+      plan_id: planId,
+      billing_interval: interval,
+      credits: String(body.credits ?? 0),
+    }
+
+    const lineItem =
+      mode === 'subscription'
+        ? {
+            price_data: {
+              currency: (body.currency || 'eur').toLowerCase(),
+              unit_amount: Math.round(body.amount),
+              recurring: { interval: interval as 'month' | 'year' },
+              product_data: {
+                name: body.description.slice(0, 200),
+              },
+            },
+            quantity: 1,
+          }
+        : {
+            price_data: {
+              currency: (body.currency || 'eur').toLowerCase(),
+              unit_amount: Math.round(body.amount),
+              product_data: {
+                name: body.description.slice(0, 200),
+              },
+            },
+            quantity: 1,
+          }
 
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
+      mode,
+      customer: customerId,
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: (body.currency || 'eur').toLowerCase(),
-            unit_amount: Math.round(body.amount),
-            product_data: {
-              name: body.description.slice(0, 200),
-            },
-          },
-          quantity: 1,
-        },
-      ],
-      success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
+      line_items: [lineItem],
+      success_url: `${successUrl}${successUrl.includes('?') ? '&' : '?'}session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl,
       client_reference_id: body.reference_id || undefined,
-      metadata: {
-        payment_type: body.payment_type,
-        reference_id: body.reference_id || '',
-        user_id: body.user_id,
-        duration_days: durationDays,
-        description: body.description.slice(0, 500),
-      },
+      metadata,
+      subscription_data: mode === 'subscription' ? { metadata } : undefined,
+      allow_promotion_codes: true,
     })
 
     if (!session.url) {
@@ -113,9 +168,12 @@ Deno.serve(async (req: Request) => {
 function defaultDurationDays(paymentType: string): number {
   switch (paymentType) {
     case 'premium_profile':
+    case 'featured_profile':
       return 28
     case 'featured_listing':
       return 7
+    case 'sponsored_project':
+      return 14
     case 'verified_badge':
       return 365
     case 'ad_campaign':

@@ -3,6 +3,7 @@ import { LifeBuoy, Mail, MessageSquare, Phone, Send, User } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { SUPPORT_COPY, getPlan } from '../lib/monetization/plans'
 
 type FeedbackState = {
   type: 'success' | 'error'
@@ -107,6 +108,20 @@ export function Contact() {
           <h1 className="mt-5 max-w-4xl text-4xl font-extrabold tracking-tight text-[#2f2a24] md:text-5xl">
             {t('contact.title')}
           </h1>
+          {profile ? (
+            <p className="mt-3 max-w-2xl text-sm text-[#5f5a54]">
+              Your plan support: <strong>{SUPPORT_COPY[getPlan(profile.plan_id).supportTier].label}</strong>
+              {' — '}
+              {SUPPORT_COPY[getPlan(profile.plan_id).supportTier].sla}.{' '}
+              <button
+                type="button"
+                className="font-semibold underline underline-offset-2"
+                onClick={() => navigateTo('/pricing')}
+              >
+                Upgrade for faster support
+              </button>
+            </p>
+          ) : null}
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <button

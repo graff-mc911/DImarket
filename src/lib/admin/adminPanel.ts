@@ -232,6 +232,60 @@ export async function fetchAdminPayments(limit = 80): Promise<AdminPayment[]> {
   return (data ?? []) as AdminPayment[]
 }
 
+export type AdminSubscriptionRow = {
+  id: string
+  user_id: string
+  full_name: string | null
+  plan_id: string
+  billing_interval: string
+  status: string
+  stripe_subscription_id: string | null
+  current_period_end: string | null
+  lead_credits: number
+  created_at: string
+}
+
+export async function fetchAdminSubscriptions(limit = 80): Promise<AdminSubscriptionRow[]> {
+  const { data, error } = await (supabase as any).rpc('admin_list_subscriptions', {
+    p_limit: limit,
+  })
+  if (error) {
+    console.error('fetchAdminSubscriptions:', error)
+    return []
+  }
+  return (data ?? []) as AdminSubscriptionRow[]
+}
+
+export async function fetchAdminGoogleAdsRequests(limit = 50) {
+  const { data, error } = await (supabase as any)
+    .from('google_ads_requests')
+    .select('id, user_id, business_name, website_url, monthly_budget_eur, goals, status, created_at')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) {
+    console.error('fetchAdminGoogleAdsRequests:', error)
+    return []
+  }
+  return (data ?? []) as Array<{
+    id: string
+    user_id: string
+    business_name: string | null
+    website_url: string | null
+    monthly_budget_eur: number | null
+    goals: string | null
+    status: string
+    created_at: string
+  }>
+}
+
+export async function updateGoogleAdsRequestStatus(id: string, status: string) {
+  const { error } = await (supabase as any)
+    .from('google_ads_requests')
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) throw error
+}
+
 export async function fetchAdminCategories(): Promise<AdminCategory[]> {
   const { data, error } = await supabase
     .from('categories')

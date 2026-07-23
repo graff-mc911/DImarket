@@ -755,6 +755,10 @@ export function Header() {
                   {t('header.sell')}
                 </button>
 
+                <button type="button" onClick={() => goTo('/pricing')} className="amazon-dept-link">
+                  Pricing
+                </button>
+
                 <button type="button" onClick={() => goTo('/contact')} className="amazon-dept-link">
                   {t('header.customerService')}
                 </button>

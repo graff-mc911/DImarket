@@ -25,6 +25,9 @@ import {
   fetchAdminCategories,
   fetchAdminListings,
   fetchAdminPayments,
+  fetchAdminSubscriptions,
+  fetchAdminGoogleAdsRequests,
+  updateGoogleAdsRequestStatus,
   fetchAdminReviews,
   fetchAdminStats,
   fetchFraudReports,
@@ -41,6 +44,7 @@ import {
   type AdminReport,
   type AdminReview,
   type AdminStats,
+  type AdminSubscriptionRow,
 } from '../lib/admin/adminPanel'
 import type { AdCampaign, Profile } from '../lib/types'
 
@@ -86,6 +90,19 @@ export function AdminPanel() {
   const [reviews, setReviews] = useState<AdminReview[]>([])
   const [categories, setCategories] = useState<AdminCategory[]>([])
   const [payments, setPayments] = useState<AdminPayment[]>([])
+  const [subscriptions, setSubscriptions] = useState<AdminSubscriptionRow[]>([])
+  const [googleAdsReqs, setGoogleAdsReqs] = useState<
+    Array<{
+      id: string
+      user_id: string
+      business_name: string | null
+      website_url: string | null
+      monthly_budget_eur: number | null
+      goals: string | null
+      status: string
+      created_at: string
+    }>
+  >([])
   const [reports, setReports] = useState<AdminReport[]>([])
   const [fraud, setFraud] = useState<
     Array<{ id: string; status: string | null; created_at: string; summary?: string | null }>
@@ -153,6 +170,8 @@ export function AdminPanel() {
     if (id === 'subscriptions') {
       setPayments(await fetchAdminPayments())
       setUsers(await searchAdminProfiles('', 'premium'))
+      setSubscriptions(await fetchAdminSubscriptions())
+      setGoogleAdsReqs(await fetchAdminGoogleAdsRequests())
     }
     if (id === 'reports') {
       setReports(await fetchReviewReports())
@@ -332,7 +351,16 @@ export function AdminPanel() {
         )}
 
         {tab === 'subscriptions' && (
-          <SubscriptionsSection payments={payments} premiumUsers={users} />
+          <SubscriptionsSection
+            payments={payments}
+            premiumUsers={users}
+            subscriptions={subscriptions}
+            googleAds={googleAdsReqs}
+            onGoogleAdsStatus={async (id, status) => {
+              await updateGoogleAdsRequestStatus(id, status)
+              setGoogleAdsReqs(await fetchAdminGoogleAdsRequests())
+            }}
+          />
         )}
 
         {tab === 'analytics' && (
@@ -679,42 +707,124 @@ function CategoriesSection({
 function SubscriptionsSection({
   payments,
   premiumUsers,
+  subscriptions,
+  googleAds,
+  onGoogleAdsStatus,
 }: {
   payments: AdminPayment[]
   premiumUsers: AdminProfile[]
+  subscriptions: AdminSubscriptionRow[]
+  googleAds: Array<{
+    id: string
+    user_id: string
+    business_name: string | null
+    website_url: string | null
+    monthly_budget_eur: number | null
+    goals: string | null
+    status: string
+    created_at: string
+  }>
+  onGoogleAdsStatus: (id: string, status: string) => void
 }) {
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5">
-        <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Recent payments</h2>
-        <div className="mt-3 space-y-2">
-          {payments.map((p) => (
-            <div key={p.id} className="rounded-xl border border-[#f0f0f2] p-3 text-[13px]">
-              <p className="font-semibold">{p.payment_type}</p>
-              <p className="text-[#86868b]">
-                {p.amount != null ? (p.amount / 100).toFixed(2) : '—'} {p.currency} · {p.status} ·{' '}
-                {new Date(p.created_at).toLocaleString()}
-              </p>
-            </div>
-          ))}
-          {!payments.length ? (
-            <p className="text-[13px] text-[#86868b]">No payments yet</p>
-          ) : null}
-        </div>
-      </section>
-      <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5">
-        <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Premium users</h2>
-        <div className="mt-3 space-y-2">
-          {premiumUsers.map((u) => (
-            <div key={u.id} className="rounded-xl border border-[#f0f0f2] p-3 text-[13px]">
-              <p className="font-semibold">{u.full_name || u.id.slice(0, 8)}</p>
-            </div>
-          ))}
-          {!premiumUsers.length ? (
-            <p className="text-[13px] text-[#86868b]">No premium users</p>
-          ) : null}
-        </div>
-      </section>
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2">
+        <a
+          href="/pricing"
+          className="rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold text-[#1d1d1f]"
+        >
+          View pricing page
+        </a>
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5">
+          <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Stripe subscriptions</h2>
+          <div className="mt-3 space-y-2">
+            {subscriptions.map((s) => (
+              <div key={s.id} className="rounded-xl border border-[#f0f0f2] p-3 text-[13px]">
+                <p className="font-semibold">
+                  {s.full_name || s.user_id.slice(0, 8)} · {s.plan_id}
+                </p>
+                <p className="text-[#86868b]">
+                  {s.status} · {s.billing_interval} · {s.lead_credits} credits
+                  {s.current_period_end
+                    ? ` · until ${new Date(s.current_period_end).toLocaleDateString()}`
+                    : ''}
+                </p>
+              </div>
+            ))}
+            {!subscriptions.length ? (
+              <p className="text-[13px] text-[#86868b]">No subscriptions yet</p>
+            ) : null}
+          </div>
+        </section>
+        <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5">
+          <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Recent payments</h2>
+          <div className="mt-3 space-y-2">
+            {payments.map((p) => (
+              <div key={p.id} className="rounded-xl border border-[#f0f0f2] p-3 text-[13px]">
+                <p className="font-semibold">{p.payment_type}</p>
+                <p className="text-[#86868b]">
+                  {p.amount != null ? Number(p.amount).toFixed(2) : '—'} {p.currency} · {p.status} ·{' '}
+                  {new Date(p.created_at).toLocaleString()}
+                </p>
+              </div>
+            ))}
+            {!payments.length ? (
+              <p className="text-[13px] text-[#86868b]">No payments yet</p>
+            ) : null}
+          </div>
+        </section>
+        <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5">
+          <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Premium / featured users</h2>
+          <div className="mt-3 space-y-2">
+            {premiumUsers.map((u) => (
+              <div key={u.id} className="rounded-xl border border-[#f0f0f2] p-3 text-[13px]">
+                <p className="font-semibold">{u.full_name || u.id.slice(0, 8)}</p>
+              </div>
+            ))}
+            {!premiumUsers.length ? (
+              <p className="text-[13px] text-[#86868b]">No premium users</p>
+            ) : null}
+          </div>
+        </section>
+        <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5">
+          <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Google Ads requests</h2>
+          <div className="mt-3 space-y-2">
+            {googleAds.map((g) => (
+              <div key={g.id} className="rounded-xl border border-[#f0f0f2] p-3 text-[13px]">
+                <p className="font-semibold">
+                  {g.business_name || 'Untitled'} · {g.status}
+                </p>
+                <p className="text-[#86868b]">
+                  Budget €{g.monthly_budget_eur ?? '—'} · {g.website_url || 'no site'}
+                </p>
+                {g.status === 'pending' || g.status === 'in_review' ? (
+                  <div className="mt-2 flex gap-1">
+                    <button
+                      type="button"
+                      className="rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-semibold text-white"
+                      onClick={() => onGoogleAdsStatus(g.id, 'active')}
+                    >
+                      Activate
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-full border border-[#d2d2d7] px-3 py-1 text-[11px] font-semibold"
+                      onClick={() => onGoogleAdsStatus(g.id, 'rejected')}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ))}
+            {!googleAds.length ? (
+              <p className="text-[13px] text-[#86868b]">No Google Ads requests</p>
+            ) : null}
+          </div>
+        </section>
+      </div>
     </div>
   )
 }
