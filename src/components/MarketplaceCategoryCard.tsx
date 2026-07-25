@@ -1,6 +1,6 @@
 import { Star } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
-import { resolveCategoryIcon } from '../lib/categoryIcons'
+import { resolveCategoryIcon, resolveCategoryIconColor } from '../lib/categoryIcons'
 import {
   marketplaceCategoryLabel,
   marketplaceCategoryPath,
@@ -22,10 +22,8 @@ function formatCount(n: number | null | undefined): string {
 export function MarketplaceCategoryCard({ category, className = '' }: MarketplaceCategoryCardProps) {
   const { language, t } = useApp()
   const Icon = resolveCategoryIcon(category.icon_key)
+  const colors = resolveCategoryIconColor(category.slug)
   const title = marketplaceCategoryLabel(category, language.code)
-  const cover =
-    category.cover_image_url ||
-    'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=900&q=80'
   const rating = category.avg_rating != null ? Number(category.avg_rating) : null
 
   return (
@@ -35,25 +33,19 @@ export function MarketplaceCategoryCard({ category, className = '' }: Marketplac
       className={`marketplace-category-card group text-left ${className}`}
       aria-label={title}
     >
-      <div className="marketplace-category-card__media">
-        <img
-          src={cover}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="marketplace-category-card__image"
-        />
-        <div className="marketplace-category-card__media-fade" aria-hidden />
-        <div className="marketplace-category-card__icon-badge" aria-hidden>
-          {category.icon ? (
-            <span className="text-2xl leading-none">{category.icon}</span>
-          ) : (
-            <Icon className="h-7 w-7" strokeWidth={1.75} />
-          )}
-        </div>
-      </div>
-
       <div className="marketplace-category-card__body">
+        <div
+          className="marketplace-category-card__icon"
+          style={{
+            background: colors.bg,
+            color: colors.fg,
+            boxShadow: `inset 0 0 0 1px ${colors.ring}`,
+          }}
+          aria-hidden
+        >
+          <Icon className="h-8 w-8" strokeWidth={1.85} />
+        </div>
+
         <h3 className="marketplace-category-card__title">{title}</h3>
 
         <div className="marketplace-category-card__stats">
@@ -81,4 +73,3 @@ export function MarketplaceCategoryCard({ category, className = '' }: Marketplac
     </button>
   )
 }
-
