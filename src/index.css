@@ -2987,6 +2987,293 @@
    Category service cards (main construction categories)
    ============================================================ */
 
+.serviya-categories {
+  --serviya-bg: #f7f8fa;
+  --serviya-primary: #1b4d3e;
+  --serviya-accent: #f59e0b;
+  --serviya-ink: #17211d;
+  --serviya-muted: #66736d;
+  --serviya-line: rgba(27, 77, 62, 0.12);
+  background: var(--serviya-bg);
+  color: var(--serviya-ink);
+  font-family: var(--font-sans);
+  padding-block: clamp(2.25rem, 5vw, 4rem);
+}
+
+.serviya-categories__head {
+  max-width: 45rem;
+  margin-bottom: 1.5rem;
+}
+
+.serviya-categories__eyebrow {
+  margin-bottom: 0.65rem;
+  color: var(--serviya-primary);
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.serviya-categories__head h2 {
+  color: var(--serviya-ink);
+  font-size: clamp(1.85rem, 3vw, 2.65rem);
+  font-weight: 850;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.serviya-categories__head p {
+  margin-top: 0.75rem;
+  color: var(--serviya-muted);
+  font-size: clamp(0.95rem, 1.4vw, 1.08rem);
+  line-height: 1.65;
+}
+
+.serviya-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 820px) {
+  .serviya-search {
+    grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+  }
+}
+
+.serviya-search__input,
+.serviya-search__location {
+  display: flex;
+  min-height: 4rem;
+  align-items: center;
+  gap: 0.8rem;
+  border: 1px solid var(--serviya-line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(17, 24, 39, 0.06);
+  color: var(--serviya-primary);
+  padding: 0 1.15rem;
+}
+
+.serviya-search__input:focus-within,
+.serviya-search__location:focus-within {
+  border-color: rgba(27, 77, 62, 0.46);
+  box-shadow: 0 16px 40px rgba(27, 77, 62, 0.1);
+}
+
+.serviya-search__input input,
+.serviya-search__location select {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--serviya-ink);
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.serviya-search__location span {
+  color: var(--serviya-muted);
+  font-size: 0.75rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.serviya-popular {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.serviya-popular > span {
+  color: var(--serviya-muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.serviya-popular > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.serviya-popular button {
+  border: 1px solid rgba(27, 77, 62, 0.1) !important;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--serviya-primary);
+  font-size: 0.86rem;
+  font-weight: 800;
+  padding: 0.52rem 0.82rem;
+  transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+
+.serviya-popular button:hover,
+.serviya-popular button:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(27, 77, 62, 0.32) !important;
+  background: rgba(27, 77, 62, 0.08);
+}
+
+.serviya-category-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 700px) {
+  .serviya-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .serviya-category-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.serviya-category-card {
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(17, 24, 39, 0.07);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.serviya-category-card:hover,
+.serviya-category-card:focus-within {
+  transform: translateY(-4px);
+  border-color: var(--serviya-primary);
+  box-shadow: 0 24px 54px rgba(17, 24, 39, 0.12);
+}
+
+.serviya-category-card__button {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  align-items: center;
+  background: #fff;
+  padding: 1.15rem;
+  text-align: left;
+}
+
+.serviya-category-card__icon {
+  display: flex;
+  width: 3.75rem;
+  height: 3.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(245, 158, 11, 0.32), transparent 48%),
+    rgba(27, 77, 62, 0.08);
+  font-size: 2rem;
+  transition: transform 200ms ease;
+}
+
+.serviya-category-card:hover .serviya-category-card__icon,
+.serviya-category-card:focus-within .serviya-category-card__icon {
+  transform: scale(1.06);
+}
+
+.serviya-category-card__body {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.serviya-category-card__body strong {
+  overflow: hidden;
+  color: var(--serviya-ink);
+  font-size: 1rem;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.serviya-category-card__body span {
+  color: var(--serviya-muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.serviya-category-card__chevron {
+  color: var(--serviya-primary);
+  transition: transform 200ms ease;
+}
+
+.serviya-category-card__button[aria-expanded='true'] .serviya-category-card__chevron {
+  transform: rotate(90deg);
+}
+
+.serviya-subcategories {
+  overflow: hidden;
+  border-top: 1px solid rgba(27, 77, 62, 0.09);
+}
+
+.serviya-subcategories > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  padding: 0 1.15rem 1.15rem;
+}
+
+.serviya-subcategory-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid rgba(27, 77, 62, 0.08) !important;
+  border-radius: 999px;
+  background: #f2f5f4;
+  color: var(--serviya-ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0.5rem 0.72rem;
+  transition: background 200ms ease, color 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+
+.serviya-subcategory-chip:hover,
+.serviya-subcategory-chip:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--serviya-primary) !important;
+  background: var(--serviya-primary);
+  color: #fff;
+}
+
+.serviya-categories__empty {
+  border-radius: 18px;
+  background: #fff;
+  color: var(--serviya-muted);
+  padding: 1.2rem;
+  box-shadow: 0 12px 34px rgba(17, 24, 39, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .serviya-category-card,
+  .serviya-category-card__icon,
+  .serviya-category-card__chevron,
+  .serviya-popular button,
+  .serviya-subcategory-chip {
+    transition: none;
+  }
+
+  .serviya-category-card:hover,
+  .serviya-category-card:focus-within,
+  .serviya-subcategory-chip:hover,
+  .serviya-subcategory-chip:focus-visible {
+    transform: none;
+  }
+}
+
 .main-categories-section--compact {
   padding-top: 1.5rem;
 }
