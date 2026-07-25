@@ -63,6 +63,7 @@ import { Notifications } from './pages/Notifications'
 import { AiAssistant } from './pages/AiAssistant'
 import { Analytics } from './pages/Analytics'
 import { CategoryPage } from './pages/CategoryPage'
+import { SearchPage } from './pages/Search'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -106,6 +107,7 @@ function App() {
 
     switch (path) {
       case '/':              return <Home />
+      case '/search':        return <SearchPage />
       case '/professionals': return <Professionals />
       case '/companies':     return <Companies />
       case '/listings':      return <Listings />

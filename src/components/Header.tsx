@@ -268,8 +268,8 @@ export function Header() {
     e.preventDefault()
     const query = searchQuery.trim()
     closeAllMenus()
-    if (!query) { navigateTo('/listings'); return }
-    navigateTo('/listings?search=' + encodeURIComponent(query))
+    if (!query) { navigateTo('/search'); return }
+    navigateTo('/search?q=' + encodeURIComponent(query))
   }
 
   // Колір банера залежно від типу

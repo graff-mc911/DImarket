@@ -17,7 +17,7 @@ export function HomeHero({ metrics }: HomeHeroProps) {
   const onSearch = (e: FormEvent) => {
     e.preventDefault()
     const q = query.trim()
-    navigateTo(q ? `/professionals?q=${encodeURIComponent(q)}` : '/professionals')
+    navigateTo(q ? `/search?q=${encodeURIComponent(q)}` : '/search')
   }
 
   return (
