@@ -3,6 +3,7 @@ export async function chatCompletion(
   system: string,
   user: string,
   model?: string,
+  maxTokens = 800,
 ): Promise<string | null> {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -16,7 +17,7 @@ export async function chatCompletion(
         { role: 'system', content: system },
         { role: 'user', content: user },
       ],
-      max_tokens: 800,
+      max_tokens: maxTokens,
       temperature: 0.3,
     }),
   })

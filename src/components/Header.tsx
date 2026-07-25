@@ -759,6 +759,10 @@ export function Header() {
                   Pricing
                 </button>
 
+                <button type="button" onClick={() => goTo('/assistant')} className="amazon-dept-link">
+                  AI Assistant
+                </button>
+
                 <button type="button" onClick={() => goTo('/contact')} className="amazon-dept-link">
                   {t('header.customerService')}
                 </button>

@@ -60,6 +60,7 @@ import { CustomerDashboard } from './pages/CustomerDashboard'
 import { AdminPanel } from './pages/AdminPanel'
 import { CostEstimator } from './pages/CostEstimator'
 import { Notifications } from './pages/Notifications'
+import { AiAssistant } from './pages/AiAssistant'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -137,6 +138,7 @@ function App() {
       case '/my-projects':   return <MyProjects />
       case '/projects':
       case '/leads':         return <ProjectFeed />
+      case '/assistant':     return <AiAssistant />
       case '/assistant/job': return <JobRequestChat />
       case '/admin/ai':        return <AiAdmin />
       case '/admin/marketing-agent': return <MarketingAgentAdmin />
@@ -162,7 +164,7 @@ function App() {
             <PageWithSideAds>{getPage()}</PageWithSideAds>
           </main>
           <Footer />
-          {path.startsWith('/admin') && <AiChatWidget />}
+          <AiChatWidget />
         </div>
       </PaidAdsProvider>
     </AppProvider>
