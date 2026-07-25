@@ -46,6 +46,8 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     }
     const category = params.get('category')
     if (category) setSelectedCategory(category)
+    const q = params.get('q')
+    if (q) setSearchQuery(q)
   }, [])
 
   useEffect(() => {

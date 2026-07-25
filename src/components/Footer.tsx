@@ -1,14 +1,29 @@
 import { Facebook, Instagram, Linkedin } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useApp } from '../contexts/AppContext'
+import { fetchHomepageMetrics, type HomeMetrics } from '../lib/homeMarketplace'
 import { navigateTo } from '../lib/navigation'
 import { FooterStats } from './FooterStats'
+import { HomeDownloadApp } from './home/HomeDownloadApp'
 
 export function Footer() {
   const { t, user } = useApp()
   const currentYear = new Date().getFullYear()
+  const [metrics, setMetrics] = useState<HomeMetrics | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const data = await fetchHomepageMetrics()
+      if (!cancelled) setMetrics(data)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const linkClass =
-    'text-sm text-[#dddddd] transition hover:text-white hover:underline'
+    'text-sm text-[#c9cdd3] transition hover:text-white hover:underline'
 
   const go = (path: string) => navigateTo(path)
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -52,7 +67,6 @@ export function Footer() {
         { label: t('footer.howItWorks'), path: '/for-professionals' },
         { label: 'Pricing', path: '/pricing' },
         { label: 'AI Assistant', path: '/assistant' },
-        { label: 'Analytics', path: '/analytics' },
         { label: t('footer.advertisingLink'), path: '/advertising' },
         { label: t('footer.contactLink'), path: '/contact' },
       ],
@@ -70,7 +84,7 @@ export function Footer() {
       links: [
         { label: t('header.findProfessionals'), path: '/professionals' },
         { label: t('footer.browseListings'), path: '/listings' },
-        { label: t('footer.postRequest'), path: '/create-ad' },
+        { label: t('homePremium.postProject'), path: '/create-project' },
       ],
     },
     {
@@ -84,7 +98,7 @@ export function Footer() {
   ]
 
   return (
-    <footer className="relative z-10 mt-auto w-full">
+    <footer className="premium-footer relative z-10 mt-auto w-full">
       <div className="amazon-footer-back py-4 text-center">
         <button
           type="button"
@@ -104,7 +118,21 @@ export function Footer() {
         </div>
       )}
 
-      <div className="amazon-footer-main layout-page-gutter py-10">
+      <div className="premium-footer__download layout-page-gutter">
+        <div className="home-download__inner-row layout-page-content py-1">
+          <div className="mb-3 text-center md:mb-0 md:text-left">
+            <p className="text-sm font-bold text-white">{t('homePremium.appTitle')}</p>
+            <p className="mt-1 text-xs text-[#aeb4bc]">{t('homePremium.appSubtitle')}</p>
+          </div>
+          <HomeDownloadApp
+            compact
+            appStoreUrl={metrics?.appStoreUrl}
+            playStoreUrl={metrics?.playStoreUrl}
+          />
+        </div>
+      </div>
+
+      <div className="layout-page-gutter py-10">
         <div className="layout-page-content">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {columnLinks.map((col) => (
@@ -129,14 +157,12 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="amazon-footer-bottom layout-page-gutter pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-6">
-        <div className="layout-page-content">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-center text-xs sm:text-left">
-              {`© ${currentYear} DImarket. ${t('footer.allRightsReserved')}`}
-            </p>
-            {socialLinks}
-          </div>
+      <div className="border-t border-[#2f3b4a] layout-page-gutter py-5">
+        <div className="layout-page-content flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-center text-xs text-[#aeb4bc] sm:text-left">
+            © {currentYear} DImarket. {t('footer.allRightsReserved')}
+          </p>
+          {socialLinks}
         </div>
       </div>
     </footer>
