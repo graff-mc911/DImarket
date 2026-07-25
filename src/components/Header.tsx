@@ -43,6 +43,7 @@ import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
+import { CategoriesMegaMenu } from './CategoriesMegaMenu'
 
 interface NavItem {
   label: string
@@ -329,9 +330,6 @@ export function Header() {
 
   const dropdownPanelClass =
     'absolute right-0 top-full mt-2 w-64 rounded-md border border-[#d5d9d9] bg-white p-2 shadow-[0_4px_12px_rgba(15,17,17,0.15)]'
-
-  const categoriesDropdownClass =
-    'absolute left-0 top-full z-50 mt-1 w-80 max-h-[min(28rem,70vh)] overflow-y-auto rounded-md border border-[#d5d9d9] bg-white p-2 shadow-[0_4px_12px_rgba(15,17,17,0.15)]'
 
   const dropdownItemClass =
     'block w-full rounded-sm px-3 py-2.5 text-left text-sm text-[var(--ink-900)] transition hover:bg-[#f7fafa]'
@@ -706,9 +704,17 @@ export function Header() {
             </div>
 
             {/* Amazon subnav */}
-            <div className="site-header-subnav mt-1 hidden sm:block">
+            <div ref={categoriesRef} className="site-header-subnav mt-1 hidden sm:block">
               <div className="amazon-dept-scroll px-3 py-1 md:px-4">
-                <div ref={categoriesRef} className="relative shrink-0">
+                <div
+                  className="categories-mega-anchor relative shrink-0"
+                  onMouseEnter={() => {
+                    setCategoriesOpen(true)
+                    setLanguageOpen(false)
+                    setCurrencyOpen(false)
+                    setAccountOpen(false)
+                  }}
+                >
                   <button
                     onClick={() => {
                       setCategoriesOpen((o) => !o)
@@ -718,16 +724,12 @@ export function Header() {
                     }}
                     type="button"
                     aria-expanded={categoriesOpen}
+                    aria-haspopup="menu"
                     className="amazon-dept-link flex items-center gap-1 font-bold"
                   >
                     <Menu className="h-4 w-4" />
-                    <span>{t('header.all')}</span>
+                    <span>{t('header.categories')}</span>
                   </button>
-                  {categoriesOpen && (
-                    <div className={categoriesDropdownClass} role="menu">
-                      {renderCategoryMenu(dropdownItemClass, 'menuitem')}
-                    </div>
-                  )}
                 </div>
 
                 <button type="button" onClick={() => goTo('/listings')} className="amazon-dept-link">
@@ -774,6 +776,20 @@ export function Header() {
                 <button type="button" onClick={goToHowItWorks} className="amazon-dept-link">
                   {t('footer.howItWorks')}
                 </button>
+              </div>
+
+              <div
+                onMouseLeave={() => setCategoriesOpen(false)}
+                onMouseEnter={() => setCategoriesOpen(true)}
+              >
+                <CategoriesMegaMenu
+                  open={categoriesOpen}
+                  onClose={() => setCategoriesOpen(false)}
+                  onNavigate={(path) => {
+                    closeAllMenus()
+                    navigateTo(path)
+                  }}
+                />
               </div>
             </div>
 

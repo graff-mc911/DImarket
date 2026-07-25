@@ -62,6 +62,7 @@ import { CostEstimator } from './pages/CostEstimator'
 import { Notifications } from './pages/Notifications'
 import { AiAssistant } from './pages/AiAssistant'
 import { Analytics } from './pages/Analytics'
+import { CategoryPage } from './pages/CategoryPage'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -82,6 +83,7 @@ function App() {
     const parts = path.split('/').filter(Boolean)
 
     // Динамічні маршрути
+    if (parts[0] === 'category' && parts[1]) return <CategoryPage slug={parts[1]} />
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
     if (parts[0] === 'book' && parts[1]) return <BookProfessional profileId={parts[1]} />

@@ -1,0 +1,61 @@
+import type { LucideIcon } from 'lucide-react'
+import {
+  Aperture,
+  Boxes,
+  BrickWall,
+  Building2,
+  Cpu,
+  Droplets,
+  Fence,
+  Flame,
+  GlassWater,
+  Hammer,
+  HardHat,
+  Home,
+  Layers,
+  Paintbrush,
+  PaintBucket,
+  PanelsTopLeft,
+  Ruler,
+  Shovel,
+  Square,
+  Sun,
+  Trees,
+  Waves,
+  Wrench,
+  Zap,
+} from 'lucide-react'
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  hammer: Hammer,
+  shovel: Shovel,
+  'building-2': Building2,
+  boxes: Boxes,
+  'brick-wall': BrickWall,
+  home: Home,
+  building: Building2,
+  layers: Layers,
+  paintbrush: Paintbrush,
+  'paint-bucket': PaintBucket,
+  'panels-top-left': PanelsTopLeft,
+  square: Square,
+  footprint: Layers,
+  wrench: Wrench,
+  aperture: Aperture,
+  droplets: Droplets,
+  zap: Zap,
+  flame: Flame,
+  fence: Fence,
+  hardhat: HardHat,
+  trees: Trees,
+  waves: Waves,
+  sun: Sun,
+  cpu: Cpu,
+  ruler: Ruler,
+  glass: GlassWater,
+}
+
+export function resolveCategoryIcon(iconKey?: string | null): LucideIcon {
+  if (!iconKey) return HardHat
+  return ICON_MAP[iconKey] ?? HardHat
+}

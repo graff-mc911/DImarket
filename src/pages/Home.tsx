@@ -4,6 +4,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { CategoryCircleTile } from '../components/CategoryCircleTile'
+import { ChooseCategorySection } from '../components/ChooseCategorySection'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
@@ -173,6 +174,7 @@ export function Home() {
       <div className="layout-page-gutter">
         <MobileAdBanner variant="horizontal" page="home" outerClassName="mt-4 mb-2" />
         <SponsoredCompanies />
+        <ChooseCategorySection />
       </div>
 
       <div className="amazon-home-deck-wrap">

@@ -39,6 +39,16 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
   const [selectedWorkTypes, setSelectedWorkTypes] = useState<string[]>([])
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const work = params.get('work') || params.get('service')
+    if (work) {
+      setSelectedWorkTypes(work.split(',').map((s) => s.trim()).filter(Boolean))
+    }
+    const category = params.get('category')
+    if (category) setSelectedCategory(category)
+  }, [])
+
+  useEffect(() => {
     void loadCategories()
     void loadProfessionals()
   }, [catalog])
@@ -117,12 +127,17 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
           (professional.professional_categories || []).some((item) => {
             const slug = item.category?.slug || ''
             return slug === selectedCategory || item.category_id === selectedCategory
-          })
+          }) ||
+          (professional.work_subcategory_slugs ?? []).some(
+            (w) => w === selectedCategory || w.startsWith(`${selectedCategory}-`),
+          )
 
         const workSubs = professional.work_subcategory_slugs ?? []
         const matchesWorkTypes =
           selectedWorkTypes.length === 0 ||
-          selectedWorkTypes.some((s) => workSubs.includes(s))
+          selectedWorkTypes.some(
+            (s) => workSubs.includes(s) || workSubs.some((w) => w.startsWith(`${s}-`) || s.startsWith(`${w}-`)),
+          )
 
         return (
           matchesSearch &&

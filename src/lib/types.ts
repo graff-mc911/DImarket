@@ -48,6 +48,17 @@ export interface Database {
           icon: string | null
           description: string | null
           created_at: string
+          cover_image_url: string | null
+          sort_order: number
+          is_main: boolean
+          is_service: boolean
+          icon_key: string | null
+          name_i18n: Json
+          description_i18n: Json
+          services_count: number
+          professionals_count: number
+          avg_rating: number | null
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -57,6 +68,17 @@ export interface Database {
           icon?: string | null
           description?: string | null
           created_at?: string
+          cover_image_url?: string | null
+          sort_order?: number
+          is_main?: boolean
+          is_service?: boolean
+          icon_key?: string | null
+          name_i18n?: Json
+          description_i18n?: Json
+          services_count?: number
+          professionals_count?: number
+          avg_rating?: number | null
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -66,6 +88,17 @@ export interface Database {
           icon?: string | null
           description?: string | null
           created_at?: string
+          cover_image_url?: string | null
+          sort_order?: number
+          is_main?: boolean
+          is_service?: boolean
+          icon_key?: string | null
+          name_i18n?: Json
+          description_i18n?: Json
+          services_count?: number
+          professionals_count?: number
+          avg_rating?: number | null
+          updated_at?: string
         }
       }
 
