@@ -380,6 +380,74 @@ export const enTranslations = {
   'homePremium.downloadOn': 'Download on the',
   'homePremium.appComingSoon': 'Apps coming soon — links will appear here when published.',
 
+  'homePremium.trustLabel': 'Platform trust metrics',
+  'homePremium.trustReviews': 'Reviews',
+  'homePremium.trustPros': 'Verified Professionals',
+  'homePremium.trustCountries': 'Countries',
+  'homePremium.trustProjects': 'Completed Projects',
+  'homePremium.carouselPrev': 'Previous reviews',
+  'homePremium.carouselNext': 'Next reviews',
+  'homePremium.companiesEyebrow': 'Partners',
+  'homePremium.companiesTitle': 'Featured companies',
+  'homePremium.companiesSubtitle': 'Trusted European construction brands our professionals work with.',
+  'homePremium.mapEyebrow': 'Live activity',
+  'homePremium.mapTitle': 'Professionals & projects across Europe',
+  'homePremium.mapSubtitle': 'Explore the latest verified pros, companies, and customer projects on the map.',
+  'homePremium.mapFilters': 'Map filters',
+  'homePremium.mapAll': 'All',
+  'homePremium.mapPros': 'Professionals',
+  'homePremium.mapProjects': 'Projects',
+  'homePremium.mapCompanies': 'Companies',
+  'homePremium.mapLoading': 'Loading map…',
+  'homePremium.mapEmpty': 'No map locations for this filter yet.',
+  'homePremium.mapNearby': 'nearby',
+  'homePremium.faqEyebrow': 'Help',
+  'homePremium.faqTitle': 'Frequently asked questions',
+  'homePremium.faqSubtitle': 'Quick answers about hiring, verification, payments, and projects on DImarket.',
+  'homePremium.faq.q1.q': 'What is DImarket?',
+  'homePremium.faq.q1.a':
+    'DImarket is a European construction marketplace that connects homeowners and businesses with verified professionals, companies, and project quotes.',
+  'homePremium.faq.q2.q': 'How do I hire a professional?',
+  'homePremium.faq.q2.a':
+    'Search by trade or city, compare ratings and portfolios, then message a pro or post a project to receive matched quotes.',
+  'homePremium.faq.q3.q': 'Are professionals verified?',
+  'homePremium.faq.q3.a':
+    'Many profiles complete identity and trade verification. Look for the verified badge, or filter search results to verified professionals only.',
+  'homePremium.faq.q4.q': 'How does posting a project work?',
+  'homePremium.faq.q4.a':
+    'Describe your job once, add location and budget, then publish. Matched professionals can apply with quotes you can compare side by side.',
+  'homePremium.faq.q5.q': 'Is DImarket available in my country?',
+  'homePremium.faq.q5.a':
+    'DImarket is expanding across Europe. Browse professionals by city or country, or use Advanced Search to filter by location and distance.',
+  'homePremium.faq.q6.q': 'How are payments handled?',
+  'homePremium.faq.q6.a':
+    'Paid plans and boosts are processed securely via Stripe. Project payments between customers and professionals can be arranged with escrow-ready workflows as they become available in your market.',
+  'homePremium.faq.q7.q': 'Can companies create profiles?',
+  'homePremium.faq.q7.a':
+    'Yes. Construction companies can register a company account, list services, and appear in company search and map filters.',
+  'homePremium.faq.q8.q': 'How does the AI Assistant help?',
+  'homePremium.faq.q8.a':
+    'Describe your renovation or repair in plain language. The AI Assistant suggests categories, budget ranges, and matching professionals for your location.',
+  'homePremium.faq.q9.q': 'What languages does DImarket support?',
+  'homePremium.faq.q9.a':
+    'The platform supports multiple European languages. Switch language anytime from the header or footer language controls.',
+  'homePremium.faq.q10.q': 'How do I contact support?',
+  'homePremium.faq.q10.a':
+    'Open the Contact page for customer support, privacy requests, and GDPR inquiries. Professionals can also use the help links in the Support footer column.',
+
+  'footer.companyCol': 'Company',
+  'footer.servicesCol': 'Services',
+  'footer.professionalsCol': 'Professionals',
+  'footer.supportCol': 'Support',
+  'footer.about': 'About',
+  'footer.verification': 'Verification',
+  'footer.forPros': 'For professionals',
+  'footer.helpCenter': 'Help center',
+  'footer.cookies': 'Cookies',
+  'footer.gdpr': 'GDPR',
+  'footer.languages': 'Languages',
+  'footer.social': 'Social media',
+
   // Категорії послуг і матеріалів.
   'category.construction': 'Construction',
   'category.constructionDesc': 'New construction and building projects',

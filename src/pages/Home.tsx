@@ -7,9 +7,13 @@ import {
   HomeCategoriesPreview,
   HomeCustomerReviews,
   HomeDownloadApp,
+  HomeFaq,
+  HomeFeaturedCompanies,
   HomeHero,
+  HomeInteractiveMap,
   HomePopularProjects,
   HomeTopProfessionals,
+  HomeTrustBar,
   HomeWhyDimarket,
 } from '../components/home'
 import { MobileAdBanner } from '../components/MobileAdBanner'
@@ -62,9 +66,10 @@ export function Home() {
   return (
     <div className="home-premium">
       <HomeHero metrics={metrics} />
+      <HomeTrustBar metrics={metrics} />
 
       <div className="layout-page-gutter home-premium__ads">
-        <MobileAdBanner variant="horizontal" page="home" outerClassName="mt-4 mb-2" />
+        <MobileAdBanner variant="horizontal" page="home" outerClassName="mt-3 mb-1" />
         <SponsoredCompanies />
       </div>
 
@@ -73,6 +78,9 @@ export function Home() {
       <HomeTopProfessionals professionals={data?.professionals ?? []} loading={loading} />
       <HomeWhyDimarket />
       <HomeCustomerReviews reviews={data?.reviews ?? []} />
+      <HomeFeaturedCompanies />
+      <HomeInteractiveMap points={data?.mapPoints ?? []} loading={loading} />
+      <HomeFaq />
       <HomeDownloadApp
         appStoreUrl={metrics.appStoreUrl}
         playStoreUrl={metrics.playStoreUrl}

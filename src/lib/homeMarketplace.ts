@@ -29,6 +29,20 @@ export type HomeReview = {
   created_at: string
   is_verified_customer: boolean
   professional_id: string
+  country_code?: string | null
+  country_name?: string | null
+  category?: string | null
+  avatar_url?: string | null
+}
+
+export type HomeMapPoint = {
+  id: string
+  kind: 'professional' | 'project' | 'company'
+  title: string
+  subtitle?: string
+  lat: number
+  lng: number
+  path: string
 }
 
 export type HomeMarketplaceData = {
@@ -37,6 +51,7 @@ export type HomeMarketplaceData = {
   projects: ListingWithImages[]
   professionals: HomeProfessional[]
   reviews: HomeReview[]
+  mapPoints: HomeMapPoint[]
 }
 
 const DEFAULT_METRICS: HomeMetrics = {
@@ -163,29 +178,222 @@ export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfession
 }
 
 export async function fetchHomeReviews(limit = 8): Promise<HomeReview[]> {
-  const { data } = await supabase
+  type Row = HomeReview & {
+    listing?: {
+      country_name?: string | null
+      category?: { name?: string; slug?: string } | null
+    } | null
+  }
+
+  const withListing = await supabase
     .from('reviews')
-    .select('id, reviewer_name, rating, comment, created_at, is_verified_customer, professional_id')
+    .select(
+      `
+      id, reviewer_name, rating, comment, created_at, is_verified_customer, professional_id,
+      listing:listings(id, country_name, category:categories(name, slug))
+    `,
+    )
     .eq('is_approved', true)
     .or('is_hidden.is.null,is_hidden.eq.false')
     .not('comment', 'is', null)
     .order('created_at', { ascending: false })
     .limit(limit)
 
-  const rows = (data as HomeReview[] | null) ?? []
-  return rows.filter((r) => (r.comment ?? '').trim().length > 20)
+  let rows: Row[] = []
+  if (!withListing.error && withListing.data) {
+    rows = (withListing.data as Row[]) ?? []
+  } else {
+    const { data } = await supabase
+      .from('reviews')
+      .select(
+        'id, reviewer_name, rating, comment, created_at, is_verified_customer, professional_id',
+      )
+      .eq('is_approved', true)
+      .or('is_hidden.is.null,is_hidden.eq.false')
+      .not('comment', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(limit)
+    rows = (data as Row[] | null) ?? []
+  }
+
+  return rows
+    .filter((r) => (r.comment ?? '').trim().length > 20)
+    .map((r) => ({
+      id: r.id,
+      reviewer_name: r.reviewer_name,
+      rating: r.rating,
+      comment: r.comment,
+      created_at: r.created_at,
+      is_verified_customer: r.is_verified_customer,
+      professional_id: r.professional_id,
+      country_name: r.listing?.country_name ?? null,
+      country_code: guessCountryCode(r.listing?.country_name),
+      category: r.listing?.category?.name ?? null,
+      avatar_url: null,
+    }))
+}
+
+function guessCountryCode(name: string | null | undefined): string | null {
+  if (!name) return null
+  const n = name.toLowerCase()
+  if (n.includes('german') || n === 'deutschland') return 'DE'
+  if (n.includes('spain') || n.includes('espa')) return 'ES'
+  if (n.includes('ukrain')) return 'UA'
+  if (n.includes('france') || n.includes('frankreich')) return 'FR'
+  if (n.includes('poland') || n.includes('polska')) return 'PL'
+  if (n.includes('ital')) return 'IT'
+  if (n.includes('portug')) return 'PT'
+  if (n.includes('nether') || n.includes('holland')) return 'NL'
+  if (n.includes('austria') || n.includes('öster')) return 'AT'
+  if (n.includes('swiss') || n.includes('schweiz')) return 'CH'
+  if (n.includes('romania') || n.includes('românia')) return 'RO'
+  if (n.includes('czech')) return 'CZ'
+  return null
+}
+
+const EUROPE_FALLBACK_COORDS: Array<{ lat: number; lng: number; city: string }> = [
+  { lat: 52.52, lng: 13.405, city: 'Berlin' },
+  { lat: 48.8566, lng: 2.3522, city: 'Paris' },
+  { lat: 40.4168, lng: -3.7038, city: 'Madrid' },
+  { lat: 52.2297, lng: 21.0122, city: 'Warsaw' },
+  { lat: 50.4501, lng: 30.5234, city: 'Kyiv' },
+  { lat: 41.9028, lng: 12.4964, city: 'Rome' },
+  { lat: 48.2082, lng: 16.3738, city: 'Vienna' },
+  { lat: 52.3676, lng: 4.9041, city: 'Amsterdam' },
+  { lat: 50.0755, lng: 14.4378, city: 'Prague' },
+  { lat: 38.7223, lng: -9.1393, city: 'Lisbon' },
+]
+
+export async function fetchHomeMapPoints(limit = 40): Promise<HomeMapPoint[]> {
+  const [prosRes, companiesRes, projectsRes] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('id, full_name, location, service_latitude, service_longitude, user_role')
+      .eq('is_professional', true)
+      .eq('user_role', 'professional')
+      .not('service_latitude', 'is', null)
+      .not('service_longitude', 'is', null)
+      .order('rating', { ascending: false })
+      .limit(limit),
+    supabase
+      .from('profiles')
+      .select('id, full_name, location, service_latitude, service_longitude, user_role')
+      .eq('user_role', 'company')
+      .not('service_latitude', 'is', null)
+      .not('service_longitude', 'is', null)
+      .order('rating', { ascending: false })
+      .limit(Math.ceil(limit / 2)),
+    supabase
+      .from('listings')
+      .select('id, title, city_name, location, latitude, longitude, status')
+      .eq('listing_type', 'service_request')
+      .eq('status', 'active')
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(limit),
+  ])
+
+  type GeoProfile = {
+    id: string
+    full_name: string | null
+    location: string | null
+    service_latitude: number | null
+    service_longitude: number | null
+  }
+  type GeoListing = {
+    id: string
+    title: string
+    city_name: string | null
+    location: string | null
+    latitude: number | null
+    longitude: number | null
+  }
+
+  const points: HomeMapPoint[] = []
+
+  for (const p of (prosRes.data as GeoProfile[] | null) ?? []) {
+    if (p.service_latitude == null || p.service_longitude == null) continue
+    points.push({
+      id: `pro-${p.id}`,
+      kind: 'professional',
+      title: p.full_name || 'Professional',
+      subtitle: p.location || undefined,
+      lat: Number(p.service_latitude),
+      lng: Number(p.service_longitude),
+      path: `/professional/${p.id}`,
+    })
+  }
+
+  for (const c of (companiesRes.data as GeoProfile[] | null) ?? []) {
+    if (c.service_latitude == null || c.service_longitude == null) continue
+    points.push({
+      id: `co-${c.id}`,
+      kind: 'company',
+      title: c.full_name || 'Company',
+      subtitle: c.location || undefined,
+      lat: Number(c.service_latitude),
+      lng: Number(c.service_longitude),
+      path: `/professional/${c.id}`,
+    })
+  }
+
+  for (const l of (projectsRes.data as GeoListing[] | null) ?? []) {
+    if (l.latitude == null || l.longitude == null) continue
+    points.push({
+      id: `proj-${l.id}`,
+      kind: 'project',
+      title: l.title,
+      subtitle: l.city_name || l.location || undefined,
+      lat: Number(l.latitude),
+      lng: Number(l.longitude),
+      path: `/listing/${l.id}`,
+    })
+  }
+
+  if (points.length >= 6) return points
+
+  // Seed sample Europe markers so the map is useful before geo data is dense
+  EUROPE_FALLBACK_COORDS.forEach((c, i) => {
+    if (points.length >= 18) return
+    const kind: HomeMapPoint['kind'] =
+      i % 3 === 0 ? 'professional' : i % 3 === 1 ? 'project' : 'company'
+    points.push({
+      id: `seed-${kind}-${i}`,
+      kind,
+      title:
+        kind === 'professional'
+          ? `Pro near ${c.city}`
+          : kind === 'project'
+            ? `Project in ${c.city}`
+            : `Company in ${c.city}`,
+      subtitle: c.city,
+      lat: c.lat + (i % 5) * 0.03,
+      lng: c.lng + (i % 4) * 0.03,
+      path:
+        kind === 'project'
+          ? '/projects'
+          : kind === 'company'
+            ? '/companies'
+            : '/professionals',
+    })
+  })
+
+  return points
 }
 
 export async function fetchHomeMarketplaceData(): Promise<HomeMarketplaceData> {
-  const [metrics, categories, projects, professionals, reviews] = await Promise.all([
-    fetchHomepageMetrics(),
-    fetchMainMarketplaceCategories(),
-    fetchHomeProjects(),
-    fetchHomeProfessionals(),
-    fetchHomeReviews(),
-  ])
+  const [metrics, categories, projects, professionals, reviews, mapPoints] =
+    await Promise.all([
+      fetchHomepageMetrics(),
+      fetchMainMarketplaceCategories(),
+      fetchHomeProjects(),
+      fetchHomeProfessionals(),
+      fetchHomeReviews(),
+      fetchHomeMapPoints(),
+    ])
 
-  return { metrics, categories, projects, professionals, reviews }
+  return { metrics, categories, projects, professionals, reviews, mapPoints }
 }
 
 export function formatHomeBudget(

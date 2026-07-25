@@ -377,6 +377,74 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.downloadOn': 'Завантажити в',
   'homePremium.appComingSoon': 'Додатки скоро — посилання з’являться після публікації.',
 
+  'homePremium.trustLabel': 'Довіра до платформи',
+  'homePremium.trustReviews': 'Відгуків',
+  'homePremium.trustPros': 'Верифікованих майстрів',
+  'homePremium.trustCountries': 'Країн',
+  'homePremium.trustProjects': 'Завершених проєктів',
+  'homePremium.carouselPrev': 'Попередні відгуки',
+  'homePremium.carouselNext': 'Наступні відгуки',
+  'homePremium.companiesEyebrow': 'Партнери',
+  'homePremium.companiesTitle': 'Рекомендовані компанії',
+  'homePremium.companiesSubtitle': 'Європейські будівельні бренди, з якими працюють наші майстри.',
+  'homePremium.mapEyebrow': 'Активність',
+  'homePremium.mapTitle': 'Майстри та проєкти Європою',
+  'homePremium.mapSubtitle': 'Дивіться останніх перевірених майстрів, компанії та проєкти клієнтів на карті.',
+  'homePremium.mapFilters': 'Фільтри карти',
+  'homePremium.mapAll': 'Усі',
+  'homePremium.mapPros': 'Майстри',
+  'homePremium.mapProjects': 'Проєкти',
+  'homePremium.mapCompanies': 'Компанії',
+  'homePremium.mapLoading': 'Завантаження карти…',
+  'homePremium.mapEmpty': 'Немає точок для цього фільтра.',
+  'homePremium.mapNearby': 'поруч',
+  'homePremium.faqEyebrow': 'Допомога',
+  'homePremium.faqTitle': 'Часті запитання',
+  'homePremium.faqSubtitle': 'Короткі відповіді про найм, верифікацію, платежі та проєкти на DImarket.',
+  'homePremium.faq.q1.q': 'Що таке DImarket?',
+  'homePremium.faq.q1.a':
+    'DImarket — європейський будівельний маркетплейс, що з’єднує клієнтів із верифікованими майстрами, компаніями та пропозиціями.',
+  'homePremium.faq.q2.q': 'Як найняти майстра?',
+  'homePremium.faq.q2.a':
+    'Шукайте за спеціальністю або містом, порівняйте рейтинги та портфоліо, напишіть майстру або опублікуйте проєкт для пропозицій.',
+  'homePremium.faq.q3.q': 'Чи верифіковані майстри?',
+  'homePremium.faq.q3.a':
+    'Багато профілів проходять перевірку особи та кваліфікації. Шукайте бейдж verified або фільтруйте лише верифікованих.',
+  'homePremium.faq.q4.q': 'Як працює публікація проєкту?',
+  'homePremium.faq.q4.a':
+    'Опишіть роботу, додайте локацію та бюджет і опублікуйте. Підібрані майстри надішлють пропозиції для порівняння.',
+  'homePremium.faq.q5.q': 'Чи доступний DImarket у моїй країні?',
+  'homePremium.faq.q5.a':
+    'DImarket розширюється Європою. Шукайте майстрів за містом або країною чи скористайтесь розширеним пошуком.',
+  'homePremium.faq.q6.q': 'Як відбуваються платежі?',
+  'homePremium.faq.q6.a':
+    'Платні плани та бусти проходять через Stripe. Оплата між клієнтом і майстром — за захищеними сценаріями, доступними у вашому ринку.',
+  'homePremium.faq.q7.q': 'Чи можуть компанії створювати профілі?',
+  'homePremium.faq.q7.a':
+    'Так. Будівельні компанії реєструють company-акаунт, додають послуги й з’являються в пошуку та на карті.',
+  'homePremium.faq.q8.q': 'Чим допомагає AI-асистент?',
+  'homePremium.faq.q8.a':
+    'Опишіть ремонт простою мовою. AI підкаже категорії, бюджет і майстрів під вашу локацію.',
+  'homePremium.faq.q9.q': 'Які мови підтримує DImarket?',
+  'homePremium.faq.q9.a':
+    'Платформа підтримує кілька європейських мов. Мову можна змінити в шапці або футері.',
+  'homePremium.faq.q10.q': 'Як зв’язатися з підтримкою?',
+  'homePremium.faq.q10.a':
+    'Відкрийте сторінку Contact для підтримки, privacy та GDPR-запитів. Майстри також можуть скористатися посиланнями Support у футері.',
+
+  'footer.companyCol': 'Компанія',
+  'footer.servicesCol': 'Послуги',
+  'footer.professionalsCol': 'Майстри',
+  'footer.supportCol': 'Підтримка',
+  'footer.about': 'Про нас',
+  'footer.verification': 'Верифікація',
+  'footer.forPros': 'Для майстрів',
+  'footer.helpCenter': 'Довідковий центр',
+  'footer.cookies': 'Cookies',
+  'footer.gdpr': 'GDPR',
+  'footer.languages': 'Мови',
+  'footer.social': 'Соцмережі',
+
   // Categories
   'category.construction': 'Будівництво',
   'category.constructionDesc': 'Нове будівництво та будівельні проєкти',

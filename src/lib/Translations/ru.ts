@@ -274,6 +274,74 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.downloadOn': 'Загрузить в',
   'homePremium.appComingSoon': 'Приложения скоро — ссылки появятся после публикации.',
 
+  'homePremium.trustLabel': 'Доверие к платформе',
+  'homePremium.trustReviews': 'Отзывов',
+  'homePremium.trustPros': 'Проверенных мастеров',
+  'homePremium.trustCountries': 'Стран',
+  'homePremium.trustProjects': 'Завершённых проектов',
+  'homePremium.carouselPrev': 'Предыдущие отзывы',
+  'homePremium.carouselNext': 'Следующие отзывы',
+  'homePremium.companiesEyebrow': 'Партнёры',
+  'homePremium.companiesTitle': 'Рекомендуемые компании',
+  'homePremium.companiesSubtitle': 'Европейские строительные бренды, с которыми работают наши мастера.',
+  'homePremium.mapEyebrow': 'Активность',
+  'homePremium.mapTitle': 'Мастера и проекты по Европе',
+  'homePremium.mapSubtitle': 'Смотрите последних проверенных мастеров, компании и проекты клиентов на карте.',
+  'homePremium.mapFilters': 'Фильтры карты',
+  'homePremium.mapAll': 'Все',
+  'homePremium.mapPros': 'Мастера',
+  'homePremium.mapProjects': 'Проекты',
+  'homePremium.mapCompanies': 'Компании',
+  'homePremium.mapLoading': 'Загрузка карты…',
+  'homePremium.mapEmpty': 'Нет точек для этого фильтра.',
+  'homePremium.mapNearby': 'рядом',
+  'homePremium.faqEyebrow': 'Помощь',
+  'homePremium.faqTitle': 'Частые вопросы',
+  'homePremium.faqSubtitle': 'Короткие ответы о найме, верификации, платежах и проектах на DImarket.',
+  'homePremium.faq.q1.q': 'Что такое DImarket?',
+  'homePremium.faq.q1.a':
+    'DImarket — европейский строительный маркетплейс, который соединяет клиентов с проверенными мастерами, компаниями и предложениями.',
+  'homePremium.faq.q2.q': 'Как нанять мастера?',
+  'homePremium.faq.q2.a':
+    'Ищите по специальности или городу, сравнивайте рейтинги и портфолио, напишите мастеру или опубликуйте проект для предложений.',
+  'homePremium.faq.q3.q': 'Мастера верифицированы?',
+  'homePremium.faq.q3.a':
+    'Многие профили проходят проверку личности и квалификации. Ищите бейдж verified или фильтруйте только проверенных.',
+  'homePremium.faq.q4.q': 'Как работает публикация проекта?',
+  'homePremium.faq.q4.a':
+    'Опишите работу, добавьте локацию и бюджет и опубликуйте. Подобранные мастера пришлют предложения для сравнения.',
+  'homePremium.faq.q5.q': 'Доступен ли DImarket в моей стране?',
+  'homePremium.faq.q5.a':
+    'DImarket расширяется по Европе. Ищите мастеров по городу или стране либо используйте расширенный поиск.',
+  'homePremium.faq.q6.q': 'Как проходят платежи?',
+  'homePremium.faq.q6.a':
+    'Платные планы и бусты обрабатываются через Stripe. Оплата между клиентом и мастером — по защищённым сценариям вашего рынка.',
+  'homePremium.faq.q7.q': 'Могут ли компании создавать профили?',
+  'homePremium.faq.q7.a':
+    'Да. Строительные компании регистрируют company-аккаунт, добавляют услуги и появляются в поиске и на карте.',
+  'homePremium.faq.q8.q': 'Чем помогает AI-ассистент?',
+  'homePremium.faq.q8.a':
+    'Опишите ремонт простым языком. AI подскажет категории, бюджет и мастеров под вашу локацию.',
+  'homePremium.faq.q9.q': 'Какие языки поддерживает DImarket?',
+  'homePremium.faq.q9.a':
+    'Платформа поддерживает несколько европейских языков. Язык можно сменить в шапке или футере.',
+  'homePremium.faq.q10.q': 'Как связаться с поддержкой?',
+  'homePremium.faq.q10.a':
+    'Откройте страницу Contact для поддержки, privacy и GDPR-запросов. Мастера также могут использовать ссылки Support в футере.',
+
+  'footer.companyCol': 'Компания',
+  'footer.servicesCol': 'Услуги',
+  'footer.professionalsCol': 'Мастера',
+  'footer.supportCol': 'Поддержка',
+  'footer.about': 'О нас',
+  'footer.verification': 'Верификация',
+  'footer.forPros': 'Для мастеров',
+  'footer.helpCenter': 'Справка',
+  'footer.cookies': 'Cookies',
+  'footer.gdpr': 'GDPR',
+  'footer.languages': 'Языки',
+  'footer.social': 'Соцсети',
+
   // Categories
   'category.construction': 'Строительство',
   'category.constructionDesc': 'Новое строительство и строительные проекты',

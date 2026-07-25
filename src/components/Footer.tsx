@@ -1,13 +1,14 @@
-import { Facebook, Instagram, Linkedin } from 'lucide-react'
+import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { fetchHomepageMetrics, type HomeMetrics } from '../lib/homeMarketplace'
 import { navigateTo } from '../lib/navigation'
+import { LANGUAGES } from '../lib/types'
 import { FooterStats } from './FooterStats'
 import { HomeDownloadApp } from './home/HomeDownloadApp'
 
 export function Footer() {
-  const { t, user } = useApp()
+  const { t, user, language, setLanguage } = useApp()
   const currentYear = new Date().getFullYear()
   const [metrics, setMetrics] = useState<HomeMetrics | null>(null)
 
@@ -28,74 +29,53 @@ export function Footer() {
   const go = (path: string) => navigateTo(path)
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
-  const socialLinks = (
-    <div className="flex items-center justify-center gap-3 sm:justify-end">
-      <a
-        href="https://www.facebook.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#3a4553] text-[#cccccc] transition hover:border-[#ff9900] hover:text-[#ff9900]"
-        aria-label="Facebook"
-      >
-        <Facebook className="h-4 w-4" />
-      </a>
-      <a
-        href="https://www.instagram.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#3a4553] text-[#cccccc] transition hover:border-[#ff9900] hover:text-[#ff9900]"
-        aria-label="Instagram"
-      >
-        <Instagram className="h-4 w-4" />
-      </a>
-      <a
-        href="https://www.linkedin.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#3a4553] text-[#cccccc] transition hover:border-[#ff9900] hover:text-[#ff9900]"
-        aria-label="LinkedIn"
-      >
-        <Linkedin className="h-4 w-4" />
-      </a>
-    </div>
-  )
-
   const columnLinks = [
     {
-      title: t('footer.getToKnow'),
+      title: t('footer.companyCol'),
       links: [
         { label: t('footer.howItWorks'), path: '/for-professionals' },
-        { label: 'Pricing', path: '/pricing' },
-        { label: 'AI Assistant', path: '/assistant' },
+        { label: t('footer.about'), path: '/contact' },
         { label: t('footer.advertisingLink'), path: '/advertising' },
         { label: t('footer.contactLink'), path: '/contact' },
+        { label: 'Pricing', path: '/pricing' },
       ],
     },
     {
-      title: t('footer.makeMoney'),
+      title: t('footer.servicesCol'),
       links: [
-        { label: t('footer.register'), path: '/register' },
-        { label: t('footer.forCompanies'), path: '/for-companies' },
-        { label: t('header.sell'), path: '/create-ad' },
-      ],
-    },
-    {
-      title: t('footer.platformTitleSimple'),
-      links: [
-        { label: t('header.findProfessionals'), path: '/professionals' },
         { label: t('footer.browseListings'), path: '/listings' },
         { label: t('homePremium.postProject'), path: '/create-project' },
+        { label: 'AI Assistant', path: '/assistant' },
+        { label: t('header.sell'), path: '/create-ad' },
+        { label: t('advancedSearch.title'), path: '/search' },
       ],
     },
     {
-      title: t('footer.supportTitle'),
+      title: t('footer.professionalsCol'),
       links: [
-        { label: t('footer.privacy'), path: '/contact' },
-        { label: t('footer.impressum'), path: '/contact' },
-        { label: t('footer.terms'), path: '/contact' },
+        { label: t('header.findProfessionals'), path: '/professionals' },
+        { label: t('footer.forCompanies'), path: '/for-companies' },
+        { label: t('footer.register'), path: '/register' },
+        { label: t('footer.verification'), path: '/verification' },
+        { label: t('footer.forPros'), path: '/for-professionals' },
+      ],
+    },
+    {
+      title: t('footer.supportCol'),
+      links: [
+        { label: t('footer.helpCenter'), path: '/contact' },
+        { label: t('footer.privacy'), path: '/contact?topic=privacy' },
+        { label: t('footer.cookies'), path: '/contact?topic=cookies' },
+        { label: t('footer.gdpr'), path: '/contact?topic=gdpr' },
+        { label: t('footer.terms'), path: '/contact?topic=terms' },
+        { label: t('footer.impressum'), path: '/contact?topic=legal' },
       ],
     },
   ]
+
+  const primaryLangs = LANGUAGES.filter((l) =>
+    ['en', 'uk', 'ru', 'de', 'pl', 'es', 'fr', 'it'].includes(l.code),
+  )
 
   return (
     <footer className="premium-footer relative z-10 mt-auto w-full">
@@ -132,7 +112,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="layout-page-gutter py-10">
+      <div className="layout-page-gutter py-8">
         <div className="layout-page-content">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {columnLinks.map((col) => (
@@ -151,18 +131,101 @@ export function Footer() {
             ))}
           </div>
 
-          <div className="mt-8 hidden md:block">
-            <FooterStats compact />
+          <div className="mt-8 flex flex-col gap-5 border-t border-[#2f3b4a] pt-6 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#aeb4bc]">
+                {t('footer.languages')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {primaryLangs.map((lang) => (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    onClick={() => setLanguage(lang)}
+                    className={`rounded-full border px-2.5 py-1 text-xs transition ${
+                      language.code === lang.code
+                        ? 'border-[#ff9900] text-[#ff9900]'
+                        : 'border-[#3a4553] text-[#c9cdd3] hover:border-[#ff9900] hover:text-[#ff9900]'
+                    }`}
+                  >
+                    {lang.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#aeb4bc]">
+                {t('footer.social')}
+              </p>
+              <div className="flex items-center gap-3">
+                <a
+                  href="https://www.facebook.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#3a4553] text-[#cccccc] transition hover:border-[#ff9900] hover:text-[#ff9900]"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="h-4 w-4" />
+                </a>
+                <a
+                  href="https://www.instagram.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#3a4553] text-[#cccccc] transition hover:border-[#ff9900] hover:text-[#ff9900]"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="h-4 w-4" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#3a4553] text-[#cccccc] transition hover:border-[#ff9900] hover:text-[#ff9900]"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="h-4 w-4" />
+                </a>
+                <a
+                  href="https://x.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#3a4553] text-[#cccccc] transition hover:border-[#ff9900] hover:text-[#ff9900]"
+                  aria-label="X"
+                >
+                  <Twitter className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+
+            <div className="hidden md:block">
+              <FooterStats compact />
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs text-[#8b939e]">
+            <button type="button" className="hover:text-white" onClick={() => go('/contact?topic=legal')}>
+              {t('footer.legal')}
+            </button>
+            <button type="button" className="hover:text-white" onClick={() => go('/contact?topic=privacy')}>
+              {t('footer.privacy')}
+            </button>
+            <button type="button" className="hover:text-white" onClick={() => go('/contact?topic=cookies')}>
+              {t('footer.cookies')}
+            </button>
+            <button type="button" className="hover:text-white" onClick={() => go('/contact?topic=gdpr')}>
+              {t('footer.gdpr')}
+            </button>
+            <span className="text-[#5c6570]">App Store · Google Play</span>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-[#2f3b4a] layout-page-gutter py-5">
-        <div className="layout-page-content flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="border-t border-[#2f3b4a] layout-page-gutter py-4">
+        <div className="layout-page-content">
           <p className="text-center text-xs text-[#aeb4bc] sm:text-left">
             © {currentYear} DImarket. {t('footer.allRightsReserved')}
           </p>
-          {socialLinks}
         </div>
       </div>
     </footer>
