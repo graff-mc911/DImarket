@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import {
   AlertTriangle,
   BarChart3,
   Bell,
+  Bot,
   CheckCircle2,
   Eye,
   FileText,
+  LayoutDashboard,
+  Megaphone,
   MessageSquare,
   Plus,
   ShieldCheck,
@@ -495,6 +498,39 @@ export function Dashboard() {
                 </p>
               </div>
 
+              <div className="mb-8 rounded-[24px] border border-[var(--glass-border)] bg-white/55 p-4 shadow-[0_12px_28px_rgba(47,42,36,0.05)]">
+                <div className="mb-3 flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.08em] text-[#64748b]">
+                  <LayoutDashboard className="h-4 w-4" />
+                  Панель керування
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  <OwnerControlButton
+                    icon={<LayoutDashboard className="h-5 w-5" />}
+                    title="Admin Panel"
+                    text="Користувачі, проекти, категорії, платежі"
+                    onClick={() => navigateTo('/admin')}
+                  />
+                  <OwnerControlButton
+                    icon={<Bot className="h-5 w-5" />}
+                    title="AI Admin"
+                    text="AI-помічник і локальні дії адміністратора"
+                    onClick={() => navigateTo('/admin/ai')}
+                  />
+                  <OwnerControlButton
+                    icon={<Megaphone className="h-5 w-5" />}
+                    title="Marketing Agent"
+                    text="Маркетингові кампанії та черга контенту"
+                    onClick={() => navigateTo('/admin/marketing-agent')}
+                  />
+                  <OwnerControlButton
+                    icon={<BarChart3 className="h-5 w-5" />}
+                    title="Analytics"
+                    text="Метрики, звіти та здоровʼя платформи"
+                    onClick={() => navigateTo('/analytics')}
+                  />
+                </div>
+              </div>
+
               {error && (
                 <div className="mb-6 rounded-[22px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
                   {error}
@@ -864,6 +900,34 @@ export function Dashboard() {
 
             </section>
     </div>
+  )
+}
+
+function OwnerControlButton({
+  icon,
+  title,
+  text,
+  onClick,
+}: {
+  icon: ReactNode
+  title: string
+  text: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex h-full items-start gap-3 rounded-[20px] border border-[rgba(148,163,184,0.18)] bg-white/65 p-4 text-left transition hover:-translate-y-0.5 hover:border-[rgba(255,153,0,0.36)] hover:bg-white hover:shadow-[0_14px_30px_rgba(47,42,36,0.08)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff9900]"
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-[rgba(255,153,0,0.12)] text-[#c96d2c]">
+        {icon}
+      </span>
+      <span>
+        <span className="block text-sm font-extrabold text-[#2f2a24]">{title}</span>
+        <span className="mt-1 block text-xs leading-5 text-[#6f665d]">{text}</span>
+      </span>
+    </button>
   )
 }
 
