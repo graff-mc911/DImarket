@@ -5033,11 +5033,16 @@
   color: #6f665d;
 }
 
-.cat-toolbar__filters select {
+.cat-toolbar__filters select,
+.cat-toolbar__filters input {
   border-radius: 12px;
   border: 1px solid rgba(176, 126, 85, 0.18);
   background: #fff;
   padding: 0.55rem 0.75rem;
+}
+
+.cat-toolbar__filters input {
+  width: 8.5rem;
 }
 
 .cat-toolbar__check {
@@ -5045,6 +5050,26 @@
   align-items: center;
   gap: 0.4rem;
   cursor: pointer;
+}
+
+.cat-breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+  color: #6f665d;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.cat-breadcrumbs button {
+  color: #c96d2c;
+  font-weight: 800;
+}
+
+.cat-breadcrumbs span:last-child {
+  color: #2f2a24;
 }
 
 .cat-section { margin-top: clamp(2.25rem, 4vw, 3.25rem); }

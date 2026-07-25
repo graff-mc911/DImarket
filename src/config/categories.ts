@@ -10,6 +10,7 @@ export type CategorySeoMeta = {
 export type ServiceSubcategory = {
   id: string
   slug: string
+  aliases?: string[]
   title: LocalizedText
   description: LocalizedText
   image: string
@@ -77,11 +78,13 @@ const sub = (
   title: string,
   slug?: string,
   description?: string,
+  aliases?: string[],
 ): ServiceSubcategory => {
   const resolvedSlug = slug ?? title.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
   return {
     id: resolvedSlug,
     slug: resolvedSlug,
+    aliases,
     title: text(title),
     description: text(description ?? `${title} services for residential and commercial projects.`),
     image: image(resolvedSlug),
@@ -109,14 +112,14 @@ const category = (
 
 export const serviceCategories: ServiceCategory[] = [
   category('specialists', '👷', 'Specialists', 'Verified tradespeople for installation, repair, and finishing work.', [
-    sub('Specialists', '⚡', 'Electrician'),
+    sub('Specialists', '⚡', 'Electrician', undefined, undefined, ['electrical']),
     sub('Specialists', '💧', 'Plumber'),
     sub('Specialists', '🔧', 'Installer'),
     sub('Specialists', '🧱', 'Mason'),
     sub('Specialists', '🏗', 'Concrete Worker'),
     sub('Specialists', '🔥', 'Welder'),
-    sub('Specialists', '🏠', 'Roofer'),
-    sub('Specialists', '🎨', 'Painter'),
+    sub('Specialists', '🏠', 'Roofer', undefined, undefined, ['roofing']),
+    sub('Specialists', '🎨', 'Painter', undefined, undefined, ['painting']),
     sub('Specialists', '⬛', 'Tiler'),
     sub('Specialists', '🪚', 'Carpenter'),
     sub('Specialists', '📐', 'Architect & Designer'),
@@ -249,3 +252,20 @@ export const serviceCategories: ServiceCategory[] = [
     sub('Legal Services', '🧾', 'Tax Lawyer'),
   ]),
 ]
+
+export function findServiceCategory(slug: string): ServiceCategory | null {
+  return serviceCategories.find((category) => category.slug === slug) ?? null
+}
+
+export function findServiceSubcategory(slug: string): {
+  category: ServiceCategory
+  subcategory: ServiceSubcategory
+} | null {
+  for (const category of serviceCategories) {
+    const subcategory = category.subcategories.find((item) =>
+      item.slug === slug || item.aliases?.includes(slug),
+    )
+    if (subcategory) return { category, subcategory }
+  }
+  return null
+}

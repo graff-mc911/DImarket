@@ -2,7 +2,6 @@ import { ArrowRight } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import {
   marketplaceCategoryLabel,
-  marketplaceServiceProsPath,
   type MarketplaceCategory,
 } from '../../lib/marketplaceCategories'
 import { navigateTo } from '../../lib/navigation'
@@ -14,7 +13,7 @@ interface CategoryPopularServicesProps {
 
 export function CategoryPopularServices({
   services,
-  categorySlug,
+  categorySlug: _categorySlug,
 }: CategoryPopularServicesProps) {
   const { language, t } = useApp()
 
@@ -35,9 +34,7 @@ export function CategoryPopularServices({
               key={service.id}
               type="button"
               className="cat-service-chip"
-              onClick={() =>
-                navigateTo(marketplaceServiceProsPath(service.slug, categorySlug))
-              }
+              onClick={() => navigateTo(`/category/${encodeURIComponent(service.slug)}`)}
             >
               <span>{marketplaceCategoryLabel(service, language.code)}</span>
               <ArrowRight className="h-4 w-4 opacity-45" aria-hidden />

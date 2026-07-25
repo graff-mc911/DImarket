@@ -1,5 +1,11 @@
 import { supabase } from './supabase'
 import type { Category, Json, ListingWithImages, Profile } from './types'
+import {
+  findServiceCategory,
+  findServiceSubcategory,
+  type ServiceCategory,
+  type ServiceSubcategory,
+} from '../config/categories'
 
 export type MarketplaceCategory = Category & {
   cover_image_url?: string | null
@@ -22,6 +28,7 @@ export type MarketplaceCategoryPage = {
   category: MarketplaceCategory | null
   services: MarketplaceCategory[]
   professionals: Profile[]
+  companies: Profile[]
   projects: ListingWithImages[]
   reviews: CategoryReview[]
   related: MarketplaceCategory[]
@@ -90,6 +97,63 @@ export function marketplaceServiceProsPath(serviceSlug: string, categorySlug?: s
   params.set('work', serviceSlug)
   if (categorySlug) params.set('category', categorySlug)
   return `/professionals?${params.toString()}`
+}
+
+function configCategoryToMarketplaceCategory(category: ServiceCategory): MarketplaceCategory {
+  const now = new Date(0).toISOString()
+  return {
+    id: `config-${category.slug}`,
+    name: category.title.en,
+    slug: category.slug,
+    parent_id: null,
+    icon: category.icon,
+    description: category.description.en,
+    created_at: now,
+    updated_at: now,
+    cover_image_url: category.image,
+    sort_order: 0,
+    is_main: true,
+    is_service: false,
+    icon_key: null,
+    name_i18n: category.title,
+    description_i18n: category.description,
+    services_count: category.serviceCount,
+    professionals_count: 0,
+    avg_rating: null,
+    completed_projects_count: 0,
+    reviews_count: 0,
+  }
+}
+
+function configSubcategoryToMarketplaceCategory(
+  subcategory: ServiceSubcategory,
+  category: ServiceCategory,
+  sortOrder: number,
+  requestedSlug = subcategory.slug,
+): MarketplaceCategory {
+  const now = new Date(0).toISOString()
+  return {
+    id: `config-${requestedSlug}`,
+    name: subcategory.title.en,
+    slug: requestedSlug,
+    parent_id: `config-${category.slug}`,
+    icon: subcategory.icon,
+    description: subcategory.description.en,
+    created_at: now,
+    updated_at: now,
+    cover_image_url: subcategory.image || category.image,
+    sort_order: sortOrder,
+    is_main: false,
+    is_service: true,
+    icon_key: null,
+    name_i18n: subcategory.title,
+    description_i18n: subcategory.description,
+    services_count: 0,
+    professionals_count: 0,
+    avg_rating: null,
+    completed_projects_count: 0,
+    reviews_count: 0,
+  }
 }
 
 export async function fetchMainMarketplaceCategories(): Promise<MarketplaceCategory[]> {
@@ -217,6 +281,7 @@ export async function fetchMarketplaceCategoryPage(
     category: null,
     services: [] as MarketplaceCategory[],
     professionals: [] as Profile[],
+    companies: [] as Profile[],
     projects: [] as ListingWithImages[],
     reviews: [] as CategoryReview[],
     related: [] as MarketplaceCategory[],
@@ -231,7 +296,9 @@ export async function fetchMarketplaceCategoryPage(
   let category: MarketplaceCategory | null = null
   let services: MarketplaceCategory[] = []
   let professionals: Profile[] = []
+  let companies: Profile[] = []
   let projects: ListingWithImages[] = []
+  let configServices: MarketplaceCategory[] | null = null
 
   if (!rpcError && rpcData && typeof rpcData === 'object') {
     const payload = rpcData as MarketplaceCategoryPage
@@ -239,6 +306,7 @@ export async function fetchMarketplaceCategoryPage(
       category = payload.category
       services = payload.services ?? []
       professionals = payload.professionals ?? []
+      companies = payload.companies ?? []
       projects = (payload.projects as ListingWithImages[]) ?? []
     }
   }
@@ -276,31 +344,59 @@ export async function fetchMarketplaceCategoryPage(
         : null
     }
 
+    if (!resolvedCatRow) {
+      const configCategory = findServiceCategory(slug)
+      const configSubcategory = findServiceSubcategory(slug)
+
+      if (configCategory) {
+        resolvedCatRow = configCategoryToMarketplaceCategory(configCategory)
+        configServices = configCategory.subcategories.map((item, index) =>
+          configSubcategoryToMarketplaceCategory(item, configCategory, index),
+        )
+      } else if (configSubcategory) {
+        resolvedCatRow = configSubcategoryToMarketplaceCategory(
+          configSubcategory.subcategory,
+          configSubcategory.category,
+          0,
+          slug,
+        )
+        configServices = []
+      }
+    }
+
     if (!resolvedCatRow) return empty
 
     category = {
       ...resolvedCatRow,
       reviews_count: resolvedCatRow.reviews_count ?? 0,
     }
-    services = await fetchCategoryServices(category.id)
+    services = configServices ?? await fetchCategoryServices(category.id)
 
     const { data: pros } = await supabase
       .from('profiles')
       .select('*')
       .eq('is_professional', true)
-      .eq('user_role', 'professional')
       .order('rating', { ascending: false })
-      .limit(24)
+      .limit(48)
 
-    professionals = ((pros as Profile[] | null) ?? [])
+    const matchingProfiles = ((pros as Profile[] | null) ?? [])
       .filter((p) => {
         const works = p.work_subcategory_slugs ?? []
+        const serviceSlugs = services.map((s) => s.slug)
         return (
           works.some((w) => w === slug || w.startsWith(`${slug}-`)) ||
-          services.some((s) => works.includes(s.slug))
+          works.some((w) => serviceSlugs.includes(w)) ||
+          (configServices != null && works.length === 0)
         )
       })
+
+    professionals = matchingProfiles
+      .filter((p) => p.user_role !== 'company')
       .slice(0, 12)
+
+    companies = matchingProfiles
+      .filter((p) => p.user_role === 'company')
+      .slice(0, 8)
 
     const { data: projectRows } = await supabase
       .from('listings')
@@ -334,6 +430,7 @@ export async function fetchMarketplaceCategoryPage(
     category,
     services,
     professionals,
+    companies,
     projects,
     reviews,
     related,

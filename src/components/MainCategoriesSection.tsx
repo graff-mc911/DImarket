@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { AnimatePresence, LazyMotion, domAnimation, m } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { ChevronRight, MapPin, Search } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -10,7 +10,6 @@ import {
   serviceCategories,
   type LocalizedText,
   type ServiceCategory,
-  type ServiceSubcategory,
 } from '../config/categories'
 import type { MarketplaceCategory } from '../lib/marketplaceCategories'
 
@@ -45,14 +44,6 @@ function categorySearchText(category: ServiceCategory, languageCode: string): st
     .toLowerCase()
 }
 
-function professionalPath(category: ServiceCategory, subcategory: ServiceSubcategory, locationId: string): string {
-  const params = new URLSearchParams()
-  params.set('work', subcategory.slug)
-  params.set('category', category.slug)
-  if (locationId !== 'all-europe') params.set('location', locationId)
-  return `/professionals?${params.toString()}`
-}
-
 /**
  * Serviya-inspired category browser for DImarket.
  */
@@ -66,7 +57,6 @@ export function MainCategoriesSection({
   const { language } = useApp()
   const [query, setQuery] = useState('')
   const [locationId, setLocationId] = useState(categoryLocationOptions[0]?.id ?? 'all-europe')
-  const [expandedId, setExpandedId] = useState<string | null>(serviceCategories[0]?.id ?? null)
   const lang = language.code
 
   const filtered = useMemo(() => {
@@ -81,8 +71,11 @@ export function MainCategoriesSection({
   const sectionSubtitle = subtitle ?? localized(categoriesUiText.subtitle, lang)
   const sectionEyebrow = eyebrow ?? localized(categoriesUiText.eyebrow, lang)
 
-  const handleSubcategoryClick = (category: ServiceCategory, subcategory: ServiceSubcategory) => {
-    navigateTo(professionalPath(category, subcategory, locationId))
+  const handleCategoryClick = (category: ServiceCategory) => {
+    const params = new URLSearchParams()
+    if (locationId !== 'all-europe') params.set('location', locationId)
+    const suffix = params.toString() ? `?${params.toString()}` : ''
+    navigateTo(`/category/${encodeURIComponent(category.slug)}${suffix}`)
   }
 
   return (
@@ -142,15 +135,13 @@ export function MainCategoriesSection({
         <LazyMotion features={domAnimation}>
           <m.div className="serviya-category-grid" layout>
             {filtered.map((category) => {
-              const expanded = expandedId === category.id
               return (
                 <m.article key={category.id} className="serviya-category-card" layout>
                   <button
                     type="button"
                     className="serviya-category-card__button"
-                    onClick={() => setExpandedId(expanded ? null : category.id)}
-                    aria-expanded={expanded}
-                    aria-label={`${expanded ? localized(categoriesUiText.closeCategory, lang) : localized(categoriesUiText.openCategory, lang)}: ${localized(category.title, lang)}`}
+                    onClick={() => handleCategoryClick(category)}
+                    aria-label={`${localized(categoriesUiText.openCategory, lang)}: ${localized(category.title, lang)}`}
                   >
                     <span className="serviya-category-card__icon" aria-hidden>
                       {category.icon}
@@ -161,33 +152,6 @@ export function MainCategoriesSection({
                     </span>
                     <ChevronRight className="serviya-category-card__chevron" aria-hidden />
                   </button>
-
-                  <AnimatePresence initial={false}>
-                    {expanded ? (
-                      <m.div
-                        className="serviya-subcategories"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2, ease: 'easeOut' }}
-                      >
-                        <div>
-                          {category.subcategories.map((subcategory) => (
-                            <button
-                              key={subcategory.id}
-                              type="button"
-                              className="serviya-subcategory-chip"
-                              onClick={() => handleSubcategoryClick(category, subcategory)}
-                              title={localized(subcategory.description, lang)}
-                            >
-                              <span aria-hidden>{subcategory.icon}</span>
-                              {localized(subcategory.title, lang)}
-                            </button>
-                          ))}
-                        </div>
-                      </m.div>
-                    ) : null}
-                  </AnimatePresence>
                 </m.article>
               )
             })}

@@ -15,11 +15,17 @@ import type { Profile } from '../../lib/types'
 interface CategoryFeaturedProsProps {
   professionals: Profile[]
   categorySlug: string
+  title?: string
+  emptyLabel?: string
+  sectionId?: string
 }
 
 export function CategoryFeaturedPros({
   professionals,
   categorySlug,
+  title,
+  emptyLabel,
+  sectionId = 'cat-featured-pros',
 }: CategoryFeaturedProsProps) {
   const { t } = useApp()
   const featured = [...professionals]
@@ -33,9 +39,9 @@ export function CategoryFeaturedPros({
     .slice(0, 6)
 
   return (
-    <section className="cat-section" aria-labelledby="cat-featured-pros">
+    <section className="cat-section" aria-labelledby={sectionId}>
       <div className="cat-section__head">
-        <h2 id="cat-featured-pros">{t('marketplace.featuredProfessionals')}</h2>
+        <h2 id={sectionId}>{title ?? t('marketplace.featuredProfessionals')}</h2>
         <button
           type="button"
           className="cat-section__link"
@@ -47,7 +53,7 @@ export function CategoryFeaturedPros({
         </button>
       </div>
       {featured.length === 0 ? (
-        <p className="cat-section__empty">{t('marketplace.noPros')}</p>
+        <p className="cat-section__empty">{emptyLabel ?? t('marketplace.noPros')}</p>
       ) : (
         <div className="cat-pro-grid">
           {featured.map((pro) => (
