@@ -1704,4 +1704,6 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'marketplace.viewAllProjects': 'Все проекты',
   'marketplace.noProjects': 'Нет недавних проектов в этой категории.',
   'marketplace.viewProject': 'Смотреть проект',
+  'marketplace.viewServices': 'Смотреть услуги',
+  'marketplace.completedProjects': 'Завершённые проекты',
 }

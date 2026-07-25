@@ -1856,6 +1856,8 @@ export const enTranslations = {
   'marketplace.viewAllProjects': 'View all projects',
   'marketplace.noProjects': 'No recent projects in this category.',
   'marketplace.viewProject': 'View project',
+  'marketplace.viewServices': 'View Services',
+  'marketplace.completedProjects': 'Completed projects',
 } as const
 
 export type TranslationKey = keyof typeof enTranslations

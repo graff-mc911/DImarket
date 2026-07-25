@@ -3133,6 +3133,214 @@
 }
 
 /* ============================================================
+   Category service cards (main construction categories)
+   ============================================================ */
+
+.main-categories-section--compact {
+  padding-top: 1.5rem;
+}
+
+.main-categories-section__search {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: min(100%, 18rem);
+  padding: 0.85rem 1rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(176, 126, 85, 0.18);
+  box-shadow: 0 8px 24px rgba(47, 42, 36, 0.05);
+}
+
+.main-categories-section__search input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 0.92rem;
+  color: #2f2a24;
+}
+
+.category-service-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.15rem;
+}
+
+@media (min-width: 640px) {
+  .category-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .category-service-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.4rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .category-service-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.category-service-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #fff;
+  border: 1px solid rgba(176, 126, 85, 0.1);
+  box-shadow: 0 12px 32px rgba(47, 42, 36, 0.06);
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 240ms ease,
+    border-color 240ms ease;
+}
+
+.category-service-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 153, 0, 0.4);
+  box-shadow:
+    0 22px 48px rgba(47, 42, 36, 0.11),
+    0 0 0 1px rgba(255, 153, 0, 0.1);
+}
+
+.category-service-card--skeleton {
+  min-height: 22rem;
+  background: linear-gradient(110deg, #ebe6df 20%, #f8f4ef 40%, #ebe6df 60%);
+  background-size: 200% 100%;
+  animation: marketplace-shimmer 1.2s linear infinite;
+}
+
+.category-service-card__media {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #e8e2da;
+}
+
+.category-service-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.category-service-card:hover .category-service-card__media img {
+  transform: scale(1.06);
+}
+
+.category-service-card__media-empty {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #efe8df 0%, #d9cfc3 100%);
+}
+
+.category-service-card__fade {
+  position: absolute;
+  inset: auto 0 0;
+  height: 48%;
+  background: linear-gradient(to top, rgba(20, 16, 12, 0.45), transparent);
+  pointer-events: none;
+}
+
+.category-service-card__icon {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  display: flex;
+  width: 3.5rem;
+  height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #c96d2c;
+  border: 1px solid rgba(255, 153, 0, 0.32);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+
+.category-service-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.15rem 1.2rem 1.25rem;
+}
+
+.category-service-card__title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: #1a1612;
+}
+
+.category-service-card:hover .category-service-card__title {
+  color: #9a5525;
+}
+
+.category-service-card__desc {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #6f665d;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6em;
+}
+
+.category-service-card__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.category-service-card__stat {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: #6f665d;
+}
+
+.category-service-card__stat strong {
+  color: #2f2a24;
+  font-weight: 750;
+}
+
+.category-service-card__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: #fff4e8;
+  color: #c96d2c;
+  font-size: 0.9rem;
+  font-weight: 750;
+  border: 1px solid rgba(255, 153, 0, 0.22);
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.category-service-card:hover .category-service-card__cta {
+  background: #ff9900;
+  color: #1a1612;
+  border-color: transparent;
+}
+
+/* ============================================================
    Premium homepage
    ============================================================ */
 

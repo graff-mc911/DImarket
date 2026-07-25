@@ -1691,6 +1691,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'marketplace.viewAllProjects': 'Усі проєкти',
   'marketplace.noProjects': 'Немає нещодавніх проєктів у цій категорії.',
   'marketplace.viewProject': 'Переглянути проєкт',
+  'marketplace.viewServices': 'Переглянути послуги',
+  'marketplace.completedProjects': 'Завершені проєкти',
   'language.ru': 'російська',
   'currency.rub': 'російський рубль',
   'messages.description': 'Внутрішній чат буде незабаром.',

@@ -58,6 +58,7 @@ export interface Database {
           services_count: number
           professionals_count: number
           avg_rating: number | null
+          completed_projects_count: number
           updated_at: string
         }
         Insert: {
@@ -78,6 +79,7 @@ export interface Database {
           services_count?: number
           professionals_count?: number
           avg_rating?: number | null
+          completed_projects_count?: number
           updated_at?: string
         }
         Update: {
@@ -98,6 +100,7 @@ export interface Database {
           services_count?: number
           professionals_count?: number
           avg_rating?: number | null
+          completed_projects_count?: number
           updated_at?: string
         }
       }

@@ -12,6 +12,7 @@ export type MarketplaceCategory = Category & {
   services_count?: number
   professionals_count?: number
   avg_rating?: number | null
+  completed_projects_count?: number
 }
 
 export type MarketplaceCategoryPage = {
@@ -24,7 +25,7 @@ export type MarketplaceCategoryPage = {
 }
 
 const MAIN_SELECT =
-  'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, parent_id, is_main, is_service'
+  'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, completed_projects_count, parent_id, is_main, is_service'
 
 function asI18nMap(value: Json | undefined | null): Record<string, string> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
@@ -79,6 +80,24 @@ export async function fetchMainMarketplaceCategories(): Promise<MarketplaceCateg
     .order('sort_order', { ascending: true })
 
   if (!error && data?.length) return data as MarketplaceCategory[]
+
+  // Column may be missing before migration — retry without completed_projects_count
+  if (error) {
+    const { data: fallback } = await supabase
+      .from('categories')
+      .select(
+        'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, parent_id, is_main, is_service',
+      )
+      .eq('is_main', true)
+      .order('sort_order', { ascending: true })
+
+    if (fallback?.length) {
+      return (fallback as MarketplaceCategory[]).map((c) => ({
+        ...c,
+        completed_projects_count: c.completed_projects_count ?? 0,
+      }))
+    }
+  }
 
   // Soft fallback: construction children that look like trade groups
   const { data: construction } = await supabase
