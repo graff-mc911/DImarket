@@ -22,6 +22,18 @@ export type MarketplaceCategoryPage = {
   services: MarketplaceCategory[]
   professionals: Profile[]
   projects: ListingWithImages[]
+  reviews: CategoryReview[]
+  related: MarketplaceCategory[]
+}
+
+export type CategoryReview = {
+  id: string
+  reviewer_name: string
+  rating: number
+  comment: string
+  created_at: string
+  is_verified_customer: boolean
+  professional_id: string
 }
 
 const MAIN_SELECT =
@@ -138,78 +150,128 @@ export async function fetchCategoryServices(
 export async function fetchMarketplaceCategoryPage(
   slug: string,
 ): Promise<MarketplaceCategoryPage> {
+  const empty = {
+    ok: false as const,
+    error: 'not_found',
+    category: null,
+    services: [] as MarketplaceCategory[],
+    professionals: [] as Profile[],
+    projects: [] as ListingWithImages[],
+    reviews: [] as CategoryReview[],
+    related: [] as MarketplaceCategory[],
+  }
+
   const { data: rpcData, error: rpcError } = await supabase.rpc(
     'get_marketplace_category_page' as never,
     { p_slug: slug } as never,
   )
 
+  let category: MarketplaceCategory | null = null
+  let services: MarketplaceCategory[] = []
+  let professionals: Profile[] = []
+  let projects: ListingWithImages[] = []
+
   if (!rpcError && rpcData && typeof rpcData === 'object') {
     const payload = rpcData as MarketplaceCategoryPage
     if (payload.ok && payload.category) {
-      return {
-        ok: true,
-        category: payload.category,
-        services: payload.services ?? [],
-        professionals: payload.professionals ?? [],
-        projects: (payload.projects as ListingWithImages[]) ?? [],
-      }
+      category = payload.category
+      services = payload.services ?? []
+      professionals = payload.professionals ?? []
+      projects = (payload.projects as ListingWithImages[]) ?? []
     }
   }
 
-  const { data: category } = await supabase
-    .from('categories')
-    .select(MAIN_SELECT)
-    .eq('slug', slug)
-    .maybeSingle()
-
   if (!category) {
-    return { ok: false, error: 'not_found', category: null, services: [], professionals: [], projects: [] }
+    const { data: catRow } = await supabase
+      .from('categories')
+      .select(MAIN_SELECT)
+      .eq('slug', slug)
+      .maybeSingle()
+
+    if (!catRow) return empty
+
+    category = catRow as MarketplaceCategory
+    services = await fetchCategoryServices(category.id)
+
+    const { data: pros } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('is_professional', true)
+      .eq('user_role', 'professional')
+      .order('rating', { ascending: false })
+      .limit(24)
+
+    professionals = ((pros as Profile[] | null) ?? [])
+      .filter((p) => {
+        const works = p.work_subcategory_slugs ?? []
+        return (
+          works.some((w) => w === slug || w.startsWith(`${slug}-`)) ||
+          services.some((s) => works.includes(s.slug))
+        )
+      })
+      .slice(0, 12)
+
+    const { data: projectRows } = await supabase
+      .from('listings')
+      .select('*, images:listing_images(*), category:categories(*)')
+      .eq('listing_type', 'service_request')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(24)
+
+    projects = ((projectRows as ListingWithImages[] | null) ?? [])
+      .filter((l) => {
+        const works = l.subcategory_slugs ?? []
+        if (works.some((w) => w === slug || w.startsWith(`${slug}-`))) return true
+        if (l.category_id === category!.id) return true
+        if (l.category && (l.category.slug === slug || l.category.parent_id === category!.id)) {
+          return true
+        }
+        return false
+      })
+      .slice(0, 8)
   }
 
-  const cat = category as MarketplaceCategory
-  const services = await fetchCategoryServices(cat.id)
-
-  const { data: professionals } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('is_professional', true)
-    .eq('user_role', 'professional')
-    .order('rating', { ascending: false })
-    .limit(24)
-
-  const filteredPros = ((professionals as Profile[] | null) ?? []).filter((p) => {
-    const works = p.work_subcategory_slugs ?? []
-    return (
-      works.some((w) => w === slug || w.startsWith(`${slug}-`)) ||
-      services.some((s) => works.includes(s.slug))
-    )
-  }).slice(0, 12)
-
-  const { data: projects } = await supabase
-    .from('listings')
-    .select('*, images:listing_images(*), category:categories(*)')
-    .eq('listing_type', 'service_request')
-    .eq('status', 'active')
-    .order('created_at', { ascending: false })
-    .limit(24)
-
-  const filteredProjects = ((projects as ListingWithImages[] | null) ?? [])
-    .filter((l) => {
-      const works = l.subcategory_slugs ?? []
-      if (works.some((w) => w === slug || w.startsWith(`${slug}-`))) return true
-      if (l.category_id === cat.id) return true
-      if (l.category && (l.category.slug === slug || l.category.parent_id === cat.id)) return true
-      return false
-    })
-    .slice(0, 8)
+  const [reviews, related] = await Promise.all([
+    fetchCategoryReviews(professionals.map((p) => p.id)),
+    fetchRelatedMainCategories(category.id, category.slug),
+  ])
 
   return {
     ok: true,
-    category: cat,
+    category,
     services,
-    professionals: filteredPros,
-    projects: filteredProjects,
+    professionals,
+    projects,
+    reviews,
+    related,
   }
+}
+
+async function fetchCategoryReviews(professionalIds: string[]): Promise<CategoryReview[]> {
+  if (professionalIds.length === 0) return []
+
+  const { data } = await supabase
+    .from('reviews')
+    .select('id, reviewer_name, rating, comment, created_at, is_verified_customer, professional_id')
+    .in('professional_id', professionalIds.slice(0, 40))
+    .eq('is_approved', true)
+    .or('is_hidden.is.null,is_hidden.eq.false')
+    .not('comment', 'is', null)
+    .order('created_at', { ascending: false })
+    .limit(12)
+
+  return ((data as CategoryReview[] | null) ?? []).filter(
+    (r) => (r.comment ?? '').trim().length > 12,
+  )
+}
+
+async function fetchRelatedMainCategories(
+  currentId: string,
+  _slug: string,
+): Promise<MarketplaceCategory[]> {
+  const mains = await fetchMainMarketplaceCategories()
+  return mains.filter((c) => c.id !== currentId).slice(0, 8)
 }
 
 export function filterCategoriesByQuery(

@@ -1693,6 +1693,29 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'marketplace.viewProject': 'Переглянути проєкт',
   'marketplace.viewServices': 'Переглянути послуги',
   'marketplace.completedProjects': 'Завершені проєкти',
+  'catPage.seoTitle': '{category} — послуги та майстри | DImarket',
+  'catPage.seoFallback': 'Категорія | DImarket',
+  'catPage.seoDescription':
+    'Знайдіть верифікованих майстрів у категорії {category}, порівняйте послуги та опублікуйте проєкт на DImarket.',
+  'catPage.popularServices': 'Популярні послуги',
+  'catPage.latestProjects': 'Останні проєкти',
+  'catPage.aiRecommendation': 'AI-рекомендація',
+  'catPage.customerReviews': 'Відгуки клієнтів',
+  'catPage.reviewsStat': 'Відгуки',
+  'catPage.relatedCategories': 'Схожі категорії',
+  'catPage.faqTitle': 'Часті запитання',
+  'catPage.faq1q': 'Як найняти майстра з категорії {category}?',
+  'catPage.faq1a':
+    'Перегляньте рекомендованих майстрів у {category}, порівняйте рейтинги або опублікуйте проєкт і отримайте пропозиції.',
+  'catPage.faq2q': 'Чи верифіковані майстри з {category}?',
+  'catPage.faq2a':
+    'Багато профілів у {category} верифіковані. Увімкніть фільтр «Лише верифіковані».',
+  'catPage.faq3q': 'Як працює AI-підбір для {category}?',
+  'catPage.faq3a':
+    'Опишіть роботу в AI-асистенті — DImarket підкаже послуги та майстрів у {category} під ваш бюджет і локацію.',
+  'catPage.faq4q': 'Чи можна фільтрувати послуги {category}?',
+  'catPage.faq4a':
+    'Так. Скористайтесь пошуком і фільтрами або відкрийте популярну послугу — відкриються відфільтровані майстри.',
   'language.ru': 'російська',
   'currency.rub': 'російський рубль',
   'messages.description': 'Внутрішній чат буде незабаром.',

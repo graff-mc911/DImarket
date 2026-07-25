@@ -1706,4 +1706,27 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'marketplace.viewProject': 'Смотреть проект',
   'marketplace.viewServices': 'Смотреть услуги',
   'marketplace.completedProjects': 'Завершённые проекты',
+  'catPage.seoTitle': '{category} — услуги и мастера | DImarket',
+  'catPage.seoFallback': 'Категория | DImarket',
+  'catPage.seoDescription':
+    'Найдите проверенных мастеров в категории {category}, сравните услуги и опубликуйте проект на DImarket.',
+  'catPage.popularServices': 'Популярные услуги',
+  'catPage.latestProjects': 'Последние проекты',
+  'catPage.aiRecommendation': 'AI-рекомендация',
+  'catPage.customerReviews': 'Отзывы клиентов',
+  'catPage.reviewsStat': 'Отзывы',
+  'catPage.relatedCategories': 'Похожие категории',
+  'catPage.faqTitle': 'Частые вопросы',
+  'catPage.faq1q': 'Как нанять мастера по направлению {category}?',
+  'catPage.faq1a':
+    'Сравните рекомендованных мастеров в {category} или опубликуйте проект и получите предложения.',
+  'catPage.faq2q': 'Проверены ли мастера в {category}?',
+  'catPage.faq2a':
+    'Многие профили в {category} верифицированы. Включите фильтр «Только проверенные».',
+  'catPage.faq3q': 'Как работает AI-подбор для {category}?',
+  'catPage.faq3a':
+    'Опишите работу в AI-ассистенте — DImarket предложит услуги и мастеров в {category} под бюджет и локацию.',
+  'catPage.faq4q': 'Можно ли фильтровать услуги {category}?',
+  'catPage.faq4a':
+    'Да. Используйте поиск и фильтры или откройте популярную услугу — откроются отфильтрованные мастера.',
 }

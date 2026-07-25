@@ -1858,6 +1858,30 @@ export const enTranslations = {
   'marketplace.viewProject': 'View project',
   'marketplace.viewServices': 'View Services',
   'marketplace.completedProjects': 'Completed projects',
+
+  'catPage.seoTitle': '{category} services & professionals | DImarket',
+  'catPage.seoFallback': 'Category | DImarket',
+  'catPage.seoDescription':
+    'Find verified {category} professionals, compare services, and post a project on DImarket.',
+  'catPage.popularServices': 'Popular services',
+  'catPage.latestProjects': 'Latest projects',
+  'catPage.aiRecommendation': 'AI recommendation',
+  'catPage.customerReviews': 'Customer reviews',
+  'catPage.reviewsStat': 'Reviews',
+  'catPage.relatedCategories': 'Related categories',
+  'catPage.faqTitle': 'Frequently asked questions',
+  'catPage.faq1q': 'How do I hire a {category} professional on DImarket?',
+  'catPage.faq1a':
+    'Browse featured professionals in {category}, compare ratings, or post a project and receive quotes from matched specialists.',
+  'catPage.faq2q': 'Are {category} professionals verified?',
+  'catPage.faq2a':
+    'Many {category} profiles are verified. Use the Verified filter to show only checked professionals.',
+  'catPage.faq3q': 'How does AI matching work for {category}?',
+  'catPage.faq3a':
+    'Describe your job once in the AI Assistant. DImarket suggests the right {category} services and professionals for your budget and location.',
+  'catPage.faq4q': 'Can I filter {category} services?',
+  'catPage.faq4a':
+    'Yes. Use search and filters on this page, or open a popular service to see professionals filtered for that skill.',
 } as const
 
 export type TranslationKey = keyof typeof enTranslations
