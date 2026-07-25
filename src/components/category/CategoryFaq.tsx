@@ -32,8 +32,28 @@ export function CategoryFaq({ categoryTitle }: CategoryFaqProps) {
     [categoryTitle, t],
   )
 
+  const faqJsonLd = useMemo(
+    () => ({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: items.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a,
+        },
+      })),
+    }),
+    [items],
+  )
+
   return (
     <section className="cat-section" aria-labelledby="cat-faq">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="cat-section__head">
         <h2 id="cat-faq">{t('catPage.faqTitle')}</h2>
       </div>
@@ -46,12 +66,17 @@ export function CategoryFaq({ categoryTitle }: CategoryFaqProps) {
                 type="button"
                 className="cat-faq__q"
                 aria-expanded={open}
+                aria-controls={`cat-faq-answer-${index}`}
                 onClick={() => setOpenIndex(open ? null : index)}
               >
                 <span>{item.q}</span>
                 <ChevronDown className="h-4 w-4" aria-hidden />
               </button>
-              {open ? <p className="cat-faq__a">{item.a}</p> : null}
+              {open ? (
+                <p id={`cat-faq-answer-${index}`} className="cat-faq__a">
+                  {item.a}
+                </p>
+              ) : null}
             </div>
           )
         })}

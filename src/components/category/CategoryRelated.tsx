@@ -16,8 +16,8 @@ export function CategoryRelated({ categories }: CategoryRelatedProps) {
       <div className="cat-section__head">
         <h2 id="cat-related">{t('catPage.relatedCategories')}</h2>
       </div>
-      <div className="category-service-grid">
-        {categories.slice(0, 4).map((category) => (
+      <div className="cat-related-row">
+        {categories.slice(0, 8).map((category) => (
           <CategoryServiceCard key={category.id} category={category} />
         ))}
       </div>

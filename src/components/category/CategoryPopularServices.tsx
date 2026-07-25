@@ -29,12 +29,12 @@ export function CategoryPopularServices({
       {services.length === 0 ? (
         <p className="cat-section__empty">{t('marketplace.noServices')}</p>
       ) : (
-        <div className="cat-services-grid">
+        <div className="cat-service-chips">
           {services.map((service) => (
             <button
               key={service.id}
               type="button"
-              className="cat-service-tile"
+              className="cat-service-chip"
               onClick={() =>
                 navigateTo(marketplaceServiceProsPath(service.slug, categorySlug))
               }

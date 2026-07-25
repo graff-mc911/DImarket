@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   CategoryAiRecommendation,
+  CategoryBeforeAfterGallery,
   CategoryCustomerReviews,
   CategoryFaq,
   CategoryFeaturedPros,
   CategoryHero,
   CategoryLatestProjects,
   CategoryPopularServices,
+  CategoryPriceGuide,
   CategoryRelated,
   CategorySearchFilters,
 } from '../components/category'
@@ -158,8 +160,14 @@ export function CategoryPage({ slug }: CategoryPageProps) {
         />
 
         <CategoryPopularServices services={services} categorySlug={category.slug} />
-        <CategoryAiRecommendation categoryTitle={title} services={page.services} />
+        <CategoryPriceGuide category={category} categoryTitle={title} projects={projects} />
+        <CategoryAiRecommendation
+          categoryTitle={title}
+          services={page.services}
+          professionals={professionals}
+        />
         <CategoryFeaturedPros professionals={professionals} categorySlug={category.slug} />
+        <CategoryBeforeAfterGallery items={page.gallery} />
         <CategoryLatestProjects projects={projects} />
         <CategoryCustomerReviews
           reviews={page.reviews}

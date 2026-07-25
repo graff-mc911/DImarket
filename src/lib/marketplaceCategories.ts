@@ -25,6 +25,7 @@ export type MarketplaceCategoryPage = {
   projects: ListingWithImages[]
   reviews: CategoryReview[]
   related: MarketplaceCategory[]
+  gallery: CategoryGalleryItem[]
 }
 
 export type CategoryReview = {
@@ -35,6 +36,15 @@ export type CategoryReview = {
   created_at: string
   is_verified_customer: boolean
   professional_id: string
+}
+
+export type CategoryGalleryItem = {
+  id: string
+  title: string
+  before_url?: string | null
+  after_url?: string | null
+  image_url?: string | null
+  source: 'portfolio' | 'project'
 }
 
 const MAIN_SELECT =
@@ -210,6 +220,7 @@ export async function fetchMarketplaceCategoryPage(
     projects: [] as ListingWithImages[],
     reviews: [] as CategoryReview[],
     related: [] as MarketplaceCategory[],
+    gallery: [] as CategoryGalleryItem[],
   }
 
   const { data: rpcData, error: rpcError } = await supabase.rpc(
@@ -312,9 +323,10 @@ export async function fetchMarketplaceCategoryPage(
       .slice(0, 8)
   }
 
-  const [reviews, related] = await Promise.all([
+  const [reviews, related, gallery] = await Promise.all([
     fetchCategoryReviews(professionals.map((p) => p.id)),
     fetchRelatedMainCategories(category.id, category.slug),
+    fetchCategoryGallery(category.slug, professionals, projects),
   ])
 
   return {
@@ -325,7 +337,60 @@ export async function fetchMarketplaceCategoryPage(
     projects,
     reviews,
     related,
+    gallery,
   }
+}
+
+async function fetchCategoryGallery(
+  slug: string,
+  professionals: Profile[],
+  projects: ListingWithImages[],
+): Promise<CategoryGalleryItem[]> {
+  const projectItems: CategoryGalleryItem[] = projects.flatMap((project) =>
+    (project.images ?? []).slice(0, 2).map((image) => ({
+      id: `project-${project.id}-${image.id}`,
+      title: project.title,
+      image_url: image.image_url,
+      source: 'project' as const,
+    })),
+  )
+
+  const professionalIds = professionals.map((p) => p.id).slice(0, 16)
+  if (professionalIds.length === 0) return projectItems.slice(0, 12)
+
+  const { data } = await supabase
+    .from('portfolio_items')
+    .select('id, title, image_url, before_url, after_url, media_type, category_slug, profile_id')
+    .in('profile_id', professionalIds)
+    .order('display_order', { ascending: true })
+    .order('created_at', { ascending: false })
+    .limit(24)
+
+  const portfolioItems = ((data as Array<{
+    id: string
+    title: string
+    image_url: string | null
+    before_url: string | null
+    after_url: string | null
+    media_type: string | null
+    category_slug: string | null
+  }> | null) ?? [])
+    .filter((item) => {
+      if (item.media_type === 'video') return false
+      return !item.category_slug || item.category_slug === slug
+    })
+    .map((item) => ({
+      id: `portfolio-${item.id}`,
+      title: item.title,
+      image_url: item.image_url,
+      before_url: item.before_url,
+      after_url: item.after_url,
+      source: 'portfolio' as const,
+    }))
+
+  return [...portfolioItems, ...projectItems]
+    .filter((item) => item.before_url || item.after_url || item.image_url)
+    .slice(0, 12)
 }
 
 async function fetchCategoryReviews(professionalIds: string[]): Promise<CategoryReview[]> {
