@@ -127,7 +127,9 @@ export function Header() {
       if (languageRef.current && !languageRef.current.contains(target)) setLanguageOpen(false)
       if (currencyRef.current && !currencyRef.current.contains(target)) setCurrencyOpen(false)
       if (accountRef.current  && !accountRef.current.contains(target))  setAccountOpen(false)
-      if (categoriesRef.current && !categoriesRef.current.contains(target)) setCategoriesOpen(false)
+      if (categoriesRef.current && !categoriesRef.current.contains(target)) {
+        // Full-screen mega closes via backdrop / Escape — don't auto-close on outside click of button only
+      }
     }
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeAllMenus()
@@ -337,47 +339,9 @@ export function Header() {
   const mobileNavItemClass =
     'flex w-full items-center gap-3 rounded-md px-4 py-3 text-left text-base font-medium text-[var(--ink-900)] transition hover:bg-[#f7fafa]'
 
-  const mobileCategoryItemClass =
-    'rounded-sm px-4 py-2.5 text-left text-sm font-medium text-[var(--ink-700)] transition hover:bg-[#f7fafa]'
-
   const categoryGroups = useMemo(
     () => buildHomeCategoryGroups(language.code, t),
     [language.code, t],
-  )
-
-  const renderCategoryMenu = (itemClass: string, role?: 'menuitem') => (
-    <>
-      {categoryGroups.map((group, groupIndex) => (
-        <div key={group.id}>
-          {groupIndex > 0 && (
-            <div className="my-1 border-t border-[var(--glass-border)]" aria-hidden />
-          )}
-          <p className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--ink-500)]">
-            {t(group.titleKey)}
-          </p>
-          {group.tiles.map((tile) => (
-            <button
-              key={tile.id}
-              type="button"
-              role={role}
-              onClick={() => goTo(tile.path)}
-              className={itemClass}
-            >
-              {tile.label}
-            </button>
-          ))}
-        </div>
-      ))}
-      <div className="my-1 border-t border-[var(--glass-border)]" aria-hidden />
-      <button
-        type="button"
-        role={role}
-        onClick={() => goTo('/listings')}
-        className={itemClass + ' text-[var(--accent-700)]'}
-      >
-        {t('listings.allCategories')}
-      </button>
-    </>
   )
 
   return (
@@ -704,9 +668,10 @@ export function Header() {
             </div>
 
             {/* Amazon subnav */}
-            <div ref={categoriesRef} className="site-header-subnav mt-1 hidden sm:block">
+            <div className="site-header-subnav mt-1 hidden sm:block">
               <div className="amazon-dept-scroll px-3 py-1 md:px-4">
                 <div
+                  ref={categoriesRef}
                   className="categories-mega-anchor relative shrink-0"
                   onMouseEnter={() => {
                     setCategoriesOpen(true)
@@ -724,7 +689,7 @@ export function Header() {
                     }}
                     type="button"
                     aria-expanded={categoriesOpen}
-                    aria-haspopup="menu"
+                    aria-haspopup="dialog"
                     className="amazon-dept-link flex items-center gap-1 font-bold"
                   >
                     <Menu className="h-4 w-4" />
@@ -777,21 +742,17 @@ export function Header() {
                   {t('footer.howItWorks')}
                 </button>
               </div>
-
-              <div
-                onMouseLeave={() => setCategoriesOpen(false)}
-                onMouseEnter={() => setCategoriesOpen(true)}
-              >
-                <CategoriesMegaMenu
-                  open={categoriesOpen}
-                  onClose={() => setCategoriesOpen(false)}
-                  onNavigate={(path) => {
-                    closeAllMenus()
-                    navigateTo(path)
-                  }}
-                />
-              </div>
             </div>
+
+            <CategoriesMegaMenu
+              open={categoriesOpen}
+              variant="fullscreen"
+              onClose={() => setCategoriesOpen(false)}
+              onNavigate={(path) => {
+                closeAllMenus()
+                navigateTo(path)
+              }}
+            />
 
             {/* Пошук (мобільний) */}
             <form onSubmit={handleSearchSubmit} className="amazon-search-bar mt-2 sm:hidden">
@@ -839,12 +800,17 @@ export function Header() {
                     </button>
                   ))}
 
-                  <p className="px-4 pt-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[var(--ink-500)]">
-                    {t('header.categories')}
-                  </p>
-                  <div className="grid gap-1 px-1 pb-2">
-                    {renderCategoryMenu(mobileCategoryItemClass)}
-                  </div>
+                  <button
+                    type="button"
+                    className={mobileNavItemClass}
+                    onClick={() => {
+                      setMobileMenuOpen(false)
+                      setCategoriesOpen(true)
+                    }}
+                  >
+                    <Menu className="h-5 w-5" />
+                    <span>{t('header.categories')}</span>
+                  </button>
 
                   <button onClick={() => goTo('/listings')} type="button" className={mobileNavItemClass}>
                     <Search className="h-5 w-5" />

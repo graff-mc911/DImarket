@@ -1706,6 +1706,11 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'marketplace.viewProject': 'Смотреть проект',
   'marketplace.viewServices': 'Смотреть услуги',
   'marketplace.completedProjects': 'Завершённые проекты',
+  'mega.close': 'Закрыть',
+  'mega.searchPlaceholder': 'Поиск категорий и услуг…',
+  'mega.recentlyViewed': 'Недавно просмотренные',
+  'mega.popularServices': 'Популярные услуги',
+  'mega.subcategories': 'Подкатегории',
   'catPage.seoTitle': '{category} — услуги и мастера | DImarket',
   'catPage.seoFallback': 'Категория | DImarket',
   'catPage.seoDescription':

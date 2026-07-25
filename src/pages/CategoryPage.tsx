@@ -17,6 +17,7 @@ import {
   marketplaceCategoryLabel,
   type MarketplaceCategoryPage,
 } from '../lib/marketplaceCategories'
+import { pushRecentCategory } from '../lib/recentCategories'
 import { navigateTo } from '../lib/navigation'
 
 interface CategoryPageProps {
@@ -63,6 +64,16 @@ export function CategoryPage({ slug }: CategoryPageProps) {
       ? description
       : t('catPage.seoDescription').replace('{category}', title)
     if (meta) meta.setAttribute('content', seoDesc)
+
+    if (category) {
+      pushRecentCategory({
+        id: category.id,
+        slug: category.slug,
+        name: title,
+        icon_key: category.icon_key,
+      })
+    }
+
     return () => {
       document.title = prev
     }

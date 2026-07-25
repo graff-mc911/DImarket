@@ -1859,6 +1859,12 @@ export const enTranslations = {
   'marketplace.viewServices': 'View Services',
   'marketplace.completedProjects': 'Completed projects',
 
+  'mega.close': 'Close',
+  'mega.searchPlaceholder': 'Search categories and services…',
+  'mega.recentlyViewed': 'Recently viewed',
+  'mega.popularServices': 'Popular services',
+  'mega.subcategories': 'Subcategories',
+
   'catPage.seoTitle': '{category} services & professionals | DImarket',
   'catPage.seoFallback': 'Category | DImarket',
   'catPage.seoDescription':

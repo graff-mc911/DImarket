@@ -1693,6 +1693,11 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'marketplace.viewProject': 'Переглянути проєкт',
   'marketplace.viewServices': 'Переглянути послуги',
   'marketplace.completedProjects': 'Завершені проєкти',
+  'mega.close': 'Закрити',
+  'mega.searchPlaceholder': 'Пошук категорій і послуг…',
+  'mega.recentlyViewed': 'Нещодавно переглянуті',
+  'mega.popularServices': 'Популярні послуги',
+  'mega.subcategories': 'Підкатегорії',
   'catPage.seoTitle': '{category} — послуги та майстри | DImarket',
   'catPage.seoFallback': 'Категорія | DImarket',
   'catPage.seoDescription':
