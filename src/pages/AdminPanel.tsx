@@ -19,6 +19,7 @@ import { isSiteOwner } from '../lib/siteOwner'
 import { OwnerAdManager } from '../components/OwnerAdManager'
 import { OwnerMarketHealth } from '../components/OwnerMarketHealth'
 import { VerificationAdminPanel } from '../components/verification/VerificationAdminPanel'
+import { AnalyticsEmbed } from './Analytics'
 import {
   createAdminCategory,
   deleteAdminCategory,
@@ -365,7 +366,16 @@ export function AdminPanel() {
 
         {tab === 'analytics' && (
           <section className="space-y-4">
-            <OverviewSection stats={stats} onOpen={(id) => setTab(id)} />
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Analytics</h2>
+              <a
+                href="/analytics"
+                className="rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold text-[#1d1d1f]"
+              >
+                Open full analytics
+              </a>
+            </div>
+            <AnalyticsEmbed />
             <div className="rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5">
               <h2 className="mb-4 text-[16px] font-semibold text-[#1d1d1f]">Market health</h2>
               <OwnerMarketHealth />

@@ -52,6 +52,7 @@ export function Footer() {
         { label: t('footer.howItWorks'), path: '/for-professionals' },
         { label: 'Pricing', path: '/pricing' },
         { label: 'AI Assistant', path: '/assistant' },
+        { label: 'Analytics', path: '/analytics' },
         { label: t('footer.advertisingLink'), path: '/advertising' },
         { label: t('footer.contactLink'), path: '/contact' },
       ],

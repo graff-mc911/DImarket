@@ -1,0 +1,374 @@
+import { useEffect, useMemo, useState } from 'react'
+import { BarChart3, Loader2, RefreshCw } from 'lucide-react'
+import { useApp } from '../contexts/AppContext'
+import { navigateTo } from '../lib/navigation'
+import { isSiteOwner } from '../lib/siteOwner'
+import {
+  fetchPlatformAnalytics,
+  fetchProAnalytics,
+  formatEuro,
+  formatHours,
+  type AnalyticsSeries,
+} from '../lib/analytics/analytics'
+import {
+  AreaSparkline,
+  BarChart,
+  ChartCard,
+  FunnelChart,
+  MetricCard,
+} from '../components/analytics/Charts'
+import { OwnerMarketHealth } from '../components/OwnerMarketHealth'
+
+type RangeDays = 7 | 14 | 30
+
+export function Analytics() {
+  const { user, profile } = useApp()
+  const owner = isSiteOwner(profile, user?.email)
+  const isPro =
+    profile?.user_role === 'professional' ||
+    profile?.user_role === 'company' ||
+    Boolean(profile?.is_professional)
+
+  const defaultMode: 'platform' | 'pro' = owner ? 'platform' : 'pro'
+  const [mode, setMode] = useState<'platform' | 'pro'>(defaultMode)
+  const [days, setDays] = useState<RangeDays>(14)
+  const [data, setData] = useState<AnalyticsSeries | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (!user) {
+      navigateTo('/login')
+      return
+    }
+    if (!owner && !isPro) {
+      navigateTo('/customer/dashboard')
+    }
+  }, [user?.id, owner, isPro])
+
+  useEffect(() => {
+    if (owner && !isPro) setMode('platform')
+    else if (!owner && isPro) setMode('pro')
+  }, [owner, isPro])
+
+  const load = async () => {
+    if (!user) return
+    setLoading(true)
+    setError('')
+    try {
+      const series =
+        mode === 'platform' && owner
+          ? await fetchPlatformAnalytics(days)
+          : await fetchProAnalytics(days)
+      setData(series)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load analytics')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void load()
+  }, [user?.id, mode, days])
+
+  const sparseLabels = useMemo(() => {
+    if (!data?.labels?.length) return []
+    const step = data.labels.length > 14 ? 2 : 1
+    return data.labels.map((l, i) => (i % step === 0 ? l.slice(0, 2) : ''))
+  }, [data?.labels])
+
+  if (!user) return null
+
+  const k = data?.kpis || {}
+
+  return (
+    <div className="py-6 pb-24 lg:pb-10">
+      <div className="mx-auto max-w-6xl space-y-5 px-4 sm:px-6">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+            </p>
+            <h1 className="mt-2 text-[28px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[32px]">
+              {mode === 'platform' ? 'Platform performance' : 'Your performance'}
+            </h1>
+            <p className="mt-1 text-[14px] text-[#6e6e73]">
+              Revenue · Projects · Conversion · Views · Profile visitors · Response time · Satisfaction
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {owner && isPro ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setMode('platform')}
+                  className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
+                    mode === 'platform' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+                  }`}
+                >
+                  Platform
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('pro')}
+                  className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
+                    mode === 'pro' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+                  }`}
+                >
+                  My business
+                </button>
+              </>
+            ) : null}
+            {([7, 14, 30] as RangeDays[]).map((d) => (
+              <button
+                key={d}
+                type="button"
+                onClick={() => setDays(d)}
+                className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
+                  days === d ? 'bg-[#1d1d1f] text-white' : 'border border-[#d2d2d7] bg-white'
+                }`}
+              >
+                {d}d
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => void load()}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold"
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              Refresh
+            </button>
+          </div>
+        </header>
+
+        {error ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+            {error}
+          </div>
+        ) : null}
+
+        {loading && !data ? (
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-[#86868b]" />
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <MetricCard
+                label="Revenue"
+                value={formatEuro(k.revenue_total)}
+                hint={mode === 'platform' ? 'Completed payments' : 'Accepted quotes'}
+              />
+              <MetricCard
+                label="Projects"
+                value={String(k.projects_total ?? 0)}
+                hint={mode === 'platform' ? 'New service requests' : 'Applications'}
+              />
+              <MetricCard
+                label="Conversion"
+                value={`${data?.conversionPct ?? 0}%`}
+                hint="Quotes accepted / sent"
+                accent="#059669"
+              />
+              <MetricCard
+                label="Views"
+                value={String(k.listing_views ?? 0)}
+                hint="Listing views (all time)"
+              />
+              <MetricCard
+                label="Profile visitors"
+                value={String(k.profile_views_total ?? 0)}
+                hint={mode === 'platform' ? `Last ${days} days` : 'Total profile views'}
+              />
+              <MetricCard
+                label="Lead response"
+                value={
+                  mode === 'pro'
+                    ? formatHours(k.response_hours) !== '—'
+                      ? formatHours(k.response_hours)
+                      : k.response_rate != null
+                        ? `${k.response_rate}%`
+                        : '—'
+                    : k.response_rate != null
+                      ? `${k.response_rate}%`
+                      : '—'
+                }
+                hint={mode === 'pro' ? 'Avg time to first reply' : 'Platform avg (when available)'}
+              />
+              <MetricCard
+                label="Satisfaction"
+                value={k.avg_rating != null ? `${Number(k.avg_rating).toFixed(1)}★` : '—'}
+                hint={
+                  k.recommend_pct != null ? `${k.recommend_pct}% would recommend` : 'From reviews'
+                }
+                accent="#d97706"
+              />
+              <MetricCard
+                label={mode === 'platform' ? 'Active projects' : 'Quotes won'}
+                value={String(
+                  mode === 'platform' ? k.active_projects ?? 0 : k.quotes_accepted ?? 0,
+                )}
+                hint={data?.source === 'rpc' ? 'Live data' : 'Client aggregate'}
+              />
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-2">
+              <ChartCard title="Revenue" subtitle={`Last ${days} days`}>
+                <AreaSparkline
+                  values={data?.revenue || []}
+                  labels={sparseLabels}
+                  color="#059669"
+                />
+              </ChartCard>
+              <ChartCard title="Projects" subtitle={`Last ${days} days`}>
+                <BarChart
+                  values={data?.projects || []}
+                  labels={sparseLabels}
+                  color="#1d1d1f"
+                />
+              </ChartCard>
+              <ChartCard title="Profile visitors" subtitle={`Daily views · ${days}d`}>
+                <BarChart
+                  values={data?.profile_views || []}
+                  labels={sparseLabels}
+                  color="#6366f1"
+                />
+              </ChartCard>
+              <ChartCard title="Customer satisfaction" subtitle="Average rating by day">
+                <AreaSparkline
+                  values={data?.satisfaction || []}
+                  labels={sparseLabels}
+                  color="#d97706"
+                  height={140}
+                />
+              </ChartCard>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-2">
+              <ChartCard title="Conversion funnel" subtitle="Quotes pipeline">
+                <FunnelChart
+                  steps={[
+                    {
+                      label: mode === 'pro' ? 'Applications' : 'Quotes created',
+                      value: Number(
+                        mode === 'pro'
+                          ? k.apps_total || k.quotes_sent || 0
+                          : k.quotes_sent || 0,
+                      ),
+                      color: '#94a3b8',
+                    },
+                    {
+                      label: 'Quotes sent',
+                      value: Number(k.quotes_sent || 0),
+                      color: '#64748b',
+                    },
+                    {
+                      label: 'Accepted',
+                      value: Number(k.quotes_accepted || 0),
+                      color: '#059669',
+                    },
+                  ]}
+                />
+                <p className="mt-3 text-[12px] text-[#86868b]">
+                  Conversion rate: <strong className="text-[#1d1d1f]">{data?.conversionPct ?? 0}%</strong>
+                </p>
+              </ChartCard>
+
+              {mode === 'platform' && owner ? (
+                <ChartCard title="Market health" subtitle="City readiness">
+                  <OwnerMarketHealth />
+                </ChartCard>
+              ) : (
+                <ChartCard title="Response & quality" subtitle="Lead handling">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-xl bg-[#f5f5f7] p-4">
+                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">
+                        Response time
+                      </p>
+                      <p className="mt-2 text-[22px] font-semibold tabular-nums">
+                        {formatHours(k.response_hours)}
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-[#f5f5f7] p-4">
+                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">
+                        Response rate
+                      </p>
+                      <p className="mt-2 text-[22px] font-semibold tabular-nums">
+                        {k.response_rate != null ? `${k.response_rate}%` : '—'}
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-[#f5f5f7] p-4">
+                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">
+                        Recommend
+                      </p>
+                      <p className="mt-2 text-[22px] font-semibold tabular-nums">
+                        {k.recommend_pct != null ? `${k.recommend_pct}%` : '—'}
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-[#f5f5f7] p-4">
+                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">Rating</p>
+                      <p className="mt-2 text-[22px] font-semibold tabular-nums">
+                        {k.avg_rating != null ? Number(k.avg_rating).toFixed(1) : '—'}
+                      </p>
+                    </div>
+                  </div>
+                </ChartCard>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/** Compact embed for Admin Panel analytics tab */
+export function AnalyticsEmbed({ days = 14 }: { days?: number }) {
+  const [data, setData] = useState<AnalyticsSeries | null>(null)
+
+  useEffect(() => {
+    void fetchPlatformAnalytics(days).then(setData)
+  }, [days])
+
+  if (!data) {
+    return (
+      <div className="flex justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-[#86868b]" />
+      </div>
+    )
+  }
+
+  const k = data.kpis
+  const labels = data.labels.map((l, i) => (i % 2 === 0 ? l.slice(0, 2) : ''))
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <MetricCard label="Revenue" value={formatEuro(k.revenue_total)} />
+        <MetricCard label="Projects" value={String(k.projects_total ?? 0)} />
+        <MetricCard label="Conversion" value={`${data.conversionPct}%`} />
+        <MetricCard
+          label="Satisfaction"
+          value={k.avg_rating != null ? `${Number(k.avg_rating).toFixed(1)}★` : '—'}
+        />
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <ChartCard title="Revenue">
+          <AreaSparkline values={data.revenue} labels={labels} color="#059669" />
+        </ChartCard>
+        <ChartCard title="Projects">
+          <BarChart values={data.projects} labels={labels} />
+        </ChartCard>
+        <ChartCard title="Profile visitors">
+          <BarChart values={data.profile_views} labels={labels} color="#6366f1" />
+        </ChartCard>
+        <ChartCard title="Satisfaction">
+          <AreaSparkline values={data.satisfaction} labels={labels} color="#d97706" />
+        </ChartCard>
+      </div>
+    </div>
+  )
+}

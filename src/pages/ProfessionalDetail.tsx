@@ -34,6 +34,7 @@ import { VerificationBadge } from '../components/MatchScoreBadge'
 import type { Profile } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 import { ReviewFeed } from '../components/reviews/ReviewFeed'
+import { recordProfileView } from '../lib/analytics/analytics'
 
 interface ProfessionalDetailProps {
   profileId: string
@@ -57,6 +58,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
   useEffect(() => {
     void loadProfile()
     if (user) void checkIfSaved()
+    if (profileId) void recordProfileView(profileId)
   }, [profileId, user])
 
   useEffect(() => {

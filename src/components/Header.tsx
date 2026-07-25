@@ -763,6 +763,10 @@ export function Header() {
                   AI Assistant
                 </button>
 
+                <button type="button" onClick={() => goTo('/analytics')} className="amazon-dept-link">
+                  Analytics
+                </button>
+
                 <button type="button" onClick={() => goTo('/contact')} className="amazon-dept-link">
                   {t('header.customerService')}
                 </button>

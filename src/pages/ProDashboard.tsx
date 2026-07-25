@@ -363,7 +363,15 @@ export function ProDashboard() {
                     </p>
                     <h2 className={`text-[17px] font-semibold ${ink}`}>Leads · last 7 days</h2>
                   </div>
-                  <TrendingUp className={`h-4 w-4 ${muted}`} />
+                  <button
+                    type="button"
+                    onClick={() => navigateTo('/analytics')}
+                    className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
+                      dark ? 'bg-white/10 text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+                    }`}
+                  >
+                    Full analytics
+                  </button>
                 </div>
                 <div className={ink}>
                   <BarChart

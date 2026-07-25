@@ -61,6 +61,7 @@ import { AdminPanel } from './pages/AdminPanel'
 import { CostEstimator } from './pages/CostEstimator'
 import { Notifications } from './pages/Notifications'
 import { AiAssistant } from './pages/AiAssistant'
+import { Analytics } from './pages/Analytics'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -140,6 +141,7 @@ function App() {
       case '/leads':         return <ProjectFeed />
       case '/assistant':     return <AiAssistant />
       case '/assistant/job': return <JobRequestChat />
+      case '/analytics':     return <Analytics />
       case '/admin/ai':        return <AiAdmin />
       case '/admin/marketing-agent': return <MarketingAgentAdmin />
       case '/checkout':      return <Checkout />
