@@ -2080,6 +2080,9 @@
     .amazon-home-deck--quad {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
+    .amazon-home-deck--triple {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   .amazon-deal-card {

@@ -3,12 +3,10 @@
 // ============================================================
 
 import { useEffect, useMemo, useState } from 'react'
-import { CategoryCircleTile } from '../components/CategoryCircleTile'
 import { ChooseCategorySection } from '../components/ChooseCategorySection'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
-import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -34,10 +32,6 @@ const HERO_GRADIENTS = [
 
 export function Home() {
   const { language, t } = useApp()
-  const categoryGroups = useMemo(
-    () => buildHomeCategoryGroups(language.code, t),
-    [language.code, t],
-  )
 
   const [professionals, setProfessionals] = useState<HomeProfessional[]>([])
   const [rawJobs, setRawJobs] = useState<ListingWithImages[]>([])
@@ -46,7 +40,6 @@ export function Home() {
   const [heroSlide, setHeroSlide] = useState(0)
 
   const heroCity = LAUNCH_MARKETS[0]?.city ?? 'Darmstadt'
-  const popularGroup = categoryGroups.find((g) => g.id === 'popular') ?? categoryGroups[0]
 
   const heroSlides = useMemo(
     () => [
@@ -178,7 +171,7 @@ export function Home() {
       </div>
 
       <div className="amazon-home-deck-wrap">
-        <div className="amazon-home-deck amazon-home-deck--quad">
+        <div className="amazon-home-deck amazon-home-deck--triple">
           <AmazonDealCard
             title={t('home.recentJobsTitle')}
             seeMore={t('home.allRequests')}
@@ -214,25 +207,6 @@ export function Home() {
               <LoadingText text={t('home.noProfessionals')} />
             )}
           </AmazonDealCard>
-
-          {popularGroup && (
-            <AmazonDealCard
-              title={t('home.allCategoriesTitle')}
-              seeMore={t('listings.title')}
-              onSeeMore={() => navigateTo('/listings')}
-            >
-              <div className="amazon-mini-grid">
-                {popularGroup.tiles.slice(0, 4).map((tile) => (
-                  <CategoryCircleTile
-                    key={tile.id}
-                    icon={tile.icon}
-                    label={tile.label}
-                    onClick={() => navigateTo(tile.path)}
-                  />
-                ))}
-              </div>
-            </AmazonDealCard>
-          )}
 
           <AmazonDealCard title={t('header.postJob')}>
             <div className="amazon-promo-card">
