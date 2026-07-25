@@ -13,6 +13,7 @@ export type MarketplaceCategory = Category & {
   professionals_count?: number
   avg_rating?: number | null
   completed_projects_count?: number
+  reviews_count?: number
 }
 
 export type MarketplaceCategoryPage = {
@@ -37,7 +38,13 @@ export type CategoryReview = {
 }
 
 const MAIN_SELECT =
+  'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, completed_projects_count, reviews_count, parent_id, is_main, is_service'
+
+const MAIN_SELECT_WITHOUT_REVIEWS =
   'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, completed_projects_count, parent_id, is_main, is_service'
+
+const MAIN_SELECT_LEGACY =
+  'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, parent_id, is_main, is_service'
 
 function asI18nMap(value: Json | undefined | null): Record<string, string> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
@@ -93,20 +100,32 @@ export async function fetchMainMarketplaceCategories(): Promise<MarketplaceCateg
 
   if (!error && data?.length) return data as MarketplaceCategory[]
 
-  // Column may be missing before migration — retry without completed_projects_count
+  // Optional stat columns may be missing in older environments — keep UI functional.
   if (error) {
-    const { data: fallback } = await supabase
+    const { data: withoutReviews, error: withoutReviewsError } = await supabase
       .from('categories')
-      .select(
-        'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, parent_id, is_main, is_service',
-      )
+      .select(MAIN_SELECT_WITHOUT_REVIEWS)
       .eq('is_main', true)
       .order('sort_order', { ascending: true })
 
-    if (fallback?.length) {
-      return (fallback as MarketplaceCategory[]).map((c) => ({
+    if (!withoutReviewsError && withoutReviews?.length) {
+      return (withoutReviews as MarketplaceCategory[]).map((c) => ({
+        ...c,
+        reviews_count: c.reviews_count ?? 0,
+      }))
+    }
+
+    const { data: legacy } = await supabase
+      .from('categories')
+      .select(MAIN_SELECT_LEGACY)
+      .eq('is_main', true)
+      .order('sort_order', { ascending: true })
+
+    if (legacy?.length) {
+      return (legacy as MarketplaceCategory[]).map((c) => ({
         ...c,
         completed_projects_count: c.completed_projects_count ?? 0,
+        reviews_count: c.reviews_count ?? 0,
       }))
     }
   }
@@ -122,12 +141,17 @@ export async function fetchMainMarketplaceCategories(): Promise<MarketplaceCateg
     const parentId = String((construction as { id: string }).id)
     const { data: children } = await supabase
       .from('categories')
-      .select(MAIN_SELECT)
+      .select(MAIN_SELECT_WITHOUT_REVIEWS)
       .eq('parent_id', parentId)
       .order('sort_order', { ascending: true })
       .order('name', { ascending: true })
 
-    if (children?.length) return children as MarketplaceCategory[]
+    if (children?.length) {
+      return (children as MarketplaceCategory[]).map((c) => ({
+        ...c,
+        reviews_count: c.reviews_count ?? 0,
+      }))
+    }
   }
 
   return []
@@ -143,8 +167,35 @@ export async function fetchCategoryServices(
     .order('sort_order', { ascending: true })
     .order('name', { ascending: true })
 
-  if (error || !data) return []
-  return data as MarketplaceCategory[]
+  if (!error && data) return data as MarketplaceCategory[]
+
+  const { data: withoutReviews, error: withoutReviewsError } = await supabase
+    .from('categories')
+    .select(MAIN_SELECT_WITHOUT_REVIEWS)
+    .eq('parent_id', parentId)
+    .order('sort_order', { ascending: true })
+    .order('name', { ascending: true })
+
+  if (!withoutReviewsError && withoutReviews) {
+    return (withoutReviews as MarketplaceCategory[]).map((c) => ({
+      ...c,
+      reviews_count: c.reviews_count ?? 0,
+    }))
+  }
+
+  const { data: legacy } = await supabase
+    .from('categories')
+    .select(MAIN_SELECT_LEGACY)
+    .eq('parent_id', parentId)
+    .order('sort_order', { ascending: true })
+    .order('name', { ascending: true })
+
+  if (!legacy) return []
+  return (legacy as MarketplaceCategory[]).map((c) => ({
+    ...c,
+    completed_projects_count: c.completed_projects_count ?? 0,
+    reviews_count: c.reviews_count ?? 0,
+  }))
 }
 
 export async function fetchMarketplaceCategoryPage(
@@ -182,15 +233,44 @@ export async function fetchMarketplaceCategoryPage(
   }
 
   if (!category) {
-    const { data: catRow } = await supabase
+    const { data: catRow, error: catError } = await supabase
       .from('categories')
       .select(MAIN_SELECT)
       .eq('slug', slug)
       .maybeSingle()
 
-    if (!catRow) return empty
+    let resolvedCatRow = catRow as MarketplaceCategory | null
 
-    category = catRow as MarketplaceCategory
+    if (catError || !resolvedCatRow) {
+      const { data: withoutReviews } = await supabase
+        .from('categories')
+        .select(MAIN_SELECT_WITHOUT_REVIEWS)
+        .eq('slug', slug)
+        .maybeSingle()
+      resolvedCatRow = withoutReviews as MarketplaceCategory | null
+    }
+
+    if (!resolvedCatRow) {
+      const { data: legacy } = await supabase
+        .from('categories')
+        .select(MAIN_SELECT_LEGACY)
+        .eq('slug', slug)
+        .maybeSingle()
+      resolvedCatRow = legacy
+        ? ({
+            ...(legacy as MarketplaceCategory),
+            completed_projects_count: 0,
+            reviews_count: 0,
+          } satisfies MarketplaceCategory)
+        : null
+    }
+
+    if (!resolvedCatRow) return empty
+
+    category = {
+      ...resolvedCatRow,
+      reviews_count: resolvedCatRow.reviews_count ?? 0,
+    }
     services = await fetchCategoryServices(category.id)
 
     const { data: pros } = await supabase
