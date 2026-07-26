@@ -1,7 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useApp } from '../../contexts/AppContext'
 import {
   computeRatingStats,
+  fetchReviewableProjects,
   fetchReviewFeed,
+  sortReviews,
+  type ReviewableProject,
   type ReviewFeedItem,
   type ReviewSort,
 } from '../../lib/reviews/reviews'
@@ -17,12 +21,6 @@ type Props = {
   onSubmitted?: () => void
 }
 
-const SORTS: { id: ReviewSort; label: string }[] = [
-  { id: 'newest', label: 'Newest' },
-  { id: 'highest', label: 'Highest' },
-  { id: 'lowest', label: 'Lowest' },
-]
-
 export function ReviewFeed({
   professionalId,
   viewerId,
@@ -30,36 +28,86 @@ export function ReviewFeed({
   showForm = false,
   onSubmitted,
 }: Props) {
+  const { t } = useApp()
   const [sort, setSort] = useState<ReviewSort>('newest')
+  const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [items, setItems] = useState<ReviewFeedItem[]>([])
   const [loading, setLoading] = useState(true)
   const [formDone, setFormDone] = useState(false)
+  const [eligibleProjects, setEligibleProjects] = useState<ReviewableProject[]>([])
+  const [checkingEligibility, setCheckingEligibility] = useState(false)
+
+  const SORTS: { id: ReviewSort; label: string }[] = [
+    { id: 'newest', label: t('reviews.sortNewest') },
+    { id: 'highest', label: t('reviews.sortHighest') },
+    { id: 'lowest', label: t('reviews.sortLowest') },
+    { id: 'most_helpful', label: t('reviews.sortMostHelpful') },
+  ]
 
   const reload = useCallback(async () => {
     setLoading(true)
-    const rows = await fetchReviewFeed(professionalId, viewerId, sort)
+    const rows = await fetchReviewFeed(professionalId, viewerId, 'newest')
     setItems(rows)
     setLoading(false)
-  }, [professionalId, viewerId, sort])
+  }, [professionalId, viewerId])
 
   useEffect(() => {
     void reload()
   }, [reload])
 
-  const stats = computeRatingStats(items)
+  useEffect(() => {
+    if (!showForm || !viewerId || formDone) {
+      setEligibleProjects([])
+      return
+    }
+    let cancelled = false
+    setCheckingEligibility(true)
+    void fetchReviewableProjects(viewerId, professionalId).then((rows) => {
+      if (cancelled) return
+      setEligibleProjects(rows)
+      setCheckingEligibility(false)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [showForm, viewerId, professionalId, formDone])
+
+  const stats = useMemo(() => computeRatingStats(items), [items])
+
+  const visibleItems = useMemo(() => {
+    const filtered = verifiedOnly
+      ? items.filter((r) => r.is_verified_project || r.is_verified_customer)
+      : items
+    return sortReviews(filtered, sort)
+  }, [items, verifiedOnly, sort])
 
   const patchItem = (next: ReviewFeedItem) => {
     setItems((prev) => prev.map((r) => (r.id === next.id ? next : r)))
   }
+
+  const canShowForm = showForm && !formDone && !checkingEligibility && eligibleProjects.length > 0
 
   return (
     <div className="space-y-4">
       <ReviewStats stats={stats} />
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[13px] font-semibold text-[#1d1d1f]">
-          {loading ? 'Loading reviews…' : `${items.length} review${items.length === 1 ? '' : 's'}`}
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-[13px] font-semibold text-[#1d1d1f]">
+            {loading
+              ? t('reviews.loading')
+              : t('reviews.countLabel').replace('{count}', String(visibleItems.length))}
+          </p>
+          <label className="inline-flex cursor-pointer items-center gap-2 text-[12px] font-semibold text-[#6e6e73]">
+            <input
+              type="checkbox"
+              checked={verifiedOnly}
+              onChange={(e) => setVerifiedOnly(e.target.checked)}
+              className="rounded border-[#d2d2d7]"
+            />
+            {t('reviews.verifiedOnly')}
+          </label>
+        </div>
         <div className="flex flex-wrap gap-1.5">
           {SORTS.map((s) => (
             <button
@@ -78,11 +126,11 @@ export function ReviewFeed({
         </div>
       </div>
 
-      {!loading && items.length === 0 ? (
-        <p className="py-6 text-center text-[13px] text-[#86868b]">No reviews yet.</p>
+      {!loading && visibleItems.length === 0 ? (
+        <p className="py-6 text-center text-[13px] text-[#86868b]">{t('reviews.empty')}</p>
       ) : (
         <div className="space-y-3">
-          {items.map((review) => (
+          {visibleItems.map((review) => (
             <ReviewCard
               key={review.id}
               review={review}
@@ -95,9 +143,20 @@ export function ReviewFeed({
         </div>
       )}
 
-      {showForm && !formDone ? (
+      {showForm && !formDone && checkingEligibility ? (
+        <p className="text-[13px] text-[#86868b]">{t('common.loading')}</p>
+      ) : null}
+
+      {showForm && !formDone && !checkingEligibility && eligibleProjects.length === 0 ? (
+        <div className="rounded-[18px] border border-[#e8e8ed] bg-[#fafafa] px-4 py-5 text-[13px] text-[#6e6e73]">
+          {t('reviews.onlyCompleted')}
+        </div>
+      ) : null}
+
+      {canShowForm ? (
         <ReviewFormV2
           professionalId={professionalId}
+          projects={eligibleProjects}
           onSuccess={() => {
             setFormDone(true)
             onSubmitted?.()
@@ -108,7 +167,7 @@ export function ReviewFeed({
 
       {showForm && formDone ? (
         <div className="rounded-[18px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] font-medium text-emerald-800">
-          Thanks! Your review was saved.
+          {t('reviews.thanks')}
         </div>
       ) : null}
     </div>

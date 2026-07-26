@@ -1,4 +1,5 @@
 import { Star } from 'lucide-react'
+import { useApp } from '../../contexts/AppContext'
 import type { RatingStats } from '../../lib/reviews/reviews'
 
 type Props = {
@@ -6,11 +7,13 @@ type Props = {
 }
 
 export function ReviewStats({ stats }: Props) {
+  const { t } = useApp()
+
   if (!stats.count) {
     return (
       <div className="rounded-[18px] border border-[#e8e8ed] bg-[#fafafa] px-4 py-6 text-center">
-        <p className="text-[14px] font-semibold text-[#1d1d1f]">No reviews yet</p>
-        <p className="mt-1 text-[13px] text-[#86868b]">Be the first to leave feedback.</p>
+        <p className="text-[14px] font-semibold text-[#1d1d1f]">{t('reviews.empty')}</p>
+        <p className="mt-1 text-[13px] text-[#86868b]">{t('reviews.beFirst')}</p>
       </div>
     )
   }
@@ -22,7 +25,7 @@ export function ReviewStats({ stats }: Props) {
       <div className="flex flex-wrap items-end gap-6">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b]">
-            Average score
+            {t('reviews.averageScore')}
           </p>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="text-[40px] font-semibold leading-none tracking-tight text-[#1d1d1f]">
@@ -43,8 +46,10 @@ export function ReviewStats({ stats }: Props) {
             ))}
           </div>
           <p className="mt-2 text-[13px] text-[#6e6e73]">
-            {stats.count} review{stats.count === 1 ? '' : 's'}
-            {stats.recommendPct != null ? ` · ${stats.recommendPct}% recommend` : ''}
+            {t('reviews.countLabel').replace('{count}', String(stats.count))}
+            {stats.recommendPct != null
+              ? ` · ${t('reviews.recommendPct').replace('{pct}', String(stats.recommendPct))}`
+              : ''}
           </p>
         </div>
 
