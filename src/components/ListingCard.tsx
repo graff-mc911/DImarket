@@ -4,12 +4,12 @@
 
 import { useState, useEffect } from 'react'
 import { Eye, Heart, MapPin, Star } from 'lucide-react'
-import { supabase }          from '../lib/supabase'
 import { useApp }            from '../contexts/AppContext'
 import { navigateTo }        from '../lib/navigation'
 import { isLaunchExampleListing } from '../lib/launchSeedRequests'
 import { listingCityLabel }  from '../lib/listingLocation'
 import { getListingDisplayImage } from '../lib/listingThemeImage'
+import { isFavorite, toggleFavorite } from '../lib/favorites'
 import type { ListingWithImages } from '../lib/types'
 
 interface ListingCardProps {
@@ -32,17 +32,12 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
     }
   }, [user, listing.id])
 
+  const favoriteType =
+    listing.listing_type === 'service_request' ? ('project' as const) : ('listing' as const)
+
   const checkIfSaved = async () => {
     try {
-      const { data } = await supabase
-        .from('saved_items')
-        .select('id')
-        .eq('user_id', user!.id)
-        .eq('item_type', 'listing')
-        .eq('item_id', listing.id)
-        .maybeSingle()
-
-      setIsSaved(!!data)
+      setIsSaved(await isFavorite(favoriteType, listing.id))
     } catch {
       // ignore
     }
@@ -59,24 +54,12 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
 
     setSaving(true)
     try {
-      if (isSaved) {
-        await supabase
-          .from('saved_items')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('item_type', 'listing')
-          .eq('item_id', listing.id)
-        setIsSaved(false)
-      } else {
-        await supabase
-          .from('saved_items')
-          .insert({
-            user_id: user.id,
-            item_type: 'listing',
-            item_id: listing.id,
-          })
-        setIsSaved(true)
-      }
+      const result = await toggleFavorite({
+        itemType: favoriteType,
+        itemId: listing.id,
+        title: listing.title,
+      })
+      if (!result.error) setIsSaved(result.saved)
     } catch (error) {
       console.error('Помилка збереження:', error)
     } finally {

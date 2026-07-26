@@ -1039,13 +1039,17 @@ export const enTranslations = {
   // Обране.
   'favorites.title': 'Favorites',
   'favorites.description':
-    'Save job requests and professionals you want to revisit later.',
+    'Save professionals, companies, projects, categories, and searches — synced with your account.',
   'favorites.loginTitle': 'Sign in to keep your favorites',
   'favorites.loginText':
-    'Saved job requests and saved professionals are available only inside your account.',
+    'Saved favorites are available only inside your account.',
   'favorites.loginButton': 'Go to sign in',
   'favorites.listingsTab': 'Job requests',
   'favorites.professionalsTab': 'Professionals',
+  'favorites.companiesTab': 'Companies',
+  'favorites.projectsTab': 'Projects',
+  'favorites.categoriesTab': 'Categories',
+  'favorites.searchesTab': 'Searches',
   'favorites.loading': 'Loading favorites...',
   'favorites.emptyListingsTitle': 'No saved job requests yet',
   'favorites.emptyListingsText':
@@ -1055,6 +1059,9 @@ export const enTranslations = {
   'favorites.emptyProfessionalsText':
     'Save professionals you want to compare, contact, or revisit later.',
   'favorites.emptyProfessionalsButton': 'Browse professionals',
+  'favorites.compare': 'Compare',
+  'favorites.share': 'Share',
+  'favorites.remove': 'Remove',
 
   // Статистика у футері.
   'footerStats.title': 'Platform activity',
