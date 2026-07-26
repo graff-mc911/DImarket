@@ -20,9 +20,9 @@ type HeroSlide = {
 }
 
 const SLIDE_IMAGES = [
-  'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80',
+  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
+  'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1400&q=80',
 ]
 
 export function HomeHero({ metrics }: HomeHeroProps) {
@@ -79,47 +79,51 @@ export function HomeHero({ metrics }: HomeHeroProps) {
   const next = () => setSlide((s) => (s + 1) % slides.length)
 
   return (
-    <section className="home-hero" aria-labelledby="home-hero-title">
+    <section className="home-hero home-hero--stacked" aria-labelledby="home-hero-title">
       <div className="home-hero__bg" aria-hidden />
       <div className="home-hero__shell layout-page-gutter">
         <div className="home-hero__layout">
           <div className="home-hero__content">
-            <p className="home-hero__eyebrow">{t('homePremium.eyebrow')}</p>
-            <h1 id="home-hero-title" className="home-hero__title">
-              {t('homePremium.heroTitle')}
-            </h1>
-            <p className="home-hero__subtitle">{t('homePremium.heroSubtitle')}</p>
+            <div className="home-hero__copy">
+              <p className="home-hero__eyebrow">{t('homePremium.eyebrow')}</p>
+              <h1 id="home-hero-title" className="home-hero__title">
+                {t('homePremium.heroTitle')}
+              </h1>
+              <p className="home-hero__subtitle">{t('homePremium.heroSubtitle')}</p>
+            </div>
 
-            <form className="home-hero__search" onSubmit={onSearch} role="search">
-              <Search className="home-hero__search-icon" aria-hidden />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t('homePremium.searchPlaceholder')}
-                aria-label={t('homePremium.searchPlaceholder')}
-              />
-              <button type="submit" className="home-hero__search-btn">
-                {t('homePremium.search')}
-              </button>
-            </form>
+            <div className="home-hero__controls">
+              <form className="home-hero__search" onSubmit={onSearch} role="search">
+                <Search className="home-hero__search-icon" aria-hidden />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t('homePremium.searchPlaceholder')}
+                  aria-label={t('homePremium.searchPlaceholder')}
+                />
+                <button type="submit" className="home-hero__search-btn">
+                  {t('homePremium.search')}
+                </button>
+              </form>
 
-            <div className="home-hero__actions">
-              <button
-                type="button"
-                className="home-btn home-btn--primary"
-                onClick={() => navigateTo('/create-project')}
-              >
-                {t('homePremium.postProject')}
-              </button>
-              <button
-                type="button"
-                className="home-btn home-btn--ghost"
-                onClick={() => navigateTo('/assistant')}
-              >
-                <Bot className="h-4 w-4" aria-hidden />
-                {t('homePremium.aiAssistant')}
-              </button>
+              <div className="home-hero__actions">
+                <button
+                  type="button"
+                  className="home-btn home-btn--primary"
+                  onClick={() => navigateTo('/create-project')}
+                >
+                  {t('homePremium.postProject')}
+                </button>
+                <button
+                  type="button"
+                  className="home-btn home-btn--ghost"
+                  onClick={() => navigateTo('/assistant')}
+                >
+                  <Bot className="h-4 w-4" aria-hidden />
+                  {t('homePremium.aiAssistant')}
+                </button>
+              </div>
             </div>
 
             <div className="home-hero__stats" aria-label={t('homePremium.statsLabel')}>
