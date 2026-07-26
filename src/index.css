@@ -3637,7 +3637,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  min-height: 12.5rem;
+  min-height: 6.25rem;
   width: 100%;
   background: #232f3e;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
@@ -3645,13 +3645,13 @@
 
 @media (min-width: 640px) {
   .home-hero-carousel {
-    min-height: 15rem;
+    min-height: 7.5rem;
   }
 }
 
 @media (min-width: 960px) {
   .home-hero-carousel {
-    min-height: 17.5rem;
+    min-height: 8.75rem;
   }
 }
 
@@ -3661,7 +3661,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  padding: 1.15rem 1.35rem 1.3rem;
+  padding: 0.7rem 1rem 0.8rem;
   background-size: cover;
   background-position: center;
   opacity: 0;
@@ -3698,33 +3698,33 @@
 }
 
 .home-hero-carousel__copy strong {
-  font-size: clamp(1.1rem, 2.2vw, 1.55rem);
+  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.02em;
 }
 
 .home-hero-carousel__copy span {
-  font-size: 0.86rem;
-  line-height: 1.4;
+  font-size: 0.78rem;
+  line-height: 1.35;
   color: rgba(255, 255, 255, 0.88);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
 .home-hero-carousel__copy em {
-  margin-top: 0.35rem;
+  margin-top: 0.25rem;
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
   background: #ff9900;
   color: #1a1612;
   font-style: normal;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 750;
-  padding: 0.45rem 0.85rem;
+  padding: 0.35rem 0.7rem;
 }
 
 .home-hero-carousel__nav {
@@ -3732,8 +3732,8 @@
   top: 50%;
   z-index: 2;
   display: flex;
-  width: 2.25rem;
-  height: 3.25rem;
+  width: 1.85rem;
+  height: 2.4rem;
   transform: translateY(-50%);
   align-items: center;
   justify-content: center;
