@@ -70,7 +70,7 @@ export const AD_SLOT_CONTAINER_SPECS: Record<SlotZone, AdSlotContainerSpec> = {
     imageW: 1200,
     imageH: AD_LEADERBOARD_DISPLAY_H_PX,
     uploadW: 1200,
-    uploadH: 300,
+    uploadH: AD_LEADERBOARD_DISPLAY_H_PX,
     aspect: AD_LEADERBOARD_ASPECT.replace(' / ', '∶'),
   },
   mob_inline: {
