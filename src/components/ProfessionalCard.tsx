@@ -14,6 +14,7 @@ import {
   resolvePrimaryActivityLabels,
   resolveProfessionalActivityLine,
 } from '../lib/professionalDisplay'
+import { CompareToggle } from './compare/CompareToggle'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -328,18 +329,21 @@ export function ProfessionalCard({
           </span>
         </div>
 
-        <button
-          onClick={() => navigateTo(`/professional/${professional.id}`)}
-          type="button"
-          className={
-            compact
-              ? 'pro-card__action inline-flex items-center gap-1 font-semibold text-[var(--accent-700)] transition hover:text-[var(--ink-900)]'
-              : 'pro-card__action-btn inline-flex w-full items-center justify-center gap-2 rounded-full bg-[rgba(242,171,116,0.18)] px-4 py-2 text-sm font-bold text-[#9a5525] transition hover:bg-[rgba(242,171,116,0.26)] sm:w-auto'
-          }
-        >
-          <span>{t('professional.contact')}</span>
-          <ArrowRight className="pro-card__avatar-icon" />
-        </button>
+        <div className="flex items-center gap-2">
+          <CompareToggle professionalId={professional.id} size="sm" />
+          <button
+            onClick={() => navigateTo(`/professional/${professional.id}`)}
+            type="button"
+            className={
+              compact
+                ? 'pro-card__action inline-flex items-center gap-1 font-semibold text-[var(--accent-700)] transition hover:text-[var(--ink-900)]'
+                : 'pro-card__action-btn inline-flex w-full items-center justify-center gap-2 rounded-full bg-[rgba(242,171,116,0.18)] px-4 py-2 text-sm font-bold text-[#9a5525] transition hover:bg-[rgba(242,171,116,0.26)] sm:w-auto'
+            }
+          >
+            <span>{t('professional.contact')}</span>
+            <ArrowRight className="pro-card__avatar-icon" />
+          </button>
+        </div>
       </div>
     </div>
   )

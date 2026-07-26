@@ -176,6 +176,12 @@ export interface Database {
           service_latitude: number | null
           service_longitude: number | null
 
+          experience_years: number | null
+          hourly_rate_min: number | null
+          hourly_rate_max: number | null
+          warranty_months: number | null
+          warranty_note: string | null
+
           created_at: string
           updated_at: string
         }

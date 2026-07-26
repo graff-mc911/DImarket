@@ -35,6 +35,7 @@ import type { Profile } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 import { ReviewFeed } from '../components/reviews/ReviewFeed'
 import { recordProfileView } from '../lib/analytics/analytics'
+import { CompareToggle } from '../components/compare/CompareToggle'
 
 interface ProfessionalDetailProps {
   profileId: string
@@ -413,6 +414,16 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
               {isSaved ? 'В збережених' : 'Зберегти майстра'}
             </button>
           )}
+
+          {user?.id !== profileId ? (
+            <div className="mt-2">
+              <CompareToggle
+                professionalId={profileId}
+                label
+                className="w-full justify-center"
+              />
+            </div>
+          ) : null}
 
           <div className="amazon-pdp-divider" />
 
