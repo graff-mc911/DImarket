@@ -1846,8 +1846,23 @@ export const enTranslations = {
 
   'notifications.title': 'Notifications',
   'notifications.empty': 'No notifications',
+  'notifications.emptyArchived': 'No archived notifications',
+  'notifications.emptyHint':
+    'Messages, reviews, matches, applications, payments, and system alerts appear here in realtime.',
   'notifications.markAll': 'Mark all read',
   'notifications.enablePush': 'Push',
+  'notifications.viewAll': 'View all',
+  'notifications.searchPlaceholder': 'Search notifications…',
+  'notifications.unread': 'Unread',
+  'notifications.archived': 'Archived',
+  'notifications.archive': 'Archive',
+  'notifications.delete': 'Delete',
+  'notifications.allCaughtUp': 'You’re all caught up',
+  'notifications.pushEnabled': 'Push enabled',
+  'notifications.pushDenied': 'Push permission denied',
+  'notifications.pushUnavailable': 'Push unavailable',
+  'notifications.realtimeHint':
+    'Live via Supabase Realtime · Messages, reviews, matches, applications, payments, system',
 
   'reviews.writeTitle': 'Leave a review',
   'reviews.overall': 'Overall rating',
