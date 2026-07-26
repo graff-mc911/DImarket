@@ -31,6 +31,7 @@ import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { VerificationBadge } from '../components/MatchScoreBadge'
+import { MembershipBadge } from '../components/membership/MembershipBadge'
 import type { Profile } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 import { ReviewFeed } from '../components/reviews/ReviewFeed'
@@ -360,6 +361,12 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           )}
           <div className="mt-2">
             <VerificationBadge level={profile.verification_level} />
+            <MembershipBadge
+              planId={(profile as { plan_id?: string | null }).plan_id}
+              isPremium={isPremium}
+              isVerified={profile.is_verified}
+              verificationLevel={profile.verification_level}
+            />
           </div>
 
           {profile.location && (

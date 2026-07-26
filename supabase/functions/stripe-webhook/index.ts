@@ -40,6 +40,8 @@ Deno.serve(async (req: Request) => {
       await handleSubscriptionChange(event.data.object as Stripe.Subscription)
     } else if (event.type === 'customer.subscription.deleted') {
       await handleSubscriptionDeleted(event.data.object as Stripe.Subscription)
+    } else if (event.type === 'invoice.payment_failed') {
+      await handleInvoiceFailed(event.data.object as Stripe.Invoice)
     } else if (event.type === 'invoice.paid') {
       await handleInvoicePaid(event.data.object as Stripe.Invoice)
     }
@@ -151,10 +153,17 @@ async function handlePaidSession(session: Stripe.Checkout.Session) {
   }
 }
 
+function normalizePlanId(planId: string): string {
+  if (planId === 'business') return 'company_premium'
+  if (planId === 'professional_premium') return 'pro'
+  if (planId === 'professional_free') return 'free'
+  return planId || 'pro'
+}
+
 async function handleSubscriptionChange(sub: Stripe.Subscription) {
   const meta = sub.metadata ?? {}
   const userId = String(meta.user_id || '')
-  const planId = String(meta.plan_id || meta.reference_id || 'pro')
+  const planId = normalizePlanId(String(meta.plan_id || meta.reference_id || 'pro'))
   const billingInterval = String(meta.billing_interval || 'month')
   if (!userId) {
     console.warn('stripe-webhook: subscription without user_id', sub.id)
@@ -197,25 +206,99 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
 }
 
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
+  const subId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id
+  let userId = ''
+  let planId = ''
+  let periodEnd: string | null = null
+
+  if (subId) {
+    const { data: row } = await admin
+      .from('user_subscriptions')
+      .select('user_id, plan_id, current_period_end')
+      .eq('stripe_subscription_id', subId)
+      .maybeSingle()
+    userId = row?.user_id || ''
+    planId = row?.plan_id || ''
+    periodEnd = row?.current_period_end || null
+  }
+
+  if (!userId && invoice.customer) {
+    const customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer.id
+    const { data: profile } = await admin
+      .from('profiles')
+      .select('id, plan_id')
+      .eq('stripe_customer_id', customerId)
+      .maybeSingle()
+    userId = profile?.id || ''
+    planId = planId || profile?.plan_id || ''
+  }
+
+  if (userId) {
+    await admin.from('billing_invoices').upsert(
+      {
+        user_id: userId,
+        stripe_invoice_id: invoice.id,
+        number: invoice.number,
+        status: invoice.status || 'paid',
+        amount_due: invoice.amount_due ?? 0,
+        amount_paid: invoice.amount_paid ?? 0,
+        currency: invoice.currency || 'eur',
+        hosted_invoice_url: invoice.hosted_invoice_url,
+        invoice_pdf: invoice.invoice_pdf,
+        period_start: invoice.period_start
+          ? new Date(invoice.period_start * 1000).toISOString()
+          : null,
+        period_end: invoice.period_end
+          ? new Date(invoice.period_end * 1000).toISOString()
+          : null,
+        paid_at: new Date().toISOString(),
+      },
+      { onConflict: 'stripe_invoice_id' },
+    )
+  }
+
   // Monthly renewal: re-grant plan credits
   if (invoice.billing_reason !== 'subscription_cycle') return
-  const subId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id
-  if (!subId) return
-
-  const { data: row } = await admin
-    .from('user_subscriptions')
-    .select('user_id, plan_id, current_period_end')
-    .eq('stripe_subscription_id', subId)
-    .maybeSingle()
-
-  if (!row?.user_id || !row.plan_id) return
+  if (!userId || !planId) return
 
   await admin.rpc('apply_plan_entitlements', {
-    p_user_id: row.user_id,
-    p_plan_id: row.plan_id,
-    p_period_end: row.current_period_end,
+    p_user_id: userId,
+    p_plan_id: planId,
+    p_period_end: periodEnd,
     p_grant_monthly_credits: true,
   })
+}
+
+async function handleInvoiceFailed(invoice: Stripe.Invoice) {
+  const customerId =
+    typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id
+  if (!customerId) return
+  const { data: profile } = await admin
+    .from('profiles')
+    .select('id')
+    .eq('stripe_customer_id', customerId)
+    .maybeSingle()
+  if (!profile?.id) return
+
+  await admin
+    .from('profiles')
+    .update({ subscription_status: 'past_due' })
+    .eq('id', profile.id)
+
+  await admin.from('billing_invoices').upsert(
+    {
+      user_id: profile.id,
+      stripe_invoice_id: invoice.id,
+      number: invoice.number,
+      status: 'open',
+      amount_due: invoice.amount_due ?? 0,
+      amount_paid: invoice.amount_paid ?? 0,
+      currency: invoice.currency || 'eur',
+      hosted_invoice_url: invoice.hosted_invoice_url,
+      invoice_pdf: invoice.invoice_pdf,
+    },
+    { onConflict: 'stripe_invoice_id' },
+  )
 }
 
 async function upsertSubscription(opts: {
@@ -241,6 +324,7 @@ async function upsertSubscription(opts: {
     subscription_status: opts.status,
     subscription_period_end: periodEnd,
     plan_id: opts.planId,
+    trial_ends_at: opts.status === 'trialing' ? periodEnd : null,
   }).eq('id', opts.userId)
 
   if (opts.stripeSubscriptionId) {
