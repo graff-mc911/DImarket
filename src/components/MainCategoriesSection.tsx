@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react'
-import { CategoryServiceCard } from './CategoryServiceCard'
+import { useEffect, useMemo, useState } from 'react'
+import { ServiyaCategoryItem } from './ServiyaCategoryItem'
 import { useApp } from '../contexts/AppContext'
+import { resolveCategoryIcon } from '../lib/categoryIcons'
 import {
+  fetchCategoryServices,
   fetchMainMarketplaceCategories,
-  filterCategoriesByQuery,
+  marketplaceCategoryLabel,
   type MarketplaceCategory,
 } from '../lib/marketplaceCategories'
-import { Search } from 'lucide-react'
 
 export interface MainCategoriesSectionProps {
   id?: string
@@ -14,21 +15,19 @@ export interface MainCategoriesSectionProps {
   subtitle?: string
   eyebrow?: string
   showSearch?: boolean
-  /** Preloaded categories (skip internal fetch) */
+  /** Preloaded main categories (skip internal fetch) */
   categories?: MarketplaceCategory[]
   loading?: boolean
   className?: string
 }
 
 /**
- * Displays ONLY main construction categories from Supabase (`is_main = true`).
+ * “Select category” block matching serviya.es:
+ * main-category toggler pills + service tiles grid.
  */
 export function MainCategoriesSection({
   id = 'choose-category',
   title,
-  subtitle,
-  eyebrow,
-  showSearch = false,
   categories: externalCategories,
   loading: externalLoading,
   className = '',
@@ -36,7 +35,11 @@ export function MainCategoriesSection({
   const { language, t } = useApp()
   const [internal, setInternal] = useState<MarketplaceCategory[]>([])
   const [internalLoading, setInternalLoading] = useState(!externalCategories)
-  const [query, setQuery] = useState('')
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [servicesByParent, setServicesByParent] = useState<Record<string, MarketplaceCategory[]>>(
+    {},
+  )
+  const [servicesLoading, setServicesLoading] = useState(false)
 
   useEffect(() => {
     if (externalCategories) return
@@ -55,58 +58,117 @@ export function MainCategoriesSection({
     }
   }, [externalCategories])
 
-  const source = externalCategories ?? internal
+  const mains = externalCategories ?? internal
   const loading = externalLoading ?? internalLoading
-  const filtered = filterCategoriesByQuery(source, query, language.code)
+
+  useEffect(() => {
+    if (!mains.length) return
+    if (!activeId || !mains.some((c) => c.id === activeId)) {
+      setActiveId(mains[0].id)
+    }
+  }, [mains, activeId])
+
+  useEffect(() => {
+    if (!activeId) return
+    if (servicesByParent[activeId]) return
+    let cancelled = false
+    ;(async () => {
+      setServicesLoading(true)
+      try {
+        const rows = await fetchCategoryServices(activeId)
+        if (!cancelled) {
+          setServicesByParent((prev) => ({ ...prev, [activeId]: rows }))
+        }
+      } finally {
+        if (!cancelled) setServicesLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [activeId, servicesByParent])
+
+  const activeMain = useMemo(
+    () => mains.find((c) => c.id === activeId) ?? null,
+    [mains, activeId],
+  )
+
+  const tiles = useMemo(() => {
+    if (!activeId) return [] as MarketplaceCategory[]
+    const children = servicesByParent[activeId]
+    if (children == null) return []
+    if (children.length > 0) return children
+    // Fallback: show the main category itself when it has no children yet
+    return activeMain ? [activeMain] : []
+  }, [activeId, servicesByParent, activeMain])
 
   const sectionTitle = title ?? t('homePremium.categoriesTitle')
-  const sectionSubtitle = subtitle ?? t('homePremium.categoriesSubtitle')
-  const sectionEyebrow = eyebrow ?? t('homePremium.categoriesEyebrow')
+  const showTilesLoading = Boolean(activeId) && servicesByParent[activeId!] == null && servicesLoading
 
   return (
     <section
       id={id}
-      className={`main-categories-section home-section layout-page-gutter ${className}`.trim()}
+      className={`serviya-cat layout-page-gutter ${className}`.trim()}
       aria-labelledby={`${id}-title`}
     >
-      <div className="home-section__head">
-        <div>
-          <p className="home-section__eyebrow">{sectionEyebrow}</p>
-          <h2 id={`${id}-title`} className="home-section__title">
-            {sectionTitle}
-          </h2>
-          <p className="home-section__subtitle">{sectionSubtitle}</p>
-        </div>
+      <div className="serviya-cat__container">
+        <h2 id={`${id}-title`} className="serviya-cat__title">
+          {sectionTitle}
+        </h2>
 
-        {showSearch ? (
-          <label className="main-categories-section__search">
-            <Search className="h-4 w-4 shrink-0 text-[#b07e55]" aria-hidden />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t('marketplace.searchCategories')}
-              aria-label={t('marketplace.searchCategories')}
-            />
-          </label>
-        ) : null}
+        {loading ? (
+          <div className="serviya-cat__togglers" aria-busy="true">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <span key={i} className="serviya-cat__toggler serviya-cat__toggler--skeleton" />
+            ))}
+          </div>
+        ) : mains.length === 0 ? (
+          <p className="serviya-cat__empty">{t('marketplace.noCategories')}</p>
+        ) : (
+          <div className="serviya-cat__togglers" role="tablist" aria-label={sectionTitle}>
+            {mains.map((cat) => {
+              const Icon = resolveCategoryIcon(cat.icon_key)
+              const label = marketplaceCategoryLabel(cat, language.code)
+              const active = cat.id === activeId
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  className={`serviya-cat__toggler${active ? ' is-active' : ''}`}
+                  onClick={() => setActiveId(cat.id)}
+                >
+                  <Icon className="serviya-cat__toggler-icon" aria-hidden />
+                  <span>{label}</span>
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        {showTilesLoading ? (
+          <div className="serviya-cat__grid" aria-busy="true">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="serviya-cat__item serviya-cat__item--skeleton" />
+            ))}
+          </div>
+        ) : tiles.length === 0 && !loading ? (
+          <p className="serviya-cat__empty">{t('marketplace.noServices')}</p>
+        ) : (
+          <div className="serviya-cat__grid">
+            {tiles.map((service) => (
+              <ServiyaCategoryItem
+                key={service.id}
+                category={service}
+                parentSlug={
+                  activeMain && service.id !== activeMain.id ? activeMain.slug : undefined
+                }
+              />
+            ))}
+          </div>
+        )}
       </div>
-
-      {loading ? (
-        <div className="category-service-grid" aria-busy="true">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="category-service-card category-service-card--skeleton" />
-          ))}
-        </div>
-      ) : filtered.length === 0 ? (
-        <p className="home-section__empty">{t('marketplace.noCategories')}</p>
-      ) : (
-        <div className="category-service-grid">
-          {filtered.map((category) => (
-            <CategoryServiceCard key={category.id} category={category} />
-          ))}
-        </div>
-      )}
     </section>
   )
 }
