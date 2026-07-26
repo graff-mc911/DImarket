@@ -1,18 +1,76 @@
 import type { FormEvent } from 'react'
-import { Bot, Search } from 'lucide-react'
-import { useState } from 'react'
+import { Bot, ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../../contexts/AppContext'
-import type { HomeMetrics } from '../../lib/homeMarketplace'
+import type { HomeMetrics, HomeProfessional } from '../../lib/homeMarketplace'
 import { navigateTo } from '../../lib/navigation'
+import type { ListingWithImages } from '../../lib/types'
 import { AnimatedStat } from './AnimatedStat'
 
 interface HomeHeroProps {
   metrics: HomeMetrics
+  professionals?: HomeProfessional[]
+  projects?: ListingWithImages[]
 }
 
-export function HomeHero({ metrics }: HomeHeroProps) {
+type HeroSlide = {
+  id: string
+  title: string
+  subtitle: string
+  cta: string
+  path: string
+  image: string
+}
+
+const SLIDE_IMAGES = [
+  'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1200&q=80',
+]
+
+export function HomeHero({ metrics, professionals = [], projects = [] }: HomeHeroProps) {
   const { t } = useApp()
   const [query, setQuery] = useState('')
+  const [slide, setSlide] = useState(0)
+
+  const slides = useMemo<HeroSlide[]>(
+    () => [
+      {
+        id: 'trust',
+        title: t('home.heroTrustTitle'),
+        subtitle: t('home.heroTrustSubtitle'),
+        cta: t('home.search'),
+        path: '/professionals',
+        image: SLIDE_IMAGES[0],
+      },
+      {
+        id: 'post',
+        title: t('home.postJobFree'),
+        subtitle: t('homePremium.heroSubtitle'),
+        cta: t('header.postJob'),
+        path: '/create-project',
+        image: SLIDE_IMAGES[1],
+      },
+      {
+        id: 'pros',
+        title: t('home.topProsInCity').replace('{city}', 'Europe'),
+        subtitle: t('home.heroSocialProof')
+          .replace('{rating}', '4.8')
+          .replace('{pros}', String(Math.max(metrics.professionals, 120))),
+        cta: t('home.allPros'),
+        path: '/professionals',
+        image: SLIDE_IMAGES[2],
+      },
+    ],
+    [t, metrics.professionals],
+  )
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setSlide((s) => (s + 1) % slides.length)
+    }, 5200)
+    return () => window.clearInterval(timer)
+  }, [slides.length])
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault()
@@ -20,53 +78,137 @@ export function HomeHero({ metrics }: HomeHeroProps) {
     navigateTo(q ? `/search?q=${encodeURIComponent(q)}` : '/search')
   }
 
+  const prev = () => setSlide((s) => (s - 1 + slides.length) % slides.length)
+  const next = () => setSlide((s) => (s + 1) % slides.length)
+
+  const featuredPro = professionals[0]
+  const featuredProject = projects[0]
+
   return (
     <section className="home-hero" aria-labelledby="home-hero-title">
       <div className="home-hero__bg" aria-hidden />
-      <div className="home-hero__content layout-page-gutter">
-        <p className="home-hero__eyebrow">{t('homePremium.eyebrow')}</p>
-        <h1 id="home-hero-title" className="home-hero__title">
-          {t('homePremium.heroTitle')}
-        </h1>
-        <p className="home-hero__subtitle">{t('homePremium.heroSubtitle')}</p>
+      <div className="home-hero__shell layout-page-gutter">
+        <div className="home-hero__layout">
+          <div className="home-hero__content">
+            <p className="home-hero__eyebrow">{t('homePremium.eyebrow')}</p>
+            <h1 id="home-hero-title" className="home-hero__title">
+              {t('homePremium.heroTitle')}
+            </h1>
+            <p className="home-hero__subtitle">{t('homePremium.heroSubtitle')}</p>
 
-        <form className="home-hero__search" onSubmit={onSearch} role="search">
-          <Search className="home-hero__search-icon" aria-hidden />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t('homePremium.searchPlaceholder')}
-            aria-label={t('homePremium.searchPlaceholder')}
-          />
-          <button type="submit" className="home-hero__search-btn">
-            {t('homePremium.search')}
-          </button>
-        </form>
+            <form className="home-hero__search" onSubmit={onSearch} role="search">
+              <Search className="home-hero__search-icon" aria-hidden />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={t('homePremium.searchPlaceholder')}
+                aria-label={t('homePremium.searchPlaceholder')}
+              />
+              <button type="submit" className="home-hero__search-btn">
+                {t('homePremium.search')}
+              </button>
+            </form>
 
-        <div className="home-hero__actions">
-          <button
-            type="button"
-            className="home-btn home-btn--primary"
-            onClick={() => navigateTo('/create-project')}
-          >
-            {t('homePremium.postProject')}
-          </button>
-          <button
-            type="button"
-            className="home-btn home-btn--ghost"
-            onClick={() => navigateTo('/assistant')}
-          >
-            <Bot className="h-4 w-4" aria-hidden />
-            {t('homePremium.aiAssistant')}
-          </button>
-        </div>
+            <div className="home-hero__actions">
+              <button
+                type="button"
+                className="home-btn home-btn--primary"
+                onClick={() => navigateTo('/create-project')}
+              >
+                {t('homePremium.postProject')}
+              </button>
+              <button
+                type="button"
+                className="home-btn home-btn--ghost"
+                onClick={() => navigateTo('/assistant')}
+              >
+                <Bot className="h-4 w-4" aria-hidden />
+                {t('homePremium.aiAssistant')}
+              </button>
+            </div>
 
-        <div className="home-hero__stats" aria-label={t('homePremium.statsLabel')}>
-          <AnimatedStat value={metrics.professionals} label={t('homePremium.statPros')} />
-          <AnimatedStat value={metrics.reviews} label={t('homePremium.statReviews')} />
-          <AnimatedStat value={metrics.countries} label={t('homePremium.statCountries')} />
-          <AnimatedStat value={metrics.projects} label={t('homePremium.statProjects')} />
+            <div className="home-hero__stats" aria-label={t('homePremium.statsLabel')}>
+              <AnimatedStat value={metrics.professionals} label={t('homePremium.statPros')} />
+              <AnimatedStat value={metrics.reviews} label={t('homePremium.statReviews')} />
+              <AnimatedStat value={metrics.countries} label={t('homePremium.statCountries')} />
+              <AnimatedStat value={metrics.projects} label={t('homePremium.statProjects')} />
+            </div>
+          </div>
+
+          <div className="home-hero__showcase" aria-label={t('home.search')}>
+            <div className="home-hero-carousel">
+              {slides.map((item, index) => (
+                <div
+                  key={item.id}
+                  className={`home-hero-carousel__slide${index === slide ? ' is-active' : ''}`}
+                  style={{ backgroundImage: `url(${item.image})` }}
+                  aria-hidden={index !== slide}
+                >
+                  <div className="home-hero-carousel__veil" aria-hidden />
+                  <button
+                    type="button"
+                    className="home-hero-carousel__copy"
+                    onClick={() => navigateTo(item.path)}
+                  >
+                    <strong>{item.title}</strong>
+                    <span>{item.subtitle}</span>
+                    <em>{item.cta}</em>
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                className="home-hero-carousel__nav home-hero-carousel__nav--prev"
+                onClick={prev}
+                aria-label="Previous"
+              >
+                <ChevronLeft className="h-5 w-5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                className="home-hero-carousel__nav home-hero-carousel__nav--next"
+                onClick={next}
+                aria-label="Next"
+              >
+                <ChevronRight className="h-5 w-5" aria-hidden />
+              </button>
+            </div>
+
+            <div className="home-hero__deal-row">
+              <button
+                type="button"
+                className="home-hero-deal"
+                onClick={() =>
+                  navigateTo(
+                    featuredPro ? `/professional/${featuredPro.id}` : '/professionals',
+                  )
+                }
+              >
+                <span className="home-hero-deal__eyebrow">{t('homePremium.prosTitle')}</span>
+                <strong>{featuredPro?.full_name || t('home.allPros')}</strong>
+                <span>
+                  {featuredPro?.location || t('homePremium.prosSubtitle')}
+                </span>
+              </button>
+              <button
+                type="button"
+                className="home-hero-deal"
+                onClick={() =>
+                  navigateTo(featuredProject ? `/listing/${featuredProject.id}` : '/listings')
+                }
+              >
+                <span className="home-hero-deal__eyebrow">{t('home.recentJobsTitle')}</span>
+                <strong>{featuredProject?.title || t('home.allRequests')}</strong>
+                <span>
+                  {featuredProject?.city_name ||
+                    featuredProject?.location ||
+                    t('homePremium.projectsSubtitle')}
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
