@@ -10,8 +10,10 @@ type DeadlineStepProps = {
     urgency?: WizardUrgency
   }) => void
   labels: {
+    asap: string
+    thisWeek: string
+    thisMonth: string
     flexible: string
-    urgent: string
     date: string
     pickDate: string
   }
@@ -25,14 +27,17 @@ export function DeadlineStep({
   labels,
   error,
 }: DeadlineStepProps) {
-  const options: { id: WizardDeadlineType; label: string; hint: string }[] = [
-    { id: 'flexible', label: labels.flexible, hint: 'No rush' },
-    { id: 'asap', label: labels.urgent, hint: 'As soon as possible' },
-    { id: 'date', label: labels.date, hint: 'Pick a day' },
-  ]
+  const options: { id: WizardDeadlineType; label: string; hint: string; urgency: WizardUrgency }[] =
+    [
+      { id: 'asap', label: labels.asap, hint: 'Start as soon as possible', urgency: 'urgent' },
+      { id: 'this_week', label: labels.thisWeek, hint: 'Within 7 days', urgency: 'high' },
+      { id: 'this_month', label: labels.thisMonth, hint: 'Within 30 days', urgency: 'normal' },
+      { id: 'flexible', label: labels.flexible, hint: 'No fixed deadline', urgency: 'low' },
+      { id: 'date', label: labels.date, hint: 'Pick a specific day', urgency: 'normal' },
+    ]
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" role="radiogroup" aria-label="Timeline">
       <div className="grid gap-3">
         {options.map((o) => {
           const active = deadlineType === o.id
@@ -40,10 +45,12 @@ export function DeadlineStep({
             <button
               key={o.id}
               type="button"
+              role="radio"
+              aria-checked={active}
               onClick={() =>
                 onChange({
                   deadlineType: o.id,
-                  urgency: o.id === 'asap' ? 'urgent' : 'normal',
+                  urgency: o.urgency,
                 })
               }
               className={
