@@ -2,6 +2,12 @@ import { supabase } from './supabase'
 import { fetchNotifications, type AppNotification } from './notifications/notifications'
 import { fetchConversationsForUser } from './chat/conversations'
 import type { Listing, Profile, Quote } from './types'
+import {
+  completionRate,
+  countProjectStatuses,
+  type StatusCounts,
+} from './dashboard/statsExtras'
+import type { ProjectLifecycle } from './dashboard/projectStatus'
 
 export type CustomerQuoteRow = Quote & {
   professional?: {
@@ -33,12 +39,17 @@ export type FavoritePro = {
 export type CustomerDashboardStats = {
   projects: Listing[]
   activeProjects: number
+  projectStatusCounts: StatusCounts<ProjectLifecycle>
+  completionRate: number
   quotes: CustomerQuoteRow[]
   quotesPending: number
   invoices: CustomerQuoteRow[]
   invoiceTotal: number
+  payments: CustomerQuoteRow[]
+  paymentTotal: number
   unreadMessages: number
   favoritePros: FavoritePro[]
+  reviewsGiven: number
   notifications: AppNotification[]
   unreadNotifications: number
   /** last 7 days project publishes */
@@ -210,15 +221,30 @@ export async function fetchCustomerDashboardStats(
     (profileHints.filter((h) => h.done).length / profileHints.length) * 100,
   )
 
+  const payments = quotes.filter((q) => q.status === 'accepted')
+  const paymentTotal = payments.reduce((s, q) => s + (Number(q.total) || 0), 0)
+
+  let reviewsGiven = 0
+  const { count } = await supabase
+    .from('reviews')
+    .select('id', { count: 'exact', head: true })
+    .eq('reviewer_id', userId)
+  if (typeof count === 'number') reviewsGiven = count
+
   return {
     projects,
     activeProjects: projects.filter((p) => p.status === 'active').length,
+    projectStatusCounts: countProjectStatuses(projects),
+    completionRate: completionRate(projects),
     quotes,
     quotesPending,
     invoices,
     invoiceTotal,
+    payments,
+    paymentTotal,
     unreadMessages: conversations.reduce((s, c) => s + (c.unread_count || 0), 0),
     favoritePros,
+    reviewsGiven,
     notifications,
     unreadNotifications: notifications.filter((n) => !n.is_read).length,
     projectsByDay,

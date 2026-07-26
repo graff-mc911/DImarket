@@ -4,6 +4,12 @@ import { fetchNotifications, type AppNotification } from './notifications/notifi
 import { fetchConversationsForUser } from './chat/conversations'
 import { buildOnboardingState } from './onboardingProgress'
 import type { Profile, ProjectApplication, Quote } from './types'
+import {
+  averageResponseHours,
+  countLeadStatuses,
+  type StatusCounts,
+} from './dashboard/statsExtras'
+import type { LeadLifecycle } from './dashboard/projectStatus'
 
 export type ProActivityItem = {
   id: string
@@ -12,6 +18,16 @@ export type ProActivityItem = {
   subtitle?: string
   at: string
   href?: string
+}
+
+export type ProLeadRow = ProjectApplication & {
+  listing?: {
+    id: string
+    title: string | null
+    status: string | null
+    city_name: string | null
+  } | null
+  matchScore?: number | null
 }
 
 export type ProDashboardStats = {
@@ -37,7 +53,12 @@ export type ProDashboardStats = {
   profileCompletion: number
   profileSteps: Array<{ id: string; label: string; done: boolean }>
   applications: ProjectApplication[]
+  leads: ProLeadRow[]
+  leadStatusCounts: StatusCounts<LeadLifecycle>
+  avgResponseHours: number | null
+  acceptedProjects: ProLeadRow[]
   quotes: Quote[]
+  invoices: Quote[]
   notifications: AppNotification[]
   unreadNotifications: number
   activity: ProActivityItem[]
@@ -45,6 +66,7 @@ export type ProDashboardStats = {
   revenueByDay: number[]
   calendarMarks: Record<string, number>
   dayLabels: string[]
+  availabilityStatus: string
 }
 
 function startOfDay(d = new Date()): Date {
@@ -258,6 +280,36 @@ export async function fetchProDashboardStats(
 
   activity.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
 
+  const listingIds = [...new Set(apps.map((a) => a.listing_id))]
+  let listingMap = new Map<
+    string,
+    { id: string; title: string | null; status: string | null; city_name: string | null }
+  >()
+  if (listingIds.length) {
+    const { data: listingRows } = await supabase
+      .from('listings')
+      .select('id, title, status, city_name')
+      .in('id', listingIds)
+    listingMap = new Map(
+      ((listingRows ?? []) as Array<{
+        id: string
+        title: string | null
+        status: string | null
+        city_name: string | null
+      }>).map((l) => [l.id, l]),
+    )
+  }
+
+  const scoreByListing = new Map(matches.map((m) => [m.listing_id, m.score]))
+  const leads: ProLeadRow[] = apps.map((a) => ({
+    ...a,
+    listing: listingMap.get(a.listing_id) || null,
+    matchScore: scoreByListing.get(a.listing_id) ?? null,
+  }))
+
+  const acceptedProjects = leads.filter((l) => l.status === 'accepted')
+  const invoices = quotes.filter((q) => q.status === 'sent' || q.status === 'accepted')
+
   return {
     todaysLeads,
     openLeads,
@@ -275,7 +327,12 @@ export async function fetchProDashboardStats(
     profileCompletion,
     profileSteps,
     applications: apps,
+    leads,
+    leadStatusCounts: countLeadStatuses(leads),
+    avgResponseHours: averageResponseHours(apps, quotes),
+    acceptedProjects,
     quotes,
+    invoices,
     notifications,
     unreadNotifications: notifications.filter((n) => !n.is_read).length,
     activity: activity.slice(0, 18),
@@ -283,6 +340,7 @@ export async function fetchProDashboardStats(
     revenueByDay,
     calendarMarks,
     dayLabels: days.map(dayLabel),
+    availabilityStatus: profile?.availability_status || 'available',
   }
 }
 

@@ -1,17 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import {
-  BarChart3,
-  Building2,
-  CreditCard,
-  FileText,
-  Flag,
-  FolderTree,
-  LayoutDashboard,
-  Megaphone,
-  ShieldCheck,
-  Star,
-  Users,
-} from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
@@ -20,6 +7,10 @@ import { OwnerAdManager } from '../components/OwnerAdManager'
 import { OwnerMarketHealth } from '../components/OwnerMarketHealth'
 import { VerificationAdminPanel } from '../components/verification/VerificationAdminPanel'
 import { AnalyticsEmbed } from './Analytics'
+import { DashboardShell } from '../components/dashboard/DashboardShell'
+import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton'
+import { useDashboardSection } from '../hooks/useDashboardSection'
+import { loadDashboardTheme, saveDashboardTheme } from '../lib/dashboard/theme'
 import {
   createAdminCategory,
   deleteAdminCategory,
@@ -53,34 +44,42 @@ type TabId =
   | 'overview'
   | 'users'
   | 'professionals'
+  | 'companies'
   | 'projects'
   | 'reviews'
   | 'categories'
   | 'ads'
   | 'subscriptions'
+  | 'payments'
+  | 'support'
   | 'analytics'
   | 'reports'
   | 'verification'
 
-const TABS: { id: TabId; label: string; icon: typeof Users }[] = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'users', label: 'Users', icon: Users },
-  { id: 'professionals', label: 'Professionals', icon: Building2 },
-  { id: 'projects', label: 'Projects', icon: FileText },
-  { id: 'reviews', label: 'Reviews', icon: Star },
-  { id: 'categories', label: 'Categories', icon: FolderTree },
-  { id: 'ads', label: 'Ads', icon: Megaphone },
-  { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
-  { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-  { id: 'reports', label: 'Reports', icon: Flag },
-  { id: 'verification', label: 'Verification', icon: ShieldCheck },
-]
+const SECTION_TO_TAB: Record<string, TabId> = {
+  overview: 'overview',
+  users: 'users',
+  professionals: 'professionals',
+  companies: 'companies',
+  projects: 'projects',
+  reviews: 'reviews',
+  categories: 'categories',
+  ads: 'ads',
+  payments: 'payments',
+  support: 'support',
+  analytics: 'analytics',
+  reports: 'reports',
+  verification: 'verification',
+}
 
 export function AdminPanel() {
   const { user } = useApp()
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [tab, setTab] = useState<TabId>('overview')
+  const { section, setSection } = useDashboardSection('admin', '/admin')
+  const tab: TabId = SECTION_TO_TAB[section] || 'overview'
+  const setTab = (id: TabId) => setSection(id)
   const [loading, setLoading] = useState(true)
+  const [dark, setDark] = useState(() => loadDashboardTheme())
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [notice, setNotice] = useState('')
 
@@ -141,6 +140,10 @@ export function AdminPanel() {
     void gate()
   }, [gate])
 
+  useEffect(() => {
+    saveDashboardTheme(dark)
+  }, [dark])
+
   const loadTab = useCallback(async (id: TabId) => {
     if (id === 'overview' || id === 'analytics') {
       setStats(await fetchAdminStats())
@@ -150,6 +153,10 @@ export function AdminPanel() {
     }
     if (id === 'professionals') {
       setUsers(await searchAdminProfiles(userQuery, 'professional'))
+    }
+    if (id === 'companies') {
+      const all = await searchAdminProfiles(userQuery, 'all')
+      setUsers(all.filter((u) => u.user_role === 'company'))
     }
     if (id === 'projects') {
       setListings(await fetchAdminListings())
@@ -168,13 +175,13 @@ export function AdminPanel() {
         .limit(100)
       setAdCampaigns((data as AdCampaign[]) || [])
     }
-    if (id === 'subscriptions') {
+    if (id === 'subscriptions' || id === 'payments') {
       setPayments(await fetchAdminPayments())
       setUsers(await searchAdminProfiles('', 'premium'))
       setSubscriptions(await fetchAdminSubscriptions())
       setGoogleAdsReqs(await fetchAdminGoogleAdsRequests())
     }
-    if (id === 'reports') {
+    if (id === 'reports' || id === 'support') {
       setReports(await fetchReviewReports())
       setFraud(await fetchFraudReports())
     }
@@ -191,8 +198,8 @@ export function AdminPanel() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-[14px] text-[#86868b]">
-        Loading admin panel…
+      <div className="min-h-[50vh] bg-[#f5f5f7] px-4 py-10">
+        <DashboardSkeleton />
       </div>
     )
   }
@@ -200,62 +207,34 @@ export function AdminPanel() {
   if (!isSiteOwner(profile, user?.email)) return null
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7]">
-      <div className="sticky top-0 z-30 border-b border-[#e8e8ed] bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4">
-          <div>
-            <h1 className="text-[22px] font-semibold tracking-tight text-[#1d1d1f]">Admin Panel</h1>
-            <p className="text-[13px] text-[#86868b]">
-              Users · Projects · Reviews · Ads · Subscriptions · Reports
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => navigateTo('/admin/ai')}
-              className="rounded-full border border-[#d2d2d7] px-3 py-1.5 text-[12px] font-semibold"
-            >
-              AI Admin
-            </button>
-            <button
-              type="button"
-              onClick={() => navigateTo('/admin/marketing-agent')}
-              className="rounded-full border border-[#d2d2d7] px-3 py-1.5 text-[12px] font-semibold"
-            >
-              Marketing
-            </button>
-            <button
-              type="button"
-              onClick={() => navigateTo('/dashboard')}
-              className="rounded-full bg-[#1d1d1f] px-3 py-1.5 text-[12px] font-semibold text-white"
-            >
-              Classic cabinet
-            </button>
-          </div>
+    <DashboardShell
+      role="admin"
+      title="Admin Panel"
+      subtitle="Users · Professionals · Companies · Projects · Payments · Support"
+      section={section}
+      onSectionChange={setSection}
+      dark={dark}
+      onToggleDark={() => setDark((d) => !d)}
+      actions={
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => navigateTo('/admin/ai')}
+            className="rounded-full border border-[#d2d2d7] px-3 py-1.5 text-[12px] font-semibold"
+          >
+            AI Admin
+          </button>
+          <button
+            type="button"
+            onClick={() => navigateTo('/dashboard')}
+            className="rounded-full bg-[#1d1d1f] px-3 py-1.5 text-[12px] font-semibold text-white"
+          >
+            Classic cabinet
+          </button>
         </div>
-        <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 pb-3">
-          {TABS.map((t) => {
-            const Icon = t.icon
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setTab(t.id)}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition ${
-                  tab === t.id
-                    ? 'bg-[#1d1d1f] text-white'
-                    : 'bg-white text-[#1d1d1f] hover:bg-[#e8e8ed]'
-                }`}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {t.label}
-              </button>
-            )
-          })}
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-7xl space-y-4 px-4 py-6">
+      }
+    >
+      <div className="space-y-4">
         {notice ? (
           <p className="rounded-xl bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800">{notice}</p>
         ) : null}
@@ -263,21 +242,36 @@ export function AdminPanel() {
         {tab === 'overview' && (
           <OverviewSection
             stats={stats}
-            onOpen={(id) => setTab(id)}
+            onOpen={(id) => setTab(id as TabId)}
           />
         )}
 
-        {(tab === 'users' || tab === 'professionals') && (
+        {(tab === 'users' || tab === 'professionals' || tab === 'companies') && (
           <UsersSection
-            title={tab === 'professionals' ? 'Professionals' : 'Users'}
+            title={
+              tab === 'professionals'
+                ? 'Professionals'
+                : tab === 'companies'
+                  ? 'Companies'
+                  : 'Users'
+            }
             users={users}
             query={userQuery}
             onQuery={setUserQuery}
             onSearch={() =>
-              void searchAdminProfiles(
-                userQuery,
-                tab === 'professionals' ? 'professional' : 'all',
-              ).then(setUsers)
+              void (async () => {
+                if (tab === 'companies') {
+                  const all = await searchAdminProfiles(userQuery, 'all')
+                  setUsers(all.filter((u) => u.user_role === 'company'))
+                  return
+                }
+                setUsers(
+                  await searchAdminProfiles(
+                    userQuery,
+                    tab === 'professionals' ? 'professional' : 'all',
+                  ),
+                )
+              })()
             }
             onToggle={async (id, flags) => {
               const res = await updateAdminProfileFlags(id, flags)
@@ -351,7 +345,7 @@ export function AdminPanel() {
           </section>
         )}
 
-        {tab === 'subscriptions' && (
+        {(tab === 'subscriptions' || tab === 'payments') && (
           <SubscriptionsSection
             payments={payments}
             premiumUsers={users}
@@ -362,6 +356,49 @@ export function AdminPanel() {
               setGoogleAdsReqs(await fetchAdminGoogleAdsRequests())
             }}
           />
+        )}
+
+        {tab === 'support' && (
+          <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-5 shadow-sm">
+            <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Support inbox</h2>
+            <p className="mt-1 text-[13px] text-[#86868b]">
+              Review reports and fraud flags. Open Messages for live conversations.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                className="rounded-full bg-[#1d1d1f] px-4 py-2 text-[12px] font-semibold text-white"
+                onClick={() => setTab('reports')}
+              >
+                Open reports
+              </button>
+              <button
+                type="button"
+                className="rounded-full border border-[#d2d2d7] px-4 py-2 text-[12px] font-semibold"
+                onClick={() => navigateTo('/messages')}
+              >
+                Messages
+              </button>
+              <button
+                type="button"
+                className="rounded-full border border-[#d2d2d7] px-4 py-2 text-[12px] font-semibold"
+                onClick={() => navigateTo('/contact')}
+              >
+                Contact form
+              </button>
+            </div>
+            <div className="mt-6">
+              <ReportsSection
+                reports={reports}
+                fraud={fraud}
+                onResolve={async (id, status) => {
+                  const res = await setReviewReportStatus(id, status)
+                  toast(res.ok ? 'Report updated' : res.error || 'Failed')
+                  void loadTab('support')
+                }}
+              />
+            </div>
+          </section>
         )}
 
         {tab === 'analytics' && (
@@ -404,7 +441,7 @@ export function AdminPanel() {
           </section>
         )}
       </div>
-    </div>
+    </DashboardShell>
   )
 }
 
