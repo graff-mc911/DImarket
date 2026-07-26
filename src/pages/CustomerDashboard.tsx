@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import {
+  BarChart3,
   Bell,
   Bookmark,
   FileText,
@@ -28,6 +29,7 @@ import {
 } from '../lib/notifications/notifications'
 import { AreaSparkline, BarChart, DonutProgress } from '../components/pro-dashboard/Charts'
 import { VerificationBadge } from '../components/MatchScoreBadge'
+import { AnalyticsEmbed } from '../components/analytics/AnalyticsHub'
 
 function formatEuro(n: number): string {
   return `€${Math.round(n).toLocaleString()}`
@@ -285,7 +287,16 @@ export function CustomerDashboard() {
                     Activity · last 7 days
                   </h2>
                 </div>
-                <LayoutDashboard className={`h-4 w-4 ${muted}`} />
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/analytics')}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold ${
+                    dark ? 'bg-white/10 text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+                  }`}
+                >
+                  <BarChart3 className="h-3.5 w-3.5" />
+                  Full analytics
+                </button>
               </div>
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
@@ -309,6 +320,12 @@ export function CustomerDashboard() {
                 </div>
               </div>
             </div>
+
+            {user ? (
+              <div className={`${card} mt-4 p-5 md:p-6`}>
+                <AnalyticsEmbed role="customer" userId={user.id} />
+              </div>
+            ) : null}
 
             <div className="mt-4 grid gap-4 lg:grid-cols-5">
               {/* My Projects */}

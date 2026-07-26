@@ -27,6 +27,7 @@ import {
 } from '../lib/notifications/notifications'
 import { AreaSparkline, BarChart, DonutProgress } from '../components/pro-dashboard/Charts'
 import { MiniCalendar } from '../components/pro-dashboard/MiniCalendar'
+import { AnalyticsEmbed } from '../components/analytics/AnalyticsHub'
 
 function formatEuro(n: number): string {
   return `€${Math.round(n).toLocaleString()}`
@@ -402,6 +403,15 @@ export function ProDashboard() {
                 </p>
               </div>
             </div>
+
+            {user ? (
+              <div className={`${card} mt-4 p-5 md:p-6`}>
+                <AnalyticsEmbed
+                  role={profile?.user_role === 'company' ? 'company' : 'professional'}
+                  userId={user.id}
+                />
+              </div>
+            ) : null}
 
             {/* Profile + quotes + reviews */}
             <div className="mt-4 grid gap-4 lg:grid-cols-3">
