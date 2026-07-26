@@ -9,9 +9,11 @@ import {
   filterNotifyCandidates,
   notifyJobMatchProfessionals,
 } from './notifyMatches'
+import { computeMatchFacets } from './matchFacets'
 
 export interface MatchingRunResult {
   ranked: RankedMatch[]
+  facets: ReturnType<typeof computeMatchFacets>
   notifiedCount: number
   notifiedIds: string[]
 }
@@ -27,6 +29,7 @@ export async function runMatchingForListing(
 ): Promise<MatchingRunResult> {
   const limit = options?.limit ?? TOP_MATCH_LIMIT
   const ranked = await rankProfessionals(criteria, limit)
+  const facets = computeMatchFacets(ranked)
 
   if (ranked.length) {
     const rows = ranked.map((m, i) => ({
@@ -35,16 +38,36 @@ export async function runMatchingForListing(
       score: m.score,
       reasons: m.reasons,
       rank_position: i + 1,
+      explanation: m.explanation ?? null,
+      breakdown: m.breakdown ?? {},
+      distance_km: m.distanceKm ?? null,
+      value_score: m.valueScore ?? null,
+      response_score: m.responseScore ?? null,
+      updated_at: new Date().toISOString(),
     }))
 
     const { error } = await supabase.from('match_scores').upsert(rows as never, {
       onConflict: 'listing_id,contractor_id',
     })
-    if (error) console.error('match_scores upsert:', error)
+    if (error) {
+      // Fallback without new columns if migration not applied yet
+      console.error('match_scores upsert:', error)
+      const legacy = ranked.map((m, i) => ({
+        listing_id: listingId,
+        contractor_id: m.profileId,
+        score: m.score,
+        reasons: m.reasons,
+        rank_position: i + 1,
+      }))
+      const retry = await supabase.from('match_scores').upsert(legacy as never, {
+        onConflict: 'listing_id,contractor_id',
+      })
+      if (retry.error) console.error('match_scores upsert legacy:', retry.error)
+    }
 
     const { error: matchErr } = await supabase.from('ai_matches').insert({
       listing_id: listingId,
-      criteria,
+      criteria: { ...criteria, facets },
       matches: ranked,
     } as never)
     if (matchErr && matchErr.code !== '42P01') console.error('ai_matches:', matchErr)
@@ -57,7 +80,7 @@ export async function runMatchingForListing(
     void invokeMatchChannelNotify(listingId, notifyIds)
   }
 
-  return { ranked, notifiedCount, notifiedIds: notifyIds }
+  return { ranked, facets, notifiedCount, notifiedIds: notifyIds }
 }
 
 async function invokeMatchChannelNotify(
@@ -77,7 +100,7 @@ export async function fetchMatchScoresForListing(listingId: string, limit = TOP_
   const { data, error } = await supabase
     .from('match_scores')
     .select(
-      '*, contractor:profiles(id, full_name, location, rating, total_reviews, is_verified, verification_level, profile_photo, avatar_url, completed_jobs, availability_status, languages, portfolio_images)',
+      '*, contractor:profiles(id, full_name, location, rating, total_reviews, is_verified, is_premium, verification_level, profile_photo, avatar_url, completed_jobs, availability_status, languages, portfolio_images, response_rate)',
     )
     .eq('listing_id', listingId)
     .order('rank_position', { ascending: true })
@@ -86,7 +109,6 @@ export async function fetchMatchScoresForListing(listingId: string, limit = TOP_
 
   if (error) {
     if (error.code === '42P01') return []
-    // Retry without new columns if migration not applied
     const retry = await supabase
       .from('match_scores')
       .select(

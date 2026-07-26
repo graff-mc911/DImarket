@@ -41,6 +41,8 @@ export type MatchScoreBreakdown = {
   availability: number
   verification: number
   portfolio: number
+  budget: number
+  responseTime: number
 }
 
 export type RankedMatch = {
@@ -52,12 +54,18 @@ export type RankedMatch = {
   responseRate: number | null
   score: number
   reasons: string[]
+  explanation?: string
   breakdown?: MatchScoreBreakdown
   distanceKm?: number | null
-  verificationLevel?: 'none' | 'bronze' | 'silver' | 'gold' | null
+  valueScore?: number
+  responseScore?: number
+  verificationLevel?: 'none' | 'bronze' | 'silver' | 'gold' | 'platinum' | null
   avatarUrl?: string | null
   completedJobs?: number
   availabilityStatus?: string
+  isPremium?: boolean | null
+  isVerified?: boolean | null
+  languages?: string[] | null
 }
 
 export type TranslationResult = {

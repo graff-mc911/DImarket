@@ -117,10 +117,10 @@ Deno.serve(async (req: Request) => {
     const email = authUser?.user?.email?.trim()
 
     if (email) {
-      const subject = `New job match: ${title}`
+      const subject = `New AI Match: ${title}`
       const text =
         `Hi ${profile.full_name ?? 'professional'},\n\n` +
-        `A new job request matches your profile.\n\n` +
+        `New AI Match — a project was matched to your profile.\n\n` +
         `${title}\n📍 ${location}\n\n` +
         `View details: ${link}`
       if (await sendResendEmail(email, subject, text)) emailed++
@@ -128,7 +128,7 @@ Deno.serve(async (req: Request) => {
 
     if (profile.telegram_chat_id) {
       const tgText =
-        `🔔 New job in your area\n\n${title}\n📍 ${location}\n\n${link}`
+        `✨ New AI Match\n\n${title}\n📍 ${location}\n\n${link}`
       if (await sendTelegram(String(profile.telegram_chat_id), tgText)) telegram++
     }
   }

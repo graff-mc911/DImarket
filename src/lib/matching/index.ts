@@ -8,6 +8,7 @@ export {
   MATCH_WEIGHTS,
   type MatchingCriteria,
   type MatchCandidate,
+  type CustomerMatchPreferences,
 } from './aiMatchService'
 
 export {
@@ -21,3 +22,22 @@ export {
   notifyJobMatchProfessionals,
   filterNotifyCandidates,
 } from './notifyMatches'
+
+export {
+  buildMatchExplanation,
+  REASON_LABELS,
+} from './explainMatch'
+
+export {
+  computeMatchFacets,
+  facetLabelsForMatch,
+  sortMatchesByFacet,
+  type MatchFacetKey,
+  type MatchFacets,
+} from './matchFacets'
+
+export {
+  inviteProfessionalToProject,
+  toggleSavedProfessional,
+  fetchSavedProfessionalIds,
+} from './inviteProfessional'
