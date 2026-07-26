@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import type { HomeMetrics } from '../../lib/homeMarketplace'
 import { navigateTo } from '../../lib/navigation'
-import { AnimatedStat } from './AnimatedStat'
 
 interface HomeHeroProps {
   metrics: HomeMetrics
@@ -82,13 +81,6 @@ export function HomeHero({ metrics }: HomeHeroProps) {
                 {t('homePremium.heroTitle')}
               </h1>
               <p className="home-hero__subtitle">{t('homePremium.heroSubtitle')}</p>
-            </div>
-
-            <div className="home-hero__stats" aria-label={t('homePremium.statsLabel')}>
-              <AnimatedStat value={metrics.professionals} label={t('homePremium.statPros')} />
-              <AnimatedStat value={metrics.reviews} label={t('homePremium.statReviews')} />
-              <AnimatedStat value={metrics.countries} label={t('homePremium.statCountries')} />
-              <AnimatedStat value={metrics.projects} label={t('homePremium.statProjects')} />
             </div>
           </div>
 
