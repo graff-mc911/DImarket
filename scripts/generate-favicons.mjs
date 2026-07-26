@@ -127,8 +127,10 @@ async function writePinnedTabSvg() {
   <image width="16" height="16" href="data:image/png;base64,${b64}"/>
 </svg>
 `
-  await fs.promises.writeFile(path.join(publicDir, 'safari-pinned-tab.svg'), svg)
-  console.log('wrote safari-pinned-tab.svg')
+  const pinnedPath = path.join(publicDir, 'safari-pinned-tab.svg')
+  await fs.promises.writeFile(pinnedPath, svg)
+  await fs.promises.copyFile(pinnedPath, path.join(publicDir, 'pinned-tab.svg'))
+  console.log('wrote safari-pinned-tab.svg + pinned-tab.svg')
 }
 
 async function writeSocial(file, width, height) {
