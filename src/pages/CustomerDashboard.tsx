@@ -5,7 +5,6 @@ import {
   Bookmark,
   FileText,
   FolderKanban,
-  LayoutDashboard,
   MessageSquare,
   Moon,
   Radio,

@@ -257,7 +257,9 @@ export async function fetchProfessionalBundle(
       revenue: Number(series.kpis.revenue_total || 0),
       responseTimeHours: series.kpis.response_hours ?? null,
       responseRate: profile.data?.response_rate ?? series.kpis.response_rate ?? null,
-      profileCompletion: profileCompletion(profile.data as Record<string, unknown>),
+      profileCompletion: profileCompletion(
+        (profile.data as unknown as Record<string, unknown> | null) ?? null,
+      ),
     },
     projectsByCategory: topCounts(catMap),
     topServices: topCounts(serviceMap),
