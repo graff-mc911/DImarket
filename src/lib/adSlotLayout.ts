@@ -39,7 +39,7 @@ export const AD_SIDE_LEGACY_MIN_PX = 198
 /** Другий блок у sticky-колонці (legacy-compact) */
 export const AD_SIDE_LEGACY_COMPACT_MIN_PX = 108
 
-/** Центральний блок на головній */
+/** Центральний блок на головній («Партнерські компанії») */
 export const AD_CENTER_MIN_PX = 220
 export const AD_CENTER_MIN_MD_PX = 248
 
@@ -47,10 +47,10 @@ export const AD_CENTER_MIN_MD_PX = 248
 export const AD_MOBILE_INLINE_MIN_PX = 80
 export const AD_MOBILE_INLINE_IMAGE_PX = 68
 
-/** Широкий лінійний банер (hero / над списком) — компактна висота на десктопі */
-export const AD_LEADERBOARD_DISPLAY_H_PX = 49
+/** Широкий лінійний банер — та сама висота, що й «Партнерські компанії» */
+export const AD_LEADERBOARD_DISPLAY_H_PX = AD_CENTER_MIN_MD_PX
 export const AD_LEADERBOARD_MAX_PX = 600
-export const AD_LEADERBOARD_ASPECT = '8 / 1' as const
+export const AD_LEADERBOARD_ASPECT = '3 / 1' as const
 
 /** Прозора панель тексту під зображенням — висота лише за вмістом */
 export const AD_TEXT_PANEL_CLASS =

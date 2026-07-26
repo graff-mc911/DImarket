@@ -131,7 +131,14 @@ export function adSlotImageStyle(
   }
 
   if (variant === 'center') {
-    return undefined
+    return {
+      width: '100%',
+      height: spec.imageH,
+      maxHeight: spec.imageH,
+      minHeight: spec.imageH,
+      flexShrink: 0,
+      overflow: 'hidden',
+    }
   }
 
   return {

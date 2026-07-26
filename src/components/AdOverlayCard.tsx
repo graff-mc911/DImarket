@@ -75,7 +75,7 @@ const variantStyles: Record<
   },
   center: {
     shell: `${adSlotTailwind.center} ad-slot-center`,
-    image: 'w-full min-h-0 shrink-0 overflow-hidden',
+    image: 'ad-slot-center__media w-full min-h-0 shrink-0 overflow-hidden',
     text: 'px-2.5 py-1',
     brand: 'text-[10px]',
     title: 'text-sm line-clamp-2 leading-tight',
@@ -160,7 +160,7 @@ function AdCampaignMedia({
     slotState.mediaUrl ||
     (slotId ? '' : getPublicBannerImageUrl(resolved))
   const shouldAdaptRatio =
-    (variant === 'mobile-inline' || variant === 'center') &&
+    variant === 'mobile-inline' &&
     (slotState.mediaType === 'image' || slotState.mediaType === 'gif')
   const adaptiveRatio = useImageAspectRatio(measuredSource, shouldAdaptRatio)
   const adaptiveImageStyle: CSSProperties | undefined =
