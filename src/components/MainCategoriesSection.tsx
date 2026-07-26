@@ -70,7 +70,7 @@ export function MainCategoriesSection({
 
   useEffect(() => {
     if (!activeId) return
-    if (servicesByParent[activeId]) return
+    if (Object.prototype.hasOwnProperty.call(servicesByParent, activeId)) return
     let cancelled = false
     ;(async () => {
       setServicesLoading(true)
