@@ -77,7 +77,7 @@ export async function fetchMatchScoresForListing(listingId: string, limit = TOP_
   const { data, error } = await supabase
     .from('match_scores')
     .select(
-      '*, contractor:profiles(id, full_name, location, rating, total_reviews, is_verified, verification_level, profile_photo, avatar_url, completed_jobs, availability_status, languages, portfolio_images)',
+      '*, contractor:profiles(id, full_name, location, rating, total_reviews, is_verified, verification_level, trust_level, trust_score, identity_verified, business_verified, insurance_verified, trusted_professional, is_premium, email_verified_at, phone_verified_at, profile_photo, avatar_url, completed_jobs, availability_status, languages, portfolio_images)',
     )
     .eq('listing_id', listingId)
     .order('rank_position', { ascending: true })
@@ -90,7 +90,7 @@ export async function fetchMatchScoresForListing(listingId: string, limit = TOP_
     const retry = await supabase
       .from('match_scores')
       .select(
-        '*, contractor:profiles(id, full_name, location, rating, total_reviews, is_verified, verification_level, profile_photo, avatar_url)',
+        '*, contractor:profiles(id, full_name, location, rating, total_reviews, is_verified, verification_level, trust_level, trust_score, identity_verified, business_verified, insurance_verified, trusted_professional, is_premium, profile_photo, avatar_url)',
       )
       .eq('listing_id', listingId)
       .order('score', { ascending: false })

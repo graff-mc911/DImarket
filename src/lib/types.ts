@@ -141,6 +141,15 @@ export interface Database {
           verification_level: 'none' | 'bronze' | 'silver' | 'gold' | 'platinum'
           email_verified_at: string | null
           phone_verified_at: string | null
+          identity_verified: boolean | null
+          business_verified: boolean | null
+          address_verified: boolean | null
+          insurance_verified: boolean | null
+          license_verified: boolean | null
+          vat_verified: boolean | null
+          trusted_professional: boolean | null
+          trust_level: number | null
+          trust_score: number | null
 
           // Преміум профіль — платне підняття у видачі
           is_premium: boolean | null
@@ -200,6 +209,15 @@ export interface Database {
           verification_level?: 'none' | 'bronze' | 'silver' | 'gold' | 'platinum'
           email_verified_at?: string | null
           phone_verified_at?: string | null
+          identity_verified?: boolean | null
+          business_verified?: boolean | null
+          address_verified?: boolean | null
+          insurance_verified?: boolean | null
+          license_verified?: boolean | null
+          vat_verified?: boolean | null
+          trusted_professional?: boolean | null
+          trust_level?: number | null
+          trust_score?: number | null
           is_premium?: boolean | null
           premium_expires_at?: string | null
           is_featured?: boolean | null
@@ -247,6 +265,15 @@ export interface Database {
           verification_level?: 'none' | 'bronze' | 'silver' | 'gold' | 'platinum'
           email_verified_at?: string | null
           phone_verified_at?: string | null
+          identity_verified?: boolean | null
+          business_verified?: boolean | null
+          address_verified?: boolean | null
+          insurance_verified?: boolean | null
+          license_verified?: boolean | null
+          vat_verified?: boolean | null
+          trusted_professional?: boolean | null
+          trust_level?: number | null
+          trust_score?: number | null
           is_premium?: boolean | null
           premium_expires_at?: string | null
           is_featured?: boolean | null

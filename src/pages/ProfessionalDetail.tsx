@@ -30,7 +30,7 @@ import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
 import { MobileAdBanner } from '../components/MobileAdBanner'
-import { VerificationBadge } from '../components/MatchScoreBadge'
+import { TrustBadges, TrustScorePill, VerificationBadge } from '../components/MatchScoreBadge'
 import type { Profile } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 import { ReviewFeed } from '../components/reviews/ReviewFeed'
@@ -352,14 +352,22 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
             <span className="text-sm text-[var(--ink-500)]">({profile.total_reviews} відгуків)</span>
           </div>
 
-          {isVerified && (
-            <div className="mt-2 flex items-center gap-1 text-sm font-medium text-[#067d62]">
-              <ShieldCheck className="h-4 w-4" />
-              Верифікований
+          <div className="mt-3 space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <TrustScorePill score={profile.trust_score} size="md" />
+              <VerificationBadge
+                trustLevel={profile.trust_level}
+                level={profile.verification_level}
+                size="md"
+              />
             </div>
-          )}
-          <div className="mt-2">
-            <VerificationBadge level={profile.verification_level} />
+            <TrustBadges source={profile} size="md" max={6} />
+            {isVerified && !profile.identity_verified ? (
+              <div className="flex items-center gap-1 text-sm font-medium text-[#067d62]">
+                <ShieldCheck className="h-4 w-4" />
+                Верифікований
+              </div>
+            ) : null}
           </div>
 
           {profile.location && (

@@ -195,6 +195,30 @@ export function AdvancedSearchFilters({
         />
         {t('advancedSearch.verifiedOnly')}
       </label>
+      <label className="adv-search__check">
+        <input
+          type="checkbox"
+          checked={filters.businessVerifiedOnly}
+          onChange={(e) => set('businessVerifiedOnly', e.target.checked)}
+        />
+        {t('advancedSearch.businessVerifiedOnly')}
+      </label>
+      <label className="adv-search__check">
+        <input
+          type="checkbox"
+          checked={filters.trustedOnly}
+          onChange={(e) => set('trustedOnly', e.target.checked)}
+        />
+        {t('advancedSearch.trustedOnly')}
+      </label>
+      <label className="adv-search__check">
+        <input
+          type="checkbox"
+          checked={filters.premiumOnly}
+          onChange={(e) => set('premiumOnly', e.target.checked)}
+        />
+        {t('advancedSearch.premiumOnly')}
+      </label>
 
       <div className="adv-search__filter-actions">
         <button type="button" className="adv-search__apply" onClick={onApply}>

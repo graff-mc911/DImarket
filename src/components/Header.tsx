@@ -513,12 +513,10 @@ export function Header() {
                         <Settings className="mr-2 inline h-4 w-4" />
                         {t('header.settings')}
                       </button>
-                      {(profile?.user_role === 'professional' || profile?.user_role === 'company') && (
-                        <button onClick={() => goTo('/verification')} type="button" className={dropdownItemClass}>
-                          <Shield className="mr-2 inline h-4 w-4" />
-                          {t('verification.menu')}
-                        </button>
-                      )}
+                      <button onClick={() => goTo('/verification')} type="button" className={dropdownItemClass}>
+                        <Shield className="mr-2 inline h-4 w-4" />
+                        {t('verification.menu')}
+                      </button>
                       {(profile?.is_professional ||
                         profile?.user_role === 'professional' ||
                         profile?.user_role === 'company') && (
@@ -882,6 +880,11 @@ export function Header() {
                     <button onClick={() => goTo('/settings')} type="button" className={mobileNavItemClass}>
                       <Settings className="h-5 w-5" />
                       <span>{t('header.settings')}</span>
+                    </button>
+
+                    <button onClick={() => goTo('/verification')} type="button" className={mobileNavItemClass}>
+                      <Shield className="h-5 w-5" />
+                      <span>{t('verification.menu')}</span>
                     </button>
 
                     {(profile?.is_professional ||
