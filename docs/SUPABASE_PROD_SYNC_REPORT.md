@@ -172,8 +172,9 @@ Priority order (dependency-aware, skip-safe on duplicates):
 17. `20260725140000_marketplace_categories.sql`
 18. `20260725180000_homepage_metrics.sql`
 19. `20260725190000_category_completed_projects.sql`
-20. `20260726270000_trust_verification_system.sql`
-21. `20260726280000_prod_schema_sync_critical.sql` ← idempotent catch-up
+20. `20260726250000_notification_center_complete.sql`
+21. `20260726270000_trust_verification_system.sql`
+22. `20260726280000_prod_schema_sync_critical.sql` ← idempotent catch-up
 
 Script behavior:
 - Uses Supabase Management API SQL endpoint
