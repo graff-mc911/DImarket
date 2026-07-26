@@ -24,7 +24,7 @@ import {
 import { supabase }       from '../lib/supabase'
 import { useApp }         from '../contexts/AppContext'
 import { navigateTo }     from '../lib/navigation'
-import { VerificationBadge } from '../components/MatchScoreBadge'
+import { TrustBadges, VerificationBadge } from '../components/MatchScoreBadge'
 import type { Listing, Profile } from '../lib/types'
 
 // Тип збереженого елемента з деталями
@@ -439,13 +439,11 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                                     <h3 className="truncate font-bold" style={{ color: 'var(--ink-900)' }}>
                                       {profile.full_name || 'Майстер'}
                                     </h3>
-                                    <VerificationBadge level={profile.verification_level} />
-                                    {(!profile.verification_level || profile.verification_level === 'none') &&
-                                      profile.is_verified && (
-                                      <span className="rounded-full px-2 py-0.5 text-xs font-semibold" style={{ background: 'rgba(34,197,94,0.12)', color: '#15803d' }}>
-                                        ✓ Верифікований
-                                      </span>
-                                    )}
+                                    <VerificationBadge
+                                      trustLevel={profile.trust_level}
+                                      level={profile.verification_level}
+                                    />
+                                    <TrustBadges source={profile} size="sm" max={3} />
                                   </div>
 
                                   <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs" style={{ color: 'var(--ink-500)' }}>
