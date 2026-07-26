@@ -1,5 +1,4 @@
-import type { FormEvent } from 'react'
-import { Bot, ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import type { HomeMetrics } from '../../lib/homeMarketplace'
@@ -27,7 +26,6 @@ const SLIDE_IMAGES = [
 
 export function HomeHero({ metrics }: HomeHeroProps) {
   const { t } = useApp()
-  const [query, setQuery] = useState('')
   const [slide, setSlide] = useState(0)
 
   const slides = useMemo<HeroSlide[]>(
@@ -69,12 +67,6 @@ export function HomeHero({ metrics }: HomeHeroProps) {
     return () => window.clearInterval(timer)
   }, [slides.length])
 
-  const onSearch = (e: FormEvent) => {
-    e.preventDefault()
-    const q = query.trim()
-    navigateTo(q ? `/search?q=${encodeURIComponent(q)}` : '/search')
-  }
-
   const prev = () => setSlide((s) => (s - 1 + slides.length) % slides.length)
   const next = () => setSlide((s) => (s + 1) % slides.length)
 
@@ -90,40 +82,6 @@ export function HomeHero({ metrics }: HomeHeroProps) {
                 {t('homePremium.heroTitle')}
               </h1>
               <p className="home-hero__subtitle">{t('homePremium.heroSubtitle')}</p>
-            </div>
-
-            <div className="home-hero__controls">
-              <form className="home-hero__search" onSubmit={onSearch} role="search">
-                <Search className="home-hero__search-icon" aria-hidden />
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder={t('homePremium.searchPlaceholder')}
-                  aria-label={t('homePremium.searchPlaceholder')}
-                />
-                <button type="submit" className="home-hero__search-btn">
-                  {t('homePremium.search')}
-                </button>
-              </form>
-
-              <div className="home-hero__actions">
-                <button
-                  type="button"
-                  className="home-btn home-btn--primary"
-                  onClick={() => navigateTo('/create-project')}
-                >
-                  {t('homePremium.postProject')}
-                </button>
-                <button
-                  type="button"
-                  className="home-btn home-btn--ghost"
-                  onClick={() => navigateTo('/assistant')}
-                >
-                  <Bot className="h-4 w-4" aria-hidden />
-                  {t('homePremium.aiAssistant')}
-                </button>
-              </div>
             </div>
 
             <div className="home-hero__stats" aria-label={t('homePremium.statsLabel')}>
