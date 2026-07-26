@@ -108,7 +108,7 @@ export function NotificationCenter({ compact = true }: Props) {
             try {
               const n = new Notification(row.title || 'DImarket', {
                 body: row.body || '',
-                icon: '/favicon.ico',
+                icon: '/icon-192.png',
                 tag: row.id,
               })
               n.onclick = () => {
