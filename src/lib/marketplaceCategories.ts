@@ -143,8 +143,23 @@ export async function fetchCategoryServices(
     .order('sort_order', { ascending: true })
     .order('name', { ascending: true })
 
-  if (error || !data) return []
-  return data as MarketplaceCategory[]
+  if (!error && data) return data as MarketplaceCategory[]
+
+  // Older prod schemas may lack completed_projects_count — retry lean select
+  const { data: fallback } = await supabase
+    .from('categories')
+    .select(
+      'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, parent_id, is_main, is_service',
+    )
+    .eq('parent_id', parentId)
+    .order('sort_order', { ascending: true })
+    .order('name', { ascending: true })
+
+  if (!fallback?.length) return []
+  return (fallback as MarketplaceCategory[]).map((c) => ({
+    ...c,
+    completed_projects_count: c.completed_projects_count ?? 0,
+  }))
 }
 
 export async function fetchMarketplaceCategoryPage(
