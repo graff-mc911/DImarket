@@ -18,6 +18,7 @@ import { Companies }          from './pages/Companies'
 import { Listings }           from './pages/Listings'
 import { ListingDetail }      from './pages/ListingDetail'
 import { ProfessionalDetail } from './pages/ProfessionalDetail'
+import { PremiumProfessionalProfile } from './pages/PremiumProfessionalProfile'
 import { Contact }            from './pages/Contact'
 import { Advertising }        from './pages/Advertising'
 
@@ -87,6 +88,13 @@ function App() {
     if (parts[0] === 'category' && parts[1]) return <CategoryPage slug={parts[1]} />
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
+    if (
+      parts[0] === 'pro' &&
+      parts[1] &&
+      !['dashboard', 'calendar'].includes(parts[1])
+    ) {
+      return <PremiumProfessionalProfile slug={parts[1]} />
+    }
     if (parts[0] === 'book' && parts[1]) return <BookProfessional profileId={parts[1]} />
     if (parts[0] === 'project' && parts[1] === 'new') return <CreateProject />
     if (parts[0] === 'create-project') return <CreateProject />

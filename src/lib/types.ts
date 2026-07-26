@@ -176,6 +176,31 @@ export interface Database {
           service_latitude: number | null
           service_longitude: number | null
 
+          // Premium public profile
+          slug: string | null
+          cover_url: string | null
+          profession: string | null
+          company_name: string | null
+          country_code: string | null
+          country_name: string | null
+          city: string | null
+          years_experience: number | null
+          response_time_hours: number | null
+          travel_radius_km: number | null
+          service_countries: string[]
+          service_cities: string[]
+          working_hours: Record<string, unknown>
+          emergency_available: boolean
+          weekend_available: boolean
+          insurance_info: string | null
+          warranty_info: string | null
+          whatsapp: string | null
+          telegram: string | null
+          social_links: Record<string, string>
+          recommendation_rate: number | null
+          repeat_customers: number
+          email_public: string | null
+
           created_at: string
           updated_at: string
         }
@@ -223,6 +248,29 @@ export interface Database {
           availability_status?: 'available' | 'busy' | 'limited' | 'unavailable'
           service_latitude?: number | null
           service_longitude?: number | null
+          slug?: string | null
+          cover_url?: string | null
+          profession?: string | null
+          company_name?: string | null
+          country_code?: string | null
+          country_name?: string | null
+          city?: string | null
+          years_experience?: number | null
+          response_time_hours?: number | null
+          travel_radius_km?: number | null
+          service_countries?: string[]
+          service_cities?: string[]
+          working_hours?: Record<string, unknown>
+          emergency_available?: boolean
+          weekend_available?: boolean
+          insurance_info?: string | null
+          warranty_info?: string | null
+          whatsapp?: string | null
+          telegram?: string | null
+          social_links?: Record<string, string>
+          recommendation_rate?: number | null
+          repeat_customers?: number
+          email_public?: string | null
           created_at?: string
           updated_at?: string
         }
