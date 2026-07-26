@@ -259,7 +259,7 @@ export async function togglePortfolioLike(
 }
 
 export async function sharePortfolioItem(item: PortfolioItemRow, profileId: string): Promise<void> {
-  const url = `${window.location.origin}/professional/${profileId}?portfolio=${item.id}`
+  const url = `${window.location.origin}/pro/${profileId}?portfolio=${item.id}`
   const title = item.title || 'Portfolio project'
   const text = item.description || 'Check out this project on DImarket'
 
@@ -279,6 +279,6 @@ export async function sharePortfolioItem(item: PortfolioItemRow, profileId: stri
 }
 
 export function portfolioShareUrl(profileId: string, itemId?: string): string {
-  const base = `${typeof window !== 'undefined' ? window.location.origin : 'https://dimarket.app'}/professional/${profileId}`
+  const base = `${typeof window !== 'undefined' ? window.location.origin : 'https://dimarket.app'}/pro/${profileId}`
   return itemId ? `${base}?portfolio=${itemId}` : base
 }

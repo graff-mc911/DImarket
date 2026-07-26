@@ -199,7 +199,18 @@ export function PremiumProfessionalProfile({ slug }: Props) {
 
   useEffect(() => {
     void load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug])
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const portfolioId = params.get('portfolio')
+    if (portfolioId) {
+      window.requestAnimationFrame(() => {
+        document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })
+      })
+    }
+  }, [bundle?.profile.id])
 
   useEffect(() => {
     if (!user || !bundle) return
