@@ -1,13 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
-import { ServiyaCategoryItem } from './ServiyaCategoryItem'
+import { useMemo, useState } from 'react'
+import { AnimatePresence, LazyMotion, domAnimation, m } from 'framer-motion'
+import { ChevronRight, MapPin, Search } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
-import { resolveCategoryIcon } from '../lib/categoryIcons'
+import { navigateTo } from '../lib/navigation'
 import {
-  fetchCategoryServices,
-  fetchMainMarketplaceCategories,
-  marketplaceCategoryLabel,
-  type MarketplaceCategory,
-} from '../lib/marketplaceCategories'
+  categoryLocationOptions,
+  categoriesUiText,
+  popularCategorySearches,
+  serviceCategories,
+  type LocalizedText,
+  type ServiceCategory,
+  type ServiceSubcategory,
+} from '../config/categories'
+import type { MarketplaceCategory } from '../lib/marketplaceCategories'
 
 export interface MainCategoriesSectionProps {
   id?: string
@@ -15,160 +20,180 @@ export interface MainCategoriesSectionProps {
   subtitle?: string
   eyebrow?: string
   showSearch?: boolean
-  /** Preloaded main categories (skip internal fetch) */
+  /** Preloaded categories (skip internal fetch) */
   categories?: MarketplaceCategory[]
   loading?: boolean
   className?: string
 }
 
+function localized(value: LocalizedText, languageCode: string): string {
+  return value[languageCode as keyof LocalizedText] ?? value.en
+}
+
+function categorySearchText(category: ServiceCategory, languageCode: string): string {
+  return [
+    category.slug,
+    localized(category.title, languageCode),
+    localized(category.description, languageCode),
+    ...category.subcategories.flatMap((item) => [
+      item.slug,
+      localized(item.title, languageCode),
+      localized(item.description, languageCode),
+    ]),
+  ]
+    .join(' ')
+    .toLowerCase()
+}
+
+function professionalPath(category: ServiceCategory, subcategory: ServiceSubcategory, locationId: string): string {
+  const params = new URLSearchParams()
+  params.set('work', subcategory.slug)
+  params.set('category', category.slug)
+  if (locationId !== 'all-europe') params.set('location', locationId)
+  return `/professionals?${params.toString()}`
+}
+
 /**
- * “Select category” block matching serviya.es:
- * main-category toggler pills + service tiles grid.
+ * Serviya-inspired category browser for DImarket.
  */
 export function MainCategoriesSection({
   id = 'choose-category',
   title,
-  categories: externalCategories,
-  loading: externalLoading,
+  subtitle,
+  eyebrow,
   className = '',
 }: MainCategoriesSectionProps) {
-  const { language, t } = useApp()
-  const [internal, setInternal] = useState<MarketplaceCategory[]>([])
-  const [internalLoading, setInternalLoading] = useState(!externalCategories)
-  const [activeId, setActiveId] = useState<string | null>(null)
-  const [servicesByParent, setServicesByParent] = useState<Record<string, MarketplaceCategory[]>>(
-    {},
-  )
-  const [servicesLoading, setServicesLoading] = useState(false)
+  const { language } = useApp()
+  const [query, setQuery] = useState('')
+  const [locationId, setLocationId] = useState(categoryLocationOptions[0]?.id ?? 'all-europe')
+  const [expandedId, setExpandedId] = useState<string | null>(serviceCategories[0]?.id ?? null)
+  const lang = language.code
 
-  useEffect(() => {
-    if (externalCategories) return
-    let cancelled = false
-    ;(async () => {
-      setInternalLoading(true)
-      try {
-        const rows = await fetchMainMarketplaceCategories()
-        if (!cancelled) setInternal(rows)
-      } finally {
-        if (!cancelled) setInternalLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [externalCategories])
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return serviceCategories
+    return serviceCategories.filter((category) =>
+      categorySearchText(category, lang).includes(q),
+    )
+  }, [query, lang])
 
-  const mains = externalCategories ?? internal
-  const loading = externalLoading ?? internalLoading
+  const sectionTitle = title ?? localized(categoriesUiText.title, lang)
+  const sectionSubtitle = subtitle ?? localized(categoriesUiText.subtitle, lang)
+  const sectionEyebrow = eyebrow ?? localized(categoriesUiText.eyebrow, lang)
 
-  useEffect(() => {
-    if (!mains.length) return
-    if (!activeId || !mains.some((c) => c.id === activeId)) {
-      setActiveId(mains[0].id)
-    }
-  }, [mains, activeId])
-
-  useEffect(() => {
-    if (!activeId) return
-    if (Object.prototype.hasOwnProperty.call(servicesByParent, activeId)) return
-    let cancelled = false
-    ;(async () => {
-      setServicesLoading(true)
-      try {
-        const rows = await fetchCategoryServices(activeId)
-        if (!cancelled) {
-          setServicesByParent((prev) => ({ ...prev, [activeId]: rows }))
-        }
-      } finally {
-        if (!cancelled) setServicesLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [activeId, servicesByParent])
-
-  const activeMain = useMemo(
-    () => mains.find((c) => c.id === activeId) ?? null,
-    [mains, activeId],
-  )
-
-  const tiles = useMemo(() => {
-    if (!activeId) return [] as MarketplaceCategory[]
-    const children = servicesByParent[activeId]
-    if (children == null) return []
-    if (children.length > 0) return children
-    // Fallback: show the main category itself when it has no children yet
-    return activeMain ? [activeMain] : []
-  }, [activeId, servicesByParent, activeMain])
-
-  const sectionTitle = title ?? t('homePremium.categoriesTitle')
-  const showTilesLoading = Boolean(activeId) && servicesByParent[activeId!] == null && servicesLoading
+  const handleSubcategoryClick = (category: ServiceCategory, subcategory: ServiceSubcategory) => {
+    navigateTo(professionalPath(category, subcategory, locationId))
+  }
 
   return (
     <section
       id={id}
-      className={`serviya-cat layout-page-gutter ${className}`.trim()}
+      className={`serviya-categories home-section layout-page-gutter ${className}`.trim()}
       aria-labelledby={`${id}-title`}
     >
-      <div className="serviya-cat__container">
-        <h2 id={`${id}-title`} className="serviya-cat__title">
-          {sectionTitle}
-        </h2>
+      <div className="serviya-categories__head">
+        <p className="serviya-categories__eyebrow">{sectionEyebrow}</p>
+        <h2 id={`${id}-title`}>{sectionTitle}</h2>
+        <p>{sectionSubtitle}</p>
+      </div>
 
-        {loading ? (
-          <div className="serviya-cat__togglers" aria-busy="true">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <span key={i} className="serviya-cat__toggler serviya-cat__toggler--skeleton" />
+      <div className="serviya-search" role="search">
+        <label className="serviya-search__input">
+          <Search className="h-5 w-5" aria-hidden />
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={localized(categoriesUiText.searchPlaceholder, lang)}
+            aria-label={localized(categoriesUiText.searchPlaceholder, lang)}
+          />
+        </label>
+        <label className="serviya-search__location">
+          <MapPin className="h-5 w-5" aria-hidden />
+          <span>{localized(categoriesUiText.locationLabel, lang)}</span>
+          <select
+            value={locationId}
+            onChange={(event) => setLocationId(event.target.value)}
+            aria-label={localized(categoriesUiText.locationLabel, lang)}
+          >
+            {categoryLocationOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {localized(option.label, lang)}
+              </option>
             ))}
-          </div>
-        ) : mains.length === 0 ? (
-          <p className="serviya-cat__empty">{t('marketplace.noCategories')}</p>
-        ) : (
-          <div className="serviya-cat__togglers" role="tablist" aria-label={sectionTitle}>
-            {mains.map((cat) => {
-              const Icon = resolveCategoryIcon(cat.icon_key)
-              const label = marketplaceCategoryLabel(cat, language.code)
-              const active = cat.id === activeId
+          </select>
+        </label>
+      </div>
+
+      <div className="serviya-popular" aria-label={localized(categoriesUiText.popularSearchesLabel, lang)}>
+        <span>{localized(categoriesUiText.popularSearchesLabel, lang)}</span>
+        <div>
+          {popularCategorySearches.map((item) => (
+            <button key={item.id} type="button" onClick={() => setQuery(item.query)}>
+              {localized(item.label, lang)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="serviya-categories__empty">{localized(categoriesUiText.noResults, lang)}</p>
+      ) : (
+        <LazyMotion features={domAnimation}>
+          <m.div className="serviya-category-grid" layout>
+            {filtered.map((category) => {
+              const expanded = expandedId === category.id
               return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  className={`serviya-cat__toggler${active ? ' is-active' : ''}`}
-                  onClick={() => setActiveId(cat.id)}
-                >
-                  <Icon className="serviya-cat__toggler-icon" aria-hidden />
-                  <span>{label}</span>
-                </button>
+                <m.article key={category.id} className="serviya-category-card" layout>
+                  <button
+                    type="button"
+                    className="serviya-category-card__button"
+                    onClick={() => setExpandedId(expanded ? null : category.id)}
+                    aria-expanded={expanded}
+                    aria-label={`${expanded ? localized(categoriesUiText.closeCategory, lang) : localized(categoriesUiText.openCategory, lang)}: ${localized(category.title, lang)}`}
+                  >
+                    <span className="serviya-category-card__icon" aria-hidden>
+                      {category.icon}
+                    </span>
+                    <span className="serviya-category-card__body">
+                      <strong>{localized(category.title, lang)}</strong>
+                      <span>{category.serviceCount} {localized(categoriesUiText.servicesLabel, lang)}</span>
+                    </span>
+                    <ChevronRight className="serviya-category-card__chevron" aria-hidden />
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {expanded ? (
+                      <m.div
+                        className="serviya-subcategories"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                      >
+                        <div>
+                          {category.subcategories.map((subcategory) => (
+                            <button
+                              key={subcategory.id}
+                              type="button"
+                              className="serviya-subcategory-chip"
+                              onClick={() => handleSubcategoryClick(category, subcategory)}
+                              title={localized(subcategory.description, lang)}
+                            >
+                              <span aria-hidden>{subcategory.icon}</span>
+                              {localized(subcategory.title, lang)}
+                            </button>
+                          ))}
+                        </div>
+                      </m.div>
+                    ) : null}
+                  </AnimatePresence>
+                </m.article>
               )
             })}
-          </div>
-        )}
-
-        {showTilesLoading ? (
-          <div className="serviya-cat__grid" aria-busy="true">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="serviya-cat__item serviya-cat__item--skeleton" />
-            ))}
-          </div>
-        ) : tiles.length === 0 && !loading ? (
-          <p className="serviya-cat__empty">{t('marketplace.noServices')}</p>
-        ) : (
-          <div className="serviya-cat__grid">
-            {tiles.map((service) => (
-              <ServiyaCategoryItem
-                key={service.id}
-                category={service}
-                parentSlug={
-                  activeMain && service.id !== activeMain.id ? activeMain.slug : undefined
-                }
-              />
-            ))}
-          </div>
-        )}
-      </div>
+          </m.div>
+        </LazyMotion>
+      )}
     </section>
   )
 }

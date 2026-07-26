@@ -334,7 +334,7 @@ export const enTranslations = {
   'homePremium.statCountries': 'Countries',
   'homePremium.statProjects': 'Projects',
   'homePremium.categoriesEyebrow': 'Trades',
-  'homePremium.categoriesTitle': 'Select a category',
+  'homePremium.categoriesTitle': 'Choose a category',
   'homePremium.categoriesSubtitle': 'Main construction categories with verified professionals nearby.',
   'homePremium.seeAllCategories': 'Browse all',
   'homePremium.viewCategory': 'View category',
