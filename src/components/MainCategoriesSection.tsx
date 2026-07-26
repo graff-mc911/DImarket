@@ -66,7 +66,7 @@ export function MainCategoriesSection({
   const { language } = useApp()
   const [query, setQuery] = useState('')
   const [locationId, setLocationId] = useState(categoryLocationOptions[0]?.id ?? 'all-europe')
-  const [expandedId, setExpandedId] = useState<string | null>(serviceCategories[0]?.id ?? null)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
   const lang = language.code
 
   const filtered = useMemo(() => {
