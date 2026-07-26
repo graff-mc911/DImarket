@@ -2,15 +2,12 @@ import type { FormEvent } from 'react'
 import { Bot, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../../contexts/AppContext'
-import type { HomeMetrics, HomeProfessional } from '../../lib/homeMarketplace'
+import type { HomeMetrics } from '../../lib/homeMarketplace'
 import { navigateTo } from '../../lib/navigation'
-import type { ListingWithImages } from '../../lib/types'
 import { AnimatedStat } from './AnimatedStat'
 
 interface HomeHeroProps {
   metrics: HomeMetrics
-  professionals?: HomeProfessional[]
-  projects?: ListingWithImages[]
 }
 
 type HeroSlide = {
@@ -28,7 +25,7 @@ const SLIDE_IMAGES = [
   'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1200&q=80',
 ]
 
-export function HomeHero({ metrics, professionals = [], projects = [] }: HomeHeroProps) {
+export function HomeHero({ metrics }: HomeHeroProps) {
   const { t } = useApp()
   const [query, setQuery] = useState('')
   const [slide, setSlide] = useState(0)
@@ -80,9 +77,6 @@ export function HomeHero({ metrics, professionals = [], projects = [] }: HomeHer
 
   const prev = () => setSlide((s) => (s - 1 + slides.length) % slides.length)
   const next = () => setSlide((s) => (s + 1) % slides.length)
-
-  const featuredPro = professionals[0]
-  const featuredProject = projects[0]
 
   return (
     <section className="home-hero" aria-labelledby="home-hero-title">
@@ -173,39 +167,6 @@ export function HomeHero({ metrics, professionals = [], projects = [] }: HomeHer
                 aria-label="Next"
               >
                 <ChevronRight className="h-5 w-5" aria-hidden />
-              </button>
-            </div>
-
-            <div className="home-hero__deal-row">
-              <button
-                type="button"
-                className="home-hero-deal"
-                onClick={() =>
-                  navigateTo(
-                    featuredPro ? `/professional/${featuredPro.id}` : '/professionals',
-                  )
-                }
-              >
-                <span className="home-hero-deal__eyebrow">{t('homePremium.prosTitle')}</span>
-                <strong>{featuredPro?.full_name || t('home.allPros')}</strong>
-                <span>
-                  {featuredPro?.location || t('homePremium.prosSubtitle')}
-                </span>
-              </button>
-              <button
-                type="button"
-                className="home-hero-deal"
-                onClick={() =>
-                  navigateTo(featuredProject ? `/listing/${featuredProject.id}` : '/listings')
-                }
-              >
-                <span className="home-hero-deal__eyebrow">{t('home.recentJobsTitle')}</span>
-                <strong>{featuredProject?.title || t('home.allRequests')}</strong>
-                <span>
-                  {featuredProject?.city_name ||
-                    featuredProject?.location ||
-                    t('homePremium.projectsSubtitle')}
-                </span>
               </button>
             </div>
           </div>
