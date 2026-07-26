@@ -44,12 +44,12 @@ export function estimateVerificationLevel(input: {
   hasInsuranceDoc?: boolean
   hasLicenseDoc?: boolean
   hasBackgroundDoc?: boolean
+  hasAddressDoc?: boolean
   emailVerified?: boolean
   phoneVerified?: boolean
 }): VerificationLevel {
-  const hasPhone =
-    Boolean(input.phoneVerified) || Boolean(input.phone && input.phone.trim().length > 5)
-  const hasEmail = Boolean(input.emailVerified) || Boolean(input.email)
+  const hasPhone = Boolean(input.phoneVerified)
+  const hasEmail = Boolean(input.emailVerified)
   if (
     hasPhone &&
     hasEmail &&
@@ -58,7 +58,8 @@ export function estimateVerificationLevel(input: {
     input.hasCompanyDoc &&
     input.hasInsuranceDoc &&
     input.hasLicenseDoc &&
-    input.hasBackgroundDoc
+    input.hasBackgroundDoc &&
+    input.hasAddressDoc
   ) {
     return 'platinum'
   }
@@ -67,7 +68,8 @@ export function estimateVerificationLevel(input: {
     hasEmail &&
     input.isVerified &&
     input.hasInsuranceDoc &&
-    input.hasLicenseDoc
+    input.hasLicenseDoc &&
+    input.hasAddressDoc
   ) {
     return 'gold'
   }
