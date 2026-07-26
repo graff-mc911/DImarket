@@ -673,12 +673,6 @@ export function Header() {
                 <div
                   ref={categoriesRef}
                   className="categories-mega-anchor relative shrink-0"
-                  onMouseEnter={() => {
-                    setCategoriesOpen(true)
-                    setLanguageOpen(false)
-                    setCurrencyOpen(false)
-                    setAccountOpen(false)
-                  }}
                 >
                   <button
                     onClick={() => {
