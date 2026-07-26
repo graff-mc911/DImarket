@@ -1,12 +1,17 @@
-import { useEffect, useState } from 'react'
-import { CategoryServiceCard } from './CategoryServiceCard'
+import { useMemo, useState } from 'react'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
+import { ChevronRight, MapPin, Search } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { navigateTo } from '../lib/navigation'
 import {
-  fetchMainMarketplaceCategories,
-  filterCategoriesByQuery,
-  type MarketplaceCategory,
-} from '../lib/marketplaceCategories'
-import { Search } from 'lucide-react'
+  categoryLocationOptions,
+  categoriesUiText,
+  popularCategorySearches,
+  serviceCategories,
+  type LocalizedText,
+  type ServiceCategory,
+} from '../config/categories'
+import type { MarketplaceCategory } from '../lib/marketplaceCategories'
 
 export interface MainCategoriesSectionProps {
   id?: string
@@ -20,92 +25,138 @@ export interface MainCategoriesSectionProps {
   className?: string
 }
 
+function localized(value: LocalizedText, languageCode: string): string {
+  return value[languageCode as keyof LocalizedText] ?? value.en
+}
+
+function categorySearchText(category: ServiceCategory, languageCode: string): string {
+  return [
+    category.slug,
+    localized(category.title, languageCode),
+    localized(category.description, languageCode),
+    ...category.subcategories.flatMap((item) => [
+      item.slug,
+      localized(item.title, languageCode),
+      localized(item.description, languageCode),
+    ]),
+  ]
+    .join(' ')
+    .toLowerCase()
+}
+
 /**
- * Displays ONLY main construction categories from Supabase (`is_main = true`).
+ * Serviya-inspired category browser for DImarket.
  */
 export function MainCategoriesSection({
   id = 'choose-category',
   title,
   subtitle,
   eyebrow,
-  showSearch = false,
-  categories: externalCategories,
-  loading: externalLoading,
   className = '',
 }: MainCategoriesSectionProps) {
-  const { language, t } = useApp()
-  const [internal, setInternal] = useState<MarketplaceCategory[]>([])
-  const [internalLoading, setInternalLoading] = useState(!externalCategories)
+  const { language } = useApp()
   const [query, setQuery] = useState('')
+  const [locationId, setLocationId] = useState(categoryLocationOptions[0]?.id ?? 'all-europe')
+  const lang = language.code
 
-  useEffect(() => {
-    if (externalCategories) return
-    let cancelled = false
-    ;(async () => {
-      setInternalLoading(true)
-      try {
-        const rows = await fetchMainMarketplaceCategories()
-        if (!cancelled) setInternal(rows)
-      } finally {
-        if (!cancelled) setInternalLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [externalCategories])
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return serviceCategories
+    return serviceCategories.filter((category) =>
+      categorySearchText(category, lang).includes(q),
+    )
+  }, [query, lang])
 
-  const source = externalCategories ?? internal
-  const loading = externalLoading ?? internalLoading
-  const filtered = filterCategoriesByQuery(source, query, language.code)
+  const sectionTitle = title ?? localized(categoriesUiText.title, lang)
+  const sectionSubtitle = subtitle ?? localized(categoriesUiText.subtitle, lang)
+  const sectionEyebrow = eyebrow ?? localized(categoriesUiText.eyebrow, lang)
 
-  const sectionTitle = title ?? t('homePremium.categoriesTitle')
-  const sectionSubtitle = subtitle ?? t('homePremium.categoriesSubtitle')
-  const sectionEyebrow = eyebrow ?? t('homePremium.categoriesEyebrow')
+  const handleCategoryClick = (category: ServiceCategory) => {
+    const params = new URLSearchParams()
+    if (locationId !== 'all-europe') params.set('location', locationId)
+    const suffix = params.toString() ? `?${params.toString()}` : ''
+    navigateTo(`/category/${encodeURIComponent(category.slug)}${suffix}`)
+  }
 
   return (
     <section
       id={id}
-      className={`main-categories-section home-section layout-page-gutter ${className}`.trim()}
+      className={`serviya-categories home-section layout-page-gutter ${className}`.trim()}
       aria-labelledby={`${id}-title`}
     >
-      <div className="home-section__head">
-        <div>
-          <p className="home-section__eyebrow">{sectionEyebrow}</p>
-          <h2 id={`${id}-title`} className="home-section__title">
-            {sectionTitle}
-          </h2>
-          <p className="home-section__subtitle">{sectionSubtitle}</p>
-        </div>
-
-        {showSearch ? (
-          <label className="main-categories-section__search">
-            <Search className="h-4 w-4 shrink-0 text-[#b07e55]" aria-hidden />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t('marketplace.searchCategories')}
-              aria-label={t('marketplace.searchCategories')}
-            />
-          </label>
-        ) : null}
+      <div className="serviya-categories__head">
+        <p className="serviya-categories__eyebrow">{sectionEyebrow}</p>
+        <h2 id={`${id}-title`}>{sectionTitle}</h2>
+        <p>{sectionSubtitle}</p>
       </div>
 
-      {loading ? (
-        <div className="category-service-grid" aria-busy="true">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="category-service-card category-service-card--skeleton" />
+      <div className="serviya-search" role="search">
+        <label className="serviya-search__input">
+          <Search className="h-5 w-5" aria-hidden />
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={localized(categoriesUiText.searchPlaceholder, lang)}
+            aria-label={localized(categoriesUiText.searchPlaceholder, lang)}
+          />
+        </label>
+        <label className="serviya-search__location">
+          <MapPin className="h-5 w-5" aria-hidden />
+          <span>{localized(categoriesUiText.locationLabel, lang)}</span>
+          <select
+            value={locationId}
+            onChange={(event) => setLocationId(event.target.value)}
+            aria-label={localized(categoriesUiText.locationLabel, lang)}
+          >
+            {categoryLocationOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {localized(option.label, lang)}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <div className="serviya-popular" aria-label={localized(categoriesUiText.popularSearchesLabel, lang)}>
+        <span>{localized(categoriesUiText.popularSearchesLabel, lang)}</span>
+        <div>
+          {popularCategorySearches.map((item) => (
+            <button key={item.id} type="button" onClick={() => setQuery(item.query)}>
+              {localized(item.label, lang)}
+            </button>
           ))}
         </div>
-      ) : filtered.length === 0 ? (
-        <p className="home-section__empty">{t('marketplace.noCategories')}</p>
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="serviya-categories__empty">{localized(categoriesUiText.noResults, lang)}</p>
       ) : (
-        <div className="category-service-grid">
-          {filtered.map((category) => (
-            <CategoryServiceCard key={category.id} category={category} />
-          ))}
-        </div>
+        <LazyMotion features={domAnimation}>
+          <m.div className="serviya-category-grid" layout>
+            {filtered.map((category) => {
+              return (
+                <m.article key={category.id} className="serviya-category-card" layout>
+                  <button
+                    type="button"
+                    className="serviya-category-card__button"
+                    onClick={() => handleCategoryClick(category)}
+                    aria-label={`${localized(categoriesUiText.openCategory, lang)}: ${localized(category.title, lang)}`}
+                  >
+                    <span className="serviya-category-card__icon" aria-hidden>
+                      {category.icon}
+                    </span>
+                    <span className="serviya-category-card__body">
+                      <strong>{localized(category.title, lang)}</strong>
+                      <span>{category.serviceCount} {localized(categoriesUiText.servicesLabel, lang)}</span>
+                    </span>
+                    <ChevronRight className="serviya-category-card__chevron" aria-hidden />
+                  </button>
+                </m.article>
+              )
+            })}
+          </m.div>
+        </LazyMotion>
       )}
     </section>
   )

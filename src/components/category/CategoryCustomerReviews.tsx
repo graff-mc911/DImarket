@@ -1,4 +1,5 @@
-import { Quote, ShieldCheck, Star } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Quote, ShieldCheck, Star } from 'lucide-react'
+import { useRef } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import type { CategoryReview } from '../../lib/marketplaceCategories'
 
@@ -12,8 +13,18 @@ export function CategoryCustomerReviews({
   averageRating,
 }: CategoryCustomerReviewsProps) {
   const { t } = useApp()
+  const trackRef = useRef<HTMLDivElement | null>(null)
 
   if (reviews.length === 0) return null
+
+  const scroll = (direction: -1 | 1) => {
+    const node = trackRef.current
+    if (!node) return
+    node.scrollBy({
+      left: direction * Math.max(280, node.clientWidth * 0.82),
+      behavior: 'smooth',
+    })
+  }
 
   return (
     <section className="cat-section" aria-labelledby="cat-reviews">
@@ -29,9 +40,26 @@ export function CategoryCustomerReviews({
           </p>
         </div>
       </div>
-      <div className="cat-reviews-grid">
+      <div className="cat-review-controls" aria-label={t('catPage.reviewCarouselControls')}>
+        <button
+          type="button"
+          onClick={() => scroll(-1)}
+          aria-label={t('catPage.previousReview')}
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden />
+        </button>
+        <button
+          type="button"
+          onClick={() => scroll(1)}
+          aria-label={t('catPage.nextReview')}
+        >
+          <ChevronRight className="h-4 w-4" aria-hidden />
+        </button>
+      </div>
+
+      <div ref={trackRef} className="cat-reviews-carousel" role="list">
         {reviews.map((review) => (
-          <article key={review.id} className="cat-review-card">
+          <article key={review.id} className="cat-review-card" role="listitem">
             <Quote className="cat-review-card__quote" aria-hidden />
             <div className="cat-review-card__stars" aria-label={`${review.rating} / 5`}>
               {Array.from({ length: 5 }).map((_, i) => (

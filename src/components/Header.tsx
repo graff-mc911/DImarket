@@ -734,6 +734,28 @@ export function Header() {
                   Analytics
                 </button>
 
+                {isSiteOwner && user ? (
+                  <>
+                    <span className="mx-1 hidden h-5 w-px shrink-0 bg-white/30 md:block" aria-hidden />
+                    <button type="button" onClick={() => goTo('/admin')} className="amazon-dept-link font-bold">
+                      <ClipboardList className="h-4 w-4" />
+                      Admin Panel
+                    </button>
+                    <button type="button" onClick={() => goTo('/dashboard')} className="amazon-dept-link font-bold">
+                      <LayoutDashboard className="h-4 w-4" />
+                      {t('header.dashboard')}
+                    </button>
+                    <button type="button" onClick={() => goTo('/admin/ai')} className="amazon-dept-link font-bold">
+                      <Bot className="h-4 w-4" />
+                      {t('ai.admin.title')}
+                    </button>
+                    <button type="button" onClick={() => goTo('/admin/marketing-agent')} className="amazon-dept-link font-bold">
+                      <Megaphone className="h-4 w-4" />
+                      Marketing
+                    </button>
+                  </>
+                ) : null}
+
                 <button type="button" onClick={() => goTo('/contact')} className="amazon-dept-link">
                   {t('header.customerService')}
                 </button>
