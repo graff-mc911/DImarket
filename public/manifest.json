@@ -4,8 +4,8 @@
   "description": "Маркетплейс для будівництва, ремонту та послуг",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F5EFE6",
-  "theme_color": "#F5EFE6",
+  "background_color": "#0B1424",
+  "theme_color": "#0B1424",
   "lang": "uk",
   "icons": [
     {

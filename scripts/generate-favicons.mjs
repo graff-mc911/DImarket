@@ -16,7 +16,8 @@ const root = path.join(__dirname, '..')
 const publicDir = path.join(root, 'public')
 const source = path.join(publicDir, 'logo-source.png')
 
-const BG = '#F5EFE6'
+/** Matches the dark app-icon plate (no cream letterbox) */
+const BG = '#0B1424'
 
 const pngSizes = [
   { file: 'favicon-16x16.png', size: 16 },
@@ -33,30 +34,15 @@ const pngSizes = [
 ]
 
 async function renderSquare(size) {
-  // Slightly more padding at tiny sizes so DI stays readable in tabs
-  const padRatio = size <= 32 ? 0.12 : 0.08
-  const padding = Math.max(1, Math.round(size * padRatio))
-  const inner = Math.max(1, size - padding * 2)
-  const resized = await sharp(source)
-    .resize(inner, inner, { fit: 'contain', background: { r: 245, g: 239, b: 230, alpha: 1 } })
-    .png()
-    .toBuffer()
-
-  return sharp({
-    create: {
-      width: size,
-      height: size,
-      channels: 3,
-      background: BG,
-    },
-  })
-    .composite([{ input: resized, gravity: 'centre' }])
+  // Source is already a finished square app icon — scale edge-to-edge
+  return sharp(source)
+    .resize(size, size, { fit: 'cover', position: 'centre' })
+    .flatten({ background: BG })
     .png()
     .toBuffer()
 }
 
 async function writeSvgFromPng(pngBuffer, pixelSize = 128) {
-  // Embed raster so SVG matches PNG/ICO (no system fonts / <text> drift)
   const compact = await sharp(pngBuffer)
     .resize(pixelSize, pixelSize, { fit: 'fill' })
     .png({ compressionLevel: 9 })
@@ -64,7 +50,6 @@ async function writeSvgFromPng(pngBuffer, pixelSize = 128) {
   const b64 = compact.toString('base64')
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${pixelSize} ${pixelSize}" role="img" aria-label="DImarket">
-  <rect width="${pixelSize}" height="${pixelSize}" fill="${BG}"/>
   <image width="${pixelSize}" height="${pixelSize}" href="data:image/png;base64,${b64}"/>
 </svg>
 `
@@ -101,16 +86,19 @@ async function main() {
     await writeSvgFromPng(master512)
   }
 
-  // Horizontal mark for mobile header
-  const headerH = 80
-  const meta = await sharp(source).metadata()
-  const scale = headerH / (meta.height || headerH)
-  const headerW = Math.round((meta.width || headerH) * scale)
+  // Square mark for header / notifications (same artwork)
   await sharp(source)
-    .resize(headerW, headerH, { fit: 'contain', background: { r: 245, g: 239, b: 230, alpha: 1 } })
+    .resize(160, 160, { fit: 'cover', position: 'centre' })
     .png()
     .toFile(path.join(publicDir, 'logo-header.png'))
   console.log('wrote logo-header.png')
+
+  // Full-size public copy for OG / sharing when needed
+  await sharp(source)
+    .resize(512, 512, { fit: 'cover', position: 'centre' })
+    .png()
+    .toFile(path.join(publicDir, 'logo-full.png'))
+  console.log('wrote logo-full.png')
 }
 
 main().catch((err) => {
