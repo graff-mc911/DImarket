@@ -47,10 +47,10 @@ export const AD_CENTER_MIN_MD_PX = 248
 export const AD_MOBILE_INLINE_MIN_PX = 80
 export const AD_MOBILE_INLINE_IMAGE_PX = 68
 
-/** Широкий лінійний банер (hero / над списком) — компактна висота на десктопі (~728×90) */
-export const AD_LEADERBOARD_DISPLAY_H_PX = 98
+/** Широкий лінійний банер (hero / над списком) — компактна висота на десктопі */
+export const AD_LEADERBOARD_DISPLAY_H_PX = 49
 export const AD_LEADERBOARD_MAX_PX = 600
-export const AD_LEADERBOARD_ASPECT = '4 / 1' as const
+export const AD_LEADERBOARD_ASPECT = '8 / 1' as const
 
 /** Прозора панель тексту під зображенням — висота лише за вмістом */
 export const AD_TEXT_PANEL_CLASS =

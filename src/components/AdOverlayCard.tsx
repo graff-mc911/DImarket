@@ -99,7 +99,7 @@ const variantStyles: Record<
   },
   leaderboard: {
     shell: adSlotTailwind.leaderboard,
-    image: 'min-h-0 w-full shrink-0 overflow-hidden',
+    image: 'ad-slot-leaderboard__media w-full min-h-0 shrink-0 overflow-hidden',
     text: 'hidden',
     brand: 'hidden',
     title: 'hidden',
@@ -160,7 +160,7 @@ function AdCampaignMedia({
     slotState.mediaUrl ||
     (slotId ? '' : getPublicBannerImageUrl(resolved))
   const shouldAdaptRatio =
-    (variant === 'leaderboard' || variant === 'mobile-inline' || variant === 'center') &&
+    (variant === 'mobile-inline' || variant === 'center') &&
     (slotState.mediaType === 'image' || slotState.mediaType === 'gif')
   const adaptiveRatio = useImageAspectRatio(measuredSource, shouldAdaptRatio)
   const adaptiveImageStyle: CSSProperties | undefined =

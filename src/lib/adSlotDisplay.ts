@@ -64,8 +64,9 @@ export function adSlotShellStyle(
       boxSizing: 'border-box',
       width: '100%',
       maxWidth: '100%',
-      height: 'auto',
-      minHeight: 0,
+      height: spec.containerH,
+      maxHeight: spec.containerH,
+      minHeight: spec.containerH,
     }
   }
 
@@ -115,7 +116,14 @@ export function adSlotImageStyle(
   }
 
   if (variant === 'leaderboard') {
-    return undefined
+    return {
+      width: '100%',
+      height: spec.imageH,
+      maxHeight: spec.imageH,
+      minHeight: spec.imageH,
+      flexShrink: 0,
+      overflow: 'hidden',
+    }
   }
 
   if (variant === 'mobile-inline' || variant === 'mobile-sticky') {
