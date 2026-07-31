@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && SEO_PRERENDER_FALLBACK=1 node scripts/seo-build.mjs",
+    "build": "vite build && node scripts/seo-build.mjs",
     "build:app": "vite build",
     "build:seo": "vite build && node scripts/seo-build.mjs",
     "seo:build": "node scripts/seo-build.mjs",

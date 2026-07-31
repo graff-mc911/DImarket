@@ -353,7 +353,8 @@ async function main() {
   copyFileSync(join(distDir, 'index.html'), shellPath)
 
   let mode = 'fallback'
-  if (!FORCE_FALLBACK) {
+  const preferPlaywright = !FORCE_FALLBACK && process.env.VERCEL !== '1'
+  if (preferPlaywright) {
     try {
       const installed = ensureChromium()
       if (!installed) throw new Error('chromium install failed')
@@ -380,6 +381,18 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(err)
-  process.exit(1)
+  // Never fail the production deploy after robots/sitemap are written.
+  console.error('seo-build error (non-fatal):', err)
+  try {
+    writeRobots()
+    writeSitemap()
+    if (existsSync(join(distDir, 'index.html')) && !existsSync(join(distDir, '_spa-shell.html'))) {
+      copyFileSync(join(distDir, 'index.html'), join(distDir, '_spa-shell.html'))
+    }
+    writeFallbackRoutes()
+    console.log('seo-build recovered via fallback')
+  } catch (err2) {
+    console.error('seo-build recovery failed:', err2)
+  }
+  process.exit(0)
 })
