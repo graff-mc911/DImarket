@@ -6,7 +6,10 @@ playwright-report
 blob-report
 playwright/.cache
 e2e
-scripts
+scripts/**
+!scripts/seo-build.mjs
+!scripts/seo-routes.mjs
+!scripts/seo-verify.mjs
 supabase
 .git
 *.txt
