@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npx playwright install chromium && vite build && node scripts/seo-build.mjs",
+    "build:app": "vite build",
+    "seo:build": "node scripts/seo-build.mjs",
+    "seo:verify": "node scripts/seo-verify.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
