@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/seo-build.mjs",
+    "build": "vite build",
     "build:app": "vite build",
-    "build:vercel": "vite build && SEO_PRERENDER_FALLBACK=1 node scripts/seo-build.mjs",
+    "build:vercel": "vite build",
     "seo:build": "node scripts/seo-build.mjs",
     "seo:verify": "node scripts/seo-verify.mjs",
     "lint": "eslint .",
@@ -50,7 +50,8 @@
     "telegram:setup": "node scripts/setup-telegram-listings-bot.mjs",
     "db:apply-admin-ai": "node scripts/apply-admin-ai-migration.mjs",
     "db:apply-admin-rating": "node scripts/apply-admin-local-rating-rpc.mjs",
-    "deploy:admin-ai": "npx supabase functions deploy admin-ai-assistant send-notification --project-ref wjlfvajloxkevggwjgtk"
+    "deploy:admin-ai": "npx supabase functions deploy admin-ai-assistant send-notification --project-ref wjlfvajloxkevggwjgtk",
+    "build:seo": "vite build && node scripts/seo-build.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
