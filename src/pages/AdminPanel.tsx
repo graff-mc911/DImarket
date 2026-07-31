@@ -364,7 +364,7 @@ export function AdminPanel() {
           />
         )}
 
-        {tab === 'analytics' && (
+        {tab === 'analytics' && user ? (
           <section className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Analytics</h2>
@@ -375,13 +375,13 @@ export function AdminPanel() {
                 Open full analytics
               </a>
             </div>
-            <AnalyticsEmbed />
+            <AnalyticsEmbed role="admin" userId={user.id} />
             <div className="rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5">
               <h2 className="mb-4 text-[16px] font-semibold text-[#1d1d1f]">Market health</h2>
               <OwnerMarketHealth />
             </div>
           </section>
-        )}
+        ) : null}
 
         {tab === 'reports' && (
           <ReportsSection

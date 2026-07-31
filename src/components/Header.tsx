@@ -522,7 +522,17 @@ export function Header() {
                       {(profile?.is_professional ||
                         profile?.user_role === 'professional' ||
                         profile?.user_role === 'company') && (
-                        <button onClick={() => goTo('/pro/dashboard')} type="button" className={dropdownItemClass}>
+                        <button
+                          onClick={() =>
+                            goTo(
+                              profile?.user_role === 'company'
+                                ? '/company/dashboard'
+                                : '/pro/dashboard',
+                            )
+                          }
+                          type="button"
+                          className={dropdownItemClass}
+                        >
                           <LayoutDashboard className="mr-2 inline h-4 w-4" />
                           {t('header.proDashboard' as never) || 'Pro Dashboard'}
                         </button>
@@ -881,7 +891,17 @@ export function Header() {
                     {(profile?.is_professional ||
                       profile?.user_role === 'professional' ||
                       profile?.user_role === 'company') && (
-                      <button onClick={() => goTo('/pro/dashboard')} type="button" className={mobileNavItemClass}>
+                      <button
+                        onClick={() =>
+                          goTo(
+                            profile?.user_role === 'company'
+                              ? '/company/dashboard'
+                              : '/pro/dashboard',
+                          )
+                        }
+                        type="button"
+                        className={mobileNavItemClass}
+                      >
                         <LayoutDashboard className="h-5 w-5" />
                         <span>{t('header.proDashboard' as never) || 'Pro Dashboard'}</span>
                       </button>

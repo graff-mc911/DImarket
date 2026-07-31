@@ -181,21 +181,106 @@ export function ChartCard({
   subtitle,
   children,
   className = '',
+  action,
 }: {
   title: string
   subtitle?: string
   children: ReactNode
   className?: string
+  action?: ReactNode
 }) {
   return (
     <section
       className={`rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5 ${className}`}
     >
-      <div className="mb-3">
-        <h2 className="text-[15px] font-semibold text-[#1d1d1f]">{title}</h2>
-        {subtitle ? <p className="mt-0.5 text-[12px] text-[#86868b]">{subtitle}</p> : null}
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <div>
+          <h2 className="text-[15px] font-semibold text-[#1d1d1f]">{title}</h2>
+          {subtitle ? <p className="mt-0.5 text-[12px] text-[#86868b]">{subtitle}</p> : null}
+        </div>
+        {action}
       </div>
       {children}
     </section>
+  )
+}
+
+export function HorizontalBarList({
+  items,
+  color = '#1d1d1f',
+  valueSuffix = '',
+}: {
+  items: Array<{ name: string; count: number }>
+  color?: string
+  valueSuffix?: string
+}) {
+  const max = Math.max(1, ...items.map((i) => i.count))
+  if (!items.length) {
+    return <p className="py-6 text-center text-[13px] text-[#86868b]">No data in this range</p>
+  }
+  return (
+    <ul className="space-y-2.5">
+      {items.map((item) => {
+        const pct = Math.round((item.count / max) * 100)
+        return (
+          <li key={item.name}>
+            <div className="mb-1 flex items-center justify-between gap-2 text-[12px]">
+              <span className="truncate font-medium text-[#3a3a3c]">{item.name}</span>
+              <span className="shrink-0 tabular-nums text-[#86868b]">
+                {item.count}
+                {valueSuffix}
+              </span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-[#f0f0f2]">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{ width: `${pct}%`, background: color }}
+              />
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+export function DonutChart({
+  value,
+  max = 100,
+  label,
+  color = '#059669',
+  size = 120,
+}: {
+  value: number
+  max?: number
+  label?: string
+  color?: string
+  size?: number
+}) {
+  const pct = Math.max(0, Math.min(100, Math.round((value / (max || 1)) * 100)))
+  const r = 42
+  const c = 2 * Math.PI * r
+  const offset = c - (pct / 100) * c
+  return (
+    <div className="relative mx-auto flex items-center justify-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox="0 0 100 100" className="-rotate-90">
+        <circle cx="50" cy="50" r={r} fill="none" stroke="#e8e8ed" strokeWidth="10" />
+        <circle
+          cx="50"
+          cy="50"
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={offset}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+        <p className="text-[22px] font-semibold tabular-nums text-[#1d1d1f]">{pct}%</p>
+        {label ? <p className="text-[11px] text-[#86868b]">{label}</p> : null}
+      </div>
+    </div>
   )
 }

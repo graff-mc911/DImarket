@@ -18,6 +18,7 @@ import {
 import { marketplaceCategoryLabel, marketplaceServiceProsPath } from '../lib/marketplaceCategories'
 import { navigateTo } from '../lib/navigation'
 import { pushRecentSearch } from '../lib/searchHistory'
+import { recordSearchEvent } from '../lib/analytics/trackSearch'
 
 type ResultTab = 'all' | 'professionals' | 'categories' | 'services' | 'projects' | 'cities'
 
@@ -66,6 +67,20 @@ export function SearchPage() {
     try {
       const data = await runAdvancedSearch(q, nextFilters, nextSort, language.code)
       setResults(data)
+      const resultCount =
+        data.professionals.length +
+        data.categories.length +
+        data.services.length +
+        data.projects.length +
+        data.cities.length
+      void recordSearchEvent({
+        query: q,
+        categorySlug: data.categories[0]?.slug || null,
+        city: nextFilters.city || null,
+        country: nextFilters.country || null,
+        resultCount,
+        source: 'advanced_search',
+      })
     } finally {
       setLoading(false)
     }

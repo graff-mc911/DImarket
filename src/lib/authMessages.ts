@@ -86,6 +86,7 @@ export function getPostLoginPath(
   const role = options?.intendedRole ?? profile?.user_role
   if (role === 'advertiser') return '/advertising'
   if (role === 'client') return '/customer/dashboard'
-  if (role === 'professional' || role === 'company') return '/pro/dashboard'
+  if (role === 'company') return '/company/dashboard'
+  if (role === 'professional') return '/pro/dashboard'
   return '/customer/dashboard'
 }
