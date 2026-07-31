@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /settings
+Disallow: /messages
+Disallow: /notifications
+Disallow: /profile
+Disallow: /my-listings
+Disallow: /my-projects
+Disallow: /billing
+Disallow: /checkout
+Disallow: /auth/
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://dimarket.app/sitemap.xml
