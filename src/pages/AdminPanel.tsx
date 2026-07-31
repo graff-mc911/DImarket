@@ -19,6 +19,7 @@ import { isSiteOwner } from '../lib/siteOwner'
 import { OwnerAdManager } from '../components/OwnerAdManager'
 import { OwnerMarketHealth } from '../components/OwnerMarketHealth'
 import { VerificationAdminPanel } from '../components/verification/VerificationAdminPanel'
+import { MembershipAdminPanel } from '../components/membership/MembershipAdminPanel'
 import { AnalyticsEmbed } from './Analytics'
 import {
   createAdminCategory,
@@ -58,6 +59,7 @@ type TabId =
   | 'categories'
   | 'ads'
   | 'subscriptions'
+  | 'membership'
   | 'analytics'
   | 'reports'
   | 'verification'
@@ -71,6 +73,7 @@ const TABS: { id: TabId; label: string; icon: typeof Users }[] = [
   { id: 'categories', label: 'Categories', icon: FolderTree },
   { id: 'ads', label: 'Ads', icon: Megaphone },
   { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
+  { id: 'membership', label: 'Membership', icon: CreditCard },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   { id: 'reports', label: 'Reports', icon: Flag },
   { id: 'verification', label: 'Verification', icon: ShieldCheck },
@@ -363,6 +366,8 @@ export function AdminPanel() {
             }}
           />
         )}
+
+        {tab === 'membership' && <MembershipAdminPanel />}
 
         {tab === 'analytics' && (
           <section className="space-y-4">

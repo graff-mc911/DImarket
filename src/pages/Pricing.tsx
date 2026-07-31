@@ -14,23 +14,38 @@ import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import {
   ADDONS,
-  PLANS,
+  FEATURE_COMPARISON,
+  PRICING_PLANS,
   SUPPORT_COPY,
   getPlan,
   planPrice,
+  plansForAudience,
   yearlySavingsPct,
   type BillingInterval,
+  type PlanAudience,
   type PlanId,
 } from '../lib/monetization/plans'
 import { startAddonCheckout, startPlanCheckout } from '../lib/monetization/billing'
+import { PlanComparisonTable } from '../components/membership/PlanComparisonTable'
+import { MembershipBadge } from '../components/membership/MembershipBadge'
+
+const AUDIENCES: { id: PlanAudience | 'all'; label: string }[] = [
+  { id: 'all', label: 'All plans' },
+  { id: 'customer', label: 'Customers' },
+  { id: 'professional', label: 'Professionals' },
+  { id: 'company', label: 'Companies' },
+  { id: 'enterprise', label: 'Enterprise' },
+]
 
 export function Pricing() {
   const { user, profile } = useApp()
   const [interval, setInterval] = useState<BillingInterval>('month')
+  const [audience, setAudience] = useState<PlanAudience | 'all'>('all')
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState('')
 
   const currentPlan = getPlan(profile?.plan_id)
+  const visiblePlans = useMemo(() => plansForAudience(audience), [audience])
 
   const support = useMemo(
     () => SUPPORT_COPY[currentPlan.supportTier],
@@ -55,13 +70,20 @@ export function Pricing() {
   }
 
   const onPlan = (planId: PlanId) => {
-    if (planId === 'free') return
-    if (planId === 'enterprise') {
-      navigateTo('/contact')
+    const plan = getPlan(planId)
+    if (!plan.checkoutEnabled) {
+      if (plan.id === 'enterprise') navigateTo('/contact')
+      else if (plan.id === 'guest') navigateTo('/')
+      else if (!user) navigateTo('/register')
       return
     }
-    void run(`plan-${planId}`, () =>
-      startPlanCheckout({ userId: user!.id, planId, interval }),
+    void run(`plan-${plan.storageId}`, () =>
+      startPlanCheckout({
+        userId: user!.id,
+        planId: plan.storageId as PlanId,
+        interval,
+        withTrial: true,
+      }),
     )
   }
 
@@ -70,17 +92,18 @@ export function Pricing() {
       <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6">
         <header className="space-y-3">
           <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">
-            Monetization
+            Premium Membership
           </p>
           <h1 className="text-[34px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[40px]">
-            Plans that grow with your business
+            Plans for every role on DImarket
           </h1>
           <p className="max-w-2xl text-[15px] leading-relaxed text-[#6e6e73]">
-            Free · Pro · Business · Enterprise — plus featured profiles, sponsored projects,
-            lead credits, banner ads, and Google Ads. Powered by Stripe subscriptions.
+            Guest · Customer · Professional Free · Professional Premium · Company Premium ·
+            Enterprise. Monthly or yearly billing, 30-day free trial, auto-renewal, cancel anytime.
+            Powered by Stripe.
           </p>
           {user ? (
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap items-center gap-2 pt-1">
               <button
                 type="button"
                 onClick={() => navigateTo('/billing')}
@@ -89,9 +112,14 @@ export function Pricing() {
                 <CreditCard className="h-4 w-4" />
                 Manage billing
               </button>
+              <MembershipBadge
+                planId={profile?.plan_id}
+                isPremium={profile?.is_premium}
+                isVerified={profile?.is_verified}
+                verificationLevel={profile?.verification_level}
+              />
               <span className="inline-flex items-center rounded-full border border-[#e8e8ed] bg-white px-3 py-2 text-[12px] text-[#6e6e73]">
-                Current: {currentPlan.name} · {support.label} support ·{' '}
-                {profile?.lead_credits ?? 0} credits
+                {currentPlan.name} · {support.label} support
               </span>
             </div>
           ) : null}
@@ -102,6 +130,27 @@ export function Pricing() {
             {error}
           </div>
         ) : null}
+
+        <div className="rounded-[22px] border border-[#e8e8ed] bg-[#fbfbfd] px-4 py-3 text-[13px] text-[#3a3a3c]">
+          <strong className="text-[#1d1d1f]">30-day free trial</strong> on paid plans · then
+          auto-renews monthly or yearly · cancel anytime in Billing / Stripe portal. Promotion
+          codes supported at checkout.
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          {AUDIENCES.map((a) => (
+            <button
+              key={a.id}
+              type="button"
+              onClick={() => setAudience(a.id)}
+              className={`rounded-full px-3.5 py-2 text-[12px] font-semibold ${
+                audience === a.id ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+              }`}
+            >
+              {a.label}
+            </button>
+          ))}
+        </div>
 
         <div className="flex items-center gap-2">
           <button
@@ -124,40 +173,47 @@ export function Pricing() {
           </button>
         </div>
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {PLANS.map((plan) => {
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {visiblePlans.map((plan) => {
             const price = planPrice(plan, interval)
-            const isCurrent = currentPlan.id === plan.id
+            const isCurrent = currentPlan.storageId === plan.storageId
             const save = yearlySavingsPct(plan)
             return (
               <article
-                key={plan.id}
+                key={plan.storageId}
                 className={`relative flex flex-col rounded-[24px] border bg-white p-5 shadow-sm ${
-                  plan.popular ? 'border-[#1d1d1f]' : 'border-[#e8e8ed]'
+                  plan.recommended || plan.popular ? 'border-[#1d1d1f]' : 'border-[#e8e8ed]'
                 }`}
               >
-                {plan.popular ? (
+                {plan.recommended || plan.popular ? (
                   <span className="absolute -top-3 left-5 rounded-full bg-[#1d1d1f] px-3 py-1 text-[11px] font-semibold text-white">
-                    Most popular
+                    Recommended
                   </span>
                 ) : null}
-                <h2 className="text-[20px] font-semibold text-[#1d1d1f]">{plan.name}</h2>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
+                  {plan.audience}
+                </p>
+                <h2 className="mt-1 text-[20px] font-semibold text-[#1d1d1f]">{plan.name}</h2>
                 <p className="mt-1 text-[13px] text-[#86868b]">{plan.tagline}</p>
                 <p className="mt-4">
                   <span className="text-[32px] font-semibold tracking-tight text-[#1d1d1f]">
                     €{price}
                   </span>
                   <span className="text-[13px] text-[#86868b]">
-                    /{interval === 'year' ? 'year' : 'mo'}
+                    {price > 0 ? `/${interval === 'year' ? 'year' : 'mo'}` : ''}
                   </span>
                 </p>
                 {interval === 'year' && save > 0 ? (
                   <p className="mt-1 text-[12px] font-medium text-emerald-700">Save {save}%</p>
+                ) : plan.trialDays > 0 ? (
+                  <p className="mt-1 text-[12px] font-medium text-[#6e6e73]">
+                    {plan.trialDays}-day free trial
+                  </p>
                 ) : (
                   <p className="mt-1 text-[12px] text-transparent">.</p>
                 )}
                 <ul className="mt-4 flex-1 space-y-2">
-                  {plan.highlights.map((h) => (
+                  {plan.highlights.slice(0, 6).map((h) => (
                     <li key={h} className="flex gap-2 text-[13px] text-[#3a3a3c]">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                       <span>{h}</span>
@@ -166,15 +222,19 @@ export function Pricing() {
                 </ul>
                 <button
                   type="button"
-                  disabled={isCurrent || loading === `plan-${plan.id}`}
+                  disabled={isCurrent || loading === `plan-${plan.storageId}`}
                   onClick={() => onPlan(plan.id)}
                   className={`mt-5 inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-semibold transition disabled:opacity-50 ${
-                    plan.popular
+                    plan.recommended || plan.popular
                       ? 'bg-[#1d1d1f] text-white'
                       : 'border border-[#d2d2d7] bg-white text-[#1d1d1f]'
                   }`}
                 >
-                  {isCurrent ? 'Current plan' : loading === `plan-${plan.id}` ? 'Redirecting…' : plan.cta}
+                  {isCurrent
+                    ? 'Current plan'
+                    : loading === `plan-${plan.storageId}`
+                      ? 'Redirecting…'
+                      : plan.cta}
                   {!isCurrent ? <ArrowRight className="h-4 w-4" /> : null}
                 </button>
               </article>
@@ -182,11 +242,22 @@ export function Pricing() {
           })}
         </section>
 
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-[22px] font-semibold text-[#1d1d1f]">Compare all plans</h2>
+            <p className="mt-1 text-[14px] text-[#6e6e73]">
+              {FEATURE_COMPARISON.length} features across Guest to Enterprise.
+            </p>
+          </div>
+          <PlanComparisonTable />
+        </section>
+
         <section className="space-y-4">
           <div>
             <h2 className="text-[22px] font-semibold text-[#1d1d1f]">Growth add-ons</h2>
             <p className="mt-1 text-[14px] text-[#6e6e73]">
-              Buy à la carte — Featured profile, Sponsored projects, Lead credits, Google Ads, Banner ads.
+              Buy à la carte — Featured profile, Sponsored projects, Lead credits, Google Ads,
+              Banner ads.
             </p>
           </div>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -252,39 +323,25 @@ export function Pricing() {
                 </li>
               ))}
             </ul>
+          </div>
+          <div className="rounded-[22px] border border-[#e8e8ed] bg-[#fbfbfd] p-5">
+            <div className="flex items-center gap-2 text-[#1d1d1f]">
+              <Megaphone className="h-5 w-5" />
+              <h2 className="text-[16px] font-semibold">Billing notes</h2>
+            </div>
+            <ul className="mt-3 space-y-2 text-[13px] text-[#3a3a3c]">
+              <li>Stripe invoices & payment history in Billing</li>
+              <li>Failed payments mark subscription past due</li>
+              <li>Cancel anytime via Stripe Customer Portal</li>
+              <li>Enterprise sales: custom pricing & Gold Partner</li>
+            </ul>
             <button
               type="button"
               onClick={() => navigateTo('/contact')}
               className="mt-4 text-[13px] font-semibold text-[#1d1d1f] underline-offset-2 hover:underline"
             >
-              Contact support
+              Contact sales
             </button>
-          </div>
-          <div className="rounded-[22px] border border-[#e8e8ed] bg-[#fbfbfd] p-5">
-            <div className="flex items-center gap-2 text-[#1d1d1f]">
-              <Megaphone className="h-5 w-5" />
-              <h2 className="text-[16px] font-semibold">Ads</h2>
-            </div>
-            <p className="mt-2 text-[13px] leading-relaxed text-[#3a3a3c]">
-              Run native banner ads on DImarket, or request managed Google Ads campaigns.
-              Business and Enterprise plans include higher discounts; Enterprise includes Google Ads management.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => navigateTo('/advertise')}
-                className="rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold"
-              >
-                Banner ads
-              </button>
-              <button
-                type="button"
-                onClick={() => navigateTo('/boost')}
-                className="rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold"
-              >
-                Profile boost
-              </button>
-            </div>
           </div>
         </section>
       </div>

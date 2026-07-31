@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import {
+  AlertTriangle,
   CreditCard,
   ExternalLink,
+  FileText,
   LifeBuoy,
   Loader,
   Sparkles,
@@ -10,13 +12,21 @@ import {
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import {
+  fetchBillingInvoices,
   fetchBillingProfile,
   fetchCreditLedger,
+  fetchPaymentHistory,
+  fetchUserSubscription,
+  isPastDue,
+  isTrialing,
   openBillingPortal,
   submitGoogleAdsRequest,
+  type BillingInvoice,
   type BillingProfile,
+  type PaymentHistoryRow,
 } from '../lib/monetization/billing'
 import { SUPPORT_COPY, getPlan } from '../lib/monetization/plans'
+import { MembershipBadge } from '../components/membership/MembershipBadge'
 
 export function Billing() {
   const { user, profile } = useApp()
@@ -24,6 +34,14 @@ export function Billing() {
   const [ledger, setLedger] = useState<
     Array<{ id: string; delta: number; balance_after: number; reason: string; created_at: string }>
   >([])
+  const [invoices, setInvoices] = useState<BillingInvoice[]>([])
+  const [payments, setPayments] = useState<PaymentHistoryRow[]>([])
+  const [sub, setSub] = useState<{
+    status?: string
+    cancel_at_period_end?: boolean
+    trial_end?: string | null
+    billing_interval?: string
+  } | null>(null)
   const [loading, setLoading] = useState(true)
   const [portalLoading, setPortalLoading] = useState(false)
   const [error, setError] = useState('')
@@ -42,18 +60,27 @@ export function Billing() {
     }
     void (async () => {
       setLoading(true)
-      const [b, l] = await Promise.all([
+      const [b, l, inv, pay, s] = await Promise.all([
         fetchBillingProfile(user.id),
         fetchCreditLedger(user.id),
+        fetchBillingInvoices(user.id),
+        fetchPaymentHistory(user.id),
+        fetchUserSubscription(user.id),
       ])
       setBilling(b)
       setLedger(l as typeof ledger)
+      setInvoices(inv)
+      setPayments(pay)
+      setSub(s)
       setLoading(false)
     })()
   }, [user?.id])
 
   const plan = getPlan(billing?.plan_id ?? profile?.plan_id)
   const support = SUPPORT_COPY[plan.supportTier]
+  const status = billing?.subscription_status || profile?.subscription_status || sub?.status || 'none'
+  const pastDue = isPastDue(status)
+  const trialing = isTrialing(status, billing?.trial_ends_at || sub?.trial_end)
 
   const onPortal = async () => {
     if (!user) return
@@ -105,10 +132,10 @@ export function Billing() {
             Billing
           </p>
           <h1 className="mt-2 text-[28px] font-semibold tracking-tight text-[#1d1d1f]">
-            Subscription & credits
+            Membership & payments
           </h1>
           <p className="mt-2 text-[14px] text-[#6e6e73]">
-            Manage your Stripe subscription, lead credits, and Google Ads requests.
+            Manage Stripe subscription, invoices, trial, auto-renewal, and lead credits.
           </p>
         </header>
 
@@ -118,16 +145,62 @@ export function Billing() {
           </div>
         ) : null}
 
+        {pastDue ? (
+          <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-900">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div>
+              <p className="font-semibold">Payment failed</p>
+              <p className="mt-0.5">
+                Your subscription is past due. Update your payment method in the Stripe portal to
+                restore Premium features.
+              </p>
+              <button
+                type="button"
+                onClick={() => void onPortal()}
+                className="mt-2 text-[12px] font-semibold underline"
+              >
+                Fix payment method
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {trialing ? (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-900">
+            Free trial active
+            {billing?.trial_ends_at || sub?.trial_end
+              ? ` until ${new Date(billing?.trial_ends_at || sub?.trial_end || '').toLocaleDateString()}`
+              : ''}
+            . Auto-renews unless canceled.
+          </div>
+        ) : null}
+
         <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-[18px] font-semibold text-[#1d1d1f]">{plan.name} plan</h2>
+              <div className="mb-2">
+                <MembershipBadge
+                  planId={billing?.plan_id ?? profile?.plan_id}
+                  isPremium={billing?.is_premium ?? profile?.is_premium}
+                  isVerified={profile?.is_verified}
+                  verificationLevel={profile?.verification_level}
+                />
+              </div>
+              <h2 className="text-[18px] font-semibold text-[#1d1d1f]">{plan.name}</h2>
               <p className="mt-1 text-[13px] text-[#6e6e73]">
-                Status: {billing?.subscription_status || profile?.subscription_status || 'none'}
+                Status: <span className="font-semibold capitalize">{status}</span>
+                {sub?.billing_interval ? ` · billed ${sub.billing_interval}ly` : ''}
                 {billing?.subscription_period_end
                   ? ` · renews/ends ${new Date(billing.subscription_period_end).toLocaleDateString()}`
                   : ''}
               </p>
+              {sub?.cancel_at_period_end ? (
+                <p className="mt-1 text-[12px] font-medium text-amber-700">
+                  Cancels at period end — reactivate in Stripe portal anytime.
+                </p>
+              ) : (
+                <p className="mt-1 text-[12px] text-[#86868b]">Auto-renewal on · cancel anytime</p>
+              )}
               <p className="mt-2 text-[13px] text-[#3a3a3c]">
                 <LifeBuoy className="mr-1 inline h-4 w-4" />
                 {support.label}: {support.sla}
@@ -148,22 +221,87 @@ export function Billing() {
                 className="inline-flex items-center gap-2 rounded-full bg-[#1d1d1f] px-3 py-2 text-[12px] font-semibold text-white disabled:opacity-50"
               >
                 <CreditCard className="h-4 w-4" />
-                {portalLoading ? 'Opening…' : 'Stripe portal'}
+                {portalLoading ? 'Opening…' : 'Manage / cancel'}
                 <ExternalLink className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Lead credits" value={String(billing?.lead_credits ?? 0)} icon={Wallet} />
-            <Stat
-              label="Premium"
-              value={billing?.is_premium ? 'On' : 'Off'}
-            />
-            <Stat
-              label="Featured"
-              value={billing?.is_featured ? 'On' : 'Off'}
-            />
+            <Stat label="Premium" value={billing?.is_premium ? 'On' : 'Off'} />
+            <Stat label="Featured" value={billing?.is_featured ? 'On' : 'Off'} />
             <Stat label="Support" value={support.label} />
+          </div>
+        </section>
+
+        <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-5 shadow-sm">
+          <div className="mb-3 flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Invoices</h2>
+          </div>
+          <div className="space-y-2">
+            {invoices.map((inv) => (
+              <div
+                key={inv.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#f0f0f2] px-3 py-2 text-[13px]"
+              >
+                <div>
+                  <p className="font-medium text-[#1d1d1f]">
+                    {inv.number || inv.id.slice(0, 8)} · {inv.status}
+                  </p>
+                  <p className="text-[11px] text-[#86868b]">
+                    {new Date(inv.paid_at || inv.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="font-semibold text-[#1d1d1f]">
+                    €{((inv.amount_paid || inv.amount_due) / 100).toFixed(2)}
+                  </span>
+                  {inv.hosted_invoice_url || inv.invoice_pdf ? (
+                    <a
+                      href={inv.hosted_invoice_url || inv.invoice_pdf || '#'}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[12px] font-semibold text-[#1d1d1f] underline"
+                    >
+                      View
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+            {!invoices.length ? (
+              <p className="text-[13px] text-[#86868b]">
+                No invoices yet. After checkout, invoices appear here and in Stripe portal.
+              </p>
+            ) : null}
+          </div>
+        </section>
+
+        <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-5 shadow-sm">
+          <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Payment history</h2>
+          <div className="mt-3 space-y-2">
+            {payments.map((p) => (
+              <div
+                key={p.id}
+                className="flex items-center justify-between rounded-xl border border-[#f0f0f2] px-3 py-2 text-[13px]"
+              >
+                <div>
+                  <p className="font-medium capitalize text-[#1d1d1f]">
+                    {p.payment_type.replace(/_/g, ' ')}
+                  </p>
+                  <p className="text-[11px] text-[#86868b]">
+                    {new Date(p.created_at).toLocaleString()} · {p.status}
+                  </p>
+                </div>
+                <p className="font-semibold text-[#1d1d1f]">
+                  €{Number(p.amount).toLocaleString()} {p.currency?.toUpperCase?.() || 'EUR'}
+                </p>
+              </div>
+            ))}
+            {!payments.length ? (
+              <p className="text-[13px] text-[#86868b]">No payments recorded yet.</p>
+            ) : null}
           </div>
         </section>
 
@@ -199,8 +337,7 @@ export function Billing() {
             <h2 className="text-[16px] font-semibold text-[#1d1d1f]">Google Ads</h2>
           </div>
           <p className="mt-2 text-[13px] text-[#6e6e73]">
-            Request a managed Google Ads campaign. Enterprise includes management; others can buy
-            setup as an add-on on Pricing.
+            Request a managed Google Ads campaign. Enterprise includes management.
           </p>
           <form onSubmit={onGoogleAds} className="mt-4 space-y-3">
             <input

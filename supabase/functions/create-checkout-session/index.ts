@@ -17,6 +17,7 @@ type CheckoutBody = {
   mode?: 'payment' | 'subscription'
   billing_interval?: 'month' | 'year'
   plan_id?: string
+  trial_period_days?: number
 }
 
 Deno.serve(async (req: Request) => {
@@ -137,6 +138,11 @@ Deno.serve(async (req: Request) => {
             quantity: 1,
           }
 
+    const trialDays =
+      typeof body.trial_period_days === 'number' && body.trial_period_days > 0
+        ? Math.min(Math.floor(body.trial_period_days), 90)
+        : 0
+
     const session = await stripe.checkout.sessions.create({
       mode,
       customer: customerId,
@@ -146,7 +152,13 @@ Deno.serve(async (req: Request) => {
       cancel_url: cancelUrl,
       client_reference_id: body.reference_id || undefined,
       metadata,
-      subscription_data: mode === 'subscription' ? { metadata } : undefined,
+      subscription_data:
+        mode === 'subscription'
+          ? {
+              metadata,
+              ...(trialDays > 0 ? { trial_period_days: trialDays } : {}),
+            }
+          : undefined,
       allow_promotion_codes: true,
     })
 
