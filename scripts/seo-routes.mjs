@@ -175,6 +175,10 @@ export function allPublicRoutes() {
 
 /** Routes written as dist/<path>/index.html during seo-build. */
 export function prerenderRoutes() {
+  // On Vercel, keep to homepage until multi-route static HTML packaging is confirmed.
+  if (process.env.VERCEL === '1') {
+    return allPublicRoutes().filter((r) => r.path === '/')
+  }
   const priorityPaths = new Set([
     '/',
     '/professionals',
