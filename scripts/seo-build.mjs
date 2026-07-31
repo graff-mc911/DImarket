@@ -54,7 +54,10 @@ Disallow: /register
 Sitemap: ${SITE_ORIGIN}/sitemap.xml
 `
   writeFileSync(join(distDir, 'robots.txt'), body, 'utf8')
-  writeFileSync(join(root, 'public', 'robots.txt'), body, 'utf8')
+  // Avoid writing into public/ on Vercel builds (can break the deploy output).
+  if (process.env.VERCEL !== '1') {
+    writeFileSync(join(root, 'public', 'robots.txt'), body, 'utf8')
+  }
   console.log('wrote robots.txt')
 }
 
@@ -80,7 +83,9 @@ ${urls}
 </urlset>
 `
   writeFileSync(join(distDir, 'sitemap.xml'), xml, 'utf8')
-  writeFileSync(join(root, 'public', 'sitemap.xml'), xml, 'utf8')
+  if (process.env.VERCEL !== '1') {
+    writeFileSync(join(root, 'public', 'sitemap.xml'), xml, 'utf8')
+  }
   console.log(`wrote sitemap.xml (${allPublicRoutes().length} urls)`)
 }
 
