@@ -2,7 +2,7 @@ import { ArrowRight, MapPin, ShieldCheck, Star, UserRound, Zap } from 'lucide-re
 import { Category, Profile } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
-import { VerificationBadge } from './MatchScoreBadge'
+import { TrustBadges, TrustScorePill, VerificationBadge } from './MatchScoreBadge'
 import {
   categorySlugForSubcategory,
   formatSubcategoriesSummary,
@@ -218,18 +218,35 @@ export function ProfessionalCard({
                   </div>
 
                   {showStatusBadges && (
-                    <div className="flex shrink-0 items-center gap-1">
-                      <VerificationBadge level={professional.verification_level} />
-                      {isVerified && (
+                    <div className="flex max-w-[12rem] shrink-0 flex-col items-end gap-1">
+                      <TrustBadges source={professional} size="sm" max={3} />
+                      <div className="flex flex-wrap items-center justify-end gap-1">
+                        <TrustScorePill score={professional.trust_score} />
+                        <VerificationBadge
+                          trustLevel={professional.trust_level}
+                          level={professional.verification_level}
+                        />
+                      </div>
+                      {isVerified && !professional.identity_verified ? (
                         <ShieldCheck
                           className="pro-card__verified shrink-0 text-[#15803d]"
                           aria-label={t('professional.verified')}
                         />
-                      )}
+                      ) : null}
                     </div>
                   )}
-                  {!showStatusBadges && professional.verification_level && professional.verification_level !== 'none' && (
-                    <VerificationBadge level={professional.verification_level} />
+                  {!showStatusBadges && (
+                    <div className="flex max-w-[12rem] shrink-0 flex-col items-end gap-1">
+                      <TrustBadges source={professional} size="sm" max={2} />
+                      {(professional.trust_level ||
+                        (professional.verification_level &&
+                          professional.verification_level !== 'none')) && (
+                        <VerificationBadge
+                          trustLevel={professional.trust_level}
+                          level={professional.verification_level}
+                        />
+                      )}
+                    </div>
                   )}
                 </div>
 

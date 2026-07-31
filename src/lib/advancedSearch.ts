@@ -36,6 +36,9 @@ export type SearchFilters = {
   priceMax: number | null
   languages: string[]
   verifiedOnly: boolean
+  businessVerifiedOnly: boolean
+  trustedOnly: boolean
+  premiumOnly: boolean
   lat: number | null
   lng: number | null
 }
@@ -58,6 +61,9 @@ export const EMPTY_SEARCH_FILTERS: SearchFilters = {
   priceMax: null,
   languages: [],
   verifiedOnly: false,
+  businessVerifiedOnly: false,
+  trustedOnly: false,
+  premiumOnly: false,
   lat: null,
   lng: null,
 }
@@ -246,6 +252,9 @@ export async function runAdvancedSearch(
 
   professionals = professionals.filter((p) => {
     if (filters.verifiedOnly && !p.is_verified) return false
+    if (filters.businessVerifiedOnly && !p.business_verified) return false
+    if (filters.trustedOnly && !p.trusted_professional) return false
+    if (filters.premiumOnly && !p.is_premium) return false
     if (filters.minRating > 0 && (p.rating ?? 0) < filters.minRating) return false
     if (filters.availability && p.availability_status !== filters.availability) return false
     if (filters.languages.length > 0) {
@@ -436,6 +445,9 @@ export function parseSearchParams(search: string): {
       priceMax: params.get('priceMax') ? Number(params.get('priceMax')) : null,
       languages: langs,
       verifiedOnly: params.get('verified') === '1',
+      businessVerifiedOnly: params.get('business') === '1',
+      trustedOnly: params.get('trusted') === '1',
+      premiumOnly: params.get('premium') === '1',
       lat: params.get('lat') ? Number(params.get('lat')) : null,
       lng: params.get('lng') ? Number(params.get('lng')) : null,
     },
@@ -459,6 +471,9 @@ export function buildSearchUrl(
   if (filters.priceMax != null) params.set('priceMax', String(filters.priceMax))
   if (filters.languages.length) params.set('languages', filters.languages.join(','))
   if (filters.verifiedOnly) params.set('verified', '1')
+  if (filters.businessVerifiedOnly) params.set('business', '1')
+  if (filters.trustedOnly) params.set('trusted', '1')
+  if (filters.premiumOnly) params.set('premium', '1')
   if (filters.lat != null) params.set('lat', String(filters.lat))
   if (filters.lng != null) params.set('lng', String(filters.lng))
   const qs = params.toString()

@@ -11,7 +11,7 @@ import {
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { fetchMatchScoresForListing, TOP_MATCH_LIMIT } from '../lib/matching'
-import { MatchScoreBadge, VerificationBadge } from '../components/MatchScoreBadge'
+import { MatchScoreBadge, TrustBadges, VerificationBadge } from '../components/MatchScoreBadge'
 import type { VerificationLevel } from '../lib/types'
 
 type MatchRow = {
@@ -26,6 +26,15 @@ type MatchRow = {
     total_reviews: number | null
     is_verified: boolean | null
     verification_level?: VerificationLevel | null
+    trust_level?: number | null
+    trust_score?: number | null
+    identity_verified?: boolean | null
+    business_verified?: boolean | null
+    insurance_verified?: boolean | null
+    trusted_professional?: boolean | null
+    is_premium?: boolean | null
+    email_verified_at?: string | null
+    phone_verified_at?: string | null
     profile_photo?: string | null
     avatar_url?: string | null
     completed_jobs?: number | null
@@ -224,8 +233,17 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                               >
                                 {p.full_name || 'Professional'}
                               </button>
-                              <VerificationBadge level={p.verification_level} />
+                              <VerificationBadge
+                                trustLevel={p.trust_level}
+                                level={p.verification_level}
+                              />
+                            </div>
+                            <div className="mt-1">
+                              <TrustBadges source={p} size="sm" max={3} />
+                            </div>
+                            <div className="mt-0.5 flex flex-wrap items-center gap-2">
                               {p.is_verified &&
+                              !p.identity_verified &&
                               (!p.verification_level || p.verification_level === 'none') ? (
                                 <span className="inline-flex items-center gap-0.5 text-[10px] font-bold uppercase text-[#067d62]">
                                   <BadgeCheck className="h-3 w-3" />
