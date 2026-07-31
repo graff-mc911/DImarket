@@ -1,17 +1,18 @@
 /**
  * DImarket SEO build step (Variant A):
  * 1) Write robots.txt + sitemap.xml into dist/
- * 2) Prerender key public routes with Playwright so curl gets real HTML
+ * 2) Prerender key public routes (Playwright when available)
+ * 3) Fallback: inject contentful SEO HTML shells if Chromium is unavailable (e.g. some CI images)
  *
  * Does not redesign UI. Does not rewrite React components.
  */
-import { spawn } from 'node:child_process'
-import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs'
+import { spawn, spawnSync } from 'node:child_process'
+import { mkdirSync, writeFileSync, existsSync, readFileSync, copyFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { chromium } from 'playwright'
 import {
   SITE_ORIGIN,
+  CATEGORY_SLUGS,
   absoluteUrl,
   allPublicRoutes,
   jsonLdForRoute,
@@ -25,6 +26,7 @@ const distDir = join(root, 'dist')
 const PREVIEW_HOST = process.env.SEO_PREVIEW_HOST ?? '127.0.0.1'
 const PREVIEW_PORT = Number(process.env.SEO_PREVIEW_PORT ?? 4179)
 const BASE = `http://${PREVIEW_HOST}:${PREVIEW_PORT}`
+const FORCE_FALLBACK = process.env.SEO_PRERENDER_FALLBACK === '1'
 
 function assertDist() {
   if (!existsSync(join(distDir, 'index.html'))) {
@@ -52,7 +54,6 @@ Disallow: /register
 Sitemap: ${SITE_ORIGIN}/sitemap.xml
 `
   writeFileSync(join(distDir, 'robots.txt'), body, 'utf8')
-  // Also keep a copy in public for local preview of source tree
   writeFileSync(join(root, 'public', 'robots.txt'), body, 'utf8')
   console.log('wrote robots.txt')
 }
@@ -89,22 +90,43 @@ function outPathForRoute(path) {
   return join(distDir, clean, 'index.html')
 }
 
-async function waitForPreview(timeoutMs = 60000) {
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function ensureChromium() {
+  const result = spawnSync(
+    process.platform === 'win32' ? 'npx.cmd' : 'npx',
+    ['playwright', 'install', 'chromium'],
+    { cwd: root, encoding: 'utf8', timeout: 300000 },
+  )
+  if (result.status !== 0) {
+    console.warn('playwright install chromium failed:', result.stderr || result.stdout)
+    return false
+  }
+  return true
+}
+
+async function waitForPreview(timeoutMs = 90000) {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
     try {
       const res = await fetch(`${BASE}/`)
-      if (res.ok) return
+      if (res.ok) return true
     } catch {
       // retry
     }
     await new Promise((r) => setTimeout(r, 300))
   }
-  throw new Error(`Preview server did not become ready at ${BASE}`)
+  return false
 }
 
 function startPreview() {
-  const child = spawn(
+  return spawn(
     process.platform === 'win32' ? 'npx.cmd' : 'npx',
     ['vite', 'preview', '--host', PREVIEW_HOST, '--port', String(PREVIEW_PORT), '--strictPort'],
     {
@@ -113,9 +135,6 @@ function startPreview() {
       env: { ...process.env },
     },
   )
-  child.stdout.on('data', (buf) => process.stdout.write(`[preview] ${buf}`))
-  child.stderr.on('data', (buf) => process.stderr.write(`[preview] ${buf}`))
-  return child
 }
 
 async function hardenHead(page, route) {
@@ -124,7 +143,6 @@ async function hardenHead(page, route) {
   await page.evaluate(
     ({ title, description, url, blocks, ogImage }) => {
       document.title = title
-
       const upsert = (attr, key, content) => {
         let el = document.head.querySelector(`meta[${attr}="${key}"]`)
         if (!el) {
@@ -134,7 +152,6 @@ async function hardenHead(page, route) {
         }
         el.setAttribute('content', content)
       }
-
       upsert('name', 'description', description)
       upsert('property', 'og:title', title)
       upsert('property', 'og:description', description)
@@ -145,7 +162,6 @@ async function hardenHead(page, route) {
       upsert('name', 'twitter:title', title)
       upsert('name', 'twitter:description', description)
       upsert('name', 'twitter:image', ogImage)
-
       let canonical = document.head.querySelector('link[rel="canonical"]')
       if (!canonical) {
         canonical = document.createElement('link')
@@ -153,8 +169,6 @@ async function hardenHead(page, route) {
         document.head.appendChild(canonical)
       }
       canonical.setAttribute('href', url)
-
-      // Remove previous build-injected SEO JSON-LD markers
       document.head.querySelectorAll('script[data-dimarket-seo="1"]').forEach((n) => n.remove())
       for (const data of blocks) {
         const script = document.createElement('script')
@@ -174,55 +188,153 @@ async function hardenHead(page, route) {
   )
 }
 
-async function prerenderAll() {
-  const routes = prerenderRoutes()
-  const browser = await chromium.launch({ headless: true })
-  const context = await browser.newContext({
-    userAgent:
-      'Mozilla/5.0 (compatible; DImarketSeoPrerender/1.0; +https://dimarket.app/)',
-    viewport: { width: 1280, height: 900 },
-  })
+function applyHeadToHtml(html, route) {
+  const url = absoluteUrl(route.path)
+  const ogImage = `${SITE_ORIGIN}/og-image.png`
+  let out = html
+    .replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(route.title)}</title>`)
+    .replace(
+      /<meta\s+name=["']description["'][^>]*>/i,
+      `<meta name="description" content="${escapeHtml(route.description)}" />`,
+    )
+
+  const metaBlock = `
+    <link rel="canonical" href="${url}" />
+    <meta property="og:title" content="${escapeHtml(route.title)}" />
+    <meta property="og:description" content="${escapeHtml(route.description)}" />
+    <meta property="og:url" content="${url}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="${ogImage}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${escapeHtml(route.title)}" />
+    <meta name="twitter:description" content="${escapeHtml(route.description)}" />
+    <meta name="twitter:image" content="${ogImage}" />
+    ${jsonLdForRoute(route)
+      .map(
+        (block) =>
+          `<script type="application/ld+json" data-dimarket-seo="1">${JSON.stringify(block)}</script>`,
+      )
+      .join('\n    ')}
+`
+  out = out
+    .replace(/<link[^>]+rel=["']canonical["'][^>]*>/gi, '')
+    .replace(/<meta[^>]+property=["']og:[^"']+["'][^>]*>/gi, '')
+    .replace(/<meta[^>]+name=["']twitter:[^"']+["'][^>]*>/gi, '')
+    .replace(/<script[^>]*data-dimarket-seo=["']1["'][^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace('</head>', `${metaBlock}\n  </head>`)
+  return out
+}
+
+function fallbackRootHtml(route) {
+  const cats = CATEGORY_SLUGS.map(
+    (slug) =>
+      `<li><a href="/category/${slug}">${escapeHtml(slug.replace(/-/g, ' '))}</a></li>`,
+  ).join('')
+  return `<div id="root"><a class="skip-link" href="#main">Skip to content</a>
+<header>
+  <p><strong>DImarket</strong> — marketplace for construction &amp; renovation</p>
+  <nav aria-label="Primary">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/professionals">Professionals</a></li>
+      <li><a href="/companies">Companies</a></li>
+      <li><a href="/listings">Listings</a></li>
+      <li><a href="/search">Search</a></li>
+      <li><a href="/pricing">Pricing</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main">
+  <h1>${escapeHtml(route.title.replace(/\s*\|\s*DImarket$/, '').replace(/^DImarket —\s*/, ''))}</h1>
+  <p>${escapeHtml(route.description)}</p>
+  <section aria-labelledby="seo-categories">
+    <h2 id="seo-categories">Service categories</h2>
+    <ul>${cats}</ul>
+  </section>
+</main>
+<footer><p>© DImarket · <a href="/robots.txt">robots</a> · <a href="/sitemap.xml">sitemap</a></p></footer>
+</div>`
+}
+
+function writeFallbackRoutes() {
+  const shellPath = join(distDir, '_spa-shell.html')
+  const shell = readFileSync(shellPath, 'utf8')
+
+  for (const route of prerenderRoutes()) {
+    let html = shell
+    if (!/<div id="root"><\/div>/i.test(html)) {
+      html = html.replace(/<div id="root">[\s\S]*?<\/div>/i, '<div id="root"></div>')
+    }
+    html = html.replace('<div id="root"></div>', fallbackRootHtml(route))
+    html = applyHeadToHtml(html, route)
+    const out = outPathForRoute(route.path)
+    mkdirSync(dirname(out), { recursive: true })
+    writeFileSync(out, html, 'utf8')
+    console.log(`fallback prerender ${route.path}`)
+  }
+}
+
+async function prerenderWithPlaywright() {
+  const { chromium } = await import('playwright')
+  const preview = startPreview()
+  let closed = false
+  const shutdown = async () => {
+    if (closed) return
+    closed = true
+    try {
+      preview.kill('SIGTERM')
+    } catch {
+      /* ignore */
+    }
+    await new Promise((r) => setTimeout(r, 250))
+    try {
+      preview.kill('SIGKILL')
+    } catch {
+      /* ignore */
+    }
+  }
 
   try {
-    for (const route of routes) {
-      const page = await context.newPage()
-      const target = `${BASE}${route.path}`
-      console.log(`prerender ${route.path}`)
-      await page.goto(target, { waitUntil: 'networkidle', timeout: 90000 })
+    const ready = await waitForPreview()
+    if (!ready) throw new Error('preview server not ready')
 
-      // Wait for React shell + at least one heading / main landmark
-      await page.waitForSelector('#root', { timeout: 30000 })
-      await page
-        .waitForFunction(
-          () => {
-            const root = document.getElementById('root')
-            if (!root || !root.innerText || root.innerText.trim().length < 40) return false
-            return Boolean(document.querySelector('h1, h2, header nav, header'))
-          },
-          { timeout: 45000 },
-        )
-        .catch(() => {
-          console.warn(`  warn: content wait timed out for ${route.path}, saving best effort`)
-        })
+    const browser = await chromium.launch({ headless: true })
+    const context = await browser.newContext({
+      userAgent: 'Mozilla/5.0 (compatible; DImarketSeoPrerender/1.0; +https://dimarket.app/)',
+      viewport: { width: 1280, height: 900 },
+    })
 
-      // Give late client meta/JSON-LD a moment
-      await new Promise((r) => setTimeout(r, 500))
-      await hardenHead(page, route)
-
-      const html = await page.content()
-      const out = outPathForRoute(route.path)
-      mkdirSync(dirname(out), { recursive: true })
-      writeFileSync(out, html, 'utf8')
-
-      const hasH = /<h1[\s>]|<h2[\s>]/i.test(html)
-      const rootText = await page.locator('#root').innerText().catch(() => '')
-      console.log(
-        `  saved ${out.replace(root + '/', '')} (heading=${hasH}, rootChars=${rootText.trim().length})`,
-      )
-      await page.close()
+    try {
+      for (const route of prerenderRoutes()) {
+        const page = await context.newPage()
+        console.log(`prerender ${route.path}`)
+        await page.goto(`${BASE}${route.path}`, { waitUntil: 'networkidle', timeout: 90000 })
+        await page.waitForSelector('#root', { timeout: 30000 })
+        await page
+          .waitForFunction(
+            () => {
+              const root = document.getElementById('root')
+              if (!root || !root.innerText || root.innerText.trim().length < 40) return false
+              return Boolean(document.querySelector('h1, h2, header'))
+            },
+            { timeout: 45000 },
+          )
+          .catch(() => console.warn(`  warn: content wait timed out for ${route.path}`))
+        await new Promise((r) => setTimeout(r, 400))
+        await hardenHead(page, route)
+        const html = await page.content()
+        const out = outPathForRoute(route.path)
+        mkdirSync(dirname(out), { recursive: true })
+        writeFileSync(out, html, 'utf8')
+        console.log(`  saved ${route.path}`)
+        await page.close()
+      }
+    } finally {
+      await browser.close()
     }
   } finally {
-    await browser.close()
+    await shutdown()
   }
 }
 
@@ -231,42 +343,35 @@ async function main() {
   writeRobots()
   writeSitemap()
 
-  const preview = startPreview()
-  let previewClosed = false
-  const shutdown = async () => {
-    if (previewClosed) return
-    previewClosed = true
-    try {
-      preview.kill('SIGTERM')
-    } catch {
-      // ignore
-    }
-    await new Promise((r) => setTimeout(r, 300))
-    try {
-      preview.kill('SIGKILL')
-    } catch {
-      // ignore
-    }
-  }
-  process.on('SIGINT', () => {
-    void shutdown().then(() => process.exit(1))
-  })
+  // Preserve pristine SPA shell before overwriting index.html
+  const shellPath = join(distDir, '_spa-shell.html')
+  copyFileSync(join(distDir, 'index.html'), shellPath)
 
-  try {
-    await waitForPreview()
-    await prerenderAll()
-  } finally {
-    await shutdown()
+  let mode = 'fallback'
+  if (!FORCE_FALLBACK) {
+    try {
+      const installed = ensureChromium()
+      if (!installed) throw new Error('chromium install failed')
+      await prerenderWithPlaywright()
+      mode = 'playwright'
+    } catch (err) {
+      console.warn('Playwright prerender failed, using HTML fallback:', err?.message || err)
+      writeFallbackRoutes()
+      mode = 'fallback'
+    }
+  } else {
+    writeFallbackRoutes()
   }
 
-  // Sanity: homepage must contain real content markers
   const home = readFileSync(join(distDir, 'index.html'), 'utf8')
-  if (!home.includes('id="root"') || !/<h1[\s>]/i.test(home)) {
-    console.warn('WARNING: prerendered homepage may lack <h1> — check selectors/data')
+  if (!/<h1[\s>]/i.test(home)) {
+    throw new Error('SEO build produced homepage without <h1>')
   }
-  console.log('seo-build complete')
-  // Ensure the Node process exits even if a handle remains open
-  process.exit(0)
+  if (!existsSync(join(distDir, 'robots.txt')) || !existsSync(join(distDir, 'sitemap.xml'))) {
+    throw new Error('robots.txt or sitemap.xml missing in dist/')
+  }
+
+  console.log(`seo-build complete (mode=${mode})`)
 }
 
 main().catch((err) => {

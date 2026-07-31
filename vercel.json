@@ -4,8 +4,8 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/((?!robots\\.txt$|sitemap\\.xml$|build-id\\.txt$|.*\\.[A-Za-z0-9]+$).*)",
-      "destination": "/index.html"
+      "source": "/((?!robots\\.txt$|sitemap\\.xml$|build-id\\.txt$|_spa-shell\\.html$|.*\\.[A-Za-z0-9]+$).*)",
+      "destination": "/_spa-shell.html"
     }
   ],
   "headers": [
