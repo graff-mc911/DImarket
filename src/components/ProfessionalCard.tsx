@@ -329,7 +329,14 @@ export function ProfessionalCard({
         </div>
 
         <button
-          onClick={() => navigateTo(`/professional/${professional.id}`)}
+          onClick={() =>
+            navigateTo(
+              `/pro/${
+                (professional as { slug?: string | null }).slug ||
+                professional.id
+              }`,
+            )
+          }
           type="button"
           className={
             compact
