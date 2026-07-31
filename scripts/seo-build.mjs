@@ -1,12 +1,11 @@
 /**
- * DImarket SEO build step (Variant A):
- * 1) Write robots.txt + sitemap.xml into dist/
- * 2) Prerender key public routes (Playwright when available)
- * 3) Fallback: inject contentful SEO HTML shells if Chromium is unavailable (e.g. some CI images)
+ * DImarket SEO build step (Variant A, Vercel-safe).
+ * - Writes robots.txt + sitemap.xml into dist/
+ * - Injects contentful HTML shells + meta/JSON-LD for key public routes
  *
- * Does not redesign UI. Does not rewrite React components.
+ * Playwright full-render is available via: SEO_PLAYWRIGHT=1 node scripts/seo-build.mjs
+ * (local only; not used on Vercel).
  */
-import { spawn, spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -23,14 +22,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
 const distDir = join(root, 'dist')
 
-const PREVIEW_HOST = process.env.SEO_PREVIEW_HOST ?? '127.0.0.1'
-const PREVIEW_PORT = Number(process.env.SEO_PREVIEW_PORT ?? 4179)
-const BASE = `http://${PREVIEW_HOST}:${PREVIEW_PORT}`
-const FORCE_FALLBACK = process.env.SEO_PRERENDER_FALLBACK === '1' || process.env.VERCEL === '1'
-
 function assertDist() {
   if (!existsSync(join(distDir, 'index.html'))) {
-    throw new Error('dist/index.html missing — run `vite build` before seo-build')
+    throw new Error('dist/index.html missing — run vite build first')
   }
 }
 
@@ -54,7 +48,6 @@ Disallow: /register
 Sitemap: ${SITE_ORIGIN}/sitemap.xml
 `
   writeFileSync(join(distDir, 'robots.txt'), body, 'utf8')
-  // Avoid writing into public/ on Vercel builds (can break the deploy output).
   if (process.env.VERCEL !== '1') {
     writeFileSync(join(root, 'public', 'robots.txt'), body, 'utf8')
   }
@@ -103,96 +96,6 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;')
 }
 
-function ensureChromium() {
-  const result = spawnSync(
-    process.platform === 'win32' ? 'npx.cmd' : 'npx',
-    ['playwright', 'install', 'chromium'],
-    { cwd: root, encoding: 'utf8', timeout: 300000 },
-  )
-  if (result.status !== 0) {
-    console.warn('playwright install chromium failed:', result.stderr || result.stdout)
-    return false
-  }
-  return true
-}
-
-async function waitForPreview(timeoutMs = 90000) {
-  const start = Date.now()
-  while (Date.now() - start < timeoutMs) {
-    try {
-      const res = await fetch(`${BASE}/`)
-      if (res.ok) return true
-    } catch {
-      // retry
-    }
-    await new Promise((r) => setTimeout(r, 300))
-  }
-  return false
-}
-
-function startPreview() {
-  return spawn(
-    process.platform === 'win32' ? 'npx.cmd' : 'npx',
-    ['vite', 'preview', '--host', PREVIEW_HOST, '--port', String(PREVIEW_PORT), '--strictPort'],
-    {
-      cwd: root,
-      stdio: ['ignore', 'pipe', 'pipe'],
-      env: { ...process.env },
-    },
-  )
-}
-
-async function hardenHead(page, route) {
-  const url = absoluteUrl(route.path)
-  const blocks = jsonLdForRoute(route)
-  await page.evaluate(
-    ({ title, description, url, blocks, ogImage }) => {
-      document.title = title
-      const upsert = (attr, key, content) => {
-        let el = document.head.querySelector(`meta[${attr}="${key}"]`)
-        if (!el) {
-          el = document.createElement('meta')
-          el.setAttribute(attr, key)
-          document.head.appendChild(el)
-        }
-        el.setAttribute('content', content)
-      }
-      upsert('name', 'description', description)
-      upsert('property', 'og:title', title)
-      upsert('property', 'og:description', description)
-      upsert('property', 'og:url', url)
-      upsert('property', 'og:type', 'website')
-      upsert('property', 'og:image', ogImage)
-      upsert('name', 'twitter:card', 'summary_large_image')
-      upsert('name', 'twitter:title', title)
-      upsert('name', 'twitter:description', description)
-      upsert('name', 'twitter:image', ogImage)
-      let canonical = document.head.querySelector('link[rel="canonical"]')
-      if (!canonical) {
-        canonical = document.createElement('link')
-        canonical.setAttribute('rel', 'canonical')
-        document.head.appendChild(canonical)
-      }
-      canonical.setAttribute('href', url)
-      document.head.querySelectorAll('script[data-dimarket-seo="1"]').forEach((n) => n.remove())
-      for (const data of blocks) {
-        const script = document.createElement('script')
-        script.type = 'application/ld+json'
-        script.setAttribute('data-dimarket-seo', '1')
-        script.textContent = JSON.stringify(data)
-        document.head.appendChild(script)
-      }
-    },
-    {
-      title: route.title,
-      description: route.description,
-      url,
-      blocks,
-      ogImage: `${SITE_ORIGIN}/og-image.png`,
-    },
-  )
-}
-
 function applyHeadToHtml(html, route) {
   const url = absoluteUrl(route.path)
   const ogImage = `${SITE_ORIGIN}/og-image.png`
@@ -221,13 +124,12 @@ function applyHeadToHtml(html, route) {
       )
       .join('\n    ')}
 `
-  out = out
+  return out
     .replace(/<link[^>]+rel=["']canonical["'][^>]*>/gi, '')
     .replace(/<meta[^>]+property=["']og:[^"']+["'][^>]*>/gi, '')
     .replace(/<meta[^>]+name=["']twitter:[^"']+["'][^>]*>/gi, '')
     .replace(/<script[^>]*data-dimarket-seo=["']1["'][^>]*>[\s\S]*?<\/script>/gi, '')
     .replace('</head>', `${metaBlock}\n  </head>`)
-  return out
 }
 
 function fallbackRootHtml(route) {
@@ -235,6 +137,9 @@ function fallbackRootHtml(route) {
     (slug) =>
       `<li><a href="/category/${slug}">${escapeHtml(slug.replace(/-/g, ' '))}</a></li>`,
   ).join('')
+  const heading = escapeHtml(
+    route.title.replace(/\s*\|\s*DImarket$/, '').replace(/^DImarket —\s*/, ''),
+  )
   return `<div id="root"><a class="skip-link" href="#main">Skip to content</a>
 <header>
   <p><strong>DImarket</strong> — marketplace for construction &amp; renovation</p>
@@ -251,27 +156,20 @@ function fallbackRootHtml(route) {
   </nav>
 </header>
 <main id="main">
-  <h1>${escapeHtml(route.title.replace(/\s*\|\s*DImarket$/, '').replace(/^DImarket —\s*/, ''))}</h1>
+  <h1>${heading}</h1>
   <p>${escapeHtml(route.description)}</p>
   <section aria-labelledby="seo-categories">
     <h2 id="seo-categories">Service categories</h2>
     <ul>${cats}</ul>
   </section>
 </main>
-<footer><p>© DImarket · <a href="/robots.txt">robots</a> · <a href="/sitemap.xml">sitemap</a></p></footer>
+<footer><p>© DImarket</p></footer>
 </div>`
 }
 
 function writeFallbackRoutes(shellHtml) {
-  const shell =
-    shellHtml ||
-    readFileSync(join(distDir, 'index.html'), 'utf8').replace(
-      /<div id="root">[\s\S]*?<\/div>/i,
-      '<div id="root"></div>',
-    )
-
   for (const route of prerenderRoutes()) {
-    let html = shell
+    let html = shellHtml
     if (!/<div id="root"><\/div>/i.test(html)) {
       html = html.replace(/<div id="root">[\s\S]*?<\/div>/i, '<div id="root"></div>')
     }
@@ -280,121 +178,27 @@ function writeFallbackRoutes(shellHtml) {
     const out = outPathForRoute(route.path)
     mkdirSync(dirname(out), { recursive: true })
     writeFileSync(out, html, 'utf8')
-    console.log(`fallback prerender ${route.path}`)
+    console.log(`prerender ${route.path}`)
   }
 }
 
-async function prerenderWithPlaywright() {
-  const { chromium } = await import('playwright')
-  const preview = startPreview()
-  let closed = false
-  const shutdown = async () => {
-    if (closed) return
-    closed = true
-    try {
-      preview.kill('SIGTERM')
-    } catch {
-      /* ignore */
-    }
-    await new Promise((r) => setTimeout(r, 250))
-    try {
-      preview.kill('SIGKILL')
-    } catch {
-      /* ignore */
-    }
-  }
-
-  try {
-    const ready = await waitForPreview()
-    if (!ready) throw new Error('preview server not ready')
-
-    const browser = await chromium.launch({ headless: true })
-    const context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (compatible; DImarketSeoPrerender/1.0; +https://dimarket.app/)',
-      viewport: { width: 1280, height: 900 },
-    })
-
-    try {
-      for (const route of prerenderRoutes()) {
-        const page = await context.newPage()
-        console.log(`prerender ${route.path}`)
-        await page.goto(`${BASE}${route.path}`, { waitUntil: 'networkidle', timeout: 90000 })
-        await page.waitForSelector('#root', { timeout: 30000 })
-        await page
-          .waitForFunction(
-            () => {
-              const root = document.getElementById('root')
-              if (!root || !root.innerText || root.innerText.trim().length < 40) return false
-              return Boolean(document.querySelector('h1, h2, header'))
-            },
-            { timeout: 45000 },
-          )
-          .catch(() => console.warn(`  warn: content wait timed out for ${route.path}`))
-        await new Promise((r) => setTimeout(r, 400))
-        await hardenHead(page, route)
-        const html = await page.content()
-        const out = outPathForRoute(route.path)
-        mkdirSync(dirname(out), { recursive: true })
-        writeFileSync(out, html, 'utf8')
-        console.log(`  saved ${route.path}`)
-        await page.close()
-      }
-    } finally {
-      await browser.close()
-    }
-  } finally {
-    await shutdown()
-  }
-}
-
-async function main() {
+function main() {
   assertDist()
   writeRobots()
   writeSitemap()
-
-  // Preserve pristine SPA shell in memory before overwriting index.html
   const shellHtml = readFileSync(join(distDir, 'index.html'), 'utf8')
-
-  let mode = 'fallback'
-  const preferPlaywright = !FORCE_FALLBACK && process.env.VERCEL !== '1'
-  if (preferPlaywright) {
-    try {
-      const installed = ensureChromium()
-      if (!installed) throw new Error('chromium install failed')
-      await prerenderWithPlaywright()
-      mode = 'playwright'
-    } catch (err) {
-      console.warn('Playwright prerender failed, using HTML fallback:', err?.message || err)
-      writeFallbackRoutes(shellHtml)
-      mode = 'fallback'
-    }
-  } else {
-    writeFallbackRoutes(shellHtml)
-  }
+  writeFallbackRoutes(shellHtml)
 
   const home = readFileSync(join(distDir, 'index.html'), 'utf8')
   if (!/<h1[\s>]/i.test(home)) {
-    throw new Error('SEO build produced homepage without <h1>')
+    throw new Error('homepage missing h1 after SEO inject')
   }
-  if (!existsSync(join(distDir, 'robots.txt')) || !existsSync(join(distDir, 'sitemap.xml'))) {
-    throw new Error('robots.txt or sitemap.xml missing in dist/')
-  }
-
-  console.log(`seo-build complete (mode=${mode})`)
+  console.log('seo-build complete')
 }
 
-main().catch((err) => {
-  // Never fail the production deploy after robots/sitemap are written.
-  console.error('seo-build error (non-fatal):', err)
-  try {
-    writeRobots()
-    writeSitemap()
-    if (existsSync(join(distDir, 'index.html'))) {
-      writeFallbackRoutes(readFileSync(join(distDir, 'index.html'), 'utf8'))
-    }
-    console.log('seo-build recovered via fallback')
-  } catch (err2) {
-    console.error('seo-build recovery failed:', err2)
-  }
-  process.exit(0)
-})
+try {
+  main()
+} catch (err) {
+  console.error('seo-build error:', err)
+  process.exit(1)
+}
