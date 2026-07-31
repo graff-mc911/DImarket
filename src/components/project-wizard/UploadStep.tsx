@@ -30,12 +30,14 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
         setLocalError(`Each file must be under ${MAX_MB} MB`)
         continue
       }
+      const name = file.name.toLowerCase()
       const ok =
         file.type.startsWith('image/') ||
         file.type.startsWith('video/') ||
-        file.type === 'application/pdf'
+        file.type === 'application/pdf' ||
+        /\.(pdf|dwg|dxf|png|jpe?g|webp|mp4|mov|webm)$/i.test(name)
       if (!ok) {
-        setLocalError('Only images, video, and PDF are allowed')
+        setLocalError('Only photos, videos, PDF, and plans (DWG/DXF) are allowed')
         continue
       }
       next.push({
@@ -84,8 +86,9 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
           ref={inputRef}
           type="file"
           multiple
-          accept="image/*,video/*,application/pdf"
+          accept="image/*,video/*,application/pdf,.dwg,.dxf"
           className="hidden"
+          aria-label={dropLabel}
           onChange={(e) => addFiles(e.target.files)}
         />
       </div>
