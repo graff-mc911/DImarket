@@ -26,7 +26,7 @@ const distDir = join(root, 'dist')
 const PREVIEW_HOST = process.env.SEO_PREVIEW_HOST ?? '127.0.0.1'
 const PREVIEW_PORT = Number(process.env.SEO_PREVIEW_PORT ?? 4179)
 const BASE = `http://${PREVIEW_HOST}:${PREVIEW_PORT}`
-const FORCE_FALLBACK = process.env.SEO_PRERENDER_FALLBACK === '1'
+const FORCE_FALLBACK = process.env.SEO_PRERENDER_FALLBACK === '1' || process.env.VERCEL === '1'
 
 function assertDist() {
   if (!existsSync(join(distDir, 'index.html'))) {

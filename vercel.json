@@ -4,7 +4,7 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/((?!robots\\.txt$|sitemap\\.xml$|build-id\\.txt$|_spa-shell\\.html$|.*\\.[A-Za-z0-9]+$).*)",
+      "source": "/(.*)",
       "destination": "/_spa-shell.html"
     }
   ],
@@ -66,6 +66,15 @@
         {
           "key": "Vercel-CDN-Cache-Control",
           "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/_spa-shell.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
         }
       ]
     },
