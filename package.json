@@ -50,7 +50,10 @@
     "telegram:setup": "node scripts/setup-telegram-listings-bot.mjs",
     "db:apply-admin-ai": "node scripts/apply-admin-ai-migration.mjs",
     "db:apply-admin-rating": "node scripts/apply-admin-local-rating-rpc.mjs",
-    "deploy:admin-ai": "npx supabase functions deploy admin-ai-assistant send-notification --project-ref wjlfvajloxkevggwjgtk"
+    "deploy:admin-ai": "npx supabase functions deploy admin-ai-assistant send-notification --project-ref wjlfvajloxkevggwjgtk",
+    "db:apply-p0": "node scripts/apply-p0-schema.mjs",
+    "db:sync-prod": "node scripts/sync-prod-database.mjs",
+    "db:audit-prod": "node scripts/sync-prod-database.mjs --audit-only"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
