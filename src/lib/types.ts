@@ -823,30 +823,60 @@ export interface Database {
       }
 
       // ----------------------------------------------------------
-      // saved_items — збережені оголошення і профілі
-      // item_type: 'listing' або 'profile'
+      // saved_items — favorites: professionals, companies, projects,
+      // categories, searches (+ legacy listing/profile)
       // ----------------------------------------------------------
       saved_items: {
         Row: {
           id: string
           user_id: string
-          item_type: 'listing' | 'profile'
+          item_type:
+            | 'listing'
+            | 'profile'
+            | 'professional'
+            | 'company'
+            | 'project'
+            | 'category'
+            | 'search'
           item_id: string
+          title: string | null
+          meta: Json
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
           user_id: string
-          item_type: 'listing' | 'profile'
+          item_type:
+            | 'listing'
+            | 'profile'
+            | 'professional'
+            | 'company'
+            | 'project'
+            | 'category'
+            | 'search'
           item_id: string
+          title?: string | null
+          meta?: Json
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           user_id?: string
-          item_type?: 'listing' | 'profile'
+          item_type?:
+            | 'listing'
+            | 'profile'
+            | 'professional'
+            | 'company'
+            | 'project'
+            | 'category'
+            | 'search'
           item_id?: string
+          title?: string | null
+          meta?: Json
           created_at?: string
+          updated_at?: string
         }
       }
 

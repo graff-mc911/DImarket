@@ -35,6 +35,7 @@ import type { Profile } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 import { ReviewFeed } from '../components/reviews/ReviewFeed'
 import { recordProfileView } from '../lib/analytics/analytics'
+import { isFavorite, toggleFavorite } from '../lib/favorites'
 
 interface ProfessionalDetailProps {
   profileId: string
@@ -57,9 +58,12 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
 
   useEffect(() => {
     void loadProfile()
-    if (user) void checkIfSaved()
     if (profileId) void recordProfileView(profileId)
   }, [profileId, user])
+
+  useEffect(() => {
+    if (user && profile) void checkIfSaved()
+  }, [user?.id, profile?.id, profile?.user_role])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -98,17 +102,13 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
     return () => { cancelled = true }
   }
 
+  const favoriteType =
+    profile?.user_role === 'company' ? ('company' as const) : ('professional' as const)
+
   // Перевірка чи збережено
   const checkIfSaved = async () => {
     try {
-      const { data } = await supabase
-        .from('saved_items')
-        .select('id')
-        .eq('user_id', user!.id)
-        .eq('item_type', 'profile')
-        .eq('item_id', profileId)
-        .maybeSingle()
-      setIsSaved(!!data)
+      setIsSaved(await isFavorite(favoriteType, profileId))
     } catch { /* ігноруємо */ }
   }
 
@@ -117,16 +117,12 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
     if (!user) { navigateTo('/login'); return }
     setSavingProfile(true)
     try {
-      if (isSaved) {
-        await supabase.from('saved_items').delete()
-          .eq('user_id', user.id).eq('item_type', 'profile').eq('item_id', profileId)
-        setIsSaved(false)
-      } else {
-        await supabase.from('saved_items').insert({
-          user_id: user.id, item_type: 'profile', item_id: profileId,
-        })
-        setIsSaved(true)
-      }
+      const result = await toggleFavorite({
+        itemType: favoriteType,
+        itemId: profileId,
+        title: profile?.full_name,
+      })
+      if (!result.error) setIsSaved(result.saved)
     } catch (e) {
       console.error('Помилка збереження:', e)
     } finally {

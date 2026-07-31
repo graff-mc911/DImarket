@@ -18,6 +18,8 @@ import {
 import { marketplaceCategoryLabel, marketplaceServiceProsPath } from '../lib/marketplaceCategories'
 import { navigateTo } from '../lib/navigation'
 import { pushRecentSearch } from '../lib/searchHistory'
+import { FavoriteButton } from '../components/favorites/FavoriteButton'
+import { searchKeyFrom } from '../lib/favorites'
 
 type ResultTab = 'all' | 'professionals' | 'categories' | 'services' | 'projects' | 'cities'
 
@@ -121,17 +123,38 @@ export function SearchPage() {
         <p className="adv-search__eyebrow">{t('advancedSearch.eyebrow')}</p>
         <h1>{t('advancedSearch.title')}</h1>
         <p className="adv-search__subtitle">{t('advancedSearch.subtitle')}</p>
-        <SearchAutocomplete
-          value={query}
-          onChange={setQuery}
-          onSubmit={(q) => {
-            setQuery(q)
-            setTab('all')
-            void runSearch(q)
-          }}
-          autoFocus={!initial.q}
-          popularFallback={POPULAR_FALLBACK}
-        />
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+          <div className="min-w-0 flex-1">
+            <SearchAutocomplete
+              value={query}
+              onChange={setQuery}
+              onSubmit={(q) => {
+                setQuery(q)
+                setTab('all')
+                void runSearch(q)
+              }}
+              autoFocus={!initial.q}
+              popularFallback={POPULAR_FALLBACK}
+            />
+          </div>
+          <FavoriteButton
+            itemType="search"
+            label
+            title={query.trim() || 'Saved search'}
+            search={{
+              search_key: searchKeyFrom({
+                query,
+                path: buildSearchUrl(query, filters, sort),
+                city: filters.city,
+                country: filters.country,
+              }),
+              query,
+              path: buildSearchUrl(query, filters, sort),
+              city: filters.city || undefined,
+              country: filters.country || undefined,
+            }}
+          />
+        </div>
       </header>
 
       <div className="adv-search__layout layout-page-gutter">

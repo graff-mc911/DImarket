@@ -7,6 +7,7 @@ import {
   marketplaceCategoryLabel,
   type MarketplaceCategory,
 } from '../../lib/marketplaceCategories'
+import { FavoriteButton } from '../favorites/FavoriteButton'
 
 interface CategoryHeroProps {
   category: MarketplaceCategory
@@ -33,7 +34,16 @@ export function CategoryHero({ category, servicesCount, reviewsCount }: Category
         <div className="cat-hero__icon" aria-hidden>
           <Icon className="h-10 w-10" strokeWidth={1.6} />
         </div>
-        <h1 className="cat-hero__title">{title}</h1>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <h1 className="cat-hero__title">{title}</h1>
+          <FavoriteButton
+            itemType="category"
+            itemId={category.id}
+            title={title}
+            label
+            className="shrink-0"
+          />
+        </div>
         {description ? <p className="cat-hero__desc">{description}</p> : null}
 
         <div className="cat-hero__stats">

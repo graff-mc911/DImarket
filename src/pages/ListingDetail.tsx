@@ -32,6 +32,7 @@ import type { ListingWithImages, Profile } from '../lib/types'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
 import { ListingInlineChat } from '../components/listing/ListingInlineChat'
 import { MobileAdBanner } from '../components/MobileAdBanner'
+import { isFavorite, toggleFavorite } from '../lib/favorites'
 
 interface ListingDetailProps {
   listingId: string
@@ -54,8 +55,11 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
 
   useEffect(() => {
     void loadListing()
-    if (user) void checkIfSaved()
   }, [listingId, user])
+
+  useEffect(() => {
+    if (user && listing) void checkIfSaved()
+  }, [user?.id, listing?.id, listing?.listing_type])
 
   // Завантаження оголошення з фото та категорією
   const loadListing = async () => {
@@ -101,17 +105,13 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
     return () => { cancelled = true }
   }
 
+  const favoriteType =
+    listing?.listing_type === 'service_request' ? ('project' as const) : ('listing' as const)
+
   // Перевірка чи збережено
   const checkIfSaved = async () => {
     try {
-      const { data } = await supabase
-        .from('saved_items')
-        .select('id')
-        .eq('user_id', user!.id)
-        .eq('item_type', 'listing')
-        .eq('item_id', listingId)
-        .maybeSingle()
-      setIsSaved(!!data)
+      setIsSaved(await isFavorite(favoriteType, listingId))
     } catch { /* ігноруємо */ }
   }
 
@@ -120,16 +120,12 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
     if (!user) { navigateTo('/login'); return }
     setSavingItem(true)
     try {
-      if (isSaved) {
-        await supabase.from('saved_items').delete()
-          .eq('user_id', user.id).eq('item_type', 'listing').eq('item_id', listingId)
-        setIsSaved(false)
-      } else {
-        await supabase.from('saved_items').insert({
-          user_id: user.id, item_type: 'listing', item_id: listingId,
-        })
-        setIsSaved(true)
-      }
+      const result = await toggleFavorite({
+        itemType: favoriteType,
+        itemId: listingId,
+        title: listing?.title,
+      })
+      if (!result.error) setIsSaved(result.saved)
     } catch (e) {
       console.error('Помилка збереження:', e)
     } finally {

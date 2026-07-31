@@ -1,506 +1,735 @@
-// ============================================================
-// Favorites.tsx — Збережені оголошення та профілі
-//
-// Користувач може зберігати:
-// - оголошення (listing)
-// - профілі майстрів/компаній (profile)
-//
-// Дані зберігаються в таблиці saved_items у Supabase.
-// Якщо таблиця ще не створена — показуємо інструкцію.
-// ============================================================
-
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Bookmark,
-  BookmarkX,
   Building2,
-  FileText,
+  Check,
+  Columns2,
+  FolderKanban,
+  FolderTree,
   Heart,
+  Loader2,
   MapPin,
   Search,
+  Share2,
   Star,
+  Trash2,
   User,
+  X,
 } from 'lucide-react'
-import { supabase }       from '../lib/supabase'
-import { useApp }         from '../contexts/AppContext'
-import { navigateTo }     from '../lib/navigation'
+import { useApp } from '../contexts/AppContext'
+import { navigateTo } from '../lib/navigation'
+import { supabase } from '../lib/supabase'
 import { VerificationBadge } from '../components/MatchScoreBadge'
-import type { Listing, Profile } from '../lib/types'
+import {
+  fetchFavoritesBundle,
+  removeFavorite,
+  shareFavorite,
+  shareUrlForFavorite,
+  tabCounts,
+  type FavoriteCategory,
+  type FavoriteProfessional,
+  type FavoriteProject,
+  type FavoriteSearch,
+  type FavoriteTab,
+  type FavoritesBundle,
+} from '../lib/favorites'
+import type { VerificationLevel } from '../lib/types'
 
-// Тип збереженого елемента з деталями
-interface SavedListingItem {
-  id: string
-  item_id: string
-  item_type: 'listing'
-  created_at: string
-  listing: Listing | null
+const TABS: { id: FavoriteTab; label: string; icon: typeof User }[] = [
+  { id: 'professionals', label: 'Professionals', icon: User },
+  { id: 'companies', label: 'Companies', icon: Building2 },
+  { id: 'projects', label: 'Projects', icon: FolderKanban },
+  { id: 'categories', label: 'Categories', icon: FolderTree },
+  { id: 'searches', label: 'Searches', icon: Search },
+]
+
+const EMPTY: FavoritesBundle = {
+  professionals: [],
+  companies: [],
+  projects: [],
+  categories: [],
+  searches: [],
 }
 
-interface SavedProfileItem {
-  id: string
-  item_id: string
-  item_type: 'profile'
-  created_at: string
-  profile: Profile | null
+function formatSavedDate(iso: string) {
+  return new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
 }
-
-type SavedItem = SavedListingItem | SavedProfileItem
-
-// Активний таб
-type ActiveTab = 'listings' | 'profiles'
 
 export function Favorites() {
   const { user, t } = useApp()
+  const [bundle, setBundle] = useState<FavoritesBundle>(EMPTY)
+  const [loading, setLoading] = useState(true)
+  const [tab, setTab] = useState<FavoriteTab>('professionals')
+  const [compareIds, setCompareIds] = useState<string[]>([])
+  const [showCompare, setShowCompare] = useState(false)
+  const [toast, setToast] = useState('')
+  const [busyId, setBusyId] = useState<string | null>(null)
 
-  const [savedListings, setSavedListings] = useState<SavedListingItem[]>([])
-  const [savedProfiles, setSavedProfiles] = useState<SavedProfileItem[]>([])
-  const [loading, setLoading]             = useState(true)
-  const [activeTab, setActiveTab]         = useState<ActiveTab>('listings')
-  // Якщо таблиця saved_items ще не існує в базі
-  const [tableNotFound, setTableNotFound] = useState(false)
+  const load = useCallback(async () => {
+    if (!user) return
+    setLoading(true)
+    const data = await fetchFavoritesBundle(user.id)
+    setBundle(data)
+    setLoading(false)
+  }, [user?.id])
 
   useEffect(() => {
-    if (user) {
-      void loadFavorites()
-    } else {
+    if (!user) {
       navigateTo('/login')
+      return
     }
-  }, [user])
+    void load()
+  }, [user?.id, load])
 
-  if (!user) {
-    return null
-  }
-
-  // Завантаження збережених елементів з Supabase
-  const loadFavorites = async () => {
-    setLoading(true)
-    try {
-      // Завантажуємо збережені оголошення
-      const { data: listingsData, error: listingsError } = await supabase
-        .from('saved_items')
-        .select('id, item_id, item_type, created_at')
-        .eq('user_id', user!.id)
-        .eq('item_type', 'listing')
-        .order('created_at', { ascending: false })
-
-      // Перевіряємо чи таблиця існує
-      if (listingsError) {
-        if (listingsError.code === '42P01') {
-          // Таблиця saved_items не створена в базі
-          setTableNotFound(true)
-          return
-        }
-        throw listingsError
-      }
-
-      // Для кожного збереженого оголошення завантажуємо деталі
-      if (listingsData && listingsData.length > 0) {
-        const ids = listingsData.map(item => item.item_id)
-        const { data: listingDetails } = await supabase
-          .from('listings')
-          .select('*')
-          .in('id', ids)
-          .eq('status', 'active')
-
-        const merged: SavedListingItem[] = listingsData.map(saved => ({
-          id: saved.id,
-          item_id: saved.item_id,
-          item_type: 'listing' as const,
-          created_at: saved.created_at,
-          listing: listingDetails?.find(l => l.id === saved.item_id) || null,
-        }))
-        setSavedListings(merged)
-      } else {
-        setSavedListings([])
-      }
-
-      // Завантажуємо збережені профілі
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('saved_items')
-        .select('id, item_id, item_type, created_at')
-        .eq('user_id', user!.id)
-        .eq('item_type', 'profile')
-        .order('created_at', { ascending: false })
-
-      if (profilesError) throw profilesError
-
-      if (profilesData && profilesData.length > 0) {
-        const ids = profilesData.map(item => item.item_id)
-        const { data: profileDetails } = await supabase
-          .from('profiles')
-          .select('*')
-          .in('id', ids)
-
-        const merged: SavedProfileItem[] = profilesData.map(saved => ({
-          id: saved.id,
-          item_id: saved.item_id,
-          item_type: 'profile' as const,
-          created_at: saved.created_at,
-          profile: profileDetails?.find(p => p.id === saved.item_id) || null,
-        }))
-        setSavedProfiles(merged)
-      } else {
-        setSavedProfiles([])
-      }
-
-    } catch (error) {
-      console.error('Помилка завантаження збережених:', error)
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    if (!user) return
+    const channel = supabase
+      .channel(`favorites-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'saved_items',
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          void load()
+        },
+      )
+      .subscribe()
+    return () => {
+      void supabase.removeChannel(channel)
     }
+  }, [user?.id, load])
+
+  useEffect(() => {
+    setCompareIds([])
+    setShowCompare(false)
+  }, [tab])
+
+  const counts = useMemo(() => tabCounts(bundle), [bundle])
+  const comparable = tab === 'professionals' || tab === 'companies' || tab === 'projects'
+
+  const flash = (msg: string) => {
+    setToast(msg)
+    window.setTimeout(() => setToast(''), 2200)
   }
 
-  // Видалення зі збережених
-  const removeFromFavorites = async (savedId: string, type: ActiveTab) => {
-    try {
-      const { error } = await supabase
-        .from('saved_items')
-        .delete()
-        .eq('id', savedId)
-        .eq('user_id', user!.id)
-
-      if (error) throw error
-
-      // Оновлюємо локальний стан без перезавантаження
-      if (type === 'listings') {
-        setSavedListings(prev => prev.filter(item => item.id !== savedId))
-      } else {
-        setSavedProfiles(prev => prev.filter(item => item.id !== savedId))
-      }
-    } catch (error) {
-      console.error('Помилка видалення зі збережених:', error)
+  const onRemove = async (savedId: string) => {
+    setBusyId(savedId)
+    const res = await removeFavorite(savedId)
+    if (res.ok) {
+      setBundle((prev) => ({
+        professionals: prev.professionals.filter((x) => x.savedId !== savedId),
+        companies: prev.companies.filter((x) => x.savedId !== savedId),
+        projects: prev.projects.filter((x) => x.savedId !== savedId),
+        categories: prev.categories.filter((x) => x.savedId !== savedId),
+        searches: prev.searches.filter((x) => x.savedId !== savedId),
+      }))
+      setCompareIds((ids) => ids.filter((id) => id !== savedId))
+      flash('Removed from favorites')
     }
+    setBusyId(null)
   }
 
-  // Форматування дати збереження
-  const formatSavedDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' })
-
-  // --- Екран завантаження ---
-  if (loading) {
-    return (
-      <div className="py-10 flex items-center justify-center">
-        <div className="glass-card p-10 text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-[var(--glass-border)] border-t-[var(--accent-700)]" />
-          <p className="muted-text mt-4 text-sm">Завантаження збережених...</p>
-        </div>
-      </div>
-    )
+  const onShare = async (title: string, url: string) => {
+    const result = await shareFavorite({ title, url, text: `Saved on DImarket: ${title}` })
+    flash(result === 'copied' ? 'Link copied' : result === 'shared' ? 'Shared' : 'Share failed')
   }
 
-  // --- Якщо таблиця не створена в базі ---
-  if (tableNotFound) {
-    return (
-      <div className="py-10">
-        <div className="mx-auto max-w-2xl">
-          <div className="glass-panel p-8 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[rgba(242,171,116,0.18)]" style={{ color: 'var(--accent-700)' }}>
-              <Bookmark className="h-8 w-8" />
-            </div>
-            <h1 className="mt-5 text-2xl font-extrabold" style={{ color: 'var(--ink-900)' }}>
-              Збережені
-            </h1>
-            <p className="muted-text mx-auto mt-4 max-w-md text-sm leading-7">
-              Функція збережених потребує таблицю <code className="rounded bg-[rgba(0,0,0,0.06)] px-1.5 py-0.5 text-xs">saved_items</code> у вашій базі Supabase.
-            </p>
-            <div className="mt-6 rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.4)] p-5 text-left">
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--ink-500)' }}>
-                SQL для створення таблиці
-              </p>
-              <pre className="mt-3 overflow-x-auto rounded-[14px] bg-[rgba(0,0,0,0.05)] p-4 text-xs leading-relaxed" style={{ color: 'var(--ink-900)' }}>
-{`CREATE TABLE saved_items (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  item_type TEXT CHECK (item_type IN ('listing','profile')),
-  item_id UUID NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  UNIQUE(user_id, item_type, item_id)
-);
-
-ALTER TABLE saved_items ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users manage own saved items"
-ON saved_items FOR ALL USING (auth.uid() = user_id);`}
-              </pre>
-            </div>
-            <button
-              type="button"
-              onClick={() => navigateTo('/listings')}
-              className="btn-primary mt-6 rounded-full"
-            >
-              <Search className="h-4 w-4" />
-              Перейти до каталогу
-            </button>
-          </div>
-        </div>
-      </div>
-    )
+  const toggleCompare = (savedId: string) => {
+    setCompareIds((prev) => {
+      if (prev.includes(savedId)) return prev.filter((x) => x !== savedId)
+      if (prev.length >= 3) return prev
+      return [...prev, savedId]
+    })
   }
+
+  const compareItems = useMemo(() => {
+    if (tab === 'professionals') {
+      return bundle.professionals.filter((p) => compareIds.includes(p.savedId))
+    }
+    if (tab === 'companies') {
+      return bundle.companies.filter((p) => compareIds.includes(p.savedId))
+    }
+    if (tab === 'projects') {
+      return bundle.projects.filter((p) => compareIds.includes(p.savedId))
+    }
+    return []
+  }, [tab, bundle, compareIds])
+
+  if (!user) return null
 
   return (
-    <div className="py-8 pb-24 lg:pb-8">
-          <div>
+    <div className="min-h-[70vh] bg-[#f5f5f7] pb-24">
+      <div className="border-b border-[#e8e8ed] bg-white/80 backdrop-blur-xl">
+        <div className="mx-auto max-w-4xl px-4 py-8 md:px-6">
+          <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
+            <Heart className="h-4 w-4" />
+            Favorites
+          </p>
+          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[#1d1d1f] md:text-[32px]">
+            {t('favorites.title') || 'Favorites'}
+          </h1>
+          <p className="mt-1 max-w-xl text-[15px] text-[#86868b]">
+            {t('favorites.description') ||
+              'Save professionals, companies, projects, categories, and searches — sync across devices.'}
+          </p>
 
-            {/* Заголовок */}
-            <div className="mb-6">
-              <h1 className="text-2xl font-extrabold tracking-[-0.03em]" style={{ color: 'var(--ink-900)' }}>
-                {t('header.favorites')}
-              </h1>
-              <p className="muted-text mt-1 text-sm">
-                Оголошення та майстри які ви зберегли
-              </p>
-            </div>
-
-            {/* Таби */}
-            <div className="mb-5 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveTab('listings')}
-                className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all"
-                style={activeTab === 'listings'
-                  ? { background: 'var(--accent-700)', color: '#fff' }
-                  : { background: 'var(--glass-bg)', color: 'var(--ink-700)', border: '1px solid var(--glass-border)' }}
-              >
-                <FileText className="h-4 w-4" />
-                Оголошення
-                {savedListings.length > 0 && (
-                  <span className="rounded-full px-1.5 py-0.5 text-xs font-bold"
-                    style={activeTab === 'listings'
-                      ? { background: 'rgba(255,255,255,0.25)' }
-                      : { background: 'var(--glass-border)', color: 'var(--ink-700)' }}>
-                    {savedListings.length}
-                  </span>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab('profiles')}
-                className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all"
-                style={activeTab === 'profiles'
-                  ? { background: 'var(--accent-700)', color: '#fff' }
-                  : { background: 'var(--glass-bg)', color: 'var(--ink-700)', border: '1px solid var(--glass-border)' }}
-              >
-                <User className="h-4 w-4" />
-                Майстри
-                {savedProfiles.length > 0 && (
-                  <span className="rounded-full px-1.5 py-0.5 text-xs font-bold"
-                    style={activeTab === 'profiles'
-                      ? { background: 'rgba(255,255,255,0.25)' }
-                      : { background: 'var(--glass-border)', color: 'var(--ink-700)' }}>
-                    {savedProfiles.length}
-                  </span>
-                )}
-              </button>
-            </div>
-
-            {/* Список збережених оголошень */}
-            {activeTab === 'listings' && (
-              <div>
-                {savedListings.length === 0 ? (
-                  <div className="glass-card py-16 text-center">
-                    <Heart className="mx-auto mb-4 h-14 w-14" style={{ color: 'var(--glass-border-strong)' }} />
-                    <p className="font-semibold" style={{ color: 'var(--ink-700)' }}>
-                      Немає збережених оголошень
-                    </p>
-                    <p className="muted-text mt-2 text-sm">
-                      Натисніть серце на оголошенні щоб зберегти його тут
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('/listings')}
-                      className="btn-primary mt-5 rounded-full"
+          <div className="mt-5 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {TABS.map((item) => {
+              const Icon = item.icon
+              const active = tab === item.id
+              const count = counts[item.id]
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setTab(item.id)}
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[12px] font-semibold transition ${
+                    active
+                      ? 'bg-[#1d1d1f] text-white'
+                      : 'border border-[#d2d2d7] bg-white text-[#1d1d1f] hover:bg-[#f5f5f7]'
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {item.label}
+                  {count > 0 ? (
+                    <span
+                      className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                        active ? 'bg-white/20' : 'bg-[#f5f5f7] text-[#6e6e73]'
+                      }`}
                     >
-                      <Search className="h-4 w-4" />
-                      Переглянути оголошення
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {savedListings.map((item) => {
-                      const listing = item.listing
-                      if (!listing) return null
-
-                      return (
-                        <div key={item.id} className="glass-card overflow-hidden">
-                          <div className="p-4">
-                            <div className="flex items-start justify-between gap-3">
-
-                              {/* Інформація про оголошення */}
-                              <button
-                                type="button"
-                                onClick={() => navigateTo('/listing/' + listing.id)}
-                                className="flex-1 min-w-0 text-left"
-                              >
-                                <h3 className="truncate font-bold transition" style={{ color: 'var(--ink-900)' }}>
-                                  {listing.title}
-                                </h3>
-                                <p className="muted-text mt-1 line-clamp-2 text-sm">
-                                  {listing.description}
-                                </p>
-                                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs" style={{ color: 'var(--ink-500)' }}>
-                                  <span className="flex items-center gap-1">
-                                    <MapPin className="h-3 w-3" />
-                                    {listing.location}
-                                  </span>
-                                  {listing.price && (
-                                    <span className="font-bold" style={{ color: 'var(--ink-900)' }}>
-                                      {listing.price.toLocaleString()} {listing.currency}
-                                    </span>
-                                  )}
-                                  <span style={{ color: 'var(--ink-400)' }}>
-                                    Збережено {formatSavedDate(item.created_at)}
-                                  </span>
-                                </div>
-                              </button>
-
-                              {/* Кнопка видалення зі збережених */}
-                              <button
-                                type="button"
-                                onClick={() => removeFromFavorites(item.id, 'listings')}
-                                className="shrink-0 flex h-9 w-9 items-center justify-center rounded-full transition hover:scale-110"
-                                style={{ background: 'rgba(239,68,68,0.10)', color: '#b91c1c' }}
-                                title="Видалити зі збережених"
-                              >
-                                <BookmarkX className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Список збережених профілів */}
-            {activeTab === 'profiles' && (
-              <div>
-                {savedProfiles.length === 0 ? (
-                  <div className="glass-card py-16 text-center">
-                    <User className="mx-auto mb-4 h-14 w-14" style={{ color: 'var(--glass-border-strong)' }} />
-                    <p className="font-semibold" style={{ color: 'var(--ink-700)' }}>
-                      Немає збережених майстрів
-                    </p>
-                    <p className="muted-text mt-2 text-sm">
-                      Зберігайте профілі майстрів щоб швидко знаходити їх тут
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('/professionals')}
-                      className="btn-primary mt-5 rounded-full"
-                    >
-                      <Search className="h-4 w-4" />
-                      Знайти майстрів
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {savedProfiles.map((item) => {
-                      const profile = item.profile
-                      if (!profile) return null
-
-                      // Ініціали для аватара
-                      const initials = profile.full_name
-                        ? profile.full_name.trim().split(/\s+/).slice(0, 2).map(p => p[0]?.toUpperCase() || '').join('')
-                        : '?'
-
-                      return (
-                        <div key={item.id} className="glass-card overflow-hidden">
-                          <div className="p-4">
-                            <div className="flex items-start justify-between gap-3">
-
-                              {/* Інформація про профіль */}
-                              <button
-                                type="button"
-                                onClick={() => navigateTo('/professional/' + profile.id)}
-                                className="flex flex-1 min-w-0 items-center gap-3 text-left"
-                              >
-                                {/* Аватар */}
-                                {profile.profile_photo || profile.avatar_url ? (
-                                  <img
-                                    src={profile.profile_photo || profile.avatar_url || ''}
-                                    alt={profile.full_name || ''}
-                                    className="h-12 w-12 shrink-0 rounded-[14px] object-cover"
-                                  />
-                                ) : (
-                                  <div
-                                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] text-sm font-bold"
-                                    style={{ background: 'rgba(199,138,96,0.15)', color: 'var(--accent-700)' }}
-                                  >
-                                    {initials}
-                                  </div>
-                                )}
-
-                                {/* Ім'я та деталі */}
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <h3 className="truncate font-bold" style={{ color: 'var(--ink-900)' }}>
-                                      {profile.full_name || 'Майстер'}
-                                    </h3>
-                                    <VerificationBadge level={profile.verification_level} />
-                                    {(!profile.verification_level || profile.verification_level === 'none') &&
-                                      profile.is_verified && (
-                                      <span className="rounded-full px-2 py-0.5 text-xs font-semibold" style={{ background: 'rgba(34,197,94,0.12)', color: '#15803d' }}>
-                                        ✓ Верифікований
-                                      </span>
-                                    )}
-                                  </div>
-
-                                  <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs" style={{ color: 'var(--ink-500)' }}>
-                                    {profile.location && (
-                                      <span className="flex items-center gap-1">
-                                        <MapPin className="h-3 w-3" />
-                                        {profile.location}
-                                      </span>
-                                    )}
-                                    {profile.rating > 0 && (
-                                      <span className="flex items-center gap-1">
-                                        <Star className="h-3 w-3 fill-current text-[#c78a60]" />
-                                        {profile.rating.toFixed(1)}
-                                        <span style={{ color: 'var(--ink-400)' }}>
-                                          ({profile.total_reviews})
-                                        </span>
-                                      </span>
-                                    )}
-                                    {profile.is_professional && (
-                                      <span className="flex items-center gap-1">
-                                        <Building2 className="h-3 w-3" />
-                                        Майстер
-                                      </span>
-                                    )}
-                                  </div>
-
-                                  {profile.bio && (
-                                    <p className="muted-text mt-1 line-clamp-1 text-xs">
-                                      {profile.bio}
-                                    </p>
-                                  )}
-                                </div>
-                              </button>
-
-                              {/* Кнопка видалення зі збережених */}
-                              <button
-                                type="button"
-                                onClick={() => removeFromFavorites(item.id, 'profiles')}
-                                className="shrink-0 flex h-9 w-9 items-center justify-center rounded-full transition hover:scale-110"
-                                style={{ background: 'rgba(239,68,68,0.10)', color: '#b91c1c' }}
-                                title="Видалити зі збережених"
-                              >
-                                <BookmarkX className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-
+                      {count}
+                    </span>
+                  ) : null}
+                </button>
+              )
+            })}
           </div>
+
+          {comparable && compareIds.length >= 2 ? (
+            <button
+              type="button"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#1d1d1f] px-4 py-2 text-[12px] font-semibold text-white"
+              onClick={() => setShowCompare(true)}
+            >
+              <Columns2 className="h-3.5 w-3.5" />
+              Compare ({compareIds.length})
+            </button>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-4xl px-4 py-6 md:px-6">
+        {loading ? (
+          <div className="flex min-h-[30vh] items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-[#86868b]" />
+          </div>
+        ) : (
+          <>
+            {tab === 'professionals' && (
+              <ProList
+                items={bundle.professionals}
+                emptyTitle="No saved professionals"
+                emptyCta="Browse professionals"
+                emptyHref="/professionals"
+                compareIds={compareIds}
+                busyId={busyId}
+                onRemove={onRemove}
+                onShare={onShare}
+                onCompare={toggleCompare}
+              />
+            )}
+            {tab === 'companies' && (
+              <ProList
+                items={bundle.companies}
+                emptyTitle="No saved companies"
+                emptyCta="Browse companies"
+                emptyHref="/companies"
+                compareIds={compareIds}
+                busyId={busyId}
+                onRemove={onRemove}
+                onShare={onShare}
+                onCompare={toggleCompare}
+              />
+            )}
+            {tab === 'projects' && (
+              <ProjectList
+                items={bundle.projects}
+                compareIds={compareIds}
+                busyId={busyId}
+                onRemove={onRemove}
+                onShare={onShare}
+                onCompare={toggleCompare}
+              />
+            )}
+            {tab === 'categories' && (
+              <CategoryList items={bundle.categories} busyId={busyId} onRemove={onRemove} onShare={onShare} />
+            )}
+            {tab === 'searches' && (
+              <SearchList items={bundle.searches} busyId={busyId} onRemove={onRemove} onShare={onShare} />
+            )}
+          </>
+        )}
+      </div>
+
+      {toast ? (
+        <div className="fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-full bg-[#1d1d1f] px-4 py-2 text-[12px] font-semibold text-white shadow-lg lg:bottom-8">
+          {toast}
+        </div>
+      ) : null}
+
+      {showCompare && compareItems.length >= 2 ? (
+        <CompareModal
+          tab={tab}
+          items={compareItems}
+          onClose={() => setShowCompare(false)}
+        />
+      ) : null}
+    </div>
+  )
+}
+
+function EmptyState({
+  title,
+  cta,
+  href,
+}: {
+  title: string
+  cta: string
+  href: string
+}) {
+  return (
+    <div className="rounded-[22px] border border-[#e8e8ed] bg-white px-6 py-16 text-center shadow-sm">
+      <Bookmark className="mx-auto h-10 w-10 text-[#d2d2d7]" />
+      <p className="mt-4 text-[15px] font-semibold text-[#1d1d1f]">{title}</p>
+      <p className="mt-1 text-[13px] text-[#86868b]">Save items to find them here later.</p>
+      <button
+        type="button"
+        onClick={() => navigateTo(href)}
+        className="mt-5 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white"
+      >
+        {cta}
+      </button>
+    </div>
+  )
+}
+
+function ActionRow({
+  savedId,
+  busy,
+  comparable,
+  inCompare,
+  onRemove,
+  onShare,
+  onCompare,
+}: {
+  savedId: string
+  busy: boolean
+  comparable?: boolean
+  inCompare?: boolean
+  onRemove: () => void
+  onShare: () => void
+  onCompare?: () => void
+}) {
+  return (
+    <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+      {comparable && onCompare ? (
+        <button
+          type="button"
+          onClick={onCompare}
+          className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1.5 text-[11px] font-semibold ${
+            inCompare
+              ? 'border-[#0066cc] bg-[#e8f1ff] text-[#0066cc]'
+              : 'border-[#d2d2d7] bg-white text-[#1d1d1f]'
+          }`}
+        >
+          {inCompare ? <Check className="h-3.5 w-3.5" /> : <Columns2 className="h-3.5 w-3.5" />}
+          Compare
+        </button>
+      ) : null}
+      <button
+        type="button"
+        onClick={onShare}
+        className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[#1d1d1f]"
+      >
+        <Share2 className="h-3.5 w-3.5" />
+        Share
+      </button>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={onRemove}
+        className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1.5 text-[11px] font-semibold text-red-700 disabled:opacity-60"
+      >
+        <Trash2 className="h-3.5 w-3.5" />
+        Remove
+      </button>
+    </div>
+  )
+}
+
+function ProList({
+  items,
+  emptyTitle,
+  emptyCta,
+  emptyHref,
+  compareIds,
+  busyId,
+  onRemove,
+  onShare,
+  onCompare,
+}: {
+  items: FavoriteProfessional[]
+  emptyTitle: string
+  emptyCta: string
+  emptyHref: string
+  compareIds: string[]
+  busyId: string | null
+  onRemove: (id: string) => void
+  onShare: (title: string, url: string) => void
+  onCompare: (id: string) => void
+}) {
+  if (!items.length) {
+    return <EmptyState title={emptyTitle} cta={emptyCta} href={emptyHref} />
+  }
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => {
+        const url = shareUrlForFavorite({
+          type: item.kind,
+          itemId: item.itemId,
+        })
+        return (
+          <li
+            key={item.savedId}
+            className="rounded-[20px] border border-[#e8e8ed] bg-white p-4 shadow-sm md:p-5"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <button
+                type="button"
+                className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                onClick={() => navigateTo(`/professional/${item.itemId}`)}
+              >
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#f5f5f7]">
+                  {item.photo ? (
+                    <img src={item.photo} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <User className="h-6 w-6 text-[#86868b]" />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="truncate text-[16px] font-semibold text-[#1d1d1f]">{item.fullName}</p>
+                    <VerificationBadge level={item.verificationLevel as VerificationLevel} />
+                  </div>
+                  <p className="mt-0.5 flex items-center gap-1 text-[13px] text-[#86868b]">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {item.location || 'Location TBD'}
+                  </p>
+                  <div className="mt-1 flex flex-wrap gap-x-3 text-[12px] text-[#6e6e73]">
+                    <span className="inline-flex items-center gap-1">
+                      <Star className="h-3.5 w-3.5 fill-[#ff9900] text-[#ff9900]" />
+                      {item.rating.toFixed(1)} ({item.totalReviews})
+                    </span>
+                    <span>Saved {formatSavedDate(item.createdAt)}</span>
+                  </div>
+                </div>
+              </button>
+              <ActionRow
+                savedId={item.savedId}
+                busy={busyId === item.savedId}
+                comparable
+                inCompare={compareIds.includes(item.savedId)}
+                onRemove={() => onRemove(item.savedId)}
+                onShare={() => onShare(item.fullName, url)}
+                onCompare={() => onCompare(item.savedId)}
+              />
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+function ProjectList({
+  items,
+  compareIds,
+  busyId,
+  onRemove,
+  onShare,
+  onCompare,
+}: {
+  items: FavoriteProject[]
+  compareIds: string[]
+  busyId: string | null
+  onRemove: (id: string) => void
+  onShare: (title: string, url: string) => void
+  onCompare: (id: string) => void
+}) {
+  if (!items.length) {
+    return (
+      <EmptyState title="No saved projects" cta="Browse projects" href="/projects" />
+    )
+  }
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => {
+        const url = shareUrlForFavorite({ type: 'project', itemId: item.itemId })
+        return (
+          <li
+            key={item.savedId}
+            className="rounded-[20px] border border-[#e8e8ed] bg-white p-4 shadow-sm md:p-5"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <button
+                type="button"
+                className="min-w-0 flex-1 text-left"
+                onClick={() => navigateTo(`/listing/${item.itemId}`)}
+              >
+                <p className="text-[16px] font-semibold text-[#1d1d1f]">{item.title}</p>
+                {item.description ? (
+                  <p className="mt-1 line-clamp-2 text-[13px] text-[#86868b]">{item.description}</p>
+                ) : null}
+                <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-[#6e6e73]">
+                  {item.location ? (
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {item.location}
+                    </span>
+                  ) : null}
+                  {item.price != null ? (
+                    <span className="font-semibold text-[#1d1d1f]">
+                      {item.price.toLocaleString()} {item.currency || 'EUR'}
+                    </span>
+                  ) : null}
+                  <span>Saved {formatSavedDate(item.createdAt)}</span>
+                </div>
+              </button>
+              <ActionRow
+                savedId={item.savedId}
+                busy={busyId === item.savedId}
+                comparable
+                inCompare={compareIds.includes(item.savedId)}
+                onRemove={() => onRemove(item.savedId)}
+                onShare={() => onShare(item.title, url)}
+                onCompare={() => onCompare(item.savedId)}
+              />
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+function CategoryList({
+  items,
+  busyId,
+  onRemove,
+  onShare,
+}: {
+  items: FavoriteCategory[]
+  busyId: string | null
+  onRemove: (id: string) => void
+  onShare: (title: string, url: string) => void
+}) {
+  if (!items.length) {
+    return <EmptyState title="No saved categories" cta="Browse categories" href="/" />
+  }
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => {
+        const path = `/category/${item.slug || item.itemId}`
+        const url = shareUrlForFavorite({ type: 'category', itemId: item.itemId, path })
+        return (
+          <li
+            key={item.savedId}
+            className="rounded-[20px] border border-[#e8e8ed] bg-white p-4 shadow-sm md:p-5"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <button
+                type="button"
+                className="min-w-0 flex-1 text-left"
+                onClick={() => navigateTo(path)}
+              >
+                <p className="text-[16px] font-semibold text-[#1d1d1f]">{item.name}</p>
+                {item.description ? (
+                  <p className="mt-1 line-clamp-2 text-[13px] text-[#86868b]">{item.description}</p>
+                ) : null}
+                <div className="mt-2 flex flex-wrap gap-x-3 text-[12px] text-[#6e6e73]">
+                  <span>{item.professionalsCount} professionals</span>
+                  {item.avgRating != null ? (
+                    <span className="inline-flex items-center gap-1">
+                      <Star className="h-3.5 w-3.5 fill-[#ff9900] text-[#ff9900]" />
+                      {item.avgRating.toFixed(1)}
+                    </span>
+                  ) : null}
+                  <span>Saved {formatSavedDate(item.createdAt)}</span>
+                </div>
+              </button>
+              <ActionRow
+                savedId={item.savedId}
+                busy={busyId === item.savedId}
+                onRemove={() => onRemove(item.savedId)}
+                onShare={() => onShare(item.name, url)}
+              />
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+function SearchList({
+  items,
+  busyId,
+  onRemove,
+  onShare,
+}: {
+  items: FavoriteSearch[]
+  busyId: string | null
+  onRemove: (id: string) => void
+  onShare: (title: string, url: string) => void
+}) {
+  if (!items.length) {
+    return <EmptyState title="No saved searches" cta="Go to search" href="/search" />
+  }
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => {
+        const path = item.path || `/search?q=${encodeURIComponent(item.query)}`
+        const url = shareUrlForFavorite({ type: 'search', itemId: item.itemId, path })
+        return (
+          <li
+            key={item.savedId}
+            className="rounded-[20px] border border-[#e8e8ed] bg-white p-4 shadow-sm md:p-5"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <button
+                type="button"
+                className="min-w-0 flex-1 text-left"
+                onClick={() => navigateTo(path)}
+              >
+                <p className="text-[16px] font-semibold text-[#1d1d1f]">{item.title}</p>
+                <p className="mt-1 text-[13px] text-[#86868b]">
+                  {[item.query, item.city, item.country].filter(Boolean).join(' · ') || path}
+                </p>
+                <p className="mt-2 text-[12px] text-[#6e6e73]">
+                  Saved {formatSavedDate(item.createdAt)}
+                </p>
+              </button>
+              <ActionRow
+                savedId={item.savedId}
+                busy={busyId === item.savedId}
+                onRemove={() => onRemove(item.savedId)}
+                onShare={() => onShare(item.title, url)}
+              />
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+function CompareModal({
+  tab,
+  items,
+  onClose,
+}: {
+  tab: FavoriteTab
+  items: Array<FavoriteProfessional | FavoriteProject>
+  onClose: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center">
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="max-h-[90vh] w-full max-w-4xl overflow-auto rounded-[24px] bg-white p-5 shadow-xl md:p-6"
+      >
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#86868b]">
+              Compare favorites
+            </p>
+            <h2 className="text-[20px] font-semibold text-[#1d1d1f]">
+              {tab} · {items.length}
+            </h2>
+          </div>
+          <button
+            type="button"
+            className="rounded-full border border-[#d2d2d7] p-2"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <div
+          className={`grid gap-3 ${items.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}
+        >
+          {items.map((item) => {
+            if ('fullName' in item) {
+              return (
+                <div key={item.savedId} className="rounded-[18px] border border-[#e8e8ed] bg-[#fafafa] p-4">
+                  <p className="font-semibold text-[#1d1d1f]">{item.fullName}</p>
+                  <p className="mt-1 text-[12px] text-[#86868b]">{item.location || '—'}</p>
+                  <dl className="mt-3 space-y-1.5 text-[13px]">
+                    <div className="flex justify-between">
+                      <dt className="text-[#86868b]">Rating</dt>
+                      <dd className="font-semibold">{item.rating.toFixed(1)}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-[#86868b]">Reviews</dt>
+                      <dd className="font-semibold">{item.totalReviews}</dd>
+                    </div>
+                  </dl>
+                  <button
+                    type="button"
+                    className="mt-4 w-full rounded-full bg-[#1d1d1f] px-3 py-2 text-[12px] font-semibold text-white"
+                    onClick={() => navigateTo(`/professional/${item.itemId}`)}
+                  >
+                    Open profile
+                  </button>
+                </div>
+              )
+            }
+            return (
+              <div key={item.savedId} className="rounded-[18px] border border-[#e8e8ed] bg-[#fafafa] p-4">
+                <p className="font-semibold text-[#1d1d1f]">{item.title}</p>
+                <p className="mt-1 text-[12px] text-[#86868b]">{item.location || '—'}</p>
+                <dl className="mt-3 space-y-1.5 text-[13px]">
+                  <div className="flex justify-between">
+                    <dt className="text-[#86868b]">Budget</dt>
+                    <dd className="font-semibold">
+                      {item.price != null
+                        ? `${item.price.toLocaleString()} ${item.currency || ''}`
+                        : '—'}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-[#86868b]">Status</dt>
+                    <dd className="font-semibold capitalize">{item.status || '—'}</dd>
+                  </div>
+                </dl>
+                <button
+                  type="button"
+                  className="mt-4 w-full rounded-full bg-[#1d1d1f] px-3 py-2 text-[12px] font-semibold text-white"
+                  onClick={() => navigateTo(`/listing/${item.itemId}`)}
+                >
+                  Open project
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
