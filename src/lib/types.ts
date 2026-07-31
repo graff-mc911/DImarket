@@ -663,9 +663,14 @@ export interface Database {
           reviewer_name: string
           reviewer_email: string | null
           reviewer_role: 'client' | 'professional' | 'company' | null
+          reviewer_avatar_url: string | null
+          reviewer_country_code: string | null
+          project_category: string | null
+          project_completed_at: string | null
           rating: number
           comment: string | null
           listing_id: string | null
+          booking_id: string | null
           is_approved: boolean | null
           is_hidden: boolean | null
           work_quality: number | null
@@ -675,8 +680,13 @@ export interface Database {
           would_recommend: boolean | null
           moderation_flag: boolean | null
           media_urls: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
+          before_media_urls: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
+          after_media_urls: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
           like_count: number
+          helpful_count: number
+          not_helpful_count: number
           is_verified_customer: boolean
+          is_verified_project: boolean
           created_at: string
         }
         Insert: {
@@ -686,9 +696,14 @@ export interface Database {
           reviewer_name: string
           reviewer_email?: string | null
           reviewer_role?: 'client' | 'professional' | 'company' | null
+          reviewer_avatar_url?: string | null
+          reviewer_country_code?: string | null
+          project_category?: string | null
+          project_completed_at?: string | null
           rating: number
           comment?: string | null
           listing_id?: string | null
+          booking_id?: string | null
           is_approved?: boolean | null
           is_hidden?: boolean | null
           work_quality?: number | null
@@ -698,8 +713,13 @@ export interface Database {
           would_recommend?: boolean | null
           moderation_flag?: boolean | null
           media_urls?: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
+          before_media_urls?: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
+          after_media_urls?: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
           like_count?: number
+          helpful_count?: number
+          not_helpful_count?: number
           is_verified_customer?: boolean
+          is_verified_project?: boolean
           created_at?: string
         }
         Update: {
@@ -709,9 +729,14 @@ export interface Database {
           reviewer_name?: string
           reviewer_email?: string | null
           reviewer_role?: 'client' | 'professional' | 'company' | null
+          reviewer_avatar_url?: string | null
+          reviewer_country_code?: string | null
+          project_category?: string | null
+          project_completed_at?: string | null
           rating?: number
           comment?: string | null
           listing_id?: string | null
+          booking_id?: string | null
           is_approved?: boolean | null
           is_hidden?: boolean | null
           work_quality?: number | null
@@ -721,8 +746,37 @@ export interface Database {
           would_recommend?: boolean | null
           moderation_flag?: boolean | null
           media_urls?: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
+          before_media_urls?: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
+          after_media_urls?: Array<{ url: string; type: 'image' | 'video' }> | string[] | null
           like_count?: number
+          helpful_count?: number
+          not_helpful_count?: number
           is_verified_customer?: boolean
+          is_verified_project?: boolean
+          created_at?: string
+        }
+      }
+
+      review_votes: {
+        Row: {
+          id: string
+          review_id: string
+          user_id: string
+          vote: 'helpful' | 'not_helpful'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          review_id: string
+          user_id: string
+          vote: 'helpful' | 'not_helpful'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          review_id?: string
+          user_id?: string
+          vote?: 'helpful' | 'not_helpful'
           created_at?: string
         }
       }
