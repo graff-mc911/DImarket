@@ -1,6 +1,10 @@
 import { verificationLevelClass, verificationLevelLabel } from '../lib/verificationLevel'
 import type { VerificationLevel } from '../lib/types'
-import { BadgeCheck } from 'lucide-react'
+import { BadgeCheck, Building2, Crown, ShieldCheck } from 'lucide-react'
+import {
+  activeTrustBadges,
+  type TrustBadgeSource,
+} from '../lib/verification/trustBadges'
 
 export function MatchScoreBadge({
   score,
@@ -59,5 +63,47 @@ export function VerificationBadge({
       {showIcon ? <BadgeCheck className={size === 'md' ? 'h-3.5 w-3.5' : 'h-3 w-3'} /> : null}
       {label}
     </span>
+  )
+}
+
+function TrustBadgeIcon({ id, className }: { id: string; className?: string }) {
+  if (id === 'business') return <Building2 className={className} />
+  if (id === 'premium') return <Crown className={className} />
+  if (id === 'identity') return <BadgeCheck className={className} />
+  return <ShieldCheck className={className} />
+}
+
+/** Named badges: Verified · Identity Verified · Business Verified · Premium */
+export function TrustBadges({
+  source,
+  size = 'sm',
+  max = 4,
+  className = '',
+}: {
+  source: TrustBadgeSource | null | undefined
+  size?: 'sm' | 'md'
+  max?: number
+  className?: string
+}) {
+  const badges = activeTrustBadges(source).slice(0, max)
+  if (!badges.length) return null
+
+  return (
+    <div className={`flex flex-wrap items-center gap-1 ${className}`}>
+      {badges.map((b) => (
+        <span
+          key={b.id}
+          className={`inline-flex items-center gap-0.5 border font-bold tracking-wide ${b.tone} ${
+            size === 'md'
+              ? 'rounded-full px-2.5 py-1 text-[11px]'
+              : 'rounded-full px-1.5 py-0.5 text-[10px]'
+          }`}
+          title={b.label}
+        >
+          <TrustBadgeIcon id={b.id} className={size === 'md' ? 'h-3.5 w-3.5' : 'h-3 w-3'} />
+          {b.label}
+        </span>
+      ))}
+    </div>
   )
 }

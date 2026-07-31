@@ -5,8 +5,9 @@ export type VerificationCheckId =
   | 'phone'
   | 'identity'
   | 'company'
-  | 'insurance'
   | 'license'
+  | 'address'
+  | 'insurance'
   | 'background'
 
 export type VerificationCheck = {
@@ -32,20 +33,29 @@ export const VERIFICATION_LEVELS: Array<{
   {
     id: 'silver',
     label: 'Silver',
-    blurb: 'Identity or company documents',
+    blurb: 'Identity or business documents',
     requires: ['email', 'phone', 'identity'],
   },
   {
     id: 'gold',
     label: 'Gold',
-    blurb: 'Insurance + trade license',
-    requires: ['email', 'phone', 'identity', 'insurance', 'license'],
+    blurb: 'License + address + insurance',
+    requires: ['email', 'phone', 'identity', 'license', 'address', 'insurance'],
   },
   {
     id: 'platinum',
     label: 'Platinum',
     blurb: 'Full stack + background check',
-    requires: ['email', 'phone', 'identity', 'company', 'insurance', 'license', 'background'],
+    requires: [
+      'email',
+      'phone',
+      'identity',
+      'company',
+      'license',
+      'address',
+      'insurance',
+      'background',
+    ],
   },
 ]
 
@@ -57,13 +67,8 @@ export function buildVerificationChecks(input: {
 }): VerificationCheck[] {
   const p = input.profile
   const docs = new Set(input.docTypes)
-  const hasEmail =
-    Boolean(p?.email_verified_at) ||
-    Boolean(input.emailConfirmed) ||
-    Boolean(input.email)
-  const hasPhone =
-    Boolean(p?.phone_verified_at) ||
-    Boolean(p?.phone && p.phone.trim().length > 5)
+  const hasEmail = Boolean(p?.email_verified_at) || Boolean(input.emailConfirmed)
+  const hasPhone = Boolean(p?.phone_verified_at)
 
   return [
     {
@@ -75,22 +80,36 @@ export function buildVerificationChecks(input: {
     {
       id: 'phone',
       label: 'Phone',
-      description: 'Phone number on profile',
+      description: 'Verified phone on profile',
       done: hasPhone,
     },
     {
       id: 'identity',
-      label: 'Identity',
+      label: 'Identity document',
       description: 'Government ID / passport',
       done: docs.has('identity'),
       docType: 'identity',
     },
     {
       id: 'company',
-      label: 'Company',
-      description: 'Business registration or VAT',
+      label: 'Business registration',
+      description: 'Company registry or VAT',
       done: docs.has('business_registration') || docs.has('vat'),
       docType: 'business_registration',
+    },
+    {
+      id: 'license',
+      label: 'Professional license',
+      description: 'Trade / professional license',
+      done: docs.has('trade_license') || docs.has('professional_license'),
+      docType: 'trade_license',
+    },
+    {
+      id: 'address',
+      label: 'Address verification',
+      description: 'Utility bill or bank statement',
+      done: docs.has('proof_of_address'),
+      docType: 'proof_of_address',
     },
     {
       id: 'insurance',
@@ -100,15 +119,8 @@ export function buildVerificationChecks(input: {
       docType: 'insurance',
     },
     {
-      id: 'license',
-      label: 'License',
-      description: 'Trade / professional license',
-      done: docs.has('trade_license'),
-      docType: 'trade_license',
-    },
-    {
       id: 'background',
-      label: 'Background Check',
+      label: 'Background check',
       description: 'Police / background clearance',
       done: docs.has('background_check'),
       docType: 'background_check',
@@ -122,7 +134,9 @@ export function nextLevelHint(
 ): string {
   const done = new Set(checks.filter((c) => c.done).map((c) => c.id))
   const order: VerificationLevel[] = ['bronze', 'silver', 'gold', 'platinum']
-  const currentIdx = order.indexOf((level && level !== 'none' ? level : 'none') as VerificationLevel)
+  const currentIdx = order.indexOf(
+    (level && level !== 'none' ? level : 'none') as VerificationLevel,
+  )
   const start = currentIdx < 0 ? 0 : currentIdx + 1
   for (let i = start; i < order.length; i++) {
     const tier = VERIFICATION_LEVELS.find((t) => t.id === order[i])
