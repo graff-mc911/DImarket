@@ -1682,8 +1682,23 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
 
   'notifications.title': 'Сповіщення',
   'notifications.empty': 'Немає сповіщень',
+  'notifications.emptyArchived': 'Немає архівованих сповіщень',
+  'notifications.emptyHint':
+    'Повідомлення, відгуки, збіги, заявки, платежі та системні сповіщення з’являються тут у реальному часі.',
   'notifications.markAll': 'Прочитати все',
-  'notifications.enablePush': 'Поштовх',
+  'notifications.enablePush': 'Push',
+  'notifications.viewAll': 'Усі',
+  'notifications.searchPlaceholder': 'Пошук сповіщень…',
+  'notifications.unread': 'Непрочитані',
+  'notifications.archived': 'Архів',
+  'notifications.archive': 'Архівувати',
+  'notifications.delete': 'Видалити',
+  'notifications.allCaughtUp': 'Усе прочитано',
+  'notifications.pushEnabled': 'Push увімкнено',
+  'notifications.pushDenied': 'Дозвіл на push відхилено',
+  'notifications.pushUnavailable': 'Push недоступний',
+  'notifications.realtimeHint':
+    'Онлайн через Supabase Realtime · Повідомлення, відгуки, збіги, заявки, платежі, система',
 
   'reviews.writeTitle': 'Залишити відгук',
   'reviews.overall': 'Загальна оцінка',
