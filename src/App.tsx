@@ -62,6 +62,8 @@ import { CostEstimator } from './pages/CostEstimator'
 import { Notifications } from './pages/Notifications'
 import { AiAssistant } from './pages/AiAssistant'
 import { Analytics } from './pages/Analytics'
+import { CompareProfessionals } from './pages/CompareProfessionals'
+import { CompareBar } from './components/compare/CompareBar'
 import { CategoryPage } from './pages/CategoryPage'
 import { SearchPage } from './pages/Search'
 
@@ -137,6 +139,7 @@ function App() {
       case '/my-listings':   return <MyListings />
       case '/messages':      return <Messages />
       case '/favorites':     return <Favorites />
+      case '/compare':       return <CompareProfessionals />
       case '/create-ad':     return <CreateAd />
       case '/create-project':
       case '/project/new':   return <CreateProject />
@@ -170,6 +173,7 @@ function App() {
             <PageWithSideAds>{getPage()}</PageWithSideAds>
           </main>
           <Footer />
+          <CompareBar />
           <AiChatWidget />
         </div>
       </PaidAdsProvider>
