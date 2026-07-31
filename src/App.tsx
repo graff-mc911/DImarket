@@ -15,6 +15,7 @@ import { bindPathListener }    from './lib/navigation'
 import { Home }               from './pages/Home'
 import { Professionals }      from './pages/Professionals'
 import { Companies }          from './pages/Companies'
+import { CompanyDetail }      from './pages/CompanyDetail'
 import { Listings }           from './pages/Listings'
 import { ListingDetail }      from './pages/ListingDetail'
 import { ProfessionalDetail } from './pages/ProfessionalDetail'
@@ -87,6 +88,8 @@ function App() {
     if (parts[0] === 'category' && parts[1]) return <CategoryPage slug={parts[1]} />
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
+    if (parts[0] === 'companies' && parts[1]) return <CompanyDetail slug={parts[1]} />
+    if (parts[0] === 'company' && parts[1]) return <CompanyDetail slug={parts[1]} />
     if (parts[0] === 'book' && parts[1]) return <BookProfessional profileId={parts[1]} />
     if (parts[0] === 'project' && parts[1] === 'new') return <CreateProject />
     if (parts[0] === 'create-project') return <CreateProject />
