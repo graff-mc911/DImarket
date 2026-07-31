@@ -114,7 +114,11 @@ function applyHeadToHtml(html, route) {
     .replace('</head>', `${metaBlock}\n  </head>`)
 }
 
-function fallbackRootHtml(route) {
+/**
+ * SEO body for crawlers. Kept out of the visible paint path so users never see
+ * the raw category list before React mounts (FOUC / "list then app" flash).
+ */
+function fallbackSeoShell(route) {
   const cats = CATEGORY_SLUGS.map(
     (slug) =>
       `<li><a href="/category/${slug}">${escapeHtml(slug.replace(/-/g, ' '))}</a></li>`,
@@ -122,7 +126,8 @@ function fallbackRootHtml(route) {
   const heading = escapeHtml(
     route.title.replace(/\s*\|\s*DImarket$/, '').replace(/^DImarket —\s*/, ''),
   )
-  return `<div id="root"><a class="skip-link" href="#main">Skip to content</a>
+  return `<div id="dimarket-seo-prerender" data-dimarket-seo-shell="1" hidden>
+<a class="skip-link" href="#main">Skip to content</a>
 <header>
   <p><strong>DImarket</strong> — marketplace for construction &amp; renovation</p>
   <nav aria-label="Primary">
@@ -146,16 +151,27 @@ function fallbackRootHtml(route) {
   </section>
 </main>
 <footer><p>© DImarket</p></footer>
-</div>`
+</div><div id="root"></div>`
 }
+
+const BOOT_STYLE =
+  '<style id="dimarket-boot">html,body,#root{margin:0;min-height:100%;background:#eaeded}</style>'
 
 function writeRoutes(shellHtml) {
   for (const route of prerenderRoutes()) {
     let html = shellHtml
+    // Strip any previous SEO shell + normalize to empty #root
+    html = html.replace(
+      /<div id="dimarket-seo-prerender"[\s\S]*?<\/div>\s*/i,
+      '',
+    )
     if (!/<div id="root"><\/div>/i.test(html)) {
       html = html.replace(/<div id="root">[\s\S]*?<\/div>/i, '<div id="root"></div>')
     }
-    html = html.replace('<div id="root"></div>', fallbackRootHtml(route))
+    html = html.replace('<div id="root"></div>', fallbackSeoShell(route))
+    if (!html.includes('id="dimarket-boot"')) {
+      html = html.replace('</head>', `${BOOT_STYLE}\n  </head>`)
+    }
     html = applyHeadToHtml(html, route)
     const out = outPathForRoute(route.path)
     mkdirSync(dirname(out), { recursive: true })
