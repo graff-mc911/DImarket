@@ -1,11 +1,11 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/_spa-shell.html"
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -66,15 +66,6 @@
         {
           "key": "Vercel-CDN-Cache-Control",
           "value": "no-store"
-        }
-      ]
-    },
-    {
-      "source": "/_spa-shell.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
         }
       ]
     },
