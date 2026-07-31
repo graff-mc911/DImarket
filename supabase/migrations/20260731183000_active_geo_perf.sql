@@ -1,10 +1,9 @@
--- Fix: active_geo performance + bigint user_count
--- Do NOT left-join full geo_catalog (millions of rows → statement timeout).
--- App loads directory from geo_catalog separately; active_geo = activity only.
+-- Perf fix: active_geo must not left-join full geo_catalog (2.7M+ rows → statement timeout).
+-- App loads the full directory from geo_catalog separately; active_geo = activity signals only.
 
-DROP VIEW IF EXISTS active_geo;
+DROP VIEW IF EXISTS public.active_geo;
 
-CREATE VIEW active_geo AS
+CREATE VIEW public.active_geo AS
 WITH profile_geo AS (
   SELECT
     NULLIF(trim(split_part(p.location, ', ', 3)), '') AS country,
@@ -34,4 +33,4 @@ aggregated AS (
 SELECT country, region, city, user_count
 FROM aggregated;
 
-GRANT SELECT ON active_geo TO anon, authenticated;
+GRANT SELECT ON public.active_geo TO anon, authenticated;

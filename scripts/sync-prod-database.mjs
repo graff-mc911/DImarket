@@ -101,6 +101,7 @@ const PRIORITY_MIGRATIONS = [
   '20260726250000_notification_center_complete.sql',
   '20260726270000_trust_verification_system.sql',
   '20260726280000_prod_schema_sync_critical.sql',
+  '20260731183000_active_geo_perf.sql',
 ]
 
 const REQUIRED_TABLES = [
@@ -199,7 +200,9 @@ async function tableExists(name) {
 }
 
 async function rpcExists(name) {
-  const { status, body } = await rest(`/rest/v1/rpc/${name}`, { method: 'POST', body: {} })
+  // Empty-body POST often 404s for required-arg RPCs even when the function exists.
+  // Treat "function not found" as missing; any other response means the RPC is registered.
+  const { body } = await rest(`/rest/v1/rpc/${name}`, { method: 'POST', body: {} })
   if (body.includes('PGRST202') || body.includes('Could not find the function')) return false
   return true
 }
@@ -210,9 +213,34 @@ async function columnExists(table, column) {
 }
 
 async function bucketExists(id) {
+  if (accessToken) {
+    const res = await fetch(`https://api.supabase.com/v1/projects/${projectRef}/database/query`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: `select 1 from storage.buckets where id = ${literal(id)} limit 1`,
+      }),
+    })
+    const text = await res.text()
+    if (res.ok) {
+      try {
+        const rows = JSON.parse(text)
+        return Array.isArray(rows) && rows.length > 0
+      } catch {
+        return text.includes('1')
+      }
+    }
+  }
   const key = serviceKey || anonKey
   const { status } = await rest(`/storage/v1/bucket/${id}`, { key })
   return status === 200
+}
+
+function literal(value) {
+  return `'${String(value).replace(/'/g, "''")}'`
 }
 
 async function runSql(sql, label) {
