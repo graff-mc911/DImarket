@@ -111,6 +111,14 @@ export async function submitProjectWizard(
     } as never)
   }
 
+  const urgency = state.deadlineType === 'asap' ? 'urgent' : state.urgency
+  let timelineDays: number | null = null
+  if (state.deadlineType === 'asap') timelineDays = 3
+  else if (state.deadlineType === 'date' && state.deadlineAt) {
+    const ms = new Date(state.deadlineAt).getTime() - Date.now()
+    if (Number.isFinite(ms)) timelineDays = Math.max(0, Math.ceil(ms / 86_400_000))
+  }
+
   await runMatchingForListing(listingId, {
     categorySlug: 'construction',
     subcategorySlugs,
@@ -122,6 +130,11 @@ export async function submitProjectWizard(
     language: state.preferredLanguage || undefined,
     preferredLanguages: state.preferredLanguage ? [state.preferredLanguage] : undefined,
     maxBudget: state.budgetMax || undefined,
+    urgency,
+    timelineDays,
+    preferences: {
+      preferAvailable: urgency === 'urgent' || urgency === 'high',
+    },
   })
 
   return { listingId }

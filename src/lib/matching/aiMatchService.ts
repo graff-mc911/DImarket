@@ -1,14 +1,24 @@
 /**
- * Reusable AI Match service for DiMarket.
- * Scores professionals 0–100% on: distance, specialization, rating,
- * completed jobs, languages, availability, verification, portfolio quality.
+ * AI Matching Engine for DImarket.
+ * Scores professionals 0–100% on: category, location, budget, timeline,
+ * languages, rating, completed projects, response time, availability,
+ * verification, portfolio, and customer preferences.
  */
 import { supabase } from '../supabase'
 import { haversineKm, type GeoPoint } from '../projectFeed'
 import type { VerificationLevel } from '../types'
 import type { MatchScoreBreakdown, RankedMatch } from '../bots/types'
+import { buildMatchExplanation } from './explainMatch'
+import { computeMatchFacets } from './matchFacets'
 
 export const TOP_MATCH_LIMIT = 10
+
+export type CustomerMatchPreferences = {
+  minRating?: number
+  verifiedOnly?: boolean
+  preferAvailable?: boolean
+  maxDistanceKm?: number
+}
 
 export type MatchingCriteria = {
   categorySlug?: string
@@ -22,6 +32,11 @@ export type MatchingCriteria = {
   language?: string
   preferredLanguages?: string[]
   maxBudget?: number
+  /** Project urgency — amplifies response / availability scoring */
+  urgency?: 'low' | 'normal' | 'high' | 'urgent' | null
+  /** Optional days until deadline */
+  timelineDays?: number | null
+  preferences?: CustomerMatchPreferences
 }
 
 export type MatchCandidate = {
@@ -51,14 +66,16 @@ export type MatchCandidate = {
 
 /** Max points per dimension (sum = 100) */
 export const MATCH_WEIGHTS = {
-  distance: 20,
-  specialization: 20,
-  rating: 12,
-  completedJobs: 10,
-  languages: 8,
-  availability: 8,
-  verification: 12,
-  portfolio: 10,
+  distance: 15,
+  specialization: 18,
+  rating: 10,
+  completedJobs: 8,
+  languages: 7,
+  availability: 7,
+  verification: 10,
+  portfolio: 5,
+  budget: 10,
+  responseTime: 10,
 } as const
 
 function subcategoryOverlap(
@@ -90,6 +107,10 @@ function profileLanguages(p: MatchCandidate): string[] {
   return []
 }
 
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n))
+}
+
 function scoreDistance(
   p: MatchCandidate,
   criteria: MatchingCriteria,
@@ -105,7 +126,7 @@ function scoreDistance(
       lat: p.service_latitude,
       lon: p.service_longitude,
     })
-    const radius = criteria.radiusKm ?? 150
+    const radius = criteria.preferences?.maxDistanceKm ?? criteria.radiusKm ?? 150
     if (km <= 5) return { points: max, reason: 'distance_close', distanceKm: km }
     if (km <= 15) return { points: max * 0.9, reason: 'distance_close', distanceKm: km }
     if (km <= 40) return { points: max * 0.75, reason: 'near_location', distanceKm: km }
@@ -114,7 +135,6 @@ function scoreDistance(
     return { points: 0, distanceKm: km }
   }
 
-  // Text fallback when no geo coords
   const loc = (p.location || '').toLowerCase()
   if (!loc) return { points: max * 0.15, distanceKm: null }
   if (criteria.city && loc.includes(criteria.city.toLowerCase())) {
@@ -126,7 +146,10 @@ function scoreDistance(
   return { points: max * 0.1, distanceKm: null }
 }
 
-function scoreSpecialization(p: MatchCandidate, criteria: MatchingCriteria): { points: number; reasons: string[] } {
+function scoreSpecialization(
+  p: MatchCandidate,
+  criteria: MatchingCriteria,
+): { points: number; reasons: string[] } {
   const max = MATCH_WEIGHTS.specialization
   const reasons: string[] = []
   let points = 0
@@ -157,7 +180,6 @@ function scoreRating(p: MatchCandidate): { points: number; reason?: string } {
   const max = MATCH_WEIGHTS.rating
   const rating = p.rating ?? 0
   const reviews = p.total_reviews ?? 0
-  // Rating 0–5 → up to 75% of weight; review volume fills rest
   let points = (rating / 5) * max * 0.75
   points += Math.min(max * 0.25, Math.log10(reviews + 1) * 2.5)
   return {
@@ -169,7 +191,6 @@ function scoreRating(p: MatchCandidate): { points: number; reason?: string } {
 function scoreCompletedJobs(p: MatchCandidate): { points: number; reason?: string } {
   const max = MATCH_WEIGHTS.completedJobs
   const jobs = Math.max(p.completed_jobs ?? 0, p.total_reviews ?? 0)
-  // 0 → 0, 5 → ~50%, 20 → ~85%, 50+ → 100%
   const points = Math.min(max, (Math.log10(jobs + 1) / Math.log10(51)) * max)
   return {
     points,
@@ -177,12 +198,12 @@ function scoreCompletedJobs(p: MatchCandidate): { points: number; reason?: strin
   }
 }
 
-function scoreLanguages(p: MatchCandidate, criteria: MatchingCriteria): { points: number; reason?: string } {
+function scoreLanguages(
+  p: MatchCandidate,
+  criteria: MatchingCriteria,
+): { points: number; reason?: string } {
   const max = MATCH_WEIGHTS.languages
-  const wanted = [
-    criteria.language,
-    ...(criteria.preferredLanguages ?? []),
-  ]
+  const wanted = [criteria.language, ...(criteria.preferredLanguages ?? [])]
     .filter(Boolean)
     .map((l) => String(l).toLowerCase().trim())
 
@@ -199,23 +220,28 @@ function scoreLanguages(p: MatchCandidate, criteria: MatchingCriteria): { points
   return { points: max * 0.7, reason: 'language_match' }
 }
 
-function scoreAvailability(p: MatchCandidate): { points: number; reason?: string } {
+function scoreAvailability(
+  p: MatchCandidate,
+  criteria: MatchingCriteria,
+): { points: number; reason?: string } {
   const max = MATCH_WEIGHTS.availability
   const status = (p.availability_status || 'available').toLowerCase()
-  const response = p.response_rate ?? 50
+  const urgent = criteria.urgency === 'urgent' || criteria.urgency === 'high'
 
   let base = 0
   if (status === 'available') base = max
-  else if (status === 'limited') base = max * 0.55
-  else if (status === 'busy') base = max * 0.25
+  else if (status === 'limited') base = max * (urgent ? 0.35 : 0.55)
+  else if (status === 'busy') base = max * (urgent ? 0.1 : 0.25)
   else base = 0
 
-  // Response rate modulates availability signal
-  const points = base * (0.55 + Math.min(1, response / 100) * 0.45)
-  return {
-    points: Math.min(max, points),
-    reason: status === 'available' && response >= 70 ? 'available_now' : status === 'available' ? 'available' : undefined,
+  let reason: string | undefined
+  if (status === 'available') {
+    reason = urgent || (criteria.timelineDays != null && criteria.timelineDays <= 7)
+      ? 'timeline_fit'
+      : 'available'
   }
+
+  return { points: Math.min(max, base), reason }
 }
 
 function scoreVerification(p: MatchCandidate): { points: number; reason?: string } {
@@ -234,7 +260,6 @@ function scorePortfolio(p: MatchCandidate): { points: number; reason?: string } 
   const images = p.portfolio_images?.length ?? 0
   const items = portfolioItemCount(p)
   const quality = images * 1.2 + items * 2.5
-  // 0 → 0, ~4 images → mid, rich portfolio → max
   const points = Math.min(max, (quality / 12) * max)
   return {
     points,
@@ -243,14 +268,87 @@ function scorePortfolio(p: MatchCandidate): { points: number; reason?: string } 
 }
 
 /**
- * Soft calibration so strong matches land in the high 90s (e.g. 98 / 95 / 92)
+ * Budget fit without published rates: prefer proven, available pros;
+ * soft-penalize premium on tight budgets (value signal).
+ */
+function scoreBudget(
+  p: MatchCandidate,
+  criteria: MatchingCriteria,
+): { points: number; reason?: string } {
+  const max = MATCH_WEIGHTS.budget
+  if (criteria.maxBudget == null || criteria.maxBudget <= 0) {
+    return { points: max * 0.55 }
+  }
+
+  const jobs = Math.max(p.completed_jobs ?? 0, p.total_reviews ?? 0)
+  const rating = p.rating ?? 0
+  let points = max * 0.35
+  points += Math.min(max * 0.3, (Math.log10(jobs + 1) / Math.log10(21)) * max * 0.3)
+  if (rating >= 4) points += max * 0.15
+  if (rating >= 4.5) points += max * 0.05
+  if ((p.availability_status || 'available') === 'available') points += max * 0.1
+
+  const tight = criteria.maxBudget < 800
+  if (p.is_premium && tight) points -= max * 0.2
+  else if (!p.is_premium) points += max * 0.08
+
+  points = clamp(points, 0, max)
+  return {
+    points,
+    reason: points >= max * 0.6 ? 'budget_fit' : undefined,
+  }
+}
+
+/** Response time from response_rate; urgency amplifies this dimension. */
+function scoreResponseTime(
+  p: MatchCandidate,
+  criteria: MatchingCriteria,
+): { points: number; reason?: string; responseScore: number } {
+  const max = MATCH_WEIGHTS.responseTime
+  const rate = clamp(p.response_rate ?? 45, 0, 100)
+  const urgent = criteria.urgency === 'urgent' || criteria.urgency === 'high'
+  const status = (p.availability_status || 'available').toLowerCase()
+
+  let points = (rate / 100) * max
+  if (urgent && status === 'available') points = Math.min(max, points * 1.15)
+  if (urgent && status === 'busy') points *= 0.7
+
+  let reason: string | undefined
+  if (rate >= 85 && status !== 'busy') reason = 'fast_response'
+  else if (rate >= 60) reason = 'good_response'
+  if (urgent && status === 'available' && rate >= 70) reason = 'fast_response'
+
+  return { points: clamp(points, 0, max), reason, responseScore: rate }
+}
+
+function computeValueScore(
+  p: MatchCandidate,
+  matchScore: number,
+  distanceKm: number | null,
+): number {
+  const jobs = Math.max(p.completed_jobs ?? 0, p.total_reviews ?? 0)
+  const jobsNorm = Math.min(100, (Math.log10(jobs + 1) / Math.log10(51)) * 100)
+  const ratingNorm = ((p.rating ?? 0) / 5) * 100
+  const distPenalty =
+    distanceKm == null ? 12 : distanceKm <= 15 ? 0 : Math.min(25, distanceKm / 8)
+  const premiumPenalty = p.is_premium ? 6 : 0
+  const raw =
+    matchScore * 0.45 +
+    ratingNorm * 0.25 +
+    jobsNorm * 0.22 +
+    (100 - distPenalty) * 0.08 -
+    premiumPenalty
+  return Math.round(clamp(raw, 0, 100) * 10) / 10
+}
+
+/**
+ * Soft calibration so strong matches land in the high 90s
  * while weak matches stay clearly lower.
  */
 export function calibrateMatchPercent(raw0to100: number): number {
   const x = Math.max(0, Math.min(100, raw0to100)) / 100
-  // Ease-out curve toward premium display band
   const curved = 1 - (1 - x) ** 1.35
-  const display = 72 + curved * 27 // 72–99
+  const display = 72 + curved * 27
   return Math.max(0, Math.min(99, Math.round(display)))
 }
 
@@ -263,9 +361,11 @@ export function scoreMatchCandidate(
   const rating = scoreRating(p)
   const jobs = scoreCompletedJobs(p)
   const langs = scoreLanguages(p, criteria)
-  const avail = scoreAvailability(p)
+  const avail = scoreAvailability(p, criteria)
   const verif = scoreVerification(p)
   const port = scorePortfolio(p)
+  const budget = scoreBudget(p, criteria)
+  const response = scoreResponseTime(p, criteria)
 
   const breakdown: MatchScoreBreakdown = {
     distance: Math.round(dist.points * 10) / 10,
@@ -276,9 +376,11 @@ export function scoreMatchCandidate(
     availability: Math.round(avail.points * 10) / 10,
     verification: Math.round(verif.points * 10) / 10,
     portfolio: Math.round(port.points * 10) / 10,
+    budget: Math.round(budget.points * 10) / 10,
+    responseTime: Math.round(response.points * 10) / 10,
   }
 
-  const raw =
+  let raw =
     dist.points +
     spec.points +
     rating.points +
@@ -286,14 +388,16 @@ export function scoreMatchCandidate(
     langs.points +
     avail.points +
     verif.points +
-    port.points
+    port.points +
+    budget.points +
+    response.points
 
-  // Premium / trust micro-boost (capped)
-  let boosted = raw
-  if (p.is_premium) boosted += 1.5
+  if (p.is_premium) raw += 1.5
   const trust = p.trust_score ?? 50
-  boosted += Math.max(-2, Math.min(2, (trust - 50) * 0.04))
+  raw += Math.max(-2, Math.min(2, (trust - 50) * 0.04))
 
+  // Soft preference boosts
+  const prefs = criteria.preferences
   const reasons = [
     dist.reason,
     ...spec.reasons,
@@ -303,24 +407,47 @@ export function scoreMatchCandidate(
     avail.reason,
     verif.reason,
     port.reason,
+    budget.reason,
+    response.reason,
   ].filter(Boolean) as string[]
 
-  return {
+  if (prefs?.preferAvailable && (p.availability_status || 'available') === 'available') {
+    raw += 1.5
+  }
+  if (prefs?.verifiedOnly && (p.is_verified || (p.verification_level && p.verification_level !== 'none'))) {
+    reasons.push('preference_verified')
+  }
+  if (prefs?.minRating && (p.rating ?? 0) >= prefs.minRating) {
+    reasons.push('preference_rating')
+  }
+
+  const score = calibrateMatchPercent(raw)
+  const valueScore = computeValueScore(p, score, dist.distanceKm)
+
+  const ranked: RankedMatch = {
     profileId: p.id,
     fullName: p.full_name || 'Professional',
     location: p.location,
     rating: p.rating ?? 0,
     totalReviews: p.total_reviews ?? 0,
     responseRate: p.response_rate,
-    score: calibrateMatchPercent(boosted),
+    score,
     reasons,
     breakdown,
     distanceKm: dist.distanceKm,
+    valueScore,
+    responseScore: response.responseScore,
     verificationLevel: p.verification_level ?? null,
     avatarUrl: p.profile_photo || p.avatar_url || null,
     completedJobs: Math.max(p.completed_jobs ?? 0, p.total_reviews ?? 0),
     availabilityStatus: p.availability_status || 'available',
+    isPremium: p.is_premium,
+    isVerified: p.is_verified,
+    languages: profileLanguages(p),
   }
+
+  ranked.explanation = buildMatchExplanation(ranked, criteria)
+  return ranked
 }
 
 const PROFILE_SELECT = `
@@ -375,24 +502,37 @@ export async function rankProfessionals(
     data = primary.data as MatchCandidate[]
   }
 
-  let ranked = data
+  const minRating = criteria.preferences?.minRating ?? criteria.minRating
+  const verifiedOnly = criteria.preferences?.verifiedOnly
+
+  let candidates = data
+  if (verifiedOnly) {
+    candidates = candidates.filter(
+      (p) =>
+        Boolean(p.is_verified) ||
+        (p.verification_level != null && p.verification_level !== 'none'),
+    )
+  }
+  if (minRating) {
+    candidates = candidates.filter((p) => (p.rating ?? 0) >= minRating)
+  }
+
+  let ranked = candidates
     .map((p) => scoreMatchCandidate(p, criteria))
     .sort((a, b) => b.score - a.score || b.rating - a.rating)
 
-  // Soft dedupe of identical display scores: nudge ranks apart for Top display (98, 95, 92…)
   ranked = applyTopScoreLadder(ranked)
 
-  if (criteria.minRating) {
-    ranked = ranked.filter((m) => m.rating >= criteria.minRating!)
-  }
-
   if (criteria.radiusKm && criteria.latitude != null && criteria.longitude != null) {
-    ranked = ranked.filter(
-      (m) => m.distanceKm == null || m.distanceKm <= criteria.radiusKm! * 2.5,
-    )
+    const maxKm =
+      criteria.preferences?.maxDistanceKm ?? criteria.radiusKm * 2.5
+    ranked = ranked.filter((m) => m.distanceKm == null || m.distanceKm <= maxKm)
   }
 
-  return ranked.slice(0, limit)
+  const top = ranked.slice(0, limit)
+  // Attach facet metadata via explanation already set; facets computed by callers
+  void computeMatchFacets(top)
+  return top
 }
 
 /**
@@ -406,17 +546,14 @@ export function applyTopScoreLadder(ranked: RankedMatch[]): RankedMatch[] {
 
   for (let i = 0; i < Math.min(out.length, ladder.length); i++) {
     const floor = ladder[i]
-    // Only boost into ladder if already a strong match (≥ floor - 8)
     if (out[i].score >= floor - 8) {
       out[i] = { ...out[i], score: Math.max(out[i].score, floor) }
     }
-    // Keep strictly non-increasing
     if (i > 0 && out[i].score > out[i - 1].score) {
       out[i] = { ...out[i], score: out[i - 1].score - 1 }
     }
   }
 
-  // Cap at 99 and enforce descending
   for (let i = 0; i < out.length; i++) {
     out[i].score = Math.min(99, Math.max(0, out[i].score))
     if (i > 0 && out[i].score >= out[i - 1].score) {
@@ -437,13 +574,23 @@ export function criteriaFromListing(listing: {
   subcategory_slugs?: string[] | null
   preferred_language?: string | null
   budget_max?: number | null
+  urgency?: 'low' | 'normal' | 'high' | 'urgent' | null
+  deadline_at?: string | null
   category?: { slug?: string } | null
+  match_preferences?: CustomerMatchPreferences | null
 }): MatchingCriteria {
   const city =
     listing.city_name?.trim() ||
     listing.location?.split(',')[0]?.trim() ||
     undefined
   const country = listing.country_name?.trim() || undefined
+
+  let timelineDays: number | null = null
+  if (listing.deadline_at) {
+    const ms = new Date(listing.deadline_at).getTime() - Date.now()
+    if (Number.isFinite(ms)) timelineDays = Math.max(0, Math.ceil(ms / 86_400_000))
+  }
+
   return {
     categorySlug: listing.category?.slug || 'construction',
     subcategorySlugs: listing.subcategory_slugs || undefined,
@@ -457,5 +604,9 @@ export function criteriaFromListing(listing: {
       ? [listing.preferred_language]
       : undefined,
     maxBudget: listing.budget_max ?? undefined,
+    urgency: listing.urgency ?? null,
+    timelineDays,
+    preferences: listing.match_preferences ?? undefined,
+    minRating: listing.match_preferences?.minRating,
   }
 }
