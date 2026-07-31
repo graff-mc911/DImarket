@@ -173,26 +173,16 @@ export function allPublicRoutes() {
   return [...STATIC_ROUTES, ...categoryRoutes(), ...landingRoutes()]
 }
 
-/** Routes that must be prerendered for contentful HTML (subset for build time). */
+/**
+ * Routes prerendered into dist/**/index.html at build time.
+ * Keep this list conservative on Vercel — nested locale folders have caused
+ * deploy packaging failures; homepage + top-level public pages are enough
+ * for the first SEO cut.
+ */
 export function prerenderRoutes() {
-  const priorityPaths = new Set([
-    '/',
-    '/professionals',
-    '/companies',
-    '/listings',
-    '/pricing',
-    '/contact',
-    '/for-professionals',
-    '/for-companies',
-    '/search',
-    '/category/construction',
-    '/category/specialists',
-    '/category/renovation',
-    '/category/hvac',
-    '/de/darmstadt/elektriker',
-    '/es/alicante/electricista',
-    '/es/madrid/fontanero',
-  ])
+  // Phase 1 on Vercel: homepage only (validates contentful HTML in production).
+  // Top-level public pages can be re-enabled after deploy packaging is confirmed.
+  const priorityPaths = new Set(['/'])
   return allPublicRoutes().filter((r) => priorityPaths.has(r.path))
 }
 

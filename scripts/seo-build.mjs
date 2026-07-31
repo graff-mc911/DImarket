@@ -7,7 +7,7 @@
  * Does not redesign UI. Does not rewrite React components.
  */
 import { spawn, spawnSync } from 'node:child_process'
-import { mkdirSync, writeFileSync, existsSync, readFileSync, copyFileSync } from 'node:fs'
+import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
@@ -262,9 +262,13 @@ function fallbackRootHtml(route) {
 </div>`
 }
 
-function writeFallbackRoutes() {
-  const shellPath = join(distDir, '_spa-shell.html')
-  const shell = readFileSync(shellPath, 'utf8')
+function writeFallbackRoutes(shellHtml) {
+  const shell =
+    shellHtml ||
+    readFileSync(join(distDir, 'index.html'), 'utf8').replace(
+      /<div id="root">[\s\S]*?<\/div>/i,
+      '<div id="root"></div>',
+    )
 
   for (const route of prerenderRoutes()) {
     let html = shell
@@ -348,9 +352,8 @@ async function main() {
   writeRobots()
   writeSitemap()
 
-  // Preserve pristine SPA shell before overwriting index.html
-  const shellPath = join(distDir, '_spa-shell.html')
-  copyFileSync(join(distDir, 'index.html'), shellPath)
+  // Preserve pristine SPA shell in memory before overwriting index.html
+  const shellHtml = readFileSync(join(distDir, 'index.html'), 'utf8')
 
   let mode = 'fallback'
   const preferPlaywright = !FORCE_FALLBACK && process.env.VERCEL !== '1'
@@ -362,11 +365,11 @@ async function main() {
       mode = 'playwright'
     } catch (err) {
       console.warn('Playwright prerender failed, using HTML fallback:', err?.message || err)
-      writeFallbackRoutes()
+      writeFallbackRoutes(shellHtml)
       mode = 'fallback'
     }
   } else {
-    writeFallbackRoutes()
+    writeFallbackRoutes(shellHtml)
   }
 
   const home = readFileSync(join(distDir, 'index.html'), 'utf8')
@@ -386,10 +389,9 @@ main().catch((err) => {
   try {
     writeRobots()
     writeSitemap()
-    if (existsSync(join(distDir, 'index.html')) && !existsSync(join(distDir, '_spa-shell.html'))) {
-      copyFileSync(join(distDir, 'index.html'), join(distDir, '_spa-shell.html'))
+    if (existsSync(join(distDir, 'index.html'))) {
+      writeFallbackRoutes(readFileSync(join(distDir, 'index.html'), 'utf8'))
     }
-    writeFallbackRoutes()
     console.log('seo-build recovered via fallback')
   } catch (err2) {
     console.error('seo-build recovery failed:', err2)
