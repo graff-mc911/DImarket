@@ -113,7 +113,7 @@ export function CategorySubcategoryPicker({
             <option value="">{t('categoryPicker.selectMain')}</option>
             {catalog.map((cat) => (
               <option key={cat.slug} value={cat.slug}>
-                {labelFor(cat.label, locale)}
+                {labelFor(cat.label, locale, cat.slug)}
               </option>
             ))}
           </select>
@@ -144,10 +144,10 @@ export function CategorySubcategoryPicker({
             >
               <option value="">{t('categoryPicker.selectSub')}</option>
               {groups.map((group) => (
-                <optgroup key={group.slug} label={labelFor(group.label, locale)}>
+                <optgroup key={group.slug} label={labelFor(group.label, locale, group.slug)}>
                   {group.subcategories.map((sub) => (
                     <option key={sub.slug} value={sub.slug}>
-                      {labelFor(sub.label, locale)}
+                      {labelFor(sub.label, locale, sub.slug)}
                     </option>
                   ))}
                 </optgroup>
@@ -158,7 +158,7 @@ export function CategorySubcategoryPicker({
               {groups.map((group) => (
                 <div key={group.slug}>
                   <p className="mb-1 text-xs font-bold uppercase tracking-wide text-[#6366f1]">
-                    {labelFor(group.label, locale)}
+                    {labelFor(group.label, locale, group.slug)}
                   </p>
                   <div className="space-y-1">
                     {group.subcategories.map((sub) => (
@@ -213,7 +213,7 @@ function SubcategoryCheckbox({
         onChange={onToggle}
         className="h-4 w-4 rounded border-[rgba(148,163,184,0.4)]"
       />
-      <span className="text-sm text-[#2f2a24]">{labelFor(sub.label, locale)}</span>
+      <span className="text-sm text-[#2f2a24]">{labelFor(sub.label, locale, sub.slug)}</span>
     </label>
   )
 }

@@ -576,7 +576,7 @@ export function Header() {
                           <div className="my-1 border-t border-[#e7e7e7]" />
                           <button onClick={() => goTo('/admin')} type="button" className={dropdownItemClass}>
                             <ClipboardList className="mr-2 inline h-4 w-4" />
-                            Admin Panel
+                            {t('header.adminPanel')}
                           </button>
                           <button onClick={() => goTo('/dashboard')} type="button" className={dropdownItemClass}>
                             <ClipboardList className="mr-2 inline h-4 w-4" />
@@ -914,7 +914,7 @@ export function Header() {
                       <>
                         <button onClick={() => goTo('/admin')} type="button" className={mobileNavItemClass}>
                           <ClipboardList className="h-5 w-5" />
-                          <span>Admin Panel</span>
+                          <span>{t('header.adminPanel')}</span>
                         </button>
                         <button onClick={() => goTo('/dashboard')} type="button" className={mobileNavItemClass}>
                           <ClipboardList className="h-5 w-5" />

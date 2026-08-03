@@ -15,7 +15,7 @@ import { navigateTo }    from '../lib/navigation'
 import { createCheckoutSession, eurosToCents, BOOST_PACKAGES } from '../lib/stripe'
 
 export function BoostProfile() {
-  const { user, profile } = useApp()
+  const { user, profile, t } = useApp()
   const [loading, setLoading]   = useState<string | null>(null)
   const [error, setError]       = useState('')
 
@@ -60,13 +60,13 @@ export function BoostProfile() {
             <div className="glass-panel p-6 md:p-8">
               <div className="eyebrow">
                 <Zap className="h-4 w-4" />
-                <span>Просування профілю</span>
+                <span>{t('boost.eyebrow')}</span>
               </div>
               <h1 className="mt-4 text-3xl font-extrabold tracking-tight" style={{ color: 'var(--ink-900)' }}>
-                Отримуйте більше клієнтів
+                {t('boost.title')}
               </h1>
               <p className="muted-text mt-3 text-base leading-relaxed">
-                Виділіть свій профіль серед інших майстрів і отримуйте більше замовлень.
+                {t('boost.subtitle')}
               </p>
             </div>
 

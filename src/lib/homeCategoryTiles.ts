@@ -205,7 +205,7 @@ function buildTileIndex(
     for (const group of cat.groups ?? []) {
       index.set(`${cat.slug}:${group.slug}`, {
         id: `${cat.slug}:${group.slug}`,
-        label: labelFor(group.label, locale),
+        label: labelFor(group.label, locale, group.slug),
         path: listingsPathForWorkGroup(group.slug, cat.slug),
         icon: tileIcon(group.slug),
       })

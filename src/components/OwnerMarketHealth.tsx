@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { Building2, ClipboardList, HardHat, MapPin, TrendingUp } from 'lucide-react'
 import { fetchMarketHealthRows, type MarketHealthRow } from '../lib/marketStats'
 import { ALL_TRACKED_MARKETS, LAUNCH_MARKETS } from '../lib/launchMarkets'
+import { useApp } from '../contexts/AppContext'
 
 export function OwnerMarketHealth() {
+  const { t } = useApp()
   const [rows, setRows] = useState<MarketHealthRow[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -25,23 +27,22 @@ export function OwnerMarketHealth() {
       <div className="mb-5">
         <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[#64748b]">
           <MapPin className="h-4 w-4" />
-          <span>Здоровʼя ринку</span>
+          <span>{t('marketHealth.eyebrow')}</span>
         </div>
         <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#2f2a24]">
-          Пілотні та наступні міста
+          {t('marketHealth.title')}
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[#6f665d]">
-          Ліквідність по містах: майстри, компанії, активні запити. Глобальна
-          реєстрація не обмежена — це лише KPI для запуску.
+          {t('marketHealth.subtitle')}
         </p>
       </div>
 
       {loading ? (
-        <p className="text-sm text-[#7a7168]">Завантаження метрик…</p>
+        <p className="text-sm text-[#7a7168]">{t('marketHealth.loading')}</p>
       ) : (
         <>
-          <MarketGroup title="Пілот (активний фокус)" rows={launchRows} />
-          <MarketGroup title="Наступна хвиля" rows={expansionRows} className="mt-6" />
+          <MarketGroup title={t('marketHealth.pilotGroup')} rows={launchRows} />
+          <MarketGroup title={t('marketHealth.nextWave')} rows={expansionRows} className="mt-6" />
         </>
       )}
     </section>

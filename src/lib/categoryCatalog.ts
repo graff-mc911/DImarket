@@ -6,6 +6,7 @@ import { CONSTRUCTION_WORK_GROUPS } from './constructionWorkGroups'
 import { TRANSPORT_WORK_GROUPS } from './transportWorkGroups'
 import { CLEANING_WORK_GROUPS } from './cleaningWorkGroups'
 import { SELL_RENT_WORK_GROUPS } from './sellRentWorkGroups'
+import { CATEGORY_LABEL_I18N } from './categoryLabelI18n'
 
 export type LocalizedLabel = {
   uk: string
@@ -127,11 +128,20 @@ export function getSubcategoryDef(categorySlug: string, subSlug: string): Subcat
   return getCategoryDef(categorySlug)?.subcategories.find((s) => s.slug === subSlug)
 }
 
-export function labelFor(entry: LocalizedLabel, locale: string): string {
+export function labelFor(entry: LocalizedLabel, locale: string, slug?: string): string {
   const normalized = locale.toLowerCase()
-  if (entry[normalized]) return entry[normalized] as string
   const baseLocale = normalized.split('-')[0]
+  const fromMap = slug ? CATEGORY_LABEL_I18N[slug] : undefined
+
+  if (fromMap?.[normalized as keyof typeof fromMap]) {
+    return fromMap[normalized as keyof typeof fromMap]
+  }
+  if (fromMap?.[baseLocale as keyof typeof fromMap]) {
+    return fromMap[baseLocale as keyof typeof fromMap]
+  }
+  if (entry[normalized]) return entry[normalized] as string
   if (entry[baseLocale]) return entry[baseLocale] as string
+  if (fromMap?.en) return fromMap.en
   if (entry.en) return entry.en
   if (entry.ru) return entry.ru
   return entry.uk
@@ -139,12 +149,12 @@ export function labelFor(entry: LocalizedLabel, locale: string): string {
 
 export function subcategoryLabel(categorySlug: string, subSlug: string, locale: string): string {
   const sub = getSubcategoryDef(categorySlug, subSlug)
-  return sub ? labelFor(sub.label, locale) : subSlug
+  return sub ? labelFor(sub.label, locale, sub.slug) : subSlug
 }
 
 export function categoryLabel(slug: string, locale: string): string {
   const cat = getCategoryDef(slug)
-  return cat ? labelFor(cat.label, locale) : slug
+  return cat ? labelFor(cat.label, locale, cat.slug) : slug
 }
 
 /** Категорії з хоча б однією підкатегорією (для випадаючих списків). */
@@ -163,7 +173,7 @@ export function subcategorySlugsForGroup(
 
 export function groupLabel(categorySlug: string, groupSlug: string, locale: string): string {
   const group = getSubcategoryGroups(categorySlug).find((g) => g.slug === groupSlug)
-  return group ? labelFor(group.label, locale) : groupSlug
+  return group ? labelFor(group.label, locale, group.slug) : groupSlug
 }
 
 export function listingsPathForWorkGroup(

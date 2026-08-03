@@ -51,7 +51,7 @@ const EMPTY_STATS: OwnerStats = {
 }
 
 export function Dashboard() {
-  const { user } = useApp()
+  const { user, t } = useApp()
 
   // Окремо зберігаємо профіль, щоб перевірити роль власника сайту.
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -398,7 +398,7 @@ export function Dashboard() {
           <div className="glass-panel p-10 text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[rgba(148,163,184,0.18)] border-t-[#64748b]" />
             <p className="mt-4 text-sm text-[#6f665d]">
-              Завантажуємо особистий кабінет...
+              {t('ownerDash.loading')}
             </p>
           </div>
         </div>
@@ -417,12 +417,11 @@ export function Dashboard() {
             </div>
 
             <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
-              Доступ заборонено
+              {t('ownerDash.accessDenied')}
             </h1>
 
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#6f665d] md:text-base">
-              Особистий кабінет власника сайту відкривається тільки для вашого
-              owner-профілю. Для інших користувачів ця сторінка недоступна.
+              {t('ownerDash.accessDeniedText')}
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -431,7 +430,7 @@ export function Dashboard() {
                 type="button"
                 className="btn-secondary rounded-full"
               >
-                На головну
+                {t('ownerDash.home')}
               </button>
 
               <button
@@ -439,7 +438,7 @@ export function Dashboard() {
                 type="button"
                 className="btn-primary rounded-full"
               >
-                Відкрити мій профіль
+                {t('ownerDash.openProfile')}
               </button>
             </div>
           </div>
@@ -482,7 +481,7 @@ export function Dashboard() {
               <div className="mb-6">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[#64748b]">
                   <ShieldCheck className="h-4 w-4" />
-                  <span>Особистий кабінет власника</span>
+                  <span>{t('ownerDash.eyebrow')}</span>
                 </div>
 
                 <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">

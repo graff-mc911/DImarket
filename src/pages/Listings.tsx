@@ -306,13 +306,13 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
         </div>
 
         <div className="amazon-filter-group">
-          <label>Максимальна ціна</label>
+          <label>{t('listings.maxPrice')}</label>
           <input
             type="number"
             min="0"
             value={maxPrice}
             onChange={e => setMaxPrice(e.target.value)}
-            placeholder="Без обмеження"
+            placeholder={t('listings.noPriceLimit')}
             className="input-glass h-9 text-sm"
           />
         </div>
