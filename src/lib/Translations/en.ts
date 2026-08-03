@@ -1,7 +1,5 @@
-// Англійські переклади інтерфейсу.
-// Важливо: цей файл є основним джерелом ключів для типу TranslationKey.
+// English UI translations — source of TranslationKey.
 export const enTranslations = {
-  // Шапка сайту: навігація, акаунт, мова, валюта.
   'header.browse': 'Browse',
   'header.findProfessionals': 'Find Professionals',
   'header.findCompanies': 'Companies',
@@ -28,8 +26,7 @@ export const enTranslations = {
   'proDash.title': 'Professional Dashboard',
   'customerDash.title': 'Your dashboard',
   'costEstimator.title': 'Estimate your project cost',
-  'costEstimator.sub':
-    'Describe the work, add photos and area — get labor, materials, duration and Low / Average / Premium prices.',
+  'costEstimator.sub': 'Describe the work, add photos and area — get labor, materials, duration and Low / Average / Premium prices.',
   'projects.title': 'Project feed',
   'projects.sub': 'Incoming customer projects — apply, save, or hide',
   'leads.title': 'Project leads',
@@ -95,8 +92,7 @@ export const enTranslations = {
   'project.wizard.email': 'Email',
   'project.wizard.language': 'Preferred language',
   'project.matches.title': 'Top matched professionals',
-  'project.matches.sub':
-    'AI ranked Top 10 by distance, specialization, rating, jobs, languages, availability, verification & portfolio',
+  'project.matches.sub': 'AI ranked Top 10 by distance, specialization, rating, jobs, languages, availability, verification & portfolio',
   'project.matches.viewProject': 'View project',
   'project.matches.myProjects': 'My projects',
   'project.matches.empty': 'No matches yet. Professionals will be notified.',
@@ -113,20 +109,16 @@ export const enTranslations = {
   'header.orders': '& Orders',
   'header.saved': 'Saved',
   'header.all': 'All',
-  'header.todaysDeals': "Today's Deals",
+  'header.todaysDeals': 'Today\'s Deals',
   'header.sell': 'Sell',
   'header.customerService': 'Customer Service',
-
   'nav.home': 'Home',
   'nav.search': 'Search',
   'nav.messages': 'Messages',
   'nav.profile': 'Profile',
   'nav.post': 'Post a job',
   'nav.mobileNavigation': 'Mobile navigation',
-
-  // Футер: основні посилання, підтримка, реклама і правовий текст.
-  'footer.tagline':
-    'Connect with trusted construction professionals and find quality materials.',
+  'footer.tagline': 'Connect with trusted construction professionals and find quality materials.',
   'footer.forClients': 'For Clients',
   'footer.browseListings': 'Browse Listings',
   'footer.postRequest': 'Post a Request',
@@ -139,18 +131,15 @@ export const enTranslations = {
   'footer.getToKnow': 'Get to Know Us',
   'footer.makeMoney': 'Make Money with Us',
   'footer.allRightsReserved': 'All rights reserved.',
-  'footer.brandText':
-    'Dimarket is a free global platform for construction services where clients post work and professionals respond directly.',
-  'footer.monetization':
-    'No fees for users. No subscriptions. Platform revenue comes only from advertising.',
+  'footer.brandText': 'Dimarket is a free global platform for construction services where clients post work and professionals respond directly.',
+  'footer.monetization': 'No fees for users. No subscriptions. Platform revenue comes only from advertising.',
   'footer.platformTitleSimple': 'Platform',
   'footer.accountTitleSimple': 'Account',
   'footer.supportTitle': 'Support',
   'footer.contactLink': 'Contact',
   'footer.advertisingLink': 'Advertise on the site',
   'footer.adsTitle': 'Advertising',
-  'footer.adsText':
-    'Construction brands, materials, tools, logistics, and local services can reach active demand across listings and professional pages.',
+  'footer.adsText': 'Construction brands, materials, tools, logistics, and local services can reach active demand across listings and professional pages.',
   'footer.adsButton': 'Advertising page',
   'footer.contactButton': 'Contact us',
   'footer.forCompanies': 'For companies',
@@ -158,18 +147,14 @@ export const enTranslations = {
   'footer.legal': 'Legal',
   'footer.impressum': 'Impressum',
   'footer.terms': 'Terms',
-  'footer.legalRight': '',
-
-  // Сторінка зворотного звʼязку: заголовки, форма, повідомлення і підказки.
+  'footer.legalRight': 'Free construction-services platform with advertising-only monetization.',
   'contact.eyebrow': 'Contact',
   'contact.title': 'Write to us directly',
-  'contact.description':
-    'If you have a question, suggestion, complaint, or idea for improving the platform, send us a message through this form.',
+  'contact.description': 'If you have a question, suggestion, complaint, or idea for improving the platform, send us a message through this form.',
   'contact.homeButton': 'Home',
   'contact.loginButton': 'Sign in',
   'contact.formTitle': 'Contact form',
-  'contact.formDescription':
-    'Describe the question in simple words — we will save the request and return to it without losing details.',
+  'contact.formDescription': 'Describe the question in simple words — we will save the request and return to it without losing details.',
   'contact.nameLabel': 'Name',
   'contact.namePlaceholder': 'Your name',
   'contact.emailLabel': 'Email',
@@ -183,27 +168,20 @@ export const enTranslations = {
   'contact.submitButton': 'Send message',
   'contact.sending': 'Sending...',
   'contact.requiredFields': 'Please fill in all required fields.',
-  'contact.successMessage':
-    'Message sent successfully. We will review it and contact you using the details you provided.',
+  'contact.successMessage': 'Message sent successfully. We will review it and contact you using the details you provided.',
   'contact.errorMessage': 'Unable to send the message. Please try again.',
   'contact.howItWorksTitle': 'How it works',
-  'contact.howItWorksStepOne':
-    'You fill out a short form with contact details and a description of the question.',
-  'contact.howItWorksStepTwo':
-    'We receive the request in the platform admin panel.',
-  'contact.howItWorksStepThree':
-    'The answer will come by email or phone, depending on what you left.',
+  'contact.howItWorksStepOne': 'You fill out a short form with contact details and a description of the question.',
+  'contact.howItWorksStepTwo': 'We receive the request in the platform admin panel.',
+  'contact.howItWorksStepThree': 'The answer will come by email or phone, depending on what you left.',
   'contact.useCasesTitle': 'What this form is for',
   'contact.useCaseQuestions': 'Questions about how the site works',
   'contact.useCaseBugs': 'Bug reports',
   'contact.useCaseIdeas': 'Feature suggestions',
   'contact.useCaseComplaints': 'Complaints about content or users',
-
-  // Головна сторінка: старі ключі, які ще можуть використовуватись у застосунку.
   'home.heroTitle': 'Find Trusted Professionals',
   'home.heroSubtitle': 'Build Your Dreams',
-  'home.heroDescription':
-    'Construction, renovation, and home services marketplace connecting clients with verified professionals',
+  'home.heroDescription': 'Construction, renovation, and home services marketplace connecting clients with verified professionals',
   'home.searchPlaceholder': 'Search for services, materials, or professionals...',
   'home.search': 'Search',
   'home.findProfessionals': 'Find Professionals',
@@ -214,8 +192,7 @@ export const enTranslations = {
   'home.postRequest': 'Post a Request',
   'home.browseByCategory': 'Browse by Category',
   'home.topRatedProfessionals': 'Top Rated Professionals',
-  'home.topRatedDescription':
-    'Connect with verified experts in construction and home services',
+  'home.topRatedDescription': 'Connect with verified experts in construction and home services',
   'home.noProfessionals': 'No professionals registered yet. Be the first!',
   'home.viewAllProfessionals': 'View All Professionals',
   'home.recentListings': 'Recent Listings',
@@ -224,29 +201,21 @@ export const enTranslations = {
   'home.viewAllListings': 'View All Listings',
   'home.whyChoose': 'Why Choose Dimarket?',
   'home.verifiedProfessionals': 'Verified Professionals',
-  'home.verifiedDescription':
-    'All professionals are verified with ratings and reviews from real clients',
+  'home.verifiedDescription': 'All professionals are verified with ratings and reviews from real clients',
   'home.quickEasy': 'Quick & Easy',
-  'home.quickEasyDescription':
-    'Post your request in minutes without registration. Get responses fast',
+  'home.quickEasyDescription': 'Post your request in minutes without registration. Get responses fast',
   'home.directCommunication': 'Direct Communication',
-  'home.directCommunicationDescription':
-    'Connect directly with professionals through our built-in messaging system',
+  'home.directCommunicationDescription': 'Connect directly with professionals through our built-in messaging system',
   'home.areYouProfessional': 'Are You a Professional?',
-  'home.joinProfessionals':
-    'Join thousands of professionals growing their business on Dimarket',
+  'home.joinProfessionals': 'Join thousands of professionals growing their business on Dimarket',
   'home.registerAsProfessional': 'Register as Professional',
-
-  // Головна сторінка: нові ключі для актуального hero-блоку, категорій, запитів і майстрів.
   'home.globalEyebrow': 'Trusted local services marketplace',
   'home.heroTrustTitle': 'Find a trusted professional near you',
-  'home.heroTrustSubtitle':
-    'Electricians, plumbers, painters — free to post, free for masters.',
+  'home.heroTrustSubtitle': 'Electricians, plumbers, painters — free to post, free for masters.',
   'home.headerSearchPlaceholder': 'Find a tradesperson — e.g. Electrician in Darmstadt',
   'home.whatServicePlaceholder': 'What service do you need?',
   'home.heroAiCta': 'Or let AI help you describe the job',
-  'home.heroSocialProof':
-    '{rating} average · {pros} professionals · Active in Darmstadt, Alicante, Madrid',
+  'home.heroSocialProof': '{rating} average · {pros} professionals · Active in Darmstadt, Alicante, Madrid',
   'home.postJobFree': 'Post a job free',
   'home.topProsInCity': 'Top professionals in {city}',
   'home.recentJobsTitle': 'Recent job requests',
@@ -271,7 +240,7 @@ export const enTranslations = {
   'trust.reviews': 'Real reviews',
   'trust.markets': 'DE · ES · UK',
   'home.heroSimpleTitle': 'Find a master for repair, installation, or building work.',
-  'home.heroSimpleDescription': '',
+  'home.heroSimpleDescription': 'Clients post job requests, professionals respond directly, and Dimarket stays free for users.',
   'home.whatNeedsToBeDone': 'What needs to be done?',
   'home.cityOrCountry': 'City or country',
   'home.postJob': 'Post job',
@@ -285,17 +254,16 @@ export const enTranslations = {
   'home.categoryGroup.metalGlass': 'Metal & glass',
   'home.categoryGroup.services': 'Services',
   'home.categoryGroup.other': 'Other',
-  'home.popularCategoriesText': '',
+  'home.popularCategoriesText': 'The most requested construction and renovation directions on Dimarket.',
   'home.browseRequests': 'Browse job requests',
   'home.freshRequestsTitle': 'Fresh job requests',
-  'home.freshRequestsText': '',
+  'home.freshRequestsText': 'New client requests that professionals can review and answer right away.',
   'home.allRequests': 'All job requests',
   'home.popularProsTitle': 'Popular professionals',
-  'home.popularProsText': '',
+  'home.popularProsText': 'Profiles with visible experience, steady ratings, and direct contact flow.',
   'home.allPros': 'All professionals',
   'home.adTitle': 'Advertising',
-  'home.adText':
-    'Promote tools, materials, local services, or construction showrooms inside a focused demand audience.',
+  'home.adText': 'Promote tools, materials, local services, or construction showrooms inside a focused demand audience.',
   'home.adButton': 'Advertise on Dimarket',
   'home.adCardOne': 'Materials partners',
   'home.adCardTwo': 'Tool brands',
@@ -308,22 +276,18 @@ export const enTranslations = {
   'home.activeLabel': 'Active',
   'home.unknownCategory': 'Construction service',
   'home.noBio': 'Construction professional profile is being completed.',
-  'home.sponsoredPlacement':
-    'Sponsored placement for tools, materials, logistics, or local construction partners.',
+  'home.sponsoredPlacement': 'Sponsored placement for tools, materials, logistics, or local construction partners.',
   'home.sponsoredTitle': 'Partner companies',
-  'home.sponsoredSubtitle': '',
+  'home.sponsoredSubtitle': 'Paid advertising from construction brands, suppliers, and service companies on DImarket.',
   'home.sponsoredCta': 'Advertise your company',
   'home.sidebarAdOne': 'Place brand visibility next to live construction demand.',
-  'home.sidebarAdTwo':
-    'Reach professionals and clients while they search for work and services.',
+  'home.sidebarAdTwo': 'Reach professionals and clients while they search for work and services.',
   'home.loading': 'Loading...',
   'homePremium.seoTitle': 'DImarket — Find trusted construction professionals in Europe',
-  'homePremium.seoDescription':
-    'Post a project, get AI-matched quotes, and hire verified tradespeople across 27 countries.',
+  'homePremium.seoDescription': 'Post a project, get AI-matched quotes, and hire verified tradespeople across 27 countries.',
   'homePremium.eyebrow': 'European construction marketplace',
   'homePremium.heroTitle': 'Build with trusted professionals',
-  'homePremium.heroSubtitle':
-    'Compare verified trades, post a project in minutes, and let AI match the right specialists.',
+  'homePremium.heroSubtitle': 'Compare verified trades, post a project in minutes, and let AI match the right specialists.',
   'homePremium.searchPlaceholder': 'Search electrician, painter, plumber…',
   'homePremium.search': 'Search',
   'homePremium.postProject': 'Post a project',
@@ -361,14 +325,11 @@ export const enTranslations = {
   'homePremium.whyTitle': 'Built for serious construction work',
   'homePremium.whySubtitle': 'Trust, matching, and payments designed for the European market.',
   'homePremium.whyVerifiedTitle': 'Verified professionals',
-  'homePremium.whyVerifiedText':
-    'ID checks, reviews, and portfolio signals so you hire with confidence.',
+  'homePremium.whyVerifiedText': 'ID checks, reviews, and portfolio signals so you hire with confidence.',
   'homePremium.whyAiTitle': 'AI matching',
-  'homePremium.whyAiText':
-    'Describe the job once — our assistant routes it to the right trades and budgets.',
+  'homePremium.whyAiText': 'Describe the job once — our assistant routes it to the right trades and budgets.',
   'homePremium.whyPaymentsTitle': 'Secure payments',
-  'homePremium.whyPaymentsText':
-    'Transparent pricing, boosts, and billing tools for clients and pros.',
+  'homePremium.whyPaymentsText': 'Transparent pricing, boosts, and billing tools for clients and pros.',
   'homePremium.reviewsEyebrow': 'Social proof',
   'homePremium.reviewsTitle': 'Customer reviews',
   'homePremium.reviewsSubtitle': 'Real feedback from completed projects across Europe.',
@@ -379,7 +340,6 @@ export const enTranslations = {
   'homePremium.getItOn': 'Get it on',
   'homePremium.downloadOn': 'Download on the',
   'homePremium.appComingSoon': 'Apps coming soon — links will appear here when published.',
-
   'homePremium.trustLabel': 'Platform trust metrics',
   'homePremium.trustReviews': 'Reviews',
   'homePremium.trustPros': 'Verified Professionals',
@@ -405,36 +365,25 @@ export const enTranslations = {
   'homePremium.faqTitle': 'Frequently asked questions',
   'homePremium.faqSubtitle': 'Quick answers about hiring, verification, payments, and projects on DImarket.',
   'homePremium.faq.q1.q': 'What is DImarket?',
-  'homePremium.faq.q1.a':
-    'DImarket is a European construction marketplace that connects homeowners and businesses with verified professionals, companies, and project quotes.',
+  'homePremium.faq.q1.a': 'DImarket is a European construction marketplace that connects homeowners and businesses with verified professionals, companies, and project quotes.',
   'homePremium.faq.q2.q': 'How do I hire a professional?',
-  'homePremium.faq.q2.a':
-    'Search by trade or city, compare ratings and portfolios, then message a pro or post a project to receive matched quotes.',
+  'homePremium.faq.q2.a': 'Search by trade or city, compare ratings and portfolios, then message a pro or post a project to receive matched quotes.',
   'homePremium.faq.q3.q': 'Are professionals verified?',
-  'homePremium.faq.q3.a':
-    'Many profiles complete identity and trade verification. Look for the verified badge, or filter search results to verified professionals only.',
+  'homePremium.faq.q3.a': 'Many profiles complete identity and trade verification. Look for the verified badge, or filter search results to verified professionals only.',
   'homePremium.faq.q4.q': 'How does posting a project work?',
-  'homePremium.faq.q4.a':
-    'Describe your job once, add location and budget, then publish. Matched professionals can apply with quotes you can compare side by side.',
+  'homePremium.faq.q4.a': 'Describe your job once, add location and budget, then publish. Matched professionals can apply with quotes you can compare side by side.',
   'homePremium.faq.q5.q': 'Is DImarket available in my country?',
-  'homePremium.faq.q5.a':
-    'DImarket is expanding across Europe. Browse professionals by city or country, or use Advanced Search to filter by location and distance.',
+  'homePremium.faq.q5.a': 'DImarket is expanding across Europe. Browse professionals by city or country, or use Advanced Search to filter by location and distance.',
   'homePremium.faq.q6.q': 'How are payments handled?',
-  'homePremium.faq.q6.a':
-    'Paid plans and boosts are processed securely via Stripe. Project payments between customers and professionals can be arranged with escrow-ready workflows as they become available in your market.',
+  'homePremium.faq.q6.a': 'Paid plans and boosts are processed securely via Stripe. Project payments between customers and professionals can be arranged with escrow-ready workflows as they become available in your market.',
   'homePremium.faq.q7.q': 'Can companies create profiles?',
-  'homePremium.faq.q7.a':
-    'Yes. Construction companies can register a company account, list services, and appear in company search and map filters.',
+  'homePremium.faq.q7.a': 'Yes. Construction companies can register a company account, list services, and appear in company search and map filters.',
   'homePremium.faq.q8.q': 'How does the AI Assistant help?',
-  'homePremium.faq.q8.a':
-    'Describe your renovation or repair in plain language. The AI Assistant suggests categories, budget ranges, and matching professionals for your location.',
+  'homePremium.faq.q8.a': 'Describe your renovation or repair in plain language. The AI Assistant suggests categories, budget ranges, and matching professionals for your location.',
   'homePremium.faq.q9.q': 'What languages does DImarket support?',
-  'homePremium.faq.q9.a':
-    'The platform supports multiple European languages. Switch language anytime from the header or footer language controls.',
+  'homePremium.faq.q9.a': 'The platform supports multiple European languages. Switch language anytime from the header or footer language controls.',
   'homePremium.faq.q10.q': 'How do I contact support?',
-  'homePremium.faq.q10.a':
-    'Open the Contact page for customer support, privacy requests, and GDPR inquiries. Professionals can also use the help links in the Support footer column.',
-
+  'homePremium.faq.q10.a': 'Open the Contact page for customer support, privacy requests, and GDPR inquiries. Professionals can also use the help links in the Support footer column.',
   'footer.companyCol': 'Company',
   'footer.servicesCol': 'Services',
   'footer.professionalsCol': 'Professionals',
@@ -447,8 +396,6 @@ export const enTranslations = {
   'footer.gdpr': 'GDPR',
   'footer.languages': 'Languages',
   'footer.social': 'Social media',
-
-  // Категорії послуг і матеріалів.
   'category.construction': 'Construction',
   'category.constructionDesc': 'New construction and building projects',
   'category.renovation': 'Renovation',
@@ -464,8 +411,7 @@ export const enTranslations = {
   'category.tools': 'Transport / logistics',
   'category.toolsDesc': 'Material delivery, movers, relocation, transport',
   'category.cleaning': 'Cleaning',
-  'category.cleaningDesc':
-    'Post-renovation cleaning, general cleaning, deep cleaning, construction cleaning',
+  'category.cleaningDesc': 'Post-renovation cleaning, general cleaning, deep cleaning, construction cleaning',
   'category.name.construction': 'Construction',
   'category.name.renovation': 'Renovation',
   'category.name.electrical': 'Auto repair shop',
@@ -476,29 +422,23 @@ export const enTranslations = {
   'category.name.tools': 'Transport / logistics',
   'category.name.cleaning': 'Cleaning',
   'category.legal-notary': 'Lawyer / Notary',
-  'category.legal-notaryDesc':
-    'Legal advice, contracts, transaction support, notary services',
+  'category.legal-notaryDesc': 'Legal advice, contracts, transaction support, notary services',
   'category.accounting-finance': 'Accountant / Financial consultant',
-  'category.accounting-financeDesc':
-    'Bookkeeping, taxes, reporting, financial consulting for businesses and sole traders',
+  'category.accounting-financeDesc': 'Bookkeeping, taxes, reporting, financial consulting for businesses and sole traders',
   'category.name.legal-notary': 'Lawyer / Notary',
   'category.name.accounting-finance': 'Accountant / Financial consultant',
   'category.furniture': 'Furniture',
   'category.furnitureDesc': 'Furniture and home furnishings for sale',
   'category.page.vacancies.title': 'Vacancies',
-  'category.page.vacancies.description':
-    'Job openings and hiring requests from employers and contractors.',
+  'category.page.vacancies.description': 'Job openings and hiring requests from employers and contractors.',
   'category.page.sellRent.title': 'For sale / Rent',
-  'category.page.sellRent.description':
-    'Listings to sell or rent property, equipment, and other items.',
+  'category.page.sellRent.description': 'Listings to sell or rent property, equipment, and other items.',
   'category.vacancies': 'Vacancies',
   'category.vacanciesDesc': 'Job vacancies and hiring',
   'category.sell-rent': 'For sale / Rent',
-  'category.sell-rentDesc':
-    'Equipment rental: excavators, scaffolding, lifts, generators, tools',
+  'category.sell-rentDesc': 'Equipment rental: excavators, scaffolding, lifts, generators, tools',
   'category.name.vacancies': 'Vacancies',
   'category.name.sell-rent': 'For sale / Rent',
-
   'categoryPicker.modeSingle': 'One subcategory',
   'categoryPicker.modeMultiple': 'Several subcategories',
   'categoryPicker.mainCategory': 'Category',
@@ -515,9 +455,7 @@ export const enTranslations = {
   'categoryPicker.filterActive': 'Filter',
   'categoryPicker.searchWorkTypes': 'Search type of work…',
   'settings.workSubcategoriesTitle': 'Types of work you perform',
-  'settings.workSubcategoriesHint':
-    'Helps clients find you. You can pick one or several subcategories.',
-
+  'settings.workSubcategoriesHint': 'Helps clients find you. You can pick one or several subcategories.',
   'home.featuredWork.hvacTitle': 'HVAC / climate',
   'home.featuredWork.hvacDesc': 'Air conditioning, ventilation, heat pumps, heating',
   'home.featuredWork.windowsTitle': 'Windows',
@@ -527,8 +465,6 @@ export const enTranslations = {
   'home.featuredWork.solarDesc': 'Solar panels, inverters, batteries, installation',
   'home.featuredWork.smartHomeDesc': 'Automation, lighting, and smart security',
   'home.featuredWork.designDesc': 'Architecture, interiors, 3D, engineering',
-
-  // Картка оголошення: тип, ціна, перегляди, статус premium.
   'listing.serviceNeeded': 'Service Needed',
   'listing.serviceOffered': 'Service Offered',
   'listing.forSale': 'For Sale',
@@ -547,38 +483,28 @@ export const enTranslations = {
   'listing.constructionService': 'Construction service',
   'listing.locationNotSpecified': 'Location not specified',
   'listing.budget': 'Budget',
-
-  // Картка майстра.
   'professional.contact': 'Contact',
   'professional.reviews': 'reviews',
   'professional.new': 'New',
   'professional.defaultName': 'Professional',
   'professional.global': 'Global',
-  'professional.profileInProgress':
-    'Construction professional profile is being completed.',
+  'professional.profileInProgress': 'Construction professional profile is being completed.',
   'professional.activityNotSpecified': 'Primary trade not specified',
   'professional.activityLabel': 'Activity',
   'professional.companyBadge': 'Company',
-
-  // Створення оголошення: форма запиту, локація, контакти, фото, статуси.
   'createAd.title': 'Create a construction job request',
   'createAd.noRegistration': 'No registration required',
   'createAd.eyebrow': 'Free job request',
   'createAd.heroTitle': 'Create a construction job request',
-  'createAd.heroDescription':
-    'Describe the work, add a location, and let professionals contact you directly. No subscription and no posting fee.',
+  'createAd.heroDescription': 'Describe the work, add a location, and let professionals contact you directly. No subscription and no posting fee.',
   'createAd.detailsTitle': 'Job details',
-  'createAd.detailsText':
-    'Keep the request specific so professionals can understand the work and send a relevant offer.',
+  'createAd.detailsText': 'Keep the request specific so professionals can understand the work and send a relevant offer.',
   'createAd.locationTitle': 'Location and visibility',
-  'createAd.locationText':
-    'Choose where the request is located and how widely it should be visible to professionals.',
+  'createAd.locationText': 'Choose where the request is located and how widely it should be visible to professionals.',
   'createAd.contactTitle': 'Contact details',
-  'createAd.contactText':
-    'At least one contact method is required so professionals can reach you directly.',
+  'createAd.contactText': 'At least one contact method is required so professionals can reach you directly.',
   'createAd.imagesTitle': 'Photos (optional)',
-  'createAd.imagesText':
-    'Add reference photos, plans, or examples to help professionals estimate the job more accurately.',
+  'createAd.imagesText': 'Add reference photos, plans, or examples to help professionals estimate the job more accurately.',
   'createAd.freeListTitle': 'What is included',
   'createAd.freeItemOne': 'Free posting for clients',
   'createAd.freeItemTwo': 'Direct contact with professionals',
@@ -598,10 +524,8 @@ export const enTranslations = {
   'createAd.titlePlaceholder': 'e.g., Need drywall repair in living room',
   'createAd.titleHint': 'Example: Need drywall repair in living room',
   'createAd.descriptionLabel': 'Description',
-  'createAd.descriptionPlaceholder':
-    'Write what needs to be done, size of the job, preferred timing, and any details that matter.',
-  'createAd.descriptionHint':
-    'Write what needs to be done, size of the job, preferred timing, and any details that matter.',
+  'createAd.descriptionPlaceholder': 'Write what needs to be done, size of the job, preferred timing, and any details that matter.',
+  'createAd.descriptionHint': 'Write what needs to be done, size of the job, preferred timing, and any details that matter.',
   'createAd.categoryLabel': 'Category',
   'createAd.selectCategory': 'Select category',
   'createAd.priceLabel': 'Budget',
@@ -619,8 +543,7 @@ export const enTranslations = {
   'createAd.imagePlaceholder': 'https://example.com/photo.jpg',
   'createAd.addImage': 'Add another image',
   'createAd.imageTip': 'Tip: Use direct image links',
-  'createAd.imageHelp':
-    'Use direct image URLs for now. Local upload can be added later without changing the data model.',
+  'createAd.imageHelp': 'Use direct image URLs for now. Local upload can be added later without changing the data model.',
   'createAd.currentLocation': 'Use my location',
   'createAd.duration': 'Request duration',
   'createAd.durationLabel': 'Request duration',
@@ -636,8 +559,7 @@ export const enTranslations = {
   'createAd.createButton': 'Publish job request',
   'createAd.creating': 'Publishing request...',
   'createAd.success': 'Job request published successfully. Redirecting...',
-  'createAd.contactRequired':
-    'Add at least phone or email before publishing the request.',
+  'createAd.contactRequired': 'Add at least phone or email before publishing the request.',
   'createAd.locationDetectError': 'Unable to detect your current location.',
   'createAd.locationLookupError': 'Location lookup failed. Please enter the city manually.',
   'createAd.publishError': 'Unable to publish the job request.',
@@ -651,16 +573,14 @@ export const enTranslations = {
   'createAd.radius.state': 'State',
   'createAd.radius.land': 'Land (DE)',
   'createAd.radius.global': 'All Users',
-
   'salesBot.eyebrow': 'AI assistant',
   'salesBot.title': 'AI assistant site guide',
   'salesBot.subtitle': 'AI assistant site guide',
   'salesBot.pageTitle': 'AI assistant site guide',
-  'salesBot.pageDesc':
-    'Tell us the category, city, budget, deadline, description, and photos — we will prepare a structured listing for professionals.',
+  'salesBot.pageDesc': 'Tell us the category, city, budget, deadline, description, and photos — we will prepare a structured listing for professionals.',
   'salesBot.classicForm': 'Classic form instead',
   'salesBot.reset': 'Start over',
-  'salesBot.inputPlaceholder': '',
+  'salesBot.inputPlaceholder': 'Your reply…',
   'salesBot.thinking': 'Thinking…',
   'salesBot.publishing': 'Publishing your listing…',
   'salesBot.draftLabel': 'Draft',
@@ -674,27 +594,22 @@ export const enTranslations = {
   'salesBot.errorLocation': 'City is required.',
   'salesBot.cardMessage': 'Hi, write what you want and I will do it',
   'salesBot.welcome': 'Hi, write what you want and I will do it',
-  'salesBot.categoryUnknown':
-    'I did not recognize the category. Pick a button below or type the category name.',
+  'salesBot.categoryUnknown': 'I did not recognize the category. Pick a button below or type the category name.',
   'salesBot.askCity': 'Great — {{category}}. Which city or area is the job in?',
   'salesBot.cityTooShort': 'Please enter a city or district (at least 2 characters).',
   'salesBot.askBudget': 'What is your approximate budget? (number, or write "skip")',
   'salesBot.budgetInvalid': 'Enter a number for budget, or write "skip".',
   'salesBot.askDeadline': 'When should the work be done? (days: 7, 14, 30, or "2 weeks")',
-  'salesBot.askDescription':
-    'Describe the job: scope, size, materials, timing — at least a few sentences.',
+  'salesBot.askDescription': 'Describe the job: scope, size, materials, timing — at least a few sentences.',
   'salesBot.descriptionTooShort': 'Please add more detail (at least 15 characters).',
-  'salesBot.askPhotos':
-    'Add photo links (https://…) separated by spaces, or write "skip".',
+  'salesBot.askPhotos': 'Add photo links (https://…) separated by spaces, or write "skip".',
   'salesBot.photosNeedUrl': 'Paste image URLs (https://…) or write "skip".',
   'salesBot.askContact': 'Phone and/or email for professionals to reach you.',
   'salesBot.contactRequired': 'Please provide a phone number or email.',
-  'salesBot.confirm':
-    'Summary:\n• Category: {{category}}\n• City: {{city}}\n• Budget: {{budget}}\n• Days visible: {{deadline}}\n• Photos: {{photos}}\n• Description: {{description}}\n\nPublish now? (yes / no)',
+  'salesBot.confirm': 'Summary:\n• Category: {{category}}\n• City: {{city}}\n• Budget: {{budget}}\n• Days visible: {{deadline}}\n• Photos: {{photos}}\n• Description: {{description}}\n\nPublish now? (yes / no)',
   'salesBot.confirmHint': 'Reply "yes" to publish or "no" to edit the description.',
   'salesBot.published': 'Done! Your listing is live. Notified {{count}} professionals. ID: {{id}}',
   'header.aiAssistant': 'AI assistant',
-
   'ai.widget.open': 'Open AI assistant',
   'ai.fallback': 'local fallback mode',
   'ai.errorGeneric': 'AI error. Please try again.',
@@ -839,8 +754,6 @@ export const enTranslations = {
   'ai.lead.askBudget': 'What is your budget?',
   'ai.lead.askDeadline': 'When should it be done?',
   'ai.lead.askContact': 'Phone or email to contact you',
-
-  // Вхід у систему.
   'login.title': 'Sign In',
   'login.subtitle': 'Sign in to manage your profile',
   'login.email': 'Email Address',
@@ -849,12 +762,10 @@ export const enTranslations = {
   'login.passwordPlaceholder': '********',
   'login.signIn': 'Sign In',
   'login.signingIn': 'Signing in...',
-  'login.noAccount': "Don't have an account?",
+  'login.noAccount': 'Don\'t have an account?',
   'login.registerLink': 'Register',
   'login.lookingToPost': 'Looking to post an ad?',
   'login.noRegistrationRequired': 'No registration required',
-
-  // Реєстрація майстра.
   'register.title': 'Register on DImarket',
   'register.subtitle': 'Choose your role and join the platform',
   'register.fullName': 'Full Name',
@@ -883,8 +794,6 @@ export const enTranslations = {
   'register.completeProfile': 'Complete your profile with portfolio',
   'register.receiveRequests': 'Start receiving client requests',
   'register.buildReputation': 'Build your reputation with reviews',
-
-  // Каталог оголошень: старі ключі.
   'listings.title': 'Browse Listings',
   'listings.searchPlaceholder': 'Search listings...',
   'listings.filters': 'Filters',
@@ -907,12 +816,9 @@ export const enTranslations = {
   'listings.sortViews': 'Most viewed',
   'listings.filterTypePrefix': 'Type: ',
   'listings.search': 'Search',
-
-  // Каталог оголошень: нові ключі.
   'listings.eyebrow': 'Job requests',
   'listings.simpleTitle': 'Active listings',
-  'listings.simpleDescription':
-    'Browse active client requests, filter by category or place, and reply directly when a job matches your skills.',
+  'listings.simpleDescription': 'Browse active client requests, filter by category or place, and reply directly when a job matches your skills.',
   'listings.whatNeedsToBeDone': 'What needs to be done?',
   'listings.cityOrCountry': 'City or country',
   'listings.findRequests': 'Find requests',
@@ -924,20 +830,15 @@ export const enTranslations = {
   'listings.countSuffix': 'job requests found',
   'listings.loadingRequests': 'Loading job requests...',
   'listings.emptyTitle': 'No job requests match these filters',
-  'listings.emptyText':
-    'Try another keyword, choose a different category, or clear location filtering.',
-
-  // Каталог майстрів: старі ключі.
+  'listings.emptyText': 'Try another keyword, choose a different category, or clear location filtering.',
   'professionals.title': 'Find Professionals',
-  'professionals.subtitle':
-    'Connect with verified experts in construction and home services',
+  'professionals.subtitle': 'Connect with verified experts in construction and home services',
   'professionals.searchPlaceholder': 'Search by name, location, or services...',
   'professionals.loading': 'Loading professionals...',
   'professionals.noFound': 'No professionals found',
   'professionals.beFirst': 'Be the first to register as a professional!',
   'professionals.joinTitle': 'Are You a Professional?',
-  'professionals.joinDesc':
-    'Join our platform and connect with clients looking for your services',
+  'professionals.joinDesc': 'Join our platform and connect with clients looking for your services',
   'professionals.getStartedToday': 'Get Started Today',
   'professionals.sortBy': 'Sort By',
   'professionals.topRated': 'Top Rated',
@@ -949,13 +850,9 @@ export const enTranslations = {
   'professionals.locationPlaceholder': 'Filter by location...',
   'professionals.found': 'professionals found',
   'professionals.registerAsProfessional': 'Register as Professional',
-
-  // Каталог майстрів: нові ключі.
   'professionals.eyebrow': 'Professionals / Masters',
-  'professionals.simpleTitle':
-    'Construction professionals ready for direct contact',
-  'professionals.simpleDescription':
-    'Search masters by city, skill, or rating and contact them directly after reviewing their public profile.',
+  'professionals.simpleTitle': 'Construction professionals ready for direct contact',
+  'professionals.simpleDescription': 'Search masters by city, skill, or rating and contact them directly after reviewing their public profile.',
   'professionals.nameSkillService': 'Name, skill, or service',
   'professionals.cityOrCountry': 'City or country',
   'professionals.filtersButton': 'Filters',
@@ -972,10 +869,7 @@ export const enTranslations = {
   'professionals.loadingSimple': 'Loading professionals...',
   'professionals.postJob': 'Post job',
   'professionals.emptyTitle': 'No professionals match these filters',
-  'professionals.emptyText':
-    'Try another location, remove the category filter, or lower the minimum rating.',
-
-  // Рекламні блоки.
+  'professionals.emptyText': 'Try another location, remove the category filter, or lower the minimum rating.',
   'ads.adSpace': 'Ad Space',
   'ads.advertiseHere': 'Advertise your business here',
   'ads.bannerAd': 'Banner Ad',
@@ -983,13 +877,10 @@ export const enTranslations = {
   'ads.contactRates': 'Contact us for rates',
   'ads.stickyAdBlock': 'Sticky Ad Block',
   'ads.close': 'Close ad',
-
-  // Загальні системні тексти.
   'common.required': '*',
   'common.loading': 'Loading...',
   'common.error': 'Error',
   'common.success': 'Success',
-
   'auth.showPassword': 'Show password',
   'auth.hidePassword': 'Hide password',
   'auth.error.invalidCredentials': 'Invalid email or password',
@@ -1003,13 +894,9 @@ export const enTranslations = {
   'auth.continueGoogle': 'Continue with Google',
   'auth.continueApple': 'Continue with Apple',
   'auth.error.oauthNoSession': 'Sign-in was not completed. Try again.',
-  'auth.error.oauthNotConfigured':
-    'Google/Apple sign-in is not configured yet. Use email and password, or contact support.',
+  'auth.error.oauthNotConfigured': 'Google/Apple sign-in is not configured yet. Use email and password, or contact support.',
   'auth.oauthLoading': 'Redirecting…',
-  'register.confirmEmail':
-    'Account created. Check your email to confirm, then sign in.',
-
-  // Радіус видимості оголошення.
+  'register.confirmEmail': 'Account created. Check your email to confirm, then sign in.',
   'visibility.city': 'City',
   'visibility.district': 'District',
   'visibility.region': 'Region',
@@ -1017,57 +904,41 @@ export const enTranslations = {
   'visibility.state': 'State',
   'visibility.land': 'Land (DE)',
   'visibility.global': 'All Users',
-
-  // Сторінки-заглушки та службові маршрути.
   'route.professionalProfileEyebrow': 'Professional profile',
   'route.professionalProfileTitle': 'Professional profile page is being prepared',
-  'route.professionalProfileDescription':
-    "Clients will be able to review a master's profile, rating, reviews, and completed jobs here.",
+  'route.professionalProfileDescription': 'Clients will be able to review a master\'s profile, rating, reviews, and completed jobs here.',
   'route.jobRequestEyebrow': 'Job request',
   'route.jobRequestTitle': 'Job request details are being prepared',
-  'route.jobRequestDescription':
-    'This page will show the full request, attachments, budget, and direct contact options for professionals.',
+  'route.jobRequestDescription': 'This page will show the full request, attachments, budget, and direct contact options for professionals.',
   'route.messagesEyebrow': 'Messages',
   'route.messagesTitle': 'Direct messages will appear here',
-  'route.messagesDescription':
-    'Clients and professionals will be able to communicate directly in one conversation thread for each job.',
+  'route.messagesDescription': 'Clients and professionals will be able to communicate directly in one conversation thread for each job.',
   'route.notFoundEyebrow': 'Page not found',
   'route.notFoundTitle': 'This page does not exist yet',
-  'route.notFoundDescription':
-    'The route is available for future growth, but there is no finished screen for it yet.',
-
-  // Обране.
+  'route.notFoundDescription': 'The route is available for future growth, but there is no finished screen for it yet.',
   'favorites.title': 'Favorites',
-  'favorites.description':
-    'Save job requests and professionals you want to revisit later.',
+  'favorites.description': 'Save job requests and professionals you want to revisit later.',
   'favorites.loginTitle': 'Sign in to keep your favorites',
-  'favorites.loginText':
-    'Saved job requests and saved professionals are available only inside your account.',
+  'favorites.loginText': 'Saved job requests and saved professionals are available only inside your account.',
   'favorites.loginButton': 'Go to sign in',
   'favorites.listingsTab': 'Job requests',
   'favorites.professionalsTab': 'Professionals',
   'favorites.loading': 'Loading favorites...',
   'favorites.emptyListingsTitle': 'No saved job requests yet',
-  'favorites.emptyListingsText':
-    'Use the favorite action on listings so they stay here for quick access later.',
+  'favorites.emptyListingsText': 'Use the favorite action on listings so they stay here for quick access later.',
   'favorites.emptyListingsButton': 'Browse job requests',
   'favorites.emptyProfessionalsTitle': 'No saved professionals yet',
-  'favorites.emptyProfessionalsText':
-    'Save professionals you want to compare, contact, or revisit later.',
+  'favorites.emptyProfessionalsText': 'Save professionals you want to compare, contact, or revisit later.',
   'favorites.emptyProfessionalsButton': 'Browse professionals',
-
-  // Статистика у футері.
   'footerStats.title': 'Platform activity',
-  'footerStats.subtitle':
-    'Live indicators from Dimarket usage and construction-service demand.',
+  'footerStats.subtitle': 'Live indicators from Dimarket usage and construction-service demand.',
   'footerStats.visits': 'Visits',
   'footerStats.listings': 'Job requests created',
   'footerStats.successful': 'Requests completed',
   'footerStats.professionals': 'Professionals',
   'footerStats.countries': 'Countries ranked',
   'footerStats.rankingTitle': 'Country ranking',
-  'footerStats.rankingSubtitle':
-    'The score combines professionals, requests, and activity across countries.',
+  'footerStats.rankingSubtitle': 'The score combines professionals, requests, and activity across countries.',
   'footerStats.updatedPrefix': 'Updated:',
   'footerStats.loading': 'Loading statistics...',
   'footerStats.empty': 'Not enough data yet to build the country ranking.',
@@ -1075,119 +946,98 @@ export const enTranslations = {
   'footerStats.prosShort': 'Pros',
   'footerStats.jobsShort': 'Jobs',
   'footerStats.repliesShort': 'Replies',
-
-  // Сторінка реклами.
   'advertising.eyebrow': 'Advertising',
   'advertising.title': 'Advertising keeps Dimarket free for users',
-  'advertising.description':
-    'Dimarket earns only from advertising. Brands can place relevant construction-focused campaigns while clients and professionals continue using the platform for free.',
+  'advertising.description': 'Dimarket earns only from advertising. Brands can place relevant construction-focused campaigns while clients and professionals continue using the platform for free.',
   'advertising.placementsTitle': 'Where ads can appear',
   'advertising.placements.homeTitle': 'Home page',
-  'advertising.placements.homeText':
-    'Warm promotional blocks next to search, featured categories, and fresh requests.',
+  'advertising.placements.homeText': 'Warm promotional blocks next to search, featured categories, and fresh requests.',
   'advertising.placements.listingsTitle': 'Listings feed',
-  'advertising.placements.listingsText':
-    'Inline placements between job requests where professionals actively scan new work.',
+  'advertising.placements.listingsText': 'Inline placements between job requests where professionals actively scan new work.',
   'advertising.placements.sidebarTitle': 'Sidebar and footer',
-  'advertising.placements.sidebarText':
-    'Persistent visibility for tools, materials, logistics, and local showrooms.',
+  'advertising.placements.sidebarText': 'Persistent visibility for tools, materials, logistics, and local showrooms.',
   'advertising.audienceTitle': 'Best fit for advertisers',
-  'advertising.audienceText':
-    'Construction materials, equipment rental, logistics, building tools, home improvement stores, local contractor services, and renovation showrooms.',
+  'advertising.audienceText': 'Construction materials, equipment rental, logistics, building tools, home improvement stores, local contractor services, and renovation showrooms.',
   'advertising.principleTitle': 'Platform principle',
-  'advertising.principleText':
-    'Clients do not pay to post requests. Professionals do not pay to see contact opportunities. Advertising is the only monetization layer.',
+  'advertising.principleText': 'Clients do not pay to post requests. Professionals do not pay to see contact opportunities. Advertising is the only monetization layer.',
   'advertising.primaryButton': 'Browse job requests',
   'advertising.secondaryButton': 'Back to home',
-
-  // Нові ключі — MyListings, Profile, Settings
-  'myListings.title':           'My Listings',
-  'myListings.subtitle':        'Manage your ads',
-  'myListings.createNew':       'New Listing',
-  'myListings.noListings':      'You have no listings yet',
-  'myListings.loading':         'Loading listings...',
-  'myListings.status.active':   'Active',
-  'myListings.status.expired':  'Expired',
-  'myListings.status.sold':     'Sold',
-  'myListings.status.deleted':  'Deleted',
-
-  // Profile
-  'profile.editProfile':        'Edit Profile',
-  'profile.portfolio':          'Portfolio',
-  'profile.reviews':            'Reviews',
-  'profile.noPortfolio':        'No portfolio items yet',
-  'profile.noReviews':          'No reviews yet',
-  'profile.memberSince':        'Member since',
-  'profile.activeAds':          'active listings',
-  'profile.viewAllListings':    'View all my listings',
-  'profile.loading':            'Loading profile…',
-  'profile.reviewsCount':       'reviews',
-  'profile.emptyHint':          'Complete your profile in Settings — use the Edit button.',
-  'common.retry':               'Try again',
-
-  // Settings
-  'settings.description':           'Manage your profile and preferences',
-  'settings.profileInfoTitle':      'Profile Information',
-  'settings.bioLabel':              'Bio / Description',
-  'settings.bioPlaceholder':        'Tell clients about your experience and services...',
-  'settings.profilePhotoLabel':     'Profile photo',
-  'settings.profilePhotoHint':      'JPG, PNG, WebP, or GIF — up to 10 MB. Upload from device or paste a URL.',
-  'settings.uploadFromDevice':      'Upload from device',
+  'myListings.title': 'My Listings',
+  'myListings.subtitle': 'Manage your ads',
+  'myListings.createNew': 'New Listing',
+  'myListings.noListings': 'You have no listings yet',
+  'myListings.loading': 'Loading listings...',
+  'myListings.status.active': 'Active',
+  'myListings.status.expired': 'Expired',
+  'myListings.status.sold': 'Sold',
+  'myListings.status.deleted': 'Deleted',
+  'profile.editProfile': 'Edit Profile',
+  'profile.portfolio': 'Portfolio',
+  'profile.reviews': 'Reviews',
+  'profile.noPortfolio': 'No portfolio items yet',
+  'profile.noReviews': 'No reviews yet',
+  'profile.memberSince': 'Member since',
+  'profile.activeAds': 'active listings',
+  'profile.viewAllListings': 'View all my listings',
+  'profile.loading': 'Loading profile…',
+  'profile.reviewsCount': 'reviews',
+  'profile.emptyHint': 'Complete your profile in Settings — use the Edit button.',
+  'common.retry': 'Try again',
+  'settings.description': 'Manage your profile and preferences',
+  'settings.profileInfoTitle': 'Profile Information',
+  'settings.bioLabel': 'Bio / Description',
+  'settings.bioPlaceholder': 'Tell clients about your experience and services...',
+  'settings.profilePhotoLabel': 'Profile photo',
+  'settings.profilePhotoHint': 'JPG, PNG, WebP, or GIF — up to 10 MB. Upload from device or paste a URL.',
+  'settings.uploadFromDevice': 'Upload from device',
   'settings.mediaUrlPlaceholder': 'https://…',
-  'settings.addMediaUrl':           'Add via URL',
-  'settings.portfolioEmptyHint':    'Add work photos from your device',
-  'settings.error.uploadMedia':     'Could not upload image',
-  'settings.profilePhotoAlt':       'Profile photo preview',
-  'settings.websiteLabel':          'Website',
-  'settings.portfolioTitle':        'Portfolio Images',
-  'settings.addPortfolioImage':     '+ Add Portfolio Image',
-  'settings.removePortfolioImage':  'Remove image',
-  'settings.preferencesTitle':      'Language & Currency',
-  'settings.notificationsTitle':    'Notifications',
-  'settings.notificationsText':     'Receive updates about messages and leads',
-  'settings.telegramTitle':         'Telegram alerts',
-  'settings.telegramText':          'Send the command below to our bot to get instant job match notifications.',
-  'settings.telegramLinked':        'Telegram connected',
-  'settings.telegramCopy':          'Copy /link command',
-  'settings.digestTitle':           'Weekly email digest',
-  'settings.digestText':            'Summary of new jobs in your area every Monday',
-  'settings.saveChanges':           'Save Changes',
-  'settings.saving':                'Saving...',
-  'settings.changePasswordTitle':   'Change Password',
-  'settings.currentPasswordLabel':    'Current password',
-  'settings.newPasswordLabel':      'New Password',
+  'settings.addMediaUrl': 'Add via URL',
+  'settings.portfolioEmptyHint': 'Add work photos from your device',
+  'settings.error.uploadMedia': 'Could not upload image',
+  'settings.profilePhotoAlt': 'Profile photo preview',
+  'settings.websiteLabel': 'Website',
+  'settings.portfolioTitle': 'Portfolio Images',
+  'settings.addPortfolioImage': '+ Add Portfolio Image',
+  'settings.removePortfolioImage': 'Remove image',
+  'settings.preferencesTitle': 'Language & Currency',
+  'settings.notificationsTitle': 'Notifications',
+  'settings.notificationsText': 'Receive updates about messages and leads',
+  'settings.telegramTitle': 'Telegram alerts',
+  'settings.telegramText': 'Send the command below to our bot to get instant job match notifications.',
+  'settings.telegramLinked': 'Telegram connected',
+  'settings.telegramCopy': 'Copy /link command',
+  'settings.digestTitle': 'Weekly email digest',
+  'settings.digestText': 'Summary of new jobs in your area every Monday',
+  'settings.saveChanges': 'Save Changes',
+  'settings.saving': 'Saving...',
+  'settings.changePasswordTitle': 'Change Password',
+  'settings.currentPasswordLabel': 'Current password',
+  'settings.newPasswordLabel': 'New Password',
   'settings.confirmNewPasswordLabel': 'Confirm New Password',
-  'settings.reauthNonceLabel':        'Code from email',
+  'settings.reauthNonceLabel': 'Code from email',
   'settings.reauthNoncePlaceholder': 'Confirmation code from email',
-  'settings.reauthEmailSent':
-    'We sent a confirmation code to your email. Enter it below with your new password.',
-  'settings.passwordHint':          'At least 6 characters. Requires email + password sign-in.',
-  'settings.changePasswordButton':  'Change Password',
-  'settings.dangerTitle':           'Danger Zone',
-  'settings.dangerText':            'Once you delete your account, there is no going back.',
-  'settings.deleteAccountButton':   'Delete Account',
+  'settings.reauthEmailSent': 'We sent a confirmation code to your email. Enter it below with your new password.',
+  'settings.passwordHint': 'At least 6 characters. Requires email + password sign-in.',
+  'settings.changePasswordButton': 'Change Password',
+  'settings.dangerTitle': 'Danger Zone',
+  'settings.dangerText': 'Once you delete your account, there is no going back.',
+  'settings.deleteAccountButton': 'Delete Account',
   'settings.confirm.deleteAccount': 'Are you sure you want to delete your account? This cannot be undone.',
-  'settings.success.profileSaved':  'Profile updated successfully!',
+  'settings.success.profileSaved': 'Profile updated successfully!',
   'settings.success.passwordChanged': 'Password changed successfully!',
-  'settings.error.loadProfile':     'Error loading profile',
-  'settings.error.saveProfile':     'Error saving profile',
-  'settings.error.changePassword':  'Error changing password',
+  'settings.error.loadProfile': 'Error loading profile',
+  'settings.error.saveProfile': 'Error saving profile',
+  'settings.error.changePassword': 'Error changing password',
   'settings.error.wrongCurrentPassword': 'Current password is incorrect',
   'settings.error.reauthRequired': 'Confirmation required. Check your email or enter the code from the message.',
   'settings.error.samePassword': 'New password must differ from the current one',
   'settings.error.noEmailForPassword': 'No email on account — cannot change password here',
-  'settings.error.oauthPasswordOnly':
-    'You signed in with Google/Apple. Use “Forgot password?” on the login page to set a password for your email.',
-  'settings.error.deleteAccount':   'Error deleting account',
+  'settings.error.oauthPasswordOnly': 'You signed in with Google/Apple. Use “Forgot password?” on the login page to set a password for your email.',
+  'settings.error.deleteAccount': 'Error deleting account',
   'settings.error.passwordMismatch': 'Passwords do not match',
-  'settings.error.noSession':       'No active session. Please log in again.',
-
-  // Загальні
-  'ads.label':   'Ad',
-  'ads.visit':   'Visit',
-
-
-  // Advertising self-service — нові ключі
+  'settings.error.noSession': 'No active session. Please log in again.',
+  'ads.label': 'Ad',
+  'ads.visit': 'Visit',
   'advertising.selfService.eyebrow': 'Self-service advertising',
   'advertising.selfService.title': 'Add your ad and choose exact geographic targeting',
   'advertising.selfService.description': 'Upload a banner, add a link, choose pages, geography and duration.',
@@ -1195,8 +1045,7 @@ export const enTranslations = {
   'advertising.selfService.createBtn': 'Create ad campaign',
   'advertising.selfService.backBtn': 'Back to home',
   'advertising.feature.placements': 'Multiple positions',
-  'advertising.feature.placementsText':
-    '1:1 site map: side columns (desktop), Partner companies (home only), mobile banners between sections.',
+  'advertising.feature.placementsText': '1:1 site map: side columns (desktop), Partner companies (home only), mobile banners between sections.',
   'advertising.feature.geo': 'Precise geography',
   'advertising.feature.geoText': 'Worldwide, countries, regions or specific cities.',
   'advertising.feature.price': 'Automatic pricing',
@@ -1209,34 +1058,26 @@ export const enTranslations = {
   'advertising.step3.title': 'Proceed to payment',
   'advertising.step3.text': 'Campaign is created with pending payment status.',
   'advertising.placementsSection.title': 'Where to show the ad',
-  'advertising.placementsSection.desc':
-    'Highlighted zones on the map are where your banner appears. Center is home only; bottom sticky is not sold.',
+  'advertising.placementsSection.desc': 'Highlighted zones on the map are where your banner appears. Center is home only; bottom sticky is not sold.',
   'advertising.slots.page.home': 'Home page',
   'advertising.slots.page.listings': 'Browse listings',
   'advertising.slots.page.professionals': 'Find professionals',
   'advertising.slots.page.default': 'Other pages',
   'advertising.slots.desktopTitle': 'Desktop / tablet',
   'advertising.slots.mobileTitle': 'Mobile',
-  'advertising.slots.mobileHint':
-    '#1 — wide banner under hero or above the list. #2–4 — between sections or cards (no fixed bottom sticky).',
+  'advertising.slots.mobileHint': '#1 — wide banner under hero or above the list. #2–4 — between sections or cards (no fixed bottom sticky).',
   'advertising.catalog.previewTitle': 'Placement map on the site',
-  'advertising.catalog.previewDesc':
-    'Click slots on the map — purple highlights are your positions. Each slot shows its on-site container size; upload at the recommended size to avoid cropping and empty space.',
+  'advertising.catalog.previewDesc': 'Click slots on the map — purple highlights are your positions. Each slot shows its on-site container size; upload at the recommended size to avoid cropping and empty space.',
   'advertising.catalog.slotSizeShort': '{w}×{h}',
   'advertising.catalog.slotSizeSublinePhoto': 'photo {ih}px',
   'advertising.catalog.slotSizeSublinePhotoApprox': 'photo ~{ih}px',
-  'advertising.catalog.slotSizeTooltip':
-    'Prepare file {iw}×{ih} px (photo area). On-site container: {cw}×{ch} px. Export: {uw}×{uh} px. Wide banners use contain; side banners use cover.',
+  'advertising.catalog.slotSizeTooltip': 'Prepare file {iw}×{ih} px (photo area). On-site container: {cw}×{ch} px. Export: {uw}×{uh} px. Wide banners use contain; side banners use cover.',
   'advertising.catalog.slotSizeSublineContainer': 'box {cw}×{ch}',
   'advertising.catalog.sizesLegendTitle': 'Container sizes (layout reference)',
-  'advertising.catalog.sizesLegendSide':
-    'Side L/R 1–4 (desktop ≥1280px): width {cw} px, row height ~{ch} px (viewport-dependent), file {uw}×{uh} px ({aspect}).',
-  'advertising.catalog.sizesLegendCenter':
-    'Center (home): image ~{iw}×{ih} px in the content column, file {uw}×{uh} px ({aspect}).',
-  'advertising.catalog.sizesLegendLeaderboard':
-    'Wide #1: up to {cw} px wide, up to {ch} px tall, file {uw}×{uh} px ({aspect}).',
-  'advertising.catalog.sizesLegendInline':
-    'Mobile #2–4: container ~{cw}×{ch} px, photo area ~{iw}×{ih} px, file {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendSide': 'Side L/R 1–4 (desktop ≥1280px): width {cw} px, row height ~{ch} px (viewport-dependent), file {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendCenter': 'Center (home): image ~{iw}×{ih} px in the content column, file {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendLeaderboard': 'Wide #1: up to {cw} px wide, up to {ch} px tall, file {uw}×{uh} px ({aspect}).',
+  'advertising.catalog.sizesLegendInline': 'Mobile #2–4: container ~{cw}×{ch} px, photo area ~{iw}×{ih} px, file {uw}×{uh} px ({aspect}).',
   'advertising.catalog.tapToSelect': 'Click L1–L4, R1–R4, Center, or mobile blocks to select or clear a position.',
   'advertising.catalog.selectedOnPage': 'On this page',
   'advertising.catalog.desktopWire': 'Desktop (≥1280px)',
@@ -1330,18 +1171,15 @@ export const enTranslations = {
   'advertising.submit': 'Proceed to payment',
   'advertising.submitting': 'Creating...',
   'advertising.preview.title': 'Preview',
-  'advertising.preview.desc':
-    'Pick a banner type, fit the image to the real container, build a collage, or add text on the photo.',
+  'advertising.preview.desc': 'Pick a banner type, fit the image to the real container, build a collage, or add text on the photo.',
   'advertising.previewStudio.containerSize': 'Photo area',
   'advertising.previewStudio.fileSizeHint': 'prepare your file at this exact size',
   'advertising.previewStudio.imagesTitle': 'Images for collage / animation',
-  'advertising.previewStudio.imagesHint':
-    'Upload photos to different slots or add more here. Collage or slideshow needs 2+ images.',
+  'advertising.previewStudio.imagesHint': 'Upload photos to different slots or add more here. Collage or slideshow needs 2+ images.',
   'advertising.previewStudio.displayTitle': 'Display mode',
   'advertising.previewStudio.collageMax': 'Collage shows up to {n} images for this format.',
   'advertising.previewStudio.frameTitle': 'Image fit',
-  'advertising.previewStudio.frameHint':
-    'Scale and offset apply to the selected banner type (side, center, leaderboard, mobile).',
+  'advertising.previewStudio.frameHint': 'Scale and offset apply to the selected banner type (side, center, leaderboard, mobile).',
   'advertising.previewStudio.resetFrame': 'Reset',
   'advertising.previewStudio.fit.contain': 'Contain',
   'advertising.previewStudio.fit.cover': 'Cover',
@@ -1350,8 +1188,7 @@ export const enTranslations = {
   'advertising.previewStudio.positionY': 'Offset ↕',
   'advertising.previewStudio.textTitle': 'Banner text',
   'advertising.previewStudio.textOverlay': 'Show title and description over the image',
-  'advertising.previewStudio.textHint':
-    'Text comes from the Name and Description fields. Unchecked — text appears below the image.',
+  'advertising.previewStudio.textHint': 'Text comes from the Name and Description fields. Unchecked — text appears below the image.',
   'advertising.previewStudio.slotsHint': 'Media from slots',
   'advertising.mediaEditor.previewFrame': 'Banner preview',
   'advertising.mediaEditor.autoFitHint': 'Images auto-fit the banner without cropping or empty side bars.',
@@ -1464,46 +1301,34 @@ export const enTranslations = {
   'home.statsProfessionals': 'professionals',
   'home.statsListings': 'active listings',
   'home.statsLanguages': 'interface languages',
-
   'launch.eyebrow': 'Launch markets',
   'launch.title': 'Growing in Darmstadt, Alicante & Madrid',
-  'launch.description':
-    'We are building local supply and demand in these cities first — DImarket works globally wherever you register.',
+  'launch.description': 'We are building local supply and demand in these cities first — DImarket works globally wherever you register.',
   'launch.registerCta': 'Join in your city',
-  'launch.globalNote':
-    'Your city is not listed? Register anyway — the platform works wherever masters, companies, and clients sign up.',
+  'launch.globalNote': 'Your city is not listed? Register anyway — the platform works wherever masters, companies, and clients sign up.',
   'launch.metricMasters': 'Masters',
   'launch.metricCompanies': 'Companies',
   'launch.metricRequests': 'Requests',
   'launch.freeForPros': 'Free for masters and companies',
   'launch.exampleBadge': 'Example request',
-
   'launch.seed.darmstadt.electric': 'Electrician needed for apartment rewiring',
-  'launch.seed.darmstadt.electricDesc':
-    'Looking for a certified electrician in Darmstadt for partial rewiring and new outlets.',
+  'launch.seed.darmstadt.electricDesc': 'Looking for a certified electrician in Darmstadt for partial rewiring and new outlets.',
   'launch.seed.darmstadt.bathroom': 'Bathroom renovation — tiles and plumbing',
-  'launch.seed.darmstadt.bathroomDesc':
-    'Need a team for bathroom refresh: new tiles, sink, and shower installation.',
+  'launch.seed.darmstadt.bathroomDesc': 'Need a team for bathroom refresh: new tiles, sink, and shower installation.',
   'launch.seed.alicante.plumbing': 'Plumber for kitchen leak in Alicante',
-  'launch.seed.alicante.plumbingDesc':
-    'Urgent fix for a kitchen pipe leak. Prefer a local plumber with references.',
+  'launch.seed.alicante.plumbingDesc': 'Urgent fix for a kitchen pipe leak. Prefer a local plumber with references.',
   'launch.seed.alicante.paint': 'Interior painting — 3-bedroom flat',
-  'launch.seed.alicante.paintDesc':
-    'Looking for a painter for walls and ceilings before summer season.',
+  'launch.seed.alicante.paintDesc': 'Looking for a painter for walls and ceilings before summer season.',
   'launch.seed.madrid.renovation': 'Full flat renovation in Madrid',
-  'launch.seed.madrid.renovationDesc':
-    'Seeking a renovation company for 85 m² apartment: layout, flooring, kitchen.',
+  'launch.seed.madrid.renovationDesc': 'Seeking a renovation company for 85 m² apartment: layout, flooring, kitchen.',
   'launch.seed.madrid.hvac': 'Air conditioning installation',
-  'launch.seed.madrid.hvacDesc':
-    'Need HVAC installation for a living room and two bedrooms.',
-
+  'launch.seed.madrid.hvacDesc': 'Need HVAC installation for a living room and two bedrooms.',
   'companies.simpleTitle': 'Construction companies',
   'companies.catalogHint': 'Firms and teams with corporate profiles.',
   'companies.browseLink': 'Browse companies',
   'companies.countSuffix': 'companies',
   'professionals.mastersOnlyHint': 'Individual masters and craftsmen.',
   'professionals.browseLink': 'Browse masters',
-
   'home.audienceTitle': 'Join DImarket',
   'home.audienceProfessional': 'I am a master',
   'home.audienceProfessionalDesc': 'Free profile, local job requests, reviews.',
@@ -1511,19 +1336,15 @@ export const enTranslations = {
   'home.audienceCompanyDesc': 'Corporate profile, B2B visibility, team showcase.',
   'home.audienceAdvertiser': 'I want to advertise',
   'home.audienceAdvertiserDesc': 'Geo-targeted banners next to live demand.',
-
   'landing.signIn': 'Sign in',
   'landing.benefitsTitle': 'Why DImarket',
   'landing.stepsTitle': 'How to start',
   'landing.launchCitiesTitle': 'Active launch cities',
   'landing.finalCtaTitle': 'Register in your city',
-  'landing.finalCtaText':
-    'DImarket is global — your location from registration is where you work and get clients.',
-
+  'landing.finalCtaText': 'DImarket is global — your location from registration is where you work and get clients.',
   'landing.pro.eyebrow': 'For masters',
   'landing.pro.title': 'Get job requests in your city',
-  'landing.pro.subtitle':
-    'Free profile on a global platform. Clients post work — you respond directly. Works in Darmstadt, Alicante, Madrid, and anywhere you register.',
+  'landing.pro.subtitle': 'Free profile on a global platform. Clients post work — you respond directly. Works in Darmstadt, Alicante, Madrid, and anywhere you register.',
   'landing.pro.cta': 'Register as a master',
   'landing.pro.freeNote': '100% free for masters — no subscriptions, no commissions.',
   'landing.pro.benefit1': 'Job requests from clients in your city and categories',
@@ -1533,13 +1354,10 @@ export const enTranslations = {
   'landing.pro.step1': 'Create a free account and select your city',
   'landing.pro.step2': 'Complete profile: photo, skills, portfolio',
   'landing.pro.step3': 'Respond to requests and get reviews',
-  'landing.pro.launchPitch':
-    'We are actively growing supply and demand in Darmstadt (DE), Alicante and Madrid (ES).',
-
+  'landing.pro.launchPitch': 'We are actively growing supply and demand in Darmstadt (DE), Alicante and Madrid (ES).',
   'landing.company.eyebrow': 'For companies',
   'landing.company.title': 'Show your construction business locally',
-  'landing.company.subtitle':
-    'Separate company catalog, corporate profile, and B2B visibility. Free registration — platform revenue is advertising only.',
+  'landing.company.subtitle': 'Separate company catalog, corporate profile, and B2B visibility. Free registration — platform revenue is advertising only.',
   'landing.company.cta': 'Register your company',
   'landing.company.freeNote': 'Free company profile — grow visibility before paid options.',
   'landing.company.benefit1': 'Dedicated /companies catalog separate from individual masters',
@@ -1549,13 +1367,10 @@ export const enTranslations = {
   'landing.company.step1': 'Register as a company with your city',
   'landing.company.step2': 'Add description, contacts, and work categories',
   'landing.company.step3': 'Receive requests and build reputation',
-  'landing.company.launchPitch':
-    'Launch focus: construction firms in Darmstadt, Alicante, and Madrid.',
-
+  'landing.company.launchPitch': 'Launch focus: construction firms in Darmstadt, Alicante, and Madrid.',
   'landing.advertiser.eyebrow': 'For advertisers',
   'landing.advertiser.title': 'Reach buyers at the moment of search',
-  'landing.advertiser.subtitle':
-    'Banner ads with geo-targeting: city, country, or global. Show your brand next to job requests and professional listings.',
+  'landing.advertiser.subtitle': 'Banner ads with geo-targeting: city, country, or global. Show your brand next to job requests and professional listings.',
   'landing.advertiser.cta': 'Register as advertiser',
   'landing.advertiser.freeNote': 'Self-serve campaigns with geo and slot selection.',
   'landing.advertiser.benefit1': 'Geo-targeting: Darmstadt, Alicante, Madrid, or worldwide',
@@ -1565,9 +1380,7 @@ export const enTranslations = {
   'landing.advertiser.step1': 'Create advertiser account',
   'landing.advertiser.step2': 'Upload creative and pick placements + geo',
   'landing.advertiser.step3': 'Launch campaign and track performance',
-  'landing.advertiser.launchPitch':
-    'City packages available for DE/ES launch markets while the platform scales globally.',
-
+  'landing.advertiser.launchPitch': 'City packages available for DE/ES launch markets while the platform scales globally.',
   'onboarding.eyebrow': 'Getting started',
   'onboarding.progress': 'steps completed',
   'onboarding.readyBadge': 'Ready for orders',
@@ -1585,31 +1398,25 @@ export const enTranslations = {
   'onboarding.advertiser.phone': 'Contact phone',
   'onboarding.advertiser.exploreAds': 'Open advertising page',
   'onboarding.advertiser.openAds': 'Set up advertising',
-
   'referral.title': 'Invite a colleague',
-  'referral.description':
-    'Share your link — when a master or company registers, you both get {days} days of profile boost in the catalog.',
+  'referral.description': 'Share your link — when a master or company registers, you both get {days} days of profile boost in the catalog.',
   'referral.invites': 'colleagues joined',
   'referral.copy': 'Copy invite link',
   'referral.copied': 'Copied',
-
   'seo.eyebrow': 'Local services',
   'seo.title': '{trade} in {city}',
-  'seo.description':
-    'Find trusted {trade} professionals and active job requests in {city}, {region}. Free registration on DImarket.',
+  'seo.description': 'Find trusted {trade} professionals and active job requests in {city}, {region}. Free registration on DImarket.',
   'seo.prosTitle': '{trade} professionals in {city}',
   'seo.jobsTitle': 'Job requests in {city}',
   'seo.emptyPros': 'No profiles yet — be the first master in this city.',
   'seo.emptyJobs': 'No active requests yet — post a job or register as a professional.',
   'seo.notFound': 'Page not found',
-
   'seo.trade.electrician': 'Electrician',
   'seo.trade.plumber': 'Plumber',
   'seo.trade.painter': 'Painter',
   'seo.trade.tiler': 'Tiler',
   'seo.trade.handyman': 'Handyman',
   'seo.trade.renovation': 'Renovation',
-
   'priceGuide.title': 'Typical prices for {trade} in {city}',
   'priceGuide.unit.hour': 'per hour',
   'priceGuide.unit.sqm': 'per m²',
@@ -1622,8 +1429,6 @@ export const enTranslations = {
   'currency.rub': 'Russian Ruble',
   'professional.featured': 'Featured',
   'professional.verified': 'Verified',
-
-  // Register & Dashboard — нові ключі
   'register.whoAreYou': 'Who are you?',
   'register.roleClient': 'Client',
   'register.roleClientDesc': 'Looking for a master or service',
@@ -1833,7 +1638,6 @@ export const enTranslations = {
   'advertising.selfServeStatus.rejected': 'Rejected',
   'advertising.selfServeStatus.expired': 'Expired',
   'advertising.selfServeStatus.deleted': 'Deleted',
-
   'messages.subtitle': 'Chat with clients and contractors in real time',
   'messages.empty': 'No conversations yet',
   'messages.selectConversation': 'Select a conversation on the left',
@@ -1843,12 +1647,10 @@ export const enTranslations = {
   'messages.read': 'read',
   'messages.viewListing': 'Listing',
   'messages.setupRequired': 'Apply Phase 1 migration in Supabase',
-
   'notifications.title': 'Notifications',
   'notifications.empty': 'No notifications',
   'notifications.markAll': 'Mark all read',
   'notifications.enablePush': 'Push',
-
   'reviews.writeTitle': 'Leave a review',
   'reviews.overall': 'Overall rating',
   'reviews.workQuality': 'Work quality',
@@ -1860,12 +1662,10 @@ export const enTranslations = {
   'reviews.submit': 'Submit review',
   'reviews.duplicate': 'You already reviewed this job',
   'reviews.error': 'Could not save review',
-
   'matching.suggested': 'Suggested contractors',
   'matching.verified': 'Verified',
   'matching.viewProfile': 'Profile',
   'matching.topThreeTitle': 'Top {count} matches for your job',
-
   'verification.menu': 'Verification',
   'verification.title': 'Contractor verification',
   'verification.subtitle': 'Build trust with official documents',
@@ -1889,11 +1689,9 @@ export const enTranslations = {
   'verification.status.pending': 'Pending',
   'verification.status.verified': 'Verified',
   'verification.status.rejected': 'Rejected',
-
   'marketplace.eyebrow': 'Construction marketplace',
   'marketplace.chooseCategory': 'Choose category',
-  'marketplace.chooseCategorySubtitle':
-    'Browse main construction trades — compare services, professionals, and ratings.',
+  'marketplace.chooseCategorySubtitle': 'Browse main construction trades — compare services, professionals, and ratings.',
   'marketplace.searchCategories': 'Search 350+ services and categories…',
   'marketplace.noCategories': 'No categories found. Try another search.',
   'marketplace.categories': 'Categories',
@@ -1926,17 +1724,14 @@ export const enTranslations = {
   'marketplace.viewProject': 'View project',
   'marketplace.viewServices': 'View Services',
   'marketplace.completedProjects': 'Completed projects',
-
   'mega.close': 'Close',
   'mega.searchPlaceholder': 'Search categories and services…',
   'mega.recentlyViewed': 'Recently viewed',
   'mega.popularServices': 'Popular services',
   'mega.subcategories': 'Subcategories',
-
   'catPage.seoTitle': '{category} services & professionals | DImarket',
   'catPage.seoFallback': 'Category | DImarket',
-  'catPage.seoDescription':
-    'Find verified {category} professionals, compare services, and post a project on DImarket.',
+  'catPage.seoDescription': 'Find verified {category} professionals, compare services, and post a project on DImarket.',
   'catPage.popularServices': 'Popular services',
   'catPage.latestProjects': 'Latest projects',
   'catPage.aiRecommendation': 'AI recommendation',
@@ -1945,22 +1740,16 @@ export const enTranslations = {
   'catPage.relatedCategories': 'Related categories',
   'catPage.faqTitle': 'Frequently asked questions',
   'catPage.faq1q': 'How do I hire a {category} professional on DImarket?',
-  'catPage.faq1a':
-    'Browse featured professionals in {category}, compare ratings, or post a project and receive quotes from matched specialists.',
+  'catPage.faq1a': 'Browse featured professionals in {category}, compare ratings, or post a project and receive quotes from matched specialists.',
   'catPage.faq2q': 'Are {category} professionals verified?',
-  'catPage.faq2a':
-    'Many {category} profiles are verified. Use the Verified filter to show only checked professionals.',
+  'catPage.faq2a': 'Many {category} profiles are verified. Use the Verified filter to show only checked professionals.',
   'catPage.faq3q': 'How does AI matching work for {category}?',
-  'catPage.faq3a':
-    'Describe your job once in the AI Assistant. DImarket suggests the right {category} services and professionals for your budget and location.',
+  'catPage.faq3a': 'Describe your job once in the AI Assistant. DImarket suggests the right {category} services and professionals for your budget and location.',
   'catPage.faq4q': 'Can I filter {category} services?',
-  'catPage.faq4a':
-    'Yes. Use search and filters on this page, or open a popular service to see professionals filtered for that skill.',
-
+  'catPage.faq4a': 'Yes. Use search and filters on this page, or open a popular service to see professionals filtered for that skill.',
   'advancedSearch.eyebrow': 'Discover',
   'advancedSearch.title': 'Advanced Search',
-  'advancedSearch.subtitle':
-    'Search professionals, categories, services, projects, and cities — with filters, voice, and smart suggestions.',
+  'advancedSearch.subtitle': 'Search professionals, categories, services, projects, and cities — with filters, voice, and smart suggestions.',
   'advancedSearch.placeholder': 'Search electrician, Berlin, tiling…',
   'advancedSearch.search': 'Search',
   'advancedSearch.clear': 'Clear',
