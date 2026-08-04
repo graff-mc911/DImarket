@@ -1,0 +1,72 @@
+{
+  "started_at": "2026-08-04T13:45:00.000Z",
+  "mode": "apply:anon_signup",
+  "data": "data/directory/spain-electricians-from-listing.json",
+  "imported": [
+    {
+      "slug": "adil-electrician-algeciras",
+      "full_name": "Adil",
+      "id": "89ccac50-eded-47be-9426-ae6087bd16da",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "juan-electrician-sesena-viejo",
+      "full_name": "Juan",
+      "id": "0000b137-1ab4-48d6-8c8a-8d8f1f5d0f5f",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "valentin-boitsun-electrician-malaga",
+      "full_name": "Valentin Boitsun",
+      "id": "74d22af9-67ea-4dbf-baae-7640d638ea7d",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "david-mingo-electrician-madrid",
+      "full_name": "David Mingo",
+      "id": "37c6f253-06cb-42ca-9d72-ab8e49d51e13",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "instalaciones-electricas-jps-valdeiglesias",
+      "full_name": "Instalaciones El\u00e9ctricas JPS",
+      "id": "27bccd1d-3309-402e-977b-86be4048fa66",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "eddy-electrician-getafe",
+      "full_name": "Eddy",
+      "id": "6d6517d5-565a-40a7-9f80-6f8d9b9c03cf",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "sergio-castaneda-electrician-madrid",
+      "full_name": "Sergio Castaneda",
+      "id": "b2a7e44d-128a-4cf3-9906-097efa8a7c8b",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "francisco-javier-ramirez-ospina-motril",
+      "full_name": "Francisco Javier Ram\u00edrez Ospina",
+      "id": "358eb5f3-d7f9-4228-9b21-4d1c4f2ab3b0",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "javier-electrician-barcelona",
+      "full_name": "Javier",
+      "id": "c8fe9419-9049-4a14-a440-38c44ae7be51",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "alfonso-electrician-don-benito",
+      "full_name": "Alfonso",
+      "id": "aedc48d6-dc72-4f83-b443-4987fb8ddcaf",
+      "action": "created_via_signup"
+    }
+  ],
+  "failed": [],
+  "created": 10,
+  "updated": 0,
+  "linked": 0,
+  "skipped": 0
+}

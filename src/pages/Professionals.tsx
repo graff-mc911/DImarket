@@ -233,9 +233,12 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
               )}
             </p>
           </div>
-          <button onClick={() => navigateTo('/create-ad')} type="button" className="btn-primary shrink-0 px-5 py-2.5 text-sm">
-            {t('professionals.postJob')}
-          </button>
+          <div className="flex flex-col items-start gap-1 sm:items-end">
+            <button onClick={() => navigateTo('/create-ad')} type="button" className="btn-primary shrink-0 px-5 py-2.5 text-sm">
+              {t('directory.requestQuote')}
+            </button>
+            <p className="text-xs text-[var(--ink-500)]">{t('directory.quoteHint')}</p>
+          </div>
         </div>
       </section>
 

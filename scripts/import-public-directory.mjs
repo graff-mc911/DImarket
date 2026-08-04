@@ -19,7 +19,11 @@ import { randomBytes } from 'crypto'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
-const dataPath = resolve(root, 'data/directory/public-businesses.json')
+const dataArg = process.argv.find((a) => a.startsWith('--data='))
+const dataPath = resolve(
+  root,
+  dataArg ? dataArg.slice('--data='.length) : 'data/directory/public-businesses.json',
+)
 const apply = process.argv.includes('--apply')
 const limitArg = process.argv.find((a) => a.startsWith('--limit='))
 const limit = limitArg ? Number(limitArg.split('=')[1]) : Infinity
@@ -113,6 +117,9 @@ function profilePatch(biz) {
   if (biz.address) extras.push(`Address: ${biz.address}`)
   if (biz.business_hours) extras.push(`Hours: ${biz.business_hours}`)
   if (biz.public_email) extras.push(`Public email: ${biz.public_email}`)
+  if (biz.years_experience) extras.push(`Experience: ${biz.years_experience} years`)
+  if (biz.hourly_rate_eur) extras.push(`Rate: ${biz.hourly_rate_eur} €/h`)
+  if (biz.tags?.length) extras.push(`Tags: ${biz.tags.join('; ')}`)
   if (biz.services?.length) extras.push(`Services: ${biz.services.join('; ')}`)
   if (extras.length) {
     const block = extras.join('\n')

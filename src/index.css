@@ -6242,6 +6242,17 @@
   color: var(--ink-600);
 }
 
+.directory-expert__stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin-top: 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--ink-700);
+  font-weight: 600;
+}
+
 .directory-expert__star {
   width: 0.95rem;
   height: 0.95rem;

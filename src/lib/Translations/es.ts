@@ -506,6 +506,8 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'directory.benefitCompare': 'Compara perfiles lado a lado',
   'directory.benefitQuotes': 'Solicita un presupuesto personalizado',
   'directory.servicesSidebar': 'Servicios del directorio',
+  'directory.requestQuote': 'Solicita tu presupuesto gratis',
+  'directory.quoteHint': 'Es gratis y tarda menos de 5 minutos',
   'createAd.title': 'Crear una solicitud de trabajo de construccion',
   'createAd.noRegistration': 'Sin registro obligatorio',
   'createAd.eyebrow': 'Solicitud de trabajo gratuita',

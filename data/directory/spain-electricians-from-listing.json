@@ -1,0 +1,515 @@
+{
+  "version": 1,
+  "generated_at": "2026-08-04T13:45:00.000Z",
+  "source": "Public electrician directory listing facts mirrored into DImarket (names, cities, service titles, listed starting prices). No third-party photos, reviews, ratings, logos, or marketing copy.",
+  "schema": {
+    "target_table": "profiles",
+    "auth_required": true,
+    "junction": "professional_categories",
+    "location_format": "City, Region, Country",
+    "notes": "Claimable directory accounts. Photos intentionally omitted."
+  },
+  "summary": {
+    "businesses_ready_to_import": 10,
+    "categories_populated": [
+      "Electrician"
+    ],
+    "cities_count": 9
+  },
+  "businesses": [
+    {
+      "slug": "adil-electrician-algeciras",
+      "full_name": "Adil",
+      "user_role": "professional",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-outlets",
+        "electro-panels"
+      ],
+      "city": "Algeciras",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Algeciras, Andalusia, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+adil-electrician-algeciras@users.dimarket.app",
+      "years_experience": null,
+      "hourly_rate_eur": null,
+      "tags": [
+        "Electrician"
+      ],
+      "services": [
+        "Electrical installation works — 10 €",
+        "Connecting household appliances — 10 €",
+        "Installation of grounding — 10 €"
+      ],
+      "bio": "Electrician in Algeciras (Spain) listed on DImarket for electrical installation works, appliance connection, and grounding jobs. Contact via DImarket to request a quote.",
+      "seo": {
+        "title": "Adil — Electrician in Algeciras | DImarket",
+        "meta_description": "Find electrician Adil in Algeciras on DImarket. Request a quote for electrical installation and appliance connection.",
+        "keywords": [
+          "electrician",
+          "Algeciras",
+          "Spain",
+          "electrical installation"
+        ]
+      }
+    },
+    {
+      "slug": "juan-electrician-sesena-viejo",
+      "full_name": "Juan",
+      "user_role": "professional",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-outlets",
+        "electro-wiring",
+        "electro-cameras"
+      ],
+      "city": "Seseña Viejo",
+      "region": "Castilla-La Mancha",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Seseña Viejo, Castilla-La Mancha, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+juan-electrician-sesena-viejo@users.dimarket.app",
+      "years_experience": null,
+      "hourly_rate_eur": null,
+      "tags": [
+        "Electrician"
+      ],
+      "services": [
+        "Other electrician services",
+        "Installation of internet cable — 2 €",
+        "Installation and replacement of sockets — 30 €"
+      ],
+      "bio": "Electrician in Seseña Viejo (Spain) on DImarket. Publicly listed services include socket installation and network cabling. Request a personalized quote on DImarket.",
+      "seo": {
+        "title": "Juan — Electrician in Seseña Viejo | DImarket",
+        "meta_description": "Electrician Juan in Seseña Viejo. Socket installation and cabling services on DImarket.",
+        "keywords": [
+          "electrician",
+          "Seseña Viejo",
+          "sockets",
+          "Spain"
+        ]
+      }
+    },
+    {
+      "slug": "valentin-boitsun-electrician-malaga",
+      "full_name": "Valentin Boitsun",
+      "user_role": "professional",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-outlets",
+        "electro-rewiring"
+      ],
+      "city": "Málaga",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Málaga, Andalusia, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+valentin-boitsun-electrician-malaga@users.dimarket.app",
+      "years_experience": null,
+      "hourly_rate_eur": null,
+      "tags": [
+        "Electrician"
+      ],
+      "services": [
+        "Installation of electrical wiring — 15 €",
+        "Installation and replacement of sockets — 15 €",
+        "Other electrician services — 50 €"
+      ],
+      "bio": "Electrician Valentin Boitsun in Málaga (Spain). DImarket listing for wiring and socket installation. Ask for a quote directly on the platform.",
+      "seo": {
+        "title": "Valentin Boitsun — Electrician in Málaga | DImarket",
+        "meta_description": "Electrician in Málaga for wiring and socket work. Compare and contact on DImarket.",
+        "keywords": [
+          "electrician",
+          "Málaga",
+          "wiring",
+          "Spain"
+        ]
+      }
+    },
+    {
+      "slug": "david-mingo-electrician-madrid",
+      "full_name": "David Mingo",
+      "user_role": "professional",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-rewiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-wiring"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+david-mingo-electrician-madrid@users.dimarket.app",
+      "years_experience": 20,
+      "hourly_rate_eur": 40,
+      "tags": [
+        "Electrician",
+        "Work under contract is possible"
+      ],
+      "services": [
+        "Electrical wiring repair — 50 €",
+        "Electrical installation bulletins — 150 €",
+        "Installation of electric lighting (chandeliers, sconces, lamps) — 50 €"
+      ],
+      "bio": "Electrician David Mingo in Madrid with publicly stated experience and hourly rate. Services include wiring repair, electrical bulletins, and lighting installation. Contact via DImarket.",
+      "seo": {
+        "title": "David Mingo — Electrician in Madrid | DImarket",
+        "meta_description": "Madrid electrician David Mingo. Wiring repair, lighting, and electrical bulletins on DImarket.",
+        "keywords": [
+          "electrician",
+          "Madrid",
+          "lighting",
+          "boletin"
+        ]
+      }
+    },
+    {
+      "slug": "instalaciones-electricas-jps-valdeiglesias",
+      "full_name": "Instalaciones Eléctricas JPS",
+      "user_role": "company",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-switches",
+        "electro-intercom"
+      ],
+      "city": "San Martín de Valdeiglesias",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "San Martín de Valdeiglesias, Madrid, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+instalaciones-electricas-jps-valdeiglesias@users.dimarket.app",
+      "years_experience": null,
+      "hourly_rate_eur": null,
+      "tags": [
+        "Electrician"
+      ],
+      "services": [
+        "Installation of electrical wiring — 1 €",
+        "Installation and replacement of switches — 1 €",
+        "Installation of intercom — 1 €"
+      ],
+      "bio": "Electrical installation company Instalaciones Eléctricas JPS in San Martín de Valdeiglesias (Madrid area). Wiring, switches, and intercom work listed on DImarket.",
+      "seo": {
+        "title": "Instalaciones Eléctricas JPS — San Martín de Valdeiglesias | DImarket",
+        "meta_description": "Electrical company near Madrid for wiring, switches, and intercoms on DImarket.",
+        "keywords": [
+          "electrician",
+          "company",
+          "Valdeiglesias",
+          "Madrid"
+        ]
+      }
+    },
+    {
+      "slug": "eddy-electrician-getafe",
+      "full_name": "Eddy",
+      "user_role": "professional",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-panels",
+        "electro-wiring"
+      ],
+      "city": "Getafe",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Getafe, Madrid, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+eddy-electrician-getafe@users.dimarket.app",
+      "years_experience": null,
+      "hourly_rate_eur": null,
+      "tags": [
+        "Electrician"
+      ],
+      "services": [
+        "Electrical installation bulletins — 320 €"
+      ],
+      "bio": "Electrician Eddy in Getafe (Madrid area). Listed for electrical installation bulletin services on DImarket. Request a quote on the platform.",
+      "seo": {
+        "title": "Eddy — Electrician in Getafe | DImarket",
+        "meta_description": "Electrician in Getafe for electrical bulletins. Contact via DImarket.",
+        "keywords": [
+          "electrician",
+          "Getafe",
+          "Madrid",
+          "bulletin"
+        ]
+      }
+    },
+    {
+      "slug": "sergio-castaneda-electrician-madrid",
+      "full_name": "Sergio Castaneda",
+      "user_role": "professional",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-alarm"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+sergio-castaneda-electrician-madrid@users.dimarket.app",
+      "years_experience": null,
+      "hourly_rate_eur": null,
+      "tags": [
+        "Electrician",
+        "Work under contract is possible"
+      ],
+      "services": [
+        "Electrical system maintenance",
+        "Installation of grounding",
+        "Installation of intercom"
+      ],
+      "bio": "Electrician Sergio Castaneda in Madrid. Maintenance, grounding, and related electrical services on DImarket. Contract work possible — request a quote.",
+      "seo": {
+        "title": "Sergio Castaneda — Electrician in Madrid | DImarket",
+        "meta_description": "Madrid electrician for maintenance and grounding. Find Sergio Castaneda on DImarket.",
+        "keywords": [
+          "electrician",
+          "Madrid",
+          "maintenance",
+          "grounding"
+        ]
+      }
+    },
+    {
+      "slug": "francisco-javier-ramirez-ospina-motril",
+      "full_name": "Francisco Javier Ramírez Ospina",
+      "user_role": "professional",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-outlets",
+        "electro-panels"
+      ],
+      "city": "Motril",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Motril, Andalusia, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+francisco-javier-ramirez-ospina-motril@users.dimarket.app",
+      "years_experience": null,
+      "hourly_rate_eur": null,
+      "tags": [
+        "Electrician"
+      ],
+      "services": [
+        "Electrical installation works — 30 €",
+        "Repair of household appliances",
+        "Installation of internet cable — 30 €"
+      ],
+      "bio": "Electrician Francisco Javier Ramírez Ospina in Motril (Andalusia). Electrical installation and cabling services on DImarket.",
+      "seo": {
+        "title": "Francisco Javier Ramírez Ospina — Electrician in Motril | DImarket",
+        "meta_description": "Electrician in Motril for installation works and cabling. Contact on DImarket.",
+        "keywords": [
+          "electrician",
+          "Motril",
+          "Andalusia",
+          "Spain"
+        ]
+      }
+    },
+    {
+      "slug": "javier-electrician-barcelona",
+      "full_name": "Javier",
+      "user_role": "professional",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-lighting",
+        "electro-panels",
+        "electro-rewiring",
+        "electro-wiring"
+      ],
+      "city": "Barcelona",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Barcelona, Catalonia, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+javier-electrician-barcelona@users.dimarket.app",
+      "years_experience": null,
+      "hourly_rate_eur": null,
+      "tags": [
+        "Electrician"
+      ],
+      "services": [
+        "Other electrician services — 50 €",
+        "Installation of electric lighting (chandeliers, sconces, lamps) — 20 €",
+        "Installation and connection of the electrical panel — 120 €"
+      ],
+      "bio": "Electrician Javier in Barcelona. Lighting and electrical panel installation listed on DImarket. Request a quote through the platform.",
+      "seo": {
+        "title": "Javier — Electrician in Barcelona | DImarket",
+        "meta_description": "Barcelona electrician for lighting and panel installation on DImarket.",
+        "keywords": [
+          "electrician",
+          "Barcelona",
+          "lighting",
+          "panel"
+        ]
+      }
+    },
+    {
+      "slug": "alfonso-electrician-don-benito",
+      "full_name": "Alfonso",
+      "user_role": "professional",
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-intercom",
+        "electro-lighting",
+        "electro-wiring"
+      ],
+      "city": "Don Benito",
+      "region": "Extremadura",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Don Benito, Extremadura, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+alfonso-electrician-don-benito@users.dimarket.app",
+      "years_experience": null,
+      "hourly_rate_eur": null,
+      "tags": [
+        "Electrician"
+      ],
+      "services": [
+        "Installation of intercom — 180 €",
+        "Repair of lighting systems — 140 €",
+        "Installation of internet cable — 120 €"
+      ],
+      "bio": "Electrician Alfonso in Don Benito (Extremadura). Intercom, lighting repair, and cabling services on DImarket.",
+      "seo": {
+        "title": "Alfonso — Electrician in Don Benito | DImarket",
+        "meta_description": "Electrician in Don Benito for intercom and lighting work. Find Alfonso on DImarket.",
+        "keywords": [
+          "electrician",
+          "Don Benito",
+          "Extremadura",
+          "intercom"
+        ]
+      }
+    }
+  ]
+}

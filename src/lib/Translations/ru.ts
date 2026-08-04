@@ -506,6 +506,8 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'directory.benefitCompare': 'Сравнивайте профили рядом',
   'directory.benefitQuotes': 'Запрашивайте индивидуальную оценку',
   'directory.servicesSidebar': 'Услуги в каталоге',
+  'directory.requestQuote': 'Запросить бесплатную оценку',
+  'directory.quoteHint': 'Это бесплатно и занимает меньше 5 минут',
   'createAd.title': 'Создать строительную заявку на работу',
   'createAd.noRegistration': 'Без регистрации',
   'createAd.eyebrow': 'Бесплатная заявка на работу',

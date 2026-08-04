@@ -30,7 +30,13 @@ interface DirectoryExpertCardProps {
 
 type ServiceRow = { name: string; priceLabel: string }
 
-function parseServiceRowsFromBio(bio: string | null | undefined): string[] {
+function parseBioField(bio: string | null | undefined, label: string): string | null {
+  if (!bio) return null
+  const match = bio.match(new RegExp(`^${label}:\\s*(.+)$`, 'im'))
+  return match?.[1]?.trim() || null
+}
+
+function parseServiceRowsFromBio(bio: string | null | undefined): ServiceRow[] {
   if (!bio) return []
   const match = bio.match(/Services:\s*([^\n]+)/i)
   if (!match) return []
@@ -39,6 +45,15 @@ function parseServiceRowsFromBio(bio: string | null | undefined): string[] {
     .map((s) => s.trim())
     .filter(Boolean)
     .slice(0, 4)
+    .map((raw) => {
+      const priced =
+        raw.match(/^(.*?)\s+[—–-]\s+(\d+(?:[.,]\d+)?\s*€(?:\/h)?)\s*$/i) ||
+        raw.match(/^(.*?)\s+\((\d+(?:[.,]\d+)?\s*€(?:\/h)?)\)\s*$/i)
+      if (priced) {
+        return { name: priced[1].trim(), priceLabel: priced[2].replace(/\s+/g, ' ').trim() }
+      }
+      return { name: raw, priceLabel: '' }
+    })
 }
 
 function buildServiceRows(
@@ -48,7 +63,10 @@ function buildServiceRows(
 ): ServiceRow[] {
   const fromBio = parseServiceRowsFromBio(professional.bio)
   if (fromBio.length) {
-    return fromBio.map((name) => ({ name, priceLabel: priceOnRequest }))
+    return fromBio.map((row) => ({
+      name: row.name,
+      priceLabel: row.priceLabel || priceOnRequest,
+    }))
   }
 
   const slugs = professional.work_subcategory_slugs ?? []
@@ -113,6 +131,17 @@ export function DirectoryExpertCard({ professional }: DirectoryExpertCardProps) 
     language.code,
     t('professional.priceOnRequest'),
   )
+
+  const experienceRaw = parseBioField(professional.bio, 'Experience')
+  const rateRaw = parseBioField(professional.bio, 'Rate')
+  const tagsRaw = parseBioField(professional.bio, 'Tags')
+  const extraTags = (tagsRaw || '')
+    .split(/[;|]/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+  for (const tag of extraTags) {
+    if (!categoryLabels.includes(tag)) categoryLabels.push(tag)
+  }
 
   useEffect(() => {
     if (!user) {
@@ -201,6 +230,13 @@ export function DirectoryExpertCard({ professional }: DirectoryExpertCardProps) 
               <Star className="directory-expert__star" aria-hidden />
               <span>{reviewsLabel}</span>
             </div>
+            {(experienceRaw || rateRaw) && (
+              <div className="directory-expert__stats">
+                {experienceRaw ? <span>{experienceRaw}</span> : null}
+                {experienceRaw && rateRaw ? <span aria-hidden>·</span> : null}
+                {rateRaw ? <span>{rateRaw}</span> : null}
+              </div>
+            )}
             <div className="directory-expert__meta">
               <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
               <span>{professional.location || t('professional.global')}</span>

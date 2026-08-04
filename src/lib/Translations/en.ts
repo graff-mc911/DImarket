@@ -504,6 +504,8 @@ export const enTranslations = {
   'directory.benefitCompare': 'Compare profiles side by side',
   'directory.benefitQuotes': 'Request a personalized quote',
   'directory.servicesSidebar': 'Services in directory',
+  'directory.requestQuote': 'Request your free quote',
+  'directory.quoteHint': "It's free and takes less than 5 minutes",
   'createAd.title': 'Create a construction job request',
   'createAd.noRegistration': 'No registration required',
   'createAd.eyebrow': 'Free job request',

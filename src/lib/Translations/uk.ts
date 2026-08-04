@@ -506,6 +506,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'directory.benefitCompare': 'Порівнюйте профілі поруч',
   'directory.benefitQuotes': 'Запитуйте індивідуальну оцінку',
   'directory.servicesSidebar': 'Послуги в каталозі',
+  'directory.requestQuote': 'Запросити безкоштовну оцінку',
+  'directory.quoteHint': 'Це безкоштовно і займає менше 5 хвилин',
   'createAd.title': 'Створити будівельний запит на роботу',
   'createAd.noRegistration': 'Без реєстрації',
   'createAd.eyebrow': 'Безкоштовний запит на роботу',
