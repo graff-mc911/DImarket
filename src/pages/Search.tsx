@@ -15,6 +15,11 @@ import {
   type SearchFilters,
   type SearchSort,
 } from '../lib/advancedSearch'
+import {
+  geoToSearchFilters,
+  searchFiltersToGeo,
+} from '../lib/globalLocation'
+import { EMPTY_GEO_SEARCH, GEO_RADIUS_OPTIONS, type GeoRadiusMode } from '../lib/geoSearch'
 import { marketplaceCategoryLabel, marketplaceServiceProsPath } from '../lib/marketplaceCategories'
 import { navigateTo } from '../lib/navigation'
 import { pushRecentSearch } from '../lib/searchHistory'
@@ -39,16 +44,30 @@ const POPULAR_FALLBACK = [
 ]
 
 export function SearchPage() {
-  const { t, language } = useApp()
+  const { t, language, location, setLocation } = useApp()
   const initial = useMemo(() => parseSearchParams(window.location.search), [])
 
   const [query, setQuery] = useState(initial.q)
-  const [filters, setFilters] = useState<SearchFilters>(initial.filters)
+  const [extraFilters, setExtraFilters] = useState<SearchFilters>(() => ({
+    ...EMPTY_SEARCH_FILTERS,
+    ...initial.filters,
+    // geo fields come from global location
+    country: '',
+    city: '',
+    distanceKm: null,
+    lat: null,
+    lng: null,
+  }))
   const [sort, setSort] = useState<SearchSort>(initial.sort)
   const [tab, setTab] = useState<ResultTab>('all')
   const [loading, setLoading] = useState(true)
   const [results, setResults] = useState<AdvancedSearchResults>(EMPTY_RESULTS)
   const [filtersOpen, setFiltersOpen] = useState(false)
+
+  const filters = useMemo(
+    () => geoToSearchFilters(location, extraFilters),
+    [location, extraFilters],
+  )
 
   const syncUrl = (q: string, nextFilters: SearchFilters, nextSort: SearchSort) => {
     const url = buildSearchUrl(q, nextFilters, nextSort)
@@ -73,22 +92,54 @@ export function SearchPage() {
 
   useEffect(() => {
     document.title = `${t('advancedSearch.title')} | DImarket`
-    void runSearch(initial.q, initial.filters, initial.sort)
+    // Seed global location from URL filters on first load if URL has location
+    if (initial.filters.city || initial.filters.country || initial.filters.lat != null) {
+      setLocation(searchFiltersToGeo(initial.filters, location))
+    }
+    void runSearch(initial.q, geoToSearchFilters(location, extraFilters), initial.sort)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Re-run search when global location changes (Header / Categories sync)
+  useEffect(() => {
+    void runSearch(query, filters, sort)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.country, location.region, location.province, location.city, location.radius, location.originLat, location.originLng])
 
   useEffect(() => {
     const onPop = () => {
       const parsed = parseSearchParams(window.location.search)
       setQuery(parsed.q)
-      setFilters(parsed.filters)
+      setExtraFilters({
+        ...parsed.filters,
+        country: '',
+        city: '',
+        distanceKm: null,
+        lat: null,
+        lng: null,
+      })
       setSort(parsed.sort)
-      void runSearch(parsed.q, parsed.filters, parsed.sort)
+      if (parsed.filters.city || parsed.filters.country) {
+        setLocation(searchFiltersToGeo(parsed.filters, location))
+      }
+      void runSearch(parsed.q, geoToSearchFilters(location, parsed.filters), parsed.sort)
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const applyFiltersChange = (next: SearchFilters) => {
+    setExtraFilters({
+      ...next,
+      country: '',
+      city: '',
+      distanceKm: null,
+      lat: null,
+      lng: null,
+    })
+    setLocation(searchFiltersToGeo(next, location))
+  }
 
   const counts = {
     professionals: results.professionals.length,
@@ -115,6 +166,9 @@ export function SearchPage() {
 
   const show = (section: ResultTab) => tab === 'all' || tab === section
 
+  const radiusKm =
+    GEO_RADIUS_OPTIONS.find((o) => o.id === location.radius)?.km ?? filters.distanceKm
+
   return (
     <div className="adv-search">
       <header className="adv-search__hero layout-page-gutter">
@@ -131,7 +185,7 @@ export function SearchPage() {
               onSubmit={(q) => {
                 setQuery(q)
                 setTab('all')
-                void runSearch(q)
+                void runSearch(q, filters, sort)
               }}
               autoFocus={!initial.q}
               popularFallback={POPULAR_FALLBACK}
@@ -143,17 +197,18 @@ export function SearchPage() {
           <div className="adv-search__dual-field">
             <span className="adv-search__dual-label">{t('advancedSearch.whereLabel')}</span>
             <LocationAutocompleteField
-              value={filters.city}
-              onChange={(city) => setFilters((f) => ({ ...f, city }))}
+              value={location.city || filters.city}
+              onChange={(city) => setLocation({ ...location, city, fromGps: false })}
               onSelect={(s) =>
-                setFilters((f) => ({
-                  ...f,
+                setLocation({
+                  ...location,
                   city: s.name || '',
-                  country: s.country || f.country,
-                  lat: s.lat ?? null,
-                  lng: s.lon ?? null,
-                  distanceKm: f.distanceKm ?? 25,
-                }))
+                  country: s.country || location.country,
+                  originLat: s.lat ?? null,
+                  originLng: s.lon ?? null,
+                  fromGps: false,
+                  radius: location.radius || '25',
+                })
               }
               placeholder={t('advancedSearch.wherePlaceholder')}
             />
@@ -162,13 +217,14 @@ export function SearchPage() {
           <label className="adv-search__dual-field adv-search__dual-radius">
             <span className="adv-search__dual-label">{t('advancedSearch.distance')}</span>
             <select
-              value={filters.distanceKm ?? ''}
-              onChange={(e) =>
-                setFilters((f) => ({
-                  ...f,
-                  distanceKm: e.target.value ? Number(e.target.value) : null,
-                }))
-              }
+              value={radiusKm ?? ''}
+              onChange={(e) => {
+                const km = e.target.value ? Number(e.target.value) : null
+                const radius =
+                  (GEO_RADIUS_OPTIONS.find((o) => o.km === km)?.id as GeoRadiusMode | undefined) ??
+                  '25'
+                setLocation({ ...location, radius })
+              }}
             >
               <option value="">{t('advancedSearch.anyDistance')}</option>
               <option value="10">10 km</option>
@@ -205,14 +261,15 @@ export function SearchPage() {
           <AdvancedSearchFilters
             filters={filters}
             sort={sort}
-            onFiltersChange={setFilters}
+            onFiltersChange={applyFiltersChange}
             onSortChange={setSort}
             onApply={() => {
               setFiltersOpen(false)
               void runSearch(query, filters, sort)
             }}
             onReset={() => {
-              setFilters({ ...EMPTY_SEARCH_FILTERS })
+              setExtraFilters({ ...EMPTY_SEARCH_FILTERS })
+              setLocation({ ...EMPTY_GEO_SEARCH })
               setSort('best_match')
               void runSearch(query, EMPTY_SEARCH_FILTERS, 'best_match')
             }}

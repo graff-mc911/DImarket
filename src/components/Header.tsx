@@ -22,7 +22,6 @@ import {
   LayoutDashboard,
   LogOut,
   Megaphone,
-  MapPin,
   Menu,
   MessageSquare,
   Search,
@@ -37,9 +36,10 @@ import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
+import { appendLocationToPath } from '../lib/globalLocation'
 import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
 import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
-import { LAUNCH_MARKETS } from '../lib/launchMarkets'
+import { HeaderLocationControl } from './HeaderLocationControl'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
@@ -68,7 +68,7 @@ interface Announcement {
 export function Header() {
   const {
     user, profile, currency, language,
-    setCurrency, setLanguage, signOut, t,
+    setCurrency, setLanguage, signOut, t, location,
   } = useApp()
 
   // Оновлення при навігації
@@ -198,7 +198,6 @@ export function Header() {
   }
 
   const isSiteOwner  = profile?.is_site_owner === true || isOwnerEmail(user?.email)
-  const deliverCity = LAUNCH_MARKETS[0]?.city ?? 'Darmstadt'
   const accountGreeting = user && profile?.full_name
     ? profile.full_name.split(' ')[0]
     : t('header.signIn')
@@ -268,8 +267,11 @@ export function Header() {
     e.preventDefault()
     const query = searchQuery.trim()
     closeAllMenus()
-    if (!query) { navigateTo('/search'); return }
-    navigateTo('/search?q=' + encodeURIComponent(query))
+    if (!query) {
+      navigateTo(appendLocationToPath('/search', location))
+      return
+    }
+    navigateTo(appendLocationToPath(`/search?q=${encodeURIComponent(query)}`, location))
   }
 
   // Колір банера залежно від типу
@@ -396,18 +398,8 @@ export function Header() {
                 <Logo variant="text" size="header" inverted />
               </button>
 
-              {/* Deliver to (Amazon) */}
-              <button
-                type="button"
-                onClick={() => goTo('/listings')}
-                className="amazon-header-block hidden shrink-0 lg:flex"
-              >
-                <span className="amazon-header-block__top">{t('header.deliverTo')}</span>
-                <span className="amazon-header-block__bottom flex items-center gap-0.5">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {deliverCity}
-                </span>
-              </button>
+              {/* Work in / Deliver to — global location */}
+              <HeaderLocationControl />
 
               {/* Пошук Amazon-style */}
               <form

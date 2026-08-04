@@ -23,7 +23,7 @@ type ListingsProps = {
 }
 
 export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
-  const { t, user, profile } = useApp()
+  const { t, user, profile, location } = useApp()
 
   const listingTypes = useMemo(
     () => [
@@ -64,7 +64,8 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     const syncFiltersFromUrl = () => {
       const params = new URLSearchParams(window.location.search)
       setSearchQuery(params.get('search') || '')
-      setLocationQuery(params.get('location') || '')
+      const urlLoc = params.get('location') || params.get('city') || ''
+      setLocationQuery(urlLoc)
       setSelectedCategory(fixedCategorySlug || params.get('category') || '')
       setSelectedType(params.get('type') || '')
       const workGroup = params.get('work')
@@ -82,6 +83,12 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     window.addEventListener('popstate', syncFiltersFromUrl)
     return () => window.removeEventListener('popstate', syncFiltersFromUrl)
   }, [fixedCategorySlug])
+
+  useEffect(() => {
+    if (locationQuery) return
+    const label = location.city || location.region || location.country
+    if (label) setLocationQuery(label)
+  }, [location.city, location.region, location.country, locationQuery])
 
   const categoryPageMeta = useMemo(() => {
     if (!fixedCategorySlug) return null

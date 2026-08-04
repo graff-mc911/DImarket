@@ -20,6 +20,13 @@ import {
   matchesServiceProfile,
   servicesPath,
 } from '../lib/serviceTaxonomy'
+import {
+  appendLocationToPath,
+  countrySlugFromGeo,
+  formatGlobalLocationLabel,
+  geoFromCountrySlug,
+  hasActiveLocation,
+} from '../lib/globalLocation'
 
 export interface MainCategoriesSectionProps {
   id?: string
@@ -61,11 +68,8 @@ function categorySearchText(category: ServiceCategory, languageCode: string): st
 function professionalPath(
   _category: ServiceCategory,
   subcategory: ServiceSubcategory,
-  locationId: string,
 ): string {
-  return servicesPath(subcategory.slug, {
-    location: locationId !== 'all-europe' ? locationId : undefined,
-  })
+  return servicesPath(subcategory.slug)
 }
 
 /**
@@ -79,12 +83,20 @@ export function MainCategoriesSection({
   eyebrow,
   className = '',
 }: MainCategoriesSectionProps) {
-  const { language, t } = useApp()
+  const { language, t, location, setLocation } = useApp()
   const [query, setQuery] = useState('')
-  const [locationId, setLocationId] = useState(categoryLocationOptions[0]?.id ?? 'all-europe')
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [statsByCategory, setStatsByCategory] = useState<Record<string, CategoryStats>>({})
   const lang = language.code
+
+  const countrySlug = countrySlugFromGeo(location)
+  const locationDisplay = formatGlobalLocationLabel(
+    location,
+    t('serviya.loc.all-europe'),
+  )
+  const selectValue = categoryLocationOptions.some((o) => o.id === countrySlug)
+    ? countrySlug
+    : 'all-europe'
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -145,15 +157,13 @@ export function MainCategoriesSection({
   const sectionEyebrow = eyebrow ?? t('serviya.eyebrow')
 
   const handleSubcategoryClick = (category: ServiceCategory, subcategory: ServiceSubcategory) => {
-    navigateTo(professionalPath(category, subcategory, locationId))
+    navigateTo(appendLocationToPath(professionalPath(category, subcategory), location))
   }
 
   const handlePopularClick = (itemId: string) => {
     const resolved = findServiceBySlug(itemId)
     if (resolved) {
-      navigateTo(servicesPath(resolved.subcategory.slug, {
-        location: locationId !== 'all-europe' ? locationId : undefined,
-      }))
+      navigateTo(appendLocationToPath(servicesPath(resolved.subcategory.slug), location))
       return
     }
     const popular = popularCategorySearches.find((p) => p.id === itemId)
@@ -197,15 +207,25 @@ export function MainCategoriesSection({
           <MapPin className="h-5 w-5" aria-hidden />
           <span>{t('serviya.locationLabel')}</span>
           <select
-            value={locationId}
-            onChange={(event) => setLocationId(event.target.value)}
+            value={selectValue}
+            onChange={(event) => setLocation(geoFromCountrySlug(event.target.value, location))}
             aria-label={t('serviya.locationLabel')}
+            title={locationDisplay}
           >
-            {categoryLocationOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {t(`serviya.loc.${option.id}` as TranslationKey)}
-              </option>
-            ))}
+            <option value="all-europe">
+              {hasActiveLocation(location) && selectValue === 'all-europe'
+                ? locationDisplay
+                : t('serviya.loc.all-europe')}
+            </option>
+            {categoryLocationOptions
+              .filter((option) => option.id !== 'all-europe')
+              .map((option) => (
+                <option key={option.id} value={option.id}>
+                  {selectValue === option.id && hasActiveLocation(location)
+                    ? locationDisplay
+                    : t(`serviya.loc.${option.id}` as TranslationKey)}
+                </option>
+              ))}
           </select>
         </label>
       </div>

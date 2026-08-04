@@ -14,7 +14,6 @@ import {
   geoSearchFromQuery,
   matchProfileGeo,
   sortByDistanceAsc,
-  type GeoSearchState,
 } from '../lib/geoSearch'
 
 interface ProfessionalCategoryLink {
@@ -33,7 +32,7 @@ interface ProfessionalsProps {
 }
 
 export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
-  const { t } = useApp()
+  const { t, location, setLocation } = useApp()
   const isCompanyCatalog = catalog === 'companies'
 
   const [professionals, setProfessionals] = useState<ProfessionalWithCategories[]>([])
@@ -43,7 +42,6 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedWork, setSelectedWork] = useState('')
-  const [geo, setGeo] = useState<GeoSearchState>({ ...EMPTY_GEO_SEARCH })
   const [sortBy, setSortBy] = useState<'rating' | 'reviews' | 'newest' | 'closest'>('newest')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [minRating, setMinRating] = useState(0)
@@ -55,11 +53,11 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     const work = params.get('work')
     if (work) setSelectedWork(work)
     const fromQuery = geoSearchFromQuery(params)
-    if (fromQuery.country || fromQuery.city || fromQuery.region) {
-      setGeo((g) => ({ ...g, ...fromQuery }))
+    if (fromQuery.country || fromQuery.city || fromQuery.region || fromQuery.fromGps) {
+      setLocation({ ...EMPTY_GEO_SEARCH, ...location, ...fromQuery })
     } else {
-      const location = params.get('location')
-      if (location) {
+      const locParam = params.get('location')
+      if (locParam) {
         const map: Record<string, string> = {
           spain: 'Spain',
           germany: 'Germany',
@@ -67,13 +65,14 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
           italy: 'Italy',
           poland: 'Poland',
         }
-        const country = map[location.toLowerCase()]
-        if (country) setGeo((g) => ({ ...g, country }))
-        else setGeo((g) => ({ ...g, city: location }))
+        const country = map[locParam.toLowerCase()]
+        if (country) setLocation({ ...location, country })
+        else setLocation({ ...location, city: locParam })
       }
     }
     const q = params.get('q')
     if (q) setSearchQuery(q)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -155,7 +154,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
 
         const matchesRating = minRating === 0 || (professional.rating || 0) >= minRating
 
-        const geoHit = matchProfileGeo(professional, geo)
+        const geoHit = matchProfileGeo(professional, location)
 
         const matchesCategory =
           selectedCategory === '' ||
@@ -199,20 +198,20 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
           return (b.rating || 0) - (a.rating || 0)
       }
     })
-  }, [geo, minRating, professionals, searchQuery, selectedCategory, selectedWork, sortBy])
+  }, [location, minRating, professionals, searchQuery, selectedCategory, selectedWork, sortBy])
 
   const activeFiltersCount = [
     selectedCategory,
     selectedWork,
-    geo.country,
-    geo.city,
-    geo.region,
+    location.country,
+    location.city,
+    location.region,
     minRating > 0 ? 'rating' : '',
   ].filter(Boolean).length
 
   const resetFilters = () => {
     setMinRating(0)
-    setGeo({ ...EMPTY_GEO_SEARCH })
+    setLocation({ ...EMPTY_GEO_SEARCH })
     setSortBy('rating')
     setSelectedCategory('')
     setSelectedWork('')
@@ -319,7 +318,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
               />
             </div>
 
-            <GeoSearchFilters value={geo} onChange={setGeo} />
+            <GeoSearchFilters value={location} onChange={setLocation} />
 
             <div className="amazon-filter-group">
               <label>{t('professionals.categoryLabel')}</label>

@@ -1,8 +1,8 @@
 /**
- * Глобальний стан застосунку: сесія Supabase, профіль, валюта та мова інтерфейсу.
- * Валюта й мова зберігаються в localStorage через ключі dimarket_*.
+ * Глобальний стан застосунку: сесія Supabase, профіль, валюта, мова та локація пошуку.
+ * Валюта, мова й локація зберігаються в localStorage через ключі dimarket_*.
  */
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { Profile, CURRENCIES, LANGUAGES } from '../lib/types'
@@ -11,14 +11,25 @@ import { getPostLoginPath } from '../lib/authMessages'
 import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
 import { isOAuthCallbackUrl } from '../lib/oauth'
 import { navigateTo } from '../lib/navigation'
+import { EMPTY_GEO_SEARCH, type GeoSearchState } from '../lib/geoSearch'
+import {
+  initializeGlobalLocation,
+  saveGlobalLocation,
+  syncLocationToCurrentUrl,
+} from '../lib/globalLocation'
 
 interface AppContextType {
   user: User | null
   profile: Profile | null
   currency: typeof CURRENCIES[number]
   language: typeof LANGUAGES[number]
+  /** Single source of truth for search location across the app */
+  location: GeoSearchState
   setCurrency: (currency: typeof CURRENCIES[number]) => void
   setLanguage: (language: typeof LANGUAGES[number]) => void
+  setLocation: (next: GeoSearchState) => void
+  patchLocation: (partial: Partial<GeoSearchState>) => void
+  clearLocation: () => void
   signOut: () => Promise<void>
   t: (key: TranslationKey) => string
 }
@@ -36,9 +47,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('dimarket_language')
     return LANGUAGES.find((l) => l.code === saved) ?? LANGUAGES[0]
   })
+  const [location, setLocationState] = useState<GeoSearchState>(() => initializeGlobalLocation())
 
   useEffect(() => {
-    // Читаємо лише нові ключі бренду DImarket
     const savedCurrency = localStorage.getItem('dimarket_currency')
     const savedLanguage = localStorage.getItem('dimarket_language')
 
@@ -52,10 +63,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (found) setLanguage(found)
     }
 
-    // Реєструємо відвідування лише один раз за поточну сесію вкладки.
     registerVisitOncePerSession()
 
-    // Отримуємо активну сесію Supabase
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
 
@@ -64,7 +73,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     })
 
-    // Слухаємо зміни авторизації
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -94,15 +102,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [language.code])
 
+  // Persist + mirror into URL on location-aware routes
+  useEffect(() => {
+    saveGlobalLocation(location)
+    syncLocationToCurrentUrl(location)
+  }, [location])
+
+  // Keep state in sync when user navigates via browser back/forward
+  useEffect(() => {
+    const onPop = () => {
+      const next = initializeGlobalLocation()
+      setLocationState(next)
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
   const registerVisitOncePerSession = async () => {
     try {
-      // Якщо візит уже зареєстрований у цій вкладці — повторно не рахуємо
       const alreadyTracked = sessionStorage.getItem('dimarket_visit_tracked')
       if (alreadyTracked === '1') {
         return
       }
 
-      // SQL-функція збільшує total_visits
       const { error } = await supabase.rpc('register_app_visit')
 
       if (!error) {
@@ -148,6 +170,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('dimarket_language', newLanguage.code)
   }
 
+  const setLocation = useCallback((next: GeoSearchState) => {
+    setLocationState(next)
+  }, [])
+
+  const patchLocation = useCallback((partial: Partial<GeoSearchState>) => {
+    setLocationState((prev) => ({ ...prev, ...partial }))
+  }, [])
+
+  const clearLocation = useCallback(() => {
+    setLocationState({ ...EMPTY_GEO_SEARCH })
+  }, [])
+
   const signOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
@@ -165,8 +199,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         profile,
         currency,
         language,
+        location,
         setCurrency: handleSetCurrency,
         setLanguage: handleSetLanguage,
+        setLocation,
+        patchLocation,
+        clearLocation,
         signOut,
         t,
       }}

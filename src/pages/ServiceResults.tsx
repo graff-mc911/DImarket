@@ -41,7 +41,7 @@ interface ServiceResultsProps {
 }
 
 export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
-  const { t, language } = useApp()
+  const { t, language, location, setLocation, patchLocation } = useApp()
   const lang = language.code
 
   const resolved = useMemo(() => findServiceBySlug(slug), [slug])
@@ -49,7 +49,6 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
   const [profiles, setProfiles] = useState<DirectoryExpert[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [geo, setGeo] = useState<GeoSearchState>({ ...EMPTY_GEO_SEARCH, ...initialGeo })
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all')
   const [minRating, setMinRating] = useState(0)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
@@ -61,13 +60,9 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const fromQuery = geoSearchFromQuery(params)
-    setGeo((prev) => ({ ...prev, ...EMPTY_GEO_SEARCH, ...initialGeo, ...fromQuery }))
-    const role = params.get('role')
-    if (role === 'professional' || role === 'company') setRoleFilter(role)
-    const q = params.get('q')
-    if (q) setSearchQuery(q)
-    // Map legacy location=spain|germany labels to country when possible
     const legacyLoc = params.get('location')
+    let legacyCountry = ''
+    let legacyCity = ''
     if (legacyLoc && !fromQuery.country && !fromQuery.city) {
       const map: Record<string, string> = {
         spain: 'Spain',
@@ -77,9 +72,32 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
         poland: 'Poland',
       }
       const country = map[legacyLoc.toLowerCase()]
-      if (country) setGeo((g) => ({ ...g, country }))
-      else setGeo((g) => ({ ...g, city: legacyLoc }))
+      if (country) legacyCountry = country
+      else legacyCity = legacyLoc
     }
+    const seeded = {
+      ...EMPTY_GEO_SEARCH,
+      ...location,
+      ...initialGeo,
+      ...fromQuery,
+      ...(legacyCountry ? { country: legacyCountry } : {}),
+      ...(legacyCity ? { city: legacyCity } : {}),
+    }
+    if (
+      seeded.country ||
+      seeded.city ||
+      seeded.region ||
+      seeded.fromGps ||
+      initialGeo?.country ||
+      initialGeo?.city
+    ) {
+      setLocation(seeded)
+    }
+    const role = params.get('role')
+    if (role === 'professional' || role === 'company') setRoleFilter(role)
+    const q = params.get('q')
+    if (q) setSearchQuery(q)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, initialGeo])
 
   useEffect(() => {
@@ -88,25 +106,23 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
 
   useEffect(() => {
     setPage(1)
-  }, [searchQuery, geo, roleFilter, minRating, verifiedOnly, availableOnly, sortBy, slug])
+  }, [searchQuery, location, roleFilter, minRating, verifiedOnly, availableOnly, sortBy, slug])
 
   // Resolve city center for SEO / selected city when coords missing
   useEffect(() => {
-    if (!geo.city || !geo.country) return
-    if (geo.originLat != null && geo.originLng != null) return
+    if (!location.city || !location.country) return
+    if (location.originLat != null && location.originLng != null) return
     let cancelled = false
-    void resolveCityCenter(geo.country, geo.city).then((center) => {
+    void resolveCityCenter(location.country, location.city).then((center) => {
       if (cancelled || !center) return
-      setGeo((g) =>
-        g.city === geo.city && g.originLat == null
-          ? { ...g, originLat: center.lat, originLng: center.lon }
-          : g,
-      )
+      if (location.originLat == null) {
+        patchLocation({ originLat: center.lat, originLng: center.lon })
+      }
     })
     return () => {
       cancelled = true
     }
-  }, [geo.city, geo.country, geo.originLat, geo.originLng])
+  }, [location.city, location.country, location.originLat, location.originLng, patchLocation])
 
   useEffect(() => {
     if (!resolved) {
@@ -206,7 +222,7 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
         p.bio?.toLowerCase().includes(q) ||
         skills.includes(q)
 
-      const geoHit = matchProfileGeo(p, geo)
+      const geoHit = matchProfileGeo(p, location)
       const matchesRating = minRating === 0 || (p.rating || 0) >= minRating
       const matchesVerified =
         !verifiedOnly || Boolean(p.verification_level && p.verification_level !== 'none')
@@ -231,7 +247,7 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
           return (b.rating || 0) - (a.rating || 0)
       }
     })
-  }, [serviceMatches, searchQuery, geo, roleFilter, minRating, verifiedOnly, availableOnly, sortBy])
+  }, [serviceMatches, searchQuery, location, roleFilter, minRating, verifiedOnly, availableOnly, sortBy])
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const paged = filtered.slice(0, page * PAGE_SIZE)
@@ -239,11 +255,11 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
 
   const activeFiltersCount = [
     searchQuery,
-    geo.country,
-    geo.region,
-    geo.province,
-    geo.city,
-    geo.fromGps ? 'gps' : '',
+    location.country,
+    location.region,
+    location.province,
+    location.city,
+    location.fromGps ? 'gps' : '',
     roleFilter !== 'all' ? roleFilter : '',
     minRating > 0 ? 'rating' : '',
     verifiedOnly ? 'verified' : '',
@@ -252,7 +268,7 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
 
   const resetFilters = () => {
     setSearchQuery('')
-    setGeo({ ...EMPTY_GEO_SEARCH })
+    setLocation({ ...EMPTY_GEO_SEARCH })
     setRoleFilter('all')
     setMinRating(0)
     setVerifiedOnly(false)
@@ -291,8 +307,8 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
       setPage={setPage}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
-      geo={geo}
-      setGeo={setGeo}
+      geo={location}
+      setGeo={setLocation}
       roleFilter={roleFilter}
       setRoleFilter={setRoleFilter}
       minRating={minRating}
