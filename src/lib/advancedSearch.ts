@@ -190,7 +190,7 @@ export async function runAdvancedSearch(
     .from('profiles')
     .select('*')
     .eq('is_professional', true)
-    .eq('user_role', 'professional')
+    .in('user_role', ['professional', 'company'])
     .limit(80)
 
   if (like) {

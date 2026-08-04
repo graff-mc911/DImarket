@@ -32,7 +32,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
 
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
-  const [sortBy, setSortBy] = useState<'rating' | 'reviews' | 'newest'>('rating')
+  const [sortBy, setSortBy] = useState<'rating' | 'reviews' | 'newest'>('newest')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [minRating, setMinRating] = useState(0)
   const [locationFilter, setLocationFilter] = useState('')

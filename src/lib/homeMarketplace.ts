@@ -155,6 +155,7 @@ export async function fetchHomeProjects(limit = 12): Promise<ListingWithImages[]
 }
 
 export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfessional[]> {
+  // Include both individual masters and companies so the public directory is visible on Home.
   const { data } = await supabase
     .from('profiles')
     .select(`
@@ -165,16 +166,20 @@ export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfession
       )
     `)
     .eq('is_professional', true)
-    .eq('user_role', 'professional')
-    .order('rating', { ascending: false })
-    .limit(limit)
+    .in('user_role', ['professional', 'company'])
+    .order('created_at', { ascending: false })
+    .limit(Math.max(limit * 3, 36))
 
-  return ((data as HomeProfessional[] | null) ?? []).sort((a, b) => {
-    const af = a.is_featured ? 1 : 0
-    const bf = b.is_featured ? 1 : 0
-    if (bf !== af) return bf - af
-    return (b.rating ?? 0) - (a.rating ?? 0)
-  })
+  return ((data as HomeProfessional[] | null) ?? [])
+    .sort((a, b) => {
+      const af = a.is_featured ? 1 : 0
+      const bf = b.is_featured ? 1 : 0
+      if (bf !== af) return bf - af
+      const ratingDiff = (b.rating ?? 0) - (a.rating ?? 0)
+      if (ratingDiff !== 0) return ratingDiff
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    })
+    .slice(0, limit)
 }
 
 export async function fetchHomeReviews(limit = 8): Promise<HomeReview[]> {
