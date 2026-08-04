@@ -67,13 +67,36 @@ async function viaServiceRole() {
   }
 }
 
-if (token && !String(token).includes('...')) {
+async function viaRpcAnon() {
+  const anon = env.VITE_SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY
+  if (!anon) return false
+  const res = await fetch(`${url}/rest/v1/rpc/backfill_directory_electrician_avatars`, {
+    method: 'POST',
+    headers: {
+      apikey: anon,
+      Authorization: `Bearer ${anon}`,
+      'Content-Type': 'application/json',
+    },
+    body: '{}',
+  })
+  const body = await res.text()
+  if (!res.ok) {
+    console.log('RPC not available yet:', res.status, body.slice(0, 200))
+    return false
+  }
+  console.log('OK via RPC', body)
+  return true
+}
+
+if (await viaRpcAnon()) {
+  // done
+} else if (token && !String(token).includes('...')) {
   await viaManagementApi()
 } else if (serviceKey && !String(serviceKey).includes('...')) {
   await viaServiceRole()
 } else {
   console.error(
-    'Need real SUPABASE_ACCESS_TOKEN or SUPABASE_SERVICE_ROLE_KEY.\n' +
+    'Need RPC applied, or SUPABASE_ACCESS_TOKEN / SUPABASE_SERVICE_ROLE_KEY.\n' +
       'UI already falls back to hosted avatars via src/lib/directoryAvatars.ts.\n' +
       `SQL ready: ${sqlPath}`,
   )
