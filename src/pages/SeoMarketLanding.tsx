@@ -57,9 +57,9 @@ export function SeoMarketLanding({ parts }: SeoMarketLandingProps) {
           .from('profiles')
           .select('*')
           .eq('is_professional', true)
-          .neq('user_role', 'company')
-          .order('rating', { ascending: false })
-          .limit(40),
+          .in('user_role', ['professional', 'company'])
+          .order('created_at', { ascending: false })
+          .limit(60),
         supabase
           .from('listings')
           .select('*, images:listing_images(*), category:categories(*)')

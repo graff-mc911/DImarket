@@ -270,9 +270,9 @@ export async function fetchMarketplaceCategoryPage(
       .from('profiles')
       .select('*')
       .eq('is_professional', true)
-      .eq('user_role', 'professional')
-      .order('rating', { ascending: false })
-      .limit(24)
+      .in('user_role', ['professional', 'company'])
+      .order('created_at', { ascending: false })
+      .limit(48)
 
     professionals = ((pros as Profile[] | null) ?? [])
       .filter((p) => {
