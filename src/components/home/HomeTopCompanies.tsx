@@ -1,10 +1,21 @@
-import { Building2, ChevronLeft, ChevronRight, Languages, MapPin, ShieldCheck, Star } from 'lucide-react'
+import { Building2, ChevronLeft, ChevronRight, Globe, Languages, MapPin, Phone, ShieldCheck, Star } from 'lucide-react'
 import { useRef } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import type { HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
 import { resolveDirectoryAvatarUrl } from '../../lib/directoryAvatars'
 import { navigateTo } from '../../lib/navigation'
+
+function normalizeWebsiteHref(raw: string | null | undefined): string | null {
+  const value = (raw ?? '').trim()
+  if (!value) return null
+  if (/^https?:\/\//i.test(value)) return value
+  return `https://${value}`
+}
+
+function websiteDisplayLabel(href: string): string {
+  return href.replace(/^https?:\/\//i, '').replace(/\/$/, '')
+}
 
 interface HomeTopCompaniesProps {
   companies: HomeProfessional[]
@@ -67,6 +78,9 @@ export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) 
             )
             const langs = (company.languages ?? []).slice(0, 3)
             const location = (company.location || '').trim()
+            const phone = (company.phone ?? '').trim()
+            const websiteHref = normalizeWebsiteHref(company.website)
+            const websiteLabel = websiteHref ? websiteDisplayLabel(websiteHref) : ''
 
             return (
               <article key={company.id} className="home-pro-card" role="listitem">
@@ -117,6 +131,22 @@ export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) 
                     ) : null}
                   </div>
                 </button>
+                {(phone || websiteHref) && (
+                  <div className="home-pro-card__contacts">
+                    {phone ? (
+                      <a href={`tel:${phone.replace(/\s+/g, '')}`}>
+                        <Phone className="h-3.5 w-3.5" aria-hidden />
+                        {phone}
+                      </a>
+                    ) : null}
+                    {websiteHref ? (
+                      <a href={websiteHref} target="_blank" rel="noopener noreferrer">
+                        <Globe className="h-3.5 w-3.5" aria-hidden />
+                        {websiteLabel}
+                      </a>
+                    ) : null}
+                  </div>
+                )}
                 <button
                   type="button"
                   className="home-btn home-btn--primary home-btn--sm"

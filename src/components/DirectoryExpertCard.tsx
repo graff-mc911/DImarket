@@ -1,4 +1,4 @@
-import { CheckSquare, Heart, MapPin, Star } from 'lucide-react'
+import { CheckSquare, Globe, Heart, MapPin, Phone, Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Category, Profile } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
@@ -83,6 +83,17 @@ function buildServiceRows(
   return rows
 }
 
+function normalizeWebsiteHref(raw: string | null | undefined): string | null {
+  const value = (raw ?? '').trim()
+  if (!value) return null
+  if (/^https?:\/\//i.test(value)) return value
+  return `https://${value}`
+}
+
+function websiteDisplayLabel(raw: string): string {
+  return raw.replace(/^https?:\/\//i, '').replace(/\/$/, '')
+}
+
 export function DirectoryExpertCard({ professional, distanceKm }: DirectoryExpertCardProps) {
   const { t, language, user } = useApp()
   const [saved, setSaved] = useState(false)
@@ -143,6 +154,11 @@ export function DirectoryExpertCard({ professional, distanceKm }: DirectoryExper
     language.code,
     t('professional.priceOnRequest'),
   )
+
+  const phone = (professional.phone ?? '').trim()
+  const websiteHref = normalizeWebsiteHref(professional.website)
+  const websiteLabel = websiteHref ? websiteDisplayLabel(websiteHref) : ''
+  const showPublicContacts = isCompany && (Boolean(phone) || Boolean(websiteHref))
 
   const experienceRaw = parseBioField(professional.bio, 'Experience')
   const rateRaw = parseBioField(professional.bio, 'Rate')
@@ -258,6 +274,29 @@ export function DirectoryExpertCard({ professional, distanceKm }: DirectoryExper
                 {distanceLabel ? ` · ${distanceLabel}` : ''}
               </span>
             </div>
+            {showPublicContacts ? (
+              <ul className="directory-expert__contacts">
+                {phone ? (
+                  <li>
+                    <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <a href={`tel:${phone.replace(/\s+/g, '')}`}>{phone}</a>
+                  </li>
+                ) : null}
+                {websiteHref ? (
+                  <li>
+                    <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <a
+                      href={websiteHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={websiteHref}
+                    >
+                      {websiteLabel}
+                    </a>
+                  </li>
+                ) : null}
+              </ul>
+            ) : null}
             {categoryLabels.length > 0 ? (
               <ul className="directory-expert__tags">
                 {categoryLabels.map((label) => (

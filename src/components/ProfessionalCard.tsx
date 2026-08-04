@@ -1,4 +1,4 @@
-import { ArrowRight, MapPin, ShieldCheck, Star, UserRound, Zap } from 'lucide-react'
+import { ArrowRight, Globe, MapPin, Phone, ShieldCheck, Star, UserRound, Zap } from 'lucide-react'
 import { Category, Profile } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -118,6 +118,18 @@ export function ProfessionalCard({
     language.code,
     compact ? 2 : 4,
   )
+
+  const phone = (professional.phone ?? '').trim()
+  const websiteRaw = (professional.website ?? '').trim()
+  const websiteHref = websiteRaw
+    ? /^https?:\/\//i.test(websiteRaw)
+      ? websiteRaw
+      : `https://${websiteRaw}`
+    : null
+  const websiteLabel = websiteHref
+    ? websiteHref.replace(/^https?:\/\//i, '').replace(/\/$/, '')
+    : ''
+  const showPublicContacts = isCompany && (Boolean(phone) || Boolean(websiteHref))
 
   const rootClass = compact
     ? 'glass-card card-hover-lift pro-card--compact flex h-full min-w-0 flex-col overflow-hidden'
@@ -250,6 +262,38 @@ export function ProfessionalCard({
                     {professional.location || t('professional.global')}
                   </span>
                 </div>
+                {showPublicContacts ? (
+                  <div
+                    className={
+                      compact
+                        ? 'pro-card__contacts mt-1 grid gap-0.5 text-[0.7rem]'
+                        : 'mt-2 grid gap-1 text-sm'
+                    }
+                  >
+                    {phone ? (
+                      <a
+                        href={`tel:${phone.replace(/\s+/g, '')}`}
+                        className="inline-flex min-w-0 items-center gap-1 font-semibold text-[var(--accent-700)] hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        <span className="truncate">{phone}</span>
+                      </a>
+                    ) : null}
+                    {websiteHref ? (
+                      <a
+                        href={websiteHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-w-0 items-center gap-1 font-semibold text-[var(--accent-700)] hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        <span className="truncate">{websiteLabel}</span>
+                      </a>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
 
               {!compact && (
