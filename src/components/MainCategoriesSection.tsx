@@ -5,13 +5,14 @@ import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import {
   categoryLocationOptions,
-  categoriesUiText,
   popularCategorySearches,
   serviceCategories,
   type LocalizedText,
   type ServiceCategory,
   type ServiceSubcategory,
 } from '../config/categories'
+import { serviyaLabel } from '../config/categoriesI18n'
+import type { TranslationKey } from '../lib/i18n'
 import type { MarketplaceCategory } from '../lib/marketplaceCategories'
 
 export interface MainCategoriesSectionProps {
@@ -26,19 +27,23 @@ export interface MainCategoriesSectionProps {
   className?: string
 }
 
-function localized(value: LocalizedText, languageCode: string): string {
-  return value[languageCode as keyof LocalizedText] ?? value.en
+function localizedTitle(
+  value: LocalizedText,
+  languageCode: string,
+  slug: string,
+): string {
+  return serviyaLabel(slug, languageCode, value[languageCode] ?? value.en)
 }
 
 function categorySearchText(category: ServiceCategory, languageCode: string): string {
   return [
     category.slug,
-    localized(category.title, languageCode),
-    localized(category.description, languageCode),
+    localizedTitle(category.title, languageCode, category.slug),
+    category.description.en,
     ...category.subcategories.flatMap((item) => [
       item.slug,
-      localized(item.title, languageCode),
-      localized(item.description, languageCode),
+      localizedTitle(item.title, languageCode, item.slug),
+      item.description.en,
     ]),
   ]
     .join(' ')
@@ -63,7 +68,7 @@ export function MainCategoriesSection({
   eyebrow,
   className = '',
 }: MainCategoriesSectionProps) {
-  const { language } = useApp()
+  const { language, t } = useApp()
   const [query, setQuery] = useState('')
   const [locationId, setLocationId] = useState(categoryLocationOptions[0]?.id ?? 'all-europe')
   const [expandedId, setExpandedId] = useState<string | null>(null)
@@ -77,9 +82,9 @@ export function MainCategoriesSection({
     )
   }, [query, lang])
 
-  const sectionTitle = title ?? localized(categoriesUiText.title, lang)
-  const sectionSubtitle = subtitle ?? localized(categoriesUiText.subtitle, lang)
-  const sectionEyebrow = eyebrow ?? localized(categoriesUiText.eyebrow, lang)
+  const sectionTitle = title ?? t('serviya.title')
+  const sectionSubtitle = subtitle ?? t('serviya.subtitle')
+  const sectionEyebrow = eyebrow ?? t('serviya.eyebrow')
 
   const handleSubcategoryClick = (category: ServiceCategory, subcategory: ServiceSubcategory) => {
     navigateTo(professionalPath(category, subcategory, locationId))
@@ -104,45 +109,46 @@ export function MainCategoriesSection({
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder={localized(categoriesUiText.searchPlaceholder, lang)}
-            aria-label={localized(categoriesUiText.searchPlaceholder, lang)}
+            placeholder={t('serviya.searchPlaceholder')}
+            aria-label={t('serviya.searchPlaceholder')}
           />
         </label>
         <label className="serviya-search__location">
           <MapPin className="h-5 w-5" aria-hidden />
-          <span>{localized(categoriesUiText.locationLabel, lang)}</span>
+          <span>{t('serviya.locationLabel')}</span>
           <select
             value={locationId}
             onChange={(event) => setLocationId(event.target.value)}
-            aria-label={localized(categoriesUiText.locationLabel, lang)}
+            aria-label={t('serviya.locationLabel')}
           >
             {categoryLocationOptions.map((option) => (
               <option key={option.id} value={option.id}>
-                {localized(option.label, lang)}
+                {t(`serviya.loc.${option.id}` as TranslationKey)}
               </option>
             ))}
           </select>
         </label>
       </div>
 
-      <div className="serviya-popular" aria-label={localized(categoriesUiText.popularSearchesLabel, lang)}>
-        <span>{localized(categoriesUiText.popularSearchesLabel, lang)}</span>
+      <div className="serviya-popular" aria-label={t('serviya.popularSearchesLabel')}>
+        <span>{t('serviya.popularSearchesLabel')}</span>
         <div>
           {popularCategorySearches.map((item) => (
             <button key={item.id} type="button" onClick={() => setQuery(item.query)}>
-              {localized(item.label, lang)}
+              {t(`serviya.popular.${item.id}` as TranslationKey)}
             </button>
           ))}
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="serviya-categories__empty">{localized(categoriesUiText.noResults, lang)}</p>
+        <p className="serviya-categories__empty">{t('serviya.noResults')}</p>
       ) : (
         <LazyMotion features={domAnimation}>
           <m.div className="serviya-category-grid" layout>
             {filtered.map((category) => {
               const expanded = expandedId === category.id
+              const categoryTitle = localizedTitle(category.title, lang, category.slug)
               return (
                 <m.article key={category.id} className="serviya-category-card" layout>
                   <button
@@ -150,14 +156,16 @@ export function MainCategoriesSection({
                     className="serviya-category-card__button"
                     onClick={() => setExpandedId(expanded ? null : category.id)}
                     aria-expanded={expanded}
-                    aria-label={`${expanded ? localized(categoriesUiText.closeCategory, lang) : localized(categoriesUiText.openCategory, lang)}: ${localized(category.title, lang)}`}
+                    aria-label={`${expanded ? t('serviya.closeCategory') : t('serviya.openCategory')}: ${categoryTitle}`}
                   >
                     <span className="serviya-category-card__icon" aria-hidden>
                       {category.icon}
                     </span>
                     <span className="serviya-category-card__body">
-                      <strong>{localized(category.title, lang)}</strong>
-                      <span>{category.serviceCount} {localized(categoriesUiText.servicesLabel, lang)}</span>
+                      <strong>{categoryTitle}</strong>
+                      <span>
+                        {category.serviceCount} {t('serviya.servicesLabel')}
+                      </span>
                     </span>
                     <ChevronRight className="serviya-category-card__chevron" aria-hidden />
                   </button>
@@ -178,10 +186,10 @@ export function MainCategoriesSection({
                               type="button"
                               className="serviya-subcategory-chip"
                               onClick={() => handleSubcategoryClick(category, subcategory)}
-                              title={localized(subcategory.description, lang)}
+                              title={subcategory.description.en}
                             >
                               <span aria-hidden>{subcategory.icon}</span>
-                              {localized(subcategory.title, lang)}
+                              {localizedTitle(subcategory.title, lang, subcategory.slug)}
                             </button>
                           ))}
                         </div>

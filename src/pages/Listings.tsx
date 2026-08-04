@@ -405,7 +405,13 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
               )}
               {selectedCategory && !fixedCategorySlug && (
                 <FilterTag
-                  label={'Категорія: ' + (categories.find(c => c.slug === selectedCategory)?.name || selectedCategory)}
+                  label={t('listings.categoryChip').replace(
+                    '{name}',
+                    translateCategory(
+                      categories.find((c) => c.slug === selectedCategory) ??
+                        ({ slug: selectedCategory, name: selectedCategory } as Category),
+                    ),
+                  )}
                   onRemove={() => setSelectedCategory('')}
                 />
               )}
