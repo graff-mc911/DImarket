@@ -6,6 +6,7 @@ import { DirectoryExpertCard } from '../components/DirectoryExpertCard'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { buildDisplayCategories, SITE_CATEGORY_SLUGS } from '../lib/siteCategories'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -52,7 +53,17 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
 
   const loadCategories = async () => {
     const { data } = await supabase.from('categories').select('*').order('name')
-    setCategories(data ?? [])
+    const fromDb = data ?? []
+    // Ensure site menu categories (incl. legal-notary, accounting-finance) appear even if DB rows are missing.
+    const merged = buildDisplayCategories(fromDb, t)
+    const bySlug = new Map<string, Category>()
+    for (const c of fromDb) bySlug.set(c.slug, c)
+    for (const c of merged) {
+      if (SITE_CATEGORY_SLUGS.includes(c.slug as (typeof SITE_CATEGORY_SLUGS)[number])) {
+        bySlug.set(c.slug, bySlug.get(c.slug) ?? c)
+      }
+    }
+    setCategories([...bySlug.values()].sort((a, b) => a.name.localeCompare(b.name)))
   }
 
   const loadProfessionals = async () => {

@@ -45,4 +45,51 @@ export const SELL_RENT_WORK_GROUPS: SubcategoryGroupDef[] = [
       },
     ],
   },
+  {
+    slug: 'property',
+    label: {
+      uk: 'Нерухомість',
+      ru: 'Недвижимость',
+      en: 'Property',
+      es: 'Inmuebles',
+    },
+    subcategories: [
+      {
+        slug: 'sell-property',
+        label: {
+          uk: 'Продаж нерухомості',
+          ru: 'Продажа недвижимости',
+          en: 'Sell property',
+          es: 'Venta de inmuebles',
+        },
+      },
+      {
+        slug: 'rent-property',
+        label: {
+          uk: 'Оренда нерухомості',
+          ru: 'Аренда недвижимости',
+          en: 'Rent property',
+          es: 'Alquiler de inmuebles',
+        },
+      },
+      {
+        slug: 'sell-commercial',
+        label: {
+          uk: 'Комерційна нерухомість (продаж)',
+          ru: 'Коммерческая недвижимость (продажа)',
+          en: 'Sell commercial property',
+          es: 'Venta de locales',
+        },
+      },
+      {
+        slug: 'rent-commercial',
+        label: {
+          uk: 'Комерційна нерухомість (оренда)',
+          ru: 'Коммерческая недвижимость (аренда)',
+          en: 'Rent commercial property',
+          es: 'Alquiler de locales',
+        },
+      },
+    ],
+  },
 ]

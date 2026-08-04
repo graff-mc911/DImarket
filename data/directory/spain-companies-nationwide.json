@@ -1,0 +1,3101 @@
+{
+  "version": 1,
+  "generated_at": "2026-08-04T14:43:49.629Z",
+  "source": "Curated Spain-wide public company directory from company websites and public registries (not Serviya-only). Factual fields only; original DImarket bios; no reviews/ratings/photos copied.",
+  "schema": {
+    "target_table": "profiles",
+    "auth_required": true,
+    "junction": "professional_categories",
+    "location_format": "City, Region, Country"
+  },
+  "summary": {
+    "businesses_ready_to_import": 50,
+    "categories_populated": [
+      "Accountant",
+      "Architecture",
+      "Auto Electrician",
+      "Auto Repair",
+      "Carpentry",
+      "Cleaning",
+      "Construction Company",
+      "Doors",
+      "Drywall",
+      "Electrician",
+      "Equipment Rental",
+      "Flooring",
+      "Furniture",
+      "Gestoría",
+      "HVAC",
+      "Handyman",
+      "Interior Design",
+      "Landscaping",
+      "Lawyer",
+      "Moving",
+      "Painting",
+      "Plumbing",
+      "Renovation",
+      "Tax Consultant",
+      "Tiles"
+    ],
+    "site_category_slugs_covered": [
+      "accounting-finance",
+      "cleaning",
+      "construction",
+      "electrical",
+      "furniture",
+      "handyman",
+      "legal-notary",
+      "sell-rent",
+      "tools"
+    ],
+    "cities_count": 20,
+    "cities": [
+      "Arroyomolinos",
+      "Badalona",
+      "Barcelona",
+      "Bilbao",
+      "Ciudad Real",
+      "Esplugues de Llobregat",
+      "Granada",
+      "L'Hospitalet de Llobregat",
+      "Madrid",
+      "Murcia",
+      "Málaga",
+      "Peligros",
+      "Pinto",
+      "San Fernando de Henares",
+      "Sant Boi de Llobregat",
+      "Sevilla",
+      "Torrent",
+      "Valencia",
+      "Viladecans",
+      "Zaragoza"
+    ]
+  },
+  "businesses": [
+    {
+      "slug": "madrid-legal-gestoria-abogados",
+      "full_name": "Madrid Legal — Gestoría & Abogados",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Lawyer",
+        "Gestoría",
+        "Accountant"
+      ],
+      "work_subcategory_slugs": [
+        "legal-notary-lawyer",
+        "legal-notary-immigration",
+        "legal-notary-contracts",
+        "legal-notary-company",
+        "accounting-finance-gestoria",
+        "accounting-finance-tax",
+        "accounting-finance-autonomo"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Limonero 9 puerta A, 28020 Madrid",
+      "phone": "+34 619 743 330",
+      "public_email": "info@madrid-legal.com",
+      "website": "https://www.madrid-legal.com/",
+      "business_hours": "Mon–Fri 09:00–19:00",
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+madrid-legal-gestoria-abogados@users.dimarket.app",
+      "services": [
+        "Immigration and residency procedures",
+        "Civil and traffic legal assistance",
+        "Company incorporation",
+        "Tax and labour gestoría",
+        "Administrative certificates"
+      ],
+      "bio": "Madrid law and gestoría office publicly listing immigration, civil, traffic, company registration, and tax-labour administrative services from Calle Limonero 9.",
+      "seo": {
+        "title": "Madrid Legal — Gestoría & Abogados — Lawyer in Madrid | DImarket",
+        "meta_description": "Find Madrid Legal — Gestoría & Abogados in Madrid, Spain on DImarket. Request a quote for lawyer, gestoría, accountant services.",
+        "keywords": [
+          "lawyer",
+          "gestoría",
+          "accountant",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.madrid-legal.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "belmonte-crespo-abogados-barcelona",
+      "full_name": "Belmonte Crespo Abogados — Barcelona",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Lawyer"
+      ],
+      "work_subcategory_slugs": [
+        "legal-notary-lawyer",
+        "legal-notary-contracts",
+        "legal-notary-immigration",
+        "legal-notary-company"
+      ],
+      "city": "Barcelona",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Barcelona, Catalonia, Spain",
+      "address": "C/ Córcega 301, 08008 Barcelona",
+      "phone": "+34 643 711 226",
+      "public_email": null,
+      "website": "https://belmontecrespoabogados.com/",
+      "business_hours": "Mon–Fri 09:00–14:00, 16:00–20:00",
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+belmonte-crespo-abogados-barcelona@users.dimarket.app",
+      "services": [
+        "Labour law",
+        "Civil and commercial law",
+        "Immigration",
+        "Traffic accident litigation",
+        "Criminal defence"
+      ],
+      "bio": "Barcelona office of Belmonte Crespo Abogados on C/ Córcega. Public practice areas include labour, civil, commercial, immigration, and traffic litigation; firm also lists Madrid, Valencia, and Zaragoza offices.",
+      "seo": {
+        "title": "Belmonte Crespo Abogados — Barcelona — Lawyer in Barcelona | DImarket",
+        "meta_description": "Find Belmonte Crespo Abogados — Barcelona in Barcelona, Spain on DImarket. Request a quote for lawyer services.",
+        "keywords": [
+          "lawyer",
+          "Barcelona",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://belmontecrespoabogados.com/en/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "belmonte-crespo-abogados-madrid",
+      "full_name": "Belmonte Crespo Abogados — Madrid",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Lawyer"
+      ],
+      "work_subcategory_slugs": [
+        "legal-notary-lawyer",
+        "legal-notary-contracts",
+        "legal-notary-immigration"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Velázquez 55, 3-D, 28001 Madrid",
+      "phone": "+34 643 711 226",
+      "public_email": null,
+      "website": "https://belmontecrespoabogados.com/",
+      "business_hours": "Mon–Fri 09:00–14:00, 16:00–20:00",
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+belmonte-crespo-abogados-madrid@users.dimarket.app",
+      "services": [
+        "Labour and civil law",
+        "Commercial advice",
+        "Immigration"
+      ],
+      "bio": "Madrid office of Belmonte Crespo Abogados at Calle Velázquez 55. Public services cover labour, civil, commercial, and immigration matters.",
+      "seo": {
+        "title": "Belmonte Crespo Abogados — Madrid — Lawyer in Madrid | DImarket",
+        "meta_description": "Find Belmonte Crespo Abogados — Madrid in Madrid, Spain on DImarket. Request a quote for lawyer services.",
+        "keywords": [
+          "lawyer",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://belmontecrespoabogados.com/en/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "belmonte-crespo-abogados-valencia",
+      "full_name": "Belmonte Crespo Abogados — Valencia",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Lawyer"
+      ],
+      "work_subcategory_slugs": [
+        "legal-notary-lawyer",
+        "legal-notary-contracts",
+        "legal-notary-tax"
+      ],
+      "city": "Valencia",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Valencia, Valencia, Spain",
+      "address": "Carrer de Colón 4, 46004 Valencia",
+      "phone": "+34 643 711 226",
+      "public_email": null,
+      "website": "https://belmontecrespoabogados.com/",
+      "business_hours": "Mon–Fri 09:00–14:00, 16:00–20:00",
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+belmonte-crespo-abogados-valencia@users.dimarket.app",
+      "services": [
+        "Civil and commercial advice",
+        "Labour disputes",
+        "Contract drafting"
+      ],
+      "bio": "Valencia office of Belmonte Crespo Abogados on Carrer de Colón. Public services include civil, commercial, and labour legal advice.",
+      "seo": {
+        "title": "Belmonte Crespo Abogados — Valencia — Lawyer in Valencia | DImarket",
+        "meta_description": "Find Belmonte Crespo Abogados — Valencia in Valencia, Spain on DImarket. Request a quote for lawyer services.",
+        "keywords": [
+          "lawyer",
+          "Valencia",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://belmontecrespoabogados.com/en/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "sanchez-abogados-madrid",
+      "full_name": "Despacho Sánchez Abogados — Madrid",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Lawyer"
+      ],
+      "work_subcategory_slugs": [
+        "legal-notary-lawyer",
+        "legal-notary-immigration",
+        "legal-notary-contracts"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Princesa 31, planta 6 oficina 67, 28008 Madrid",
+      "phone": "+34 900 264 347",
+      "public_email": null,
+      "website": "https://www.sanchez-abogados.com/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+sanchez-abogados-madrid@users.dimarket.app",
+      "services": [
+        "Legal advice for individuals and companies",
+        "Immigration and residency support",
+        "International client assistance"
+      ],
+      "bio": "Madrid office of Despacho Sánchez Abogados at Calle Princesa 31. Public services cover local and international legal assistance including immigration.",
+      "seo": {
+        "title": "Despacho Sánchez Abogados — Madrid — Lawyer in Madrid | DImarket",
+        "meta_description": "Find Despacho Sánchez Abogados — Madrid in Madrid, Spain on DImarket. Request a quote for lawyer services.",
+        "keywords": [
+          "lawyer",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.sanchez-abogados.com/estamos-para-ustedes/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "sanchez-abogados-valencia",
+      "full_name": "Despacho Sánchez Abogados — Valencia",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Lawyer"
+      ],
+      "work_subcategory_slugs": [
+        "legal-notary-lawyer",
+        "legal-notary-immigration",
+        "legal-notary-contracts"
+      ],
+      "city": "Valencia",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Valencia, Valencia, Spain",
+      "address": "Avda. de las Cortes Valencianas 58, planta 10 oficina 9, Valencia",
+      "phone": "+34 900 264 347",
+      "public_email": null,
+      "website": "https://www.sanchez-abogados.com/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+sanchez-abogados-valencia@users.dimarket.app",
+      "services": [
+        "Legal advice",
+        "Immigration procedures",
+        "International client support"
+      ],
+      "bio": "Valencia office of Despacho Sánchez Abogados at Avda. de las Cortes Valencianas 58 (Sorolla Center). Public services cover legal advice and immigration support.",
+      "seo": {
+        "title": "Despacho Sánchez Abogados — Valencia — Lawyer in Valencia | DImarket",
+        "meta_description": "Find Despacho Sánchez Abogados — Valencia in Valencia, Spain on DImarket. Request a quote for lawyer services.",
+        "keywords": [
+          "lawyer",
+          "Valencia",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.sanchez-abogados.com/estamos-para-ustedes/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "abogados-santillana-barcelona",
+      "full_name": "Abogados Santillana",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Lawyer"
+      ],
+      "work_subcategory_slugs": [
+        "legal-notary-lawyer",
+        "legal-notary-company",
+        "legal-notary-contracts"
+      ],
+      "city": "Barcelona",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Barcelona, Catalonia, Spain",
+      "address": "Carrer de Còrsega 303, 08008 Barcelona",
+      "phone": "+34 634 386 985",
+      "public_email": null,
+      "website": "https://abogadossantillana.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+abogados-santillana-barcelona@users.dimarket.app",
+      "services": [
+        "Insolvency and restructuring",
+        "Commercial litigation",
+        "Director liability defence"
+      ],
+      "bio": "Barcelona law firm at Carrer de Còrsega 303. Public focus includes insolvency, debt restructuring, and commercial matters; also lists Madrid and Valencia coverage.",
+      "seo": {
+        "title": "Abogados Santillana — Lawyer in Barcelona | DImarket",
+        "meta_description": "Find Abogados Santillana in Barcelona, Spain on DImarket. Request a quote for lawyer services.",
+        "keywords": [
+          "lawyer",
+          "Barcelona",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://abogadossantillana.com/expertos-en-derecho-concursal-en-barcelona/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "legal-fournier-spain",
+      "full_name": "Legal Fournier",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Lawyer"
+      ],
+      "work_subcategory_slugs": [
+        "legal-notary-lawyer",
+        "legal-notary-immigration",
+        "legal-notary-contracts"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://legalfournier.com/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+legal-fournier-spain@users.dimarket.app",
+      "services": [
+        "Immigration law",
+        "English-speaking legal counsel in Spain",
+        "Residency and nationality procedures"
+      ],
+      "bio": "Spanish law practice publicly listing immigration counsel and English-speaking legal services for residents and newcomers in Spain.",
+      "seo": {
+        "title": "Legal Fournier — Lawyer in Madrid | DImarket",
+        "meta_description": "Find Legal Fournier in Madrid, Spain on DImarket. Request a quote for lawyer services.",
+        "keywords": [
+          "lawyer",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://legalfournier.com/en/immigration/english-speaking-lawyer-spain/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "gd-asesoria-madrid",
+      "full_name": "GD Asesoría — Madrid",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Accountant",
+        "Tax Consultant",
+        "Gestoría"
+      ],
+      "work_subcategory_slugs": [
+        "accounting-finance-bookkeeping",
+        "accounting-finance-tax",
+        "accounting-finance-payroll",
+        "accounting-finance-advisory",
+        "accounting-finance-gestoria",
+        "legal-notary-company"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "C/ Velázquez 64, 4ª, 28001 Madrid",
+      "phone": "+34 915 247 150",
+      "public_email": null,
+      "website": "https://www.gdasesoria.com/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+gd-asesoria-madrid@users.dimarket.app",
+      "services": [
+        "Fiscal and accounting advice",
+        "Payroll outsourcing",
+        "Labour and mercantile advice",
+        "Immigration gestoría"
+      ],
+      "bio": "Madrid office of GD Asesoría (Gesdocument) at Calle Velázquez 64. Public services cover fiscal/accounting advice, payroll, labour, mercantile, and immigration gestoría for SMEs.",
+      "seo": {
+        "title": "GD Asesoría — Madrid — Accountant in Madrid | DImarket",
+        "meta_description": "Find GD Asesoría — Madrid in Madrid, Spain on DImarket. Request a quote for accountant, tax consultant, gestoría services.",
+        "keywords": [
+          "accountant",
+          "tax consultant",
+          "gestoría",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.gdasesoria.com/",
+        "https://www.gdasesoria.com/oficinas/gestoria-madrid"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "gd-asesoria-barcelona",
+      "full_name": "GD Asesoría — Barcelona",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Accountant",
+        "Tax Consultant",
+        "Gestoría"
+      ],
+      "work_subcategory_slugs": [
+        "accounting-finance-bookkeeping",
+        "accounting-finance-tax",
+        "accounting-finance-payroll",
+        "accounting-finance-gestoria",
+        "accounting-finance-autonomo"
+      ],
+      "city": "Barcelona",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Barcelona, Catalonia, Spain",
+      "address": "Carrer de Roc Boronat 147, 10º, 08018 Barcelona",
+      "phone": "+34 932 702 405",
+      "public_email": null,
+      "website": "https://www.gdasesoria.com/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en",
+        "ca"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+gd-asesoria-barcelona@users.dimarket.app",
+      "services": [
+        "Accounting and tax for SMEs",
+        "Payroll",
+        "Integral PYME management"
+      ],
+      "bio": "Barcelona office of GD Asesoría at Carrer de Roc Boronat 147. Public services include accounting, tax, payroll, and integral SME management.",
+      "seo": {
+        "title": "GD Asesoría — Barcelona — Accountant in Barcelona | DImarket",
+        "meta_description": "Find GD Asesoría — Barcelona in Barcelona, Spain on DImarket. Request a quote for accountant, tax consultant, gestoría services.",
+        "keywords": [
+          "accountant",
+          "tax consultant",
+          "gestoría",
+          "Barcelona",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.gdasesoria.com/",
+        "https://www.gdasesoria.com/oficinas/gestoria-barcelona"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "gd-asesoria-valencia",
+      "full_name": "GD Asesoría — Valencia",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Accountant",
+        "Tax Consultant"
+      ],
+      "work_subcategory_slugs": [
+        "accounting-finance-bookkeeping",
+        "accounting-finance-tax",
+        "accounting-finance-payroll",
+        "accounting-finance-advisory"
+      ],
+      "city": "Valencia",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Valencia, Valencia, Spain",
+      "address": "C/ Menorca 19, 7ª mod 1, 46023 Valencia",
+      "phone": "+34 963 391 117",
+      "public_email": null,
+      "website": "https://www.gdasesoria.com/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+gd-asesoria-valencia@users.dimarket.app",
+      "services": [
+        "Fiscal and accounting advice",
+        "Payroll",
+        "SME consulting"
+      ],
+      "bio": "Valencia office of GD Asesoría at Calle Menorca 19. Public services cover fiscal/accounting advice, payroll, and SME consulting.",
+      "seo": {
+        "title": "GD Asesoría — Valencia — Accountant in Valencia | DImarket",
+        "meta_description": "Find GD Asesoría — Valencia in Valencia, Spain on DImarket. Request a quote for accountant, tax consultant services.",
+        "keywords": [
+          "accountant",
+          "tax consultant",
+          "Valencia",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.gdasesoria.com/",
+        "https://www.gdasesoria.com/oficinas/gestoria-valencia-asesoria"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "gd-asesoria-bilbao",
+      "full_name": "GD Asesoría — Bilbao",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Accountant",
+        "Tax Consultant"
+      ],
+      "work_subcategory_slugs": [
+        "accounting-finance-bookkeeping",
+        "accounting-finance-tax",
+        "accounting-finance-payroll",
+        "accounting-finance-advisory"
+      ],
+      "city": "Bilbao",
+      "region": "Basque Country",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Bilbao, Basque Country, Spain",
+      "address": "Av. Madariaga 1, Planta 3, 48014 Bilbao",
+      "phone": "+34 944 352 644",
+      "public_email": null,
+      "website": "https://www.gdasesoria.com/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+gd-asesoria-bilbao@users.dimarket.app",
+      "services": [
+        "Corporate accounting",
+        "Tax advice",
+        "Payroll for SMEs"
+      ],
+      "bio": "Bilbao office of GD Asesoría at Av. Madariaga 1. Public services cover corporate accounting, tax advice, and payroll for SMEs.",
+      "seo": {
+        "title": "GD Asesoría — Bilbao — Accountant in Bilbao | DImarket",
+        "meta_description": "Find GD Asesoría — Bilbao in Bilbao, Spain on DImarket. Request a quote for accountant, tax consultant services.",
+        "keywords": [
+          "accountant",
+          "tax consultant",
+          "Bilbao",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.gdasesoria.com/",
+        "https://www.gdasesoria.com/oficinas/gestoria-bilbao"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "gd-asesoria-zaragoza",
+      "full_name": "GD Asesoría — Zaragoza",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Accountant",
+        "Tax Consultant"
+      ],
+      "work_subcategory_slugs": [
+        "accounting-finance-bookkeeping",
+        "accounting-finance-tax",
+        "accounting-finance-payroll"
+      ],
+      "city": "Zaragoza",
+      "region": "Aragon",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Zaragoza, Aragon, Spain",
+      "address": "Avenida de Gómez Laguna 25, Planta 9 oficina A2, 50009 Zaragoza",
+      "phone": "+34 976 227 669",
+      "public_email": null,
+      "website": "https://www.gdasesoria.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+gd-asesoria-zaragoza@users.dimarket.app",
+      "services": [
+        "Accounting",
+        "Tax filings",
+        "Payroll"
+      ],
+      "bio": "Zaragoza office of GD Asesoría at Avenida de Gómez Laguna 25. Public services include accounting, tax filings, and payroll.",
+      "seo": {
+        "title": "GD Asesoría — Zaragoza — Accountant in Zaragoza | DImarket",
+        "meta_description": "Find GD Asesoría — Zaragoza in Zaragoza, Spain on DImarket. Request a quote for accountant, tax consultant services.",
+        "keywords": [
+          "accountant",
+          "tax consultant",
+          "Zaragoza",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.gdasesoria.com/",
+        "https://www.gdasesoria.com/oficinas/gestoria-zaragoza"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "gestoria-simon-madrid",
+      "full_name": "Gestoría Simón",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Gestoría",
+        "Accountant",
+        "Lawyer"
+      ],
+      "work_subcategory_slugs": [
+        "accounting-finance-gestoria",
+        "accounting-finance-tax",
+        "accounting-finance-bookkeeping",
+        "accounting-finance-autonomo",
+        "legal-notary-lawyer"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle de la Oca 90, 1ºB, 28025 Madrid",
+      "phone": "+34 914 618 127",
+      "public_email": null,
+      "website": "https://www.gestoriasimon.es/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+gestoria-simon-madrid@users.dimarket.app",
+      "services": [
+        "Administrative gestoría",
+        "Fiscal and accounting filings",
+        "Legal support for individuals and companies",
+        "Autónomo procedures"
+      ],
+      "bio": "Madrid gestoría and legal office at Calle de la Oca 90 (Carabanchel), with a second published office in San Sebastián de los Reyes. Public services cover administrative, fiscal, accounting, and legal procedures.",
+      "seo": {
+        "title": "Gestoría Simón — Gestoría in Madrid | DImarket",
+        "meta_description": "Find Gestoría Simón in Madrid, Spain on DImarket. Request a quote for gestoría, accountant, lawyer services.",
+        "keywords": [
+          "gestoría",
+          "accountant",
+          "lawyer",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.gestoriasimon.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "gestoria-de-madrid-arroyomolinos",
+      "full_name": "Gestoría de Madrid",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Gestoría",
+        "Accountant"
+      ],
+      "work_subcategory_slugs": [
+        "accounting-finance-gestoria",
+        "accounting-finance-tax",
+        "accounting-finance-bookkeeping",
+        "accounting-finance-autonomo",
+        "legal-notary-company"
+      ],
+      "city": "Arroyomolinos",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Arroyomolinos, Madrid, Spain",
+      "address": "C/ Miguel Servet 62, Pol. Ind. Valdefuentes, 28939 Arroyomolinos, Madrid",
+      "phone": "+34 916 686 454",
+      "public_email": "info@gestoriademadrid.com",
+      "website": "https://gestoriademadrid.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+gestoria-de-madrid-arroyomolinos@users.dimarket.app",
+      "services": [
+        "Fiscal and accounting advice",
+        "Legal orientation for businesses",
+        "Autónomo and company support"
+      ],
+      "bio": "Gestoría based in Arroyomolinos (Madrid) at C/ Miguel Servet 62. Public services cover fiscal/accounting advice and legal orientation for companies and autónomos.",
+      "seo": {
+        "title": "Gestoría de Madrid — Gestoría in Arroyomolinos | DImarket",
+        "meta_description": "Find Gestoría de Madrid in Arroyomolinos, Spain on DImarket. Request a quote for gestoría, accountant services.",
+        "keywords": [
+          "gestoría",
+          "accountant",
+          "Arroyomolinos",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://gestoriademadrid.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "asesorate-pymes-espana",
+      "full_name": "Asesórate Pymes",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Accountant",
+        "Gestoría",
+        "Tax Consultant"
+      ],
+      "work_subcategory_slugs": [
+        "accounting-finance-bookkeeping",
+        "accounting-finance-tax",
+        "accounting-finance-payroll",
+        "accounting-finance-autonomo",
+        "accounting-finance-gestoria"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://www.asesoratepymes.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+asesorate-pymes-espana@users.dimarket.app",
+      "services": [
+        "Labour, fiscal and accounting advice",
+        "Support for autónomos and PYMES",
+        "Coverage listed across major Spanish cities"
+      ],
+      "bio": "Spanish advisory network publicly listing labour, fiscal, accounting, and legal gestoría for autónomos and SMEs in Madrid, Barcelona, Valencia, Sevilla, Zaragoza, Bilbao and other cities.",
+      "seo": {
+        "title": "Asesórate Pymes — Accountant in Madrid | DImarket",
+        "meta_description": "Find Asesórate Pymes in Madrid, Spain on DImarket. Request a quote for accountant, gestoría, tax consultant services.",
+        "keywords": [
+          "accountant",
+          "gestoría",
+          "tax consultant",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.asesoratepymes.com/asesoria-gestoria/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "servicios-a-domicilio-madrid",
+      "full_name": "Servicios a Domicilio Madrid",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Cleaning",
+        "Handyman",
+        "Plumbing",
+        "Electrician",
+        "Moving"
+      ],
+      "work_subcategory_slugs": [
+        "cleaning-general",
+        "cleaning-deep",
+        "cleaning-post-renovation",
+        "handyman-general",
+        "plumbing-repair",
+        "electro-wiring",
+        "logistics-relocation"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": null,
+      "phone": "+34 742 071 096",
+      "public_email": null,
+      "website": "https://serviciosadomiciliomadrid.es/",
+      "business_hours": "24/7 emergency coverage",
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+servicios-a-domicilio-madrid@users.dimarket.app",
+      "services": [
+        "Home and office cleaning",
+        "Post-renovation cleaning",
+        "Handyman repairs",
+        "Emergency plumbing and electrical",
+        "Flat clear-outs and moves"
+      ],
+      "bio": "Madrid home-services company publicly listing cleaning, handyman, emergency plumbing/electrical, and move-out clearances across the Comunidad de Madrid.",
+      "seo": {
+        "title": "Servicios a Domicilio Madrid — Cleaning in Madrid | DImarket",
+        "meta_description": "Find Servicios a Domicilio Madrid in Madrid, Spain on DImarket. Request a quote for cleaning, handyman, plumbing services.",
+        "keywords": [
+          "cleaning",
+          "handyman",
+          "plumbing",
+          "electrician",
+          "moving",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://serviciosadomiciliomadrid.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "service-total-madrid",
+      "full_name": "Service Total",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "HVAC",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "hvac-ac",
+        "hvac-heating",
+        "plumbing-repair",
+        "plumbing-install",
+        "handyman-general",
+        "handyman-locks"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": null,
+      "phone": "+34 671 939 966",
+      "public_email": "info@servicetotal.com",
+      "website": "https://service-total.es/",
+      "business_hours": "365 days emergency coverage",
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+service-total-madrid@users.dimarket.app",
+      "services": [
+        "Air-conditioning installation and repair",
+        "Heating maintenance",
+        "Plumbing emergencies",
+        "Drain clearing",
+        "Locksmith",
+        "Handyman repairs"
+      ],
+      "bio": "Madrid building-maintenance company publicly listing HVAC, plumbing, drain clearing, locksmith, and handyman services with year-round emergency coverage.",
+      "seo": {
+        "title": "Service Total — HVAC in Madrid | DImarket",
+        "meta_description": "Find Service Total in Madrid, Spain on DImarket. Request a quote for hvac, plumbing, handyman services.",
+        "keywords": [
+          "hvac",
+          "plumbing",
+          "handyman",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://service-total.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "tecniser-control-madrid",
+      "full_name": "Tecniser Control",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Cleaning",
+        "HVAC",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "cleaning-general",
+        "hvac-ac",
+        "plumbing-repair",
+        "handyman-general"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Av. Secundino Zuazo 85, 28055 Madrid",
+      "phone": "+34 647 926 767",
+      "public_email": "contacto@tecnisercontrol.com",
+      "website": "https://tecnisercontrol.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+tecniser-control-madrid@users.dimarket.app",
+      "services": [
+        "Community technical services",
+        "HVAC maintenance",
+        "Plumbing",
+        "Cleaning and concierge support"
+      ],
+      "bio": "Madrid multiservice company at Av. Secundino Zuazo 85. Public services cover HVAC, plumbing, cleaning, and community technical maintenance.",
+      "seo": {
+        "title": "Tecniser Control — Cleaning in Madrid | DImarket",
+        "meta_description": "Find Tecniser Control in Madrid, Spain on DImarket. Request a quote for cleaning, hvac, plumbing services.",
+        "keywords": [
+          "cleaning",
+          "hvac",
+          "plumbing",
+          "handyman",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://tecnisercontrol.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "detodoenuno-barcelona",
+      "full_name": "DeTodoenUno Reformas Barcelona",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Cleaning",
+        "Moving"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "cleaning-post-renovation",
+        "logistics-relocation",
+        "handyman-locks"
+      ],
+      "city": "Viladecans",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Viladecans, Catalonia, Spain",
+      "address": "Avda Generalitat 145, Viladecans, Barcelona",
+      "phone": "+34 628 852 474",
+      "public_email": "info@detodoenuno.es",
+      "website": "https://www.detodoenuno.es/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+detodoenuno-barcelona@users.dimarket.app",
+      "services": [
+        "Full renovations",
+        "Bathroom and kitchen renovations",
+        "Plumbing and electrical",
+        "Facade works",
+        "Cleaning and moves"
+      ],
+      "bio": "Barcelona-area renovation and multiservice company in Viladecans (Avda Generalitat 145). Public services cover renovations, plumbing, electrical, cleaning, and moves.",
+      "seo": {
+        "title": "DeTodoenUno Reformas Barcelona — Renovation in Viladecans | DImarket",
+        "meta_description": "Find DeTodoenUno Reformas Barcelona in Viladecans, Spain on DImarket. Request a quote for renovation, plumbing, electrician services.",
+        "keywords": [
+          "renovation",
+          "plumbing",
+          "electrician",
+          "cleaning",
+          "moving",
+          "Viladecans",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.detodoenuno.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "mudanzas-expertos-badalona",
+      "full_name": "Mudanzas Expertos",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Moving",
+        "Cleaning"
+      ],
+      "work_subcategory_slugs": [
+        "logistics-movers",
+        "logistics-relocation",
+        "logistics-transport",
+        "cleaning-general"
+      ],
+      "city": "Badalona",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Badalona, Catalonia, Spain",
+      "address": "Carrer de Londres 6, 1-1, 08914 Badalona",
+      "phone": "+34 678 132 242",
+      "public_email": null,
+      "website": "https://mudanzaexpertos.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+mudanzas-expertos-badalona@users.dimarket.app",
+      "services": [
+        "Home and office moves",
+        "Storage",
+        "Move-related cleaning"
+      ],
+      "bio": "Badalona moving company at Carrer de Londres 6. Public services cover residential and office moves, storage, and related cleaning.",
+      "seo": {
+        "title": "Mudanzas Expertos — Moving in Badalona | DImarket",
+        "meta_description": "Find Mudanzas Expertos in Badalona, Spain on DImarket. Request a quote for moving, cleaning services.",
+        "keywords": [
+          "moving",
+          "cleaning",
+          "Badalona",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://mudanzaexpertos.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "manifix-reformas-madrid",
+      "full_name": "Manifix S.L.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Painting",
+        "Plumbing",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "plumbing-install",
+        "painting-walls",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "flooring-laminate"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Abad Juan Catalán 28, 4ºD, 28032 Madrid",
+      "phone": "+34 627 697 783",
+      "public_email": "manifixsl@gmail.com",
+      "website": "https://manifix.es/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+manifix-reformas-madrid@users.dimarket.app",
+      "services": [
+        "Full home renovations",
+        "Bathroom and kitchen renovations",
+        "Painting",
+        "Flooring"
+      ],
+      "bio": "Madrid renovation company Manifix S.L. at Calle Abad Juan Catalán 28. Public services include full renovations, bathrooms, kitchens, painting, and flooring.",
+      "seo": {
+        "title": "Manifix S.L. — Renovation in Madrid | DImarket",
+        "meta_description": "Find Manifix S.L. in Madrid, Spain on DImarket. Request a quote for renovation, painting, plumbing services.",
+        "keywords": [
+          "renovation",
+          "painting",
+          "plumbing",
+          "tiles",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://manifix.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "vital-services-madrid",
+      "full_name": "Vital Services Servicios Auxiliares",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Cleaning",
+        "Moving",
+        "Renovation",
+        "Landscaping"
+      ],
+      "work_subcategory_slugs": [
+        "cleaning-general",
+        "logistics-relocation",
+        "logistics-movers",
+        "masonry-partitions",
+        "handyman-general"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Las Gardenias 14 Loc, 28039 Madrid",
+      "phone": "+34 916 697 820",
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+vital-services-madrid@users.dimarket.app",
+      "services": [
+        "Cleaning for companies and individuals",
+        "Moves and transfers",
+        "Gardening",
+        "Premises maintenance and renovations"
+      ],
+      "bio": "Madrid auxiliary-services company at Calle Las Gardenias 14. Public registry listing covers cleaning, moves, gardening, and premises maintenance/renovations.",
+      "seo": {
+        "title": "Vital Services Servicios Auxiliares — Cleaning in Madrid | DImarket",
+        "meta_description": "Find Vital Services Servicios Auxiliares in Madrid, Spain on DImarket. Request a quote for cleaning, moving, renovation services.",
+        "keywords": [
+          "cleaning",
+          "moving",
+          "renovation",
+          "landscaping",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://empresite.eleconomista.es/VITAL-SERVICES-SERVICIOS-AUXILIARES-EMPRESAS-PARTICULARES.html"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "hortaleza-mudanzas-pinto",
+      "full_name": "Hortaleza Servicios de Mudanzas y Guardamuebles",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Moving",
+        "Cleaning"
+      ],
+      "work_subcategory_slugs": [
+        "logistics-relocation",
+        "logistics-movers",
+        "logistics-transport",
+        "cleaning-general",
+        "rent-tools"
+      ],
+      "city": "Pinto",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Pinto, Madrid, Spain",
+      "address": "Calle de Cádiz 28, 28320 Pinto, Madrid",
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+hortaleza-mudanzas-pinto@users.dimarket.app",
+      "services": [
+        "Moving and storage",
+        "Road transport",
+        "Building cleaning",
+        "Community maintenance"
+      ],
+      "bio": "Moving and storage company in Pinto (Madrid) at Calle de Cádiz 28. Public registry listing covers moves, storage, transport, cleaning, and community maintenance.",
+      "seo": {
+        "title": "Hortaleza Servicios de Mudanzas y Guardamuebles — Moving in Pinto | DImarket",
+        "meta_description": "Find Hortaleza Servicios de Mudanzas y Guardamuebles in Pinto, Spain on DImarket. Request a quote for moving, cleaning services.",
+        "keywords": [
+          "moving",
+          "cleaning",
+          "Pinto",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://empresite.eleconomista.es/HORTALEZA-SERVICIOS-MUDANZAS-GUARDAMUEBLES.html"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "econova-global-service",
+      "full_name": "Econova Global Service",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Moving",
+        "Renovation",
+        "Cleaning",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "logistics-relocation",
+        "masonry-partitions",
+        "cleaning-deep",
+        "handyman-general",
+        "painting-walls"
+      ],
+      "city": "Ciudad Real",
+      "region": "Castilla-La Mancha",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Ciudad Real, Castilla-La Mancha, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://econovaglobalservice.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+econova-global-service@users.dimarket.app",
+      "services": [
+        "Moves",
+        "Home renovations",
+        "Maintenance and deep cleaning"
+      ],
+      "bio": "Econova Global Service publicly listing integrated home moves, renovations, and maintenance/cleaning services for residential clients.",
+      "seo": {
+        "title": "Econova Global Service — Moving in Ciudad Real | DImarket",
+        "meta_description": "Find Econova Global Service in Ciudad Real, Spain on DImarket. Request a quote for moving, renovation, cleaning services.",
+        "keywords": [
+          "moving",
+          "renovation",
+          "cleaning",
+          "handyman",
+          "Ciudad Real",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://econovaglobalservice.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "manitas-montaje-madrid",
+      "full_name": "Manitas y Montaje Madrid",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Handyman",
+        "Furniture"
+      ],
+      "work_subcategory_slugs": [
+        "handyman-general",
+        "handyman-assembly",
+        "furniture-assembly",
+        "handyman-locks"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": null,
+      "phone": "+34 742 071 096",
+      "public_email": null,
+      "website": "https://serviciosadomiciliomadrid.es/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+manitas-montaje-madrid@users.dimarket.app",
+      "services": [
+        "Small household repairs",
+        "Furniture assembly",
+        "Lock and door fixes"
+      ],
+      "bio": "Madrid handyman listing (via Servicios a Domicilio Madrid) for small household repairs, furniture assembly, and lock/door fixes.",
+      "seo": {
+        "title": "Manitas y Montaje Madrid — Handyman in Madrid | DImarket",
+        "meta_description": "Find Manitas y Montaje Madrid in Madrid, Spain on DImarket. Request a quote for handyman, furniture services.",
+        "keywords": [
+          "handyman",
+          "furniture",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://serviciosadomiciliomadrid.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "talleres-jj-madrid",
+      "full_name": "Talleres JJ Multimarca",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Auto Repair"
+      ],
+      "work_subcategory_slugs": [
+        "electrical-auto-repair",
+        "electrical-auto-electrician",
+        "electrical-tires",
+        "electrical-towing"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "C/ de Ramón Calabuig 46-48, 28053 Madrid",
+      "phone": "+34 914 781 893",
+      "public_email": "info@talleresjj.es",
+      "website": "https://www.talleresjj.es/",
+      "business_hours": "Mon–Fri 08:30–19:00",
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+talleres-jj-madrid@users.dimarket.app",
+      "services": [
+        "Multibrand mechanical repair",
+        "Hybrid and EV maintenance",
+        "Diagnostics",
+        "24h tow coordination"
+      ],
+      "bio": "Madrid multibrand garage at C/ Ramón Calabuig 46-48 (Puente de Vallecas). Public services cover mechanical repair, diagnostics, hybrid/EV maintenance, and towing coordination.",
+      "seo": {
+        "title": "Talleres JJ Multimarca — Auto Repair in Madrid | DImarket",
+        "meta_description": "Find Talleres JJ Multimarca in Madrid, Spain on DImarket. Request a quote for auto repair services.",
+        "keywords": [
+          "auto repair",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.talleresjj.es/",
+        "https://www.talleresjj.es/contacto/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "talleres-amador-madrid",
+      "full_name": "Talleres Amador",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Auto Repair"
+      ],
+      "work_subcategory_slugs": [
+        "electrical-auto-repair",
+        "electrical-auto-electrician",
+        "electrical-tires"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Príncipe de Asturias 9, 28006 Madrid",
+      "phone": "+34 914 012 641",
+      "public_email": "talleresamador@gmail.com",
+      "website": "https://talleresamador.es/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+talleres-amador-madrid@users.dimarket.app",
+      "services": [
+        "Mechanical maintenance and repair",
+        "Bodywork and paint",
+        "Tires",
+        "Vehicle electrical systems"
+      ],
+      "bio": "Madrid garage Talleres Amador at Calle Príncipe de Asturias 9 (Salamanca). Public services include mechanical repair, bodywork, tires, HVAC, and vehicle electrical systems.",
+      "seo": {
+        "title": "Talleres Amador — Auto Repair in Madrid | DImarket",
+        "meta_description": "Find Talleres Amador in Madrid, Spain on DImarket. Request a quote for auto repair services.",
+        "keywords": [
+          "auto repair",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://talleresamador.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "talleres-h-nunez-madrid",
+      "full_name": "Talleres H. Núñez",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Auto Repair",
+        "Auto Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electrical-auto-repair",
+        "electrical-auto-electrician"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Paseo de las Yeserías 57, 28005 Madrid",
+      "phone": "+34 914 732 761",
+      "public_email": null,
+      "website": "https://www.tallerhnunez.com/",
+      "business_hours": "Mon–Fri 08:30–14:00, 15:30–20:00",
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+talleres-h-nunez-madrid@users.dimarket.app",
+      "services": [
+        "General mechanics",
+        "Electronic diagnostics",
+        "Vehicle electrical repairs"
+      ],
+      "bio": "Madrid garage at Paseo de las Yeserías 57 (Arganzuela). Public services cover general mechanics, electronic diagnostics, and vehicle electrical repairs.",
+      "seo": {
+        "title": "Talleres H. Núñez — Auto Repair in Madrid | DImarket",
+        "meta_description": "Find Talleres H. Núñez in Madrid, Spain on DImarket. Request a quote for auto repair, auto electrician services.",
+        "keywords": [
+          "auto repair",
+          "auto electrician",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.tallerhnunez.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "madrid-car-taller",
+      "full_name": "Madrid Car Taller",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Auto Repair"
+      ],
+      "work_subcategory_slugs": [
+        "electrical-auto-repair",
+        "electrical-tires"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "C. de la Vía 6, 28019 Madrid",
+      "phone": "+34 914 722 411",
+      "public_email": null,
+      "website": "https://www.madridcar.es/",
+      "business_hours": "Mon–Fri 09:00–14:00, 16:00–19:00",
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+madrid-car-taller@users.dimarket.app",
+      "services": [
+        "Multibrand car repair",
+        "Spare parts",
+        "Maintenance"
+      ],
+      "bio": "Madrid multibrand garage at C. de la Vía 6 (Carabanchel). Public services include mechanical repairs, maintenance, and on-site spare parts.",
+      "seo": {
+        "title": "Madrid Car Taller — Auto Repair in Madrid | DImarket",
+        "meta_description": "Find Madrid Car Taller in Madrid, Spain on DImarket. Request a quote for auto repair services.",
+        "keywords": [
+          "auto repair",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.madridcar.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "el-carpintero-barcelona",
+      "full_name": "El Carpintero Barcelona",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Furniture",
+        "Carpentry"
+      ],
+      "work_subcategory_slugs": [
+        "furniture-custom",
+        "furniture-assembly",
+        "furniture-repair",
+        "carpentry-wood-structures",
+        "carpentry-doors-install"
+      ],
+      "city": "Barcelona",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Barcelona, Catalonia, Spain",
+      "address": null,
+      "phone": "+34 932 713 008",
+      "public_email": null,
+      "website": "https://elcarpinterobarcelona.es/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "ca"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+el-carpintero-barcelona@users.dimarket.app",
+      "services": [
+        "Custom carpentry",
+        "Built-in furniture",
+        "Door and woodwork installation"
+      ],
+      "bio": "Barcelona carpentry company publicly listing custom woodwork, built-in furniture, and door/wood structure installation.",
+      "seo": {
+        "title": "El Carpintero Barcelona — Furniture in Barcelona | DImarket",
+        "meta_description": "Find El Carpintero Barcelona in Barcelona, Spain on DImarket. Request a quote for furniture, carpentry services.",
+        "keywords": [
+          "furniture",
+          "carpentry",
+          "Barcelona",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://elcarpinterobarcelona.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "bric-madera-barcelona",
+      "full_name": "Bric Madera",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Furniture",
+        "Carpentry"
+      ],
+      "work_subcategory_slugs": [
+        "furniture-custom",
+        "furniture-assembly",
+        "carpentry-wood-structures"
+      ],
+      "city": "Barcelona",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Barcelona, Catalonia, Spain",
+      "address": null,
+      "phone": "+34 933 528 354",
+      "public_email": null,
+      "website": "https://bricmadera.com/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "ca"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+bric-madera-barcelona@users.dimarket.app",
+      "services": [
+        "Custom furniture",
+        "Wood carpentry",
+        "Assembly"
+      ],
+      "bio": "Barcelona woodworking company publicly listing custom furniture, carpentry, and assembly services.",
+      "seo": {
+        "title": "Bric Madera — Furniture in Barcelona | DImarket",
+        "meta_description": "Find Bric Madera in Barcelona, Spain on DImarket. Request a quote for furniture, carpentry services.",
+        "keywords": [
+          "furniture",
+          "carpentry",
+          "Barcelona",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://bricmadera.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "ceysa-alquiler-maquinaria-madrid",
+      "full_name": "CEYSA — Alquiler de maquinaria",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Equipment Rental"
+      ],
+      "work_subcategory_slugs": [
+        "rent-excavator",
+        "rent-mini-excavator",
+        "rent-generators",
+        "rent-tools",
+        "rent-lifts"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "C/ Mayo 61, 28022 Madrid",
+      "phone": "+34 917 477 178",
+      "public_email": "info@ceysa.es",
+      "website": "https://ceysa.es/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+ceysa-alquiler-maquinaria-madrid@users.dimarket.app",
+      "services": [
+        "Mini-excavator rental",
+        "Construction machinery hire",
+        "Container rental",
+        "On-site assistance"
+      ],
+      "bio": "Madrid construction-equipment rental company CEYSA at C/ Mayo 61. Public services cover mini-excavators, construction machinery, containers, and on-site assistance.",
+      "seo": {
+        "title": "CEYSA — Alquiler de maquinaria — Equipment Rental in Madrid | DImarket",
+        "meta_description": "Find CEYSA — Alquiler de maquinaria in Madrid, Spain on DImarket. Request a quote for equipment rental services.",
+        "keywords": [
+          "equipment rental",
+          "Madrid",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://ceysa.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "airmax-andamios-madrid",
+      "full_name": "AirMax Andamios — Madrid",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Equipment Rental"
+      ],
+      "work_subcategory_slugs": [
+        "rent-scaffolding",
+        "rent-lifts",
+        "rent-tools"
+      ],
+      "city": "San Fernando de Henares",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "San Fernando de Henares, Madrid, Spain",
+      "address": "Av. Astronomía 18, P.I. Puerta de Madrid, 28830 San Fernando de Henares",
+      "phone": "+34 914 901 120",
+      "public_email": null,
+      "website": "https://www.airmax.es/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+airmax-andamios-madrid@users.dimarket.app",
+      "services": [
+        "Scaffolding rental and sale",
+        "Lift platforms",
+        "Material elevators"
+      ],
+      "bio": "AirMax Madrid scaffolding and lift rental at Av. Astronomía 18 (San Fernando de Henares). Public services include scaffolding hire/sale and elevation equipment.",
+      "seo": {
+        "title": "AirMax Andamios — Madrid — Equipment Rental in San Fernando de Henares | DImarket",
+        "meta_description": "Find AirMax Andamios — Madrid in San Fernando de Henares, Spain on DImarket. Request a quote for equipment rental services.",
+        "keywords": [
+          "equipment rental",
+          "San Fernando de Henares",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.airmax.es/contacto/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "airmax-andamios-barcelona",
+      "full_name": "AirMax Andamios — Barcelona",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Equipment Rental"
+      ],
+      "work_subcategory_slugs": [
+        "rent-scaffolding",
+        "rent-lifts",
+        "rent-tools"
+      ],
+      "city": "Sant Boi de Llobregat",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Sant Boi de Llobregat, Catalonia, Spain",
+      "address": "C/ Zaragoza 10, 08830 Sant Boi de Llobregat",
+      "phone": "+34 936 354 690",
+      "public_email": null,
+      "website": "https://www.airmax.es/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "ca"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+airmax-andamios-barcelona@users.dimarket.app",
+      "services": [
+        "Scaffolding rental",
+        "Lift platforms",
+        "Material elevators"
+      ],
+      "bio": "AirMax Barcelona scaffolding and lift rental at C/ Zaragoza 10 (Sant Boi de Llobregat). Public services include scaffolding and elevation equipment hire.",
+      "seo": {
+        "title": "AirMax Andamios — Barcelona — Equipment Rental in Sant Boi de Llobregat | DImarket",
+        "meta_description": "Find AirMax Andamios — Barcelona in Sant Boi de Llobregat, Spain on DImarket. Request a quote for equipment rental services.",
+        "keywords": [
+          "equipment rental",
+          "Sant Boi de Llobregat",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.airmax.es/contacto/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "axor-rentals-madrid-pinto",
+      "full_name": "AXOR Rentals — Madrid Sur (Pinto)",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Equipment Rental"
+      ],
+      "work_subcategory_slugs": [
+        "rent-excavator",
+        "rent-scaffolding",
+        "rent-lifts",
+        "rent-generators",
+        "rent-tools"
+      ],
+      "city": "Pinto",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Pinto, Madrid, Spain",
+      "address": "Pol. El Cascajal, C/ Gaviotas 10, 28320 Pinto",
+      "phone": "+34 916 913 515",
+      "public_email": "axor@axor-rentals.com",
+      "website": "https://www.axor-rentals.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+axor-rentals-madrid-pinto@users.dimarket.app",
+      "services": [
+        "Construction machinery rental",
+        "Scaffolding and lifts",
+        "Generators and tools",
+        "Excavators and loaders"
+      ],
+      "bio": "AXOR Rentals Madrid Sur branch in Pinto. Public listing covers excavators, scaffolding, lifts, generators, and worksite tools for construction projects.",
+      "seo": {
+        "title": "AXOR Rentals — Madrid Sur (Pinto) — Equipment Rental in Pinto | DImarket",
+        "meta_description": "Find AXOR Rentals — Madrid Sur (Pinto) in Pinto, Spain on DImarket. Request a quote for equipment rental services.",
+        "keywords": [
+          "equipment rental",
+          "Pinto",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.axor-rentals.com/index.php/es/axor-delegaciones/madrid-sur-pinto"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "vr-valencia-reformas",
+      "full_name": "VR Valencia Reformas",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Drywall",
+        "HVAC",
+        "Architecture"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "drywall-install",
+        "hvac-ac",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "design-engineering-architect",
+        "carpentry-doors-install"
+      ],
+      "city": "Valencia",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Valencia, Valencia, Spain",
+      "address": null,
+      "phone": "+34 963 145 430",
+      "public_email": null,
+      "website": "https://www.vrvalenciareformas.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+vr-valencia-reformas@users.dimarket.app",
+      "services": [
+        "Full renovations of homes and premises",
+        "Plumbing and electrical works",
+        "Interior and exterior painting",
+        "Drywall",
+        "Air-conditioning installation",
+        "Architecture coordination"
+      ],
+      "bio": "Valencia renovation company publicly listing full-home and commercial renovations with plumbing, electrical, painting, drywall, and air-conditioning trades, plus architecture support for chalets, flats, and offices.",
+      "seo": {
+        "title": "VR Valencia Reformas — Renovation in Valencia | DImarket",
+        "meta_description": "Find VR Valencia Reformas in Valencia, Spain on DImarket. Request a quote for renovation, plumbing, electrician services.",
+        "keywords": [
+          "renovation",
+          "plumbing",
+          "electrician",
+          "painting",
+          "drywall",
+          "hvac",
+          "architecture",
+          "Valencia",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.vrvalenciareformas.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "reforma-integral-vlc-torrent",
+      "full_name": "Reforma Integral VLC",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Electrician",
+        "Plumbing",
+        "Painting",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-install",
+        "painting-walls",
+        "tiling-install",
+        "masonry-partitions",
+        "demolition-partitions"
+      ],
+      "city": "Torrent",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Torrent, Valencia, Spain",
+      "address": "Calle Germanies 11 Bajo, 46900 Torrent, Valencia",
+      "phone": "+34 696 583 457",
+      "public_email": null,
+      "website": "https://reformaintegralenvalencia.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reforma-integral-vlc-torrent@users.dimarket.app",
+      "services": [
+        "Full renovations in Valencia and surroundings",
+        "Electrical installation and repairs",
+        "Plumbing installation and repairs",
+        "Residential and commercial fit-out"
+      ],
+      "bio": "Renovation company based in Torrent (Valencia metro area) with a published street address. Public services cover full renovations plus electrical and plumbing works for homes and businesses.",
+      "seo": {
+        "title": "Reforma Integral VLC — Renovation in Torrent | DImarket",
+        "meta_description": "Find Reforma Integral VLC in Torrent, Spain on DImarket. Request a quote for renovation, electrician, plumbing services.",
+        "keywords": [
+          "renovation",
+          "electrician",
+          "plumbing",
+          "painting",
+          "tiles",
+          "Torrent",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformaintegralenvalencia.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "reformas-valencia-10",
+      "full_name": "Reformas Valencia 10",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Drywall",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "drywall-install",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "carpentry-doors-install"
+      ],
+      "city": "Valencia",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Valencia, Valencia, Spain",
+      "address": "Carrer de Sant Vicent Màrtir, Extramurs, Valencia",
+      "phone": null,
+      "public_email": null,
+      "website": "https://reformasvalencia10.es/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reformas-valencia-10@users.dimarket.app",
+      "services": [
+        "Full flat renovations",
+        "Kitchen and bathroom renovations",
+        "Commercial premises and community works",
+        "Masonry, plumbing, electrical, painting, drywall"
+      ],
+      "bio": "Valencia-city renovation firm with a public base in the Extramurs area. Listed work includes full renovations, kitchens, bathrooms, commercial premises, and coordinated masonry, plumbing, electrical, painting, and drywall trades.",
+      "seo": {
+        "title": "Reformas Valencia 10 — Renovation in Valencia | DImarket",
+        "meta_description": "Find Reformas Valencia 10 in Valencia, Spain on DImarket. Request a quote for renovation, plumbing, electrician services.",
+        "keywords": [
+          "renovation",
+          "plumbing",
+          "electrician",
+          "painting",
+          "drywall",
+          "tiles",
+          "Valencia",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformasvalencia10.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "reformas-vilar-barcelona",
+      "full_name": "Reformas Vilar",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Drywall",
+        "Doors",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "drywall-install",
+        "masonry-partitions",
+        "carpentry-doors-install",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "windows-aluminum"
+      ],
+      "city": "Esplugues de Llobregat",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Esplugues de Llobregat, Catalonia, Spain",
+      "address": "Carrer dels Caquis 7, 08950 Esplugues de Llobregat, Barcelona",
+      "phone": "+34 678 824 747",
+      "public_email": "info@reformasvilar.com",
+      "website": "https://reformasvilar.com/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "ca"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reformas-vilar-barcelona@users.dimarket.app",
+      "services": [
+        "Full home renovations",
+        "Bathroom and kitchen renovations",
+        "Commercial premises fit-out",
+        "Drywall, painting, carpentry",
+        "Plumbing and electrical works",
+        "Facade rehabilitation"
+      ],
+      "bio": "Barcelona-area renovation company based in Esplugues de Llobregat. Public contact lists full and partial renovations of homes, bathrooms, kitchens, and commercial premises with plumbing, electrical, drywall, painting, and carpentry trades.",
+      "seo": {
+        "title": "Reformas Vilar — Renovation in Esplugues de Llobregat | DImarket",
+        "meta_description": "Find Reformas Vilar in Esplugues de Llobregat, Spain on DImarket. Request a quote for renovation, plumbing, electrician services.",
+        "keywords": [
+          "renovation",
+          "plumbing",
+          "electrician",
+          "painting",
+          "drywall",
+          "doors",
+          "tiles",
+          "Esplugues de Llobregat",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformasvilar.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "instalaciones-y-reformas-barcelona",
+      "full_name": "Instalaciones y Reformas",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-outlets",
+        "plumbing-install"
+      ],
+      "city": "L'Hospitalet de Llobregat",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "L'Hospitalet de Llobregat, Catalonia, Spain",
+      "address": "Calle Miralta 1, tienda 1, L'Hospitalet de Llobregat",
+      "phone": "+34 933 377 548",
+      "public_email": "info@instalacionesyreformas.es",
+      "website": "https://www.instalacionesyreformas.es/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "ca"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+instalaciones-y-reformas-barcelona@users.dimarket.app",
+      "services": [
+        "Electrical installations and reforms in Barcelona",
+        "Related renovation support works"
+      ],
+      "bio": "Electrical installation and renovation company with a published shop address in L’Hospitalet de Llobregat serving the Barcelona area. Public phones and email are listed for electrical reforms and related works.",
+      "seo": {
+        "title": "Instalaciones y Reformas — Electrician in L'Hospitalet de Llobregat | DImarket",
+        "meta_description": "Find Instalaciones y Reformas in L'Hospitalet de Llobregat, Spain on DImarket. Request a quote for electrician, renovation services.",
+        "keywords": [
+          "electrician",
+          "renovation",
+          "L'Hospitalet de Llobregat",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.instalacionesyreformas.es/inicio/contacto/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "dereforma-sevilla",
+      "full_name": "DeReformaSevilla",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Tiles",
+        "Plumbing",
+        "Electrician",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "facade-repair"
+      ],
+      "city": "Sevilla",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Sevilla, Andalusia, Spain",
+      "address": null,
+      "phone": "+34 614 174 191",
+      "public_email": "info@dereformasevilla.es",
+      "website": "https://dereformasevilla.es/",
+      "business_hours": "Mon–Fri 09:00–17:00",
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+dereforma-sevilla@users.dimarket.app",
+      "services": [
+        "Full flat renovations",
+        "Bathroom and kitchen renovations",
+        "Commercial premises and office renovations",
+        "Terrace and facade works"
+      ],
+      "bio": "Seville renovation company with published weekday hours. Public service list covers flats, bathrooms, kitchens, offices, commercial premises, terraces, and facade-related renovations across Seville districts.",
+      "seo": {
+        "title": "DeReformaSevilla — Renovation in Sevilla | DImarket",
+        "meta_description": "Find DeReformaSevilla in Sevilla, Spain on DImarket. Request a quote for renovation, tiles, plumbing services.",
+        "keywords": [
+          "renovation",
+          "tiles",
+          "plumbing",
+          "electrician",
+          "painting",
+          "Sevilla",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://dereformasevilla.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "reformas-group-malaga",
+      "full_name": "Reformas Group S.L.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Tiles",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "painting-walls",
+        "carpentry-doors-install"
+      ],
+      "city": "Málaga",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Málaga, Andalusia, Spain",
+      "address": "Calle Emilio López Cerezo 5, 29006 Málaga",
+      "phone": "+34 684 744 071",
+      "public_email": "presupuestos@reformasgroup.com",
+      "website": "https://reformasgroup.es/",
+      "business_hours": null,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reformas-group-malaga@users.dimarket.app",
+      "services": [
+        "Full and partial renovations",
+        "Kitchen and bathroom renovations",
+        "Chalet and apartment renovations",
+        "Commercial and office fit-out on the Costa del Sol"
+      ],
+      "bio": "Málaga renovation company (S.L.) with a published office on Emilio López Cerezo. Public listings cover full and partial renovations of homes, chalets, kitchens, bathrooms, offices, and commercial spaces in Málaga and Costa del Sol municipalities.",
+      "seo": {
+        "title": "Reformas Group S.L. — Renovation in Málaga | DImarket",
+        "meta_description": "Find Reformas Group S.L. in Málaga, Spain on DImarket. Request a quote for renovation, plumbing, electrician services.",
+        "keywords": [
+          "renovation",
+          "plumbing",
+          "electrician",
+          "tiles",
+          "painting",
+          "Málaga",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformasgroup.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "grupo-reinsol-malaga",
+      "full_name": "Grupo Reinsol",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Renovation",
+        "Interior Design",
+        "Plumbing",
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-brick",
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "facade-repair",
+        "design-engineering-interior"
+      ],
+      "city": "Málaga",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Málaga, Andalusia, Spain",
+      "address": "Calle Sebastián Souvirón 8, 1º, 29005 Málaga",
+      "phone": "+34 661 948 116",
+      "public_email": "reinsol@gruporeinsol.com",
+      "website": "https://www.gruporeinsol.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+grupo-reinsol-malaga@users.dimarket.app",
+      "services": [
+        "Full home renovations",
+        "Kitchen and bathroom renovations",
+        "Commercial and office renovations",
+        "Facade and building rehabilitation",
+        "Interior design coordination",
+        "Community maintenance works"
+      ],
+      "bio": "Málaga construction and renovation company with a published city-centre office. Public services include full renovations, kitchens, bathrooms, commercial spaces, facade rehabilitation, interior design, and community maintenance.",
+      "seo": {
+        "title": "Grupo Reinsol — Construction Company in Málaga | DImarket",
+        "meta_description": "Find Grupo Reinsol in Málaga, Spain on DImarket. Request a quote for construction company, renovation, interior design services.",
+        "keywords": [
+          "construction company",
+          "renovation",
+          "interior design",
+          "plumbing",
+          "electrician",
+          "Málaga",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.gruporeinsol.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "insergan-malaga",
+      "full_name": "Insergan Servicios y Mantenimientos S.L.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-brick",
+        "masonry-partitions",
+        "facade-repair",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls"
+      ],
+      "city": "Málaga",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Málaga, Andalusia, Spain",
+      "address": "Calle La Flauta Mágica 7, 29006 Málaga",
+      "phone": "+34 952 313 006",
+      "public_email": null,
+      "website": "https://insergan.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+insergan-malaga@users.dimarket.app",
+      "services": [
+        "Building rehabilitation and renovations",
+        "Residential and commercial fit-out",
+        "Community repair works",
+        "Technical advice on maintenance and rehabilitation"
+      ],
+      "bio": "Family construction and maintenance company in Málaga. Public listings cover rehabilitation, renovations of homes and commercial premises, community repairs, and technical advice for building maintenance in Málaga and eastern Andalusia.",
+      "seo": {
+        "title": "Insergan Servicios y Mantenimientos S.L. — Construction Company in Málaga | DImarket",
+        "meta_description": "Find Insergan Servicios y Mantenimientos S.L. in Málaga, Spain on DImarket. Request a quote for construction company, renovation services.",
+        "keywords": [
+          "construction company",
+          "renovation",
+          "Málaga",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://insergan.com/construccion-y-reformas/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "seia-reformas-zaragoza",
+      "full_name": "SEIA Reformas y Proyectos",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Interior Design",
+        "HVAC",
+        "Electrician",
+        "Doors",
+        "Architecture"
+      ],
+      "work_subcategory_slugs": [
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "carpentry-doors-install",
+        "hvac-heating",
+        "hvac-ac",
+        "electro-smart-home",
+        "electro-lighting",
+        "design-engineering-interior",
+        "design-engineering-architect",
+        "insulation-thermal"
+      ],
+      "city": "Zaragoza",
+      "region": "Aragon",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Zaragoza, Aragon, Spain",
+      "address": "Calle Rosalía de Castro 27 Local, 50018 Zaragoza",
+      "phone": "+34 976 958 638",
+      "public_email": null,
+      "website": "https://www.seia.es/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+seia-reformas-zaragoza@users.dimarket.app",
+      "services": [
+        "Full renovations of homes, offices, and industrial units",
+        "Kitchen and bathroom renovations",
+        "Climate and heating systems",
+        "Home automation and lighting",
+        "Energy-efficiency upgrades",
+        "Architecture and engineering coordination"
+      ],
+      "bio": "Zaragoza renovation firm with a published Actur-area office. Public services include full renovations of homes, offices, and industrial spaces, plus kitchens, bathrooms, climate systems, lighting/automation, and architecture coordination.",
+      "seo": {
+        "title": "SEIA Reformas y Proyectos — Renovation in Zaragoza | DImarket",
+        "meta_description": "Find SEIA Reformas y Proyectos in Zaragoza, Spain on DImarket. Request a quote for renovation, interior design, hvac services.",
+        "keywords": [
+          "renovation",
+          "interior design",
+          "hvac",
+          "electrician",
+          "doors",
+          "architecture",
+          "Zaragoza",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.seia.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "tecniasist-granada",
+      "full_name": "TECNIASIST",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Drywall",
+        "Tiles",
+        "Doors"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "drywall-install",
+        "masonry-partitions",
+        "tiling-install",
+        "carpentry-doors-install",
+        "demolition-partitions"
+      ],
+      "city": "Peligros",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Peligros, Andalusia, Spain",
+      "address": "Calle Baza 19, Local 7, 18210 Peligros (Polígono Industrial Juncaril), Granada",
+      "phone": "+34 645 515 888",
+      "public_email": "granada@tecniasist.es",
+      "website": "https://tecniasist.es/",
+      "business_hours": "Mon–Fri 09:00–20:00",
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+tecniasist-granada@users.dimarket.app",
+      "services": [
+        "Full renovations",
+        "Emergency plumbing",
+        "Electrical works",
+        "Masonry, drywall, painting, tiling",
+        "Locksmith / access-related call-outs",
+        "General home repairs"
+      ],
+      "bio": "Granada-area renovation and repair company based in Peligros (Juncaril industrial estate). Public hours and services cover full renovations, emergency plumbing, electrical work, masonry, drywall, painting, tiling, and general home repairs across Granada metro.",
+      "seo": {
+        "title": "TECNIASIST — Renovation in Peligros | DImarket",
+        "meta_description": "Find TECNIASIST in Peligros, Spain on DImarket. Request a quote for renovation, plumbing, electrician services.",
+        "keywords": [
+          "renovation",
+          "plumbing",
+          "electrician",
+          "painting",
+          "drywall",
+          "tiles",
+          "doors",
+          "Peligros",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://tecniasist.es/",
+        "https://empresadereformasgranada.es/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "fontaneros-granada",
+      "full_name": "Fontaneros Granada",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "plumbing-boilers",
+        "plumbing-showers",
+        "tiling-bathroom"
+      ],
+      "city": "Granada",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Granada, Andalusia, Spain",
+      "address": null,
+      "phone": "+34 958 223 491",
+      "public_email": null,
+      "website": "https://granadafontaneros.com/",
+      "business_hours": "24/7 emergency call-outs",
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+fontaneros-granada@users.dimarket.app",
+      "services": [
+        "24h plumbing emergencies",
+        "Leak and blockage repairs",
+        "Water-heater and boiler work",
+        "Bathroom renovations and bathtub-to-shower conversions"
+      ],
+      "bio": "Granada plumbing company publicly listing round-the-clock emergency call-outs plus scheduled installations, boiler/heater work, and bathroom renovation services across Granada city and nearby municipalities.",
+      "seo": {
+        "title": "Fontaneros Granada — Plumbing in Granada | DImarket",
+        "meta_description": "Find Fontaneros Granada in Granada, Spain on DImarket. Request a quote for plumbing, renovation services.",
+        "keywords": [
+          "plumbing",
+          "renovation",
+          "Granada",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://granadafontaneros.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "castillo-reformas-murcia",
+      "full_name": "Castillo Reformas",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Tiles",
+        "Flooring",
+        "Drywall",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "flooring-laminate",
+        "drywall-install",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "masonry-partitions",
+        "carpentry-doors-install",
+        "facade-repair"
+      ],
+      "city": "Murcia",
+      "region": "Murcia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Murcia, Murcia, Spain",
+      "address": null,
+      "phone": "+34 619 861 323",
+      "public_email": "hola@castilloreformas.com",
+      "website": "https://www.castilloreformas.com/",
+      "business_hours": null,
+      "languages": [
+        "es"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+castillo-reformas-murcia@users.dimarket.app",
+      "services": [
+        "Full renovations",
+        "Kitchen and bathroom renovations",
+        "Tiling and flooring",
+        "Drywall, plumbing, electrical, carpentry",
+        "Facade rehabilitation"
+      ],
+      "bio": "Murcia-region renovation company with a published phone and email. Public services include full renovations, kitchens, bathrooms, tiling, flooring, drywall, plumbing, electrical work, carpentry, and facade rehabilitation across Murcia and nearby towns.",
+      "seo": {
+        "title": "Castillo Reformas — Renovation in Murcia | DImarket",
+        "meta_description": "Find Castillo Reformas in Murcia, Spain on DImarket. Request a quote for renovation, plumbing, electrician services.",
+        "keywords": [
+          "renovation",
+          "plumbing",
+          "electrician",
+          "tiles",
+          "flooring",
+          "drywall",
+          "painting",
+          "Murcia",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.castilloreformas.com/",
+        "https://www.castilloreformas.com/aviso-legal/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    },
+    {
+      "slug": "bilbao-fontaneros",
+      "full_name": "Bilbao Fontaneros",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "plumbing-heating",
+        "plumbing-boilers",
+        "plumbing-showers",
+        "hvac-heating",
+        "tiling-bathroom"
+      ],
+      "city": "Bilbao",
+      "region": "Basque Country",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Bilbao, Basque Country, Spain",
+      "address": "Camino Ugasko 19, 48014 Bilbao",
+      "phone": "+34 944 483 647",
+      "public_email": null,
+      "website": "https://www.bilbaofontaneros.com/",
+      "business_hours": "Mon–Fri 08:00–20:00; Sat 09:00–15:00",
+      "languages": [
+        "es",
+        "eu"
+      ],
+      "preferred_language": "es",
+      "directory_claim_email": "directory+bilbao-fontaneros@users.dimarket.app",
+      "services": [
+        "Plumbing repairs and installations",
+        "Emergency plumbing within published hours",
+        "Bathroom renovations and shower tray conversions",
+        "Heating and hot-water systems"
+      ],
+      "bio": "Bilbao plumbing company with a published address in Ugasko and weekday/Saturday hours. Public services cover plumbing repairs and installations, bathroom renovations, heating/hot water, and urgent call-outs within stated hours across Bizkaia.",
+      "seo": {
+        "title": "Bilbao Fontaneros — Plumbing in Bilbao | DImarket",
+        "meta_description": "Find Bilbao Fontaneros in Bilbao, Spain on DImarket. Request a quote for plumbing, hvac, renovation services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "renovation",
+          "Bilbao",
+          "Spain",
+          "company",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.bilbaofontaneros.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "spain-companies-nationwide"
+      }
+    }
+  ]
+}

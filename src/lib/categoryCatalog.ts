@@ -6,6 +6,11 @@ import { CONSTRUCTION_WORK_GROUPS } from './constructionWorkGroups'
 import { TRANSPORT_WORK_GROUPS } from './transportWorkGroups'
 import { CLEANING_WORK_GROUPS } from './cleaningWorkGroups'
 import { SELL_RENT_WORK_GROUPS } from './sellRentWorkGroups'
+import { LEGAL_WORK_GROUPS } from './legalWorkGroups'
+import { ACCOUNTING_WORK_GROUPS } from './accountingWorkGroups'
+import { HANDYMAN_WORK_GROUPS } from './handymanWorkGroups'
+import { FURNITURE_WORK_GROUPS } from './furnitureWorkGroups'
+import { ELECTRICAL_AUTO_WORK_GROUPS } from './electricalAutoWorkGroups'
 import { CATEGORY_LABEL_I18N } from './categoryLabelI18n'
 import { SERVIYA_CATEGORY_I18N } from '../config/categoriesI18n'
 
@@ -81,6 +86,61 @@ export const SERVICE_CATEGORY_CATALOG: CategoryWithSubcategoriesDef[] = [
     },
     groups: SELL_RENT_WORK_GROUPS,
     subcategories: flattenGroups(SELL_RENT_WORK_GROUPS),
+  },
+  {
+    slug: 'legal-notary',
+    label: {
+      uk: 'Юрист / нотаріус',
+      ru: 'Юрист / нотариус',
+      en: 'Lawyer / Notary',
+      es: 'Abogado / Notario',
+    },
+    groups: LEGAL_WORK_GROUPS,
+    subcategories: flattenGroups(LEGAL_WORK_GROUPS),
+  },
+  {
+    slug: 'accounting-finance',
+    label: {
+      uk: 'Бухгалтер / фінансовий консультант',
+      ru: 'Бухгалтер / финансовый консультант',
+      en: 'Accountant / Financial consultant',
+      es: 'Contador / Consultor financiero',
+    },
+    groups: ACCOUNTING_WORK_GROUPS,
+    subcategories: flattenGroups(ACCOUNTING_WORK_GROUPS),
+  },
+  {
+    slug: 'handyman',
+    label: {
+      uk: 'Майстер на годину',
+      ru: 'Мастер на час',
+      en: 'Handyman',
+      es: 'Manitas',
+    },
+    groups: HANDYMAN_WORK_GROUPS,
+    subcategories: flattenGroups(HANDYMAN_WORK_GROUPS),
+  },
+  {
+    slug: 'furniture',
+    label: {
+      uk: 'Меблі',
+      ru: 'Мебель',
+      en: 'Furniture',
+      es: 'Muebles',
+    },
+    groups: FURNITURE_WORK_GROUPS,
+    subcategories: flattenGroups(FURNITURE_WORK_GROUPS),
+  },
+  {
+    slug: 'electrical',
+    label: {
+      uk: 'СТО / автосервіс',
+      ru: 'СТО / автосервис',
+      en: 'Auto service',
+      es: 'Taller mecánico',
+    },
+    groups: ELECTRICAL_AUTO_WORK_GROUPS,
+    subcategories: flattenGroups(ELECTRICAL_AUTO_WORK_GROUPS),
   },
 ]
 

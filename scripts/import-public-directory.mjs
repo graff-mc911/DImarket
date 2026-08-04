@@ -46,6 +46,12 @@ function categorySlugForSubcategory(subSlug) {
   if (subSlug.startsWith('transport-') || subSlug.startsWith('logistics-')) return 'tools'
   if (subSlug.startsWith('cleaning-')) return 'cleaning'
   if (subSlug.startsWith('sell-') || subSlug.startsWith('rent-')) return 'sell-rent'
+  if (subSlug.startsWith('legal-notary') || subSlug.startsWith('legal-')) return 'legal-notary'
+  if (subSlug.startsWith('accounting-finance') || subSlug.startsWith('accounting-'))
+    return 'accounting-finance'
+  if (subSlug.startsWith('handyman-')) return 'handyman'
+  if (subSlug.startsWith('furniture-')) return 'furniture'
+  if (subSlug.startsWith('electrical-')) return 'electrical'
   return 'construction'
 }
 
@@ -131,21 +137,25 @@ function profilePatch(biz) {
 }
 
 async function findExistingByWebsiteOrName(client, biz) {
-  if (biz.website) {
-    const { data } = await client
-      .from('profiles')
-      .select('id, full_name, website')
-      .eq('website', biz.website)
-      .limit(5)
-    if (data?.length) return data[0]
-  }
+  // Prefer exact name + city so multi-office brands (same website) can each import.
   const { data: byName } = await client
     .from('profiles')
     .select('id, full_name, website, location')
     .ilike('full_name', biz.full_name)
     .ilike('location', `%${biz.city}%`)
     .limit(5)
-  return byName?.[0] || null
+  if (byName?.length) return byName[0]
+
+  if (biz.website) {
+    const { data } = await client
+      .from('profiles')
+      .select('id, full_name, website, location')
+      .eq('website', biz.website)
+      .ilike('full_name', biz.full_name)
+      .limit(5)
+    if (data?.length) return data[0]
+  }
+  return null
 }
 
 function claimPassword(slug) {
