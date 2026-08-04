@@ -64,6 +64,12 @@ import { AiAssistant } from './pages/AiAssistant'
 import { Analytics } from './pages/Analytics'
 import { CategoryPage } from './pages/CategoryPage'
 import { SearchPage } from './pages/Search'
+import { ServiceResults } from './pages/ServiceResults'
+import {
+  findServiceBySlug,
+  isReservedAppPath,
+  SEO_SERVICE_ALIASES,
+} from './lib/serviceTaxonomy'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -85,6 +91,7 @@ function App() {
 
     // Динамічні маршрути
     if (parts[0] === 'category' && parts[1]) return <CategoryPage slug={parts[1]} />
+    if (parts[0] === 'services' && parts[1]) return <ServiceResults slug={parts[1]} />
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
     if (parts[0] === 'book' && parts[1]) return <BookProfessional profileId={parts[1]} />
@@ -103,6 +110,14 @@ function App() {
       isSeoLocale(parts[0])
     ) {
       return <SeoMarketLanding parts={parts} />
+    }
+
+    // Short SEO aliases: /electrician, /plumber, /lawyer, …
+    if (parts.length === 1 && !isReservedAppPath(parts[0])) {
+      const aliasOrSlug = SEO_SERVICE_ALIASES[parts[0].toLowerCase()] ?? parts[0].toLowerCase()
+      if (findServiceBySlug(aliasOrSlug)) {
+        return <ServiceResults slug={aliasOrSlug} />
+      }
     }
 
     switch (path) {

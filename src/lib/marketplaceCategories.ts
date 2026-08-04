@@ -3,6 +3,7 @@ import type { Category, Json, ListingWithImages, Profile } from './types'
 import { SERVIYA_CATEGORY_I18N } from '../config/categoriesI18n'
 import { CATEGORY_LABEL_I18N } from './categoryLabelI18n'
 import { getTranslation, type LanguageCode, type TranslationKey } from './i18n'
+import { findServiceBySlug, servicesPath } from './serviceTaxonomy'
 
 export type MarketplaceCategory = Category & {
   cover_image_url?: string | null
@@ -127,6 +128,9 @@ export function marketplaceCategoryPath(slug: string): string {
 }
 
 export function marketplaceServiceProsPath(serviceSlug: string, categorySlug?: string): string {
+  if (findServiceBySlug(serviceSlug)) {
+    return servicesPath(serviceSlug)
+  }
   const params = new URLSearchParams()
   params.set('work', serviceSlug)
   if (categorySlug) params.set('category', categorySlug)

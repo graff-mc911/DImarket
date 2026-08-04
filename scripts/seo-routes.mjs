@@ -168,9 +168,51 @@ export function landingRoutes() {
   })
 }
 
+/** Hierarchical service SEO pages (short aliases + /services/:slug) */
+export const SERVICE_SEO_SLUGS = [
+  'electrician',
+  'plumber',
+  'painter',
+  'tiler',
+  'carpenter',
+  'roofer',
+  'handyman',
+  'lawyer',
+  'accountant',
+  'hvac-service',
+  'house-cleaning',
+  'apartment-moving',
+  'home-renovation',
+  'architect-designer',
+  'auto-repair',
+]
+
+export function serviceSeoRoutes() {
+  const short = ['electrician', 'plumber', 'painter', 'tiler', 'roofer', 'handyman', 'lawyer', 'accountant']
+  const routes = short.map((slug) => ({
+    path: `/${slug}`,
+    title: `${slug.replace(/-/g, ' ')} specialists & companies | DImarket`,
+    description: `Find verified ${slug.replace(/-/g, ' ')} specialists and companies on DImarket. Compare profiles and request a free quote.`,
+    changefreq: 'daily',
+    priority: 0.9,
+    schema: 'service',
+  }))
+  for (const slug of SERVICE_SEO_SLUGS) {
+    routes.push({
+      path: `/services/${slug}`,
+      title: `${slug.replace(/-/g, ' ')} | DImarket`,
+      description: `Browse ${slug.replace(/-/g, ' ')} professionals and companies on DImarket.`,
+      changefreq: 'daily',
+      priority: 0.85,
+      schema: 'service',
+    })
+  }
+  return routes
+}
+
 /** All indexable public routes (sitemap + prerender targets). */
 export function allPublicRoutes() {
-  return [...STATIC_ROUTES, ...categoryRoutes(), ...landingRoutes()]
+  return [...STATIC_ROUTES, ...categoryRoutes(), ...landingRoutes(), ...serviceSeoRoutes()]
 }
 
 /** Routes written as dist/<path>/index.html during seo-build. */
@@ -189,6 +231,10 @@ export function prerenderRoutes() {
     '/category/specialists',
     '/category/renovation',
     '/category/hvac',
+    '/electrician',
+    '/plumber',
+    '/lawyer',
+    '/services/electrician',
     '/de/darmstadt/elektriker',
     '/es/alicante/electricista',
     '/es/madrid/fontanero',

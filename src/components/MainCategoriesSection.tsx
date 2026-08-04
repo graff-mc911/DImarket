@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, LazyMotion, domAnimation, m } from 'framer-motion'
 import { ChevronRight, MapPin, Search } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
@@ -14,6 +14,12 @@ import {
 import { serviyaLabel } from '../config/categoriesI18n'
 import type { TranslationKey } from '../lib/i18n'
 import type { MarketplaceCategory } from '../lib/marketplaceCategories'
+import { supabase } from '../lib/supabase'
+import {
+  findServiceBySlug,
+  matchesServiceProfile,
+  servicesPath,
+} from '../lib/serviceTaxonomy'
 
 export interface MainCategoriesSectionProps {
   id?: string
@@ -26,6 +32,8 @@ export interface MainCategoriesSectionProps {
   loading?: boolean
   className?: string
 }
+
+type CategoryStats = { specialists: number; companies: number }
 
 function localizedTitle(
   value: LocalizedText,
@@ -50,16 +58,19 @@ function categorySearchText(category: ServiceCategory, languageCode: string): st
     .toLowerCase()
 }
 
-function professionalPath(category: ServiceCategory, subcategory: ServiceSubcategory, locationId: string): string {
-  const params = new URLSearchParams()
-  params.set('work', subcategory.slug)
-  params.set('category', category.slug)
-  if (locationId !== 'all-europe') params.set('location', locationId)
-  return `/professionals?${params.toString()}`
+function professionalPath(
+  _category: ServiceCategory,
+  subcategory: ServiceSubcategory,
+  locationId: string,
+): string {
+  return servicesPath(subcategory.slug, {
+    location: locationId !== 'all-europe' ? locationId : undefined,
+  })
 }
 
 /**
  * Serviya-inspired category browser for DImarket.
+ * Main category click expands; subcategory navigates to /services/:slug results.
  */
 export function MainCategoriesSection({
   id = 'choose-category',
@@ -72,6 +83,7 @@ export function MainCategoriesSection({
   const [query, setQuery] = useState('')
   const [locationId, setLocationId] = useState(categoryLocationOptions[0]?.id ?? 'all-europe')
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [statsByCategory, setStatsByCategory] = useState<Record<string, CategoryStats>>({})
   const lang = language.code
 
   const filtered = useMemo(() => {
@@ -82,12 +94,80 @@ export function MainCategoriesSection({
     )
   }, [query, lang])
 
+  // Lazy-load directory counts once (for category card stats).
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('id, user_role, bio, full_name, work_subcategory_slugs, professional_categories(category:categories(name, slug))')
+        .eq('is_professional', true)
+        .in('user_role', ['professional', 'company'])
+        .limit(500)
+
+      if (cancelled || !data) return
+
+      const next: Record<string, CategoryStats> = {}
+      for (const category of serviceCategories) {
+        const specialistIds = new Set<string>()
+        const companyIds = new Set<string>()
+        for (const sub of category.subcategories) {
+          const resolved = findServiceBySlug(sub.slug)
+          if (!resolved) continue
+          for (const profile of data as Array<{
+            id?: string
+            user_role?: string
+            bio?: string | null
+            full_name?: string | null
+            work_subcategory_slugs?: string[] | null
+            professional_categories?: { category?: { name?: string; slug?: string } | null }[]
+          }>) {
+            if (!matchesServiceProfile(profile, resolved.matcher)) continue
+            const pid = profile.id ?? `${profile.full_name}-${profile.user_role}`
+            if (profile.user_role === 'company') companyIds.add(pid)
+            else specialistIds.add(pid)
+          }
+        }
+        next[category.id] = {
+          specialists: specialistIds.size,
+          companies: companyIds.size,
+        }
+      }
+      if (!cancelled) setStatsByCategory(next)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const sectionTitle = title ?? t('serviya.title')
   const sectionSubtitle = subtitle ?? t('serviya.subtitle')
   const sectionEyebrow = eyebrow ?? t('serviya.eyebrow')
 
   const handleSubcategoryClick = (category: ServiceCategory, subcategory: ServiceSubcategory) => {
     navigateTo(professionalPath(category, subcategory, locationId))
+  }
+
+  const handlePopularClick = (itemId: string) => {
+    const resolved = findServiceBySlug(itemId)
+    if (resolved) {
+      navigateTo(servicesPath(resolved.subcategory.slug, {
+        location: locationId !== 'all-europe' ? locationId : undefined,
+      }))
+      return
+    }
+    const popular = popularCategorySearches.find((p) => p.id === itemId)
+    if (popular) setQuery(popular.query)
+  }
+
+  const formatCategoryStats = (category: ServiceCategory): string => {
+    const stats = statsByCategory[category.id]
+    if (!stats) {
+      return `${category.serviceCount} ${t('serviya.servicesLabel')}`
+    }
+    return t('services.statsSpecialistsCompanies')
+      .replace('{specialists}', String(stats.specialists))
+      .replace('{companies}', String(stats.companies))
   }
 
   return (
@@ -134,7 +214,7 @@ export function MainCategoriesSection({
         <span>{t('serviya.popularSearchesLabel')}</span>
         <div>
           {popularCategorySearches.map((item) => (
-            <button key={item.id} type="button" onClick={() => setQuery(item.query)}>
+            <button key={item.id} type="button" onClick={() => handlePopularClick(item.id)}>
               {t(`serviya.popular.${item.id}` as TranslationKey)}
             </button>
           ))}
@@ -163,9 +243,7 @@ export function MainCategoriesSection({
                     </span>
                     <span className="serviya-category-card__body">
                       <strong>{categoryTitle}</strong>
-                      <span>
-                        {category.serviceCount} {t('serviya.servicesLabel')}
-                      </span>
+                      <span>{formatCategoryStats(category)}</span>
                     </span>
                     <ChevronRight className="serviya-category-card__chevron" aria-hidden />
                   </button>

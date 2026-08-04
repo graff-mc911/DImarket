@@ -7,6 +7,7 @@ import { MobileAdBanner } from '../components/MobileAdBanner'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { buildDisplayCategories, SITE_CATEGORY_SLUGS } from '../lib/siteCategories'
+import { findServiceBySlug, matchesServiceProfile } from '../lib/serviceTaxonomy'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -33,6 +34,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
 
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedWork, setSelectedWork] = useState('')
   const [sortBy, setSortBy] = useState<'rating' | 'reviews' | 'newest'>('newest')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [minRating, setMinRating] = useState(0)
@@ -42,6 +44,10 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     const params = new URLSearchParams(window.location.search)
     const category = params.get('category')
     if (category) setSelectedCategory(category)
+    const work = params.get('work')
+    if (work) setSelectedWork(work)
+    const location = params.get('location')
+    if (location) setLocationFilter(location)
     const q = params.get('q')
     if (q) setSearchQuery(q)
   }, [])
@@ -140,11 +146,24 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
             (w) => w === selectedCategory || w.startsWith(`${selectedCategory}-`),
           )
 
+        const workResolved = selectedWork ? findServiceBySlug(selectedWork) : null
+        const matchesWork =
+          selectedWork === '' ||
+          (workResolved
+            ? matchesServiceProfile(professional, workResolved.matcher)
+            : (professional.work_subcategory_slugs ?? []).some(
+                (w) =>
+                  w === selectedWork ||
+                  w.startsWith(`${selectedWork}-`) ||
+                  w.includes(selectedWork),
+              ))
+
         return (
           matchesSearch &&
           matchesRating &&
           matchesLocation &&
-          matchesCategory
+          matchesCategory &&
+          matchesWork
         )
       })
       .sort((a, b) => {
@@ -164,11 +183,13 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     professionals,
     searchQuery,
     selectedCategory,
+    selectedWork,
     sortBy,
   ])
 
   const activeFiltersCount = [
     selectedCategory,
+    selectedWork,
     minRating > 0 ? 'rating' : '',
     locationFilter,
   ].filter(Boolean).length
@@ -178,6 +199,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     setLocationFilter('')
     setSortBy('rating')
     setSelectedCategory('')
+    setSelectedWork('')
     setSearchQuery('')
   }
 

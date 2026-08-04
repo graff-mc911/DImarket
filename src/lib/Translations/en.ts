@@ -1981,6 +1981,30 @@ export const enTranslations = {
   'pricing.fromPriceWeek': 'from €{price}/wk',
   'pricing.priceEur': '€{price}',
   'portfolio.media.beforeAfter': 'Before / After',
+
+  // Hierarchical service results (/services/:slug)
+  'services.crumbHome': 'Home',
+  'services.seoTitle': '{trade} specialists & companies | {parent} | DImarket',
+  'services.seoDescription':
+    'Find verified {trade} specialists and companies for {parent} projects on DImarket. Compare profiles and request a free quote.',
+  'services.statSpecialists': '{n} Specialists',
+  'services.statCompanies': '{n} Companies',
+  'services.showingCount': '{n} matching profiles',
+  'services.roleLabel': 'Specialist / Company',
+  'services.roleAll': 'All',
+  'services.roleSpecialists': 'Specialists',
+  'services.roleCompanies': 'Companies',
+  'services.filterVerified': 'Verified only',
+  'services.filterAvailable': 'Available now',
+  'services.locationPlaceholder': 'Country, region or city',
+  'services.loadMore': 'Load more',
+  'services.emptyTitle': 'No specialists found',
+  'services.emptyText': 'Be the first specialist in {trade}. Register and start receiving requests.',
+  'services.registerCta': 'Register',
+  'services.notFoundTitle': 'Service not found',
+  'services.notFoundText': 'This service category does not exist or the link is outdated.',
+  'services.backToCategories': 'Back to categories',
+  'services.statsSpecialistsCompanies': '{specialists} Specialists · {companies} Companies',
 } as const
 
 export type TranslationKey = keyof typeof enTranslations
