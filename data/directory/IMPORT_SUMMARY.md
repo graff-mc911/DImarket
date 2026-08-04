@@ -74,3 +74,8 @@ node scripts/import-public-directory.mjs --apply
 - Bios, SEO titles, meta descriptions, and keywords are original DImarket text.
 - Reviews, ratings, biographies copied from third parties, photos, logos, and website layouts were not scraped or reused.
 - Auth emails are claimable directory+slug@users.dimarket.app addresses; public business emails stay in public_email only.
+
+## Live import (production)
+
+- Applied: 2026-08-04 via `node scripts/import-public-directory.mjs --apply` (anon signup mode)
+- Result: **18/18 created** — see `import-run-report.md`

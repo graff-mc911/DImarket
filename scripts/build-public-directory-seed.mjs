@@ -1113,6 +1113,10 @@ node scripts/import-public-directory.mjs --apply
 ## Policy
 
 ${summary.policy_notes.map((n) => `- ${n}`).join('\n')}
+
+## Live import
+
+After applying, see \`import-run-report.md\` for per-business auth user IDs.
 `
 
 writeFileSync(resolve(outDir, 'IMPORT_SUMMARY.md'), md)

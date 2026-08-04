@@ -1,0 +1,205 @@
+{
+  "started_at": "2026-08-04T10:37:41.747Z",
+  "mode": "apply:anon_signup",
+  "imported": [
+    {
+      "slug": "bp-bau-darmstadt",
+      "full_name": "B&P Bau",
+      "id": "41e720df-5d2d-4fb7-b77a-78d87b4eeab2",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "domenico-di-santo-malerbetrieb-darmstadt",
+      "full_name": "Domenico Di Santo Malerbetrieb",
+      "id": "f52fde86-97ff-41b7-a448-42548d2d0d70",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "heinrich-schmid-darmstadt",
+      "full_name": "Heinrich Schmid GmbH & Co. KG — Darmstadt",
+      "id": "0f8d834b-a8cb-4582-b3f2-ed4957f9118f",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "kraft-gmbh-darmstadt",
+      "full_name": "Kraft GmbH Darmstadt",
+      "id": "7449de6a-609d-4c0f-824b-2dd434f58f6b",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "patrick-noel-malerhandwerk-darmstadt",
+      "full_name": "Patrick Noël Malerhandwerk GmbH",
+      "id": "33ecfc72-3c07-42e4-b301-c3eaba8b945e",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "stark-elektro-darmstadt",
+      "full_name": "Stark Elektro",
+      "id": "d72561fd-8ee5-4b4c-9390-3ba341ec5022",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "zimmermann-und-sohn-darmstadt",
+      "full_name": "Zimmermann & Sohn GmbH",
+      "id": "980d36ec-4778-4fe5-a0f0-bb478f720e9f",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "carbonell-reformas-alicante",
+      "full_name": "Carbonell Reformas Alicante",
+      "id": "224f7b1d-ea4e-42ea-bd37-aaf0bfc21e03",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "coypa-fontaneria-reformas-alicante",
+      "full_name": "Coypa Reformas y Fontanería Alicante",
+      "id": "e197dec8-e28c-4313-9baf-abab513427b6",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "explanada-reformas-alicante",
+      "full_name": "Explanada Reformas",
+      "id": "98abeb7b-9eae-4a7f-9b38-35e68358cf15",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "multihogar-alicante",
+      "full_name": "MultiHogar Alicante",
+      "id": "7f2975b3-efae-45ca-be9a-d014d425d0f7",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "reformas-alacant",
+      "full_name": "Reformas Alacant",
+      "id": "9033e8ac-c42e-4513-8b03-cada6888b835",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "reformas-esquivel-alicante",
+      "full_name": "Reformas Esquivel",
+      "id": "cfea3db8-b754-4e12-81c6-bf04bf9d93c2",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "urbasan-alicante",
+      "full_name": "Urbasan Reformas & Interiorismo",
+      "id": "edfa789c-5406-429b-a779-fcd8aa81fb74",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "construcciones-carmona-madrid",
+      "full_name": "Construcciones Carmona",
+      "id": "3891a46e-c143-4e3b-a9fd-8b3a7436b3e2",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "jm-reformas-elite-madrid",
+      "full_name": "JM Reformas Élite S.L.",
+      "id": "7c3d8255-9cf8-43af-adba-59b106296c37",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "refiser-madrid",
+      "full_name": "REFISER — Obras y Reformas",
+      "id": "1ecab26d-3c87-4b09-a523-91d7c1f3caef",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "reformas-multiservicios-moraga-madrid",
+      "full_name": "Reformas y Multiservicios Moraga",
+      "id": "8b53571e-72fc-491d-86d3-dc5e42342c2a",
+      "action": "created_via_signup"
+    }
+  ],
+  "failed": [],
+  "created": 18,
+  "updated": 0,
+  "linked": 0,
+  "skipped": 0,
+  "finished_at": "2026-08-04T10:38:08.384Z",
+  "totals": {
+    "attempted": 18,
+    "succeeded": 18,
+    "failed": 0,
+    "created": 18,
+    "updated": 0,
+    "linked": 0,
+    "skipped": 0,
+    "seed_summary": {
+      "generated_at": "2026-08-04T10:30:27.700Z",
+      "businesses_ready_to_import": 18,
+      "categories_populated": [
+        "Construction Company",
+        "Demolition",
+        "Doors",
+        "Drywall",
+        "Electrician",
+        "Flooring",
+        "HVAC",
+        "Insulation",
+        "Interior Design",
+        "Painting",
+        "Plastering",
+        "Plumbing",
+        "Renovation",
+        "Tiles",
+        "Windows"
+      ],
+      "categories_count": 15,
+      "cities_covered": [
+        "Alicante, Valencia, Spain",
+        "Darmstadt, Hessen, Germany",
+        "Madrid, Madrid, Spain"
+      ],
+      "cities_count": 3,
+      "duplicates_removed": 0,
+      "duplicates_detail": [],
+      "records_skipped_insufficient_public_info": 7,
+      "skipped_detail": [
+        {
+          "name": "Generic yellow-pages painter listings (Darmstadt)",
+          "reason": "Name-only aggregator entries without a verifiable website or published phone/address owned by the business."
+        },
+        {
+          "name": "ibau / public tender notices (Darmstadt)",
+          "reason": "Tender notices are not business directory profiles."
+        },
+        {
+          "name": "Unverified Google Maps pins without official website",
+          "reason": "Insufficient reusable public business facts without copying third-party reviews or photos."
+        },
+        {
+          "name": "Duplicate REFISER Coslada landing pages",
+          "reason": "Same company as REFISER Madrid; merged into one listing."
+        },
+        {
+          "name": "Duplicate Carbonell / Reformas Alicante brand variants",
+          "reason": "Same operating company already included as Carbonell Reformas Alicante."
+        },
+        {
+          "name": "Redosan Reformas (Alicante)",
+          "reason": "Appears only on third-party directories without a verified owned website, phone, or address."
+        },
+        {
+          "name": "Hardware / building-materials retailers without clear construction-service listing",
+          "reason": "Insufficient public service facts for a DImarket professional/company profile."
+        }
+      ],
+      "by_city": {
+        "Alicante, Valencia, Spain": 7,
+        "Darmstadt, Hessen, Germany": 7,
+        "Madrid, Madrid, Spain": 4
+      },
+      "by_role": {
+        "company": 16,
+        "professional": 2
+      },
+      "policy_notes": [
+        "Only publicly listed factual business information was used.",
+        "Bios, SEO titles, meta descriptions, and keywords are original DImarket text.",
+        "Reviews, ratings, biographies copied from third parties, photos, logos, and website layouts were not scraped or reused.",
+        "Auth emails are claimable directory+slug@users.dimarket.app addresses; public business emails stay in public_email only."
+      ]
+    }
+  }
+}

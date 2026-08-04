@@ -5,12 +5,17 @@
  * Default: dry-run (no writes).
  * Apply:    node scripts/import-public-directory.mjs --apply
  *
- * Requires .env.local: VITE_SUPABASE_URL (or SUPABASE_URL) + SUPABASE_SERVICE_ROLE_KEY
+ * Auth modes (first match wins):
+ * 1) SUPABASE_SERVICE_ROLE_KEY — admin createUser / upsert
+ * 2) VITE_SUPABASE_ANON_KEY — signUp + session profile update (claimable accounts)
+ *
+ * Requires VITE_SUPABASE_URL (or SUPABASE_URL) in .env.local
  */
 import { readFileSync, existsSync, writeFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { createClient } from '@supabase/supabase-js'
+import { randomBytes } from 'crypto'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
@@ -34,7 +39,6 @@ function loadEnvFile(name) {
 }
 
 function categorySlugForSubcategory(subSlug) {
-  // Mirror src/lib/categoryCatalog.ts SERVICE_CATEGORY_CATALOG parents.
   if (subSlug.startsWith('transport-') || subSlug.startsWith('logistics-')) return 'tools'
   if (subSlug.startsWith('cleaning-')) return 'cleaning'
   if (subSlug.startsWith('sell-') || subSlug.startsWith('rent-')) return 'sell-rent'
@@ -53,16 +57,16 @@ async function findAuthUserByEmail(admin, email) {
   return null
 }
 
-async function syncProfessionalCategories(admin, userId, subcategorySlugs) {
+async function syncProfessionalCategories(client, userId, subcategorySlugs) {
   const parentSlugs = [
     ...new Set(subcategorySlugs.map((s) => categorySlugForSubcategory(s))),
   ]
   if (!parentSlugs.length) {
-    await admin.from('professional_categories').delete().eq('profile_id', userId)
+    await client.from('professional_categories').delete().eq('profile_id', userId)
     return { synced: 0 }
   }
 
-  const { data: categories, error } = await admin
+  const { data: categories, error } = await client
     .from('categories')
     .select('id, slug')
     .in('slug', parentSlugs)
@@ -73,12 +77,12 @@ async function syncProfessionalCategories(admin, userId, subcategorySlugs) {
     return { synced: 0 }
   }
 
-  await admin.from('professional_categories').delete().eq('profile_id', userId)
+  await client.from('professional_categories').delete().eq('profile_id', userId)
   const rows = categories.map((cat) => ({
     profile_id: userId,
     category_id: cat.id,
   }))
-  const { error: insertError } = await admin.from('professional_categories').insert(rows)
+  const { error: insertError } = await client.from('professional_categories').insert(rows)
   if (insertError) throw new Error(`professional_categories: ${insertError.message}`)
   return { synced: rows.length }
 }
@@ -105,7 +109,6 @@ function profilePatch(biz) {
     work_subcategory_slugs: biz.work_subcategory_slugs || [],
     availability_status: 'available',
   }
-  // Append structured public facts into bio only when address/hours exist and not already present.
   const extras = []
   if (biz.address) extras.push(`Address: ${biz.address}`)
   if (biz.business_hours) extras.push(`Hours: ${biz.business_hours}`)
@@ -120,16 +123,16 @@ function profilePatch(biz) {
   return patch
 }
 
-async function findExistingByWebsiteOrName(admin, biz) {
+async function findExistingByWebsiteOrName(client, biz) {
   if (biz.website) {
-    const { data } = await admin
+    const { data } = await client
       .from('profiles')
       .select('id, full_name, website')
       .eq('website', biz.website)
       .limit(5)
     if (data?.length) return data[0]
   }
-  const { data: byName } = await admin
+  const { data: byName } = await client
     .from('profiles')
     .select('id, full_name, website, location')
     .ilike('full_name', biz.full_name)
@@ -138,7 +141,12 @@ async function findExistingByWebsiteOrName(admin, biz) {
   return byName?.[0] || null
 }
 
-async function ensureAuthUser(admin, biz) {
+function claimPassword(slug) {
+  // Deterministic-enough local secret for re-runs via signIn; not published.
+  return `DmDir_${slug}_${randomBytes(8).toString('hex')}!`
+}
+
+async function ensureViaAdmin(admin, biz) {
   const email = biz.directory_claim_email
   const patch = profilePatch(biz)
 
@@ -180,6 +188,63 @@ async function ensureAuthUser(admin, biz) {
   return { id: userId, action: error && userId ? 'linked_existing_auth' : 'created' }
 }
 
+async function ensureViaSignup(anonClient, url, anonKey, biz) {
+  const email = biz.directory_claim_email
+  const patch = profilePatch(biz)
+
+  const existing = await findExistingByWebsiteOrName(anonClient, biz)
+  if (existing?.id) {
+    return { id: existing.id, action: 'skipped_existing_public_profile' }
+  }
+
+  const password = claimPassword(biz.slug)
+  const { data: signed, error: signErr } = await anonClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: biz.full_name,
+        user_role: biz.user_role,
+        phone: biz.phone || '',
+        location: biz.location,
+        directory_slug: biz.slug,
+        directory_source: 'public-business-directory',
+      },
+    },
+  })
+
+  const session = signed?.session
+  const userId = signed?.user?.id
+
+  if (signErr || !userId) {
+    const msg = signErr?.message || 'signUp failed'
+    if (/already|registered|exists/i.test(msg)) {
+      return { id: null, action: 'exists_needs_service_role', error: msg }
+    }
+    throw new Error(`signUp ${biz.slug}: ${msg}`)
+  }
+
+  if (!session?.access_token) {
+    return { id: userId, action: 'created_pending_confirm', error: 'no session (email confirm required)' }
+  }
+
+  const authed = createClient(url, anonKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
+  await authed.auth.setSession({
+    access_token: session.access_token,
+    refresh_token: session.refresh_token,
+  })
+
+  const { error: upErr } = await authed.from('profiles').update(patch).eq('id', userId)
+  if (upErr) throw new Error(`profile update ${biz.slug}: ${upErr.message}`)
+
+  await syncProfessionalCategories(authed, userId, biz.work_subcategory_slugs)
+  await authed.auth.signOut()
+
+  return { id: userId, action: 'created_via_signup' }
+}
+
 async function main() {
   const payload = loadPayload()
   const businesses = (payload.businesses || []).slice(0, limit)
@@ -202,37 +267,66 @@ async function main() {
 
   const env = { ...loadEnvFile('.env'), ...loadEnvFile('.env.local'), ...process.env }
   const url = env.VITE_SUPABASE_URL || env.SUPABASE_URL
-  const key = env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) {
-    console.error('Need VITE_SUPABASE_URL/SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY')
+  const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY
+  const anonKey = env.VITE_SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY
+  if (!url) {
+    console.error('Need VITE_SUPABASE_URL / SUPABASE_URL')
+    process.exit(1)
+  }
+  if (!serviceKey && !anonKey) {
+    console.error('Need SUPABASE_SERVICE_ROLE_KEY or VITE_SUPABASE_ANON_KEY')
     process.exit(1)
   }
 
-  const admin = createClient(url, key, {
+  process.env.VITE_SUPABASE_URL = url
+  if (anonKey) process.env.VITE_SUPABASE_ANON_KEY = anonKey
+
+  const mode = serviceKey ? 'service_role' : 'anon_signup'
+  console.log(`Auth mode: ${mode}`)
+
+  const admin = serviceKey
+    ? createClient(url, serviceKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      })
+    : null
+
+  const anon = createClient(url, anonKey || serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
 
   const report = {
     started_at: new Date().toISOString(),
-    mode: 'apply',
+    mode: `apply:${mode}`,
     imported: [],
     failed: [],
     created: 0,
     updated: 0,
     linked: 0,
+    skipped: 0,
   }
 
   for (const biz of businesses) {
     try {
-      const result = await ensureAuthUser(admin, biz)
+      const result = admin
+        ? await ensureViaAdmin(admin, biz)
+        : await ensureViaSignup(anon, url, anonKey, biz)
+
+      if (result.error && !result.id) {
+        report.failed.push({ slug: biz.slug, error: result.error, action: result.action })
+        console.error(`FAIL ${biz.slug}: ${result.error}`)
+        continue
+      }
+
       report.imported.push({
         slug: biz.slug,
         full_name: biz.full_name,
         id: result.id,
         action: result.action,
       })
-      if (result.action === 'created') report.created++
+      if (result.action === 'created' || result.action === 'created_via_signup') report.created++
       else if (result.action === 'updated_existing') report.updated++
+      else if (String(result.action).startsWith('skipped') || result.action === 'created_pending_confirm')
+        report.skipped++
       else report.linked++
       console.log(`OK ${result.action} ${biz.slug} → ${result.id}`)
     } catch (err) {
@@ -249,13 +343,42 @@ async function main() {
     created: report.created,
     updated: report.updated,
     linked: report.linked,
+    skipped: report.skipped,
     seed_summary: payload.summary,
   }
 
   const reportPath = resolve(root, 'data/directory/import-run-report.json')
   writeFileSync(reportPath, JSON.stringify(report, null, 2) + '\n')
+
+  const md = `# Import run report
+
+- Started: ${report.started_at}
+- Finished: ${report.finished_at}
+- Mode: \`${report.mode}\`
+
+| Metric | Value |
+| --- | ---: |
+| Attempted | ${report.totals.attempted} |
+| Succeeded | ${report.totals.succeeded} |
+| Failed | ${report.totals.failed} |
+| Created | ${report.totals.created} |
+| Updated | ${report.totals.updated} |
+| Linked / other | ${report.totals.linked} |
+| Skipped | ${report.totals.skipped} |
+
+## Imported
+
+${report.imported.map((r) => `- \`${r.action}\` **${r.full_name}** (\`${r.slug}\`) → \`${r.id}\``).join('\n') || '_none_'}
+
+## Failed
+
+${report.failed.map((r) => `- \`${r.slug}\`: ${r.error}`).join('\n') || '_none_'}
+`
+  writeFileSync(resolve(root, 'data/directory/import-run-report.md'), md)
+
   console.log(`\nImport finished. Report: ${reportPath}`)
   console.log(JSON.stringify(report.totals, null, 2))
+  if (report.failed.length) process.exitCode = 1
 }
 
 main().catch((err) => {
