@@ -1,0 +1,75 @@
+name: Backfill Germany directory coords
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "data/directory/germany-directory-nationwide.json"
+      - "data/directory/germany-coords-backfill.sql"
+      - "scripts/backfill-germany-directory-coords.mjs"
+      - "scripts/germany-directory-nationwide-data.mjs"
+      - "supabase/migrations/20260804220000_backfill_germany_directory_coords.sql"
+      - ".github/workflows/backfill-germany-directory-coords.yml"
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+
+      - name: Ensure Germany seed JSON exists
+        run: node scripts/build-germany-directory-seed.mjs
+
+      - name: Backfill map coordinates
+        env:
+          VITE_SUPABASE_URL: https://wjlfvajloxkevggwjgtk.supabase.co
+          SUPABASE_URL: https://wjlfvajloxkevggwjgtk.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          set +e
+          if [ -n "${SUPABASE_ACCESS_TOKEN}" ]; then
+            apply_sql() {
+              local file="$1"
+              echo "Applying $file"
+              SQL=$(jq -Rs . < "$file")
+              RESP=$(curl -sS -w "\n%{http_code}" -X POST \
+                "https://api.supabase.com/v1/projects/wjlfvajloxkevggwjgtk/database/query" \
+                -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+                -H "Content-Type: application/json" \
+                -d "{\"query\": ${SQL}}")
+              CODE=$(echo "$RESP" | tail -n1)
+              BODY=$(echo "$RESP" | sed '$d')
+              echo "HTTP $CODE"
+              echo "$BODY" | head -c 800
+              echo
+              test "$CODE" = "200" -o "$CODE" = "201"
+            }
+            apply_sql supabase/migrations/20260804220000_backfill_germany_directory_coords.sql
+            apply_sql data/directory/germany-coords-backfill.sql
+            if [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
+              JS=$(curl -sL https://dimarket.app/ | grep -oE '/assets/index-[^"]+\.js' | head -1)
+              BUNDLE=$(curl -sL "https://dimarket.app$JS")
+              export VITE_SUPABASE_ANON_KEY=$(printf '%s' "$BUNDLE" | grep -oE 'eyJ[a-zA-Z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+' | head -1)
+            fi
+            curl -sS -X POST \
+              "https://wjlfvajloxkevggwjgtk.supabase.co/rest/v1/rpc/backfill_germany_directory_coords" \
+              -H "apikey: ${VITE_SUPABASE_ANON_KEY}" \
+              -H "Authorization: Bearer ${VITE_SUPABASE_ANON_KEY}" \
+              -H "Content-Type: application/json" \
+              -d '{}' || true
+          fi
+          node scripts/backfill-germany-directory-coords.mjs
+          code=$?
+          if [ $code -eq 2 ]; then
+            echo "No DB credentials in repo secrets yet — new imports still set coords on create."
+            exit 0
+          fi
+          exit $code

@@ -73,14 +73,37 @@ const PROVINCE_OVERLAY: Record<string, Record<string, Record<string, string[]>>>
   },
   Germany: {
     Hessen: {
-      Darmstadt: ['Darmstadt', 'Frankfurt'],
+      Darmstadt: ['Darmstadt'],
       Frankfurt: ['Frankfurt', 'Frankfurt am Main'],
+    },
+    Berlin: {
+      Berlin: ['Berlin'],
     },
     Hamburg: {
       Hamburg: ['Hamburg'],
     },
     Bavaria: {
       Munich: ['Munich', 'München'],
+      Nuremberg: ['Nuremberg', 'Nürnberg', 'Fürth'],
+    },
+    'North Rhine-Westphalia': {
+      Cologne: ['Cologne', 'Köln'],
+      Düsseldorf: ['Düsseldorf', 'Dusseldorf'],
+      Dortmund: ['Dortmund'],
+      Essen: ['Essen'],
+    },
+    'Baden-Württemberg': {
+      Stuttgart: ['Stuttgart'],
+    },
+    Saxony: {
+      Leipzig: ['Leipzig'],
+      Dresden: ['Dresden'],
+    },
+    'Lower Saxony': {
+      Hannover: ['Hannover', 'Hanover'],
+    },
+    Bremen: {
+      Bremen: ['Bremen'],
     },
   },
   France: {
