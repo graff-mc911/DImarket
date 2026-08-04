@@ -64,6 +64,7 @@ import { AiAssistant } from './pages/AiAssistant'
 import { Analytics } from './pages/Analytics'
 import { CategoryPage } from './pages/CategoryPage'
 import { SearchPage } from './pages/Search'
+import { MapExplore } from './pages/MapExplore'
 import { ServiceResults } from './pages/ServiceResults'
 import {
   findServiceBySlug,
@@ -142,6 +143,7 @@ function App() {
     switch (path) {
       case '/':              return <Home />
       case '/search':        return <SearchPage />
+      case '/map':           return <MapExplore />
       case '/professionals': return <Professionals />
       case '/companies':     return <Companies />
       case '/listings':      return <Listings />

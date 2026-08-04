@@ -18,7 +18,7 @@ import {
 export const GLOBAL_LOCATION_STORAGE_KEY = 'dimarket_global_location'
 
 const LOCATION_AWARE_PATH =
-  /^\/(search|professionals|companies|listings|services|electrician|plumber|painter|tiler|carpenter|roofer|handyman|lawyer|accountant|architect|hvac|cleaning|moving|renovation)(\/|$)/i
+  /^\/(search|map|professionals|companies|listings|services|electrician|plumber|painter|tiler|carpenter|roofer|handyman|lawyer|accountant|architect|hvac|cleaning|moving|renovation)(\/|$)/i
 
 const COUNTRY_SLUG_TO_NAME: Record<string, string> = {
   germany: 'Germany',

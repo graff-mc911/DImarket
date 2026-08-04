@@ -22,6 +22,7 @@ import {
   LayoutDashboard,
   LogOut,
   Megaphone,
+  MapPin,
   Menu,
   MessageSquare,
   Search,
@@ -206,6 +207,7 @@ export function Header() {
   const navItems: NavItem[] = [
     { label: t('header.findProfessionals'), path: '/professionals', icon: Hammer },
     { label: t('header.findCompanies'), path: '/companies', icon: Building2 },
+    { label: t('header.map'), path: '/map', icon: MapPin },
   ]
 
   /** Центр нижньої панелі шапки — посилання з футера (між «Знайти майстрів» і «Перегляд оголошень») */

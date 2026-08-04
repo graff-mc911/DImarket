@@ -4677,6 +4677,109 @@
   z-index: 1;
 }
 
+.dimarket-map__canvas {
+  height: min(72vh, 640px);
+  min-height: 360px;
+}
+
+.dimarket-map-popup {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 200px;
+  color: #2a241c;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.dimarket-map-popup__head {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+
+.dimarket-map-popup__photo {
+  width: 56px;
+  height: 56px;
+  border-radius: 0.65rem;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #f3eee7;
+}
+
+.dimarket-map-popup__photo--placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  background: #1a2330;
+}
+
+.dimarket-map-popup__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+.dimarket-map-popup__rating {
+  font-weight: 600;
+}
+
+.dimarket-map-popup__badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.dimarket-map-popup__place {
+  color: #6b645c;
+  font-size: 0.78rem;
+}
+
+.dimarket-map-popup__body p {
+  margin: 0.25rem 0 0;
+  color: #5c564e;
+}
+
+.dimarket-map-popup__cta,
+.dimarket-map-zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.55rem;
+  padding: 0.4rem 0.7rem;
+  background: #c48a4a;
+  color: #fff !important;
+  font-weight: 600;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.dimarket-map-zoom {
+  margin-top: 0.4rem;
+  width: 100%;
+  background: #1a2330;
+}
+
+.map-explore-page .home-map__filters {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .dimarket-map__canvas {
+    height: min(58vh, 480px);
+    min-height: 280px;
+  }
+}
+
 .home-map__status {
   position: absolute;
   z-index: 5;

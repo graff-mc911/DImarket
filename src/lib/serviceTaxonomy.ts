@@ -504,6 +504,7 @@ export function isReservedAppPath(segment: string): boolean {
     'dashboard',
     'admin',
     'search',
+    'map',
     'contact',
     'advertise',
     'advertising',
