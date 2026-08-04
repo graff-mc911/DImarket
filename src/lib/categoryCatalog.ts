@@ -7,6 +7,7 @@ import { TRANSPORT_WORK_GROUPS } from './transportWorkGroups'
 import { CLEANING_WORK_GROUPS } from './cleaningWorkGroups'
 import { SELL_RENT_WORK_GROUPS } from './sellRentWorkGroups'
 import { CATEGORY_LABEL_I18N } from './categoryLabelI18n'
+import { SERVIYA_CATEGORY_I18N } from '../config/categoriesI18n'
 
 export type LocalizedLabel = {
   uk: string
@@ -131,17 +132,25 @@ export function getSubcategoryDef(categorySlug: string, subSlug: string): Subcat
 export function labelFor(entry: LocalizedLabel, locale: string, slug?: string): string {
   const normalized = locale.toLowerCase()
   const baseLocale = normalized.split('-')[0]
-  const fromMap = slug ? CATEGORY_LABEL_I18N[slug] : undefined
+  const fromWorkMap = slug ? CATEGORY_LABEL_I18N[slug] : undefined
+  const fromServiya = slug ? SERVIYA_CATEGORY_I18N[slug] : undefined
+  const fromMap = fromWorkMap || fromServiya
 
-  if (fromMap?.[normalized as keyof typeof fromMap]) {
-    return fromMap[normalized as keyof typeof fromMap]
+  if (fromWorkMap?.[normalized as keyof typeof fromWorkMap]) {
+    return fromWorkMap[normalized as keyof typeof fromWorkMap]
   }
-  if (fromMap?.[baseLocale as keyof typeof fromMap]) {
-    return fromMap[baseLocale as keyof typeof fromMap]
+  if (fromWorkMap?.[baseLocale as keyof typeof fromWorkMap]) {
+    return fromWorkMap[baseLocale as keyof typeof fromWorkMap]
+  }
+  if (fromServiya?.[normalized as keyof typeof fromServiya]) {
+    return fromServiya[normalized as keyof typeof fromServiya]
+  }
+  if (fromServiya?.[baseLocale as keyof typeof fromServiya]) {
+    return fromServiya[baseLocale as keyof typeof fromServiya]
   }
   if (entry[normalized]) return entry[normalized] as string
   if (entry[baseLocale]) return entry[baseLocale] as string
-  if (fromMap?.en) return fromMap.en
+  if (fromMap && 'en' in fromMap && fromMap.en) return fromMap.en
   if (entry.en) return entry.en
   if (entry.ru) return entry.ru
   return entry.uk
