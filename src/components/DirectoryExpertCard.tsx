@@ -13,6 +13,7 @@ import {
   isCompanyProfile,
   resolveProfessionalCategoryLabels,
 } from '../lib/professionalDisplay'
+import { resolveDirectoryAvatarUrl } from '../lib/directoryAvatars'
 import { supabase } from '../lib/supabase'
 
 interface ProfessionalCategoryLink {
@@ -90,7 +91,11 @@ export function DirectoryExpertCard({ professional }: DirectoryExpertCardProps) 
     t('professional.defaultName'),
   )
   const isCompany = isCompanyProfile(professional)
-  const avatarUrl = professional.profile_photo || professional.avatar_url || null
+  const avatarUrl = resolveDirectoryAvatarUrl(
+    professional.id,
+    professional.profile_photo,
+    professional.avatar_url,
+  )
   const reviewsLabel =
     (professional.total_reviews ?? 0) > 0
       ? `${professional.rating?.toFixed?.(1) ?? professional.rating} · ${professional.total_reviews} ${t('professional.reviews')}`

@@ -21,8 +21,10 @@ node scripts/import-public-directory.mjs --data=data/directory/spain-electrician
 node scripts/import-public-directory.mjs --data=data/directory/spain-electricians-from-listing.json --apply
 ```
 
-## UI gaps closed vs listing pattern
-- Service rows can show listed € prices (not only “on request”)
-- Experience years + hourly rate when present in bio
-- Advantage tags (e.g. Electrician, contract work)
-- Directory hero CTA: request free quote + short hint
+## Avatars
+
+Public listing photos were downloaded and re-hosted on DImarket Supabase Storage (`ad-media/campaigns/profiles/{id}/avatar.*`).
+
+- UI resolves them via `src/lib/directoryAvatars.ts` (catalog + detail cards).
+- DB backfill SQL: `data/directory/spain-electricians-avatars-backfill.sql`
+- Apply when keys available: `node scripts/apply-electrician-avatars.mjs`

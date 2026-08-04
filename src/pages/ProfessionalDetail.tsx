@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
+import { resolveDirectoryAvatarUrl } from '../lib/directoryAvatars'
 import { navigateTo }  from '../lib/navigation'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { VerificationBadge } from '../components/MatchScoreBadge'
@@ -174,6 +175,9 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
   const initials = profile?.full_name
     ? profile.full_name.trim().split(/\s+/).slice(0, 2).map(p => p[0]?.toUpperCase() || '').join('')
     : 'DI'
+  const avatarPhoto = profile
+    ? resolveDirectoryAvatarUrl(profile.id, profile.profile_photo, profile.avatar_url)
+    : null
 
   // --- Завантаження ---
   if (loading) {
@@ -228,10 +232,10 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
         {/* Ліва колонка */}
         <div>
           <div className="amazon-pdp-image">
-            {profile.profile_photo || profile.avatar_url ? (
+            {avatarPhoto ? (
               <div className="aspect-square bg-[#f7fafa] sm:aspect-[4/3]">
                 <img
-                  src={profile.profile_photo || profile.avatar_url || ''}
+                  src={avatarPhoto}
                   alt={profile.full_name || 'Майстер'}
                   className="h-full w-full object-contain"
                 />

@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import type { HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
+import { resolveDirectoryAvatarUrl } from '../../lib/directoryAvatars'
 import { navigateTo } from '../../lib/navigation'
 
 interface HomeTopCompaniesProps {

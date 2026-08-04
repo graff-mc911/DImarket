@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import type { HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
+import { resolveDirectoryAvatarUrl } from '../../lib/directoryAvatars'
 import { navigateTo } from '../../lib/navigation'
 
 interface HomeTopProfessionalsProps {
@@ -59,7 +60,7 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
         <div ref={railRef} className="home-rail home-rail--pros" role="list">
           {professionals.map((pro) => {
             const name = formatProfessionalCardTitle(pro, t('professional.defaultName'))
-            const avatar = pro.profile_photo || pro.avatar_url
+            const avatar = resolveDirectoryAvatarUrl(pro.id, pro.profile_photo, pro.avatar_url)
             const langs = (pro.languages ?? []).slice(0, 3)
             const responseTime = t('homePremium.responseTypical')
 
