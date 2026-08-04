@@ -50,17 +50,17 @@ export const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
   },
 }
 
-export const NOTIFICATION_CATEGORIES: { id: NotificationType; label: string }[] = [
-  { id: 'message', label: 'Messages' },
-  { id: 'project', label: 'Project updates' },
-  { id: 'quote', label: 'Quotes' },
-  { id: 'review', label: 'Reviews' },
-  { id: 'payment', label: 'Payments' },
-  { id: 'verification', label: 'Verification' },
-  { id: 'booking', label: 'Bookings' },
-  { id: 'match', label: 'Matches' },
-  { id: 'lead', label: 'Leads' },
-  { id: 'system', label: 'System' },
+export const NOTIFICATION_CATEGORIES: { id: NotificationType; labelKey: string }[] = [
+  { id: 'message', labelKey: 'notif.cat.message' },
+  { id: 'project', labelKey: 'notif.cat.project' },
+  { id: 'quote', labelKey: 'notif.cat.quote' },
+  { id: 'review', labelKey: 'notif.cat.review' },
+  { id: 'payment', labelKey: 'notif.cat.payment' },
+  { id: 'verification', labelKey: 'notif.cat.verification' },
+  { id: 'booking', labelKey: 'notif.cat.booking' },
+  { id: 'match', labelKey: 'notif.cat.match' },
+  { id: 'lead', labelKey: 'notif.cat.lead' },
+  { id: 'system', labelKey: 'notif.cat.system' },
 ]
 
 export async function createNotification(input: {

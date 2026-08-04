@@ -281,9 +281,9 @@ export function AiAssistant() {
                         value={trade}
                         onChange={(e) => setTrade(e.target.value)}
                       >
-                        {PROJECT_TRADES.map((t) => (
-                          <option key={t.id} value={t.id}>
-                            {t.labelEn}
+                        {PROJECT_TRADES.map((trade) => (
+                          <option key={trade.id} value={trade.id}>
+                            {t(trade.labelKey)}
                           </option>
                         ))}
                       </select>

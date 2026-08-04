@@ -16,10 +16,10 @@ import {
   submitGoogleAdsRequest,
   type BillingProfile,
 } from '../lib/monetization/billing'
-import { SUPPORT_COPY, getPlan } from '../lib/monetization/plans'
+import { getPlan } from '../lib/monetization/plans'
 
 export function Billing() {
-  const { user, profile } = useApp()
+  const { user, profile, t } = useApp()
   const [billing, setBilling] = useState<BillingProfile | null>(null)
   const [ledger, setLedger] = useState<
     Array<{ id: string; delta: number; balance_after: number; reason: string; created_at: string }>
@@ -53,7 +53,6 @@ export function Billing() {
   }, [user?.id])
 
   const plan = getPlan(billing?.plan_id ?? profile?.plan_id)
-  const support = SUPPORT_COPY[plan.supportTier]
 
   const onPortal = async () => {
     if (!user) return
@@ -121,7 +120,12 @@ export function Billing() {
         <section className="rounded-[22px] border border-[#e8e8ed] bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-[18px] font-semibold text-[#1d1d1f]">{plan.name} plan</h2>
+              <h2 className="text-[18px] font-semibold text-[#1d1d1f]">
+                {t('billing.planSuffix').replace(
+                  '{plan}',
+                  t(`pricing.plan.${plan.id}.name` as never),
+                )}
+              </h2>
               <p className="mt-1 text-[13px] text-[#6e6e73]">
                 Status: {billing?.subscription_status || profile?.subscription_status || 'none'}
                 {billing?.subscription_period_end
@@ -130,7 +134,8 @@ export function Billing() {
               </p>
               <p className="mt-2 text-[13px] text-[#3a3a3c]">
                 <LifeBuoy className="mr-1 inline h-4 w-4" />
-                {support.label}: {support.sla}
+                {t(`pricing.support.${plan.supportTier}.label` as never)}:{' '}
+                {t(`pricing.support.${plan.supportTier}.sla` as never)}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -163,7 +168,7 @@ export function Billing() {
               label="Featured"
               value={billing?.is_featured ? 'On' : 'Off'}
             />
-            <Stat label="Support" value={support.label} />
+            <Stat label={t('pricing.supportByPlan')} value={t(`pricing.support.${plan.supportTier}.label` as never)} />
           </div>
         </section>
 

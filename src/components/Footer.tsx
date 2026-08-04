@@ -37,7 +37,7 @@ export function Footer() {
         { label: t('footer.about'), path: '/contact' },
         { label: t('footer.advertisingLink'), path: '/advertising' },
         { label: t('footer.contactLink'), path: '/contact' },
-        { label: 'Pricing', path: '/pricing' },
+        { label: t('footer.pricing'), path: '/pricing' },
       ],
     },
     {
@@ -45,7 +45,7 @@ export function Footer() {
       links: [
         { label: t('footer.browseListings'), path: '/listings' },
         { label: t('homePremium.postProject'), path: '/create-project' },
-        { label: 'AI Assistant', path: '/assistant' },
+        { label: t('header.aiAssistant'), path: '/assistant' },
         { label: t('header.sell'), path: '/create-ad' },
         { label: t('advancedSearch.title'), path: '/search' },
       ],

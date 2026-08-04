@@ -110,7 +110,7 @@ export function HomeHero({ metrics }: HomeHeroProps) {
                 type="button"
                 className="home-hero-carousel__nav home-hero-carousel__nav--prev"
                 onClick={prev}
-                aria-label="Previous"
+                aria-label={t('common.previous')}
               >
                 <ChevronLeft className="h-5 w-5" aria-hidden />
               </button>
@@ -118,7 +118,7 @@ export function HomeHero({ metrics }: HomeHeroProps) {
                 type="button"
                 className="home-hero-carousel__nav home-hero-carousel__nav--next"
                 onClick={next}
-                aria-label="Next"
+                aria-label={t('common.next')}
               >
                 <ChevronRight className="h-5 w-5" aria-hidden />
               </button>

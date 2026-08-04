@@ -7,9 +7,10 @@ import {
   Share2,
   X,
 } from 'lucide-react'
+import { useApp } from '../../contexts/AppContext'
 import {
-  categoryLabel,
   coverUrl,
+  portfolioCategoryKey,
   sharePortfolioItem,
   togglePortfolioLike,
   type PortfolioItemRow,
@@ -38,6 +39,7 @@ export function PortfolioMasonry({
   filterCategory = '',
   highlightItemId = null,
 }: Props) {
+  const { t } = useApp()
   const [lightbox, setLightbox] = useState<PortfolioItemRow | null>(null)
   const [busyLike, setBusyLike] = useState<string | null>(null)
   const [shareNotice, setShareNotice] = useState<string | null>(null)
@@ -168,12 +170,12 @@ export function PortfolioMasonry({
                     <p className="truncate text-[14px] font-semibold text-[#1d1d1f]">{item.title}</p>
                     <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-[#86868b]">
                       {item.media_type === 'certificate'
-                        ? 'Certificate'
+                        ? t('portfolio.cat.certificate')
                         : item.media_type === 'before_after'
-                          ? 'Before / After'
+                          ? t('portfolio.media.beforeAfter' as never)
                           : item.media_type === 'video'
-                            ? 'Video'
-                            : categoryLabel(item.category_slug)}
+                            ? t('ads.videoBadge')
+                            : t(portfolioCategoryKey(item.category_slug) as never)}
                     </p>
                   </div>
                 </div>
@@ -267,7 +269,8 @@ export function PortfolioMasonry({
             <div className="mt-4">
               <h3 className="text-[18px] font-semibold text-[#1d1d1f]">{lightbox.title}</h3>
               <p className="mt-1 text-[12px] font-medium uppercase tracking-wide text-[#86868b]">
-                {categoryLabel(lightbox.category_slug)} · {lightbox.media_type.replace('_', ' ')}
+                {t(portfolioCategoryKey(lightbox.category_slug) as never)} ·{' '}
+                {lightbox.media_type.replace('_', ' ')}
               </p>
               {lightbox.description ? (
                 <p className="mt-3 text-[14px] leading-relaxed text-[#6e6e73]">{lightbox.description}</p>

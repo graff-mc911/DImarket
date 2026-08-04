@@ -334,7 +334,7 @@ export function ProjectFeed() {
                 <option value="">All categories</option>
                 {PROJECT_TRADES.map((tr) => (
                   <option key={tr.id} value={tr.id}>
-                    {tr.labelEn}
+                    {t(tr.labelKey)}
                   </option>
                 ))}
               </select>

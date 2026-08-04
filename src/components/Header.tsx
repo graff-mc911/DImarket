@@ -506,7 +506,7 @@ export function Header() {
                         profile?.is_professional) && (
                         <button onClick={() => goTo('/customer/dashboard')} type="button" className={dropdownItemClass}>
                           <LayoutDashboard className="mr-2 inline h-4 w-4" />
-                          {t('header.customerDashboard' as never) || 'My Dashboard'}
+                          {t('header.customerDashboard')}
                         </button>
                       )}
                       <button onClick={() => goTo('/settings')} type="button" className={dropdownItemClass}>
@@ -524,23 +524,23 @@ export function Header() {
                         profile?.user_role === 'company') && (
                         <button onClick={() => goTo('/pro/dashboard')} type="button" className={dropdownItemClass}>
                           <LayoutDashboard className="mr-2 inline h-4 w-4" />
-                          {t('header.proDashboard' as never) || 'Pro Dashboard'}
+                          {t('header.proDashboard')}
                         </button>
                       )}
                       <button onClick={() => goTo('/my-listings')} type="button" className={dropdownItemClass}>
                         <FileText className="mr-2 inline h-4 w-4" />
-                        {t('header.myListings') || 'Мої оголошення'}
+                        {t('header.myListings')}
                       </button>
                       <button onClick={() => goTo('/my-projects')} type="button" className={dropdownItemClass}>
                         <FileText className="mr-2 inline h-4 w-4" />
-                        {t('header.myProjects' as never) || 'Мої проекти'}
+                        {t('header.myProjects')}
                       </button>
                       {(profile?.is_professional ||
                         profile?.user_role === 'professional' ||
                         profile?.user_role === 'company') && (
                         <button onClick={() => goTo('/projects')} type="button" className={dropdownItemClass}>
                           <Zap className="mr-2 inline h-4 w-4" />
-                          {t('header.projects' as never) || t('header.leads' as never) || 'Projects'}
+                          {t('header.projects')}
                         </button>
                       )}
                       <button onClick={() => goTo('/favorites')} type="button" className={dropdownItemClass}>
@@ -588,7 +588,7 @@ export function Header() {
                           </button>
                           <button onClick={() => goTo('/admin/marketing-agent')} type="button" className={dropdownItemClass}>
                             <Megaphone className="mr-2 inline h-4 w-4" />
-                            Marketing Agent
+                            {t('header.marketingAgent')}
                           </button>
                         </>
                       )}
@@ -710,22 +710,22 @@ export function Header() {
                   {t('header.postJob')}
                 </button>
                 <button type="button" onClick={() => goTo('/cost-estimator')} className="amazon-dept-link">
-                  {t('header.costEstimator' as never) || 'Cost estimator'}
+                  {t('header.costEstimator')}
                 </button>
                 <button type="button" onClick={() => goTo('/create-ad')} className="amazon-dept-link">
                   {t('header.sell')}
                 </button>
 
                 <button type="button" onClick={() => goTo('/pricing')} className="amazon-dept-link">
-                  Pricing
+                  {t('header.pricing')}
                 </button>
 
                 <button type="button" onClick={() => goTo('/assistant')} className="amazon-dept-link">
-                  AI Assistant
+                  {t('header.aiAssistant')}
                 </button>
 
                 <button type="button" onClick={() => goTo('/analytics')} className="amazon-dept-link">
-                  Analytics
+                  {t('header.analytics')}
                 </button>
 
                 <button type="button" onClick={() => goTo('/contact')} className="amazon-dept-link">
@@ -869,7 +869,7 @@ export function Header() {
                       profile?.is_professional) && (
                       <button onClick={() => goTo('/customer/dashboard')} type="button" className={mobileNavItemClass}>
                         <LayoutDashboard className="h-5 w-5" />
-                        <span>{t('header.customerDashboard' as never) || 'My Dashboard'}</span>
+                        <span>{t('header.customerDashboard')}</span>
                       </button>
                     )}
 
@@ -883,13 +883,13 @@ export function Header() {
                       profile?.user_role === 'company') && (
                       <button onClick={() => goTo('/pro/dashboard')} type="button" className={mobileNavItemClass}>
                         <LayoutDashboard className="h-5 w-5" />
-                        <span>{t('header.proDashboard' as never) || 'Pro Dashboard'}</span>
+                        <span>{t('header.proDashboard')}</span>
                       </button>
                     )}
 
                     <button onClick={() => goTo('/my-listings')} type="button" className={mobileNavItemClass}>
                       <FileText className="h-5 w-5" />
-                      <span>{t('header.myListings') || 'Мої оголошення'}</span>
+                      <span>{t('header.myListings')}</span>
                     </button>
 
                     <button onClick={() => goTo('/favorites')} type="button" className={mobileNavItemClass}>

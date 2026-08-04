@@ -1,5 +1,8 @@
 import { supabase } from './supabase'
 import type { Category, Json, ListingWithImages, Profile } from './types'
+import { SERVIYA_CATEGORY_I18N } from '../config/categoriesI18n'
+import { CATEGORY_LABEL_I18N } from './categoryLabelI18n'
+import { getTranslation, type LanguageCode, type TranslationKey } from './i18n'
 
 export type MarketplaceCategory = Category & {
   cover_image_url?: string | null
@@ -43,9 +46,55 @@ function asI18nMap(value: Json | undefined | null): Record<string, string> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
   const out: Record<string, string> = {}
   for (const [k, v] of Object.entries(value)) {
-    if (typeof v === 'string') out[k] = v
+    if (typeof v === 'string' && v.trim()) out[k] = v
   }
   return out
+}
+
+function localeCandidates(lang: string): string[] {
+  const normalized = lang.toLowerCase()
+  const base = normalized.split('-')[0]
+  return normalized === base ? [normalized] : [normalized, base]
+}
+
+/** Static UI maps (Serviya + work-type catalog) — used when DB name_i18n lacks the locale. */
+function labelFromStaticMaps(slug: string | undefined | null, lang: string): string | null {
+  if (!slug) return null
+  const maps = [SERVIYA_CATEGORY_I18N[slug], CATEGORY_LABEL_I18N[slug]]
+  for (const map of maps) {
+    if (!map) continue
+    for (const code of localeCandidates(lang)) {
+      const hit = (map as Record<string, string>)[code]
+      if (hit?.trim()) return hit
+    }
+  }
+  // Dictionary keys used by site chrome: category.name.<slug> / category.<slug>
+  for (const code of localeCandidates(lang)) {
+    for (const prefix of ['category.name.', 'category.'] as const) {
+      const key = `${prefix}${slug}` as TranslationKey
+      try {
+        const text = getTranslation(code as LanguageCode, key)
+        if (text && text !== key) return text
+      } catch {
+        /* unknown locale code — skip */
+      }
+    }
+  }
+  return null
+}
+
+function pickLocalized(
+  map: Record<string, string>,
+  lang: string,
+  slug?: string | null,
+): string | null {
+  for (const code of localeCandidates(lang)) {
+    if (map[code]?.trim()) return map[code]
+  }
+  const fromStatic = labelFromStaticMaps(slug, lang)
+  if (fromStatic) return fromStatic
+  if (map.en?.trim()) return map.en
+  return null
 }
 
 export function marketplaceCategoryLabel(
@@ -53,15 +102,24 @@ export function marketplaceCategoryLabel(
   lang: string,
 ): string {
   const map = asI18nMap(category.name_i18n)
-  return map[lang] || map.en || category.name || category.slug
+  return (
+    pickLocalized(map, lang, category.slug) ||
+    category.name ||
+    category.slug
+  )
 }
 
 export function marketplaceCategoryDescription(
-  category: Pick<MarketplaceCategory, 'description' | 'description_i18n'>,
+  category: Pick<MarketplaceCategory, 'description' | 'description_i18n' | 'slug'>,
   lang: string,
 ): string {
   const map = asI18nMap(category.description_i18n)
-  return map[lang] || map.en || category.description || ''
+  // Prefer DB locale; do not jump to English before static title maps (no desc maps yet).
+  for (const code of localeCandidates(lang)) {
+    if (map[code]?.trim()) return map[code]
+  }
+  if (map.en?.trim()) return map.en
+  return category.description || ''
 }
 
 export function marketplaceCategoryPath(slug: string): string {
