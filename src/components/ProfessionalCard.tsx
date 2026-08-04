@@ -129,7 +129,7 @@ export function ProfessionalCard({
   const websiteLabel = websiteHref
     ? websiteHref.replace(/^https?:\/\//i, '').replace(/\/$/, '')
     : ''
-  const showPublicContacts = isCompany && (Boolean(phone) || Boolean(websiteHref))
+  const showPublicContacts = Boolean(phone) || Boolean(websiteHref)
 
   const rootClass = compact
     ? 'glass-card card-hover-lift pro-card--compact flex h-full min-w-0 flex-col overflow-hidden'

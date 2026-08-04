@@ -158,7 +158,7 @@ export function DirectoryExpertCard({ professional, distanceKm }: DirectoryExper
   const phone = (professional.phone ?? '').trim()
   const websiteHref = normalizeWebsiteHref(professional.website)
   const websiteLabel = websiteHref ? websiteDisplayLabel(websiteHref) : ''
-  const showPublicContacts = isCompany && (Boolean(phone) || Boolean(websiteHref))
+  const showPublicContacts = Boolean(phone) || Boolean(websiteHref)
 
   const experienceRaw = parseBioField(professional.bio, 'Experience')
   const rateRaw = parseBioField(professional.bio, 'Rate')
