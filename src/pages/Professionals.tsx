@@ -6,7 +6,6 @@ import { DirectoryExpertCard } from '../components/DirectoryExpertCard'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
-import { ConstructionWorkTypesPanel } from '../components/ConstructionWorkTypesPanel'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -37,14 +36,9 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [minRating, setMinRating] = useState(0)
   const [locationFilter, setLocationFilter] = useState('')
-  const [selectedWorkTypes, setSelectedWorkTypes] = useState<string[]>([])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const work = params.get('work') || params.get('service')
-    if (work) {
-      setSelectedWorkTypes(work.split(',').map((s) => s.trim()).filter(Boolean))
-    }
     const category = params.get('category')
     if (category) setSelectedCategory(category)
     const q = params.get('q')
@@ -135,19 +129,11 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
             (w) => w === selectedCategory || w.startsWith(`${selectedCategory}-`),
           )
 
-        const workSubs = professional.work_subcategory_slugs ?? []
-        const matchesWorkTypes =
-          selectedWorkTypes.length === 0 ||
-          selectedWorkTypes.some(
-            (s) => workSubs.includes(s) || workSubs.some((w) => w.startsWith(`${s}-`) || s.startsWith(`${w}-`)),
-          )
-
         return (
           matchesSearch &&
           matchesRating &&
           matchesLocation &&
-          matchesCategory &&
-          matchesWorkTypes
+          matchesCategory
         )
       })
       .sort((a, b) => {
@@ -167,13 +153,11 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     professionals,
     searchQuery,
     selectedCategory,
-    selectedWorkTypes,
     sortBy,
   ])
 
   const activeFiltersCount = [
     selectedCategory,
-    selectedWorkTypes.length > 0 ? 'work' : '',
     minRating > 0 ? 'rating' : '',
     locationFilter,
   ].filter(Boolean).length
@@ -183,7 +167,6 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     setLocationFilter('')
     setSortBy('rating')
     setSelectedCategory('')
-    setSelectedWorkTypes([])
     setSearchQuery('')
   }
 
@@ -346,14 +329,6 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
         </aside>
 
         <main className="min-w-0 flex-1">
-          <div className="amazon-section-card mb-4">
-            <ConstructionWorkTypesPanel
-              categorySlug="construction"
-              selected={selectedWorkTypes}
-              onChange={setSelectedWorkTypes}
-            />
-          </div>
-
           <MobileAdBanner variant="horizontal" page="professionals" outerClassName="mb-4" />
 
           {loading ? (
