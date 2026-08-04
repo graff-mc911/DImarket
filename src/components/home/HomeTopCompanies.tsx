@@ -60,7 +60,11 @@ export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) 
         <div ref={railRef} className="home-rail home-rail--pros" role="list">
           {companies.map((company) => {
             const name = formatProfessionalCardTitle(company, t('professional.defaultName'))
-            const avatar = company.profile_photo || company.avatar_url
+            const avatar = resolveDirectoryAvatarUrl(
+              company.id,
+              company.profile_photo,
+              company.avatar_url,
+            )
             const langs = (company.languages ?? []).slice(0, 3)
             const location = (company.location || '').trim()
 
