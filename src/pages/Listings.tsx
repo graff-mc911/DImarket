@@ -16,11 +16,7 @@ import {
   categoryPagePath,
   type SiteCategorySlug,
 } from '../lib/siteCategories'
-import { ConstructionWorkTypesPanel } from '../components/ConstructionWorkTypesPanel'
-import {
-  categoryHasWorkSubcategories,
-  subcategorySlugsForGroup,
-} from '../lib/categoryCatalog'
+import { subcategorySlugsForGroup } from '../lib/categoryCatalog'
 
 type ListingsProps = {
   fixedCategorySlug?: SiteCategorySlug
@@ -242,8 +238,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     setMobileFiltersOpen(false)
   }
 
-  const workCategorySlug = fixedCategorySlug || selectedCategory
-
   const filtersPanel = (
     <>
       <h2 className="text-base font-bold text-[var(--ink-900)]">{t('listings.filtersButton')}</h2>
@@ -385,16 +379,6 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
         </aside>
 
         <main className="min-w-0 flex-1">
-          {workCategorySlug && categoryHasWorkSubcategories(workCategorySlug) && (
-            <div className="amazon-section-card mb-4">
-              <ConstructionWorkTypesPanel
-                categorySlug={workCategorySlug}
-                selected={selectedSubcategories}
-                onChange={setSelectedSubcategories}
-              />
-            </div>
-          )}
-
           {activeFiltersCount > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {searchQuery && (
