@@ -255,6 +255,7 @@ export function prerenderRoutes() {
     '/',
     '/professionals',
     '/companies',
+    '/map',
     '/listings',
     '/pricing',
     '/contact',
