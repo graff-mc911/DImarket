@@ -760,7 +760,7 @@ export const itTranslations: Partial<Record<TranslationKey, string>> = {
   'login.subtitle': 'Gestisci il tuo profilo',
   'login.email': 'Indirizzo email',
   'login.emailPlaceholder': 'tu@esempio.com',
-  'login.password': 'Password',
+  'login.password': 'Parola',
   'login.passwordPlaceholder': '********',
   'login.signIn': 'Accedi',
   'login.signingIn': 'Accesso in corso...',

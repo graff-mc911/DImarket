@@ -1224,7 +1224,7 @@ export const slTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.mediaEditor.layout.leaderboard': 'Lestvica najboljših',
   'advertising.mediaEditor.layout.mobile': 'Mobilni',
   'advertising.mediaEditor.transition.fade': 'Gladko zbledi',
-  'advertising.mediaEditor.transition.crossfade': 'Crossfade',
+  'advertising.mediaEditor.transition.crossfade': 'Navzkrižno zatemnjevanje',
   'advertising.mediaEditor.transition.slide-left': 'Potisnite z leve',
   'advertising.mediaEditor.transition.slide-right': 'Potisnite z desne',
   'advertising.mediaEditor.transition.slide-up': 'Potisnite od spodaj',

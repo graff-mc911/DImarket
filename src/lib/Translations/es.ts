@@ -349,7 +349,7 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustProjects': 'Proyectos completados',
   'homePremium.carouselPrev': 'Reseñas anteriores',
   'homePremium.carouselNext': 'Reseñas siguientes',
-  'homePremium.companiesEyebrow': 'Partners',
+  'homePremium.companiesEyebrow': 'Socios',
   'homePremium.companiesTitle': 'Empresas destacadas',
   'homePremium.companiesSubtitle': 'Marcas europeas de construcción de confianza con las que trabajan nuestros profesionales.',
   'homePremium.mapEyebrow': 'Actividad en vivo',

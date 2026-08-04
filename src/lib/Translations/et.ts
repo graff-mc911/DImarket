@@ -1224,7 +1224,7 @@ export const etTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.mediaEditor.layout.leaderboard': 'Edetabel',
   'advertising.mediaEditor.layout.mobile': 'Mobiilne',
   'advertising.mediaEditor.transition.fade': 'Sujuv tuhmumine',
-  'advertising.mediaEditor.transition.crossfade': 'Crossfade',
+  'advertising.mediaEditor.transition.crossfade': 'Ristlahustumine',
   'advertising.mediaEditor.transition.slide-left': 'Libistage vasakult',
   'advertising.mediaEditor.transition.slide-right': 'Libistage paremalt',
   'advertising.mediaEditor.transition.slide-up': 'Libistage alt',

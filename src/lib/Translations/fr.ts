@@ -227,7 +227,7 @@ export const frTranslations: Partial<Record<TranslationKey, string>> = {
   'home.tile.tiler': 'Carreleur',
   'home.tile.cleaning': 'Nettoyage',
   'home.tile.renovation': 'Rénovation',
-  'home.tile.prosCount': '{count} pros',
+  'home.tile.prosCount': '{count} professionnels',
   'home.howItWorksTitle': 'Comment ça marche',
   'home.howItWorksText': 'Trois étapes simples pour trouver un professionnel ou obtenir des missions',
   'home.howStep1Title': 'Créer un compte',
