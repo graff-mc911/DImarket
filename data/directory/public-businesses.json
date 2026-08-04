@@ -1,0 +1,1422 @@
+{
+  "version": 1,
+  "generated_at": "2026-08-04T10:30:27.700Z",
+  "schema": {
+    "target_table": "profiles",
+    "auth_required": true,
+    "junction": "professional_categories",
+    "location_format": "City, Region, Country",
+    "notes": "profiles.id references auth.users(id). Import creates claimable auth users then upserts profiles and syncs professional_categories from work_subcategory_slugs."
+  },
+  "summary": {
+    "generated_at": "2026-08-04T10:30:27.700Z",
+    "businesses_ready_to_import": 18,
+    "categories_populated": [
+      "Construction Company",
+      "Demolition",
+      "Doors",
+      "Drywall",
+      "Electrician",
+      "Flooring",
+      "HVAC",
+      "Insulation",
+      "Interior Design",
+      "Painting",
+      "Plastering",
+      "Plumbing",
+      "Renovation",
+      "Tiles",
+      "Windows"
+    ],
+    "categories_count": 15,
+    "cities_covered": [
+      "Alicante, Valencia, Spain",
+      "Darmstadt, Hessen, Germany",
+      "Madrid, Madrid, Spain"
+    ],
+    "cities_count": 3,
+    "duplicates_removed": 0,
+    "duplicates_detail": [],
+    "records_skipped_insufficient_public_info": 7,
+    "skipped_detail": [
+      {
+        "name": "Generic yellow-pages painter listings (Darmstadt)",
+        "reason": "Name-only aggregator entries without a verifiable website or published phone/address owned by the business."
+      },
+      {
+        "name": "ibau / public tender notices (Darmstadt)",
+        "reason": "Tender notices are not business directory profiles."
+      },
+      {
+        "name": "Unverified Google Maps pins without official website",
+        "reason": "Insufficient reusable public business facts without copying third-party reviews or photos."
+      },
+      {
+        "name": "Duplicate REFISER Coslada landing pages",
+        "reason": "Same company as REFISER Madrid; merged into one listing."
+      },
+      {
+        "name": "Duplicate Carbonell / Reformas Alicante brand variants",
+        "reason": "Same operating company already included as Carbonell Reformas Alicante."
+      },
+      {
+        "name": "Redosan Reformas (Alicante)",
+        "reason": "Appears only on third-party directories without a verified owned website, phone, or address."
+      },
+      {
+        "name": "Hardware / building-materials retailers without clear construction-service listing",
+        "reason": "Insufficient public service facts for a DImarket professional/company profile."
+      }
+    ],
+    "by_city": {
+      "Alicante, Valencia, Spain": 7,
+      "Darmstadt, Hessen, Germany": 7,
+      "Madrid, Madrid, Spain": 4
+    },
+    "by_role": {
+      "company": 16,
+      "professional": 2
+    },
+    "policy_notes": [
+      "Only publicly listed factual business information was used.",
+      "Bios, SEO titles, meta descriptions, and keywords are original DImarket text.",
+      "Reviews, ratings, biographies copied from third parties, photos, logos, and website layouts were not scraped or reused.",
+      "Auth emails are claimable directory+slug@users.dimarket.app addresses; public business emails stay in public_email only."
+    ]
+  },
+  "businesses": [
+    {
+      "slug": "bp-bau-darmstadt",
+      "full_name": "B&P Bau",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Renovation",
+        "Electrician",
+        "Plumbing",
+        "HVAC",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "painting-walls",
+        "painting-facade",
+        "electro-wiring",
+        "plumbing-install",
+        "hvac-ac",
+        "drywall-install"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://www.b-pbau.de/",
+      "business_hours": null,
+      "services": [
+        "New build and renovation",
+        "Interior fit-out",
+        "Facade and painting",
+        "Electrical works",
+        "Sanitary and climate systems"
+      ],
+      "languages": [
+        "de"
+      ],
+      "bio": "Construction and renovation company headquartered in Darmstadt. Public service list covers new build and renovation, interior fit-out, facade and painting work, plus electrical, sanitary, and climate trades.",
+      "preferred_language": "de",
+      "directory_claim_email": "directory+bp-bau-darmstadt@users.dimarket.app",
+      "seo": {
+        "title": "B&P Bau — Construction Company in Darmstadt | DImarket",
+        "meta_description": "B&P Bau offers new build and renovation, interior fit-out, facade and painting in Darmstadt, Germany. Find contact details on DImarket.",
+        "slug": "bp-bau-darmstadt",
+        "keywords": [
+          "B&P Bau",
+          "Construction Company",
+          "Renovation",
+          "Electrician",
+          "Plumbing",
+          "HVAC",
+          "Painting",
+          "Darmstadt",
+          "Hessen",
+          "Germany",
+          "New build and renovation",
+          "Interior fit-out",
+          "Facade and painting",
+          "Electrical works",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.b-pbau.de/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "domenico-di-santo-malerbetrieb-darmstadt",
+      "full_name": "Domenico Di Santo Malerbetrieb",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering",
+        "Drywall",
+        "Flooring",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "plastering-manual",
+        "drywall-install",
+        "flooring-laminate",
+        "wallpaper-install"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://www.disanto-domenico.de/malerbetrieb-darmstadt/",
+      "business_hours": null,
+      "services": [
+        "Painting",
+        "Wallpapering",
+        "Plastering",
+        "Drywall",
+        "Floor covering"
+      ],
+      "languages": [
+        "de"
+      ],
+      "bio": "Family-run painting business serving Darmstadt and nearby towns. Publicly described services include painting, wallpapering, plastering, drywall, and floor covering for private, commercial, and institutional clients.",
+      "preferred_language": "de",
+      "directory_claim_email": "directory+domenico-di-santo-malerbetrieb-darmstadt@users.dimarket.app",
+      "seo": {
+        "title": "Domenico Di Santo Malerbetrieb — Painting in Darmstadt | DImarket",
+        "meta_description": "Domenico Di Santo Malerbetrieb offers painting, wallpapering, plastering in Darmstadt, Germany. Find contact details on DImarket.",
+        "slug": "domenico-di-santo-malerbetrieb-darmstadt",
+        "keywords": [
+          "Domenico Di Santo Malerbetrieb",
+          "Painting",
+          "Plastering",
+          "Drywall",
+          "Flooring",
+          "Renovation",
+          "Darmstadt",
+          "Hessen",
+          "Germany",
+          "Wallpapering",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.disanto-domenico.de/malerbetrieb-darmstadt/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "heinrich-schmid-darmstadt",
+      "full_name": "Heinrich Schmid GmbH & Co. KG — Darmstadt",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Drywall",
+        "Flooring",
+        "Tiles",
+        "Plastering",
+        "Insulation",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-facade",
+        "drywall-install",
+        "drywall-partitions",
+        "flooring-parquet",
+        "flooring-laminate",
+        "flooring-screed",
+        "tiling-install",
+        "plastering-manual",
+        "facade-insulation",
+        "insulation-thermal",
+        "facade-repair"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "Gräfenhäuser Straße 36, 64293 Darmstadt",
+      "phone": "+49 6151 1301912",
+      "public_email": "darmstadt@heinrich-schmid.de",
+      "website": "https://www.heinrich-schmid.com/standorte/darmstadt-273/",
+      "business_hours": null,
+      "services": [
+        "Painting",
+        "Drywall",
+        "Flooring and screed",
+        "Tiling",
+        "Plaster and stucco",
+        "Facade renovation",
+        "Thermal insulation",
+        "Project coordination"
+      ],
+      "languages": [
+        "de",
+        "en"
+      ],
+      "bio": "Regional branch of a German trades company in Darmstadt. Public location lists painting, drywall, flooring, tiling, plaster, facade renovation, and insulation for residential and commercial interiors.",
+      "preferred_language": "de",
+      "directory_claim_email": "directory+heinrich-schmid-darmstadt@users.dimarket.app",
+      "seo": {
+        "title": "Heinrich Schmid GmbH & Co. KG — Darmstadt — Painting in Darmstadt | DI",
+        "meta_description": "Heinrich Schmid GmbH & Co. KG — Darmstadt offers painting, drywall, flooring and screed in Darmstadt, Germany. Find contact details on DImarket.",
+        "slug": "heinrich-schmid-darmstadt",
+        "keywords": [
+          "Heinrich Schmid GmbH & Co. KG — Darmstadt",
+          "Painting",
+          "Drywall",
+          "Flooring",
+          "Tiles",
+          "Plastering",
+          "Insulation",
+          "Renovation",
+          "Darmstadt",
+          "Hessen",
+          "Germany",
+          "Flooring and screed",
+          "Tiling",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.heinrich-schmid.com/standorte/darmstadt-273/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "kraft-gmbh-darmstadt",
+      "full_name": "Kraft GmbH Darmstadt",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Drywall",
+        "Renovation",
+        "Construction Company"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "drywall-install",
+        "plastering-manual"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "Messeler-Park-Straße 119 A, 64291 Darmstadt",
+      "phone": "+49 6151 384170",
+      "public_email": null,
+      "website": "https://www.kraft-gmbh-darmstadt.de/",
+      "business_hours": null,
+      "services": [
+        "Interior painting",
+        "Finishing trades",
+        "Renovation of living and work spaces"
+      ],
+      "languages": [
+        "de"
+      ],
+      "bio": "Darmstadt finishing trades company with a public workshop address in the Messeler Park area. Listed services focus on interior painting and renovation of residential and commercial rooms.",
+      "preferred_language": "de",
+      "directory_claim_email": "directory+kraft-gmbh-darmstadt@users.dimarket.app",
+      "seo": {
+        "title": "Kraft GmbH Darmstadt — Painting in Darmstadt | DImarket",
+        "meta_description": "Kraft GmbH Darmstadt offers interior painting, finishing trades, renovation of living and work spaces in Darmstadt, Germany. Find contact details on DImarket.",
+        "slug": "kraft-gmbh-darmstadt",
+        "keywords": [
+          "Kraft GmbH Darmstadt",
+          "Painting",
+          "Drywall",
+          "Renovation",
+          "Construction Company",
+          "Darmstadt",
+          "Hessen",
+          "Germany",
+          "Interior painting",
+          "Finishing trades",
+          "Renovation of living and work spaces",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.kraft-gmbh-darmstadt.de/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "patrick-noel-malerhandwerk-darmstadt",
+      "full_name": "Patrick Noël Malerhandwerk GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering",
+        "Demolition",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "painting-facade",
+        "plastering-manual",
+        "demolition-walls",
+        "demolition-partitions"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "In der Kirchtanne 27, 64297 Darmstadt",
+      "phone": "+49 6151 5013326",
+      "public_email": "info@noel-malerhandwerk.de",
+      "website": "https://www.noel-malerhandwerk.de/",
+      "business_hours": null,
+      "services": [
+        "Painting and coating",
+        "Interior finishing",
+        "Selective demolition / strip-out",
+        "Damage-related renovation support"
+      ],
+      "languages": [
+        "de"
+      ],
+      "bio": "Registered painting trades company in Darmstadt-Eberstadt. Public impressum lists painting and related finishing work, with selective demolition and renovation support for private and commercial properties.",
+      "preferred_language": "de",
+      "directory_claim_email": "directory+patrick-noel-malerhandwerk-darmstadt@users.dimarket.app",
+      "seo": {
+        "title": "Patrick Noël Malerhandwerk GmbH — Painting in Darmstadt | DImarket",
+        "meta_description": "Patrick Noël Malerhandwerk GmbH offers painting and coating, interior finishing, selective demolition / strip-out in Darmstadt, Germany. Find contact details on",
+        "slug": "patrick-noel-malerhandwerk-darmstadt",
+        "keywords": [
+          "Patrick Noël Malerhandwerk GmbH",
+          "Painting",
+          "Plastering",
+          "Demolition",
+          "Renovation",
+          "Darmstadt",
+          "Hessen",
+          "Germany",
+          "Painting and coating",
+          "Interior finishing",
+          "Selective demolition / strip-out",
+          "Damage-related renovation support",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.noel-malerhandwerk.de/impressum",
+        "https://www.noel-malerhandwerk.de/kontakt"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "stark-elektro-darmstadt",
+      "full_name": "Stark Elektro",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-rewiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-smart-home",
+        "solar-panels",
+        "solar-installation",
+        "smart-home-systems"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "Moltkestraße 21, 64295 Darmstadt",
+      "phone": "+49 177 6988882",
+      "public_email": "info@stark-elektro.de",
+      "website": "https://stark-elektro.de/",
+      "business_hours": "Mon–Fri 08:00–17:00",
+      "services": [
+        "Electrical installation",
+        "Rewiring and renovation electrics",
+        "Photovoltaic systems",
+        "Wallbox / EV charging",
+        "Smart home and network cabling",
+        "Electrical planning"
+      ],
+      "languages": [
+        "de",
+        "en"
+      ],
+      "bio": "Master electrician company based in Darmstadt serving the Rhine-Main area. Publicly listed services cover electrical installation and renovation, photovoltaic systems, EV wallboxes, and smart-home wiring for residential and commercial clients.",
+      "preferred_language": "de",
+      "directory_claim_email": "directory+stark-elektro-darmstadt@users.dimarket.app",
+      "seo": {
+        "title": "Stark Elektro — Electrician in Darmstadt | DImarket",
+        "meta_description": "Stark Elektro offers electrical installation, rewiring and renovation electrics, photovoltaic systems in Darmstadt, Germany. Find contact details on DImarket.",
+        "slug": "stark-elektro-darmstadt",
+        "keywords": [
+          "Stark Elektro",
+          "Electrician",
+          "Darmstadt",
+          "Hessen",
+          "Germany",
+          "Electrical installation",
+          "Rewiring and renovation electrics",
+          "Photovoltaic systems",
+          "Wallbox / EV charging",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://stark-elektro.de/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "zimmermann-und-sohn-darmstadt",
+      "full_name": "Zimmermann & Sohn GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering",
+        "Drywall",
+        "Flooring",
+        "Tiles",
+        "Insulation",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-facade",
+        "plastering-manual",
+        "plastering-decorative",
+        "drywall-install",
+        "flooring-parquet",
+        "tiling-install",
+        "facade-insulation",
+        "wallpaper-install"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "Marienburgstraße 1, 64297 Darmstadt",
+      "phone": "+49 6151 46297",
+      "public_email": null,
+      "website": "https://zimmermannundsohn.de/",
+      "business_hours": null,
+      "services": [
+        "Painting and wallpapering",
+        "Plastering",
+        "Drywall",
+        "Flooring and tiling",
+        "Facade renovation",
+        "Thermal insulation",
+        "Heritage restoration support"
+      ],
+      "languages": [
+        "de"
+      ],
+      "bio": "Long-established painting and finishing company in Darmstadt. Public site lists painting, plastering, drywall, flooring, tiling, facade work, and insulation for renovation and heritage-related projects.",
+      "preferred_language": "de",
+      "directory_claim_email": "directory+zimmermann-und-sohn-darmstadt@users.dimarket.app",
+      "seo": {
+        "title": "Zimmermann & Sohn GmbH — Painting in Darmstadt | DImarket",
+        "meta_description": "Zimmermann & Sohn GmbH offers painting and wallpapering, plastering, drywall in Darmstadt, Germany. Find contact details on DImarket.",
+        "slug": "zimmermann-und-sohn-darmstadt",
+        "keywords": [
+          "Zimmermann & Sohn GmbH",
+          "Painting",
+          "Plastering",
+          "Drywall",
+          "Flooring",
+          "Tiles",
+          "Insulation",
+          "Renovation",
+          "Darmstadt",
+          "Hessen",
+          "Germany",
+          "Painting and wallpapering",
+          "Flooring and tiling",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://zimmermannundsohn.de/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "carbonell-reformas-alicante",
+      "full_name": "Carbonell Reformas Alicante",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Tiles",
+        "Interior Design"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "electro-wiring",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "painting-walls",
+        "carpentry-doors-install",
+        "design-engineering-interior",
+        "demolition-partitions"
+      ],
+      "city": "Alicante",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Alicante, Valencia, Spain",
+      "address": null,
+      "phone": "+34 966 262 802",
+      "public_email": null,
+      "website": "https://carbonellreformasalicante.com/",
+      "business_hours": "Mon–Sat 09:00–20:30",
+      "services": [
+        "Full flat renovations",
+        "Bathroom renovations",
+        "Kitchen renovations",
+        "Facade rehabilitation",
+        "Commercial and office fit-out"
+      ],
+      "languages": [
+        "es",
+        "en"
+      ],
+      "bio": "Alicante renovation firm established around 2010. Public listings cover full-flat, bathroom, and kitchen renovations plus facade and commercial fit-out work, with published weekday and Saturday hours.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+carbonell-reformas-alicante@users.dimarket.app",
+      "seo": {
+        "title": "Carbonell Reformas Alicante — Renovation in Alicante | DImarket",
+        "meta_description": "Carbonell Reformas Alicante offers full flat renovations, bathroom renovations, kitchen renovations in Alicante, Spain. Find contact details on DImarket.",
+        "slug": "carbonell-reformas-alicante",
+        "keywords": [
+          "Carbonell Reformas Alicante",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "Tiles",
+          "Interior Design",
+          "Alicante",
+          "Valencia",
+          "Spain",
+          "Full flat renovations",
+          "Bathroom renovations",
+          "Kitchen renovations",
+          "Facade rehabilitation",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://carbonellreformasalicante.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "coypa-fontaneria-reformas-alicante",
+      "full_name": "Coypa Reformas y Fontanería Alicante",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Renovation",
+        "Electrician",
+        "HVAC"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "electro-wiring",
+        "hvac-ac",
+        "tiling-bathroom"
+      ],
+      "city": "Alicante",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Alicante, Valencia, Spain",
+      "address": "Calle Nou d'Octubre, 03012 Alicante",
+      "phone": null,
+      "public_email": null,
+      "website": "https://fontaneriayreformasalicante.com/",
+      "business_hours": null,
+      "services": [
+        "Plumbing repairs and bathroom renovations",
+        "Electrical interventions",
+        "Air-conditioning related works",
+        "Vertical / height-access interventions"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Alicante plumbing and renovation company with a public address on Calle Nou d’Octubre. Services listed include bathroom renovations, plumbing repairs, electrical work, and air-conditioning interventions.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+coypa-fontaneria-reformas-alicante@users.dimarket.app",
+      "seo": {
+        "title": "Coypa Reformas y Fontanería Alicante — Plumbing in Alicante | DImarket",
+        "meta_description": "Coypa Reformas y Fontanería Alicante offers plumbing repairs and bathroom renovations, electrical interventions, air-conditioning related works in Alicante, Spa",
+        "slug": "coypa-fontaneria-reformas-alicante",
+        "keywords": [
+          "Coypa Reformas y Fontanería Alicante",
+          "Plumbing",
+          "Renovation",
+          "Electrician",
+          "HVAC",
+          "Alicante",
+          "Valencia",
+          "Spain",
+          "Plumbing repairs and bathroom renovations",
+          "Electrical interventions",
+          "Air-conditioning related works",
+          "Vertical / height-access interventions",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://fontaneriayreformasalicante.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "explanada-reformas-alicante",
+      "full_name": "Explanada Reformas",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Construction Company"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "tiling-install",
+        "flooring-laminate"
+      ],
+      "city": "Alicante",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Alicante, Valencia, Spain",
+      "address": "Calle Jacinto Maltés 28, 03012 Alicante",
+      "phone": "+34 865 443 420",
+      "public_email": null,
+      "website": "https://reformasintegralesalicante.pro/",
+      "business_hours": null,
+      "services": [
+        "Full home renovations",
+        "Commercial premises renovations",
+        "Second-home renovations"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Alicante renovation company with a public office on Calle Jacinto Maltés. Listed projects cover full residential renovations, commercial premises, and second homes in Alicante and nearby areas.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+explanada-reformas-alicante@users.dimarket.app",
+      "seo": {
+        "title": "Explanada Reformas — Renovation in Alicante | DImarket",
+        "meta_description": "Explanada Reformas offers full home renovations, commercial premises renovations, second-home renovations in Alicante, Spain. Find contact details on DImarket.",
+        "slug": "explanada-reformas-alicante",
+        "keywords": [
+          "Explanada Reformas",
+          "Renovation",
+          "Construction Company",
+          "Alicante",
+          "Valencia",
+          "Spain",
+          "Full home renovations",
+          "Commercial premises renovations",
+          "Second-home renovations",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformasintegralesalicante.pro/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "multihogar-alicante",
+      "full_name": "MultiHogar Alicante",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Electrician",
+        "Windows"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "electro-wiring",
+        "electro-outlets",
+        "electro-lighting",
+        "windows-repair"
+      ],
+      "city": "Alicante",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Alicante, Valencia, Spain",
+      "address": "Calle Xixona 16, El Campello, Alicante",
+      "phone": "+34 627 378 977",
+      "public_email": null,
+      "website": "https://multihogaralicante.es/",
+      "business_hours": null,
+      "services": [
+        "Emergency plumbing",
+        "Authorized electrical repairs and renovations",
+        "Blind and shutter repairs",
+        "Home maintenance call-outs"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Home services company based in El Campello (Alicante province). Public contact lists plumbing, authorized electrical work, shutter repairs, and general residential call-outs.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+multihogar-alicante@users.dimarket.app",
+      "seo": {
+        "title": "MultiHogar Alicante — Plumbing in Alicante | DImarket",
+        "meta_description": "MultiHogar Alicante offers emergency plumbing, authorized electrical repairs and renovations, blind and shutter repairs in Alicante, Spain. Find contact details",
+        "slug": "multihogar-alicante",
+        "keywords": [
+          "MultiHogar Alicante",
+          "Plumbing",
+          "Electrician",
+          "Windows",
+          "Alicante",
+          "Valencia",
+          "Spain",
+          "Emergency plumbing",
+          "Authorized electrical repairs and renovations",
+          "Blind and shutter repairs",
+          "Home maintenance call-outs",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://multihogaralicante.es/",
+        "https://multihogaralicante.es/contacto/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "reformas-alacant",
+      "full_name": "Reformas Alacant",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Drywall",
+        "Doors",
+        "Demolition"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-showers",
+        "electro-wiring",
+        "electro-lighting",
+        "painting-walls",
+        "drywall-install",
+        "drywall-suspended-ceiling",
+        "carpentry-doors-install",
+        "masonry-partitions",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "demolition-partitions"
+      ],
+      "city": "Alicante",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Alicante, Valencia, Spain",
+      "address": null,
+      "phone": "+34 634 579 438",
+      "public_email": null,
+      "website": "https://reformasalacant.es/",
+      "business_hours": null,
+      "services": [
+        "Full apartment renovations",
+        "Kitchen and bathroom renovations",
+        "Plumbing and electrical",
+        "Carpentry and drywall",
+        "Painting and finishes",
+        "Commercial premises fit-out"
+      ],
+      "languages": [
+        "es",
+        "en"
+      ],
+      "bio": "Alicante renovation company coordinating in-house plumbing, electrical, carpentry, drywall, masonry, and painting trades. Public contact lists full-home, kitchen, bathroom, and commercial premises renovations across the city.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reformas-alacant@users.dimarket.app",
+      "seo": {
+        "title": "Reformas Alacant — Renovation in Alicante | DImarket",
+        "meta_description": "Reformas Alacant offers full apartment renovations, kitchen and bathroom renovations, plumbing and electrical in Alicante, Spain. Find contact details on DImark",
+        "slug": "reformas-alacant",
+        "keywords": [
+          "Reformas Alacant",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "Painting",
+          "Drywall",
+          "Doors",
+          "Demolition",
+          "Alicante",
+          "Valencia",
+          "Spain",
+          "Full apartment renovations",
+          "Kitchen and bathroom renovations",
+          "Plumbing and electrical",
+          "Carpentry and drywall",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformasalacant.es/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "reformas-esquivel-alicante",
+      "full_name": "Reformas Esquivel",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Painting",
+        "Renovation",
+        "Tiles",
+        "Doors",
+        "Windows"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "plumbing-showers",
+        "painting-walls",
+        "tiling-install",
+        "masonry-partitions",
+        "carpentry-doors-install",
+        "windows-install"
+      ],
+      "city": "Alicante",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Alicante, Valencia, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://www.reformasesquivel.com/",
+      "business_hours": null,
+      "services": [
+        "Plumbing repairs and installations",
+        "Masonry and tiling",
+        "Painting",
+        "Door and window fitting"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Independent renovation trades business serving Alicante. Public service list includes plumbing, masonry, tiling, painting, and door/window fitting for residential clients.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reformas-esquivel-alicante@users.dimarket.app",
+      "seo": {
+        "title": "Reformas Esquivel — Plumbing in Alicante | DImarket",
+        "meta_description": "Reformas Esquivel offers plumbing repairs and installations, masonry and tiling, painting in Alicante, Spain. Find contact details on DImarket.",
+        "slug": "reformas-esquivel-alicante",
+        "keywords": [
+          "Reformas Esquivel",
+          "Plumbing",
+          "Painting",
+          "Renovation",
+          "Tiles",
+          "Doors",
+          "Windows",
+          "Alicante",
+          "Valencia",
+          "Spain",
+          "Plumbing repairs and installations",
+          "Masonry and tiling",
+          "Door and window fitting",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.reformasesquivel.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "urbasan-alicante",
+      "full_name": "Urbasan Reformas & Interiorismo",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Interior Design",
+        "Tiles",
+        "Plumbing",
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "design-engineering-interior",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "carpentry-doors-install"
+      ],
+      "city": "Alicante",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Alicante, Valencia, Spain",
+      "address": "Calle San Agatángelo 13, 03007 Alicante",
+      "phone": "+34 965 133 046",
+      "public_email": "info@urbasan.com",
+      "website": "https://www.urbasan.com/",
+      "business_hours": null,
+      "services": [
+        "Turnkey renovations",
+        "Kitchen renovations",
+        "Bathroom renovations",
+        "Interior design coordination"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Alicante renovation and interior-design company with a public showroom address on Calle San Agatángelo. Listed work includes turnkey home renovations plus kitchen and bathroom projects.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+urbasan-alicante@users.dimarket.app",
+      "seo": {
+        "title": "Urbasan Reformas & Interiorismo — Renovation in Alicante | DImarket",
+        "meta_description": "Urbasan Reformas & Interiorismo offers turnkey renovations, kitchen renovations, bathroom renovations in Alicante, Spain. Find contact details on DImarket.",
+        "slug": "urbasan-alicante",
+        "keywords": [
+          "Urbasan Reformas & Interiorismo",
+          "Renovation",
+          "Interior Design",
+          "Tiles",
+          "Plumbing",
+          "Electrician",
+          "Alicante",
+          "Valencia",
+          "Spain",
+          "Turnkey renovations",
+          "Kitchen renovations",
+          "Bathroom renovations",
+          "Interior design coordination",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.urbasan.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "construcciones-carmona-madrid",
+      "full_name": "Construcciones Carmona",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "HVAC",
+        "Painting",
+        "Doors"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-brick",
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "hvac-ac",
+        "painting-walls",
+        "carpentry-doors-install",
+        "carpentry-wood-structures"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Prado Egido 40, 28492 Mataelpino (El Boalo), Madrid",
+      "phone": "+34 613 014 831",
+      "public_email": null,
+      "website": "https://construccionesreformasmadrid.es/",
+      "business_hours": "Mon–Fri 11:00–14:00 and 18:00–20:00",
+      "services": [
+        "Full renovations of homes and premises",
+        "Masonry",
+        "Plumbing and electrical",
+        "Carpentry",
+        "Climate systems",
+        "Painting and finishes"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Family construction and renovation company based in Mataelpino, covering Madrid city and the northwest sierra municipalities. Public hours and trades include masonry, plumbing, electrical, carpentry, climate, and painting.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+construcciones-carmona-madrid@users.dimarket.app",
+      "seo": {
+        "title": "Construcciones Carmona — Construction Company in Madrid | DImarket",
+        "meta_description": "Construcciones Carmona offers full renovations of homes and premises, masonry, plumbing and electrical in Madrid, Spain. Find contact details on DImarket.",
+        "slug": "construcciones-carmona-madrid",
+        "keywords": [
+          "Construcciones Carmona",
+          "Construction Company",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "HVAC",
+          "Painting",
+          "Doors",
+          "Madrid",
+          "Spain",
+          "Full renovations of homes and premises",
+          "Masonry",
+          "Plumbing and electrical",
+          "Carpentry",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://construccionesreformasmadrid.es/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "jm-reformas-elite-madrid",
+      "full_name": "JM Reformas Élite S.L.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Demolition",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "demolition-partitions",
+        "demolition-walls",
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "tiling-install",
+        "carpentry-doors-install"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Ricardo Beltrán y Rozpide 7, 28026 Madrid",
+      "phone": "+34 624 614 361",
+      "public_email": "jmreformaselite@gmail.com",
+      "website": "https://jmreformaselite.com/",
+      "business_hours": null,
+      "services": [
+        "Full renovations",
+        "Bathroom and kitchen renovations",
+        "Demolition and masonry",
+        "Plumbing and electrical",
+        "Painting and tiling finishes"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Madrid renovation company (S.L.) with a published address in the south of the city. Public services span demolition, masonry, plumbing, electrical work, painting, tiling, and full home renovations.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+jm-reformas-elite-madrid@users.dimarket.app",
+      "seo": {
+        "title": "JM Reformas Élite S.L. — Renovation in Madrid | DImarket",
+        "meta_description": "JM Reformas Élite S.L. offers full renovations, bathroom and kitchen renovations, demolition and masonry in Madrid, Spain. Find contact details on DImarket.",
+        "slug": "jm-reformas-elite-madrid",
+        "keywords": [
+          "JM Reformas Élite S.L.",
+          "Renovation",
+          "Demolition",
+          "Plumbing",
+          "Electrician",
+          "Painting",
+          "Tiles",
+          "Madrid",
+          "Spain",
+          "Full renovations",
+          "Bathroom and kitchen renovations",
+          "Demolition and masonry",
+          "Plumbing and electrical",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://jmreformaselite.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "refiser-madrid",
+      "full_name": "REFISER — Obras y Reformas",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Construction Company"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-heating",
+        "electro-wiring",
+        "electro-outlets",
+        "painting-walls",
+        "carpentry-doors-install"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Ebanistería 3, 28037 Madrid",
+      "phone": "+34 638 419 932",
+      "public_email": null,
+      "website": "https://refiser.com/",
+      "business_hours": null,
+      "services": [
+        "Full renovations of homes and premises",
+        "Masonry",
+        "Plumbing and heating",
+        "Electrical installation and repairs",
+        "Painting and carpentry"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Madrid renovation and building-works company with a public office on Calle Ebanistería. Listed trades include masonry, plumbing, electrical work, painting, and carpentry for homes and commercial premises.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+refiser-madrid@users.dimarket.app",
+      "seo": {
+        "title": "REFISER — Obras y Reformas — Renovation in Madrid | DImarket",
+        "meta_description": "REFISER — Obras y Reformas offers full renovations of homes and premises, masonry, plumbing and heating in Madrid, Spain. Find contact details on DImarket.",
+        "slug": "refiser-madrid",
+        "keywords": [
+          "REFISER — Obras y Reformas",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "Painting",
+          "Construction Company",
+          "Madrid",
+          "Spain",
+          "Full renovations of homes and premises",
+          "Masonry",
+          "Plumbing and heating",
+          "Electrical installation and repairs",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://refiser.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "reformas-multiservicios-moraga-madrid",
+      "full_name": "Reformas y Multiservicios Moraga",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Renovation",
+        "Electrician",
+        "Painting",
+        "Flooring",
+        "Doors"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-boilers",
+        "plumbing-showers",
+        "electro-wiring",
+        "painting-walls",
+        "flooring-laminate",
+        "carpentry-doors-install"
+      ],
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Madrid, Madrid, Spain",
+      "address": "Calle Menasalbas 2, Madrid",
+      "phone": "+34 625 112 025",
+      "public_email": null,
+      "website": "https://www.reformasymultiservicios.es/",
+      "business_hours": null,
+      "services": [
+        "Plumbing call-outs and boiler work",
+        "Bathroom renovations",
+        "Kitchen renovations",
+        "Electrical and painting works",
+        "Floating floors and doors"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Madrid multi-service renovation and plumbing company with a public address on Calle Menasalbas. Listed work includes plumbing call-outs, bathroom and kitchen renovations, electrical work, painting, floors, and doors.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reformas-multiservicios-moraga-madrid@users.dimarket.app",
+      "seo": {
+        "title": "Reformas y Multiservicios Moraga — Plumbing in Madrid | DImarket",
+        "meta_description": "Reformas y Multiservicios Moraga offers plumbing call-outs and boiler work, bathroom renovations, kitchen renovations in Madrid, Spain. Find contact details on ",
+        "slug": "reformas-multiservicios-moraga-madrid",
+        "keywords": [
+          "Reformas y Multiservicios Moraga",
+          "Plumbing",
+          "Renovation",
+          "Electrician",
+          "Painting",
+          "Flooring",
+          "Doors",
+          "Madrid",
+          "Spain",
+          "Plumbing call-outs and boiler work",
+          "Bathroom renovations",
+          "Kitchen renovations",
+          "Electrical and painting works",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.reformasymultiservicios.es/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "generated_at": "2026-08-04T10:30:27.700Z",
+  "businesses_ready_to_import": 18,
+  "categories_populated": [
+    "Construction Company",
+    "Demolition",
+    "Doors",
+    "Drywall",
+    "Electrician",
+    "Flooring",
+    "HVAC",
+    "Insulation",
+    "Interior Design",
+    "Painting",
+    "Plastering",
+    "Plumbing",
+    "Renovation",
+    "Tiles",
+    "Windows"
+  ],
+  "categories_count": 15,
+  "cities_covered": [
+    "Alicante, Valencia, Spain",
+    "Darmstadt, Hessen, Germany",
+    "Madrid, Madrid, Spain"
+  ],
+  "cities_count": 3,
+  "duplicates_removed": 0,
+  "duplicates_detail": [],
+  "records_skipped_insufficient_public_info": 7,
+  "skipped_detail": [
+    {
+      "name": "Generic yellow-pages painter listings (Darmstadt)",
+      "reason": "Name-only aggregator entries without a verifiable website or published phone/address owned by the business."
+    },
+    {
+      "name": "ibau / public tender notices (Darmstadt)",
+      "reason": "Tender notices are not business directory profiles."
+    },
+    {
+      "name": "Unverified Google Maps pins without official website",
+      "reason": "Insufficient reusable public business facts without copying third-party reviews or photos."
+    },
+    {
+      "name": "Duplicate REFISER Coslada landing pages",
+      "reason": "Same company as REFISER Madrid; merged into one listing."
+    },
+    {
+      "name": "Duplicate Carbonell / Reformas Alicante brand variants",
+      "reason": "Same operating company already included as Carbonell Reformas Alicante."
+    },
+    {
+      "name": "Redosan Reformas (Alicante)",
+      "reason": "Appears only on third-party directories without a verified owned website, phone, or address."
+    },
+    {
+      "name": "Hardware / building-materials retailers without clear construction-service listing",
+      "reason": "Insufficient public service facts for a DImarket professional/company profile."
+    }
+  ],
+  "by_city": {
+    "Alicante, Valencia, Spain": 7,
+    "Darmstadt, Hessen, Germany": 7,
+    "Madrid, Madrid, Spain": 4
+  },
+  "by_role": {
+    "company": 16,
+    "professional": 2
+  },
+  "policy_notes": [
+    "Only publicly listed factual business information was used.",
+    "Bios, SEO titles, meta descriptions, and keywords are original DImarket text.",
+    "Reviews, ratings, biographies copied from third parties, photos, logos, and website layouts were not scraped or reused.",
+    "Auth emails are claimable directory+slug@users.dimarket.app addresses; public business emails stay in public_email only."
+  ]
+}
