@@ -13,6 +13,7 @@ import {
   HomeInteractiveMap,
   HomePopularProjects,
   HomeTopProfessionals,
+  HomeTopCompanies,
   HomeTrustBar,
   HomeWhyDimarket,
 } from '../components/home'
@@ -86,6 +87,7 @@ export function Home() {
       <HomeCategoriesPreview categories={data?.categories ?? []} loading={loading} />
       <HomePopularProjects projects={data?.projects ?? []} loading={loading} />
       <HomeTopProfessionals professionals={data?.professionals ?? []} loading={loading} />
+      <HomeTopCompanies companies={data?.companies ?? []} loading={loading} />
       <HomeWhyDimarket />
       <HomeCustomerReviews reviews={data?.reviews ?? []} />
       <HomeFeaturedCompanies />

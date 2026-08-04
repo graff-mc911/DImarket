@@ -50,6 +50,7 @@ export type HomeMarketplaceData = {
   categories: MarketplaceCategory[]
   projects: ListingWithImages[]
   professionals: HomeProfessional[]
+  companies: HomeProfessional[]
   reviews: HomeReview[]
   mapPoints: HomeMapPoint[]
 }
@@ -155,7 +156,6 @@ export async function fetchHomeProjects(limit = 12): Promise<ListingWithImages[]
 }
 
 export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfessional[]> {
-  // Include both individual masters and companies so the public directory is visible on Home.
   const { data } = await supabase
     .from('profiles')
     .select(`
@@ -166,20 +166,40 @@ export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfession
       )
     `)
     .eq('is_professional', true)
-    .in('user_role', ['professional', 'company'])
+    .eq('user_role', 'professional')
     .order('created_at', { ascending: false })
-    .limit(Math.max(limit * 3, 36))
+    .limit(Math.max(limit * 2, 24))
 
-  return ((data as HomeProfessional[] | null) ?? [])
-    .sort((a, b) => {
-      const af = a.is_featured ? 1 : 0
-      const bf = b.is_featured ? 1 : 0
-      if (bf !== af) return bf - af
-      const ratingDiff = (b.rating ?? 0) - (a.rating ?? 0)
-      if (ratingDiff !== 0) return ratingDiff
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    })
-    .slice(0, limit)
+  return sortHomeProfiles((data as HomeProfessional[] | null) ?? []).slice(0, limit)
+}
+
+export async function fetchHomeCompanies(limit = 12): Promise<HomeProfessional[]> {
+  const { data } = await supabase
+    .from('profiles')
+    .select(`
+      *,
+      professional_categories(
+        category_id,
+        category:categories(id, name, slug)
+      )
+    `)
+    .eq('is_professional', true)
+    .eq('user_role', 'company')
+    .order('created_at', { ascending: false })
+    .limit(Math.max(limit * 2, 24))
+
+  return sortHomeProfiles((data as HomeProfessional[] | null) ?? []).slice(0, limit)
+}
+
+function sortHomeProfiles(rows: HomeProfessional[]): HomeProfessional[] {
+  return [...rows].sort((a, b) => {
+    const af = a.is_featured ? 1 : 0
+    const bf = b.is_featured ? 1 : 0
+    if (bf !== af) return bf - af
+    const ratingDiff = (b.rating ?? 0) - (a.rating ?? 0)
+    if (ratingDiff !== 0) return ratingDiff
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  })
 }
 
 export async function fetchHomeReviews(limit = 8): Promise<HomeReview[]> {
@@ -388,17 +408,18 @@ export async function fetchHomeMapPoints(limit = 40): Promise<HomeMapPoint[]> {
 }
 
 export async function fetchHomeMarketplaceData(): Promise<HomeMarketplaceData> {
-  const [metrics, categories, projects, professionals, reviews, mapPoints] =
+  const [metrics, categories, projects, professionals, companies, reviews, mapPoints] =
     await Promise.all([
       fetchHomepageMetrics(),
       fetchMainMarketplaceCategories(),
       fetchHomeProjects(),
       fetchHomeProfessionals(),
+      fetchHomeCompanies(),
       fetchHomeReviews(),
       fetchHomeMapPoints(),
     ])
 
-  return { metrics, categories, projects, professionals, reviews, mapPoints }
+  return { metrics, categories, projects, professionals, companies, reviews, mapPoints }
 }
 
 export function formatHomeBudget(
