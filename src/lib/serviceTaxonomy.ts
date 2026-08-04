@@ -21,15 +21,54 @@ export type WorkMatcher = {
  */
 export const SUBCATEGORY_WORK_MATCHERS: Record<string, WorkMatcher> = {
   // Specialists
-  electrician: { prefixes: ['electro'], keywords: ['electrician', 'electrical', 'electricista'] },
-  plumber: { prefixes: ['plumbing'], keywords: ['plumber', 'plumbing', 'fontaner'] },
+  electrician: {
+    prefixes: ['electro'],
+    keywords: [
+      'electrician',
+      'electrical',
+      'electricista',
+      'elektriker',
+      'електрик',
+      'электрик',
+      'elektryk',
+      'électricien',
+    ],
+  },
+  plumber: {
+    prefixes: ['plumbing'],
+    keywords: [
+      'plumber',
+      'plumbing',
+      'fontaner',
+      'fontanero',
+      'klempner',
+      'сантехнік',
+      'сантехник',
+      'hydraulik',
+      'plombier',
+    ],
+  },
   installer: { prefixes: ['windows', 'drywall', 'carpentry'], keywords: ['installer', 'installation'] },
   mason: { prefixes: ['masonry'], keywords: ['mason', 'brick', 'albañil'] },
   'concrete-worker': { prefixes: ['concrete'], keywords: ['concrete', 'бетон'] },
   welder: { prefixes: ['welding', 'metal'], keywords: ['welder', 'welding', 'soldador'] },
   roofer: { prefixes: ['roofing'], keywords: ['roof', 'roofer', 'tejados'] },
-  painter: { prefixes: ['painting'], keywords: ['painter', 'painting', 'pintor'] },
-  tiler: { prefixes: ['tiling'], keywords: ['tiler', 'tiling', 'alicat'] },
+  painter: {
+    prefixes: ['painting'],
+    keywords: [
+      'painter',
+      'painting',
+      'pintor',
+      'maler',
+      'маляр',
+      'малярщик',
+      'peintre',
+    ],
+  },
+  tiler: {
+    prefixes: ['tiling'],
+    keywords: ['tiler', 'tiling', 'alicat', 'плиточник', 'fliesenleger'],
+  },
   carpenter: { prefixes: ['carpentry'], keywords: ['carpenter', 'carpentry', 'carpinter'] },
   'architect-designer': {
     prefixes: ['design-engineering'],
@@ -327,6 +366,126 @@ export function matchesServiceProfile(
 
 export function allSubcategorySlugs(): string[] {
   return serviceCategories.flatMap((c) => c.subcategories.map((s) => s.slug))
+}
+
+/** Normalize query for lexicon matching (lowercase, trim, collapse spaces). */
+function normalizeSearchNeedle(value: string): string {
+  return value.trim().toLowerCase().replace(/\s+/g, ' ')
+}
+
+/**
+ * Build a lexicon of profession / service terms from taxonomy titles + keywords.
+ * Used to keep Nominatim away from service queries.
+ */
+export function collectServiceLexicon(): Set<string> {
+  const set = new Set<string>()
+  const add = (raw: string) => {
+    const n = normalizeSearchNeedle(raw)
+    if (n.length >= 3) set.add(n)
+  }
+
+  for (const [slug, matcher] of Object.entries(SUBCATEGORY_WORK_MATCHERS)) {
+    add(slug.replace(/-/g, ' '))
+    for (const k of matcher.keywords ?? []) add(k)
+    for (const p of matcher.prefixes ?? []) add(p.replace(/-/g, ' '))
+  }
+  for (const alias of Object.keys(SEO_SERVICE_ALIASES)) add(alias)
+
+  for (const category of serviceCategories) {
+    for (const title of Object.values(category.title)) add(String(title))
+    for (const sub of category.subcategories) {
+      add(sub.slug.replace(/-/g, ' '))
+      for (const title of Object.values(sub.title)) add(String(title))
+    }
+  }
+
+  // Common multilingual profession tokens not always present in titles
+  for (const extra of [
+    'електрик',
+    'электрик',
+    'сантехнік',
+    'сантехник',
+    'маляр',
+    'малярщик',
+    'плиточник',
+    'юрист',
+    'адвокат',
+    'бухгалтер',
+  ]) {
+    add(extra)
+  }
+
+  return set
+}
+
+let cachedServiceLexicon: Set<string> | null = null
+
+/** True when the query is a known profession/service term — never geocode these. */
+export function isServiceKeyword(query: string): boolean {
+  const q = normalizeSearchNeedle(query)
+  if (q.length < 2) return false
+  if (!cachedServiceLexicon) cachedServiceLexicon = collectServiceLexicon()
+  if (cachedServiceLexicon.has(q)) return true
+  // Prefix / contains: "электрик в дармштадте" still starts with a profession token
+  for (const term of cachedServiceLexicon) {
+    if (term.length < 4) continue
+    if (q === term || q.startsWith(`${term} `) || q.endsWith(` ${term}`) || q.includes(` ${term} `)) {
+      return true
+    }
+  }
+  return false
+}
+
+/**
+ * Resolve a free-text service query to taxonomy entries (DB-first service index).
+ * Never involves geocoding.
+ */
+export function resolveServiceQuery(query: string): ResolvedService[] {
+  const q = normalizeSearchNeedle(query)
+  if (q.length < 2) return []
+
+  const hits: Array<ResolvedService & { score: number }> = []
+
+  for (const category of serviceCategories) {
+    for (const subcategory of category.subcategories) {
+      const matcher = SUBCATEGORY_WORK_MATCHERS[subcategory.slug] ?? {
+        keywords: [subcategory.title.en.toLowerCase(), subcategory.slug.replace(/-/g, ' ')],
+      }
+      const needles = [
+        subcategory.slug.replace(/-/g, ' '),
+        subcategory.id,
+        ...Object.values(subcategory.title).map((t) => String(t).toLowerCase()),
+        ...(matcher.keywords ?? []).map((k) => k.toLowerCase()),
+        ...(SEO_SERVICE_ALIASES[subcategory.slug] ? [subcategory.slug] : []),
+      ]
+      // Also match SEO aliases that point to this subcategory
+      for (const [alias, target] of Object.entries(SEO_SERVICE_ALIASES)) {
+        if (target === subcategory.slug) needles.push(alias)
+      }
+
+      let score = 0
+      for (const needle of needles) {
+        const n = needle.toLowerCase()
+        if (!n) continue
+        if (n === q) score = Math.max(score, 100)
+        else if (n.startsWith(q) || q.startsWith(n)) score = Math.max(score, 80)
+        else if (n.includes(q) || q.includes(n)) score = Math.max(score, 50)
+      }
+      if (score > 0) {
+        hits.push({ category, subcategory, matcher, score })
+      }
+    }
+  }
+
+  hits.sort((a, b) => b.score - a.score)
+  const seen = new Set<string>()
+  const unique: ResolvedService[] = []
+  for (const hit of hits) {
+    if (seen.has(hit.subcategory.slug)) continue
+    seen.add(hit.subcategory.slug)
+    unique.push({ category: hit.category, subcategory: hit.subcategory, matcher: hit.matcher })
+  }
+  return unique
 }
 
 export function isReservedAppPath(segment: string): boolean {

@@ -75,6 +75,13 @@ export async function searchLocations(query: string): Promise<LocationSuggestion
     return []
   }
 
+  // Defense in depth: never geocode known profession/service keywords.
+  // Import lazily to avoid circular deps with locationAutocomplete.
+  const { isServiceKeyword } = await import('./serviceTaxonomy')
+  if (isServiceKeyword(query)) {
+    return []
+  }
+
   try {
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=8&accept-language=en`

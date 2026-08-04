@@ -5,8 +5,13 @@ import {
   marketplaceServiceProsPath,
   type MarketplaceCategory,
 } from './marketplaceCategories'
-import { autocompleteLocations } from './locationAutocomplete'
 import { haversineKm } from './projectFeed'
+import {
+  matchesServiceProfile,
+  resolveServiceQuery,
+  serviceCanonicalPath,
+  type ResolvedService,
+} from './serviceTaxonomy'
 import type { ListingWithImages, Profile } from './types'
 
 export type SearchEntityType =
@@ -14,7 +19,7 @@ export type SearchEntityType =
   | 'category'
   | 'service'
   | 'project'
-  | 'city'
+  | 'material'
 
 export type SearchSuggestion = {
   id: string
@@ -43,9 +48,9 @@ export type SearchFilters = {
 export type AdvancedSearchResults = {
   professionals: Profile[]
   categories: MarketplaceCategory[]
-  services: Array<MarketplaceCategory & { parentSlug?: string }>
+  services: Array<MarketplaceCategory & { parentSlug?: string; href?: string }>
   projects: ListingWithImages[]
-  cities: SearchSuggestion[]
+  materials: ListingWithImages[]
 }
 
 export const EMPTY_SEARCH_FILTERS: SearchFilters = {
@@ -74,6 +79,20 @@ function scoreText(haystack: string, query: string): number {
   return hits * 15
 }
 
+function taxonomyServiceSuggestions(resolved: ResolvedService[]): SearchSuggestion[] {
+  return resolved.slice(0, 8).map((r) => ({
+    id: `tax-${r.subcategory.slug}`,
+    type: 'service' as const,
+    label: r.subcategory.title.en,
+    sublabel: r.category.title.en,
+    path: serviceCanonicalPath(r.subcategory.slug),
+  }))
+}
+
+/**
+ * SERVICE INDEX ONLY — professionals, companies, categories, services, projects, materials.
+ * Never calls Nominatim / geocoder.
+ */
 export async function fetchSearchSuggestions(
   query: string,
   lang: string,
@@ -82,7 +101,9 @@ export async function fetchSearchSuggestions(
   if (q.length < 2) return []
 
   const like = `%${q}%`
-  const [catsRes, prosRes, projectsRes, cities] = await Promise.all([
+  const resolved = resolveServiceQuery(q)
+
+  const [catsRes, prosRes, projectsRes, materialsRes] = await Promise.all([
     supabase
       .from('categories')
       .select('id, name, slug, icon_key, is_main, is_service, parent_id, name_i18n')
@@ -90,10 +111,12 @@ export async function fetchSearchSuggestions(
       .limit(8),
     supabase
       .from('profiles')
-      .select('id, full_name, location, is_professional, user_role')
+      .select(
+        'id, full_name, location, is_professional, user_role, bio, work_subcategory_slugs, professional_categories:professional_categories(category:categories(name, slug))',
+      )
       .eq('is_professional', true)
-      .ilike('full_name', like)
-      .limit(6),
+      .in('user_role', ['professional', 'company'])
+      .limit(40),
     supabase
       .from('listings')
       .select('id, title, city_name, location, status')
@@ -101,26 +124,57 @@ export async function fetchSearchSuggestions(
       .eq('status', 'active')
       .ilike('title', like)
       .limit(6),
-    autocompleteLocations(q).catch(() => []),
+    supabase
+      .from('listings')
+      .select('id, title, city_name, location, status, listing_type')
+      .eq('status', 'active')
+      .neq('listing_type', 'service_request')
+      .or(`title.ilike.${like},description.ilike.${like}`)
+      .limit(6),
   ])
 
   const suggestions: SearchSuggestion[] = []
+  const seen = new Set<string>()
+
+  for (const s of taxonomyServiceSuggestions(resolved)) {
+    if (seen.has(s.path)) continue
+    seen.add(s.path)
+    suggestions.push(s)
+  }
 
   for (const c of (catsRes.data as MarketplaceCategory[] | null) ?? []) {
     const label = marketplaceCategoryLabel(c, lang)
     const isService = c.is_service === true
+    const path = isService
+      ? marketplaceServiceProsPath(c.slug)
+      : marketplaceCategoryPath(c.slug)
+    if (seen.has(path)) continue
+    seen.add(path)
     suggestions.push({
       id: `cat-${c.id}`,
       type: isService ? 'service' : 'category',
       label,
       sublabel: isService ? 'Service' : 'Category',
-      path: isService
-        ? marketplaceServiceProsPath(c.slug)
-        : marketplaceCategoryPath(c.slug),
+      path,
     })
   }
 
-  for (const p of (prosRes.data as Array<Pick<Profile, 'id' | 'full_name' | 'location'>> | null) ?? []) {
+  const pros = (prosRes.data as Array<
+    Pick<Profile, 'id' | 'full_name' | 'location' | 'bio' | 'work_subcategory_slugs'> & {
+      professional_categories?: { category?: { name?: string | null; slug?: string | null } | null }[]
+    }
+  > | null) ?? []
+
+  const matchedPros = resolved.length
+    ? pros.filter((p) => resolved.some((r) => matchesServiceProfile(p, r.matcher)))
+    : pros.filter(
+        (p) =>
+          scoreText(p.full_name ?? '', q) > 0 ||
+          scoreText(p.bio ?? '', q) > 0 ||
+          scoreText(p.location ?? '', q) > 0,
+      )
+
+  for (const p of matchedPros.slice(0, 6)) {
     suggestions.push({
       id: `pro-${p.id}`,
       type: 'professional',
@@ -145,20 +199,63 @@ export async function fetchSearchSuggestions(
     })
   }
 
-  for (const city of cities.slice(0, 5)) {
-    const label = city.displayName || city.name
+  for (const l of (materialsRes.data as Array<{
+    id: string
+    title: string
+    city_name: string | null
+    location: string | null
+  }> | null) ?? []) {
     suggestions.push({
-      id: `city-${city.placeId || label}`,
-      type: 'city',
-      label,
-      sublabel: 'City',
-      path: `/search?q=${encodeURIComponent(label)}&city=${encodeURIComponent(city.name)}`,
+      id: `mat-${l.id}`,
+      type: 'material',
+      label: l.title,
+      sublabel: l.city_name || l.location || undefined,
+      path: `/listing/${l.id}`,
     })
   }
 
   return suggestions.slice(0, 16)
 }
 
+function passesLocationFilters(
+  locHaystack: string,
+  filters: SearchFilters,
+  coords: { lat: number | null; lng: number | null },
+): boolean {
+  const cityNeedle = filters.city.trim().toLowerCase()
+  const countryNeedle = filters.country.trim().toLowerCase()
+  const loc = locHaystack.toLowerCase()
+  if (cityNeedle && !loc.includes(cityNeedle)) {
+    // If we have distance + coords, admin city string is optional
+    if (!(filters.distanceKm != null && filters.lat != null && filters.lng != null && coords.lat != null && coords.lng != null)) {
+      return false
+    }
+  }
+  if (countryNeedle && !loc.includes(countryNeedle)) {
+    if (!(filters.distanceKm != null && filters.lat != null && filters.lng != null && coords.lat != null && coords.lng != null)) {
+      return false
+    }
+  }
+  if (
+    filters.distanceKm != null &&
+    filters.lat != null &&
+    filters.lng != null &&
+    coords.lat != null &&
+    coords.lng != null
+  ) {
+    const d = haversineKm(
+      { lat: filters.lat, lon: filters.lng },
+      { lat: coords.lat, lon: coords.lng },
+    )
+    if (d > filters.distanceKm) return false
+  }
+  return true
+}
+
+/**
+ * Full SERVICE search. Location filters apply separately.
+ * Never geocodes the service query.
+ */
 export async function runAdvancedSearch(
   query: string,
   filters: SearchFilters,
@@ -167,6 +264,7 @@ export async function runAdvancedSearch(
 ): Promise<AdvancedSearchResults> {
   const q = query.trim()
   const like = q ? `%${q}%` : null
+  const resolved = q ? resolveServiceQuery(q) : []
 
   const catSelect =
     'id, name, slug, icon_key, is_main, is_service, parent_id, name_i18n, professionals_count, avg_rating, cover_image_url, description, description_i18n, services_count, completed_projects_count, sort_order'
@@ -178,22 +276,23 @@ export async function runAdvancedSearch(
     .eq('is_service', true)
     .limit(40)
 
-  if (like) {
+  if (like && !resolved.length) {
     catsQuery = catsQuery.or(`name.ilike.${like},slug.ilike.${like}`)
     servicesQuery = servicesQuery.or(`name.ilike.${like},slug.ilike.${like}`)
-  } else {
+  } else if (!like) {
     catsQuery = catsQuery.order('sort_order', { ascending: true })
     servicesQuery = servicesQuery.order('professionals_count', { ascending: false })
   }
 
+  // When searching a profession, load directory broadly and match by work taxonomy.
   let prosQuery = supabase
     .from('profiles')
-    .select('*')
+    .select('*, professional_categories:professional_categories(category:categories(name, slug))')
     .eq('is_professional', true)
     .in('user_role', ['professional', 'company'])
-    .limit(80)
+    .limit(resolved.length ? 120 : 80)
 
-  if (like) {
+  if (like && !resolved.length) {
     prosQuery = prosQuery.or(
       `full_name.ilike.${like},bio.ilike.${like},location.ilike.${like}`,
     )
@@ -213,21 +312,67 @@ export async function runAdvancedSearch(
     )
   }
 
-  const [catsRes, servicesRes, prosRes, projectsRes, citySuggestions] = await Promise.all([
+  let materialsQuery = supabase
+    .from('listings')
+    .select('*, images:listing_images(*), category:categories(*)')
+    .eq('status', 'active')
+    .neq('listing_type', 'service_request')
+    .order('created_at', { ascending: false })
+    .limit(40)
+
+  if (like) {
+    materialsQuery = materialsQuery.or(
+      `title.ilike.${like},description.ilike.${like},location.ilike.${like},city_name.ilike.${like}`,
+    )
+  }
+
+  const [catsRes, servicesRes, prosRes, projectsRes, materialsRes] = await Promise.all([
     catsQuery,
     servicesQuery,
     prosQuery,
     projectsQuery,
-    q.length >= 2 ? autocompleteLocations(q).catch(() => []) : Promise.resolve([]),
+    materialsQuery,
   ])
 
   let categories = (catsRes.data as MarketplaceCategory[] | null) ?? []
-  let services = ((servicesRes.data as MarketplaceCategory[] | null) ?? []).map((s) => ({
+  type ServiceRow = MarketplaceCategory & { parentSlug?: string; href?: string }
+  let services: ServiceRow[] = ((servicesRes.data as MarketplaceCategory[] | null) ?? []).map((s) => ({
     ...s,
-    parentSlug: undefined as string | undefined,
+    parentSlug: undefined,
+    href: undefined,
   }))
 
-  if (q) {
+  // Merge taxonomy services into results (priority over empty DB hits)
+  if (resolved.length) {
+    const taxServices: ServiceRow[] = resolved.map((r) => ({
+      ...( {
+        id: `tax-${r.subcategory.slug}`,
+        name: r.subcategory.title.en,
+        slug: r.subcategory.slug,
+        icon_key: r.subcategory.icon,
+        is_main: false,
+        is_service: true,
+        parent_id: null,
+        name_i18n: r.subcategory.title,
+        professionals_count: 0,
+        avg_rating: null,
+        cover_image_url: r.subcategory.image,
+        description: r.subcategory.description.en,
+        description_i18n: r.subcategory.description,
+        services_count: 0,
+        completed_projects_count: 0,
+        sort_order: 0,
+      } as unknown as MarketplaceCategory),
+      parentSlug: r.category.slug,
+      href: serviceCanonicalPath(r.subcategory.slug),
+    }))
+    services = [
+      ...taxServices,
+      ...services.filter((s) => !resolved.some((r) => r.subcategory.slug === s.slug)),
+    ]
+  }
+
+  if (q && !resolved.length) {
     categories = categories.filter((c) => {
       const label = marketplaceCategoryLabel(c, lang)
       return scoreText(label, q) > 0 || scoreText(c.slug, q) > 0 || scoreText(c.name, q) > 0
@@ -236,13 +381,25 @@ export async function runAdvancedSearch(
       const label = marketplaceCategoryLabel(s, lang)
       return scoreText(label, q) > 0 || scoreText(s.slug, q) > 0 || scoreText(s.name, q) > 0
     })
+  } else if (resolved.length) {
+    categories = categories.filter((c) =>
+      resolved.some(
+        (r) =>
+          c.slug === r.category.slug ||
+          scoreText(marketplaceCategoryLabel(c, lang), q) > 0,
+      ),
+    )
   }
 
   let professionals = (prosRes.data as Profile[] | null) ?? []
   let projects = (projectsRes.data as ListingWithImages[] | null) ?? []
+  let materials = (materialsRes.data as ListingWithImages[] | null) ?? []
 
-  const cityNeedle = filters.city.trim().toLowerCase()
-  const countryNeedle = filters.country.trim().toLowerCase()
+  if (resolved.length) {
+    professionals = professionals.filter((p) =>
+      resolved.some((r) => matchesServiceProfile(p, r.matcher)),
+    )
+  }
 
   professionals = professionals.filter((p) => {
     if (filters.verifiedOnly && !p.is_verified) return false
@@ -252,29 +409,13 @@ export async function runAdvancedSearch(
       const langs = (p.languages ?? []).map((l) => l.toLowerCase())
       if (!filters.languages.some((l) => langs.includes(l.toLowerCase()))) return false
     }
-    const loc = (p.location ?? '').toLowerCase()
-    if (cityNeedle && !loc.includes(cityNeedle)) return false
-    if (countryNeedle && !loc.includes(countryNeedle)) return false
-    if (
-      filters.distanceKm != null &&
-      filters.lat != null &&
-      filters.lng != null &&
-      p.service_latitude != null &&
-      p.service_longitude != null
-    ) {
-      const d = haversineKm(
-        { lat: filters.lat, lon: filters.lng },
-        { lat: p.service_latitude, lon: p.service_longitude },
-      )
-      if (d > filters.distanceKm) return false
-    }
-    return true
+    return passesLocationFilters(p.location ?? '', filters, {
+      lat: p.service_latitude ?? null,
+      lng: p.service_longitude ?? null,
+    })
   })
 
   projects = projects.filter((l) => {
-    const loc = `${l.city_name ?? ''} ${l.location ?? ''} ${l.country_name ?? ''}`.toLowerCase()
-    if (cityNeedle && !loc.includes(cityNeedle)) return false
-    if (countryNeedle && !loc.includes(countryNeedle)) return false
     if (filters.priceMin != null && (l.budget_max ?? l.budget_min ?? 0) < filters.priceMin) {
       return false
     }
@@ -282,21 +423,20 @@ export async function runAdvancedSearch(
       const price = l.budget_min ?? l.budget_max
       if (price != null && price > filters.priceMax) return false
     }
-    if (
-      filters.distanceKm != null &&
-      filters.lat != null &&
-      filters.lng != null &&
-      l.latitude != null &&
-      l.longitude != null
-    ) {
-      const d = haversineKm(
-        { lat: filters.lat, lon: filters.lng },
-        { lat: l.latitude, lon: l.longitude },
-      )
-      if (d > filters.distanceKm) return false
-    }
-    return true
+    return passesLocationFilters(
+      `${l.city_name ?? ''} ${l.location ?? ''} ${l.country_name ?? ''}`,
+      filters,
+      { lat: l.latitude ?? null, lng: l.longitude ?? null },
+    )
   })
+
+  materials = materials.filter((l) =>
+    passesLocationFilters(
+      `${l.city_name ?? ''} ${l.location ?? ''} ${l.country_name ?? ''}`,
+      filters,
+      { lat: l.latitude ?? null, lng: l.longitude ?? null },
+    ),
+  )
 
   const sortPros = (list: Profile[]) => {
     const copy = [...list]
@@ -344,7 +484,7 @@ export async function runAdvancedSearch(
     }
   }
 
-  const sortProjects = (list: ListingWithImages[]) => {
+  const sortListings = (list: ListingWithImages[]) => {
     const copy = [...list]
     switch (sort) {
       case 'newest':
@@ -385,22 +525,12 @@ export async function runAdvancedSearch(
     }
   }
 
-  const cities: SearchSuggestion[] = (citySuggestions ?? []).slice(0, 8).map((c) => {
-    const label = c.displayName || c.name
-    return {
-      id: `city-${c.placeId || label}`,
-      type: 'city' as const,
-      label,
-      path: `/search?q=${encodeURIComponent(label)}&city=${encodeURIComponent(c.name)}`,
-    }
-  })
-
   return {
     professionals: sortPros(professionals).slice(0, 40),
     categories: categories.slice(0, 24),
     services: services.slice(0, 40),
-    projects: sortProjects(projects).slice(0, 40),
-    cities,
+    projects: sortListings(projects).slice(0, 40),
+    materials: sortListings(materials).slice(0, 40),
   }
 }
 

@@ -5,6 +5,7 @@ import {
   type SearchFilters,
   type SearchSort,
 } from '../../lib/advancedSearch'
+import { LocationAutocompleteField } from './LocationAutocompleteField'
 
 const LANG_OPTIONS = ['en', 'uk', 'ru', 'de', 'pl', 'fr', 'es', 'it', 'pt', 'ro'] as const
 
@@ -82,15 +83,24 @@ export function AdvancedSearchFilters({
         />
       </label>
 
-      <label className="adv-search__field">
+      <div className="adv-search__field">
         <span>{t('advancedSearch.city')}</span>
-        <input
-          type="text"
+        <LocationAutocompleteField
           value={filters.city}
-          onChange={(e) => set('city', e.target.value)}
+          onChange={(city) => onFiltersChange({ ...filters, city })}
+          onSelect={(s) =>
+            onFiltersChange({
+              ...filters,
+              city: s.name || '',
+              country: s.country || filters.country,
+              lat: s.lat ?? filters.lat,
+              lng: s.lon ?? filters.lng,
+              distanceKm: filters.distanceKm ?? 25,
+            })
+          }
           placeholder={t('advancedSearch.cityPlaceholder')}
         />
-      </label>
+      </div>
 
       <label className="adv-search__field">
         <span>{t('advancedSearch.distance')}</span>

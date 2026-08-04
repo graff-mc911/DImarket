@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { MapPin } from 'lucide-react'
 import { AdvancedSearchFilters } from '../components/search/AdvancedSearchFilters'
+import { LocationAutocompleteField } from '../components/search/LocationAutocompleteField'
 import { SearchAutocomplete } from '../components/search/SearchAutocomplete'
 import { ProfessionalCard } from '../components/ProfessionalCard'
 import { ListingCard } from '../components/ListingCard'
@@ -19,14 +19,14 @@ import { marketplaceCategoryLabel, marketplaceServiceProsPath } from '../lib/mar
 import { navigateTo } from '../lib/navigation'
 import { pushRecentSearch } from '../lib/searchHistory'
 
-type ResultTab = 'all' | 'professionals' | 'categories' | 'services' | 'projects' | 'cities'
+type ResultTab = 'all' | 'professionals' | 'categories' | 'services' | 'projects' | 'materials'
 
 const EMPTY_RESULTS: AdvancedSearchResults = {
   professionals: [],
   categories: [],
   services: [],
   projects: [],
-  cities: [],
+  materials: [],
 }
 
 const POPULAR_FALLBACK = [
@@ -95,14 +95,14 @@ export function SearchPage() {
     categories: results.categories.length,
     services: results.services.length,
     projects: results.projects.length,
-    cities: results.cities.length,
+    materials: results.materials.length,
   }
   const total =
     counts.professionals +
     counts.categories +
     counts.services +
     counts.projects +
-    counts.cities
+    counts.materials
 
   const tabs: Array<{ id: ResultTab; label: string; count: number }> = [
     { id: 'all', label: t('advancedSearch.tabAll'), count: total },
@@ -110,7 +110,7 @@ export function SearchPage() {
     { id: 'categories', label: t('advancedSearch.tabCategories'), count: counts.categories },
     { id: 'services', label: t('advancedSearch.tabServices'), count: counts.services },
     { id: 'projects', label: t('advancedSearch.tabProjects'), count: counts.projects },
-    { id: 'cities', label: t('advancedSearch.tabCities'), count: counts.cities },
+    { id: 'materials', label: t('advancedSearch.tabMaterials'), count: counts.materials },
   ]
 
   const show = (section: ResultTab) => tab === 'all' || tab === section
@@ -121,17 +121,75 @@ export function SearchPage() {
         <p className="adv-search__eyebrow">{t('advancedSearch.eyebrow')}</p>
         <h1>{t('advancedSearch.title')}</h1>
         <p className="adv-search__subtitle">{t('advancedSearch.subtitle')}</p>
-        <SearchAutocomplete
-          value={query}
-          onChange={setQuery}
-          onSubmit={(q) => {
-            setQuery(q)
-            setTab('all')
-            void runSearch(q)
-          }}
-          autoFocus={!initial.q}
-          popularFallback={POPULAR_FALLBACK}
-        />
+
+        <div className="adv-search__dual">
+          <div className="adv-search__dual-field">
+            <span className="adv-search__dual-label">{t('advancedSearch.whatLabel')}</span>
+            <SearchAutocomplete
+              value={query}
+              onChange={setQuery}
+              onSubmit={(q) => {
+                setQuery(q)
+                setTab('all')
+                void runSearch(q)
+              }}
+              autoFocus={!initial.q}
+              popularFallback={POPULAR_FALLBACK}
+              placeholder={t('advancedSearch.placeholder')}
+              hideSubmit
+            />
+          </div>
+
+          <div className="adv-search__dual-field">
+            <span className="adv-search__dual-label">{t('advancedSearch.whereLabel')}</span>
+            <LocationAutocompleteField
+              value={filters.city}
+              onChange={(city) => setFilters((f) => ({ ...f, city }))}
+              onSelect={(s) =>
+                setFilters((f) => ({
+                  ...f,
+                  city: s.name || '',
+                  country: s.country || f.country,
+                  lat: s.lat ?? null,
+                  lng: s.lon ?? null,
+                  distanceKm: f.distanceKm ?? 25,
+                }))
+              }
+              placeholder={t('advancedSearch.wherePlaceholder')}
+            />
+          </div>
+
+          <label className="adv-search__dual-field adv-search__dual-radius">
+            <span className="adv-search__dual-label">{t('advancedSearch.distance')}</span>
+            <select
+              value={filters.distanceKm ?? ''}
+              onChange={(e) =>
+                setFilters((f) => ({
+                  ...f,
+                  distanceKm: e.target.value ? Number(e.target.value) : null,
+                }))
+              }
+            >
+              <option value="">{t('advancedSearch.anyDistance')}</option>
+              <option value="10">10 km</option>
+              <option value="25">25 km</option>
+              <option value="50">50 km</option>
+              <option value="100">100 km</option>
+              <option value="200">200 km</option>
+            </select>
+          </label>
+
+          <button
+            type="button"
+            className="adv-search__dual-submit"
+            onClick={() => {
+              setTab('all')
+              void runSearch(query, filters, sort)
+            }}
+          >
+            {t('advancedSearch.search')}
+          </button>
+        </div>
       </header>
 
       <div className="adv-search__layout layout-page-gutter">
@@ -216,7 +274,9 @@ export function SearchPage() {
                         type="button"
                         className="adv-search__service-row"
                         onClick={() =>
-                          navigateTo(marketplaceServiceProsPath(s.slug, s.parentSlug))
+                          navigateTo(
+                            s.href || marketplaceServiceProsPath(s.slug, s.parentSlug),
+                          )
                         }
                       >
                         <span>{marketplaceCategoryLabel(s, language.code)}</span>
@@ -238,20 +298,12 @@ export function SearchPage() {
                 </section>
               )}
 
-              {show('cities') && counts.cities > 0 && (
+              {show('materials') && counts.materials > 0 && (
                 <section className="adv-search__section">
-                  <h2>{t('advancedSearch.tabCities')}</h2>
-                  <div className="adv-search__city-list">
-                    {results.cities.map((c) => (
-                      <button
-                        key={c.id}
-                        type="button"
-                        className="adv-search__city"
-                        onClick={() => navigateTo(c.path)}
-                      >
-                        <MapPin className="h-4 w-4" aria-hidden />
-                        {c.label}
-                      </button>
+                  <h2>{t('advancedSearch.tabMaterials')}</h2>
+                  <div className="adv-search__grid adv-search__grid--projects">
+                    {results.materials.map((l) => (
+                      <ListingCard key={l.id} listing={l} />
                     ))}
                   </div>
                 </section>

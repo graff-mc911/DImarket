@@ -3,7 +3,6 @@ import {
   Building2,
   Clock,
   FolderOpen,
-  MapPin,
   Search,
   Sparkles,
   UserRound,
@@ -26,7 +25,7 @@ const TYPE_ICON: Record<SearchEntityType, typeof UserRound> = {
   category: FolderOpen,
   service: Wrench,
   project: Briefcase,
-  city: MapPin,
+  material: Building2,
 }
 
 interface SearchAutocompleteProps {
@@ -36,6 +35,7 @@ interface SearchAutocompleteProps {
   placeholder?: string
   autoFocus?: boolean
   compact?: boolean
+  hideSubmit?: boolean
   popularFallback?: string[]
 }
 
@@ -46,6 +46,7 @@ export function SearchAutocomplete({
   placeholder,
   autoFocus,
   compact = false,
+  hideSubmit = false,
   popularFallback = [],
 }: SearchAutocompleteProps) {
   const { t, language } = useApp()
@@ -182,9 +183,11 @@ export function SearchAutocomplete({
             commit(text)
           }}
         />
-        <button type="submit" className="adv-search__submit">
-          {t('advancedSearch.search')}
-        </button>
+        {!hideSubmit ? (
+          <button type="submit" className="adv-search__submit">
+            {t('advancedSearch.search')}
+          </button>
+        ) : null}
       </form>
 
       {(showIdleHints || showSuggestions) && (
@@ -274,7 +277,7 @@ export function SearchAutocomplete({
                             ? t('advancedSearch.type.service')
                             : s.type === 'project'
                               ? t('advancedSearch.type.project')
-                              : t('advancedSearch.type.city')}
+                              : t('advancedSearch.type.material')}
                     </span>
                   </button>
                 )

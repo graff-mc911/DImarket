@@ -1,8 +1,11 @@
 /**
  * Location autocomplete: Google Places when VITE_GOOGLE_MAPS_API_KEY is set,
  * otherwise OpenStreetMap Nominatim.
+ *
+ * NEVER call this for profession/service keywords — use the service index instead.
  */
 import { searchLocations, type LocationSuggestion } from './geocoding'
+import { isServiceKeyword } from './serviceTaxonomy'
 
 declare global {
   interface Window {
@@ -69,6 +72,8 @@ function componentOf(place: GooglePlace, type: string): string {
 
 export async function autocompleteLocations(query: string): Promise<LocationSuggestion[]> {
   if (!query || query.trim().length < 2) return []
+  // Geocoder is location-only. Profession terms like "електрик" must never hit Nominatim.
+  if (isServiceKeyword(query)) return []
 
   const ready = await loadGoogleMapsPlaces()
   if (ready && window.google?.maps?.places) {
