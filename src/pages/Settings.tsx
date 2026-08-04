@@ -38,6 +38,7 @@ import {
   type NotificationPrefs,
 } from '../lib/notifications/notifications'
 import type { Profile } from '../lib/types'
+import { searchLocations } from '../lib/geocoding'
 
 function profileSaveErrorMessage(err: unknown): string {
   if (err && typeof err === 'object' && 'message' in err) {
@@ -68,6 +69,7 @@ export function Settings() {
   const [bio, setBio] = useState('')
   const [phone, setPhone] = useState('')
   const [location, setLocation] = useState('')
+  const [serviceRadiusKm, setServiceRadiusKm] = useState<string>('')
   const [website, setWebsite] = useState('')
   const [profilePhoto, setProfilePhoto] = useState('')
   const [isProfessional, setIsProfessional] = useState(false)
@@ -190,6 +192,11 @@ export function Settings() {
       setBio(data.bio ?? '')
       setPhone(data.phone ?? '')
       setLocation(data.location ?? '')
+      setServiceRadiusKm(
+        data.service_radius_km != null && data.service_radius_km > 0
+          ? String(data.service_radius_km)
+          : '',
+      )
       setWebsite(data.website ?? '')
       setProfilePhoto(data.profile_photo ?? '')
       setIsProfessional(Boolean(data.is_professional))
@@ -260,6 +267,25 @@ export function Settings() {
         preferred_language: preferredLanguage,
         preferred_currency: preferredCurrency,
         work_subcategory_slugs: isProfessional ? workSubcategories.subcategorySlugs : [],
+      }
+
+      if (isProfessional) {
+        const radius = serviceRadiusKm.trim() ? Number(serviceRadiusKm) : null
+        payload.service_radius_km =
+          radius != null && Number.isFinite(radius) && radius > 0 ? Math.round(radius) : null
+
+        if (normalizedLocation) {
+          try {
+            const hits = await searchLocations(normalizedLocation)
+            const hit = hits.find((h) => h.lat != null && h.lon != null)
+            if (hit?.lat != null && hit?.lon != null) {
+              payload.service_latitude = hit.lat
+              payload.service_longitude = hit.lon
+            }
+          } catch {
+            /* optional geocode */
+          }
+        }
       }
 
       const { data: updated, error } = await supabase
@@ -611,6 +637,27 @@ export function Settings() {
                           placeholder={t('register.locationPlaceholder')}
                         />
                       </div>
+
+                      {isProfessional ? (
+                        <div>
+                          <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                            {t('geo.serviceRadiusLabel')}
+                          </label>
+                          <select
+                            className="select-glass"
+                            value={serviceRadiusKm}
+                            onChange={(event) => setServiceRadiusKm(event.target.value)}
+                          >
+                            <option value="">{t('geo.serviceRadiusAny')}</option>
+                            {[5, 10, 15, 25, 30, 50, 75, 100, 150, 200].map((km) => (
+                              <option key={km} value={String(km)}>
+                                {km} km
+                              </option>
+                            ))}
+                          </select>
+                          <p className="mt-1 text-xs text-[#6f665d]">{t('geo.serviceRadiusHint')}</p>
+                        </div>
+                      ) : null}
                     </div>
 
                     <div>

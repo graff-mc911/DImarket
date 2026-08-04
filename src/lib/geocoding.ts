@@ -9,6 +9,22 @@ export interface LocationSuggestion {
 }
 
 export async function getCurrentLocation(): Promise<{ city: string; country: string } | null> {
+  const detailed = await getCurrentLocationDetailed()
+  if (!detailed?.city) return null
+  return { city: detailed.city, country: detailed.country }
+}
+
+export type CurrentLocationDetailed = {
+  city: string
+  country: string
+  region?: string
+  province?: string
+  postalCode?: string
+  lat: number
+  lon: number
+}
+
+export async function getCurrentLocationDetailed(): Promise<CurrentLocationDetailed | null> {
   try {
     const position = await new Promise<GeolocationPosition>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -20,23 +36,34 @@ export async function getCurrentLocation(): Promise<{ city: string; country: str
     const { latitude, longitude } = position.coords
 
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=uk`
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en`,
     )
 
     const data = await response.json()
+    const address = data.address ?? {}
 
-    const city = data.address?.city ||
-                 data.address?.town ||
-                 data.address?.village ||
-                 data.address?.municipality ||
-                 ''
-    const country = data.address?.country || ''
+    const city =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.municipality ||
+      address.suburb ||
+      ''
+    const country = address.country || ''
+    const region = address.state || address.region || ''
+    const province = address.province || address.county || address.state_district || ''
 
-    if (city) {
-      return { city, country }
+    if (!city && !country) return null
+
+    return {
+      city,
+      country,
+      region: region || undefined,
+      province: province || undefined,
+      postalCode: address.postcode || undefined,
+      lat: latitude,
+      lon: longitude,
     }
-
-    return null
   } catch (error) {
     console.error('Error getting location:', error)
     return null

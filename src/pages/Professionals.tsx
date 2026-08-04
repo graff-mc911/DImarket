@@ -8,6 +8,14 @@ import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { buildDisplayCategories, SITE_CATEGORY_SLUGS } from '../lib/siteCategories'
 import { findServiceBySlug, matchesServiceProfile } from '../lib/serviceTaxonomy'
+import { GeoSearchFilters } from '../components/GeoSearchFilters'
+import {
+  EMPTY_GEO_SEARCH,
+  geoSearchFromQuery,
+  matchProfileGeo,
+  sortByDistanceAsc,
+  type GeoSearchState,
+} from '../lib/geoSearch'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -35,10 +43,10 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedWork, setSelectedWork] = useState('')
-  const [sortBy, setSortBy] = useState<'rating' | 'reviews' | 'newest'>('newest')
+  const [geo, setGeo] = useState<GeoSearchState>({ ...EMPTY_GEO_SEARCH })
+  const [sortBy, setSortBy] = useState<'rating' | 'reviews' | 'newest' | 'closest'>('newest')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [minRating, setMinRating] = useState(0)
-  const [locationFilter, setLocationFilter] = useState('')
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -46,8 +54,24 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     if (category) setSelectedCategory(category)
     const work = params.get('work')
     if (work) setSelectedWork(work)
-    const location = params.get('location')
-    if (location) setLocationFilter(location)
+    const fromQuery = geoSearchFromQuery(params)
+    if (fromQuery.country || fromQuery.city || fromQuery.region) {
+      setGeo((g) => ({ ...g, ...fromQuery }))
+    } else {
+      const location = params.get('location')
+      if (location) {
+        const map: Record<string, string> = {
+          spain: 'Spain',
+          germany: 'Germany',
+          france: 'France',
+          italy: 'Italy',
+          poland: 'Poland',
+        }
+        const country = map[location.toLowerCase()]
+        if (country) setGeo((g) => ({ ...g, country }))
+        else setGeo((g) => ({ ...g, city: location }))
+      }
+    }
     const q = params.get('q')
     if (q) setSearchQuery(q)
   }, [])
@@ -116,10 +140,9 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
 
   const filteredProfessionals = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase()
-    const normalizedLocation = locationFilter.trim().toLowerCase()
 
-    return [...professionals]
-      .filter((professional) => {
+    const rows = professionals
+      .map((professional) => {
         const skills = (professional.professional_categories || [])
           .map((item) => item.category?.name?.toLowerCase() || '')
           .join(' ')
@@ -132,9 +155,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
 
         const matchesRating = minRating === 0 || (professional.rating || 0) >= minRating
 
-        const matchesLocation =
-          normalizedLocation === '' ||
-          professional.location?.toLowerCase().includes(normalizedLocation)
+        const geoHit = matchProfileGeo(professional, geo)
 
         const matchesCategory =
           selectedCategory === '' ||
@@ -158,45 +179,40 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
                   w.includes(selectedWork),
               ))
 
-        return (
-          matchesSearch &&
-          matchesRating &&
-          matchesLocation &&
-          matchesCategory &&
-          matchesWork
-        )
-      })
-      .sort((a, b) => {
-        switch (sortBy) {
-          case 'reviews':
-            return (b.total_reviews || 0) - (a.total_reviews || 0)
-          case 'newest':
-            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          case 'rating':
-          default:
-            return (b.rating || 0) - (a.rating || 0)
+        if (!(matchesSearch && matchesRating && geoHit.matches && matchesCategory && matchesWork)) {
+          return null
         }
+        return { ...professional, distanceKm: geoHit.distanceKm }
       })
-  }, [
-    locationFilter,
-    minRating,
-    professionals,
-    searchQuery,
-    selectedCategory,
-    selectedWork,
-    sortBy,
-  ])
+      .filter(Boolean) as Array<(typeof professionals)[number] & { distanceKm?: number | null }>
+
+    if (sortBy === 'closest') return sortByDistanceAsc(rows)
+
+    return [...rows].sort((a, b) => {
+      switch (sortBy) {
+        case 'reviews':
+          return (b.total_reviews || 0) - (a.total_reviews || 0)
+        case 'newest':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        case 'rating':
+        default:
+          return (b.rating || 0) - (a.rating || 0)
+      }
+    })
+  }, [geo, minRating, professionals, searchQuery, selectedCategory, selectedWork, sortBy])
 
   const activeFiltersCount = [
     selectedCategory,
     selectedWork,
+    geo.country,
+    geo.city,
+    geo.region,
     minRating > 0 ? 'rating' : '',
-    locationFilter,
   ].filter(Boolean).length
 
   const resetFilters = () => {
     setMinRating(0)
-    setLocationFilter('')
+    setGeo({ ...EMPTY_GEO_SEARCH })
     setSortBy('rating')
     setSelectedCategory('')
     setSelectedWork('')
@@ -303,15 +319,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
               />
             </div>
 
-            <div className="amazon-filter-group">
-              <label>{t('professionals.cityOrCountry')}</label>
-              <input
-                type="text"
-                value={locationFilter}
-                onChange={(e) => setLocationFilter(e.target.value)}
-                className="input-glass h-9 text-sm"
-              />
-            </div>
+            <GeoSearchFilters value={geo} onChange={setGeo} />
 
             <div className="amazon-filter-group">
               <label>{t('professionals.categoryLabel')}</label>
@@ -333,10 +341,13 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
               <label>{t('professionals.sortLabel')}</label>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'rating' | 'reviews' | 'newest')}
+                onChange={(e) =>
+                  setSortBy(e.target.value as 'rating' | 'reviews' | 'newest' | 'closest')
+                }
                 className="select-glass h-9 text-sm"
               >
                 <option value="rating">{t('professionals.sortRating')}</option>
+                <option value="closest">{t('advancedSearch.sortClosest')}</option>
                 <option value="reviews">{t('professionals.sortReviews')}</option>
                 <option value="newest">{t('professionals.sortNewest')}</option>
               </select>
@@ -377,7 +388,14 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
             <div className="directory-expert-list flex flex-col gap-4">
               {filteredProfessionals.map((professional, index) => (
                 <div key={professional.id}>
-                  <DirectoryExpertCard professional={professional} />
+                  <DirectoryExpertCard
+                    professional={professional}
+                    distanceKm={
+                      'distanceKm' in professional
+                        ? (professional as { distanceKm?: number | null }).distanceKm
+                        : null
+                    }
+                  />
                   {(index + 1) % 8 === 0 && index < filteredProfessionals.length - 1 && (
                     <MobileAdBanner
                       variant="inline"

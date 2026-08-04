@@ -70,6 +70,7 @@ import {
   isReservedAppPath,
   SEO_SERVICE_ALIASES,
 } from './lib/serviceTaxonomy'
+import { parseGeoServicePath } from './lib/geoSearch'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -110,6 +111,24 @@ function App() {
       isSeoLocale(parts[0])
     ) {
       return <SeoMarketLanding parts={parts} />
+    }
+
+    // Geo SEO: /spain/alicante/electricians or /spain/alicante/alicante/plumbers
+    if (parts.length === 3 || parts.length === 4) {
+      const geo = parseGeoServicePath(parts)
+      if (geo && findServiceBySlug(geo.tradeSlug)) {
+        return (
+          <ServiceResults
+            slug={geo.tradeSlug}
+            initialGeo={{
+              country: geo.country,
+              province: geo.province,
+              city: geo.city,
+              radius: '25',
+            }}
+          />
+        )
+      }
     }
 
     // Short SEO aliases: /electrician, /plumber, /lawyer, …

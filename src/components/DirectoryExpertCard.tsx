@@ -15,6 +15,7 @@ import {
 } from '../lib/professionalDisplay'
 import { resolveDirectoryAvatarUrl } from '../lib/directoryAvatars'
 import { supabase } from '../lib/supabase'
+import { formatDistanceKm, formatLocationParts } from '../lib/geoSearch'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -27,6 +28,7 @@ export type DirectoryExpert = Profile & {
 
 interface DirectoryExpertCardProps {
   professional: DirectoryExpert
+  distanceKm?: number | null
 }
 
 type ServiceRow = { name: string; priceLabel: string }
@@ -81,10 +83,15 @@ function buildServiceRows(
   return rows
 }
 
-export function DirectoryExpertCard({ professional }: DirectoryExpertCardProps) {
+export function DirectoryExpertCard({ professional, distanceKm }: DirectoryExpertCardProps) {
   const { t, language, user } = useApp()
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
+  const locParts = formatLocationParts(professional.location)
+  const distanceLabel =
+    distanceKm != null
+      ? t('geo.distanceAway').replace('{distance}', formatDistanceKm(distanceKm))
+      : null
 
   const displayName = formatProfessionalCardTitle(
     professional,
@@ -244,7 +251,12 @@ export function DirectoryExpertCard({ professional }: DirectoryExpertCardProps) 
             )}
             <div className="directory-expert__meta">
               <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              <span>{professional.location || t('professional.global')}</span>
+              <span>
+                {[locParts.city, locParts.region, locParts.country].filter(Boolean).join(', ') ||
+                  professional.location ||
+                  t('professional.global')}
+                {distanceLabel ? ` · ${distanceLabel}` : ''}
+              </span>
             </div>
             {categoryLabels.length > 0 ? (
               <ul className="directory-expert__tags">

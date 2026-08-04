@@ -187,6 +187,19 @@ export const SERVICE_SEO_SLUGS = [
   'auto-repair',
 ]
 
+/** Public geo landing pages: /spain/alicante/electricians */
+export const GEO_SERVICE_LANDINGS = [
+  '/spain/alicante/electricians',
+  '/spain/alicante/plumbers',
+  '/spain/valencia/electricians',
+  '/spain/madrid/electricians',
+  '/spain/madrid/lawyers',
+  '/spain/barcelona/plumbers',
+  '/spain/malaga/painters',
+  '/germany/darmstadt/electricians',
+  '/france/paris/painters',
+]
+
 export function serviceSeoRoutes() {
   const short = ['electrician', 'plumber', 'painter', 'tiler', 'roofer', 'handyman', 'lawyer', 'accountant']
   const routes = short.map((slug) => ({
@@ -205,6 +218,19 @@ export function serviceSeoRoutes() {
       changefreq: 'daily',
       priority: 0.85,
       schema: 'service',
+    })
+  }
+  for (const path of GEO_SERVICE_LANDINGS) {
+    const parts = path.split('/').filter(Boolean)
+    const trade = parts[parts.length - 1]
+    const place = parts.slice(0, -1).join(', ')
+    routes.push({
+      path,
+      title: `${trade} in ${place} | DImarket`,
+      description: `Find verified ${trade} near ${place} on DImarket. Filter by radius and request a free quote.`,
+      changefreq: 'daily',
+      priority: 0.9,
+      schema: 'local',
     })
   }
   return routes
@@ -235,6 +261,8 @@ export function prerenderRoutes() {
     '/plumber',
     '/lawyer',
     '/services/electrician',
+    '/spain/alicante/electricians',
+    '/spain/madrid/lawyers',
     '/de/darmstadt/elektriker',
     '/es/alicante/electricista',
     '/es/madrid/fontanero',

@@ -175,6 +175,7 @@ export interface Database {
           availability_status: 'available' | 'busy' | 'limited' | 'unavailable'
           service_latitude: number | null
           service_longitude: number | null
+          service_radius_km: number | null
 
           created_at: string
           updated_at: string
@@ -223,6 +224,7 @@ export interface Database {
           availability_status?: 'available' | 'busy' | 'limited' | 'unavailable'
           service_latitude?: number | null
           service_longitude?: number | null
+          service_radius_km?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -265,6 +267,12 @@ export interface Database {
           preferred_language?: string | null
           preferred_currency?: string | null
           work_subcategory_slugs?: string[]
+          completed_jobs?: number
+          languages?: string[]
+          availability_status?: 'available' | 'busy' | 'limited' | 'unavailable'
+          service_latitude?: number | null
+          service_longitude?: number | null
+          service_radius_km?: number | null
           created_at?: string
           updated_at?: string
         }

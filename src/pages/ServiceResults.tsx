@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { CheckCircle2, ShieldCheck, Sparkles, Users } from 'lucide-react'
 import { DirectoryExpertCard, type DirectoryExpert } from '../components/DirectoryExpertCard'
 import { Breadcrumbs } from '../components/Breadcrumbs'
+import { GeoSearchFilters } from '../components/GeoSearchFilters'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -16,17 +17,30 @@ import {
 } from '../lib/serviceTaxonomy'
 import { serviyaLabel } from '../config/categoriesI18n'
 import type { TranslationKey } from '../lib/i18n'
+import {
+  EMPTY_GEO_SEARCH,
+  geoSearchFromQuery,
+  matchProfileGeo,
+  resolveCityCenter,
+  sortByDistanceAsc,
+  type GeoSearchState,
+} from '../lib/geoSearch'
 
 const PAGE_SIZE = 12
 
 type RoleFilter = 'all' | 'professional' | 'company'
+type SortMode = 'rating' | 'reviews' | 'newest' | 'closest'
+
+type DirectoryExpertWithDistance = DirectoryExpert & { distanceKm?: number | null }
 
 interface ServiceResultsProps {
   /** Subcategory slug from /services/:slug or SEO alias */
   slug: string
+  /** Optional pre-filled geo from SEO location landings */
+  initialGeo?: Partial<GeoSearchState>
 }
 
-export function ServiceResults({ slug }: ServiceResultsProps) {
+export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
   const { t, language } = useApp()
   const lang = language.code
 
@@ -35,24 +49,38 @@ export function ServiceResults({ slug }: ServiceResultsProps) {
   const [profiles, setProfiles] = useState<DirectoryExpert[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [locationFilter, setLocationFilter] = useState('')
+  const [geo, setGeo] = useState<GeoSearchState>({ ...EMPTY_GEO_SEARCH, ...initialGeo })
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all')
   const [minRating, setMinRating] = useState(0)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [availableOnly, setAvailableOnly] = useState(false)
-  const [sortBy, setSortBy] = useState<'rating' | 'reviews' | 'newest'>('rating')
+  const [sortBy, setSortBy] = useState<SortMode>('rating')
   const [page, setPage] = useState(1)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const loc = params.get('location')
-    if (loc) setLocationFilter(loc)
+    const fromQuery = geoSearchFromQuery(params)
+    setGeo((prev) => ({ ...prev, ...EMPTY_GEO_SEARCH, ...initialGeo, ...fromQuery }))
     const role = params.get('role')
     if (role === 'professional' || role === 'company') setRoleFilter(role)
     const q = params.get('q')
     if (q) setSearchQuery(q)
-  }, [slug])
+    // Map legacy location=spain|germany labels to country when possible
+    const legacyLoc = params.get('location')
+    if (legacyLoc && !fromQuery.country && !fromQuery.city) {
+      const map: Record<string, string> = {
+        spain: 'Spain',
+        germany: 'Germany',
+        france: 'France',
+        italy: 'Italy',
+        poland: 'Poland',
+      }
+      const country = map[legacyLoc.toLowerCase()]
+      if (country) setGeo((g) => ({ ...g, country }))
+      else setGeo((g) => ({ ...g, city: legacyLoc }))
+    }
+  }, [slug, initialGeo])
 
   useEffect(() => {
     void loadProfiles()
@@ -60,7 +88,25 @@ export function ServiceResults({ slug }: ServiceResultsProps) {
 
   useEffect(() => {
     setPage(1)
-  }, [searchQuery, locationFilter, roleFilter, minRating, verifiedOnly, availableOnly, sortBy, slug])
+  }, [searchQuery, geo, roleFilter, minRating, verifiedOnly, availableOnly, sortBy, slug])
+
+  // Resolve city center for SEO / selected city when coords missing
+  useEffect(() => {
+    if (!geo.city || !geo.country) return
+    if (geo.originLat != null && geo.originLng != null) return
+    let cancelled = false
+    void resolveCityCenter(geo.country, geo.city).then((center) => {
+      if (cancelled || !center) return
+      setGeo((g) =>
+        g.city === geo.city && g.originLat == null
+          ? { ...g, originLat: center.lat, originLng: center.lon }
+          : g,
+      )
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [geo.city, geo.country, geo.originLat, geo.originLng])
 
   useEffect(() => {
     if (!resolved) {
@@ -144,54 +190,48 @@ export function ServiceResults({ slug }: ServiceResultsProps) {
 
   const filtered = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
-    const loc = locationFilter.trim().toLowerCase()
 
-    return [...serviceMatches]
-      .filter((p) => {
-        if (roleFilter === 'professional' && p.user_role !== 'professional') return false
-        if (roleFilter === 'company' && p.user_role !== 'company') return false
+    const rows: DirectoryExpertWithDistance[] = []
+    for (const p of serviceMatches) {
+      if (roleFilter === 'professional' && p.user_role !== 'professional') continue
+      if (roleFilter === 'company' && p.user_role !== 'company') continue
 
-        const skills = (p.professional_categories || [])
-          .map((item) => item.category?.name?.toLowerCase() || '')
-          .join(' ')
+      const skills = (p.professional_categories || [])
+        .map((item) => item.category?.name?.toLowerCase() || '')
+        .join(' ')
 
-        const matchesSearch =
-          !q ||
-          p.full_name?.toLowerCase().includes(q) ||
-          p.bio?.toLowerCase().includes(q) ||
-          skills.includes(q)
+      const matchesSearch =
+        !q ||
+        p.full_name?.toLowerCase().includes(q) ||
+        p.bio?.toLowerCase().includes(q) ||
+        skills.includes(q)
 
-        const matchesLocation = !loc || p.location?.toLowerCase().includes(loc)
-        const matchesRating = minRating === 0 || (p.rating || 0) >= minRating
-        const matchesVerified =
-          !verifiedOnly ||
-          Boolean(p.verification_level && p.verification_level !== 'none')
-        const matchesAvailable =
-          !availableOnly || p.availability_status === 'available' || !p.availability_status
+      const geoHit = matchProfileGeo(p, geo)
+      const matchesRating = minRating === 0 || (p.rating || 0) >= minRating
+      const matchesVerified =
+        !verifiedOnly || Boolean(p.verification_level && p.verification_level !== 'none')
+      const matchesAvailable =
+        !availableOnly || p.availability_status === 'available' || !p.availability_status
 
-        return matchesSearch && matchesLocation && matchesRating && matchesVerified && matchesAvailable
-      })
-      .sort((a, b) => {
-        switch (sortBy) {
-          case 'reviews':
-            return (b.total_reviews || 0) - (a.total_reviews || 0)
-          case 'newest':
-            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          case 'rating':
-          default:
-            return (b.rating || 0) - (a.rating || 0)
-        }
-      })
-  }, [
-    serviceMatches,
-    searchQuery,
-    locationFilter,
-    roleFilter,
-    minRating,
-    verifiedOnly,
-    availableOnly,
-    sortBy,
-  ])
+      if (!(matchesSearch && geoHit.matches && matchesRating && matchesVerified && matchesAvailable)) {
+        continue
+      }
+      rows.push({ ...p, distanceKm: geoHit.distanceKm })
+    }
+
+    if (sortBy === 'closest') return sortByDistanceAsc(rows)
+    return rows.sort((a, b) => {
+      switch (sortBy) {
+        case 'reviews':
+          return (b.total_reviews || 0) - (a.total_reviews || 0)
+        case 'newest':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        case 'rating':
+        default:
+          return (b.rating || 0) - (a.rating || 0)
+      }
+    })
+  }, [serviceMatches, searchQuery, geo, roleFilter, minRating, verifiedOnly, availableOnly, sortBy])
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const paged = filtered.slice(0, page * PAGE_SIZE)
@@ -199,7 +239,11 @@ export function ServiceResults({ slug }: ServiceResultsProps) {
 
   const activeFiltersCount = [
     searchQuery,
-    locationFilter,
+    geo.country,
+    geo.region,
+    geo.province,
+    geo.city,
+    geo.fromGps ? 'gps' : '',
     roleFilter !== 'all' ? roleFilter : '',
     minRating > 0 ? 'rating' : '',
     verifiedOnly ? 'verified' : '',
@@ -208,7 +252,7 @@ export function ServiceResults({ slug }: ServiceResultsProps) {
 
   const resetFilters = () => {
     setSearchQuery('')
-    setLocationFilter('')
+    setGeo({ ...EMPTY_GEO_SEARCH })
     setRoleFilter('all')
     setMinRating(0)
     setVerifiedOnly(false)
@@ -247,8 +291,8 @@ export function ServiceResults({ slug }: ServiceResultsProps) {
       setPage={setPage}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
-      locationFilter={locationFilter}
-      setLocationFilter={setLocationFilter}
+      geo={geo}
+      setGeo={setGeo}
       roleFilter={roleFilter}
       setRoleFilter={setRoleFilter}
       minRating={minRating}
@@ -280,8 +324,8 @@ function ServiceResultsView({
   setPage,
   searchQuery,
   setSearchQuery,
-  locationFilter,
-  setLocationFilter,
+  geo,
+  setGeo,
   roleFilter,
   setRoleFilter,
   minRating,
@@ -304,15 +348,15 @@ function ServiceResultsView({
   specialistCount: number
   companyCount: number
   filteredCount: number
-  paged: DirectoryExpert[]
+  paged: DirectoryExpertWithDistance[]
   hasMore: boolean
   page: number
   pageCount: number
   setPage: (n: number | ((p: number) => number)) => void
   searchQuery: string
   setSearchQuery: (v: string) => void
-  locationFilter: string
-  setLocationFilter: (v: string) => void
+  geo: GeoSearchState
+  setGeo: (v: GeoSearchState) => void
   roleFilter: RoleFilter
   setRoleFilter: (v: RoleFilter) => void
   minRating: number
@@ -321,8 +365,8 @@ function ServiceResultsView({
   setVerifiedOnly: (v: boolean) => void
   availableOnly: boolean
   setAvailableOnly: (v: boolean) => void
-  sortBy: 'rating' | 'reviews' | 'newest'
-  setSortBy: (v: 'rating' | 'reviews' | 'newest') => void
+  sortBy: SortMode
+  setSortBy: (v: SortMode) => void
   mobileFiltersOpen: boolean
   setMobileFiltersOpen: (v: boolean | ((x: boolean) => boolean)) => void
   activeFiltersCount: number
@@ -415,16 +459,7 @@ function ServiceResultsView({
                 className="input-glass h-9 text-sm"
               />
             </div>
-            <div className="amazon-filter-group">
-              <label>{t('professionals.cityOrCountry')}</label>
-              <input
-                type="text"
-                value={locationFilter}
-                onChange={(e) => setLocationFilter(e.target.value)}
-                className="input-glass h-9 text-sm"
-                placeholder={t('services.locationPlaceholder')}
-              />
-            </div>
+            <GeoSearchFilters value={geo} onChange={setGeo} />
             <div className="amazon-filter-group">
               <label>{t('services.roleLabel')}</label>
               <select
@@ -441,10 +476,11 @@ function ServiceResultsView({
               <label>{t('professionals.sortLabel')}</label>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'rating' | 'reviews' | 'newest')}
+                onChange={(e) => setSortBy(e.target.value as SortMode)}
                 className="select-glass h-9 text-sm"
               >
                 <option value="rating">{t('professionals.sortRating')}</option>
+                <option value="closest">{t('advancedSearch.sortClosest')}</option>
                 <option value="reviews">{t('professionals.sortReviews')}</option>
                 <option value="newest">{t('professionals.sortNewest')}</option>
               </select>
@@ -504,7 +540,10 @@ function ServiceResultsView({
               <div className="directory-expert-list flex flex-col gap-4">
                 {paged.map((professional, index) => (
                   <div key={professional.id}>
-                    <DirectoryExpertCard professional={professional} />
+                    <DirectoryExpertCard
+                      professional={professional}
+                      distanceKm={professional.distanceKm}
+                    />
                     {(index + 1) % 8 === 0 && index < paged.length - 1 && (
                       <MobileAdBanner
                         variant="inline"
