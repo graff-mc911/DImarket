@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
+import { CheckCircle2, ShieldCheck, Sparkles, Users } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Profile, Category } from '../lib/types'
-import { ProfessionalCard } from '../components/ProfessionalCard'
+import { DirectoryExpertCard } from '../components/DirectoryExpertCard'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -86,14 +87,14 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
 
   const translateCategory = (category: Category) => {
     const newKey = `category.name.${category.slug}`
-    const newValue = t(newKey)
+    const newValue = t(newKey as never)
 
     if (newValue !== newKey) {
       return newValue
     }
 
     const legacyKey = `category.${category.slug}`
-    const legacyValue = t(legacyKey)
+    const legacyValue = t(legacyKey as never)
 
     if (legacyValue !== legacyKey) {
       return legacyValue
@@ -186,45 +187,78 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     setSearchQuery('')
   }
 
+  const sidebarCategories = useMemo(() => {
+    return categories
+      .map((category) => ({
+        id: category.id,
+        slug: category.slug,
+        label: translateCategory(category),
+        count: filteredProfessionals.filter((professional) =>
+          (professional.professional_categories || []).some(
+            (item) => item.category?.slug === category.slug || item.category_id === category.id,
+          ),
+        ).length,
+      }))
+      .filter((item) => item.count > 0)
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+      .slice(0, 14)
+  }, [categories, filteredProfessionals, t])
+
   return (
-    <div className="py-6 pb-24 lg:pb-8">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-[var(--ink-900)] md:text-2xl">
-            {isCompanyCatalog ? t('companies.simpleTitle') : t('professionals.simpleTitle')}
-          </h1>
-          <p className="mt-1 text-sm text-[var(--ink-600)]">
-            {loading
-              ? t('professionals.loadingSimple')
-              : `${filteredProfessionals.length} ${
-                  isCompanyCatalog ? t('companies.countSuffix') : t('professionals.countSuffix')
-                }`}
-          </p>
-          {!isCompanyCatalog && (
-            <p className="mt-1 text-xs text-[var(--ink-500)]">
-              {t('professionals.mastersOnlyHint')}{' '}
-              <button type="button" onClick={() => navigateTo('/companies')} className="amazon-link font-medium">
-                {t('companies.browseLink')}
-              </button>
+    <div className="directory-page pb-24 lg:pb-8">
+      <section className="directory-hero mb-6 overflow-hidden rounded-xl border border-[#d5d9d9] bg-gradient-to-br from-[#f7fafc] via-white to-[#fff8ef]">
+        <div className="flex flex-col gap-5 p-5 md:flex-row md:items-end md:justify-between md:p-8">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">
+              {isCompanyCatalog ? t('header.findCompanies') : t('professionals.eyebrow')}
             </p>
-          )}
-          {isCompanyCatalog && (
-            <p className="mt-1 text-xs text-[var(--ink-500)]">
-              {t('companies.catalogHint')}{' '}
-              <button type="button" onClick={() => navigateTo('/professionals')} className="amazon-link font-medium">
-                {t('professionals.browseLink')}
-              </button>
+            <h1 className="mt-2 text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-3xl">
+              {isCompanyCatalog ? t('companies.simpleTitle') : t('professionals.simpleTitle')}
+            </h1>
+            <p className="mt-2 text-sm text-[var(--ink-600)] md:text-base">
+              {isCompanyCatalog ? t('companies.catalogHint') : t('professionals.simpleDescription')}
             </p>
-          )}
+            <ul className="mt-4 flex flex-col gap-2 text-sm text-[var(--ink-700)] sm:flex-row sm:flex-wrap sm:gap-x-5 sm:gap-y-2">
+              <li className="inline-flex items-center gap-2">
+                <Users className="h-4 w-4 text-[var(--brand-ai)]" aria-hidden />
+                {t('directory.benefitExperts')}
+              </li>
+              <li className="inline-flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[var(--brand-ai)]" aria-hidden />
+                {t('directory.benefitCompare')}
+              </li>
+              <li className="inline-flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-[var(--brand-ai)]" aria-hidden />
+                {t('directory.benefitQuotes')}
+              </li>
+            </ul>
+            <p className="mt-3 text-xs text-[var(--ink-500)]">
+              {loading
+                ? t('professionals.loadingSimple')
+                : `${filteredProfessionals.length} ${
+                    isCompanyCatalog ? t('companies.countSuffix') : t('professionals.countSuffix')
+                  }`}
+              {' · '}
+              {!isCompanyCatalog ? (
+                <button type="button" onClick={() => navigateTo('/companies')} className="amazon-link font-medium">
+                  {t('companies.browseLink')}
+                </button>
+              ) : (
+                <button type="button" onClick={() => navigateTo('/professionals')} className="amazon-link font-medium">
+                  {t('professionals.browseLink')}
+                </button>
+              )}
+            </p>
+          </div>
+          <button onClick={() => navigateTo('/create-ad')} type="button" className="btn-primary shrink-0 px-5 py-2.5 text-sm">
+            {t('professionals.postJob')}
+          </button>
         </div>
-        <button onClick={() => navigateTo('/create-ad')} type="button" className="btn-primary px-4 py-2 text-sm">
-          {t('professionals.postJob')}
-        </button>
-      </div>
+      </section>
 
       <button
         type="button"
-        onClick={() => setMobileFiltersOpen(v => !v)}
+        onClick={() => setMobileFiltersOpen((v) => !v)}
         className="btn-secondary mb-4 w-full py-2 text-sm lg:hidden"
       >
         {t('professionals.filtersButton')}
@@ -232,7 +266,11 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
       </button>
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-        <aside className={`amazon-filter-sidebar w-full lg:w-[220px] lg:shrink-0 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
+        <aside
+          className={`amazon-filter-sidebar w-full lg:w-[220px] lg:shrink-0 ${
+            mobileFiltersOpen ? 'block' : 'hidden lg:block'
+          }`}
+        >
           <h2 className="text-base font-bold text-[var(--ink-900)]">{t('professionals.filtersButton')}</h2>
 
           <div className="mt-3 space-y-0">
@@ -319,20 +357,22 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
           <MobileAdBanner variant="horizontal" page="professionals" outerClassName="mb-4" />
 
           {loading ? (
-            <div className="amazon-section-card p-8 text-center text-[var(--ink-500)]">
-              {t('professionals.loadingSimple')}
+            <div className="space-y-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="h-44 animate-pulse rounded-xl bg-[#f3f4f4]" />
+              ))}
             </div>
           ) : filteredProfessionals.length > 0 ? (
-            <div className="product-grid">
+            <div className="directory-expert-list flex flex-col gap-4">
               {filteredProfessionals.map((professional, index) => (
                 <div key={professional.id}>
-                  <ProfessionalCard professional={professional} />
+                  <DirectoryExpertCard professional={professional} />
                   {(index + 1) % 8 === 0 && index < filteredProfessionals.length - 1 && (
                     <MobileAdBanner
                       variant="inline"
                       page="professionals"
                       inlineIndex={2}
-                      outerClassName="mt-6"
+                      outerClassName="mt-4"
                     />
                   )}
                 </div>
@@ -340,12 +380,8 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
             </div>
           ) : (
             <div className="amazon-section-card p-10 text-center">
-              <h2 className="text-lg font-bold text-[var(--ink-900)]">
-                {t('professionals.emptyTitle')}
-              </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--ink-600)]">
-                {t('professionals.emptyText')}
-              </p>
+              <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('professionals.emptyTitle')}</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--ink-600)]">{t('professionals.emptyText')}</p>
               <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <button onClick={resetFilters} type="button" className="btn-secondary text-sm">
                   {t('professionals.clearFiltersSimple')}
@@ -356,8 +392,38 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
               </div>
             </div>
           )}
-
         </main>
+
+        <aside className="directory-services-sidebar hidden w-full shrink-0 xl:block xl:w-[240px]">
+          <div className="sticky top-24 rounded-xl border border-[#d5d9d9] bg-white p-4">
+            <h2 className="text-base font-bold text-[var(--ink-900)]">{t('directory.servicesSidebar')}</h2>
+            {sidebarCategories.length === 0 ? (
+              <p className="mt-3 text-sm text-[var(--ink-500)]">{t('professionals.emptyText')}</p>
+            ) : (
+              <ul className="mt-3 space-y-1">
+                {sidebarCategories.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedCategory(selectedCategory === item.slug ? '' : item.slug)
+                      }
+                      className={`flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-[#f3f4f4] ${
+                        selectedCategory === item.slug
+                          ? 'bg-[#f3f4f4] font-semibold text-[var(--ink-900)]'
+                          : 'text-[var(--ink-700)]'
+                      }`}
+                    >
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[var(--ink-400)]" aria-hidden />
+                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                      <span className="text-xs text-[var(--ink-400)]">{item.count}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </aside>
       </div>
     </div>
   )

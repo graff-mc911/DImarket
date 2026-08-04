@@ -1,0 +1,254 @@
+import { CheckSquare, Heart, MapPin, Star } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Category, Profile } from '../lib/types'
+import { useApp } from '../contexts/AppContext'
+import { navigateTo } from '../lib/navigation'
+import {
+  categorySlugForSubcategory,
+  getSubcategoryDef,
+  labelFor,
+} from '../lib/categoryCatalog'
+import {
+  formatProfessionalCardTitle,
+  isCompanyProfile,
+  resolveProfessionalCategoryLabels,
+} from '../lib/professionalDisplay'
+import { supabase } from '../lib/supabase'
+
+interface ProfessionalCategoryLink {
+  category_id: string
+  category?: Category | null
+}
+
+export type DirectoryExpert = Profile & {
+  professional_categories?: ProfessionalCategoryLink[]
+}
+
+interface DirectoryExpertCardProps {
+  professional: DirectoryExpert
+}
+
+type ServiceRow = { name: string; priceLabel: string }
+
+function parseServiceRowsFromBio(bio: string | null | undefined): string[] {
+  if (!bio) return []
+  const match = bio.match(/Services:\s*([^\n]+)/i)
+  if (!match) return []
+  return match[1]
+    .split(/[;|]/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .slice(0, 4)
+}
+
+function buildServiceRows(
+  professional: DirectoryExpert,
+  locale: string,
+  priceOnRequest: string,
+): ServiceRow[] {
+  const fromBio = parseServiceRowsFromBio(professional.bio)
+  if (fromBio.length) {
+    return fromBio.map((name) => ({ name, priceLabel: priceOnRequest }))
+  }
+
+  const slugs = professional.work_subcategory_slugs ?? []
+  const rows: ServiceRow[] = []
+  for (const slug of slugs.slice(0, 4)) {
+    const parent = categorySlugForSubcategory(slug) || 'construction'
+    const def = getSubcategoryDef(parent, slug)
+    const name = def ? labelFor(def.label, locale, slug) : slug
+    rows.push({ name, priceLabel: priceOnRequest })
+  }
+  return rows
+}
+
+export function DirectoryExpertCard({ professional }: DirectoryExpertCardProps) {
+  const { t, language, user } = useApp()
+  const [saved, setSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  const displayName = formatProfessionalCardTitle(
+    professional,
+    t('professional.defaultName'),
+  )
+  const isCompany = isCompanyProfile(professional)
+  const avatarUrl = professional.profile_photo || professional.avatar_url || null
+  const reviewsLabel =
+    (professional.total_reviews ?? 0) > 0
+      ? `${professional.rating?.toFixed?.(1) ?? professional.rating} · ${professional.total_reviews} ${t('professional.reviews')}`
+      : t('professional.noReviews')
+
+  const translateCategory = (category: Category) => {
+    const newKey = `category.name.${category.slug}`
+    const newValue = t(newKey as never)
+    if (newValue !== newKey) return newValue
+    const legacyKey = `category.${category.slug}`
+    const legacyValue = t(legacyKey as never)
+    if (legacyValue !== legacyKey) return legacyValue
+    return category.name
+  }
+
+  const categoryLabels = resolveProfessionalCategoryLabels(
+    professional,
+    translateCategory,
+    3,
+  )
+
+  if (categoryLabels.length === 0) {
+    const slugs = professional.work_subcategory_slugs ?? []
+    for (const slug of slugs.slice(0, 3)) {
+      const parent = categorySlugForSubcategory(slug) || 'construction'
+      const def = getSubcategoryDef(parent, slug)
+      const name = def ? labelFor(def.label, language.code, slug) : slug
+      if (!categoryLabels.includes(name)) categoryLabels.push(name)
+    }
+  }
+
+  if (isCompany) {
+    categoryLabels.unshift(t('professional.companyBadge'))
+  }
+
+  const serviceRows = buildServiceRows(
+    professional,
+    language.code,
+    t('professional.priceOnRequest'),
+  )
+
+  useEffect(() => {
+    if (!user) {
+      setSaved(false)
+      return
+    }
+    let cancelled = false
+    ;(async () => {
+      try {
+        const { data } = await supabase
+          .from('saved_items')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('item_type', 'profile')
+          .eq('item_id', professional.id)
+          .maybeSingle()
+        if (!cancelled) setSaved(Boolean(data))
+      } catch {
+        if (!cancelled) setSaved(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [user, professional.id])
+
+  const toggleFavorite = async () => {
+    if (!user) {
+      navigateTo('/login')
+      return
+    }
+    if (saving) return
+    setSaving(true)
+    try {
+      if (saved) {
+        await supabase
+          .from('saved_items')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('item_type', 'profile')
+          .eq('item_id', professional.id)
+        setSaved(false)
+      } else {
+        await supabase.from('saved_items').insert({
+          user_id: user.id,
+          item_type: 'profile' as const,
+          item_id: professional.id,
+        } as never)
+        setSaved(true)
+      }
+    } catch (error) {
+      console.error('Favorite toggle failed:', error)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <article className="directory-expert">
+      <button
+        type="button"
+        className="directory-expert__photo"
+        onClick={() => navigateTo(`/professional/${professional.id}`)}
+        aria-label={displayName}
+      >
+        {avatarUrl ? (
+          <img src={avatarUrl} alt="" loading="lazy" />
+        ) : (
+          <span className="directory-expert__photo-fallback" aria-hidden>
+            {displayName.slice(0, 1).toUpperCase()}
+          </span>
+        )}
+      </button>
+
+      <div className="directory-expert__body">
+        <div className="directory-expert__header">
+          <div className="directory-expert__identity">
+            <button
+              type="button"
+              className="directory-expert__name"
+              onClick={() => navigateTo(`/professional/${professional.id}`)}
+            >
+              {displayName}
+            </button>
+            <div className="directory-expert__reviews">
+              <Star className="directory-expert__star" aria-hidden />
+              <span>{reviewsLabel}</span>
+            </div>
+            <div className="directory-expert__meta">
+              <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              <span>{professional.location || t('professional.global')}</span>
+            </div>
+            {categoryLabels.length > 0 ? (
+              <ul className="directory-expert__tags">
+                {categoryLabels.map((label) => (
+                  <li key={`${professional.id}-${label}`}>
+                    <CheckSquare className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <span>{label}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+
+          {serviceRows.length > 0 ? (
+            <div className="directory-expert__prices">
+              {serviceRows.map((row) => (
+                <div key={`${professional.id}-${row.name}`} className="directory-expert__price-row">
+                  <span className="directory-expert__price-name">{row.name}</span>
+                  <span className="directory-expert__price-dots" aria-hidden />
+                  <span className="directory-expert__price-value">{row.priceLabel}</span>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
+        <div className="directory-expert__footer">
+          <button
+            type="button"
+            className="directory-expert__profile-btn"
+            onClick={() => navigateTo(`/professional/${professional.id}`)}
+          >
+            {t('professional.expertProfile')}
+          </button>
+          <button
+            type="button"
+            className={`directory-expert__fav ${saved ? 'is-saved' : ''}`}
+            onClick={() => void toggleFavorite()}
+            aria-label={t('favorites.title')}
+            disabled={saving}
+          >
+            <Heart className={`h-5 w-5 ${saved ? 'fill-current' : ''}`} />
+          </button>
+        </div>
+      </div>
+    </article>
+  )
+}
