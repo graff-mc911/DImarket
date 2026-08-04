@@ -1,134 +1,225 @@
 {
-  "started_at": "2026-08-04T10:37:41.747Z",
+  "started_at": "2026-08-04T11:12:41.281Z",
   "mode": "apply:anon_signup",
   "imported": [
     {
       "slug": "bp-bau-darmstadt",
       "full_name": "B&P Bau",
       "id": "41e720df-5d2d-4fb7-b77a-78d87b4eeab2",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "domenico-di-santo-malerbetrieb-darmstadt",
       "full_name": "Domenico Di Santo Malerbetrieb",
       "id": "f52fde86-97ff-41b7-a448-42548d2d0d70",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "heinrich-schmid-darmstadt",
       "full_name": "Heinrich Schmid GmbH & Co. KG — Darmstadt",
       "id": "0f8d834b-a8cb-4582-b3f2-ed4957f9118f",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "kraft-gmbh-darmstadt",
       "full_name": "Kraft GmbH Darmstadt",
       "id": "7449de6a-609d-4c0f-824b-2dd434f58f6b",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "patrick-noel-malerhandwerk-darmstadt",
       "full_name": "Patrick Noël Malerhandwerk GmbH",
       "id": "33ecfc72-3c07-42e4-b301-c3eaba8b945e",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "stark-elektro-darmstadt",
       "full_name": "Stark Elektro",
       "id": "d72561fd-8ee5-4b4c-9390-3ba341ec5022",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "zimmermann-und-sohn-darmstadt",
       "full_name": "Zimmermann & Sohn GmbH",
       "id": "980d36ec-4778-4fe5-a0f0-bb478f720e9f",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "carbonell-reformas-alicante",
       "full_name": "Carbonell Reformas Alicante",
       "id": "224f7b1d-ea4e-42ea-bd37-aaf0bfc21e03",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "coypa-fontaneria-reformas-alicante",
       "full_name": "Coypa Reformas y Fontanería Alicante",
       "id": "e197dec8-e28c-4313-9baf-abab513427b6",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "explanada-reformas-alicante",
       "full_name": "Explanada Reformas",
       "id": "98abeb7b-9eae-4a7f-9b38-35e68358cf15",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "multihogar-alicante",
       "full_name": "MultiHogar Alicante",
       "id": "7f2975b3-efae-45ca-be9a-d014d425d0f7",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "reformas-alacant",
       "full_name": "Reformas Alacant",
       "id": "9033e8ac-c42e-4513-8b03-cada6888b835",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "reformas-esquivel-alicante",
       "full_name": "Reformas Esquivel",
       "id": "cfea3db8-b754-4e12-81c6-bf04bf9d93c2",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "urbasan-alicante",
       "full_name": "Urbasan Reformas & Interiorismo",
       "id": "edfa789c-5406-429b-a779-fcd8aa81fb74",
+      "action": "skipped_existing_public_profile"
+    },
+    {
+      "slug": "bilbao-fontaneros",
+      "full_name": "Bilbao Fontaneros",
+      "id": "e0aef021-d515-4116-a015-78a9587873a7",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "reformas-vilar-barcelona",
+      "full_name": "Reformas Vilar",
+      "id": "07851914-4b09-4403-b98e-5068c68636b0",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "fontaneros-granada",
+      "full_name": "Fontaneros Granada",
+      "id": "26cc6416-187f-4772-9f22-3679b2412125",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "instalaciones-y-reformas-barcelona",
+      "full_name": "Instalaciones y Reformas",
+      "id": "3d6039ab-7e0a-4278-a83c-c9317799b80e",
       "action": "created_via_signup"
     },
     {
       "slug": "construcciones-carmona-madrid",
       "full_name": "Construcciones Carmona",
       "id": "3891a46e-c143-4e3b-a9fd-8b3a7436b3e2",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "jm-reformas-elite-madrid",
       "full_name": "JM Reformas Élite S.L.",
       "id": "7c3d8255-9cf8-43af-adba-59b106296c37",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "refiser-madrid",
       "full_name": "REFISER — Obras y Reformas",
       "id": "1ecab26d-3c87-4b09-a523-91d7c1f3caef",
-      "action": "created_via_signup"
+      "action": "skipped_existing_public_profile"
     },
     {
       "slug": "reformas-multiservicios-moraga-madrid",
       "full_name": "Reformas y Multiservicios Moraga",
       "id": "8b53571e-72fc-491d-86d3-dc5e42342c2a",
+      "action": "skipped_existing_public_profile"
+    },
+    {
+      "slug": "grupo-reinsol-malaga",
+      "full_name": "Grupo Reinsol",
+      "id": "b6ae675b-e6a9-4baa-bff5-32280e0e2ef6",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "insergan-malaga",
+      "full_name": "Insergan Servicios y Mantenimientos S.L.",
+      "id": "8df4829d-b775-4c47-8bf8-9ff7b061e29f",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "reformas-group-malaga",
+      "full_name": "Reformas Group S.L.",
+      "id": "e1ab80f8-43ff-4845-ae03-6f0dc42f02db",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "castillo-reformas-murcia",
+      "full_name": "Castillo Reformas",
+      "id": "5a8aef0d-1f75-47f0-ae76-b567b9e798a6",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "tecniasist-granada",
+      "full_name": "TECNIASIST",
+      "id": "7ad8b738-4509-4cf4-9396-7faecc3b2581",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "dereforma-sevilla",
+      "full_name": "DeReformaSevilla",
+      "id": "065e5bcc-fdbf-4db7-b6d9-1a5ce4bb5300",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "reforma-integral-vlc-torrent",
+      "full_name": "Reforma Integral VLC",
+      "id": "27534357-e978-4851-b6a1-8f5afd5f999c",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "lamin-reformas-fontaneria-valencia",
+      "full_name": "Lamin Reformas y Fontanería",
+      "id": "bba9fff4-e1a5-4c3b-9f75-42541066b1b6",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "reformas-valencia-10",
+      "full_name": "Reformas Valencia 10",
+      "id": "c034bdc8-0283-4f37-8324-44169eb1e1fb",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "vr-valencia-reformas",
+      "full_name": "VR Valencia Reformas",
+      "id": "2b7230e7-8f37-4f0a-bc70-63969bcd8dd0",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "seia-reformas-zaragoza",
+      "full_name": "SEIA Reformas y Proyectos",
+      "id": "53e3c4de-a548-4831-93d6-1b7de8a8aa71",
       "action": "created_via_signup"
     }
   ],
   "failed": [],
-  "created": 18,
+  "created": 15,
   "updated": 0,
   "linked": 0,
-  "skipped": 0,
-  "finished_at": "2026-08-04T10:38:08.384Z",
+  "skipped": 18,
+  "finished_at": "2026-08-04T11:13:08.137Z",
   "totals": {
-    "attempted": 18,
-    "succeeded": 18,
+    "attempted": 33,
+    "succeeded": 33,
     "failed": 0,
-    "created": 18,
+    "created": 15,
     "updated": 0,
     "linked": 0,
-    "skipped": 0,
+    "skipped": 18,
     "seed_summary": {
-      "generated_at": "2026-08-04T10:30:27.700Z",
-      "businesses_ready_to_import": 18,
+      "generated_at": "2026-08-04T11:12:37.434Z",
+      "businesses_ready_to_import": 33,
       "categories_populated": [
+        "Architecture",
         "Construction Company",
         "Demolition",
         "Doors",
@@ -145,16 +236,27 @@
         "Tiles",
         "Windows"
       ],
-      "categories_count": 15,
+      "categories_count": 16,
       "cities_covered": [
         "Alicante, Valencia, Spain",
+        "Bilbao, Basque Country, Spain",
         "Darmstadt, Hessen, Germany",
-        "Madrid, Madrid, Spain"
+        "Esplugues de Llobregat, Catalonia, Spain",
+        "Granada, Andalusia, Spain",
+        "L'Hospitalet de Llobregat, Catalonia, Spain",
+        "Madrid, Madrid, Spain",
+        "Murcia, Murcia, Spain",
+        "Málaga, Andalusia, Spain",
+        "Peligros, Andalusia, Spain",
+        "Sevilla, Andalusia, Spain",
+        "Torrent, Valencia, Spain",
+        "Valencia, Valencia, Spain",
+        "Zaragoza, Aragon, Spain"
       ],
-      "cities_count": 3,
+      "cities_count": 14,
       "duplicates_removed": 0,
       "duplicates_detail": [],
-      "records_skipped_insufficient_public_info": 7,
+      "records_skipped_insufficient_public_info": 9,
       "skipped_detail": [
         {
           "name": "Generic yellow-pages painter listings (Darmstadt)",
@@ -183,16 +285,35 @@
         {
           "name": "Hardware / building-materials retailers without clear construction-service listing",
           "reason": "Insufficient public service facts for a DImarket professional/company profile."
+        },
+        {
+          "name": "Third-party Google / portal reviews and star ratings",
+          "reason": "Reviews and ratings are not copied; DImarket listings start without imported review text."
+        },
+        {
+          "name": "Company website photos, logos, and gallery images",
+          "reason": "Copyrighted media is not scraped; profiles use text facts only until the business claims and uploads its own media."
         }
       ],
       "by_city": {
         "Alicante, Valencia, Spain": 7,
+        "Bilbao, Basque Country, Spain": 1,
         "Darmstadt, Hessen, Germany": 7,
-        "Madrid, Madrid, Spain": 4
+        "Esplugues de Llobregat, Catalonia, Spain": 1,
+        "Granada, Andalusia, Spain": 1,
+        "L'Hospitalet de Llobregat, Catalonia, Spain": 1,
+        "Madrid, Madrid, Spain": 4,
+        "Murcia, Murcia, Spain": 1,
+        "Málaga, Andalusia, Spain": 3,
+        "Peligros, Andalusia, Spain": 1,
+        "Sevilla, Andalusia, Spain": 1,
+        "Torrent, Valencia, Spain": 1,
+        "Valencia, Valencia, Spain": 3,
+        "Zaragoza, Aragon, Spain": 1
       },
       "by_role": {
-        "company": 16,
-        "professional": 2
+        "company": 30,
+        "professional": 3
       },
       "policy_notes": [
         "Only publicly listed factual business information was used.",

@@ -17,6 +17,13 @@ Each profile also includes:
 
 Reviews, ratings, third-party biographies, marketing copy copied verbatim, photos, logos, and website layouts.
 
+## Files
+
+- `public-businesses.json` — primary import payload (profiles schema + SEO sidecar)
+- `public-businesses.csv` — flat importable table
+- `public-businesses.sql` — SQL UPDATE helpers (after auth users exist)
+- `IMPORT_SUMMARY.md` / `IMPORT_SUMMARY.json` — counts and skipped records
+
 ## Rebuild
 
 ```bash
@@ -29,3 +36,5 @@ node scripts/build-public-directory-seed.mjs
 node scripts/import-public-directory.mjs          # dry-run
 node scripts/import-public-directory.mjs --apply  # create auth users + profiles
 ```
+
+Requires `SUPABASE_SERVICE_ROLE_KEY` and `VITE_SUPABASE_URL` / `SUPABASE_URL`.

@@ -241,6 +241,74 @@ UPDATE profiles SET
 WHERE website = 'https://www.urbasan.com/'
    OR (full_name = 'Urbasan Reformas & Interiorismo' AND location ILIKE '%Alicante%');
 
+-- Bilbao Fontaneros (bilbao-fontaneros)
+UPDATE profiles SET
+  full_name = 'Bilbao Fontaneros',
+  bio = 'Bilbao plumbing company with a published address in Ugasko and weekday/Saturday hours. Public services cover plumbing repairs and installations, bathroom renovations, heating/hot water, and urgent call-outs within stated hours across Bizkaia.',
+  phone = '+34 944 483 647',
+  location = 'Bilbao, Basque Country, Spain',
+  website = 'https://www.bilbaofontaneros.com/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es', 'eu']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['plumbing-repair', 'plumbing-install', 'plumbing-heating', 'plumbing-boilers', 'plumbing-showers', 'hvac-heating', 'tiling-bathroom']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://www.bilbaofontaneros.com/'
+   OR (full_name = 'Bilbao Fontaneros' AND location ILIKE '%Bilbao%');
+
+-- Reformas Vilar (reformas-vilar-barcelona)
+UPDATE profiles SET
+  full_name = 'Reformas Vilar',
+  bio = 'Barcelona-area renovation company based in Esplugues de Llobregat. Public contact lists full and partial renovations of homes, bathrooms, kitchens, and commercial premises with plumbing, electrical, drywall, painting, and carpentry trades.',
+  phone = '+34 678 824 747',
+  location = 'Esplugues de Llobregat, Catalonia, Spain',
+  website = 'https://reformasvilar.com/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es', 'ca']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['plumbing-install', 'electro-wiring', 'painting-walls', 'drywall-install', 'masonry-partitions', 'carpentry-doors-install', 'tiling-bathroom', 'tiling-kitchen', 'windows-aluminum']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://reformasvilar.com/'
+   OR (full_name = 'Reformas Vilar' AND location ILIKE '%Esplugues de Llobregat%');
+
+-- Fontaneros Granada (fontaneros-granada)
+UPDATE profiles SET
+  full_name = 'Fontaneros Granada',
+  bio = 'Granada plumbing company publicly listing round-the-clock emergency call-outs plus scheduled installations, boiler/heater work, and bathroom renovation services across Granada city and nearby municipalities.',
+  phone = '+34 958 223 491',
+  location = 'Granada, Andalusia, Spain',
+  website = 'https://granadafontaneros.com/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['plumbing-repair', 'plumbing-install', 'plumbing-boilers', 'plumbing-showers', 'tiling-bathroom']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://granadafontaneros.com/'
+   OR (full_name = 'Fontaneros Granada' AND location ILIKE '%Granada%');
+
+-- Instalaciones y Reformas (instalaciones-y-reformas-barcelona)
+UPDATE profiles SET
+  full_name = 'Instalaciones y Reformas',
+  bio = 'Electrical installation and renovation company with a published shop address in L’Hospitalet de Llobregat serving the Barcelona area. Public phones and email are listed for electrical reforms and related works.',
+  phone = '+34 933 377 548',
+  location = 'L''Hospitalet de Llobregat, Catalonia, Spain',
+  website = 'https://www.instalacionesyreformas.es/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es', 'ca']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['electro-wiring', 'electro-panels', 'electro-lighting', 'electro-outlets', 'plumbing-install']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://www.instalacionesyreformas.es/'
+   OR (full_name = 'Instalaciones y Reformas' AND location ILIKE '%L''Hospitalet de Llobregat%');
+
 -- Construcciones Carmona (construcciones-carmona-madrid)
 UPDATE profiles SET
   full_name = 'Construcciones Carmona',
@@ -308,5 +376,192 @@ UPDATE profiles SET
   updated_at = now()
 WHERE website = 'https://www.reformasymultiservicios.es/'
    OR (full_name = 'Reformas y Multiservicios Moraga' AND location ILIKE '%Madrid%');
+
+-- Grupo Reinsol (grupo-reinsol-malaga)
+UPDATE profiles SET
+  full_name = 'Grupo Reinsol',
+  bio = 'Málaga construction and renovation company with a published city-centre office. Public services include full renovations, kitchens, bathrooms, commercial spaces, facade rehabilitation, interior design, and community maintenance.',
+  phone = '+34 661 948 116',
+  location = 'Málaga, Andalusia, Spain',
+  website = 'https://www.gruporeinsol.com/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['masonry-brick', 'masonry-partitions', 'plumbing-install', 'electro-wiring', 'painting-walls', 'facade-repair', 'design-engineering-interior']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://www.gruporeinsol.com/'
+   OR (full_name = 'Grupo Reinsol' AND location ILIKE '%Málaga%');
+
+-- Insergan Servicios y Mantenimientos S.L. (insergan-malaga)
+UPDATE profiles SET
+  full_name = 'Insergan Servicios y Mantenimientos S.L.',
+  bio = 'Family construction and maintenance company in Málaga. Public listings cover rehabilitation, renovations of homes and commercial premises, community repairs, and technical advice for building maintenance in Málaga and eastern Andalusia.',
+  phone = '+34 952 313 006',
+  location = 'Málaga, Andalusia, Spain',
+  website = 'https://insergan.com/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['masonry-brick', 'masonry-partitions', 'facade-repair', 'plumbing-install', 'electro-wiring', 'painting-walls']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://insergan.com/'
+   OR (full_name = 'Insergan Servicios y Mantenimientos S.L.' AND location ILIKE '%Málaga%');
+
+-- Reformas Group S.L. (reformas-group-malaga)
+UPDATE profiles SET
+  full_name = 'Reformas Group S.L.',
+  bio = 'Málaga renovation company (S.L.) with a published office on Emilio López Cerezo. Public listings cover full and partial renovations of homes, chalets, kitchens, bathrooms, offices, and commercial spaces in Málaga and Costa del Sol municipalities.',
+  phone = '+34 684 744 071',
+  location = 'Málaga, Andalusia, Spain',
+  website = 'https://reformasgroup.es/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es', 'en']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['masonry-partitions', 'plumbing-install', 'electro-wiring', 'tiling-bathroom', 'tiling-kitchen', 'painting-walls', 'carpentry-doors-install']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://reformasgroup.es/'
+   OR (full_name = 'Reformas Group S.L.' AND location ILIKE '%Málaga%');
+
+-- Castillo Reformas (castillo-reformas-murcia)
+UPDATE profiles SET
+  full_name = 'Castillo Reformas',
+  bio = 'Murcia-region renovation company with a published phone and email. Public services include full renovations, kitchens, bathrooms, tiling, flooring, drywall, plumbing, electrical work, carpentry, and facade rehabilitation across Murcia and nearby towns.',
+  phone = '+34 619 861 323',
+  location = 'Murcia, Murcia, Spain',
+  website = 'https://www.castilloreformas.com/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['tiling-bathroom', 'tiling-kitchen', 'flooring-laminate', 'drywall-install', 'plumbing-install', 'electro-wiring', 'painting-walls', 'masonry-partitions', 'carpentry-doors-install', 'facade-repair']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://www.castilloreformas.com/'
+   OR (full_name = 'Castillo Reformas' AND location ILIKE '%Murcia%');
+
+-- TECNIASIST (tecniasist-granada)
+UPDATE profiles SET
+  full_name = 'TECNIASIST',
+  bio = 'Granada-area renovation and repair company based in Peligros (Juncaril industrial estate). Public hours and services cover full renovations, emergency plumbing, electrical work, masonry, drywall, painting, tiling, and general home repairs across Granada metro.',
+  phone = '+34 645 515 888',
+  location = 'Peligros, Andalusia, Spain',
+  website = 'https://tecniasist.es/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['plumbing-repair', 'plumbing-install', 'electro-wiring', 'painting-walls', 'drywall-install', 'masonry-partitions', 'tiling-install', 'carpentry-doors-install', 'demolition-partitions']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://tecniasist.es/'
+   OR (full_name = 'TECNIASIST' AND location ILIKE '%Peligros%');
+
+-- DeReformaSevilla (dereforma-sevilla)
+UPDATE profiles SET
+  full_name = 'DeReformaSevilla',
+  bio = 'Seville renovation company with published weekday hours. Public service list covers flats, bathrooms, kitchens, offices, commercial premises, terraces, and facade-related renovations across Seville districts.',
+  phone = '+34 614 174 191',
+  location = 'Sevilla, Andalusia, Spain',
+  website = 'https://dereformasevilla.es/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['masonry-partitions', 'tiling-bathroom', 'tiling-kitchen', 'plumbing-install', 'electro-wiring', 'painting-walls', 'facade-repair']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://dereformasevilla.es/'
+   OR (full_name = 'DeReformaSevilla' AND location ILIKE '%Sevilla%');
+
+-- Reforma Integral VLC (reforma-integral-vlc-torrent)
+UPDATE profiles SET
+  full_name = 'Reforma Integral VLC',
+  bio = 'Renovation company based in Torrent (Valencia metro area) with a published street address. Public services cover full renovations plus electrical and plumbing works for homes and businesses.',
+  phone = '+34 696 583 457',
+  location = 'Torrent, Valencia, Spain',
+  website = 'https://reformaintegralenvalencia.com/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['electro-wiring', 'plumbing-install', 'painting-walls', 'tiling-install', 'masonry-partitions', 'demolition-partitions']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://reformaintegralenvalencia.com/'
+   OR (full_name = 'Reforma Integral VLC' AND location ILIKE '%Torrent%');
+
+-- Lamin Reformas y Fontanería (lamin-reformas-fontaneria-valencia)
+UPDATE profiles SET
+  full_name = 'Lamin Reformas y Fontanería',
+  bio = 'Valencia plumbing and renovation business publicly advertising round-the-clock plumbing and electrical emergencies plus bathroom, kitchen, and general home renovations across the Valencian Community.',
+  phone = NULL,
+  location = 'Valencia, Valencia, Spain',
+  website = 'https://reformaslamin.com/',
+  user_role = 'professional',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['plumbing-repair', 'plumbing-install', 'plumbing-showers', 'electro-wiring', 'tiling-bathroom', 'tiling-kitchen']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://reformaslamin.com/'
+   OR (full_name = 'Lamin Reformas y Fontanería' AND location ILIKE '%Valencia%');
+
+-- Reformas Valencia 10 (reformas-valencia-10)
+UPDATE profiles SET
+  full_name = 'Reformas Valencia 10',
+  bio = 'Valencia-city renovation firm with a public base in the Extramurs area. Listed work includes full renovations, kitchens, bathrooms, commercial premises, and coordinated masonry, plumbing, electrical, painting, and drywall trades.',
+  phone = NULL,
+  location = 'Valencia, Valencia, Spain',
+  website = 'https://reformasvalencia10.es/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['masonry-partitions', 'plumbing-install', 'electro-wiring', 'painting-walls', 'drywall-install', 'tiling-bathroom', 'tiling-kitchen', 'carpentry-doors-install']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://reformasvalencia10.es/'
+   OR (full_name = 'Reformas Valencia 10' AND location ILIKE '%Valencia%');
+
+-- VR Valencia Reformas (vr-valencia-reformas)
+UPDATE profiles SET
+  full_name = 'VR Valencia Reformas',
+  bio = 'Valencia renovation company publicly listing full-home and commercial renovations with plumbing, electrical, painting, drywall, and air-conditioning trades, plus architecture support for chalets, flats, and offices.',
+  phone = '+34 963 145 430',
+  location = 'Valencia, Valencia, Spain',
+  website = 'https://www.vrvalenciareformas.com/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['plumbing-install', 'electro-wiring', 'painting-walls', 'drywall-install', 'hvac-ac', 'tiling-bathroom', 'tiling-kitchen', 'design-engineering-architect', 'carpentry-doors-install']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://www.vrvalenciareformas.com/'
+   OR (full_name = 'VR Valencia Reformas' AND location ILIKE '%Valencia%');
+
+-- SEIA Reformas y Proyectos (seia-reformas-zaragoza)
+UPDATE profiles SET
+  full_name = 'SEIA Reformas y Proyectos',
+  bio = 'Zaragoza renovation firm with a published Actur-area office. Public services include full renovations of homes, offices, and industrial spaces, plus kitchens, bathrooms, climate systems, lighting/automation, and architecture coordination.',
+  phone = '+34 976 958 638',
+  location = 'Zaragoza, Aragon, Spain',
+  website = 'https://www.seia.es/',
+  user_role = 'company',
+  is_professional = true,
+  languages = ARRAY['es']::text[],
+  preferred_language = 'es',
+  work_subcategory_slugs = ARRAY['tiling-bathroom', 'tiling-kitchen', 'carpentry-doors-install', 'hvac-heating', 'hvac-ac', 'electro-smart-home', 'electro-lighting', 'design-engineering-interior', 'design-engineering-architect', 'insulation-thermal']::text[],
+  availability_status = 'available',
+  updated_at = now()
+WHERE website = 'https://www.seia.es/'
+   OR (full_name = 'SEIA Reformas y Proyectos' AND location ILIKE '%Zaragoza%');
 
 COMMIT;

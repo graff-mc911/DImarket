@@ -1,7 +1,8 @@
 {
-  "generated_at": "2026-08-04T10:30:27.700Z",
-  "businesses_ready_to_import": 18,
+  "generated_at": "2026-08-04T11:12:37.434Z",
+  "businesses_ready_to_import": 33,
   "categories_populated": [
+    "Architecture",
     "Construction Company",
     "Demolition",
     "Doors",
@@ -18,16 +19,27 @@
     "Tiles",
     "Windows"
   ],
-  "categories_count": 15,
+  "categories_count": 16,
   "cities_covered": [
     "Alicante, Valencia, Spain",
+    "Bilbao, Basque Country, Spain",
     "Darmstadt, Hessen, Germany",
-    "Madrid, Madrid, Spain"
+    "Esplugues de Llobregat, Catalonia, Spain",
+    "Granada, Andalusia, Spain",
+    "L'Hospitalet de Llobregat, Catalonia, Spain",
+    "Madrid, Madrid, Spain",
+    "Murcia, Murcia, Spain",
+    "Málaga, Andalusia, Spain",
+    "Peligros, Andalusia, Spain",
+    "Sevilla, Andalusia, Spain",
+    "Torrent, Valencia, Spain",
+    "Valencia, Valencia, Spain",
+    "Zaragoza, Aragon, Spain"
   ],
-  "cities_count": 3,
+  "cities_count": 14,
   "duplicates_removed": 0,
   "duplicates_detail": [],
-  "records_skipped_insufficient_public_info": 7,
+  "records_skipped_insufficient_public_info": 9,
   "skipped_detail": [
     {
       "name": "Generic yellow-pages painter listings (Darmstadt)",
@@ -56,16 +68,35 @@
     {
       "name": "Hardware / building-materials retailers without clear construction-service listing",
       "reason": "Insufficient public service facts for a DImarket professional/company profile."
+    },
+    {
+      "name": "Third-party Google / portal reviews and star ratings",
+      "reason": "Reviews and ratings are not copied; DImarket listings start without imported review text."
+    },
+    {
+      "name": "Company website photos, logos, and gallery images",
+      "reason": "Copyrighted media is not scraped; profiles use text facts only until the business claims and uploads its own media."
     }
   ],
   "by_city": {
     "Alicante, Valencia, Spain": 7,
+    "Bilbao, Basque Country, Spain": 1,
     "Darmstadt, Hessen, Germany": 7,
-    "Madrid, Madrid, Spain": 4
+    "Esplugues de Llobregat, Catalonia, Spain": 1,
+    "Granada, Andalusia, Spain": 1,
+    "L'Hospitalet de Llobregat, Catalonia, Spain": 1,
+    "Madrid, Madrid, Spain": 4,
+    "Murcia, Murcia, Spain": 1,
+    "Málaga, Andalusia, Spain": 3,
+    "Peligros, Andalusia, Spain": 1,
+    "Sevilla, Andalusia, Spain": 1,
+    "Torrent, Valencia, Spain": 1,
+    "Valencia, Valencia, Spain": 3,
+    "Zaragoza, Aragon, Spain": 1
   },
   "by_role": {
-    "company": 16,
-    "professional": 2
+    "company": 30,
+    "professional": 3
   },
   "policy_notes": [
     "Only publicly listed factual business information was used.",

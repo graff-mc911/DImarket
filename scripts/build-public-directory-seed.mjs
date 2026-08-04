@@ -12,6 +12,7 @@
 import { writeFileSync, mkdirSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { SPAIN_EXPANSION } from './spain-directory-expansion-data.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const outDir = resolve(__dirname, '../data/directory')
@@ -40,6 +41,7 @@ mkdirSync(outDir, { recursive: true })
 
 /** @type {RawBusiness[]} */
 const RAW = [
+  ...SPAIN_EXPANSION,
   // ── Darmstadt / Germany ──────────────────────────────────────────
   {
     slug: 'stark-elektro-darmstadt',
@@ -738,6 +740,14 @@ const SKIPPED = [
   {
     name: 'Hardware / building-materials retailers without clear construction-service listing',
     reason: 'Insufficient public service facts for a DImarket professional/company profile.',
+  },
+  {
+    name: 'Third-party Google / portal reviews and star ratings',
+    reason: 'Reviews and ratings are not copied; DImarket listings start without imported review text.',
+  },
+  {
+    name: 'Company website photos, logos, and gallery images',
+    reason: 'Copyrighted media is not scraped; profiles use text facts only until the business claims and uploads its own media.',
   },
 ]
 

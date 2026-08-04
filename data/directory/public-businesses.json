@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-08-04T10:30:27.700Z",
+  "generated_at": "2026-08-04T11:12:37.434Z",
   "schema": {
     "target_table": "profiles",
     "auth_required": true,
@@ -9,9 +9,10 @@
     "notes": "profiles.id references auth.users(id). Import creates claimable auth users then upserts profiles and syncs professional_categories from work_subcategory_slugs."
   },
   "summary": {
-    "generated_at": "2026-08-04T10:30:27.700Z",
-    "businesses_ready_to_import": 18,
+    "generated_at": "2026-08-04T11:12:37.434Z",
+    "businesses_ready_to_import": 33,
     "categories_populated": [
+      "Architecture",
       "Construction Company",
       "Demolition",
       "Doors",
@@ -28,16 +29,27 @@
       "Tiles",
       "Windows"
     ],
-    "categories_count": 15,
+    "categories_count": 16,
     "cities_covered": [
       "Alicante, Valencia, Spain",
+      "Bilbao, Basque Country, Spain",
       "Darmstadt, Hessen, Germany",
-      "Madrid, Madrid, Spain"
+      "Esplugues de Llobregat, Catalonia, Spain",
+      "Granada, Andalusia, Spain",
+      "L'Hospitalet de Llobregat, Catalonia, Spain",
+      "Madrid, Madrid, Spain",
+      "Murcia, Murcia, Spain",
+      "Málaga, Andalusia, Spain",
+      "Peligros, Andalusia, Spain",
+      "Sevilla, Andalusia, Spain",
+      "Torrent, Valencia, Spain",
+      "Valencia, Valencia, Spain",
+      "Zaragoza, Aragon, Spain"
     ],
-    "cities_count": 3,
+    "cities_count": 14,
     "duplicates_removed": 0,
     "duplicates_detail": [],
-    "records_skipped_insufficient_public_info": 7,
+    "records_skipped_insufficient_public_info": 9,
     "skipped_detail": [
       {
         "name": "Generic yellow-pages painter listings (Darmstadt)",
@@ -66,16 +78,35 @@
       {
         "name": "Hardware / building-materials retailers without clear construction-service listing",
         "reason": "Insufficient public service facts for a DImarket professional/company profile."
+      },
+      {
+        "name": "Third-party Google / portal reviews and star ratings",
+        "reason": "Reviews and ratings are not copied; DImarket listings start without imported review text."
+      },
+      {
+        "name": "Company website photos, logos, and gallery images",
+        "reason": "Copyrighted media is not scraped; profiles use text facts only until the business claims and uploads its own media."
       }
     ],
     "by_city": {
       "Alicante, Valencia, Spain": 7,
+      "Bilbao, Basque Country, Spain": 1,
       "Darmstadt, Hessen, Germany": 7,
-      "Madrid, Madrid, Spain": 4
+      "Esplugues de Llobregat, Catalonia, Spain": 1,
+      "Granada, Andalusia, Spain": 1,
+      "L'Hospitalet de Llobregat, Catalonia, Spain": 1,
+      "Madrid, Madrid, Spain": 4,
+      "Murcia, Murcia, Spain": 1,
+      "Málaga, Andalusia, Spain": 3,
+      "Peligros, Andalusia, Spain": 1,
+      "Sevilla, Andalusia, Spain": 1,
+      "Torrent, Valencia, Spain": 1,
+      "Valencia, Valencia, Spain": 3,
+      "Zaragoza, Aragon, Spain": 1
     },
     "by_role": {
-      "company": 16,
-      "professional": 2
+      "company": 30,
+      "professional": 3
     },
     "policy_notes": [
       "Only publicly listed factual business information was used.",
@@ -1115,6 +1146,285 @@
       }
     },
     {
+      "slug": "bilbao-fontaneros",
+      "full_name": "Bilbao Fontaneros",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "plumbing-heating",
+        "plumbing-boilers",
+        "plumbing-showers",
+        "hvac-heating",
+        "tiling-bathroom"
+      ],
+      "city": "Bilbao",
+      "region": "Basque Country",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Bilbao, Basque Country, Spain",
+      "address": "Camino Ugasko 19, 48014 Bilbao",
+      "phone": "+34 944 483 647",
+      "public_email": null,
+      "website": "https://www.bilbaofontaneros.com/",
+      "business_hours": "Mon–Fri 08:00–20:00; Sat 09:00–15:00",
+      "services": [
+        "Plumbing repairs and installations",
+        "Emergency plumbing within published hours",
+        "Bathroom renovations and shower tray conversions",
+        "Heating and hot-water systems"
+      ],
+      "languages": [
+        "es",
+        "eu"
+      ],
+      "bio": "Bilbao plumbing company with a published address in Ugasko and weekday/Saturday hours. Public services cover plumbing repairs and installations, bathroom renovations, heating/hot water, and urgent call-outs within stated hours across Bizkaia.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+bilbao-fontaneros@users.dimarket.app",
+      "seo": {
+        "title": "Bilbao Fontaneros — Plumbing in Bilbao | DImarket",
+        "meta_description": "Bilbao Fontaneros offers plumbing repairs and installations, emergency plumbing within published hours, bathroom renovations and shower tray conversions in Bilb",
+        "slug": "bilbao-fontaneros",
+        "keywords": [
+          "Bilbao Fontaneros",
+          "Plumbing",
+          "HVAC",
+          "Renovation",
+          "Bilbao",
+          "Basque Country",
+          "Spain",
+          "Plumbing repairs and installations",
+          "Emergency plumbing within published hours",
+          "Bathroom renovations and shower tray conversions",
+          "Heating and hot-water systems",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.bilbaofontaneros.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "reformas-vilar-barcelona",
+      "full_name": "Reformas Vilar",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Drywall",
+        "Doors",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "drywall-install",
+        "masonry-partitions",
+        "carpentry-doors-install",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "windows-aluminum"
+      ],
+      "city": "Esplugues de Llobregat",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Esplugues de Llobregat, Catalonia, Spain",
+      "address": "Carrer dels Caquis 7, 08950 Esplugues de Llobregat, Barcelona",
+      "phone": "+34 678 824 747",
+      "public_email": "info@reformasvilar.com",
+      "website": "https://reformasvilar.com/",
+      "business_hours": null,
+      "services": [
+        "Full home renovations",
+        "Bathroom and kitchen renovations",
+        "Commercial premises fit-out",
+        "Drywall, painting, carpentry",
+        "Plumbing and electrical works",
+        "Facade rehabilitation"
+      ],
+      "languages": [
+        "es",
+        "ca"
+      ],
+      "bio": "Barcelona-area renovation company based in Esplugues de Llobregat. Public contact lists full and partial renovations of homes, bathrooms, kitchens, and commercial premises with plumbing, electrical, drywall, painting, and carpentry trades.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reformas-vilar-barcelona@users.dimarket.app",
+      "seo": {
+        "title": "Reformas Vilar — Renovation in Esplugues de Llobregat | DImarket",
+        "meta_description": "Reformas Vilar offers full home renovations, bathroom and kitchen renovations, commercial premises fit-out in Esplugues de Llobregat, Spain. Find contact detail",
+        "slug": "reformas-vilar-barcelona",
+        "keywords": [
+          "Reformas Vilar",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "Painting",
+          "Drywall",
+          "Doors",
+          "Tiles",
+          "Esplugues de Llobregat",
+          "Catalonia",
+          "Spain",
+          "Full home renovations",
+          "Bathroom and kitchen renovations",
+          "Commercial premises fit-out",
+          "Drywall, painting, carpentry",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformasvilar.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "fontaneros-granada",
+      "full_name": "Fontaneros Granada",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "plumbing-boilers",
+        "plumbing-showers",
+        "tiling-bathroom"
+      ],
+      "city": "Granada",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Granada, Andalusia, Spain",
+      "address": null,
+      "phone": "+34 958 223 491",
+      "public_email": null,
+      "website": "https://granadafontaneros.com/",
+      "business_hours": "24/7 emergency call-outs",
+      "services": [
+        "24h plumbing emergencies",
+        "Leak and blockage repairs",
+        "Water-heater and boiler work",
+        "Bathroom renovations and bathtub-to-shower conversions"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Granada plumbing company publicly listing round-the-clock emergency call-outs plus scheduled installations, boiler/heater work, and bathroom renovation services across Granada city and nearby municipalities.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+fontaneros-granada@users.dimarket.app",
+      "seo": {
+        "title": "Fontaneros Granada — Plumbing in Granada | DImarket",
+        "meta_description": "Fontaneros Granada offers 24h plumbing emergencies, leak and blockage repairs, water-heater and boiler work in Granada, Spain. Find contact details on DImarket.",
+        "slug": "fontaneros-granada",
+        "keywords": [
+          "Fontaneros Granada",
+          "Plumbing",
+          "Renovation",
+          "Granada",
+          "Andalusia",
+          "Spain",
+          "24h plumbing emergencies",
+          "Leak and blockage repairs",
+          "Water-heater and boiler work",
+          "Bathroom renovations and bathtub-to-shower conversions",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://granadafontaneros.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "instalaciones-y-reformas-barcelona",
+      "full_name": "Instalaciones y Reformas",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-outlets",
+        "plumbing-install"
+      ],
+      "city": "L'Hospitalet de Llobregat",
+      "region": "Catalonia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "L'Hospitalet de Llobregat, Catalonia, Spain",
+      "address": "Calle Miralta 1, tienda 1, L'Hospitalet de Llobregat",
+      "phone": "+34 933 377 548",
+      "public_email": "info@instalacionesyreformas.es",
+      "website": "https://www.instalacionesyreformas.es/",
+      "business_hours": null,
+      "services": [
+        "Electrical installations and reforms in Barcelona",
+        "Related renovation support works"
+      ],
+      "languages": [
+        "es",
+        "ca"
+      ],
+      "bio": "Electrical installation and renovation company with a published shop address in L’Hospitalet de Llobregat serving the Barcelona area. Public phones and email are listed for electrical reforms and related works.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+instalaciones-y-reformas-barcelona@users.dimarket.app",
+      "seo": {
+        "title": "Instalaciones y Reformas — Electrician in L'Hospitalet de Llobregat | ",
+        "meta_description": "Instalaciones y Reformas offers electrical installations and reforms in barcelona, related renovation support works in L'Hospitalet de Llobregat, Spain. Find co",
+        "slug": "instalaciones-y-reformas-barcelona",
+        "keywords": [
+          "Instalaciones y Reformas",
+          "Electrician",
+          "Renovation",
+          "L'Hospitalet de Llobregat",
+          "Catalonia",
+          "Spain",
+          "Electrical installations and reforms in Barcelona",
+          "Related renovation support works",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.instalacionesyreformas.es/inicio/contacto/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
       "slug": "construcciones-carmona-madrid",
       "full_name": "Construcciones Carmona",
       "user_role": "company",
@@ -1411,6 +1721,830 @@
       },
       "sources": [
         "https://www.reformasymultiservicios.es/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "grupo-reinsol-malaga",
+      "full_name": "Grupo Reinsol",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Renovation",
+        "Interior Design",
+        "Plumbing",
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-brick",
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "facade-repair",
+        "design-engineering-interior"
+      ],
+      "city": "Málaga",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Málaga, Andalusia, Spain",
+      "address": "Calle Sebastián Souvirón 8, 1º, 29005 Málaga",
+      "phone": "+34 661 948 116",
+      "public_email": "reinsol@gruporeinsol.com",
+      "website": "https://www.gruporeinsol.com/",
+      "business_hours": null,
+      "services": [
+        "Full home renovations",
+        "Kitchen and bathroom renovations",
+        "Commercial and office renovations",
+        "Facade and building rehabilitation",
+        "Interior design coordination",
+        "Community maintenance works"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Málaga construction and renovation company with a published city-centre office. Public services include full renovations, kitchens, bathrooms, commercial spaces, facade rehabilitation, interior design, and community maintenance.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+grupo-reinsol-malaga@users.dimarket.app",
+      "seo": {
+        "title": "Grupo Reinsol — Construction Company in Málaga | DImarket",
+        "meta_description": "Grupo Reinsol offers full home renovations, kitchen and bathroom renovations, commercial and office renovations in Málaga, Spain. Find contact details on DImark",
+        "slug": "grupo-reinsol-malaga",
+        "keywords": [
+          "Grupo Reinsol",
+          "Construction Company",
+          "Renovation",
+          "Interior Design",
+          "Plumbing",
+          "Electrician",
+          "Málaga",
+          "Andalusia",
+          "Spain",
+          "Full home renovations",
+          "Kitchen and bathroom renovations",
+          "Commercial and office renovations",
+          "Facade and building rehabilitation",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.gruporeinsol.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "insergan-malaga",
+      "full_name": "Insergan Servicios y Mantenimientos S.L.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-brick",
+        "masonry-partitions",
+        "facade-repair",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls"
+      ],
+      "city": "Málaga",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Málaga, Andalusia, Spain",
+      "address": "Calle La Flauta Mágica 7, 29006 Málaga",
+      "phone": "+34 952 313 006",
+      "public_email": null,
+      "website": "https://insergan.com/",
+      "business_hours": null,
+      "services": [
+        "Building rehabilitation and renovations",
+        "Residential and commercial fit-out",
+        "Community repair works",
+        "Technical advice on maintenance and rehabilitation"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Family construction and maintenance company in Málaga. Public listings cover rehabilitation, renovations of homes and commercial premises, community repairs, and technical advice for building maintenance in Málaga and eastern Andalusia.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+insergan-malaga@users.dimarket.app",
+      "seo": {
+        "title": "Insergan Servicios y Mantenimientos S.L. — Construction Company in Mál",
+        "meta_description": "Insergan Servicios y Mantenimientos S.L. offers building rehabilitation and renovations, residential and commercial fit-out, community repair works in Málaga, S",
+        "slug": "insergan-malaga",
+        "keywords": [
+          "Insergan Servicios y Mantenimientos S.L.",
+          "Construction Company",
+          "Renovation",
+          "Málaga",
+          "Andalusia",
+          "Spain",
+          "Building rehabilitation and renovations",
+          "Residential and commercial fit-out",
+          "Community repair works",
+          "Technical advice on maintenance and rehabilitation",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://insergan.com/construccion-y-reformas/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "reformas-group-malaga",
+      "full_name": "Reformas Group S.L.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Tiles",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "painting-walls",
+        "carpentry-doors-install"
+      ],
+      "city": "Málaga",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Málaga, Andalusia, Spain",
+      "address": "Calle Emilio López Cerezo 5, 29006 Málaga",
+      "phone": "+34 684 744 071",
+      "public_email": "presupuestos@reformasgroup.com",
+      "website": "https://reformasgroup.es/",
+      "business_hours": null,
+      "services": [
+        "Full and partial renovations",
+        "Kitchen and bathroom renovations",
+        "Chalet and apartment renovations",
+        "Commercial and office fit-out on the Costa del Sol"
+      ],
+      "languages": [
+        "es",
+        "en"
+      ],
+      "bio": "Málaga renovation company (S.L.) with a published office on Emilio López Cerezo. Public listings cover full and partial renovations of homes, chalets, kitchens, bathrooms, offices, and commercial spaces in Málaga and Costa del Sol municipalities.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reformas-group-malaga@users.dimarket.app",
+      "seo": {
+        "title": "Reformas Group S.L. — Renovation in Málaga | DImarket",
+        "meta_description": "Reformas Group S.L. offers full and partial renovations, kitchen and bathroom renovations, chalet and apartment renovations in Málaga, Spain. Find contact detai",
+        "slug": "reformas-group-malaga",
+        "keywords": [
+          "Reformas Group S.L.",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "Tiles",
+          "Painting",
+          "Málaga",
+          "Andalusia",
+          "Spain",
+          "Full and partial renovations",
+          "Kitchen and bathroom renovations",
+          "Chalet and apartment renovations",
+          "Commercial and office fit-out on the Costa del Sol",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformasgroup.es/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "castillo-reformas-murcia",
+      "full_name": "Castillo Reformas",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Tiles",
+        "Flooring",
+        "Drywall",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "flooring-laminate",
+        "drywall-install",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "masonry-partitions",
+        "carpentry-doors-install",
+        "facade-repair"
+      ],
+      "city": "Murcia",
+      "region": "Murcia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Murcia, Murcia, Spain",
+      "address": null,
+      "phone": "+34 619 861 323",
+      "public_email": "hola@castilloreformas.com",
+      "website": "https://www.castilloreformas.com/",
+      "business_hours": null,
+      "services": [
+        "Full renovations",
+        "Kitchen and bathroom renovations",
+        "Tiling and flooring",
+        "Drywall, plumbing, electrical, carpentry",
+        "Facade rehabilitation"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Murcia-region renovation company with a published phone and email. Public services include full renovations, kitchens, bathrooms, tiling, flooring, drywall, plumbing, electrical work, carpentry, and facade rehabilitation across Murcia and nearby towns.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+castillo-reformas-murcia@users.dimarket.app",
+      "seo": {
+        "title": "Castillo Reformas — Renovation in Murcia | DImarket",
+        "meta_description": "Castillo Reformas offers full renovations, kitchen and bathroom renovations, tiling and flooring in Murcia, Spain. Find contact details on DImarket.",
+        "slug": "castillo-reformas-murcia",
+        "keywords": [
+          "Castillo Reformas",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "Tiles",
+          "Flooring",
+          "Drywall",
+          "Painting",
+          "Murcia",
+          "Spain",
+          "Full renovations",
+          "Kitchen and bathroom renovations",
+          "Tiling and flooring",
+          "Drywall, plumbing, electrical, carpentry",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.castilloreformas.com/",
+        "https://www.castilloreformas.com/aviso-legal/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "tecniasist-granada",
+      "full_name": "TECNIASIST",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Drywall",
+        "Tiles",
+        "Doors"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "drywall-install",
+        "masonry-partitions",
+        "tiling-install",
+        "carpentry-doors-install",
+        "demolition-partitions"
+      ],
+      "city": "Peligros",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Peligros, Andalusia, Spain",
+      "address": "Calle Baza 19, Local 7, 18210 Peligros (Polígono Industrial Juncaril), Granada",
+      "phone": "+34 645 515 888",
+      "public_email": "granada@tecniasist.es",
+      "website": "https://tecniasist.es/",
+      "business_hours": "Mon–Fri 09:00–20:00",
+      "services": [
+        "Full renovations",
+        "Emergency plumbing",
+        "Electrical works",
+        "Masonry, drywall, painting, tiling",
+        "Locksmith / access-related call-outs",
+        "General home repairs"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Granada-area renovation and repair company based in Peligros (Juncaril industrial estate). Public hours and services cover full renovations, emergency plumbing, electrical work, masonry, drywall, painting, tiling, and general home repairs across Granada metro.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+tecniasist-granada@users.dimarket.app",
+      "seo": {
+        "title": "TECNIASIST — Renovation in Peligros | DImarket",
+        "meta_description": "TECNIASIST offers full renovations, emergency plumbing, electrical works in Peligros, Spain. Find contact details on DImarket.",
+        "slug": "tecniasist-granada",
+        "keywords": [
+          "TECNIASIST",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "Painting",
+          "Drywall",
+          "Tiles",
+          "Doors",
+          "Peligros",
+          "Andalusia",
+          "Spain",
+          "Full renovations",
+          "Emergency plumbing",
+          "Electrical works",
+          "Masonry, drywall, painting, tiling",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://tecniasist.es/",
+        "https://empresadereformasgranada.es/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "dereforma-sevilla",
+      "full_name": "DeReformaSevilla",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Tiles",
+        "Plumbing",
+        "Electrician",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "facade-repair"
+      ],
+      "city": "Sevilla",
+      "region": "Andalusia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Sevilla, Andalusia, Spain",
+      "address": null,
+      "phone": "+34 614 174 191",
+      "public_email": "info@dereformasevilla.es",
+      "website": "https://dereformasevilla.es/",
+      "business_hours": "Mon–Fri 09:00–17:00",
+      "services": [
+        "Full flat renovations",
+        "Bathroom and kitchen renovations",
+        "Commercial premises and office renovations",
+        "Terrace and facade works"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Seville renovation company with published weekday hours. Public service list covers flats, bathrooms, kitchens, offices, commercial premises, terraces, and facade-related renovations across Seville districts.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+dereforma-sevilla@users.dimarket.app",
+      "seo": {
+        "title": "DeReformaSevilla — Renovation in Sevilla | DImarket",
+        "meta_description": "DeReformaSevilla offers full flat renovations, bathroom and kitchen renovations, commercial premises and office renovations in Sevilla, Spain. Find contact deta",
+        "slug": "dereforma-sevilla",
+        "keywords": [
+          "DeReformaSevilla",
+          "Renovation",
+          "Tiles",
+          "Plumbing",
+          "Electrician",
+          "Painting",
+          "Sevilla",
+          "Andalusia",
+          "Spain",
+          "Full flat renovations",
+          "Bathroom and kitchen renovations",
+          "Commercial premises and office renovations",
+          "Terrace and facade works",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://dereformasevilla.es/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "reforma-integral-vlc-torrent",
+      "full_name": "Reforma Integral VLC",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Electrician",
+        "Plumbing",
+        "Painting",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-install",
+        "painting-walls",
+        "tiling-install",
+        "masonry-partitions",
+        "demolition-partitions"
+      ],
+      "city": "Torrent",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Torrent, Valencia, Spain",
+      "address": "Calle Germanies 11 Bajo, 46900 Torrent, Valencia",
+      "phone": "+34 696 583 457",
+      "public_email": null,
+      "website": "https://reformaintegralenvalencia.com/",
+      "business_hours": null,
+      "services": [
+        "Full renovations in Valencia and surroundings",
+        "Electrical installation and repairs",
+        "Plumbing installation and repairs",
+        "Residential and commercial fit-out"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Renovation company based in Torrent (Valencia metro area) with a published street address. Public services cover full renovations plus electrical and plumbing works for homes and businesses.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reforma-integral-vlc-torrent@users.dimarket.app",
+      "seo": {
+        "title": "Reforma Integral VLC — Renovation in Torrent | DImarket",
+        "meta_description": "Reforma Integral VLC offers full renovations in valencia and surroundings, electrical installation and repairs, plumbing installation and repairs in Torrent, Sp",
+        "slug": "reforma-integral-vlc-torrent",
+        "keywords": [
+          "Reforma Integral VLC",
+          "Renovation",
+          "Electrician",
+          "Plumbing",
+          "Painting",
+          "Tiles",
+          "Torrent",
+          "Valencia",
+          "Spain",
+          "Full renovations in Valencia and surroundings",
+          "Electrical installation and repairs",
+          "Plumbing installation and repairs",
+          "Residential and commercial fit-out",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformaintegralenvalencia.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "lamin-reformas-fontaneria-valencia",
+      "full_name": "Lamin Reformas y Fontanería",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Electrician",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "plumbing-showers",
+        "electro-wiring",
+        "tiling-bathroom",
+        "tiling-kitchen"
+      ],
+      "city": "Valencia",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Valencia, Valencia, Spain",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://reformaslamin.com/",
+      "business_hours": "24/7 emergency plumbing and electrical call-outs",
+      "services": [
+        "24h plumbing emergencies",
+        "Electrical repairs and installations",
+        "Bathroom and kitchen renovations",
+        "General home renovations"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Valencia plumbing and renovation business publicly advertising round-the-clock plumbing and electrical emergencies plus bathroom, kitchen, and general home renovations across the Valencian Community.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+lamin-reformas-fontaneria-valencia@users.dimarket.app",
+      "seo": {
+        "title": "Lamin Reformas y Fontanería — Plumbing in Valencia | DImarket",
+        "meta_description": "Lamin Reformas y Fontanería offers 24h plumbing emergencies, electrical repairs and installations, bathroom and kitchen renovations in Valencia, Spain. Find con",
+        "slug": "lamin-reformas-fontaneria-valencia",
+        "keywords": [
+          "Lamin Reformas y Fontanería",
+          "Plumbing",
+          "Electrician",
+          "Renovation",
+          "Valencia",
+          "Spain",
+          "24h plumbing emergencies",
+          "Electrical repairs and installations",
+          "Bathroom and kitchen renovations",
+          "General home renovations",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformaslamin.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "reformas-valencia-10",
+      "full_name": "Reformas Valencia 10",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Drywall",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "drywall-install",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "carpentry-doors-install"
+      ],
+      "city": "Valencia",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Valencia, Valencia, Spain",
+      "address": "Carrer de Sant Vicent Màrtir, Extramurs, Valencia",
+      "phone": null,
+      "public_email": null,
+      "website": "https://reformasvalencia10.es/",
+      "business_hours": null,
+      "services": [
+        "Full flat renovations",
+        "Kitchen and bathroom renovations",
+        "Commercial premises and community works",
+        "Masonry, plumbing, electrical, painting, drywall"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Valencia-city renovation firm with a public base in the Extramurs area. Listed work includes full renovations, kitchens, bathrooms, commercial premises, and coordinated masonry, plumbing, electrical, painting, and drywall trades.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+reformas-valencia-10@users.dimarket.app",
+      "seo": {
+        "title": "Reformas Valencia 10 — Renovation in Valencia | DImarket",
+        "meta_description": "Reformas Valencia 10 offers full flat renovations, kitchen and bathroom renovations, commercial premises and community works in Valencia, Spain. Find contact de",
+        "slug": "reformas-valencia-10",
+        "keywords": [
+          "Reformas Valencia 10",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "Painting",
+          "Drywall",
+          "Tiles",
+          "Valencia",
+          "Spain",
+          "Full flat renovations",
+          "Kitchen and bathroom renovations",
+          "Commercial premises and community works",
+          "Masonry, plumbing, electrical, painting, drywall",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://reformasvalencia10.es/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "vr-valencia-reformas",
+      "full_name": "VR Valencia Reformas",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Plumbing",
+        "Electrician",
+        "Painting",
+        "Drywall",
+        "HVAC",
+        "Architecture"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "drywall-install",
+        "hvac-ac",
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "design-engineering-architect",
+        "carpentry-doors-install"
+      ],
+      "city": "Valencia",
+      "region": "Valencia",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Valencia, Valencia, Spain",
+      "address": null,
+      "phone": "+34 963 145 430",
+      "public_email": null,
+      "website": "https://www.vrvalenciareformas.com/",
+      "business_hours": null,
+      "services": [
+        "Full renovations of homes and premises",
+        "Plumbing and electrical works",
+        "Interior and exterior painting",
+        "Drywall",
+        "Air-conditioning installation",
+        "Architecture coordination"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Valencia renovation company publicly listing full-home and commercial renovations with plumbing, electrical, painting, drywall, and air-conditioning trades, plus architecture support for chalets, flats, and offices.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+vr-valencia-reformas@users.dimarket.app",
+      "seo": {
+        "title": "VR Valencia Reformas — Renovation in Valencia | DImarket",
+        "meta_description": "VR Valencia Reformas offers full renovations of homes and premises, plumbing and electrical works, interior and exterior painting in Valencia, Spain. Find conta",
+        "slug": "vr-valencia-reformas",
+        "keywords": [
+          "VR Valencia Reformas",
+          "Renovation",
+          "Plumbing",
+          "Electrician",
+          "Painting",
+          "Drywall",
+          "HVAC",
+          "Architecture",
+          "Valencia",
+          "Spain",
+          "Full renovations of homes and premises",
+          "Plumbing and electrical works",
+          "Interior and exterior painting",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.vrvalenciareformas.com/"
+      ],
+      "import": {
+        "table": "profiles",
+        "requires_auth_user": true,
+        "sync_professional_categories": true
+      }
+    },
+    {
+      "slug": "seia-reformas-zaragoza",
+      "full_name": "SEIA Reformas y Proyectos",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Interior Design",
+        "HVAC",
+        "Electrician",
+        "Doors",
+        "Architecture"
+      ],
+      "work_subcategory_slugs": [
+        "tiling-bathroom",
+        "tiling-kitchen",
+        "carpentry-doors-install",
+        "hvac-heating",
+        "hvac-ac",
+        "electro-smart-home",
+        "electro-lighting",
+        "design-engineering-interior",
+        "design-engineering-architect",
+        "insulation-thermal"
+      ],
+      "city": "Zaragoza",
+      "region": "Aragon",
+      "country": "Spain",
+      "country_code": "ES",
+      "location": "Zaragoza, Aragon, Spain",
+      "address": "Calle Rosalía de Castro 27 Local, 50018 Zaragoza",
+      "phone": "+34 976 958 638",
+      "public_email": null,
+      "website": "https://www.seia.es/",
+      "business_hours": null,
+      "services": [
+        "Full renovations of homes, offices, and industrial units",
+        "Kitchen and bathroom renovations",
+        "Climate and heating systems",
+        "Home automation and lighting",
+        "Energy-efficiency upgrades",
+        "Architecture and engineering coordination"
+      ],
+      "languages": [
+        "es"
+      ],
+      "bio": "Zaragoza renovation firm with a published Actur-area office. Public services include full renovations of homes, offices, and industrial spaces, plus kitchens, bathrooms, climate systems, lighting/automation, and architecture coordination.",
+      "preferred_language": "es",
+      "directory_claim_email": "directory+seia-reformas-zaragoza@users.dimarket.app",
+      "seo": {
+        "title": "SEIA Reformas y Proyectos — Renovation in Zaragoza | DImarket",
+        "meta_description": "SEIA Reformas y Proyectos offers full renovations of homes, offices, and industrial units, kitchen and bathroom renovations, climate and heating systems in Zara",
+        "slug": "seia-reformas-zaragoza",
+        "keywords": [
+          "SEIA Reformas y Proyectos",
+          "Renovation",
+          "Interior Design",
+          "HVAC",
+          "Electrician",
+          "Doors",
+          "Architecture",
+          "Zaragoza",
+          "Aragon",
+          "Spain",
+          "Full renovations of homes, offices, and industrial units",
+          "Kitchen and bathroom renovations",
+          "Climate and heating systems",
+          "Home automation and lighting",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.seia.es/"
       ],
       "import": {
         "table": "profiles",
