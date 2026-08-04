@@ -80,6 +80,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    document.documentElement.lang = language.code
+    document.documentElement.dir = language.code === 'ar' ? 'rtl' : 'ltr'
+    const ogLocale = document.querySelector('meta[property="og:locale"]')
+    if (ogLocale) {
+      ogLocale.setAttribute('content', language.code.replace('-', '_'))
+    } else {
+      const meta = document.createElement('meta')
+      meta.setAttribute('property', 'og:locale')
+      meta.setAttribute('content', language.code.replace('-', '_'))
+      document.head.appendChild(meta)
+    }
+  }, [language.code])
+
   const registerVisitOncePerSession = async () => {
     try {
       // Якщо візит уже зареєстрований у цій вкладці — повторно не рахуємо

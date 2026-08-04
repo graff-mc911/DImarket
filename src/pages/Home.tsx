@@ -40,9 +40,19 @@ export function Home() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    document.title = t('homePremium.seoTitle')
+    const title = t('homePremium.seoTitle')
+    const description = t('homePremium.seoDescription')
+    document.title = title
     const meta = document.querySelector('meta[name="description"]')
-    if (meta) meta.setAttribute('content', t('homePremium.seoDescription'))
+    if (meta) meta.setAttribute('content', description)
+    const setProp = (selector: string, content: string) => {
+      const el = document.querySelector(selector)
+      if (el) el.setAttribute('content', content)
+    }
+    setProp('meta[property="og:title"]', title)
+    setProp('meta[property="og:description"]', description)
+    setProp('meta[name="twitter:title"]', title)
+    setProp('meta[name="twitter:description"]', description)
   }, [t])
 
   useEffect(() => {

@@ -2,11 +2,53 @@ import fs from 'fs'
 
 export function parseTranslationFile(filePath) {
   const s = fs.readFileSync(filePath, 'utf8')
-  const objStart = s.indexOf('{')
-  const asConst = s.lastIndexOf('} as const')
-  const objEnd = asConst >= 0 ? asConst : s.lastIndexOf('}')
-  const body = s.slice(objStart, objEnd + 1)
-  return Function(`"use strict"; return (${body});`)()
+  // Prefer the translations object after `export const … = {`
+  // (locale files start with `import type { TranslationKey } …`).
+  const exportMatch = s.match(/export const \w+[^=]*=\s*\{/)
+  const objStart = exportMatch
+    ? exportMatch.index + exportMatch[0].length - 1
+    : s.indexOf('{')
+  const tail = s.slice(objStart)
+  // Scan string-aware to the matching closing brace of the object.
+  let depth = 0
+  let inStr = false
+  let end = -1
+  for (let i = 0; i < tail.length; i++) {
+    const ch = tail[i]
+    if (inStr) {
+      if (ch === '\\') {
+        i++
+        continue
+      }
+      if (ch === "'") inStr = false
+      continue
+    }
+    if (ch === "'") {
+      inStr = true
+      continue
+    }
+    if (ch === '{') depth++
+    else if (ch === '}') {
+      depth--
+      if (depth === 0) {
+        end = objStart + i
+        break
+      }
+    }
+  }
+  if (end < 0) throw new Error(`Could not parse translations object in ${filePath}`)
+  const body = s.slice(objStart, end + 1)
+  // Prefer regex extraction — avoids Function() choking on odd escapes.
+  const out = {}
+  const re = /'((?:\\'|[^'])*)'\s*:\s*'((?:\\'|[^'])*)'/g
+  let m
+  while ((m = re.exec(body))) {
+    out[m[1].replace(/\\'/g, "'")] = m[2]
+      .replace(/\\'/g, "'")
+      .replace(/\\n/g, '\n')
+      .replace(/\\\\/g, '\\')
+  }
+  return out
 }
 
 export function escapeTsString(value) {
