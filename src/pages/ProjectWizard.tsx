@@ -55,9 +55,7 @@ export function ProjectWizard() {
   }
 
   const trade = PROJECT_TRADES.find((x) => x.id === state.tradeId)
-  const tradeLabel = trade
-    ? tw(t, trade.labelKey, trade.labelEn)
-    : tw(t, 'project.wizard.category', 'Category')
+  const tradeLabel = trade ? t(trade.labelKey) : t('project.wizard.category')
 
   const titles: Record<number, { title: string; subtitle: string }> = {
     1: {
@@ -169,7 +167,7 @@ export function ProjectWizard() {
         <CategoryStep
           selectedId={state.tradeId}
           onSelect={(tradeId, subcategorySlug) => patch({ tradeId, subcategorySlug })}
-          t={(key) => tw(t, key, PROJECT_TRADES.find((x) => x.labelKey === key)?.labelEn || key)}
+          t={t}
           error={fieldErrors.tradeId}
         />
       )}

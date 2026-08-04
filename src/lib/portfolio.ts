@@ -44,15 +44,23 @@ export const EMPTY_PORTFOLIO_DRAFT: PortfolioItemDraft = {
 }
 
 export const PORTFOLIO_CATEGORIES = [
-  { id: '', label: 'All' },
-  ...PROJECT_TRADES.map((t) => ({ id: t.id, label: t.labelEn })),
-  { id: 'certificate', label: 'Certificates' },
+  { id: '', labelKey: 'portfolio.cat.all' },
+  ...PROJECT_TRADES.map((trade) => ({ id: trade.id, labelKey: trade.labelKey })),
+  { id: 'certificate', labelKey: 'portfolio.cat.certificate' },
 ]
 
+/** Translation key for a portfolio category slug (use with t()). */
+export function portfolioCategoryKey(slug: string | null | undefined): string {
+  if (!slug) return 'portfolio.cat.general'
+  if (slug === 'certificate') return 'portfolio.cat.certificate'
+  return PROJECT_TRADES.find((trade) => trade.id === slug)?.labelKey || 'portfolio.cat.general'
+}
+
+/** @deprecated Prefer portfolioCategoryKey + t() */
 export function categoryLabel(slug: string | null | undefined): string {
   if (!slug) return 'General'
   if (slug === 'certificate') return 'Certificates'
-  return PROJECT_TRADES.find((t) => t.id === slug)?.labelEn || slug
+  return PROJECT_TRADES.find((trade) => trade.id === slug)?.labelEn || slug
 }
 
 export function coverUrl(item: PortfolioItemRow): string | null {

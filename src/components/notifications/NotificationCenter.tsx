@@ -22,14 +22,14 @@ import {
   type AppNotification,
 } from '../../lib/notifications/notifications'
 
-const FILTERS: { id: string; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'project', label: 'Projects' },
-  { id: 'message', label: 'Messages' },
-  { id: 'review', label: 'Reviews' },
-  { id: 'payment', label: 'Payments' },
-  { id: 'verification', label: 'Verification' },
-  { id: 'booking', label: 'Bookings' },
+const FILTERS: { id: string; labelKey: string }[] = [
+  { id: 'all', labelKey: 'notifications.filter.all' },
+  { id: 'project', labelKey: 'notifications.filter.project' },
+  { id: 'message', labelKey: 'notifications.filter.message' },
+  { id: 'review', labelKey: 'notifications.filter.review' },
+  { id: 'payment', labelKey: 'notifications.filter.payment' },
+  { id: 'verification', labelKey: 'notifications.filter.verification' },
+  { id: 'booking', labelKey: 'notifications.filter.booking' },
 ]
 
 function TypeIcon({ type }: { type: string }) {
@@ -45,14 +45,16 @@ function TypeIcon({ type }: { type: string }) {
   return <Bell className={cls} />
 }
 
-function typeLabel(type: string) {
-  if (type === 'quote' || type === 'lead' || type === 'listing' || type === 'match') return 'Project'
-  if (type === 'message') return 'Message'
-  if (type === 'review') return 'Review'
-  if (type === 'payment') return 'Payment'
-  if (type === 'verification') return 'Verification'
-  if (type === 'booking') return 'Booking'
-  return 'Update'
+function typeLabel(type: string, t: (key: never) => string) {
+  if (type === 'quote' || type === 'lead' || type === 'listing' || type === 'match' || type === 'project') {
+    return t('notifications.type.project' as never)
+  }
+  if (type === 'message') return t('notifications.type.message' as never)
+  if (type === 'review') return t('notifications.type.review' as never)
+  if (type === 'payment') return t('notifications.type.payment' as never)
+  if (type === 'verification') return t('notifications.type.verification' as never)
+  if (type === 'booking') return t('notifications.type.booking' as never)
+  return t('notifications.type.update' as never)
 }
 
 type Props = {
@@ -177,7 +179,7 @@ export function NotificationCenter({ compact = true }: Props) {
         <div>
           <p className="text-[14px] font-semibold text-[#1d1d1f]">{t('notifications.title')}</p>
           <p className="text-[11px] text-[#86868b]">
-            In-app · Push · Email · Realtime
+            {t('notifications.channelsHint')}
           </p>
         </div>
         <div className="flex flex-wrap justify-end gap-2">
@@ -186,7 +188,7 @@ export function NotificationCenter({ compact = true }: Props) {
             className="text-[11px] font-semibold text-indigo-600"
             onClick={() => void enablePush()}
           >
-            {pushOk ? 'Push on' : t('notifications.enablePush')}
+            {pushOk ? t('notifications.pushOn') : t('notifications.enablePush')}
           </button>
           <button
             type="button"
@@ -214,7 +216,7 @@ export function NotificationCenter({ compact = true }: Props) {
                 : 'bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed]'
             }`}
           >
-            {f.label}
+            {t(f.labelKey as never)}
           </button>
         ))}
       </div>
@@ -250,7 +252,7 @@ export function NotificationCenter({ compact = true }: Props) {
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2">
                   <span className="text-[10px] font-bold uppercase tracking-wide text-[#86868b]">
-                    {typeLabel(n.type)}
+                    {typeLabel(n.type, t)}
                   </span>
                   {!n.is_read ? (
                     <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
@@ -291,7 +293,7 @@ export function NotificationCenter({ compact = true }: Props) {
               navigateTo('/notifications')
             }}
           >
-            Open full center
+            {t('notifications.openFull')}
           </button>
         )}
       </div>
@@ -301,7 +303,7 @@ export function NotificationCenter({ compact = true }: Props) {
   if (!compact) {
     return (
       <div className="px-4 py-8">
-        <h1 className="mb-4 text-[22px] font-semibold text-[#1d1d1f]">Notification Center</h1>
+        <h1 className="mb-4 text-[22px] font-semibold text-[#1d1d1f]">{t('notifications.centerTitle')}</h1>
         {panel}
       </div>
     )
@@ -332,17 +334,17 @@ export function NotificationCenter({ compact = true }: Props) {
 
 /** Full-page wrapper */
 export function NotificationsPage() {
-  const { user } = useApp()
+  const { user, t } = useApp()
   if (!user) {
     return (
       <div className="px-4 py-16 text-center">
-        <p className="text-[14px] text-[#6e6e73]">Sign in to view notifications</p>
+        <p className="text-[14px] text-[#6e6e73]">{t('notifications.signIn')}</p>
         <button
           type="button"
           className="mt-4 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white"
           onClick={() => navigateTo('/login')}
         >
-          Log in
+          {t('notifications.logIn')}
         </button>
       </div>
     )

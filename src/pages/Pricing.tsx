@@ -11,6 +11,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import type { TranslationKey } from '../lib/i18n'
 import { navigateTo } from '../lib/navigation'
 import {
   ADDONS,
@@ -21,20 +22,50 @@ import {
   yearlySavingsPct,
   type BillingInterval,
   type PlanId,
+  type SupportTier,
 } from '../lib/monetization/plans'
 import { startAddonCheckout, startPlanCheckout } from '../lib/monetization/billing'
 
+const PLAN_HIGHLIGHTS: Record<PlanId, TranslationKey[]> = {
+  free: [
+    'pricing.plan.free.h1',
+    'pricing.plan.free.h2',
+    'pricing.plan.free.h3',
+    'pricing.plan.free.h4',
+  ],
+  pro: [
+    'pricing.plan.pro.h1',
+    'pricing.plan.pro.h2',
+    'pricing.plan.pro.h3',
+    'pricing.plan.pro.h4',
+  ],
+  business: [
+    'pricing.plan.business.h1',
+    'pricing.plan.business.h2',
+    'pricing.plan.business.h3',
+    'pricing.plan.business.h4',
+    'pricing.plan.business.h5',
+  ],
+  enterprise: [
+    'pricing.plan.enterprise.h1',
+    'pricing.plan.enterprise.h2',
+    'pricing.plan.enterprise.h3',
+    'pricing.plan.enterprise.h4',
+    'pricing.plan.enterprise.h5',
+  ],
+}
+
 export function Pricing() {
-  const { user, profile } = useApp()
+  const { user, profile, t } = useApp()
   const [interval, setInterval] = useState<BillingInterval>('month')
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState('')
 
   const currentPlan = getPlan(profile?.plan_id)
 
-  const support = useMemo(
-    () => SUPPORT_COPY[currentPlan.supportTier],
-    [currentPlan.supportTier],
+  const supportTier = useMemo(
+    () => Object.keys(SUPPORT_COPY) as SupportTier[],
+    [],
   )
 
   const run = async (key: string, fn: () => Promise<{ url: string }>) => {
@@ -49,7 +80,7 @@ export function Pricing() {
       if (result.url.startsWith('http')) window.location.href = result.url
       else navigateTo(result.url)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Payment failed')
+      setError(err instanceof Error ? err.message : t('pricing.paymentFailed'))
       setLoading(null)
     }
   }
@@ -65,19 +96,22 @@ export function Pricing() {
     )
   }
 
+  const planName = (id: PlanId) => t(`pricing.plan.${id}.name` as TranslationKey)
+  const supportLabel = (tier: SupportTier) =>
+    t(`pricing.support.${tier}.label` as TranslationKey)
+
   return (
     <div className="py-8 pb-24 lg:pb-10">
       <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6">
         <header className="space-y-3">
           <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">
-            Monetization
+            {t('pricing.eyebrow')}
           </p>
           <h1 className="text-[34px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[40px]">
-            Plans that grow with your business
+            {t('pricing.title')}
           </h1>
           <p className="max-w-2xl text-[15px] leading-relaxed text-[#6e6e73]">
-            Free · Pro · Business · Enterprise — plus featured profiles, sponsored projects,
-            lead credits, banner ads, and Google Ads. Powered by Stripe subscriptions.
+            {t('pricing.subtitle')}
           </p>
           {user ? (
             <div className="flex flex-wrap gap-2 pt-1">
@@ -87,11 +121,13 @@ export function Pricing() {
                 className="inline-flex items-center gap-2 rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white"
               >
                 <CreditCard className="h-4 w-4" />
-                Manage billing
+                {t('pricing.manageBilling')}
               </button>
               <span className="inline-flex items-center rounded-full border border-[#e8e8ed] bg-white px-3 py-2 text-[12px] text-[#6e6e73]">
-                Current: {currentPlan.name} · {support.label} support ·{' '}
-                {profile?.lead_credits ?? 0} credits
+                {t('pricing.currentBadge')
+                  .replace('{plan}', planName(currentPlan.id))
+                  .replace('{support}', supportLabel(currentPlan.supportTier))
+                  .replace('{credits}', String(profile?.lead_credits ?? 0))}
               </span>
             </div>
           ) : null}
@@ -111,7 +147,7 @@ export function Pricing() {
               interval === 'month' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
             }`}
           >
-            Monthly
+            {t('pricing.monthly')}
           </button>
           <button
             type="button"
@@ -120,7 +156,7 @@ export function Pricing() {
               interval === 'year' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
             }`}
           >
-            Yearly · save up to 17%
+            {t('pricing.yearly')}
           </button>
         </div>
 
@@ -138,29 +174,35 @@ export function Pricing() {
               >
                 {plan.popular ? (
                   <span className="absolute -top-3 left-5 rounded-full bg-[#1d1d1f] px-3 py-1 text-[11px] font-semibold text-white">
-                    Most popular
+                    {t('pricing.mostPopular')}
                   </span>
                 ) : null}
-                <h2 className="text-[20px] font-semibold text-[#1d1d1f]">{plan.name}</h2>
-                <p className="mt-1 text-[13px] text-[#86868b]">{plan.tagline}</p>
+                <h2 className="text-[20px] font-semibold text-[#1d1d1f]">
+                  {planName(plan.id)}
+                </h2>
+                <p className="mt-1 text-[13px] text-[#86868b]">
+                  {t(`pricing.plan.${plan.id}.tagline` as TranslationKey)}
+                </p>
                 <p className="mt-4">
                   <span className="text-[32px] font-semibold tracking-tight text-[#1d1d1f]">
                     €{price}
                   </span>
                   <span className="text-[13px] text-[#86868b]">
-                    /{interval === 'year' ? 'year' : 'mo'}
+                    {interval === 'year' ? t('pricing.perYear') : t('pricing.perMonth')}
                   </span>
                 </p>
                 {interval === 'year' && save > 0 ? (
-                  <p className="mt-1 text-[12px] font-medium text-emerald-700">Save {save}%</p>
+                  <p className="mt-1 text-[12px] font-medium text-emerald-700">
+                    {t('pricing.savePct').replace('{pct}', String(save))}
+                  </p>
                 ) : (
                   <p className="mt-1 text-[12px] text-transparent">.</p>
                 )}
                 <ul className="mt-4 flex-1 space-y-2">
-                  {plan.highlights.map((h) => (
-                    <li key={h} className="flex gap-2 text-[13px] text-[#3a3a3c]">
+                  {PLAN_HIGHLIGHTS[plan.id].map((key) => (
+                    <li key={key} className="flex gap-2 text-[13px] text-[#3a3a3c]">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                      <span>{h}</span>
+                      <span>{t(key)}</span>
                     </li>
                   ))}
                 </ul>
@@ -174,7 +216,11 @@ export function Pricing() {
                       : 'border border-[#d2d2d7] bg-white text-[#1d1d1f]'
                   }`}
                 >
-                  {isCurrent ? 'Current plan' : loading === `plan-${plan.id}` ? 'Redirecting…' : plan.cta}
+                  {isCurrent
+                    ? t('pricing.currentPlan')
+                    : loading === `plan-${plan.id}`
+                      ? t('pricing.redirecting')
+                      : t(`pricing.plan.${plan.id}.cta` as TranslationKey)}
                   {!isCurrent ? <ArrowRight className="h-4 w-4" /> : null}
                 </button>
               </article>
@@ -184,10 +230,8 @@ export function Pricing() {
 
         <section className="space-y-4">
           <div>
-            <h2 className="text-[22px] font-semibold text-[#1d1d1f]">Growth add-ons</h2>
-            <p className="mt-1 text-[14px] text-[#6e6e73]">
-              Buy à la carte — Featured profile, Sponsored projects, Lead credits, Google Ads, Banner ads.
-            </p>
+            <h2 className="text-[22px] font-semibold text-[#1d1d1f]">{t('pricing.addonsTitle')}</h2>
+            <p className="mt-1 text-[14px] text-[#6e6e73]">{t('pricing.addonsSub')}</p>
           </div>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {ADDONS.map((addon) => {
@@ -201,6 +245,8 @@ export function Pricing() {
                       : addon.paymentType === 'google_ads'
                         ? Sparkles
                         : Megaphone
+              const nameKey = `pricing.addon.${addon.id}.name` as TranslationKey
+              const descKey = `pricing.addon.${addon.id}.desc` as TranslationKey
               return (
                 <div
                   key={addon.id}
@@ -211,11 +257,13 @@ export function Pricing() {
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-[15px] font-semibold text-[#1d1d1f]">{addon.name}</h3>
-                      <p className="mt-1 text-[13px] text-[#6e6e73]">{addon.description}</p>
+                      <h3 className="text-[15px] font-semibold text-[#1d1d1f]">{t(nameKey)}</h3>
+                      <p className="mt-1 text-[13px] text-[#6e6e73]">{t(descKey)}</p>
                       <div className="mt-3 flex items-center justify-between gap-2">
                         <span className="text-[16px] font-semibold text-[#1d1d1f]">
-                          {addon.href ? `from €${addon.priceEur}/wk` : `€${addon.priceEur}`}
+                          {addon.href
+                            ? t('pricing.fromPriceWeek').replace('{price}', String(addon.priceEur))
+                            : t('pricing.priceEur').replace('{price}', String(addon.priceEur))}
                         </span>
                         <button
                           type="button"
@@ -227,7 +275,11 @@ export function Pricing() {
                           }
                           className="rounded-full bg-[#1d1d1f] px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50"
                         >
-                          {loading === addon.id ? '…' : addon.href ? 'Open' : 'Buy'}
+                          {loading === addon.id
+                            ? '…'
+                            : addon.href
+                              ? t('pricing.open')
+                              : t('pricing.buy')}
                         </button>
                       </div>
                     </div>
@@ -242,13 +294,15 @@ export function Pricing() {
           <div className="rounded-[22px] border border-[#e8e8ed] bg-[#fbfbfd] p-5">
             <div className="flex items-center gap-2 text-[#1d1d1f]">
               <LifeBuoy className="h-5 w-5" />
-              <h2 className="text-[16px] font-semibold">Support by plan</h2>
+              <h2 className="text-[16px] font-semibold">{t('pricing.supportByPlan')}</h2>
             </div>
             <ul className="mt-3 space-y-2 text-[13px] text-[#3a3a3c]">
-              {(Object.keys(SUPPORT_COPY) as Array<keyof typeof SUPPORT_COPY>).map((key) => (
+              {supportTier.map((key) => (
                 <li key={key}>
-                  <span className="font-semibold">{SUPPORT_COPY[key].label}:</span>{' '}
-                  {SUPPORT_COPY[key].sla}
+                  <span className="font-semibold">
+                    {t(`pricing.support.${key}.label` as TranslationKey)}:
+                  </span>{' '}
+                  {t(`pricing.support.${key}.sla` as TranslationKey)}
                 </li>
               ))}
             </ul>
@@ -257,17 +311,16 @@ export function Pricing() {
               onClick={() => navigateTo('/contact')}
               className="mt-4 text-[13px] font-semibold text-[#1d1d1f] underline-offset-2 hover:underline"
             >
-              Contact support
+              {t('pricing.contactSupport')}
             </button>
           </div>
           <div className="rounded-[22px] border border-[#e8e8ed] bg-[#fbfbfd] p-5">
             <div className="flex items-center gap-2 text-[#1d1d1f]">
               <Megaphone className="h-5 w-5" />
-              <h2 className="text-[16px] font-semibold">Ads</h2>
+              <h2 className="text-[16px] font-semibold">{t('pricing.adsSection')}</h2>
             </div>
             <p className="mt-2 text-[13px] leading-relaxed text-[#3a3a3c]">
-              Run native banner ads on DImarket, or request managed Google Ads campaigns.
-              Business and Enterprise plans include higher discounts; Enterprise includes Google Ads management.
+              {t('pricing.adsBody')}
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               <button
@@ -275,14 +328,14 @@ export function Pricing() {
                 onClick={() => navigateTo('/advertise')}
                 className="rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold"
               >
-                Banner ads
+                {t('pricing.bannerAds')}
               </button>
               <button
                 type="button"
                 onClick={() => navigateTo('/boost')}
                 className="rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold"
               >
-                Profile boost
+                {t('pricing.profileBoost')}
               </button>
             </div>
           </div>

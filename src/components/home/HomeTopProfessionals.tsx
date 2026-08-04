@@ -31,10 +31,10 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
           <p className="home-section__subtitle">{t('homePremium.prosSubtitle')}</p>
         </div>
         <div className="home-carousel-nav">
-          <button type="button" onClick={() => scroll(-1)} aria-label="Previous">
+          <button type="button" onClick={() => scroll(-1)} aria-label={t('common.previous')}>
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <button type="button" onClick={() => scroll(1)} aria-label="Next">
+          <button type="button" onClick={() => scroll(1)} aria-label={t('common.next')}>
             <ChevronRight className="h-5 w-5" />
           </button>
           <button

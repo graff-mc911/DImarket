@@ -35,7 +35,7 @@ export function CategoryStep({ selectedId, onSelect, t, error }: CategoryStepPro
                 <Icon className={'h-6 w-6 ' + (active ? 'text-white' : 'text-[#1d1d1f]')} />
               </span>
               <span className="text-[13px] font-semibold leading-snug tracking-[-0.01em]">
-                {t(trade.labelKey) || trade.labelEn}
+                {t(trade.labelKey)}
               </span>
             </button>
           )

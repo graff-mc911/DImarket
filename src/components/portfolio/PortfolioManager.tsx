@@ -149,7 +149,7 @@ export function PortfolioManager({
                   : 'bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed]'
               }`}
             >
-              {c.label}
+              {t(c.labelKey as never)}
             </button>
           ))}
         </div>
@@ -232,13 +232,13 @@ export function PortfolioManager({
                 value={draft.category_slug}
                 onChange={(e) => setDraft((d) => ({ ...d, category_slug: e.target.value }))}
               >
-                <option value="">General</option>
-                {PROJECT_TRADES.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.labelEn}
+                <option value="">{t('portfolio.cat.general')}</option>
+                {PROJECT_TRADES.map((trade) => (
+                  <option key={trade.id} value={trade.id}>
+                    {t(trade.labelKey)}
                   </option>
                 ))}
-                <option value="certificate">Certificates</option>
+                <option value="certificate">{t('portfolio.cat.certificate')}</option>
               </select>
             </label>
           </div>

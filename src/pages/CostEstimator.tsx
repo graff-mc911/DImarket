@@ -84,10 +84,10 @@ export function CostEstimator() {
     }
   }
 
-  const tradeLabel = useMemo(
-    () => PROJECT_TRADES.find((t) => t.id === tradeId)?.labelEn || 'General',
-    [tradeId],
-  )
+  const tradeLabel = useMemo(() => {
+    const trade = PROJECT_TRADES.find((x) => x.id === tradeId)
+    return trade ? t(trade.labelKey) : t('portfolio.cat.general')
+  }, [tradeId, t])
 
   return (
     <div className="min-h-[80vh] bg-[#f5f5f7] pb-24">
@@ -137,7 +137,7 @@ export function CostEstimator() {
                     }`}
                   >
                     <Icon className="h-3.5 w-3.5" />
-                    {tr.labelEn}
+                    {t(tr.labelKey)}
                   </button>
                 )
               })}

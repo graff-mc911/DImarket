@@ -753,16 +753,16 @@ export function Settings() {
                     {notificationsEnabled ? (
                       <div className="mt-5 space-y-4 rounded-2xl border border-[rgba(190,168,150,0.28)] bg-white/50 p-4">
                         <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
-                          Channels
+                          {t('settings.notifChannels')}
                         </p>
                         <div className="flex flex-wrap gap-4">
                           {(
                             [
-                              ['inapp', 'In-app'],
-                              ['push', 'Push'],
-                              ['email', 'Email'],
+                              ['inapp', 'settings.channel.inapp'],
+                              ['push', 'settings.channel.push'],
+                              ['email', 'settings.channel.email'],
                             ] as const
-                          ).map(([key, label]) => (
+                          ).map(([key, labelKey]) => (
                             <label key={key} className="inline-flex items-center gap-2 text-sm text-[#2f2a24]">
                               <input
                                 type="checkbox"
@@ -771,12 +771,12 @@ export function Settings() {
                                   setNotificationPrefs((p) => ({ ...p, [key]: e.target.checked }))
                                 }
                               />
-                              {label}
+                              {t(labelKey)}
                             </label>
                           ))}
                         </div>
                         <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
-                          Categories
+                          {t('settings.notifCategories')}
                         </p>
                         <div className="grid gap-2 sm:grid-cols-2">
                           {NOTIFICATION_CATEGORIES.map((c) => (
@@ -797,7 +797,7 @@ export function Settings() {
                                   }))
                                 }
                               />
-                              {c.label}
+                              {t(c.labelKey as never)}
                             </label>
                           ))}
                         </div>
