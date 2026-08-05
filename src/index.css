@@ -202,6 +202,103 @@
     min-width: 0;
   }
 
+  @media (max-width: 1279px) {
+    .app-shell {
+      padding-bottom: calc(3.75rem + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  .mobile-bottom-nav {
+    box-shadow: 0 -1px 0 rgba(26, 26, 26, 0.06);
+  }
+
+  .mobile-nav-more {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+  }
+
+  .mobile-nav-more__backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgba(15, 17, 17, 0.45);
+  }
+
+  .mobile-nav-more__sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: min(78dvh, 36rem);
+    overflow: auto;
+    border-radius: 1rem 1rem 0 0;
+    background: #232f3e;
+    color: #fff;
+    padding: 1rem 1rem calc(5rem + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.28);
+  }
+
+  .mobile-nav-more__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .mobile-nav-more__head h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .mobile-nav-more__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
+  .mobile-nav-more__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .mobile-nav-more__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 0.75rem;
+    border: 0;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .mobile-nav-more__item:hover,
+  .mobile-nav-more__item:focus-visible {
+    background: rgba(255, 153, 0, 0.16);
+    outline: none;
+  }
+
+  .mobile-nav-more__icon {
+    display: inline-flex;
+    color: #ff9900;
+  }
+
   .page-bg {
     background-color: var(--bg-canvas);
   }
@@ -2494,10 +2591,6 @@
     color: var(--ink-700);
     font-size: 0.75rem;
     font-weight: 500;
-  }
-
-  .mobile-bottom-nav {
-    box-shadow: 0 -1px 0 rgba(26, 26, 26, 0.06);
   }
 
   @media (max-width: 1279px) {

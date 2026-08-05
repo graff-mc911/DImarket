@@ -8,6 +8,7 @@ import { AppProvider }         from './contexts/AppContext'
 import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
+import { MobileBottomNav }     from './components/MobileBottomNav'
 import { PageWithSideAds } from './components/PageWithSideAds'
 import { bindPathListener }    from './lib/navigation'
 
@@ -221,6 +222,9 @@ function App() {
           </main>
           <ErrorBoundary name="Footer">
             <Footer />
+          </ErrorBoundary>
+          <ErrorBoundary name="MobileBottomNav">
+            <MobileBottomNav />
           </ErrorBoundary>
           <AiChatWidget />
         </div>

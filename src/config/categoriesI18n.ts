@@ -3274,8 +3274,6 @@ export const SERVIYA_CATEGORY_I18N: Record<string, ServiyaLabelMap> = {
     zh: '门窗制造商',
     ja: '窓メーカー',
   },
-}
-
   'buy-sell': {
     en: 'Buy & Sell',
     uk: 'Продам / Здам',
@@ -3492,6 +3490,7 @@ export const SERVIYA_CATEGORY_I18N: Record<string, ServiyaLabelMap> = {
     zh: '招聘工匠',
     ja: '職人募集',
   },
+}
 
 export function serviyaLabel(slug: string, locale: string, fallback: string): string {
   const map = SERVIYA_CATEGORY_I18N[slug]
