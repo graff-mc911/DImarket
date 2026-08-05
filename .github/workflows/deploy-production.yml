@@ -1,5 +1,7 @@
 name: Deploy Production (Vercel)
 
+# Fallback when Vercel Git auto-deploy is stuck.
+# Immediate fix without this workflow: Vercel Dashboard → Redeploy production from main.
 on:
   push:
     branches: [main]
@@ -12,7 +14,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,23 +28,32 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Require Vercel token
+      - name: Check Vercel secrets
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          if [ -z "$VERCEL_TOKEN" ]; then
-            echo "::error::Missing GitHub Actions secret VERCEL_TOKEN. Add it in repo Settings → Secrets, then re-run this workflow."
+          missing=0
+          for key in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!key}" ]; then
+              echo "::error::Missing GitHub Actions secret: $key"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "::error::Add secrets, then re-run. Or Redeploy in Vercel Dashboard from branch main (commit d0c6320+)."
             exit 1
           fi
 
-      - name: Pull Vercel project settings
+      - name: Pull production env
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
-      - name: Build
+      - name: Build (production)
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -56,3 +67,14 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: npx vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
+
+      - name: Verify live build-id
+        run: |
+          sleep 5
+          live="$(curl -fsS 'https://dimarket.app/build-id.txt' | tr -d '[:space:]')"
+          echo "Live build-id: $live"
+          echo "Expected prefix of: ${{ github.sha }}"
+          case "$live" in
+            ${GITHUB_SHA:0:7}*) echo "OK: production updated" ;;
+            *) echo "::warning::Production build-id ($live) does not match this SHA yet — CDN may still be catching up." ;;
+          esac
