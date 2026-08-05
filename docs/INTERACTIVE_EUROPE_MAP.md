@@ -12,11 +12,13 @@ Interactive Europe map UX for professionals, companies, projects, marketplace an
 ## Marker kinds (DB-backed only)
 | Kind | Color | Source |
 |------|-------|--------|
-| Professional | Green `#16a34a` | `profiles` professional + coords |
-| Company | Blue `#2563eb` | `profiles` company + coords |
-| Project | Orange `#ea580c` | `listings` service_request |
+| Professional | Green `#16a34a` | `profiles` professional + coords **or city text** |
+| Company | Blue `#2563eb` | `profiles` company + coords **or city text** |
+| Project | Orange `#ea580c` | `listings` service_request + coords **or city/location text** |
 | Job | Purple `#7c3aed` | listings under vacancies / job heuristics |
 | Marketplace | Brown `#92400e` | `item_sale` / `item_wanted` / sell-rent |
+
+Listings without `latitude`/`longitude` are placed via `inferCoordsFromLocationText()` (city name → approximate center).
 
 ## Synchronization
 - Header / AppContext geo → map center + radius filter
@@ -26,7 +28,7 @@ Interactive Europe map UX for professionals, companies, projects, marketplace an
 - Marker click → sidebar highlight
 
 ## Performance
-- Session cache (~90s) for marker payload
+- Session cache key `dimarket_map_markers_v3` (~90s) for marker payload
 - Client-side filter (no full reload)
 - Zoom-aware clustering
 - Lazy images in popups/sidebar

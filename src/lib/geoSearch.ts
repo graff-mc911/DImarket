@@ -76,9 +76,114 @@ const CITY_CENTERS: Record<string, GeoPoint> = {
   'germany|frankfurt': { lat: 50.1109, lon: 8.6821 },
   'germany|hamburg': { lat: 53.5511, lon: 9.9937 },
   'germany|munich': { lat: 48.1351, lon: 11.582 },
+  'germany|münchen': { lat: 48.1351, lon: 11.582 },
+  'germany|berlin': { lat: 52.52, lon: 13.405 },
+  'germany|cologne': { lat: 50.9375, lon: 6.9603 },
+  'germany|köln': { lat: 50.9375, lon: 6.9603 },
+  'germany|stuttgart': { lat: 48.7758, lon: 9.1829 },
+  'germany|leipzig': { lat: 51.3397, lon: 12.3731 },
   'france|paris': { lat: 48.8566, lon: 2.3522 },
   'france|lyon': { lat: 45.764, lon: 4.8357 },
   'france|marseille': { lat: 43.2965, lon: 5.3698 },
+  'poland|warsaw': { lat: 52.2297, lon: 21.0122 },
+  'poland|warszawa': { lat: 52.2297, lon: 21.0122 },
+  'poland|krakow': { lat: 50.0647, lon: 19.945 },
+  'poland|kraków': { lat: 50.0647, lon: 19.945 },
+  'ukraine|kyiv': { lat: 50.4501, lon: 30.5234 },
+  'ukraine|київ': { lat: 50.4501, lon: 30.5234 },
+  'ukraine|lviv': { lat: 49.8397, lon: 24.0297 },
+  'italy|rome': { lat: 41.9028, lon: 12.4964 },
+  'italy|roma': { lat: 41.9028, lon: 12.4964 },
+  'italy|milan': { lat: 45.4642, lon: 9.19 },
+  'italy|milano': { lat: 45.4642, lon: 9.19 },
+  'austria|vienna': { lat: 48.2082, lon: 16.3738 },
+  'austria|wien': { lat: 48.2082, lon: 16.3738 },
+  'netherlands|amsterdam': { lat: 52.3676, lon: 4.9041 },
+  'portugal|lisbon': { lat: 38.7223, lon: -9.1393 },
+  'portugal|lisboa': { lat: 38.7223, lon: -9.1393 },
+  'czech republic|prague': { lat: 50.0755, lon: 14.4378 },
+  'czechia|prague': { lat: 50.0755, lon: 14.4378 },
+  'czech republic|praha': { lat: 50.0755, lon: 14.4378 },
+}
+
+/** City-only lookup when country is unknown (e.g. listing.location = "Berlin"). */
+const CITY_ONLY_CENTERS: Record<string, GeoPoint> = {
+  berlin: { lat: 52.52, lon: 13.405 },
+  munich: { lat: 48.1351, lon: 11.582 },
+  münchen: { lat: 48.1351, lon: 11.582 },
+  frankfurt: { lat: 50.1109, lon: 8.6821 },
+  hamburg: { lat: 53.5511, lon: 9.9937 },
+  darmstadt: { lat: 49.8728, lon: 8.6512 },
+  cologne: { lat: 50.9375, lon: 6.9603 },
+  köln: { lat: 50.9375, lon: 6.9603 },
+  madrid: { lat: 40.4168, lon: -3.7038 },
+  barcelona: { lat: 41.3874, lon: 2.1686 },
+  valencia: { lat: 39.4699, lon: -0.3763 },
+  alicante: { lat: 38.3452, lon: -0.481 },
+  sevilla: { lat: 37.3891, lon: -5.9845 },
+  seville: { lat: 37.3891, lon: -5.9845 },
+  paris: { lat: 48.8566, lon: 2.3522 },
+  lyon: { lat: 45.764, lon: 4.8357 },
+  warsaw: { lat: 52.2297, lon: 21.0122 },
+  warszawa: { lat: 52.2297, lon: 21.0122 },
+  kyiv: { lat: 50.4501, lon: 30.5234 },
+  київ: { lat: 50.4501, lon: 30.5234 },
+  rome: { lat: 41.9028, lon: 12.4964 },
+  roma: { lat: 41.9028, lon: 12.4964 },
+  milan: { lat: 45.4642, lon: 9.19 },
+  milano: { lat: 45.4642, lon: 9.19 },
+  vienna: { lat: 48.2082, lon: 16.3738 },
+  wien: { lat: 48.2082, lon: 16.3738 },
+  amsterdam: { lat: 52.3676, lon: 4.9041 },
+  prague: { lat: 50.0755, lon: 14.4378 },
+  praha: { lat: 50.0755, lon: 14.4378 },
+  lisbon: { lat: 38.7223, lon: -9.1393 },
+  lisboa: { lat: 38.7223, lon: -9.1393 },
+  lviv: { lat: 49.8397, lon: 24.0297 },
+  львів: { lat: 49.8397, lon: 24.0297 },
+  odessa: { lat: 46.4825, lon: 30.7233 },
+  odesa: { lat: 46.4825, lon: 30.7233 },
+  одеса: { lat: 46.4825, lon: 30.7233 },
+  kharkiv: { lat: 49.9935, lon: 36.2304 },
+  харків: { lat: 49.9935, lon: 36.2304 },
+  dnipro: { lat: 48.4647, lon: 35.0462 },
+  дніпро: { lat: 48.4647, lon: 35.0462 },
+  krakow: { lat: 50.0647, lon: 19.945 },
+  kraków: { lat: 50.0647, lon: 19.945 },
+  краків: { lat: 50.0647, lon: 19.945 },
+  wroclaw: { lat: 51.1079, lon: 17.0385 },
+  wrocław: { lat: 51.1079, lon: 17.0385 },
+  gdansk: { lat: 54.352, lon: 18.6466 },
+  gdańsk: { lat: 54.352, lon: 18.6466 },
+  london: { lat: 51.5074, lon: -0.1278 },
+  лондон: { lat: 51.5074, lon: -0.1278 },
+  stockholm: { lat: 59.3293, lon: 18.0686 },
+  brussels: { lat: 50.8503, lon: 4.3517 },
+  bruxelles: { lat: 50.8503, lon: 4.3517 },
+  zurich: { lat: 47.3769, lon: 8.5417 },
+  zürich: { lat: 47.3769, lon: 8.5417 },
+  copenhagen: { lat: 55.6761, lon: 12.5683 },
+  københavn: { lat: 55.6761, lon: 12.5683 },
+  oslo: { lat: 59.9139, lon: 10.7522 },
+  helsinki: { lat: 60.1699, lon: 24.9384 },
+  dublin: { lat: 53.3498, lon: -6.2603 },
+  budapest: { lat: 47.4979, lon: 19.0402 },
+  bucharest: { lat: 44.4268, lon: 26.1025 },
+  sofia: { lat: 42.6977, lon: 23.3219 },
+  belgrade: { lat: 44.7866, lon: 20.4489 },
+  zagreb: { lat: 45.815, lon: 15.9819 },
+  athens: { lat: 37.9838, lon: 23.7275 },
+  istanbul: { lat: 41.0082, lon: 28.9784 },
+  tallinn: { lat: 59.437, lon: 24.7536 },
+  riga: { lat: 56.9496, lon: 24.1052 },
+  vilnius: { lat: 54.6872, lon: 25.2797 },
+  берлін: { lat: 52.52, lon: 13.405 },
+  варшава: { lat: 52.2297, lon: 21.0122 },
+  париж: { lat: 48.8566, lon: 2.3522 },
+  мюнхен: { lat: 48.1351, lon: 11.582 },
+  відень: { lat: 48.2082, lon: 16.3738 },
+  прага: { lat: 50.0755, lon: 14.4378 },
+  kiev: { lat: 50.4501, lon: 30.5234 },
 }
 
 const cityCenterCache = new Map<string, GeoPoint | null>()
@@ -88,8 +193,45 @@ function cityKey(country: string, city: string): string {
 }
 
 export function knownCityCenter(country: string, city: string): GeoPoint | null {
-  if (!country || !city) return null
-  return CITY_CENTERS[cityKey(country, city)] ?? null
+  if (!city) return null
+  if (country) {
+    const hit = CITY_CENTERS[cityKey(country, city)]
+    if (hit) return hit
+  }
+  return CITY_ONLY_CENTERS[city.trim().toLowerCase()] ?? null
+}
+
+/**
+ * Resolve approximate coordinates from free-form location text
+ * (e.g. "Berlin", "Warsaw, Poland", "Kyiv / Ukraine").
+ */
+export function inferCoordsFromLocationText(
+  location: string | null | undefined,
+): GeoPoint | null {
+  if (!location?.trim()) return null
+  const raw = location.trim()
+  const lower = raw.toLowerCase()
+
+  if (CITY_ONLY_CENTERS[lower]) return CITY_ONLY_CENTERS[lower]
+
+  const parts = raw.split(/[,/|–—-]+/).map((p) => p.trim()).filter(Boolean)
+  if (parts.length >= 2) {
+    const fromPair =
+      knownCityCenter(parts[1], parts[0]) ?? knownCityCenter(parts[0], parts[1])
+    if (fromPair) return fromPair
+  }
+
+  const cities = Object.keys(CITY_ONLY_CENTERS).sort((a, b) => b.length - a.length)
+  for (const city of cities) {
+    if (lower.includes(city)) return CITY_ONLY_CENTERS[city]
+  }
+
+  for (const [key, coords] of Object.entries(CITY_CENTERS)) {
+    const cityPart = key.split('|')[1]
+    if (cityPart && lower.includes(cityPart)) return coords
+  }
+
+  return null
 }
 
 export async function resolveCityCenter(
@@ -98,7 +240,7 @@ export async function resolveCityCenter(
 ): Promise<GeoPoint | null> {
   const key = cityKey(country, city)
   if (!city) return null
-  const known = CITY_CENTERS[key]
+  const known = CITY_CENTERS[key] ?? (city ? CITY_ONLY_CENTERS[city.trim().toLowerCase()] : null)
   if (known) return known
   if (cityCenterCache.has(key)) return cityCenterCache.get(key) ?? null
 
