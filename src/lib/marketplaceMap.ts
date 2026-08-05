@@ -10,6 +10,10 @@ import type { GeoSearchState } from './geoSearch'
 import { matchProfileGeo } from './geoSearch'
 import { matchesServiceProfile, resolveServiceQuery } from './serviceTaxonomy'
 import { radiusModeToKm } from './geoSearch'
+import {
+  excludeSuppressedFromQuery,
+  filterSuppressedListings,
+} from './suppressedListings'
 
 export type MapMarkerKind = 'professional' | 'company' | 'project'
 
@@ -228,21 +232,23 @@ export async function fetchMarketplaceMapMarkers(limit = 250): Promise<Marketpla
       .not('service_longitude', 'is', null)
       .order('rating', { ascending: false })
       .limit(Math.ceil(half / 2)),
-    supabase
-      .from('listings')
-      .select(
-        `
+    excludeSuppressedFromQuery(
+      supabase
+        .from('listings')
+        .select(
+          `
         id, title, description, city_name, location, country_name,
         latitude, longitude, status, budget_min, budget_max,
         category:categories(name, slug)
       `,
-      )
-      .eq('listing_type', 'service_request')
-      .eq('status', 'active')
-      .not('latitude', 'is', null)
-      .not('longitude', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(half),
+        )
+        .eq('listing_type', 'service_request')
+        .eq('status', 'active')
+        .not('latitude', 'is', null)
+        .not('longitude', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(half),
+    ),
   ])
 
   const markers: MarketplaceMapMarker[] = []
@@ -254,7 +260,7 @@ export async function fetchMarketplaceMapMarkers(limit = 250): Promise<Marketpla
     const m = toProfileMarker(p, 'company')
     if (m) markers.push(m)
   }
-  for (const l of (projectsRes.data as ListingRow[] | null) ?? []) {
+  for (const l of filterSuppressedListings((projectsRes.data as ListingRow[] | null) ?? [])) {
     const m = toProjectMarker(l)
     if (m) markers.push(m)
   }

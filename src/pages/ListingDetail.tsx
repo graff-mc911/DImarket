@@ -28,6 +28,7 @@ import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
 import { getListingThemeImageUrl } from '../lib/listingThemeImage'
+import { isSuppressedListing } from '../lib/suppressedListings'
 import type { ListingWithImages, Profile } from '../lib/types'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
 import { ListingInlineChat } from '../components/listing/ListingInlineChat'
@@ -73,7 +74,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
       if (cancelled) return
 
       if (qError) { setError(qError.message); return }
-      if (!data)  { setError('Оголошення не знайдено або знято з публікації.'); return }
+      if (!data || isSuppressedListing(data))  { setError('Оголошення не знайдено або знято з публікації.'); return }
 
       setListing(data as ListingWithImages)
 

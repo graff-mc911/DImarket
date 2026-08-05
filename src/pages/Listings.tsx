@@ -17,6 +17,10 @@ import {
   type SiteCategorySlug,
 } from '../lib/siteCategories'
 import { subcategorySlugsForGroup } from '../lib/categoryCatalog'
+import {
+  excludeSuppressedFromQuery,
+  filterSuppressedListings,
+} from '../lib/suppressedListings'
 
 type ListingsProps = {
   fixedCategorySlug?: SiteCategorySlug
@@ -119,16 +123,20 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
 
       const [categoriesResult, listingsResult] = await Promise.all([
         supabase.from('categories').select('*').order('name'),
-        supabase
-          .from('listings')
-          .select('*, images:listing_images(*), category:categories(*)')
-          .eq('status', 'active')
-          .gte('expires_at', now)
-          .order('created_at', { ascending: false }),
+        excludeSuppressedFromQuery(
+          supabase
+            .from('listings')
+            .select('*, images:listing_images(*), category:categories(*)')
+            .eq('status', 'active')
+            .gte('expires_at', now)
+            .order('created_at', { ascending: false }),
+        ),
       ])
 
       setCategories(categoriesResult.data ?? [])
-      setAllListings((listingsResult.data as ListingWithImages[] | null) ?? [])
+      setAllListings(
+        filterSuppressedListings((listingsResult.data as ListingWithImages[] | null) ?? []),
+      )
     } finally {
       setLoading(false)
     }

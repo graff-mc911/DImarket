@@ -1,6 +1,10 @@
 import { supabase } from './supabase'
 import type { Listing, ProjectApplication, ProjectFile } from './types'
 import { PROJECT_TRADES } from './projectWizard'
+import {
+  excludeSuppressedFromQuery,
+  isSuppressedListing,
+} from './suppressedListings'
 
 export type ProjectFeedItem = Listing & {
   project_files?: ProjectFile[] | null
@@ -117,11 +121,13 @@ export async function fetchProjectFeedPage(opts: {
   hiddenListingIds: Set<string>
 }): Promise<{ items: ProjectFeedItem[]; hasMore: boolean }> {
   const limit = opts.limit ?? PAGE_SIZE
-  let q = supabase
-    .from('listings')
-    .select('*, project_files(*), category:categories(name, slug)')
-    .eq('listing_type', 'service_request')
-    .eq('status', 'active')
+  let q = excludeSuppressedFromQuery(
+    supabase
+      .from('listings')
+      .select('*, project_files(*), category:categories(name, slug)')
+      .eq('listing_type', 'service_request')
+      .eq('status', 'active'),
+  )
 
   if (opts.filters.country.trim()) {
     q = q.ilike('country_name', `%${opts.filters.country.trim()}%`)
@@ -161,7 +167,7 @@ export async function fetchProjectFeedPage(opts: {
   }
 
   let items = withDistance((data as ProjectFeedItem[]) ?? [], opts.origin).filter(
-    (item) => !opts.hiddenListingIds.has(item.id),
+    (item) => !opts.hiddenListingIds.has(item.id) && !isSuppressedListing(item),
   )
 
   const maxDist = opts.filters.distanceKm ? Number(opts.filters.distanceKm) : null
@@ -194,7 +200,7 @@ export async function fetchProjectById(
     .eq('status', 'active')
     .maybeSingle()
 
-  if (error || !data) return null
+  if (error || !data || isSuppressedListing(data)) return null
   return withDistance([data as ProjectFeedItem], origin)[0] ?? null
 }
 

@@ -3,6 +3,10 @@ import {
   fetchMainMarketplaceCategories,
   type MarketplaceCategory,
 } from './marketplaceCategories'
+import {
+  excludeSuppressedFromQuery,
+  filterSuppressedListings,
+} from './suppressedListings'
 import type { ListingWithImages, Profile } from './types'
 
 export type HomeMetrics = {
@@ -143,16 +147,18 @@ export async function fetchHomepageMetrics(): Promise<HomeMetrics> {
 
 export async function fetchHomeProjects(limit = 12): Promise<ListingWithImages[]> {
   const now = new Date().toISOString()
-  const { data } = await supabase
-    .from('listings')
-    .select('*, images:listing_images(*), category:categories(*)')
-    .eq('listing_type', 'service_request')
-    .eq('status', 'active')
-    .gte('expires_at', now)
-    .order('created_at', { ascending: false })
-    .limit(limit)
+  const { data } = await excludeSuppressedFromQuery(
+    supabase
+      .from('listings')
+      .select('*, images:listing_images(*), category:categories(*)')
+      .eq('listing_type', 'service_request')
+      .eq('status', 'active')
+      .gte('expires_at', now)
+      .order('created_at', { ascending: false })
+      .limit(limit),
+  )
 
-  return (data as ListingWithImages[] | null) ?? []
+  return filterSuppressedListings((data as ListingWithImages[] | null) ?? [])
 }
 
 export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfessional[]> {
@@ -308,15 +314,17 @@ export async function fetchHomeMapPoints(limit = 40): Promise<HomeMapPoint[]> {
       .not('service_longitude', 'is', null)
       .order('rating', { ascending: false })
       .limit(Math.ceil(limit / 2)),
-    supabase
-      .from('listings')
-      .select('id, title, city_name, location, latitude, longitude, status')
-      .eq('listing_type', 'service_request')
-      .eq('status', 'active')
-      .not('latitude', 'is', null)
-      .not('longitude', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(limit),
+    excludeSuppressedFromQuery(
+      supabase
+        .from('listings')
+        .select('id, title, city_name, location, latitude, longitude, status')
+        .eq('listing_type', 'service_request')
+        .eq('status', 'active')
+        .not('latitude', 'is', null)
+        .not('longitude', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(limit),
+    ),
   ])
 
   type GeoProfile = {
@@ -363,7 +371,7 @@ export async function fetchHomeMapPoints(limit = 40): Promise<HomeMapPoint[]> {
     })
   }
 
-  for (const l of (projectsRes.data as GeoListing[] | null) ?? []) {
+  for (const l of filterSuppressedListings((projectsRes.data as GeoListing[] | null) ?? [])) {
     if (l.latitude == null || l.longitude == null) continue
     points.push({
       id: `proj-${l.id}`,

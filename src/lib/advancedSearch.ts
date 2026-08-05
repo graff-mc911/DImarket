@@ -13,6 +13,7 @@ import {
   type ResolvedService,
 } from './serviceTaxonomy'
 import type { ListingWithImages, Profile } from './types'
+import { excludeSuppressedFromQuery, isSuppressedListing } from './suppressedListings'
 
 export type SearchEntityType =
   | 'professional'
@@ -117,13 +118,15 @@ export async function fetchSearchSuggestions(
       .eq('is_professional', true)
       .in('user_role', ['professional', 'company'])
       .limit(40),
-    supabase
-      .from('listings')
-      .select('id, title, city_name, location, status')
-      .eq('listing_type', 'service_request')
-      .eq('status', 'active')
-      .ilike('title', like)
-      .limit(6),
+    excludeSuppressedFromQuery(
+      supabase
+        .from('listings')
+        .select('id, title, city_name, location, status')
+        .eq('listing_type', 'service_request')
+        .eq('status', 'active')
+        .ilike('title', like)
+        .limit(6),
+    ),
     supabase
       .from('listings')
       .select('id, title, city_name, location, status, listing_type')
@@ -184,12 +187,13 @@ export async function fetchSearchSuggestions(
     })
   }
 
-  for (const l of (projectsRes.data as Array<{
+  for (const l of ((projectsRes.data as Array<{
     id: string
     title: string
     city_name: string | null
     location: string | null
-  }> | null) ?? []) {
+    description?: string | null
+  }> | null) ?? []).filter((row) => !isSuppressedListing(row))) {
     suggestions.push({
       id: `proj-${l.id}`,
       type: 'project',
@@ -298,13 +302,15 @@ export async function runAdvancedSearch(
     )
   }
 
-  let projectsQuery = supabase
-    .from('listings')
-    .select('*, images:listing_images(*), category:categories(*)')
-    .eq('listing_type', 'service_request')
-    .eq('status', 'active')
-    .order('created_at', { ascending: false })
-    .limit(60)
+  let projectsQuery = excludeSuppressedFromQuery(
+    supabase
+      .from('listings')
+      .select('*, images:listing_images(*), category:categories(*)')
+      .eq('listing_type', 'service_request')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(60),
+  )
 
   if (like) {
     projectsQuery = projectsQuery.or(
@@ -392,7 +398,9 @@ export async function runAdvancedSearch(
   }
 
   let professionals = (prosRes.data as Profile[] | null) ?? []
-  let projects = (projectsRes.data as ListingWithImages[] | null) ?? []
+  let projects = ((projectsRes.data as ListingWithImages[] | null) ?? []).filter(
+    (row) => !isSuppressedListing(row),
+  )
   let materials = (materialsRes.data as ListingWithImages[] | null) ?? []
 
   if (resolved.length) {

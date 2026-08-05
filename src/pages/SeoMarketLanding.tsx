@@ -5,6 +5,7 @@ import { ListingCard } from '../components/ListingCard'
 import { LANGUAGES } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { excludeSuppressedFromQuery, filterSuppressedListings } from '../lib/suppressedListings'
 import { supabase } from '../lib/supabase'
 import { locationMatchesMarket } from '../lib/launchMarkets'
 import type { ListingWithImages, Profile } from '../lib/types'
@@ -60,18 +61,20 @@ export function SeoMarketLanding({ parts }: SeoMarketLandingProps) {
           .in('user_role', ['professional', 'company'])
           .order('created_at', { ascending: false })
           .limit(60),
-        supabase
-          .from('listings')
-          .select('*, images:listing_images(*), category:categories(*)')
-          .eq('listing_type', 'service_request')
-          .eq('status', 'active')
-          .gte('expires_at', now)
-          .order('created_at', { ascending: false })
-          .limit(20),
+        excludeSuppressedFromQuery(
+          supabase
+            .from('listings')
+            .select('*, images:listing_images(*), category:categories(*)')
+            .eq('listing_type', 'service_request')
+            .eq('status', 'active')
+            .gte('expires_at', now)
+            .order('created_at', { ascending: false })
+            .limit(20),
+        ),
       ])
 
       const allPros = (prosResult.data as Profile[] | null) ?? []
-      const allJobs = (jobsResult.data as ListingWithImages[] | null) ?? []
+      const allJobs = filterSuppressedListings((jobsResult.data as ListingWithImages[] | null) ?? [])
 
       setProfessionals(
         allPros
