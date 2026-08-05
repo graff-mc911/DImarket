@@ -1,0 +1,977 @@
+{
+  "version": 1,
+  "generated_at": "2026-08-05T05:33:43.382Z",
+  "source": "Curated Poland-wide public masters and companies from company websites / Impressum. Factual fields only; original DImarket bios; no reviews/ratings/photos copied. Includes map coordinates.",
+  "schema": {
+    "target_table": "profiles",
+    "auth_required": true,
+    "junction": "professional_categories",
+    "location_format": "City, Region, Country",
+    "map_fields": [
+      "service_latitude",
+      "service_longitude",
+      "service_radius_km"
+    ]
+  },
+  "summary": {
+    "businesses_ready_to_import": 15,
+    "masters": 8,
+    "companies": 7,
+    "with_map_coordinates": 15,
+    "roles": [
+      "company",
+      "professional"
+    ],
+    "categories_populated": [
+      "Construction Company",
+      "Drywall",
+      "Electrician",
+      "HVAC",
+      "Painting",
+      "Plastering",
+      "Plumbing",
+      "Renovation",
+      "Tiles"
+    ],
+    "site_category_slugs_covered": [
+      "construction",
+      "electrical"
+    ],
+    "cities_count": 6,
+    "cities": [
+      "Gdańsk",
+      "Kraków",
+      "Poznań",
+      "Warsaw",
+      "Wrocław",
+      "Łódź"
+    ]
+  },
+  "businesses": [
+    {
+      "slug": "electric-solutions-nowak-warsaw",
+      "full_name": "Electric Solutions Krzysztof Nowak",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-smart-home",
+        "smart-home-systems"
+      ],
+      "city": "Warsaw",
+      "region": "Masovian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Warsaw, Masovian, Poland",
+      "address": null,
+      "phone": "+48 535 777 031",
+      "public_email": "eskn.kontakt@gmail.com",
+      "website": "https://esnowak.pl/",
+      "business_hours": null,
+      "languages": [
+        "pl",
+        "en"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+electric-solutions-nowak-warsaw@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Modernisation and fault removal",
+        "Periodic measurements",
+        "Switchboard fabrication",
+        "Smart home installations"
+      ],
+      "bio": "Warsaw electrician (Electric Solutions Krzysztof Nowak) publicly listing electrical installations, modernisations, measurements, switchboard work, and smart-home systems across Warsaw and surroundings.",
+      "service_latitude": 52.2297,
+      "service_longitude": 21.0122,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Electric Solutions Krzysztof Nowak — Electrician in Warsaw | DImarket",
+        "meta_description": "Find Electric Solutions Krzysztof Nowak in Warsaw, Poland on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Warsaw",
+          "Poland",
+          "professional",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://esnowak.pl/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "elektryk-hydraulik-warsaw",
+      "full_name": "Elektryk Hydraulik Warszawa",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-lighting",
+        "electro-outlets",
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers"
+      ],
+      "city": "Warsaw",
+      "region": "Masovian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Warsaw, Masovian, Poland",
+      "address": null,
+      "phone": "+48 730 903 928",
+      "public_email": null,
+      "website": "https://www.elektrykhydraulik.waw.pl/",
+      "business_hours": null,
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+elektryk-hydraulik-warsaw@users.dimarket.app",
+      "services": [
+        "Electrical installations and modernisation",
+        "Emergency electrical call-outs",
+        "Lighting installation",
+        "Plumbing repairs",
+        "Bathroom fixture installation"
+      ],
+      "bio": "Warsaw electrical and plumbing company publicly listing installations, modernisations, emergency electrical call-outs, and related sanitary repairs for homes and commercial premises.",
+      "service_latitude": 52.2455,
+      "service_longitude": 21.0185,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Elektryk Hydraulik Warszawa — Electrician in Warsaw | DImarket",
+        "meta_description": "Find Elektryk Hydraulik Warszawa in Warsaw, Poland on DImarket. Request a quote for electrician, plumbing services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "Warsaw",
+          "Poland",
+          "company",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.elektrykhydraulik.waw.pl/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "elektryk24h-warsaw",
+      "full_name": "Elektryk24h",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-outlets",
+        "electro-rewiring"
+      ],
+      "city": "Warsaw",
+      "region": "Masovian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Warsaw, Masovian, Poland",
+      "address": null,
+      "phone": "+48 661 654 654",
+      "public_email": "bok@elektryk24h.com",
+      "website": "https://elektryk24h.com/",
+      "business_hours": "24/7",
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+elektryk24h-warsaw@users.dimarket.app",
+      "services": [
+        "24h electrical emergency service",
+        "Appliance connection",
+        "Fuse and panel repairs",
+        "Meter modernisation",
+        "Electrical measurements"
+      ],
+      "bio": "Polish 24h electrician service (Elektryk24h) publicly listing emergency call-outs, appliance connection, panel repairs, meter modernisation, and electrical measurements with Warsaw coverage.",
+      "service_latitude": 52.2185,
+      "service_longitude": 20.9855,
+      "service_radius_km": 45,
+      "seo": {
+        "title": "Elektryk24h — Electrician in Warsaw | DImarket",
+        "meta_description": "Find Elektryk24h in Warsaw, Poland on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Warsaw",
+          "Poland",
+          "company",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://elektryk24h.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "voltserwis-bando-krakow",
+      "full_name": "VoltSerwis Damian Bańdo",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-rewiring"
+      ],
+      "city": "Kraków",
+      "region": "Lesser Poland",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Kraków, Lesser Poland, Poland",
+      "address": null,
+      "phone": "+48 666 010 232",
+      "public_email": "kontakt@elektrykwkrakowie.pl",
+      "website": "https://elektryk-krakow.pl/",
+      "business_hours": "24/7",
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+voltserwis-bando-krakow@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "24h emergency electrician",
+        "Fault diagnosis and repair",
+        "Residential and commercial electrics"
+      ],
+      "bio": "Kraków electrician VoltSerwis (Damian Bańdo) publicly listing electrical installations and 24h emergency service for Kraków and surroundings.",
+      "service_latitude": 50.0647,
+      "service_longitude": 19.945,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "VoltSerwis Damian Bańdo — Electrician in Kraków | DImarket",
+        "meta_description": "Find VoltSerwis Damian Bańdo in Kraków, Poland on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Kraków",
+          "Poland",
+          "professional",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://elektryk-krakow.pl/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "stachura-budownictwo-wroclaw",
+      "full_name": "Stachura Budownictwo",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Construction Company",
+        "Plumbing",
+        "Electrician",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "plumbing-install",
+        "electro-wiring",
+        "painting-walls",
+        "drywall-install",
+        "tiling-install"
+      ],
+      "city": "Wrocław",
+      "region": "Lower Silesian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Wrocław, Lower Silesian, Poland",
+      "address": "ul. Kościańska 34/20, 54-027 Wrocław",
+      "phone": "+48 576 135 957",
+      "public_email": null,
+      "website": "https://stachura-budownictwo.pl/",
+      "business_hours": "Mon–Fri 08:00–16:00",
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+stachura-budownictwo-wroclaw@users.dimarket.app",
+      "services": [
+        "Apartment and house renovations",
+        "Interior finishing",
+        "Plumbing installations",
+        "Electrical installations",
+        "Painting and fit-out"
+      ],
+      "bio": "Wrocław renovation and construction company (Stachura Budownictwo) at ul. Kościańska 34/20. Public services cover renovations, finishing, plumbing, electrical, and painting for residential and commercial clients.",
+      "service_latitude": 51.1185,
+      "service_longitude": 16.9755,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Stachura Budownictwo — Renovation in Wrocław | DImarket",
+        "meta_description": "Find Stachura Budownictwo in Wrocław, Poland on DImarket. Request a quote for renovation, construction company, plumbing services.",
+        "keywords": [
+          "renovation",
+          "construction company",
+          "plumbing",
+          "electrician",
+          "painting",
+          "Wrocław",
+          "Poland",
+          "company",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://stachura-budownictwo.pl/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "malt-uslugi-malarskie-wroclaw",
+      "full_name": "MALT Usługi Malarskie",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "plastering-manual",
+        "wallpaper-install"
+      ],
+      "city": "Wrocław",
+      "region": "Lower Silesian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Wrocław, Lower Silesian, Poland",
+      "address": "ul. Srebrnogórska 14/1, 50-536 Wrocław",
+      "phone": "+48 667 138 628",
+      "public_email": "biuro.malt@wp.pl",
+      "website": "https://www.malowanie-wroclaw.com.pl/",
+      "business_hours": null,
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+malt-uslugi-malarskie-wroclaw@users.dimarket.app",
+      "services": [
+        "Wall and ceiling painting",
+        "Surface preparation and plastering",
+        "Spray painting",
+        "Commercial and residential painting"
+      ],
+      "bio": "Wrocław painting business (MALT) at ul. Srebrnogórska 14/1. Public services cover wall and ceiling painting, surface preparation, and spray painting for homes and commercial spaces.",
+      "service_latitude": 51.0855,
+      "service_longitude": 17.0452,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "MALT Usługi Malarskie — Painting in Wrocław | DImarket",
+        "meta_description": "Find MALT Usługi Malarskie in Wrocław, Poland on DImarket. Request a quote for painting, plastering services.",
+        "keywords": [
+          "painting",
+          "plastering",
+          "Wrocław",
+          "Poland",
+          "professional",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.malowanie-wroclaw.com.pl/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "mo-wykonczenia-wnetrz-wroclaw",
+      "full_name": "M.O Wykończenia Wnętrz Marcin Owsianka",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Painting",
+        "Drywall",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "drywall-install",
+        "tiling-install",
+        "tiling-bathroom",
+        "flooring-laminate"
+      ],
+      "city": "Wrocław",
+      "region": "Lower Silesian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Wrocław, Lower Silesian, Poland",
+      "address": "ul. Szybowcowa 50/20, 54-130 Wrocław",
+      "phone": "+48 723 139 301",
+      "public_email": "biuro@mo-wykonczeniawnetrz.pl",
+      "website": "https://www.mo-wykonczeniawnetrz.pl/",
+      "business_hours": null,
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+mo-wykonczenia-wnetrz-wroclaw@users.dimarket.app",
+      "services": [
+        "Interior finishing",
+        "Painting",
+        "Drywall",
+        "Tiling",
+        "Apartment renovations"
+      ],
+      "bio": "Wrocław interior-finishing company (M.O Wykończenia Wnętrz) at ul. Szybowcowa 50/20. Public services cover painting, drywall, tiling, and apartment renovations.",
+      "service_latitude": 51.1425,
+      "service_longitude": 16.9525,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "M.O Wykończenia Wnętrz Marcin Owsianka — Renovation in Wrocław | DImarket",
+        "meta_description": "Find M.O Wykończenia Wnętrz Marcin Owsianka in Wrocław, Poland on DImarket. Request a quote for renovation, painting, drywall services.",
+        "keywords": [
+          "renovation",
+          "painting",
+          "drywall",
+          "tiles",
+          "Wrocław",
+          "Poland",
+          "company",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.mo-wykonczeniawnetrz.pl/kontakt/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "wojcik-uslugi-ogolnobudowlane-wroclaw",
+      "full_name": "Usługi Ogólnobudowlane Robert Wójcik",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Drywall",
+        "Tiles",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "drywall-install",
+        "tiling-install",
+        "flooring-laminate",
+        "plumbing-showers"
+      ],
+      "city": "Wrocław",
+      "region": "Lower Silesian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Wrocław, Lower Silesian, Poland",
+      "address": "ul. Kazimierza Jagiellończyka 42 lok. 2, 50-239 Wrocław",
+      "phone": "+48 602 740 071",
+      "public_email": "pomaluje.wroclaw@gmail.com",
+      "website": "http://malarzwroclaw.pl/",
+      "business_hours": null,
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+wojcik-uslugi-ogolnobudowlane-wroclaw@users.dimarket.app",
+      "services": [
+        "Interior finishing",
+        "Painting and spray painting",
+        "Drywall",
+        "Tiles and panels",
+        "Bathroom fixture installation"
+      ],
+      "bio": "Wrocław general construction tradesman (Robert Wójcik) at ul. Kazimierza Jagiellończyka 42. Public services cover interior finishing, painting, drywall, tiling, and bathroom fit-out.",
+      "service_latitude": 51.1255,
+      "service_longitude": 17.0485,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "Usługi Ogólnobudowlane Robert Wójcik — Painting in Wrocław | DImarket",
+        "meta_description": "Find Usługi Ogólnobudowlane Robert Wójcik in Wrocław, Poland on DImarket. Request a quote for painting, drywall, tiles services.",
+        "keywords": [
+          "painting",
+          "drywall",
+          "tiles",
+          "renovation",
+          "Wrocław",
+          "Poland",
+          "professional",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "http://malarzwroclaw.pl/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "tgm-remonty-wroclaw",
+      "full_name": "TGM Remonty Wrocław",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Tiles",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "tiling-install",
+        "tiling-bathroom",
+        "painting-walls",
+        "drywall-install",
+        "demolition-partitions"
+      ],
+      "city": "Wrocław",
+      "region": "Lower Silesian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Wrocław, Lower Silesian, Poland",
+      "address": null,
+      "phone": "+48 600 331 607",
+      "public_email": null,
+      "website": "https://www.tgm.wroclaw.pl/",
+      "business_hours": null,
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+tgm-remonty-wroclaw@users.dimarket.app",
+      "services": [
+        "Apartment renovations",
+        "Tiling",
+        "Painting",
+        "Interior fit-out"
+      ],
+      "bio": "Wrocław renovation company (TGM) publicly listing apartment renovations, tiling, painting, and interior fit-out across Wrocław districts and nearby towns.",
+      "service_latitude": 51.1079,
+      "service_longitude": 17.0385,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "TGM Remonty Wrocław — Renovation in Wrocław | DImarket",
+        "meta_description": "Find TGM Remonty Wrocław in Wrocław, Poland on DImarket. Request a quote for renovation, tiles, painting services.",
+        "keywords": [
+          "renovation",
+          "tiles",
+          "painting",
+          "Wrocław",
+          "Poland",
+          "company",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.tgm.wroclaw.pl/kontakt.html"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "hydraulik-gdansk-kaminski",
+      "full_name": "Drobne Naprawy Hydrauliczne Michał Kamiński",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Plumbing"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers"
+      ],
+      "city": "Gdańsk",
+      "region": "Pomeranian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Gdańsk, Pomeranian, Poland",
+      "address": "ul. Kasztelańska 11/3, 80-180 Gdańsk",
+      "phone": "+48 791 936 415",
+      "public_email": "adres@hydraulikgdansk.pl",
+      "website": "https://hydraulikgdansk.pl/",
+      "business_hours": "Mon–Sat 06:00–",
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+hydraulik-gdansk-kaminski@users.dimarket.app",
+      "services": [
+        "Plumbing repairs",
+        "Sanitary installation",
+        "Emergency plumbing support"
+      ],
+      "bio": "Gdańsk plumber (Michał Kamiński) at ul. Kasztelańska 11/3. Public services cover plumbing repairs and sanitary installation across Gdańsk.",
+      "service_latitude": 54.3355,
+      "service_longitude": 18.6055,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "Drobne Naprawy Hydrauliczne Michał Kamiński — Plumbing in Gdańsk | DImarket",
+        "meta_description": "Find Drobne Naprawy Hydrauliczne Michał Kamiński in Gdańsk, Poland on DImarket. Request a quote for plumbing services.",
+        "keywords": [
+          "plumbing",
+          "Gdańsk",
+          "Poland",
+          "professional",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://hydraulikgdansk.pl/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "eltak-nobis-lodz",
+      "full_name": "Firma Eltak Andrzej Nobis",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting"
+      ],
+      "city": "Łódź",
+      "region": "Łódź",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Łódź, Łódź, Poland",
+      "address": "ul. Przewozowa 4, 92-404 Łódź",
+      "phone": "+48 601 295 913",
+      "public_email": "andrzej.nobis@o2.pl",
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+eltak-nobis-lodz@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Electrical systems assembly",
+        "Residential and commercial electrics"
+      ],
+      "bio": "Łódź electrician (Firma Eltak Andrzej Nobis) at ul. Przewozowa 4. Public registry listing covers electrical installations for residential and commercial clients.",
+      "service_latitude": 51.7455,
+      "service_longitude": 19.5125,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Firma Eltak Andrzej Nobis — Electrician in Łódź | DImarket",
+        "meta_description": "Find Firma Eltak Andrzej Nobis in Łódź, Poland on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Łódź",
+          "Poland",
+          "professional",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.krs-online.com.pl/firma/1479205-firma-eltak-andrzej-nobis"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "hydraulik-awarie-peczek-lodz",
+      "full_name": "Hydraulik Łódź Michał Pęczek",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Plumbing"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "plumbing-showers"
+      ],
+      "city": "Łódź",
+      "region": "Łódź",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Łódź, Łódź, Poland",
+      "address": "ul. Strzelecka 12/31, 93-334 Łódź",
+      "phone": "+48 698 987 713",
+      "public_email": "poczta@hydraulik-awarie.pl",
+      "website": "https://hydraulik-awarie.pl/",
+      "business_hours": "24/7",
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+hydraulik-awarie-peczek-lodz@users.dimarket.app",
+      "services": [
+        "Drain clearing",
+        "Pipe blockage removal",
+        "Emergency plumbing",
+        "Sanitary repairs"
+      ],
+      "bio": "Łódź plumber (Michał Pęczek) at ul. Strzelecka 12/31. Public services cover drain clearing, blockage removal, and emergency plumbing across Łódź and surroundings.",
+      "service_latitude": 51.7325,
+      "service_longitude": 19.4785,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "Hydraulik Łódź Michał Pęczek — Plumbing in Łódź | DImarket",
+        "meta_description": "Find Hydraulik Łódź Michał Pęczek in Łódź, Poland on DImarket. Request a quote for plumbing services.",
+        "keywords": [
+          "plumbing",
+          "Łódź",
+          "Poland",
+          "professional",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://hydraulik-awarie.pl/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "bf-elektryka-luczak-lodz",
+      "full_name": "B-f Elektryka Paweł Łuczak",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-outlets"
+      ],
+      "city": "Łódź",
+      "region": "Łódź",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Łódź, Łódź, Poland",
+      "address": "ul. Armii Krajowej 28 lok. 21, 94-046 Łódź",
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+bf-elektryka-luczak-lodz@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Residential electrics",
+        "Panel and lighting work"
+      ],
+      "bio": "Łódź electrician (B-f Elektryka Paweł Łuczak) registered at ul. Armii Krajowej 28. Public registry listing covers electrical installation works in Łódź.",
+      "service_latitude": 51.7592,
+      "service_longitude": 19.4155,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "B-f Elektryka Paweł Łuczak — Electrician in Łódź | DImarket",
+        "meta_description": "Find B-f Elektryka Paweł Łuczak in Łódź, Poland on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Łódź",
+          "Poland",
+          "professional",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "http://www.krs-online.com.pl/firma/5661409-b-f-elektryka-pawel-luczak"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "elektryk-gda-spzoo-gdansk",
+      "full_name": "ELEKTRYK-GDA Sp. z o.o.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting"
+      ],
+      "city": "Gdańsk",
+      "region": "Pomeranian",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Gdańsk, Pomeranian, Poland",
+      "address": "ul. Lawendowe Wzgórze 36A/21, 80-175 Gdańsk",
+      "phone": null,
+      "public_email": null,
+      "website": null,
+      "business_hours": null,
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+elektryk-gda-spzoo-gdansk@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Repair and maintenance of electrical equipment",
+        "Finishing electrical works"
+      ],
+      "bio": "Gdańsk electrical company (ELEKTRYK-GDA Sp. z o.o.) registered at ul. Lawendowe Wzgórze 36A/21. Public KRS listing covers electrical installations and equipment maintenance.",
+      "service_latitude": 54.3485,
+      "service_longitude": 18.5855,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "ELEKTRYK-GDA Sp. z o.o. — Electrician in Gdańsk | DImarket",
+        "meta_description": "Find ELEKTRYK-GDA Sp. z o.o. in Gdańsk, Poland on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Gdańsk",
+          "Poland",
+          "company",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://krs-pobierz.pl/elektryk-gda-i0001052214"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    },
+    {
+      "slug": "hydraf-hydraulik-poznan",
+      "full_name": "Hydraf — Hydraulik Poznań",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "hvac-heating"
+      ],
+      "city": "Poznań",
+      "region": "Greater Poland",
+      "country": "Poland",
+      "country_code": "PL",
+      "location": "Poznań, Greater Poland, Poland",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://hydraf.com.pl/",
+      "business_hours": "24/7 emergency",
+      "languages": [
+        "pl"
+      ],
+      "preferred_language": "pl",
+      "directory_claim_email": "directory+hydraf-hydraulik-poznan@users.dimarket.app",
+      "services": [
+        "Emergency plumbing",
+        "Water and sewage installations",
+        "Central heating",
+        "Gas installations",
+        "Underfloor heating",
+        "Bathroom fixture installation"
+      ],
+      "bio": "Poznań plumbing and installation company (Hydraf) publicly listing emergency plumbing, water/sewage, heating, gas, underfloor heating, and bathroom fixture installation citywide.",
+      "service_latitude": 52.4064,
+      "service_longitude": 16.9252,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Hydraf — Hydraulik Poznań — Plumbing in Poznań | DImarket",
+        "meta_description": "Find Hydraf — Hydraulik Poznań in Poznań, Poland on DImarket. Request a quote for plumbing, hvac services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "Poznań",
+          "Poland",
+          "company",
+          "Poland",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://hydraf.com.pl/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "poland-directory-nationwide"
+      }
+    }
+  ]
+}

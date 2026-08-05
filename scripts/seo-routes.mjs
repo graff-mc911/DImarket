@@ -211,6 +211,12 @@ export const GEO_SERVICE_LANDINGS = [
   '/germany/hamburg/plumbers',
   '/germany/cologne/painters',
   '/germany/frankfurt/plumbers',
+  '/poland/warsaw/electricians',
+  '/poland/warsaw/plumbers',
+  '/poland/krakow/electricians',
+  '/poland/wroclaw/painters',
+  '/poland/gdansk/plumbers',
+  '/poland/poznan/plumbers',
   '/france/paris/painters',
 ]
 

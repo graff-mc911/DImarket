@@ -106,6 +106,35 @@ const PROVINCE_OVERLAY: Record<string, Record<string, Record<string, string[]>>>
       Bremen: ['Bremen'],
     },
   },
+  Poland: {
+    Masovian: {
+      Warsaw: ['Warsaw', 'Warszawa'],
+    },
+    'Lesser Poland': {
+      Kraków: ['Kraków', 'Krakow'],
+    },
+    'Lower Silesian': {
+      Wrocław: ['Wrocław', 'Wroclaw'],
+    },
+    Pomeranian: {
+      Gdańsk: ['Gdańsk', 'Gdansk'],
+    },
+    'Greater Poland': {
+      Poznań: ['Poznań', 'Poznan'],
+    },
+    Łódź: {
+      Łódź: ['Łódź', 'Lodz'],
+    },
+    Silesian: {
+      Katowice: ['Katowice'],
+    },
+    Lublin: {
+      Lublin: ['Lublin'],
+    },
+    'West Pomeranian': {
+      Szczecin: ['Szczecin'],
+    },
+  },
   France: {
     'Île-de-France': {
       Paris: ['Paris', 'Versailles'],
