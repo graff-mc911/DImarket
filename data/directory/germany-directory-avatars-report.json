@@ -1,0 +1,281 @@
+[
+  {
+    "name": "Stark Elektro",
+    "slug": "stark-elektro-darmstadt",
+    "id": "d72561fd-8ee5-4b4c-9390-3ba341ec5022",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/d72561fd-8ee5-4b4c-9390-3ba341ec5022/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14353,
+    "patched": false
+  },
+  {
+    "name": "Heinrich Schmid GmbH & Co. KG — Darmstadt",
+    "slug": "heinrich-schmid-darmstadt",
+    "id": "0f8d834b-a8cb-4582-b3f2-ed4957f9118f",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/0f8d834b-a8cb-4582-b3f2-ed4957f9118f/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 12112,
+    "patched": false
+  },
+  {
+    "name": "Patrick Noël Malerhandwerk GmbH",
+    "slug": "patrick-noel-malerhandwerk-darmstadt",
+    "id": "33ecfc72-3c07-42e4-b301-c3eaba8b945e",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/33ecfc72-3c07-42e4-b301-c3eaba8b945e/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 12803,
+    "patched": false
+  },
+  {
+    "name": "Kraft GmbH Darmstadt",
+    "slug": "kraft-gmbh-darmstadt",
+    "id": "7449de6a-609d-4c0f-824b-2dd434f58f6b",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/7449de6a-609d-4c0f-824b-2dd434f58f6b/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13203,
+    "patched": false
+  },
+  {
+    "name": "Zimmermann & Sohn GmbH",
+    "slug": "zimmermann-und-sohn-darmstadt",
+    "id": "980d36ec-4778-4fe5-a0f0-bb478f720e9f",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/980d36ec-4778-4fe5-a0f0-bb478f720e9f/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13059,
+    "patched": false
+  },
+  {
+    "name": "Domenico Di Santo Malerbetrieb",
+    "slug": "domenico-di-santo-malerbetrieb-darmstadt",
+    "id": "f52fde86-97ff-41b7-a448-42548d2d0d70",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/f52fde86-97ff-41b7-a448-42548d2d0d70/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13102,
+    "patched": false
+  },
+  {
+    "name": "B&P Bau",
+    "slug": "bp-bau-darmstadt",
+    "id": "41e720df-5d2d-4fb7-b77a-78d87b4eeab2",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/41e720df-5d2d-4fb7-b77a-78d87b4eeab2/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14802,
+    "patched": false
+  },
+  {
+    "name": "Kretsch Gebäudetechnik GmbH",
+    "slug": "kretsch-gebaeudetechnik-berlin",
+    "id": "ef08a110-7fbd-4f25-935c-61cba2c2ccee",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/ef08a110-7fbd-4f25-935c-61cba2c2ccee/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14731,
+    "patched": true
+  },
+  {
+    "name": "Sanitär Strehlow",
+    "slug": "sanitaer-strehlow-berlin",
+    "id": "a9ce1027-bca8-473c-8fa5-f63849973876",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/a9ce1027-bca8-473c-8fa5-f63849973876/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14610,
+    "patched": true
+  },
+  {
+    "name": "Stefans Allrounder",
+    "slug": "stefans-allrounder-berlin",
+    "id": "b232929a-eefe-4d47-9862-9dd5acaa56bb",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/b232929a-eefe-4d47-9862-9dd5acaa56bb/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15039,
+    "patched": true
+  },
+  {
+    "name": "ElbHandWerk Sanitär und Heizung GmbH",
+    "slug": "elbhandwerk-sanitaer-hamburg",
+    "id": "64499076-6d49-4e81-8373-a234aaaab964",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/64499076-6d49-4e81-8373-a234aaaab964/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13707,
+    "patched": true
+  },
+  {
+    "name": "Rucker Elektro GmbH",
+    "slug": "rucker-elektro-muenchen",
+    "id": "526d03c3-0d8e-4ab2-a9bb-d09a4f4d6c73",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/526d03c3-0d8e-4ab2-a9bb-d09a4f4d6c73/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15140,
+    "patched": true
+  },
+  {
+    "name": "Auracher Elektroanlagen",
+    "slug": "auracher-elektroanlagen-muenchen",
+    "id": "7b21cd37-4495-4dfc-9a0b-6d07dfe03b9f",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/7b21cd37-4495-4dfc-9a0b-6d07dfe03b9f/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14610,
+    "patched": true
+  },
+  {
+    "name": "Elektro-Meisterbetrieb Dollinger",
+    "slug": "dollinger-elektro-muenchen",
+    "id": "2ff88a58-64d8-4293-ae8f-d446957dc860",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/2ff88a58-64d8-4293-ae8f-d446957dc860/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14020,
+    "patched": true
+  },
+  {
+    "name": "bELEKTRO Meisterbetrieb GmbH",
+    "slug": "belektro-meisterbetrieb-muenchen",
+    "id": "a04fbbfc-f65a-49c4-8a9e-24bebad7f787",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/a04fbbfc-f65a-49c4-8a9e-24bebad7f787/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14785,
+    "patched": true
+  },
+  {
+    "name": "AC-Elektro UG",
+    "slug": "ac-elektro-ug-muenchen",
+    "id": "52d63da5-c98c-42e6-899e-a1deca28fa56",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/52d63da5-c98c-42e6-899e-a1deca28fa56/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14317,
+    "patched": true
+  },
+  {
+    "name": "Sanitär + Heizung Peter Röhring",
+    "slug": "sanitaer-roehring-frankfurt",
+    "id": "a7c84f31-3c44-4c6f-aeb3-1b996edac598",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/a7c84f31-3c44-4c6f-aeb3-1b996edac598/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14894,
+    "patched": true
+  },
+  {
+    "name": "TSM-Elektro",
+    "slug": "tsm-elektro-frankfurt",
+    "id": "6484548b-a5ec-443a-87de-af18543f2834",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/6484548b-a5ec-443a-87de-af18543f2834/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13280,
+    "patched": true
+  },
+  {
+    "name": "Ahl Malerwerkstätte GmbH",
+    "slug": "ahl-malerwerkstaette-koeln",
+    "id": "18b6d473-8e8e-4287-adfc-46c2c9b47e6f",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/18b6d473-8e8e-4287-adfc-46c2c9b47e6f/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13595,
+    "patched": true
+  },
+  {
+    "name": "Lüpschen Meisterbetrieb Sanitär + Heizung GmbH",
+    "slug": "luepschen-sanitaer-koeln",
+    "id": "d66cd1b7-49a7-4602-80f9-e22f00c674f5",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/d66cd1b7-49a7-4602-80f9-e22f00c674f5/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13602,
+    "patched": true
+  },
+  {
+    "name": "Sanitherm — Peter Schumacher",
+    "slug": "sanitherm-koeln",
+    "id": "b121ed77-0d1f-422d-92b9-6361c2b2a822",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/b121ed77-0d1f-422d-92b9-6361c2b2a822/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14963,
+    "patched": true
+  },
+  {
+    "name": "Malerisch Meisterbetrieb Dirk Reifschneider GmbH",
+    "slug": "malerisch-reifschneider-koeln",
+    "id": "4e6fd39b-5486-4844-9c3e-013d73b0d180",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/4e6fd39b-5486-4844-9c3e-013d73b0d180/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14131,
+    "patched": true
+  },
+  {
+    "name": "Spiegel Elektrotechnik GmbH",
+    "slug": "spiegel-elektrotechnik-stuttgart",
+    "id": "6b8e25c0-e4e1-407f-933a-f48f334ef4ad",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/6b8e25c0-e4e1-407f-933a-f48f334ef4ad/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15261,
+    "patched": true
+  },
+  {
+    "name": "E-Technik Schulten GmbH",
+    "slug": "e-technik-schulten-duesseldorf",
+    "id": "5bcb0ccd-7ff9-4d53-927a-7d721b0f4df3",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/5bcb0ccd-7ff9-4d53-927a-7d721b0f4df3/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14274,
+    "patched": true
+  },
+  {
+    "name": "Angelidis Elektrotechnik GmbH",
+    "slug": "angelidis-elektrotechnik-duesseldorf",
+    "id": "fc2519f7-3bea-43c3-a9d6-d9a0b7c52bc7",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/fc2519f7-3bea-43c3-a9d6-d9a0b7c52bc7/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15485,
+    "patched": true
+  },
+  {
+    "name": "GHM Elektro- und Schaltanlagen GmbH",
+    "slug": "ghm-elektro-leipzig",
+    "id": "8afd890a-2ea0-40d3-9ad1-675799aae2ca",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/8afd890a-2ea0-40d3-9ad1-675799aae2ca/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15064,
+    "patched": true
+  },
+  {
+    "name": "Malerbetrieb Weißbach GmbH",
+    "slug": "malerbetrieb-weissbach-dresden",
+    "id": "1e885ab8-0bbc-4574-aadd-9d3e13337a2d",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/1e885ab8-0bbc-4574-aadd-9d3e13337a2d/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14007,
+    "patched": true
+  },
+  {
+    "name": "Geßner Haustechnik Dresden",
+    "slug": "gessner-haustechnik-dresden",
+    "id": "f7d7ad33-733a-4531-ae57-0ccd9e01392e",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/f7d7ad33-733a-4531-ae57-0ccd9e01392e/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14270,
+    "patched": true
+  },
+  {
+    "name": "Elektrotechnik Günther GmbH",
+    "slug": "elektrotechnik-guenther-hannover",
+    "id": "ed6f9646-122b-46bb-820d-c439c858f736",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/ed6f9646-122b-46bb-820d-c439c858f736/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14405,
+    "patched": true
+  },
+  {
+    "name": "Malerfachbetrieb Feller & Piontek GbR",
+    "slug": "feller-piontek-maler-nuernberg",
+    "id": "9c241aa8-b6a7-4f1c-b22d-455e7b6e9941",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/9c241aa8-b6a7-4f1c-b22d-455e7b6e9941/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13905,
+    "patched": true
+  },
+  {
+    "name": "Böttjer Elektrotechnik GmbH",
+    "slug": "boettjer-elektrotechnik-bremen",
+    "id": "5fafcffa-2591-4c48-abfc-392e79c2b7ad",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/5fafcffa-2591-4c48-abfc-392e79c2b7ad/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14562,
+    "patched": true
+  }
+]

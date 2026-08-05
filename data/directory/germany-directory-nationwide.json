@@ -1,0 +1,2048 @@
+{
+  "version": 1,
+  "generated_at": "2026-08-04T21:44:51.316Z",
+  "source": "Curated Germany-wide public masters and companies from company websites / Impressum. Factual fields only; original DImarket bios; no reviews/ratings/photos copied. Includes map coordinates.",
+  "schema": {
+    "target_table": "profiles",
+    "auth_required": true,
+    "junction": "professional_categories",
+    "location_format": "City, Region, Country",
+    "map_fields": [
+      "service_latitude",
+      "service_longitude",
+      "service_radius_km"
+    ]
+  },
+  "summary": {
+    "businesses_ready_to_import": 31,
+    "masters": 8,
+    "companies": 23,
+    "with_map_coordinates": 31,
+    "roles": [
+      "company",
+      "professional"
+    ],
+    "categories_populated": [
+      "Construction Company",
+      "Demolition",
+      "Drywall",
+      "Electrician",
+      "Flooring",
+      "HVAC",
+      "Insulation",
+      "Painting",
+      "Plastering",
+      "Plumbing",
+      "Renovation",
+      "Tiles"
+    ],
+    "site_category_slugs_covered": [
+      "construction",
+      "electrical"
+    ],
+    "cities_count": 13,
+    "cities": [
+      "Berlin",
+      "Bremen",
+      "Cologne",
+      "Darmstadt",
+      "Dresden",
+      "Düsseldorf",
+      "Frankfurt",
+      "Hamburg",
+      "Hannover",
+      "Leipzig",
+      "Munich",
+      "Nuremberg",
+      "Stuttgart"
+    ]
+  },
+  "businesses": [
+    {
+      "slug": "stark-elektro-darmstadt",
+      "full_name": "Stark Elektro",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-rewiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-smart-home",
+        "solar-panels",
+        "solar-installation",
+        "smart-home-systems"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "Moltkestraße 21, 64295 Darmstadt",
+      "phone": "+49 177 6988882",
+      "public_email": "info@stark-elektro.de",
+      "website": "https://stark-elektro.de/",
+      "business_hours": "Mon–Fri 08:00–17:00",
+      "languages": [
+        "de",
+        "en"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+stark-elektro-darmstadt@users.dimarket.app",
+      "services": [
+        "Electrical installation",
+        "Rewiring and renovation electrics",
+        "Photovoltaic systems",
+        "Wallbox / EV charging",
+        "Smart home and network cabling"
+      ],
+      "bio": "Master electrician company based in Darmstadt serving the Rhine-Main area. Publicly listed services cover electrical installation and renovation, photovoltaic systems, EV wallboxes, and smart-home wiring.",
+      "service_latitude": 49.8582,
+      "service_longitude": 8.6415,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Stark Elektro — Electrician in Darmstadt | DImarket",
+        "meta_description": "Find Stark Elektro in Darmstadt, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Darmstadt",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://stark-elektro.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "heinrich-schmid-darmstadt",
+      "full_name": "Heinrich Schmid GmbH & Co. KG — Darmstadt",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Drywall",
+        "Flooring",
+        "Tiles",
+        "Plastering",
+        "Insulation",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-facade",
+        "drywall-install",
+        "drywall-partitions",
+        "flooring-parquet",
+        "flooring-laminate",
+        "flooring-screed",
+        "tiling-install",
+        "plastering-manual",
+        "facade-insulation",
+        "insulation-thermal",
+        "facade-repair"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "Gräfenhäuser Straße 36, 64293 Darmstadt",
+      "phone": "+49 6151 1301912",
+      "public_email": "darmstadt@heinrich-schmid.de",
+      "website": "https://www.heinrich-schmid.com/standorte/darmstadt-273/",
+      "business_hours": null,
+      "languages": [
+        "de",
+        "en"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+heinrich-schmid-darmstadt@users.dimarket.app",
+      "services": [
+        "Painting",
+        "Drywall",
+        "Flooring and screed",
+        "Tiling",
+        "Plaster and stucco",
+        "Facade renovation",
+        "Thermal insulation"
+      ],
+      "bio": "Regional branch of a German trades company in Darmstadt. Public location lists painting, drywall, flooring, tiling, plaster, facade renovation, and insulation.",
+      "service_latitude": 49.8912,
+      "service_longitude": 8.6408,
+      "service_radius_km": 50,
+      "seo": {
+        "title": "Heinrich Schmid GmbH & Co. KG — Darmstadt — Painting in Darmstadt | DImarket",
+        "meta_description": "Find Heinrich Schmid GmbH & Co. KG — Darmstadt in Darmstadt, Germany on DImarket. Request a quote for painting, drywall, flooring services.",
+        "keywords": [
+          "painting",
+          "drywall",
+          "flooring",
+          "tiles",
+          "plastering",
+          "insulation",
+          "renovation",
+          "Darmstadt",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.heinrich-schmid.com/standorte/darmstadt-273/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "patrick-noel-malerhandwerk-darmstadt",
+      "full_name": "Patrick Noël Malerhandwerk GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering",
+        "Demolition",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "painting-facade",
+        "plastering-manual",
+        "demolition-walls",
+        "demolition-partitions"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "In der Kirchtanne 27, 64297 Darmstadt",
+      "phone": "+49 6151 5013326",
+      "public_email": "info@noel-malerhandwerk.de",
+      "website": "https://www.noel-malerhandwerk.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+patrick-noel-malerhandwerk-darmstadt@users.dimarket.app",
+      "services": [
+        "Painting and coating",
+        "Interior finishing",
+        "Selective demolition / strip-out"
+      ],
+      "bio": "Registered painting trades company in Darmstadt-Eberstadt. Public impressum lists painting and related finishing work with selective demolition and renovation support.",
+      "service_latitude": 49.8405,
+      "service_longitude": 8.6421,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Patrick Noël Malerhandwerk GmbH — Painting in Darmstadt | DImarket",
+        "meta_description": "Find Patrick Noël Malerhandwerk GmbH in Darmstadt, Germany on DImarket. Request a quote for painting, plastering, demolition services.",
+        "keywords": [
+          "painting",
+          "plastering",
+          "demolition",
+          "renovation",
+          "Darmstadt",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.noel-malerhandwerk.de/impressum"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "kraft-gmbh-darmstadt",
+      "full_name": "Kraft GmbH Darmstadt",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Drywall",
+        "Renovation",
+        "Construction Company"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "drywall-install",
+        "plastering-manual"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "Messeler-Park-Strasse 119 A, 64291 Darmstadt",
+      "phone": "+49 6151 384170",
+      "public_email": null,
+      "website": "https://www.kraft-gmbh-darmstadt.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+kraft-gmbh-darmstadt@users.dimarket.app",
+      "services": [
+        "Interior painting",
+        "Finishing trades",
+        "Renovation of living and work spaces"
+      ],
+      "bio": "Darmstadt finishing trades company with a public workshop address in the Messeler Park area. Listed services focus on interior painting and renovation.",
+      "service_latitude": 49.9055,
+      "service_longitude": 8.6682,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Kraft GmbH Darmstadt — Painting in Darmstadt | DImarket",
+        "meta_description": "Find Kraft GmbH Darmstadt in Darmstadt, Germany on DImarket. Request a quote for painting, drywall, renovation services.",
+        "keywords": [
+          "painting",
+          "drywall",
+          "renovation",
+          "construction company",
+          "Darmstadt",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.kraft-gmbh-darmstadt.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "zimmermann-und-sohn-darmstadt",
+      "full_name": "Zimmermann & Sohn GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering",
+        "Drywall",
+        "Flooring",
+        "Tiles",
+        "Insulation",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-facade",
+        "plastering-manual",
+        "plastering-decorative",
+        "drywall-install",
+        "flooring-parquet",
+        "tiling-install",
+        "facade-insulation",
+        "wallpaper-install"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": "Marienburgstraße 1, 64297 Darmstadt",
+      "phone": "+49 6151 46297",
+      "public_email": null,
+      "website": "https://zimmermannundsohn.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+zimmermann-und-sohn-darmstadt@users.dimarket.app",
+      "services": [
+        "Painting and wallpapering",
+        "Plastering",
+        "Drywall",
+        "Flooring and tiling",
+        "Facade renovation",
+        "Thermal insulation"
+      ],
+      "bio": "Long-established painting and finishing company in Darmstadt. Public site lists painting, plastering, drywall, flooring, tiling, facade work, and insulation.",
+      "service_latitude": 49.8458,
+      "service_longitude": 8.6354,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Zimmermann & Sohn GmbH — Painting in Darmstadt | DImarket",
+        "meta_description": "Find Zimmermann & Sohn GmbH in Darmstadt, Germany on DImarket. Request a quote for painting, plastering, drywall services.",
+        "keywords": [
+          "painting",
+          "plastering",
+          "drywall",
+          "flooring",
+          "tiles",
+          "insulation",
+          "renovation",
+          "Darmstadt",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://zimmermannundsohn.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "domenico-di-santo-malerbetrieb-darmstadt",
+      "full_name": "Domenico Di Santo Malerbetrieb",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering",
+        "Drywall",
+        "Flooring",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "plastering-manual",
+        "drywall-install",
+        "flooring-laminate",
+        "wallpaper-install"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://www.disanto-domenico.de/malerbetrieb-darmstadt/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+domenico-di-santo-malerbetrieb-darmstadt@users.dimarket.app",
+      "services": [
+        "Painting",
+        "Wallpapering",
+        "Plastering",
+        "Drywall",
+        "Floor covering"
+      ],
+      "bio": "Family-run painting business serving Darmstadt and nearby towns. Publicly described services include painting, wallpapering, plastering, drywall, and floor covering.",
+      "service_latitude": 49.8728,
+      "service_longitude": 8.6512,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "Domenico Di Santo Malerbetrieb — Painting in Darmstadt | DImarket",
+        "meta_description": "Find Domenico Di Santo Malerbetrieb in Darmstadt, Germany on DImarket. Request a quote for painting, plastering, drywall services.",
+        "keywords": [
+          "painting",
+          "plastering",
+          "drywall",
+          "flooring",
+          "renovation",
+          "Darmstadt",
+          "Germany",
+          "professional",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.disanto-domenico.de/malerbetrieb-darmstadt/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "bp-bau-darmstadt",
+      "full_name": "B&P Bau",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Renovation",
+        "Electrician",
+        "Plumbing",
+        "HVAC",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "painting-walls",
+        "painting-facade",
+        "electro-wiring",
+        "plumbing-install",
+        "hvac-ac",
+        "drywall-install"
+      ],
+      "city": "Darmstadt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Darmstadt, Hessen, Germany",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://www.b-pbau.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+bp-bau-darmstadt@users.dimarket.app",
+      "services": [
+        "New build and renovation",
+        "Interior fit-out",
+        "Facade and painting",
+        "Electrical works",
+        "Sanitary and climate systems"
+      ],
+      "bio": "Construction and renovation company headquartered in Darmstadt. Public service list covers new build and renovation, interior fit-out, facade and painting, plus electrical, sanitary, and climate trades.",
+      "service_latitude": 49.8785,
+      "service_longitude": 8.6558,
+      "service_radius_km": 45,
+      "seo": {
+        "title": "B&P Bau — Construction Company in Darmstadt | DImarket",
+        "meta_description": "Find B&P Bau in Darmstadt, Germany on DImarket. Request a quote for construction company, renovation, electrician services.",
+        "keywords": [
+          "construction company",
+          "renovation",
+          "electrician",
+          "plumbing",
+          "hvac",
+          "painting",
+          "Darmstadt",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.b-pbau.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "kretsch-gebaeudetechnik-berlin",
+      "full_name": "Kretsch Gebäudetechnik GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "HVAC"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-smart-home",
+        "plumbing-install",
+        "plumbing-repair",
+        "hvac-heating",
+        "hvac-ac",
+        "solar-installation"
+      ],
+      "city": "Berlin",
+      "region": "Berlin",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Berlin, Berlin, Germany",
+      "address": "Ahornstraße 26, 12163 Berlin",
+      "phone": "+49 30 88550284",
+      "public_email": "info@kretsch-technik.de",
+      "website": "https://kretsch-technik.de/",
+      "business_hours": "Mon–Thu 08:00–15:00, Fri 08:00–12:00",
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+kretsch-gebaeudetechnik-berlin@users.dimarket.app",
+      "services": [
+        "Electrical installation and renovation",
+        "KNX / smart home",
+        "EV charging systems",
+        "Sanitary installation and bathroom renovation",
+        "Heating and heat pumps",
+        "Air conditioning"
+      ],
+      "bio": "Berlin Meisterbetrieb publicly listing electrical engineering plus sanitary, heating, and climate trades from Ahornstraße 26 in Steglitz.",
+      "service_latitude": 52.4578,
+      "service_longitude": 13.3225,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Kretsch Gebäudetechnik GmbH — Electrician in Berlin | DImarket",
+        "meta_description": "Find Kretsch Gebäudetechnik GmbH in Berlin, Germany on DImarket. Request a quote for electrician, plumbing, hvac services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "hvac",
+          "Berlin",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://kretsch-technik.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "sanitaer-strehlow-berlin",
+      "full_name": "Sanitär Strehlow",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "hvac-heating",
+        "tiling-bathroom"
+      ],
+      "city": "Berlin",
+      "region": "Berlin",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Berlin, Berlin, Germany",
+      "address": "Gleimstraße 42, 10437 Berlin",
+      "phone": "+49 30 4494949",
+      "public_email": "service@sanitaer-strehlow.de",
+      "website": "https://sanitaer-strehlow.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+sanitaer-strehlow-berlin@users.dimarket.app",
+      "services": [
+        "Sanitary installation",
+        "Bathroom renovation",
+        "Gas and water installation",
+        "Heating systems",
+        "Drinking-water hygiene"
+      ],
+      "bio": "Berlin master plumber business publicly listing sanitary, heating, gas, and bathroom renovation services from Gleimstraße 42.",
+      "service_latitude": 52.5438,
+      "service_longitude": 13.4123,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "Sanitär Strehlow — Plumbing in Berlin | DImarket",
+        "meta_description": "Find Sanitär Strehlow in Berlin, Germany on DImarket. Request a quote for plumbing, hvac services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "Berlin",
+          "Germany",
+          "professional",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://sanitaer-strehlow.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "stefans-allrounder-berlin",
+      "full_name": "Stefans Allrounder",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC",
+        "Electrician",
+        "Painting",
+        "Renovation",
+        "Tiles"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-showers",
+        "hvac-heating",
+        "electro-wiring",
+        "painting-walls",
+        "tiling-bathroom",
+        "drywall-install"
+      ],
+      "city": "Berlin",
+      "region": "Berlin",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Berlin, Berlin, Germany",
+      "address": "Rüsternallee 45, 14050 Berlin",
+      "phone": "+49 30 23980262",
+      "public_email": "info@stefans-allrounder.com",
+      "website": "https://stefans-allrounder.com/",
+      "business_hours": "Mon–Fri 08:00–18:00, Sat 10:00–16:00",
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+stefans-allrounder-berlin@users.dimarket.app",
+      "services": [
+        "Bathroom renovation",
+        "Sanitary and heating",
+        "Electrical works",
+        "Painting",
+        "Tiling and drywall",
+        "Interior fit-out"
+      ],
+      "bio": "Berlin Meisterbetrieb publicly listing bathroom renovation, sanitary and heating, electrical, painting, tiling, and interior fit-out from Rüsternallee 45.",
+      "service_latitude": 52.5125,
+      "service_longitude": 13.2648,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Stefans Allrounder — Plumbing in Berlin | DImarket",
+        "meta_description": "Find Stefans Allrounder in Berlin, Germany on DImarket. Request a quote for plumbing, hvac, electrician services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "electrician",
+          "painting",
+          "renovation",
+          "tiles",
+          "Berlin",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://stefans-allrounder.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "elbhandwerk-sanitaer-hamburg",
+      "full_name": "ElbHandWerk Sanitär und Heizung GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "hvac-heating",
+        "tiling-bathroom"
+      ],
+      "city": "Hamburg",
+      "region": "Hamburg",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Hamburg, Hamburg, Germany",
+      "address": "Offakamp 9e, 22529 Hamburg",
+      "phone": "+49 40 50724999",
+      "public_email": "info@elbhandwerk.com",
+      "website": "https://www.elbhandwerk.com/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+elbhandwerk-sanitaer-hamburg@users.dimarket.app",
+      "services": [
+        "Sanitary installation",
+        "Bathroom renovation",
+        "Heating modernisation",
+        "Heat pumps",
+        "Complete apartment modernisation coordination"
+      ],
+      "bio": "Hamburg Meisterbetrieb for sanitary and heating at Offakamp 9e. Public services cover sanitary work, bathroom renovation, heating modernisation, and coordinated apartment modernisations.",
+      "service_latitude": 53.5955,
+      "service_longitude": 9.9452,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "ElbHandWerk Sanitär und Heizung GmbH — Plumbing in Hamburg | DImarket",
+        "meta_description": "Find ElbHandWerk Sanitär und Heizung GmbH in Hamburg, Germany on DImarket. Request a quote for plumbing, hvac, renovation services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "renovation",
+          "Hamburg",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.elbhandwerk.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "rucker-elektro-muenchen",
+      "full_name": "Rucker Elektro GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-smart-home",
+        "solar-installation"
+      ],
+      "city": "Munich",
+      "region": "Bavaria",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Munich, Bavaria, Germany",
+      "address": "Edeltraudstraße 57, 81827 München",
+      "phone": "+49 89 43759400",
+      "public_email": "info@rucker-elektro.de",
+      "website": "https://rucker-elektro.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+rucker-elektro-muenchen@users.dimarket.app",
+      "services": [
+        "Electrical installation",
+        "Wallbox / EV charging",
+        "E-Check",
+        "Fire protection electrics",
+        "Meter cabinet modernisation"
+      ],
+      "bio": "Munich electrician company in Trudering publicly listing installation, wallboxes, E-Check, fire-protection electrics, and meter-cabinet modernisation.",
+      "service_latitude": 48.1235,
+      "service_longitude": 11.6638,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Rucker Elektro GmbH — Electrician in Munich | DImarket",
+        "meta_description": "Find Rucker Elektro GmbH in Munich, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Munich",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://rucker-elektro.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "auracher-elektroanlagen-muenchen",
+      "full_name": "Auracher Elektroanlagen",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-smart-home",
+        "electro-cameras",
+        "smart-home-systems"
+      ],
+      "city": "Munich",
+      "region": "Bavaria",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Munich, Bavaria, Germany",
+      "address": "Gmunder Straße 35A, 81379 München",
+      "phone": "+49 89 7231515",
+      "public_email": "info@auracher-elektro.de",
+      "website": "https://auracher-elektro.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+auracher-elektroanlagen-muenchen@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Building technology",
+        "Security systems",
+        "Smart home"
+      ],
+      "bio": "Munich electrical Meisterbetrieb at Gmunder Straße 35A. Public services cover electrical installations, building technology, and security systems.",
+      "service_latitude": 48.1088,
+      "service_longitude": 11.5372,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Auracher Elektroanlagen — Electrician in Munich | DImarket",
+        "meta_description": "Find Auracher Elektroanlagen in Munich, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Munich",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://auracher-elektro.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "dollinger-elektro-muenchen",
+      "full_name": "Elektro-Meisterbetrieb Dollinger",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-outlets"
+      ],
+      "city": "Munich",
+      "region": "Bavaria",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Munich, Bavaria, Germany",
+      "address": null,
+      "phone": "+49 89 58939350",
+      "public_email": "hans@dollinger-elektro.de",
+      "website": "https://www.dollinger-elektro.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+dollinger-elektro-muenchen@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "E-Check",
+        "Network cabling",
+        "Service for residential and commercial clients"
+      ],
+      "bio": "Munich electrician master publicly listing electrical installations, E-Check, and network cabling for residential and commercial clients in Laim and citywide.",
+      "service_latitude": 48.1412,
+      "service_longitude": 11.5085,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "Elektro-Meisterbetrieb Dollinger — Electrician in Munich | DImarket",
+        "meta_description": "Find Elektro-Meisterbetrieb Dollinger in Munich, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Munich",
+          "Germany",
+          "professional",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.dollinger-elektro.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "belektro-meisterbetrieb-muenchen",
+      "full_name": "bELEKTRO Meisterbetrieb GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-rewiring",
+        "electro-panels",
+        "electro-lighting"
+      ],
+      "city": "Munich",
+      "region": "Bavaria",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Munich, Bavaria, Germany",
+      "address": "Thalkirchner Str. 82, 80337 München",
+      "phone": "+49 89 24231183",
+      "public_email": "info@belektro-meisterbetrieb.de",
+      "website": "https://www.belektro-meisterbetrieb.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+belektro-meisterbetrieb-muenchen@users.dimarket.app",
+      "services": [
+        "Electrical installation",
+        "Service and maintenance",
+        "Residential and commercial electrics"
+      ],
+      "bio": "Munich electrical Meisterbetrieb at Thalkirchner Str. 82. Public impressum lists electrical installation and customer service for private and commercial clients.",
+      "service_latitude": 48.1228,
+      "service_longitude": 11.5554,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "bELEKTRO Meisterbetrieb GmbH — Electrician in Munich | DImarket",
+        "meta_description": "Find bELEKTRO Meisterbetrieb GmbH in Munich, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Munich",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.belektro-meisterbetrieb.de/kontakt/impressum/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "ac-elektro-ug-muenchen",
+      "full_name": "AC-Elektro UG",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-smart-home",
+        "solar-panels",
+        "solar-installation",
+        "smart-home-systems"
+      ],
+      "city": "Munich",
+      "region": "Bavaria",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Munich, Bavaria, Germany",
+      "address": null,
+      "phone": "+49 15560 904447",
+      "public_email": "ac.elektro.muenchen@gmail.com",
+      "website": "https://ac-elektro-ug.de/",
+      "business_hours": null,
+      "languages": [
+        "de",
+        "en"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+ac-elektro-ug-muenchen@users.dimarket.app",
+      "services": [
+        "Electrical installation",
+        "Smart home",
+        "Photovoltaic systems",
+        "EV mobility / wallboxes"
+      ],
+      "bio": "Munich electrician Meisterbetrieb publicly listing electrical installation, smart home, photovoltaics, and EV charging for Munich and surrounding districts.",
+      "service_latitude": 48.1351,
+      "service_longitude": 11.582,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "AC-Elektro UG — Electrician in Munich | DImarket",
+        "meta_description": "Find AC-Elektro UG in Munich, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Munich",
+          "Germany",
+          "professional",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://ac-elektro-ug.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "sanitaer-roehring-frankfurt",
+      "full_name": "Sanitär + Heizung Peter Röhring",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "hvac-heating"
+      ],
+      "city": "Frankfurt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Frankfurt, Hessen, Germany",
+      "address": "An der Herrenwiese 175, 60529 Frankfurt am Main",
+      "phone": "+49 69 38013323",
+      "public_email": "peter-roehring@web.de",
+      "website": "https://www.sanitaer-frankfurt.com/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+sanitaer-roehring-frankfurt@users.dimarket.app",
+      "services": [
+        "Sanitary installation",
+        "Heating",
+        "Gas installation",
+        "Bathroom modernisation"
+      ],
+      "bio": "Frankfurt-Schwanheim Meisterbetrieb for sanitary and heating at An der Herrenwiese 175. Public services cover sanitary, heating, and gas installation.",
+      "service_latitude": 50.0785,
+      "service_longitude": 8.5752,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Sanitär + Heizung Peter Röhring — Plumbing in Frankfurt | DImarket",
+        "meta_description": "Find Sanitär + Heizung Peter Röhring in Frankfurt, Germany on DImarket. Request a quote for plumbing, hvac services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "Frankfurt",
+          "Germany",
+          "professional",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.sanitaer-frankfurt.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "tsm-elektro-frankfurt",
+      "full_name": "TSM-Elektro",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-rewiring"
+      ],
+      "city": "Frankfurt",
+      "region": "Hessen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Frankfurt, Hessen, Germany",
+      "address": null,
+      "phone": "+49 69 67868978",
+      "public_email": null,
+      "website": "https://www.tsm-elektro.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+tsm-elektro-frankfurt@users.dimarket.app",
+      "services": [
+        "Electrical planning",
+        "Modernisation",
+        "Maintenance and renovation electrics",
+        "Commercial and residential projects"
+      ],
+      "bio": "Frankfurt electrician Meisterbetrieb (since 2005) publicly listing planning, modernisation, maintenance, and renovation electrics for commercial and residential clients.",
+      "service_latitude": 50.1109,
+      "service_longitude": 8.6821,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "TSM-Elektro — Electrician in Frankfurt | DImarket",
+        "meta_description": "Find TSM-Elektro in Frankfurt, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Frankfurt",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.tsm-elektro.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "ahl-malerwerkstaette-koeln",
+      "full_name": "Ahl Malerwerkstätte GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Flooring",
+        "Drywall"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-facade",
+        "wallpaper-install",
+        "flooring-laminate",
+        "drywall-install",
+        "plastering-manual"
+      ],
+      "city": "Cologne",
+      "region": "North Rhine-Westphalia",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Cologne, North Rhine-Westphalia, Germany",
+      "address": "Ursulagartenstraße 30, 50668 Köln",
+      "phone": "+49 221 131181",
+      "public_email": "info@maler-ahl.de",
+      "website": "https://www.maler-ahl.de/",
+      "business_hours": "Mon–Thu 07:30–16:30, Fri 07:30–14:00",
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+ahl-malerwerkstaette-koeln@users.dimarket.app",
+      "services": [
+        "Painting",
+        "Wallpapering",
+        "Lacquering",
+        "Facade painting",
+        "Floor covering",
+        "Drywall"
+      ],
+      "bio": "Cologne painting workshop at Ursulagartenstraße 30. Public services cover painting, wallpapering, facade work, floor covering, and drywall within about 60 km of Cologne.",
+      "service_latitude": 50.9478,
+      "service_longitude": 6.9525,
+      "service_radius_km": 60,
+      "seo": {
+        "title": "Ahl Malerwerkstätte GmbH — Painting in Cologne | DImarket",
+        "meta_description": "Find Ahl Malerwerkstätte GmbH in Cologne, Germany on DImarket. Request a quote for painting, flooring, drywall services.",
+        "keywords": [
+          "painting",
+          "flooring",
+          "drywall",
+          "Cologne",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.maler-ahl.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "luepschen-sanitaer-koeln",
+      "full_name": "Lüpschen Meisterbetrieb Sanitär + Heizung GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC",
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-showers",
+        "hvac-heating",
+        "electro-wiring",
+        "tiling-bathroom"
+      ],
+      "city": "Cologne",
+      "region": "North Rhine-Westphalia",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Cologne, North Rhine-Westphalia, Germany",
+      "address": "Kohlhofstr. 1b, 50765 Köln",
+      "phone": "+49 221 5905562",
+      "public_email": "meisterbetrieb@luepschen.com",
+      "website": "https://www.luepschen.com/",
+      "business_hours": "Mon–Fri 07:30–13:00, Mon–Thu 14:00–16:15",
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+luepschen-sanitaer-koeln@users.dimarket.app",
+      "services": [
+        "Bathroom renovation",
+        "Heating modernisation",
+        "Water technology",
+        "Renewable heating",
+        "Electrical installation"
+      ],
+      "bio": "Cologne Meisterbetrieb for sanitary and heating at Kohlhofstr. 1b. Public services cover bathroom renovation, heating modernisation, water technology, and electrical installation.",
+      "service_latitude": 51.0215,
+      "service_longitude": 6.8912,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Lüpschen Meisterbetrieb Sanitär + Heizung GmbH — Plumbing in Cologne | DImarket",
+        "meta_description": "Find Lüpschen Meisterbetrieb Sanitär + Heizung GmbH in Cologne, Germany on DImarket. Request a quote for plumbing, hvac, electrician services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "electrician",
+          "Cologne",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.luepschen.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "sanitherm-koeln",
+      "full_name": "Sanitherm — Peter Schumacher",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC",
+        "Electrician",
+        "Painting"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "hvac-heating",
+        "hvac-ac",
+        "electro-wiring",
+        "painting-walls"
+      ],
+      "city": "Cologne",
+      "region": "North Rhine-Westphalia",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Cologne, North Rhine-Westphalia, Germany",
+      "address": "Fuggerstraße 20, 51149 Köln",
+      "phone": "+49 2203 9352410",
+      "public_email": null,
+      "website": "https://sanitherm.de/",
+      "business_hours": "Mon–Thu 08:00–12:00 and 13:00–17:00, Fri 08:00–12:00 and 13:00–15:00",
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+sanitherm-koeln@users.dimarket.app",
+      "services": [
+        "Sanitary",
+        "Heating",
+        "Climate systems",
+        "Electrical",
+        "Painting",
+        "Emergency response"
+      ],
+      "bio": "Cologne-area Meisterbetrieb at Fuggerstraße 20 (Porz). Public services cover sanitary, heating, climate, electrical, and painting trades with emergency coverage.",
+      "service_latitude": 50.8855,
+      "service_longitude": 7.0852,
+      "service_radius_km": 45,
+      "seo": {
+        "title": "Sanitherm — Peter Schumacher — Plumbing in Cologne | DImarket",
+        "meta_description": "Find Sanitherm — Peter Schumacher in Cologne, Germany on DImarket. Request a quote for plumbing, hvac, electrician services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "electrician",
+          "painting",
+          "Cologne",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://sanitherm.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "malerisch-reifschneider-koeln",
+      "full_name": "Malerisch Meisterbetrieb Dirk Reifschneider GmbH",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "painting-facade",
+        "plastering-manual",
+        "wallpaper-install"
+      ],
+      "city": "Cologne",
+      "region": "North Rhine-Westphalia",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Cologne, North Rhine-Westphalia, Germany",
+      "address": "Zeissstr. 5, 50859 Köln",
+      "phone": "+49 2234 4302694",
+      "public_email": "Info@malerisch-meisterbetrieb.de",
+      "website": "https://www.malerisch-meisterbetrieb.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+malerisch-reifschneider-koeln@users.dimarket.app",
+      "services": [
+        "Painting",
+        "Wallpapering",
+        "Facade coating",
+        "Plastering"
+      ],
+      "bio": "Cologne painting Meisterbetrieb at Zeissstr. 5. Public services cover painting, wallpapering, facade coating, and plastering.",
+      "service_latitude": 50.9585,
+      "service_longitude": 6.8425,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Malerisch Meisterbetrieb Dirk Reifschneider GmbH — Painting in Cologne | DImarket",
+        "meta_description": "Find Malerisch Meisterbetrieb Dirk Reifschneider GmbH in Cologne, Germany on DImarket. Request a quote for painting, plastering services.",
+        "keywords": [
+          "painting",
+          "plastering",
+          "Cologne",
+          "Germany",
+          "professional",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.malerisch-meisterbetrieb.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "spiegel-elektrotechnik-stuttgart",
+      "full_name": "Spiegel Elektrotechnik GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-smart-home"
+      ],
+      "city": "Stuttgart",
+      "region": "Baden-Württemberg",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Stuttgart, Baden-Württemberg, Germany",
+      "address": null,
+      "phone": "+49 711 788090",
+      "public_email": "info@spiegel-elektrotechnik.de",
+      "website": "https://www.spiegel-elektrotechnik.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+spiegel-elektrotechnik-stuttgart@users.dimarket.app",
+      "services": [
+        "Electrical installation",
+        "Building electrics",
+        "Lighting",
+        "Communication and media technology",
+        "Control technology"
+      ],
+      "bio": "Stuttgart electrical company publicly listing installation, building electrics, lighting, communication/media technology, and control technology for the greater Stuttgart area.",
+      "service_latitude": 48.7758,
+      "service_longitude": 9.1829,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Spiegel Elektrotechnik GmbH — Electrician in Stuttgart | DImarket",
+        "meta_description": "Find Spiegel Elektrotechnik GmbH in Stuttgart, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Stuttgart",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.spiegel-elektrotechnik.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "e-technik-schulten-duesseldorf",
+      "full_name": "E-Technik Schulten GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-rewiring"
+      ],
+      "city": "Düsseldorf",
+      "region": "North Rhine-Westphalia",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Düsseldorf, North Rhine-Westphalia, Germany",
+      "address": "Bockumer Str. 20, 40489 Düsseldorf",
+      "phone": "+49 211 407648",
+      "public_email": "mail@ets-dus.de",
+      "website": "http://elektromeisterschulten.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+e-technik-schulten-duesseldorf@users.dimarket.app",
+      "services": [
+        "Classical electrical installation",
+        "Special systems",
+        "Industrial electrics"
+      ],
+      "bio": "Düsseldorf family Meisterbetrieb at Bockumer Str. 20. Public services cover classical electrical installation, special systems, and industrial electrics.",
+      "service_latitude": 51.2658,
+      "service_longitude": 6.7385,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "E-Technik Schulten GmbH — Electrician in Düsseldorf | DImarket",
+        "meta_description": "Find E-Technik Schulten GmbH in Düsseldorf, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Düsseldorf",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "http://elektromeisterschulten.de/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "angelidis-elektrotechnik-duesseldorf",
+      "full_name": "Angelidis Elektrotechnik GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-smart-home"
+      ],
+      "city": "Düsseldorf",
+      "region": "North Rhine-Westphalia",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Düsseldorf, North Rhine-Westphalia, Germany",
+      "address": "Zimmerstrasse 33, 40215 Düsseldorf",
+      "phone": "+49 211 58087111",
+      "public_email": "info@ae-elektrotechnik.com",
+      "website": "https://ae-elektrotechnik.com/",
+      "business_hours": "Mon–Fri 08:00–16:00",
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+angelidis-elektrotechnik-duesseldorf@users.dimarket.app",
+      "services": [
+        "Electrical planning",
+        "Electrical installation",
+        "Industrial, commercial, and residential projects"
+      ],
+      "bio": "Düsseldorf Meisterbetrieb at Zimmerstrasse 33. Public services cover electrical planning and installation for industrial, commercial, residential, and municipal projects.",
+      "service_latitude": 51.2115,
+      "service_longitude": 6.7892,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Angelidis Elektrotechnik GmbH — Electrician in Düsseldorf | DImarket",
+        "meta_description": "Find Angelidis Elektrotechnik GmbH in Düsseldorf, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Düsseldorf",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://ae-elektrotechnik.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "ghm-elektro-leipzig",
+      "full_name": "GHM Elektro- und Schaltanlagen GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting"
+      ],
+      "city": "Leipzig",
+      "region": "Saxony",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Leipzig, Saxony, Germany",
+      "address": "Wittenberger Str. 15, 04129 Leipzig",
+      "phone": "+49 341 3510820",
+      "public_email": "info@ghm-leipzig.de",
+      "website": "https://www.ghm-leipzig.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+ghm-elektro-leipzig@users.dimarket.app",
+      "services": [
+        "Electrical systems",
+        "Switchgear",
+        "Installation projects"
+      ],
+      "bio": "Leipzig electrical company at Wittenberger Str. 15. Public impressum lists electrical and switchgear work for the Leipzig region.",
+      "service_latitude": 51.3725,
+      "service_longitude": 12.3855,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "GHM Elektro- und Schaltanlagen GmbH — Electrician in Leipzig | DImarket",
+        "meta_description": "Find GHM Elektro- und Schaltanlagen GmbH in Leipzig, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Leipzig",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.ghm-leipzig.de/impressum.html"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "malerbetrieb-weissbach-dresden",
+      "full_name": "Malerbetrieb Weißbach GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "painting-facade",
+        "plastering-manual",
+        "wallpaper-install"
+      ],
+      "city": "Dresden",
+      "region": "Saxony",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Dresden, Saxony, Germany",
+      "address": "Altomsewitz 16, 01157 Dresden",
+      "phone": "+49 351 4717511",
+      "public_email": "kontakt@malerbetrieb-weissbach.de",
+      "website": "https://www.malerbetrieb-weissbach.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+malerbetrieb-weissbach-dresden@users.dimarket.app",
+      "services": [
+        "Painting",
+        "Wallpapering",
+        "Facade work",
+        "Interior finishing"
+      ],
+      "bio": "Dresden painting company at Altomsewitz 16. Public impressum lists painting and finishing trades for Dresden.",
+      "service_latitude": 51.0585,
+      "service_longitude": 13.6652,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Malerbetrieb Weißbach GmbH — Painting in Dresden | DImarket",
+        "meta_description": "Find Malerbetrieb Weißbach GmbH in Dresden, Germany on DImarket. Request a quote for painting, plastering services.",
+        "keywords": [
+          "painting",
+          "plastering",
+          "Dresden",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.malerbetrieb-weissbach.de/impressum"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "gessner-haustechnik-dresden",
+      "full_name": "Geßner Haustechnik Dresden",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "hvac-heating"
+      ],
+      "city": "Dresden",
+      "region": "Saxony",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Dresden, Saxony, Germany",
+      "address": "Am Hopfenfeld 3, 01239 Dresden",
+      "phone": "+49 351 4713493",
+      "public_email": "info@gessner-haustechnik.de",
+      "website": "https://gessner-haustechnik.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+gessner-haustechnik-dresden@users.dimarket.app",
+      "services": [
+        "Bathroom renovation",
+        "Sanitary installation",
+        "Heating service",
+        "Heating emergency service"
+      ],
+      "bio": "Dresden sanitary and heating Meisterbetrieb at Am Hopfenfeld 3. Public services cover bathroom renovation, sanitary installation, and heating service.",
+      "service_latitude": 51.0058,
+      "service_longitude": 13.8025,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Geßner Haustechnik Dresden — Plumbing in Dresden | DImarket",
+        "meta_description": "Find Geßner Haustechnik Dresden in Dresden, Germany on DImarket. Request a quote for plumbing, hvac services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "Dresden",
+          "Germany",
+          "professional",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://gessner-haustechnik.de/impressum"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "elektrotechnik-guenther-hannover",
+      "full_name": "Elektrotechnik Günther GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting"
+      ],
+      "city": "Hannover",
+      "region": "Lower Saxony",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Hannover, Lower Saxony, Germany",
+      "address": "Davenstedter Straße 6, 30449 Hannover",
+      "phone": "+49 511 16996950",
+      "public_email": "info@elektrotechnik-guenther.de",
+      "website": "https://elektrotechnik-guenther.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+elektrotechnik-guenther-hannover@users.dimarket.app",
+      "services": [
+        "Electrical installation",
+        "Construction-site power distribution",
+        "Site lighting"
+      ],
+      "bio": "Hannover electrical Meisterbetrieb at Davenstedter Straße 6. Public site lists electrical installation and construction-site power distribution.",
+      "service_latitude": 52.3575,
+      "service_longitude": 9.6958,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Elektrotechnik Günther GmbH — Electrician in Hannover | DImarket",
+        "meta_description": "Find Elektrotechnik Günther GmbH in Hannover, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Hannover",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://elektrotechnik-guenther.de/impressum/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "feller-piontek-maler-nuernberg",
+      "full_name": "Malerfachbetrieb Feller & Piontek GbR",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Painting",
+        "Plastering"
+      ],
+      "work_subcategory_slugs": [
+        "painting-walls",
+        "painting-ceiling",
+        "painting-facade",
+        "plastering-manual",
+        "wallpaper-install"
+      ],
+      "city": "Nuremberg",
+      "region": "Bavaria",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Nuremberg, Bavaria, Germany",
+      "address": "Östliche Waldringstr. 23, 90765 Fürth",
+      "phone": "+49 911 7876220",
+      "public_email": "info@maler-feller-piontek.de",
+      "website": "https://www.maler-feller-piontek.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+feller-piontek-maler-nuernberg@users.dimarket.app",
+      "services": [
+        "Painting",
+        "Wallpapering",
+        "Facade work",
+        "Interior finishing"
+      ],
+      "bio": "Painting Meisterbetrieb based in Fürth serving Nuremberg, Fürth, Erlangen and surroundings. Public impressum lists painting trades since 2006.",
+      "service_latitude": 49.4925,
+      "service_longitude": 10.9885,
+      "service_radius_km": 50,
+      "seo": {
+        "title": "Malerfachbetrieb Feller & Piontek GbR — Painting in Nuremberg | DImarket",
+        "meta_description": "Find Malerfachbetrieb Feller & Piontek GbR in Nuremberg, Germany on DImarket. Request a quote for painting, plastering services.",
+        "keywords": [
+          "painting",
+          "plastering",
+          "Nuremberg",
+          "Germany",
+          "professional",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.maler-feller-piontek.de/content/92/38/impressum"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    },
+    {
+      "slug": "boettjer-elektrotechnik-bremen",
+      "full_name": "Böttjer Elektrotechnik GmbH",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "solar-installation",
+        "electro-smart-home"
+      ],
+      "city": "Bremen",
+      "region": "Bremen",
+      "country": "Germany",
+      "country_code": "DE",
+      "location": "Bremen, Bremen, Germany",
+      "address": "Zweigstraße 12, 28217 Bremen",
+      "phone": "+49 421 370150",
+      "public_email": "info@elektro-boettjer.de",
+      "website": "https://elektro-boettjer.de/",
+      "business_hours": null,
+      "languages": [
+        "de"
+      ],
+      "preferred_language": "de",
+      "directory_claim_email": "directory+boettjer-elektrotechnik-bremen@users.dimarket.app",
+      "services": [
+        "Electrical installation",
+        "EV charging / DC charging for businesses",
+        "Wallbox load management"
+      ],
+      "bio": "Bremen electrician company at Zweigstraße 12. Public services cover electrical installation and EV charging solutions for businesses.",
+      "service_latitude": 53.0955,
+      "service_longitude": 8.7685,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Böttjer Elektrotechnik GmbH — Electrician in Bremen | DImarket",
+        "meta_description": "Find Böttjer Elektrotechnik GmbH in Bremen, Germany on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Bremen",
+          "Germany",
+          "company",
+          "Germany",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://elektro-boettjer.de/impressum/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "germany-directory-nationwide"
+      }
+    }
+  ]
+}

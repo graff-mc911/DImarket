@@ -1,0 +1,137 @@
+[
+  {
+    "name": "Electric Solutions Krzysztof Nowak",
+    "slug": "electric-solutions-nowak-warsaw",
+    "id": "ec863a50-08fa-464b-9b6b-3727feb6bfbc",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/ec863a50-08fa-464b-9b6b-3727feb6bfbc/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14244,
+    "patched": true
+  },
+  {
+    "name": "Elektryk Hydraulik Warszawa",
+    "slug": "elektryk-hydraulik-warsaw",
+    "id": "9f2bafd7-1bb8-4b3e-919a-20c1fb8a35b0",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/9f2bafd7-1bb8-4b3e-919a-20c1fb8a35b0/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15671,
+    "patched": true
+  },
+  {
+    "name": "Elektryk24h",
+    "slug": "elektryk24h-warsaw",
+    "id": "95e93673-a643-4dca-bab7-a18a3ea6a124",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/95e93673-a643-4dca-bab7-a18a3ea6a124/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13075,
+    "patched": true
+  },
+  {
+    "name": "VoltSerwis Damian Bańdo",
+    "slug": "voltserwis-bando-krakow",
+    "id": "756474d1-a698-42ab-b9cf-a42d7bfcc2cd",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/756474d1-a698-42ab-b9cf-a42d7bfcc2cd/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14313,
+    "patched": true
+  },
+  {
+    "name": "Stachura Budownictwo",
+    "slug": "stachura-budownictwo-wroclaw",
+    "id": "9b04e576-fc42-47a5-b006-befaffb1b252",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/9b04e576-fc42-47a5-b006-befaffb1b252/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14486,
+    "patched": true
+  },
+  {
+    "name": "MALT Usługi Malarskie",
+    "slug": "malt-uslugi-malarskie-wroclaw",
+    "id": "a67448fa-edc8-4004-83f6-a482e9a5a498",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/a67448fa-edc8-4004-83f6-a482e9a5a498/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14699,
+    "patched": true
+  },
+  {
+    "name": "M.O Wykończenia Wnętrz Marcin Owsianka",
+    "slug": "mo-wykonczenia-wnetrz-wroclaw",
+    "id": "0771ca76-7e9b-4ec9-b502-14a085b661d3",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/0771ca76-7e9b-4ec9-b502-14a085b661d3/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14042,
+    "patched": true
+  },
+  {
+    "name": "Usługi Ogólnobudowlane Robert Wójcik",
+    "slug": "wojcik-uslugi-ogolnobudowlane-wroclaw",
+    "id": "1e8dbd9c-6254-4bf6-b223-e82659987b5d",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/1e8dbd9c-6254-4bf6-b223-e82659987b5d/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13360,
+    "patched": true
+  },
+  {
+    "name": "TGM Remonty Wrocław",
+    "slug": "tgm-remonty-wroclaw",
+    "id": "2dc233cb-ba78-43c9-b7e1-f5e90254d030",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/2dc233cb-ba78-43c9-b7e1-f5e90254d030/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 12030,
+    "patched": true
+  },
+  {
+    "name": "Drobne Naprawy Hydrauliczne Michał Kamiński",
+    "slug": "hydraulik-gdansk-kaminski",
+    "id": "947feed1-32eb-4390-bd35-951fabbd9792",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/947feed1-32eb-4390-bd35-951fabbd9792/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14026,
+    "patched": true
+  },
+  {
+    "name": "Firma Eltak Andrzej Nobis",
+    "slug": "eltak-nobis-lodz",
+    "id": "e1b912f3-6437-41be-b4e1-9990cad09d8b",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/e1b912f3-6437-41be-b4e1-9990cad09d8b/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13768,
+    "patched": true
+  },
+  {
+    "name": "Hydraulik Łódź Michał Pęczek",
+    "slug": "hydraulik-awarie-peczek-lodz",
+    "id": "489958ea-e67b-4ac5-9ff0-71622aacacaa",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/489958ea-e67b-4ac5-9ff0-71622aacacaa/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13901,
+    "patched": true
+  },
+  {
+    "name": "B-f Elektryka Paweł Łuczak",
+    "slug": "bf-elektryka-luczak-lodz",
+    "id": "79f618f5-7bdb-45ef-89db-5ec7c826f278",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/79f618f5-7bdb-45ef-89db-5ec7c826f278/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14321,
+    "patched": true
+  },
+  {
+    "name": "ELEKTRYK-GDA Sp. z o.o.",
+    "slug": "elektryk-gda-spzoo-gdansk",
+    "id": "e609d4b6-416d-443b-bde0-46ae3576e01b",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/e609d4b6-416d-443b-bde0-46ae3576e01b/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14566,
+    "patched": true
+  },
+  {
+    "name": "Hydraf — Hydraulik Poznań",
+    "slug": "hydraf-hydraulik-poznan",
+    "id": "137da278-5e58-4211-92fb-563ead6dff26",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/137da278-5e58-4211-92fb-563ead6dff26/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 13481,
+    "patched": true
+  }
+]
