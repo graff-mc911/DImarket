@@ -1,12 +1,12 @@
 /**
- * Hierarchical service taxonomy: Serviya marketing categories ↔ DImarket work slugs.
+ * Hierarchical service taxonomy: DImarket marketing categories ↔ DImarket work slugs.
  * Powers expand → subcategory → results URLs without changing visual design.
  */
 
 import { serviceCategories, type ServiceCategory, type ServiceSubcategory } from '../config/categories'
 import { isReservedNavPath } from './navMap'
 
-/** Work-slug prefixes (or exact slugs) that match a Serviya subcategory. */
+/** Work-slug prefixes (or exact slugs) that match a marketing subcategory. */
 export type WorkMatcher = {
   /** Prefix match: work slug starts with `${prefix}-` or equals prefix */
   prefixes?: string[]
@@ -17,7 +17,7 @@ export type WorkMatcher = {
 }
 
 /**
- * Map Serviya subcategory slug → DB work matchers.
+ * Map marketing subcategory slug → DB work matchers.
  * Keep in sync with profiles.work_subcategory_slugs used in directory imports.
  */
 export const SUBCATEGORY_WORK_MATCHERS: Record<string, WorkMatcher> = {

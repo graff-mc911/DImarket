@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 import type { Category, Json, ListingWithImages, Profile } from './types'
-import { SERVIYA_CATEGORY_I18N } from '../config/categoriesI18n'
+import { DIMARKET_CATEGORY_I18N } from '../config/categoriesI18n'
 import { CATEGORY_LABEL_I18N } from './categoryLabelI18n'
 import { getTranslation, type LanguageCode, type TranslationKey } from './i18n'
 import { findServiceBySlug, servicesPath } from './serviceTaxonomy'
@@ -59,10 +59,10 @@ function localeCandidates(lang: string): string[] {
   return normalized === base ? [normalized] : [normalized, base]
 }
 
-/** Static UI maps (Serviya + work-type catalog) — used when DB name_i18n lacks the locale. */
+/** Static UI maps (category label + work-type catalog) — used when DB name_i18n lacks the locale. */
 function labelFromStaticMaps(slug: string | undefined | null, lang: string): string | null {
   if (!slug) return null
-  const maps = [SERVIYA_CATEGORY_I18N[slug], CATEGORY_LABEL_I18N[slug]]
+  const maps = [DIMARKET_CATEGORY_I18N[slug], CATEGORY_LABEL_I18N[slug]]
   for (const map of maps) {
     if (!map) continue
     for (const code of localeCandidates(lang)) {

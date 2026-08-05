@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generated_at": "2026-08-04T14:43:49.629Z",
-  "source": "Curated Spain-wide public company directory from company websites and public registries (not Serviya-only). Factual fields only; original DImarket bios; no reviews/ratings/photos copied.",
+  "source": "Curated Spain-wide public company directory from company websites and public registries (multi-source). Factual fields only; original DImarket bios; no reviews/ratings/photos copied.",
   "schema": {
     "target_table": "profiles",
     "auth_required": true,

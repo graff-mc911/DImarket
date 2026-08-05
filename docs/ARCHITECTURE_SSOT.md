@@ -29,12 +29,12 @@ Surfaces: `HomeInteractiveMap`, `MapExplore`, `EstimatorResultsMap` — chrome o
 | Site chrome order/icons | `siteCategories.ts` | Professionals filters, listings paths |
 | Work specialization | `categoryCatalog.ts` + `*WorkGroups.ts` | Create ad, Settings, matching |
 | Work matching helpers | `categoryMatching.ts` | Professionals, category pages |
-| Serviya ↔ site bridge | `homeCategoryAdapter.ts` | Home cards paths + DB count overlay |
+| Home ↔ site bridge | `homeCategoryAdapter.ts` | Home cards paths + DB count overlay |
 | Marketing Home cards (legacy tree) | `config/categories.ts` + `categoriesI18n.ts` | Expandable Home UI until full DB migration |
 
 **Alias table (do not invent a third slug):**
 
-| Concept | Serviya (Home) | Site / DB |
+| Concept | Home card | Site / DB |
 |---------|----------------|-----------|
 | Buy & Sell | `buy-sell` | `sell-rent` |
 | Jobs | `jobs` | `vacancies` |
@@ -69,7 +69,7 @@ Aliases remain in `App.tsx` for bookmarks.
 | UI keys | `src/lib/Translations/en.ts` (`TranslationKey`) |
 | Locale overlays | `Translations/{uk,ru,…}.ts` via `locales/index.ts` |
 | Runtime | `useApp().t` / `getTranslation` only |
-| Category labels | Prefer DB `name_i18n`; fallbacks `CATEGORY_LABEL_I18N` / Serviya map (do not merge blindly) |
+| Category labels | Prefer DB `name_i18n`; fallbacks `CATEGORY_LABEL_I18N` / Home card map (do not merge blindly) |
 | Bot copy | `supabase/functions/telegram-bot/i18n.ts` (isolated) |
 
 Do not add parallel `header.*` / `nav.*` keys for new shared chrome — use `navMap.labelKey` (+ `labelKeyBySurface` when copy must differ).
@@ -80,5 +80,5 @@ Do not add parallel `header.*` / `nav.*` keys for new shared chrome — use `nav
 
 1. No new features that introduce a second map, category list, nav array, or translation store.
 2. New routes: add to `navMap.ts` first, then `App.tsx`.
-3. New category mains: seed DB + `siteCategories` if chrome; do not grow Serviya unless Home still depends on it.
+3. New category mains: seed DB + `siteCategories` if chrome; extend Home cards only via `categories.ts` when needed.
 4. New map surfaces: `useMarketplaceMapMarkers` + `EuropeMarketplaceMap` only.

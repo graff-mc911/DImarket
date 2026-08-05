@@ -1,5 +1,5 @@
 /**
- * Home category adapter — bridges Serviya marketing cards ↔ site/DB mains.
+ * Home category adapter — bridges Home marketing cards ↔ site/DB mains.
  *
  * Home UI still paints `serviceCategories` (expandable sub-tree).
  * DB / site chrome use different top-level slugs for some concepts.
@@ -13,10 +13,10 @@ import type { MarketplaceCategory } from './marketplaceCategories'
 import { servicesPath } from './serviceTaxonomy'
 
 /**
- * Serviya marketing slug → site / Supabase main slug.
+ * Home marketing slug → site / Supabase main slug.
  * Only list pairs that differ; identical slugs pass through unchanged.
  */
-export const SERVIYA_TO_SITE_SLUG: Readonly<Record<string, string>> = {
+export const HOME_TO_SITE_SLUG: Readonly<Record<string, string>> = {
   'buy-sell': 'sell-rent',
   jobs: 'vacancies',
   'legal-services': 'legal-notary',
@@ -25,20 +25,20 @@ export const SERVIYA_TO_SITE_SLUG: Readonly<Record<string, string>> = {
   moving: 'tools',
 }
 
-/** Inverse for lookups from site → Serviya (first wins if multiple). */
-export const SITE_TO_SERVIYA_SLUG: Readonly<Record<string, string>> = Object.fromEntries(
-  Object.entries(SERVIYA_TO_SITE_SLUG).map(([serviya, site]) => [site, serviya]),
+/** Inverse for lookups from site → Home card slug (first wins if multiple). */
+export const SITE_TO_HOME_SLUG: Readonly<Record<string, string>> = Object.fromEntries(
+  Object.entries(HOME_TO_SITE_SLUG).map(([home, site]) => [site, home]),
 )
 
-export function siteSlugForServiya(serviyaSlug: string): string {
-  return SERVIYA_TO_SITE_SLUG[serviyaSlug] ?? serviyaSlug
+export function siteSlugForHomeCard(homeSlug: string): string {
+  return HOME_TO_SITE_SLUG[homeSlug] ?? homeSlug
 }
 
-export function serviyaSlugForSite(siteSlug: string): string {
-  return SITE_TO_SERVIYA_SLUG[siteSlug] ?? siteSlug
+export function homeCardSlugForSite(siteSlug: string): string {
+  return SITE_TO_HOME_SLUG[siteSlug] ?? siteSlug
 }
 
-/** Canonical listing / category path for a Home (Serviya) card. */
+/** Canonical listing / category path for a Home marketing card. */
 export function homeCategoryPath(
   category: Pick<ServiceCategory, 'slug' | 'href'>,
   subcategory?: Pick<ServiceSubcategory, 'slug'> | null,
@@ -62,7 +62,7 @@ export function homeCategoryPath(
   if (slug === 'buy-sell' || subcategory?.slug?.startsWith('buy-sell')) return '/sell-rent'
   if (slug === 'jobs' || subcategory?.slug?.startsWith('jobs-')) return '/vacancies'
   if (subcategory) return servicesPath(subcategory.slug)
-  const site = siteSlugForServiya(slug)
+  const site = siteSlugForHomeCard(slug)
   if (site === 'sell-rent') return '/sell-rent'
   if (site === 'vacancies') return '/vacancies'
   return `/category/${encodeURIComponent(site)}`
@@ -85,12 +85,12 @@ export function marketplaceBySiteSlug(
   return map
 }
 
-/** Overlay DB counts onto a Serviya card when an alias/site match exists. */
-export function dbOverlayForServiya(
-  serviyaSlug: string,
+/** Overlay DB counts onto a Home card when an alias/site match exists. */
+export function dbOverlayForHome(
+  homeSlug: string,
   bySite: Map<string, MarketplaceCategory>,
 ): HomeCategoryDbOverlay {
-  const site = siteSlugForServiya(serviyaSlug)
+  const site = siteSlugForHomeCard(homeSlug)
   const row = bySite.get(site)
   if (!row) {
     return { professionalsCount: null, servicesCount: null, dbSlug: null }

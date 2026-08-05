@@ -18,7 +18,7 @@ export function DocumentsHub({ subcategory = null }: Props) {
   const { t, location, language } = useApp()
   const jurisdiction = useMemo(() => jurisdictionFromLocation(location), [location])
   const locationLabel =
-    formatGlobalLocationLabel(location, t('serviya.loc.all-europe')) || t('docs.location.any')
+    formatGlobalLocationLabel(location, t('dimarket.loc.all-europe')) || t('docs.location.any')
 
   const docs = useMemo(
     () => listDocuments({ subcategory, jurisdiction }),

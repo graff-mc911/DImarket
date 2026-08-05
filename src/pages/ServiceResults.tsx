@@ -15,7 +15,7 @@ import {
   servicesPath,
   type ResolvedService,
 } from '../lib/serviceTaxonomy'
-import { serviyaLabel } from '../config/categoriesI18n'
+import { dimarketLabel } from '../config/categoriesI18n'
 import type { TranslationKey } from '../lib/i18n'
 import {
   EMPTY_GEO_SEARCH,
@@ -129,8 +129,8 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
       document.title = `${t('services.notFoundTitle')} | DImarket`
       return
     }
-    const subTitle = serviyaLabel(resolved.subcategory.slug, lang, resolved.subcategory.title.en)
-    const catTitle = serviyaLabel(resolved.category.slug, lang, resolved.category.title.en)
+    const subTitle = dimarketLabel(resolved.subcategory.slug, lang, resolved.subcategory.title.en)
+    const catTitle = dimarketLabel(resolved.category.slug, lang, resolved.category.title.en)
     const title = t('services.seoTitle')
       .replace('{trade}', subTitle)
       .replace('{parent}', catTitle)
@@ -388,8 +388,8 @@ function ServiceResultsView({
   activeFiltersCount: number
   resetFilters: () => void
 }) {
-  const subTitle = serviyaLabel(resolved.subcategory.slug, lang, resolved.subcategory.title.en)
-  const catTitle = serviyaLabel(resolved.category.slug, lang, resolved.category.title.en)
+  const subTitle = dimarketLabel(resolved.subcategory.slug, lang, resolved.subcategory.title.en)
+  const catTitle = dimarketLabel(resolved.category.slug, lang, resolved.category.title.en)
 
   const siblingSubs = resolved.category.subcategories
 
@@ -606,7 +606,7 @@ function ServiceResultsView({
             <h2 className="text-base font-bold text-[var(--ink-900)]">{catTitle}</h2>
             <ul className="mt-3 space-y-1">
               {siblingSubs.map((sub) => {
-                const label = serviyaLabel(sub.slug, lang, sub.title.en)
+                const label = dimarketLabel(sub.slug, lang, sub.title.en)
                 const active = sub.slug === resolved.subcategory.slug
                 return (
                   <li key={sub.id}>

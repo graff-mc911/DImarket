@@ -1,5 +1,5 @@
 /**
- * Spain-wide public companies for DImarket directory (multi-source, not Serviya-only).
+ * Spain-wide public companies for DImarket directory (multi-source).
  * Factual public fields only — no copied reviews, ratings, photos, or marketing copy.
  */
 export const SPAIN_COMPANIES_NATIONWIDE = [

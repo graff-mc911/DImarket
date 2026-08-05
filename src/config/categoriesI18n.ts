@@ -1,12 +1,12 @@
-/** Localized titles for Serviya category browser (src/config/categories.ts). */
-export type ServiyaLocale =
+/** Localized titles for DImarket category browser (src/config/categories.ts). */
+export type DimarketLocale =
   | 'en' | 'uk' | 'ru' | 'pl' | 'de' | 'fr' | 'es' | 'it' | 'pt' | 'ro'
   | 'cs' | 'sk' | 'hu' | 'bg' | 'sr' | 'hr' | 'sl' | 'lt' | 'lv' | 'et'
   | 'tr' | 'kk' | 'ar' | 'zh' | 'ja'
 
-export type ServiyaLabelMap = Record<ServiyaLocale, string>
+export type DimarketLabelMap = Record<DimarketLocale, string>
 
-export const SERVIYA_CATEGORY_I18N: Record<string, ServiyaLabelMap> = {
+export const DIMARKET_CATEGORY_I18N: Record<string, DimarketLabelMap> = {
   '3d-visualization': {
     en: '3D Visualization',
     uk: '3D-візуалізація',
@@ -3536,10 +3536,10 @@ export const SERVIYA_CATEGORY_I18N: Record<string, ServiyaLabelMap> = {
   },
 }
 
-export function serviyaLabel(slug: string, locale: string, fallback: string): string {
-  const map = SERVIYA_CATEGORY_I18N[slug]
+export function dimarketLabel(slug: string, locale: string, fallback: string): string {
+  const map = DIMARKET_CATEGORY_I18N[slug]
   if (!map) return fallback
   const normalized = locale.toLowerCase()
   const base = normalized.split("-")[0]
-  return map[normalized as ServiyaLocale] || map[base as ServiyaLocale] || map.en || fallback
+  return map[normalized as DimarketLocale] || map[base as DimarketLocale] || map.en || fallback
 }

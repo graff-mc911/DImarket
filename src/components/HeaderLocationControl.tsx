@@ -33,7 +33,7 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
 
   const label = formatGlobalLocationLabel(
     location,
-    t('serviya.loc.all-europe'),
+    t('dimarket.loc.all-europe'),
   )
 
   return (
@@ -61,7 +61,7 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
           <p className="mb-2 text-xs font-semibold text-[var(--adv-muted,#6b645c)]">
             {hasActiveLocation(location)
               ? formatGlobalLocationLabel(location)
-              : t('serviya.loc.all-europe')}
+              : t('dimarket.loc.all-europe')}
           </p>
           <GeoSearchFilters value={location} onChange={setLocation} />
         </div>

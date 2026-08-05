@@ -20,7 +20,7 @@ import {
   type MapMarkerKind,
 } from '../lib/marketplaceMap'
 import { serviceCategories } from '../config/categories'
-import { serviyaLabel } from '../config/categoriesI18n'
+import { dimarketLabel } from '../config/categoriesI18n'
 import { navigateTo } from '../lib/navigation'
 
 type ViewMode = 'map' | 'list' | 'split'
@@ -221,7 +221,7 @@ export function MapExplore() {
                 <option value="">{t('mapExplore.anyCategory')}</option>
                 {serviceCategories.map((c) => (
                   <option key={c.slug} value={c.slug}>
-                    {serviyaLabel(c.slug, lang, c.title.en)}
+                    {dimarketLabel(c.slug, lang, c.title.en)}
                   </option>
                 ))}
               </select>
@@ -245,7 +245,7 @@ export function MapExplore() {
                     []
                   ).map((s) => (
                     <option key={s.slug} value={s.slug}>
-                      {serviyaLabel(s.slug, lang, s.title.en)}
+                      {dimarketLabel(s.slug, lang, s.title.en)}
                     </option>
                   ))}
                 </select>

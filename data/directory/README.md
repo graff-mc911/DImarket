@@ -8,7 +8,7 @@ Curated initial directory of publicly listed construction companies and professi
 |--------|------|-------|-------|
 | Launch (DE Darmstadt + ES) | `public-businesses.json` | `build-public-directory-seed.mjs` | Early launch set |
 | Spain companies | `spain-companies-nationwide.json` | `build-spain-companies-seed.mjs` | Nationwide companies |
-| Spain electricians | `spain-electricians-from-listing.json` | — | Serviya-style masters |
+| Spain electricians | `spain-electricians-from-listing.json` | — | DImarket-style masters |
 | **Slovakia** | `slovakia-directory-nationwide.json` | `build-slovakia-directory-seed.mjs` | Masters + companies + map coords |
 | **Romania** | `romania-directory-nationwide.json` | `build-romania-directory-seed.mjs` | Masters + companies + map coords |
 

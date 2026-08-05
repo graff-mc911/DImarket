@@ -94,7 +94,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
     )
   }
 
-  const locationLabel = formatGlobalLocationLabel(location, t('serviya.loc.all-europe'))
+  const locationLabel = formatGlobalLocationLabel(location, t('dimarket.loc.all-europe'))
   const steps = doc.procedureSteps ?? []
   const isLicense = doc.documentType === 'license' || doc.documentType === 'permit'
 

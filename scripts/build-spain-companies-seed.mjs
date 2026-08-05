@@ -90,7 +90,7 @@ const payload = {
   version: 1,
   generated_at: new Date().toISOString(),
   source:
-    'Curated Spain-wide public company directory from company websites and public registries (not Serviya-only). Factual fields only; original DImarket bios; no reviews/ratings/photos copied.',
+    'Curated Spain-wide public company directory from company websites and public registries (multi-source). Factual fields only; original DImarket bios; no reviews/ratings/photos copied.',
   schema: {
     target_table: 'profiles',
     auth_required: true,
@@ -129,7 +129,7 @@ node scripts/import-public-directory.mjs --data=data/directory/spain-companies-n
 
 ## Notes
 
-- Multi-source public listings (company websites / public registries), not limited to Serviya.
+- Multi-source public listings (company websites / public registries).
 - Lawyers and accountants included (\`legal-notary\`, \`accounting-finance\` work slugs).
 - Ensure DB has \`legal-notary\` and \`accounting-finance\` category rows (migration \`20260628120000_categories_legal_accounting.sql\`).
 `,

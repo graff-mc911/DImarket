@@ -4,7 +4,7 @@
  */
 
 import { serviceCategories, type ServiceCategory } from '../../config/categories'
-import { serviyaLabel } from '../../config/categoriesI18n'
+import { dimarketLabel } from '../../config/categoriesI18n'
 
 /** Parent + subcategory slugs from the existing DImarket catalog. */
 export function dimarketMatchCategorySlugs(): string[] {
@@ -32,14 +32,14 @@ export function dimarketMatchCategoryOptions(languageCode = 'en'): MatchCategory
     if (cat.slug === 'commercial-agents') continue
     out.push({
       slug: cat.slug,
-      label: serviyaLabel(cat.slug, languageCode, cat.title[languageCode] ?? cat.title.en),
+      label: dimarketLabel(cat.slug, languageCode, cat.title[languageCode] ?? cat.title.en),
       parentSlug: cat.slug,
       isParent: true,
     })
     for (const sub of cat.subcategories) {
       out.push({
         slug: sub.slug,
-        label: serviyaLabel(sub.slug, languageCode, sub.title[languageCode] ?? sub.title.en),
+        label: dimarketLabel(sub.slug, languageCode, sub.title[languageCode] ?? sub.title.en),
         parentSlug: cat.slug,
         isParent: false,
       })
@@ -56,11 +56,11 @@ export function dimarketParentCategoryOptions(languageCode = 'en'): MatchCategor
 export function labelForMatchCategory(slug: string, languageCode = 'en'): string {
   for (const cat of serviceCategories) {
     if (cat.slug === slug) {
-      return serviyaLabel(slug, languageCode, cat.title[languageCode] ?? cat.title.en)
+      return dimarketLabel(slug, languageCode, cat.title[languageCode] ?? cat.title.en)
     }
     for (const sub of cat.subcategories) {
       if (sub.slug === slug) {
-        return serviyaLabel(slug, languageCode, sub.title[languageCode] ?? sub.title.en)
+        return dimarketLabel(slug, languageCode, sub.title[languageCode] ?? sub.title.en)
       }
     }
   }

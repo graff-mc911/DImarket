@@ -16,6 +16,6 @@ node scripts/import-public-directory.mjs --data=data/directory/spain-companies-n
 
 ## Notes
 
-- Multi-source public listings (company websites / public registries), not limited to Serviya.
+- Multi-source public listings (company websites / public registries).
 - Lawyers and accountants included (`legal-notary`, `accounting-finance` work slugs).
 - Ensure DB has `legal-notary` and `accounting-finance` category rows (migration `20260628120000_categories_legal_accounting.sql`).

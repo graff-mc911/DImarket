@@ -11,7 +11,7 @@
 | Nav label keys | Prefer `src/lib/navMap.ts` for chrome destinations |
 
 Do **not** edit a monolithic `i18n.ts` string table — that path is obsolete.  
-Category slug labels are separate (`categoryLabelI18n`, Serviya, DB `name_i18n`); see `docs/ARCHITECTURE_SSOT.md`.
+Category slug labels are separate (`categoryLabelI18n`, Home card map, DB `name_i18n`); see `docs/ARCHITECTURE_SSOT.md`.
 
 ---
 

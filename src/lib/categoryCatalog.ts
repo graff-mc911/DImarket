@@ -12,7 +12,7 @@ import { HANDYMAN_WORK_GROUPS } from './handymanWorkGroups'
 import { FURNITURE_WORK_GROUPS } from './furnitureWorkGroups'
 import { ELECTRICAL_AUTO_WORK_GROUPS } from './electricalAutoWorkGroups'
 import { CATEGORY_LABEL_I18N } from './categoryLabelI18n'
-import { SERVIYA_CATEGORY_I18N } from '../config/categoriesI18n'
+import { DIMARKET_CATEGORY_I18N } from '../config/categoriesI18n'
 
 export type LocalizedLabel = {
   uk: string
@@ -193,8 +193,8 @@ export function labelFor(entry: LocalizedLabel, locale: string, slug?: string): 
   const normalized = locale.toLowerCase()
   const baseLocale = normalized.split('-')[0]
   const fromWorkMap = slug ? CATEGORY_LABEL_I18N[slug] : undefined
-  const fromServiya = slug ? SERVIYA_CATEGORY_I18N[slug] : undefined
-  const fromMap = fromWorkMap || fromServiya
+  const fromDimarketMap = slug ? DIMARKET_CATEGORY_I18N[slug] : undefined
+  const fromMap = fromWorkMap || fromDimarketMap
 
   if (fromWorkMap?.[normalized as keyof typeof fromWorkMap]) {
     return fromWorkMap[normalized as keyof typeof fromWorkMap]
@@ -202,11 +202,11 @@ export function labelFor(entry: LocalizedLabel, locale: string, slug?: string): 
   if (fromWorkMap?.[baseLocale as keyof typeof fromWorkMap]) {
     return fromWorkMap[baseLocale as keyof typeof fromWorkMap]
   }
-  if (fromServiya?.[normalized as keyof typeof fromServiya]) {
-    return fromServiya[normalized as keyof typeof fromServiya]
+  if (fromDimarketMap?.[normalized as keyof typeof fromDimarketMap]) {
+    return fromDimarketMap[normalized as keyof typeof fromDimarketMap]
   }
-  if (fromServiya?.[baseLocale as keyof typeof fromServiya]) {
-    return fromServiya[baseLocale as keyof typeof fromServiya]
+  if (fromDimarketMap?.[baseLocale as keyof typeof fromDimarketMap]) {
+    return fromDimarketMap[baseLocale as keyof typeof fromDimarketMap]
   }
   if (entry[normalized]) return entry[normalized] as string
   if (entry[baseLocale]) return entry[baseLocale] as string

@@ -11,11 +11,11 @@ import {
   type ServiceCategory,
   type ServiceSubcategory,
 } from '../config/categories'
-import { serviyaLabel } from '../config/categoriesI18n'
+import { dimarketLabel } from '../config/categoriesI18n'
 import type { TranslationKey } from '../lib/i18n'
 import type { MarketplaceCategory } from '../lib/marketplaceCategories'
 import {
-  dbOverlayForServiya,
+  dbOverlayForHome,
   homeCategoryPath,
   marketplaceBySiteSlug,
 } from '../lib/homeCategoryAdapter'
@@ -52,7 +52,7 @@ function localizedTitle(
   languageCode: string,
   slug: string,
 ): string {
-  return serviyaLabel(slug, languageCode, value[languageCode] ?? value.en)
+  return dimarketLabel(slug, languageCode, value[languageCode] ?? value.en)
 }
 
 function categorySearchText(category: ServiceCategory, languageCode: string): string {
@@ -78,7 +78,7 @@ function professionalPath(
 }
 
 /**
- * Home / Serviya category browser.
+ * DImarket category browser: expand a card, then open matching professionals.
  * Paints marketing tree from serviceCategories; enriches counts from DB mains
  * via homeCategoryAdapter when `categories` prop is provided (SSoT bridge).
  */
@@ -105,7 +105,7 @@ export function MainCategoriesSection({
   const countrySlug = countrySlugFromGeo(location)
   const locationDisplay = formatGlobalLocationLabel(
     location,
-    t('serviya.loc.all-europe'),
+    t('dimarket.loc.all-europe'),
   )
   const selectValue = categoryLocationOptions.some((o) => o.id === countrySlug)
     ? countrySlug
@@ -167,9 +167,9 @@ export function MainCategoriesSection({
     }
   }, [])
 
-  const sectionTitle = title ?? t('serviya.title')
-  const sectionSubtitle = subtitle ?? t('serviya.subtitle')
-  const sectionEyebrow = eyebrow ?? t('serviya.eyebrow')
+  const sectionTitle = title ?? t('dimarket.title')
+  const sectionSubtitle = subtitle ?? t('dimarket.subtitle')
+  const sectionEyebrow = eyebrow ?? t('dimarket.eyebrow')
 
   const handleSubcategoryClick = (category: ServiceCategory, subcategory: ServiceSubcategory) => {
     if (category.slug === 'documents-procedures' || category.slug === 'official-documents') {
@@ -180,16 +180,12 @@ export function MainCategoriesSection({
   }
 
   const handlePopularClick = (itemId: string) => {
-    if (itemId === 'buy-sell') {
+    if (itemId === 'buy-sell' || itemId === 'sellRent' || itemId === 'buySell') {
       navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'buy-sell', href: '/sell-rent' }), location))
       return
     }
     if (itemId === 'jobs') {
       navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'jobs', href: '/vacancies' }), location))
-      return
-    }
-    if (itemId === 'documents-procedures' || itemId === 'official-documents') {
-      navigateTo(appendLocationToPath('/documents', location))
       return
     }
     const resolved = findServiceBySlug(itemId)
@@ -211,7 +207,7 @@ export function MainCategoriesSection({
   }
 
   const formatCategoryStats = (category: ServiceCategory): string => {
-    const overlay = dbOverlayForServiya(category.slug, dbBySite)
+    const overlay = dbOverlayForHome(category.slug, dbBySite)
     if (overlay.professionalsCount != null && !marketplaceLoading) {
       const companies = statsByCategory[category.id]?.companies ?? 0
       return t('services.statsSpecialistsCompanies')
@@ -221,9 +217,9 @@ export function MainCategoriesSection({
     const stats = statsByCategory[category.id]
     if (!stats) {
       if (overlay.servicesCount != null) {
-        return `${overlay.servicesCount} ${t('serviya.servicesLabel')}`
+        return `${overlay.servicesCount} ${t('dimarket.servicesLabel')}`
       }
-      return `${category.serviceCount} ${t('serviya.servicesLabel')}`
+      return `${category.serviceCount} ${t('dimarket.servicesLabel')}`
     }
     return t('services.statsSpecialistsCompanies')
       .replace('{specialists}', String(stats.specialists))
@@ -233,39 +229,39 @@ export function MainCategoriesSection({
   return (
     <section
       id={id}
-      className={`serviya-categories home-section layout-page-gutter ${className}`.trim()}
+      className={`dimarket-categories home-section layout-page-gutter ${className}`.trim()}
       aria-labelledby={`${id}-title`}
     >
-      <div className="serviya-categories__head">
-        <p className="serviya-categories__eyebrow">{sectionEyebrow}</p>
+      <div className="dimarket-categories__head">
+        <p className="dimarket-categories__eyebrow">{sectionEyebrow}</p>
         <h2 id={`${id}-title`}>{sectionTitle}</h2>
         <p>{sectionSubtitle}</p>
       </div>
 
-      <div className="serviya-search" role="search">
-        <label className="serviya-search__input">
+      <div className="dimarket-search" role="search">
+        <label className="dimarket-search__input">
           <Search className="h-5 w-5" aria-hidden />
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder={t('serviya.searchPlaceholder')}
-            aria-label={t('serviya.searchPlaceholder')}
+            placeholder={t('dimarket.searchPlaceholder')}
+            aria-label={t('dimarket.searchPlaceholder')}
           />
         </label>
-        <label className="serviya-search__location">
+        <label className="dimarket-search__location">
           <MapPin className="h-5 w-5" aria-hidden />
-          <span>{t('serviya.locationLabel')}</span>
+          <span>{t('dimarket.locationLabel')}</span>
           <select
             value={selectValue}
             onChange={(event) => setLocation(geoFromCountrySlug(event.target.value, location))}
-            aria-label={t('serviya.locationLabel')}
+            aria-label={t('dimarket.locationLabel')}
             title={locationDisplay}
           >
             <option value="all-europe">
               {hasActiveLocation(location) && selectValue === 'all-europe'
                 ? locationDisplay
-                : t('serviya.loc.all-europe')}
+                : t('dimarket.loc.all-europe')}
             </option>
             {categoryLocationOptions
               .filter((option) => option.id !== 'all-europe')
@@ -273,30 +269,30 @@ export function MainCategoriesSection({
                 <option key={option.id} value={option.id}>
                   {selectValue === option.id && hasActiveLocation(location)
                     ? locationDisplay
-                    : t(`serviya.loc.${option.id}` as TranslationKey)}
+                    : t(`dimarket.loc.${option.id}` as TranslationKey)}
                 </option>
               ))}
           </select>
         </label>
       </div>
 
-      <div className="serviya-popular" aria-label={t('serviya.popularSearchesLabel')}>
-        <span>{t('serviya.popularSearchesLabel')}</span>
+      <div className="dimarket-popular" aria-label={t('dimarket.popularSearchesLabel')}>
+        <span>{t('dimarket.popularSearchesLabel')}</span>
         <div>
           {popularCategorySearches.map((item) => (
             <button key={item.id} type="button" onClick={() => handlePopularClick(item.id)}>
-              {t(`serviya.popular.${item.id}` as TranslationKey)}
+              {t(`dimarket.popular.${item.id}` as TranslationKey)}
             </button>
           ))}
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="serviya-categories__empty">{t('serviya.noResults')}</p>
+        <p className="dimarket-categories__empty">{t('dimarket.noResults')}</p>
       ) : (
         <LazyMotion features={domAnimation}>
           <m.div
-            className="serviya-category-grid"
+            className="dimarket-category-grid"
             layout
             data-category-count={filtered.length}
             data-includes-buy-sell={filtered.some((c) => c.id === 'buy-sell') ? '1' : '0'}
@@ -306,28 +302,28 @@ export function MainCategoriesSection({
               const expanded = expandedId === category.id
               const categoryTitle = localizedTitle(category.title, lang, category.slug)
               return (
-                <m.article key={category.id} className="serviya-category-card" layout>
+                <m.article key={category.id} className="dimarket-category-card" layout>
                   <button
                     type="button"
-                    className="serviya-category-card__button"
+                    className="dimarket-category-card__button"
                     onClick={() => handleCategoryCardClick(category)}
                     aria-expanded={expanded}
-                    aria-label={`${expanded ? t('serviya.closeCategory') : t('serviya.openCategory')}: ${categoryTitle}`}
+                    aria-label={`${expanded ? t('dimarket.closeCategory') : t('dimarket.openCategory')}: ${categoryTitle}`}
                   >
-                    <span className="serviya-category-card__icon" aria-hidden>
+                    <span className="dimarket-category-card__icon" aria-hidden>
                       {category.icon}
                     </span>
-                    <span className="serviya-category-card__body">
+                    <span className="dimarket-category-card__body">
                       <strong>{categoryTitle}</strong>
                       <span>{formatCategoryStats(category)}</span>
                     </span>
-                    <ChevronRight className="serviya-category-card__chevron" aria-hidden />
+                    <ChevronRight className="dimarket-category-card__chevron" aria-hidden />
                   </button>
 
                   <AnimatePresence initial={false}>
                     {expanded ? (
                       <m.div
-                        className="serviya-subcategories"
+                        className="dimarket-subcategories"
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -337,7 +333,7 @@ export function MainCategoriesSection({
                           {category.href ? (
                             <button
                               type="button"
-                              className="serviya-subcategory-chip serviya-subcategory-chip--primary"
+                              className="dimarket-subcategory-chip dimarket-subcategory-chip--primary"
                               onClick={() =>
                                 navigateTo(appendLocationToPath(homeCategoryPath(category), location))
                               }
@@ -350,7 +346,7 @@ export function MainCategoriesSection({
                             <button
                               key={subcategory.id}
                               type="button"
-                              className="serviya-subcategory-chip"
+                              className="dimarket-subcategory-chip"
                               onClick={() => handleSubcategoryClick(category, subcategory)}
                               title={subcategory.description.en}
                             >
