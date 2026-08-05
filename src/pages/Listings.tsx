@@ -135,11 +135,39 @@ export function Listings({
     if (!fixedCategorySlug) return null
     const cfg = SITE_CATEGORY_CONFIG[fixedCategorySlug]
     if (!cfg.pageTitleKey) return null
+    const baseTitle = t(cfg.pageTitleKey)
+    const subTitle = fixedSubcategorySlug
+      ? subcategoryLabel(fixedCategorySlug, fixedSubcategorySlug, 'en')
+      : ''
+    const loc = initialLocationQuery ? ` — ${initialLocationQuery}` : ''
     return {
-      title: t(cfg.pageTitleKey),
+      title: subTitle ? `${subTitle} | ${baseTitle}${loc}` : `${baseTitle}${loc}`,
       description: cfg.pageDescriptionKey ? t(cfg.pageDescriptionKey) : '',
     }
-  }, [fixedCategorySlug, t])
+  }, [fixedCategorySlug, fixedSubcategorySlug, initialLocationQuery, t])
+
+  useEffect(() => {
+    if (!categoryPageMeta?.title) return
+    document.title = `${categoryPageMeta.title} | DImarket`
+    const desc = document.querySelector('meta[name="description"]')
+    if (desc && categoryPageMeta.description) {
+      desc.setAttribute('content', categoryPageMeta.description)
+    }
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.rel = 'canonical'
+      document.head.appendChild(canonical)
+    }
+    const path =
+      fixedCategorySlug === MARKETPLACE_CATEGORY_SLUG || fixedCategorySlug === JOBS_CATEGORY_SLUG
+        ? sectionCanonicalPath(
+            fixedCategorySlug === JOBS_CATEGORY_SLUG ? 'jobs' : 'marketplace',
+            fixedSubcategorySlug,
+          )
+        : categoryPagePath(fixedCategorySlug)
+    canonical.href = `https://dimarket.app${path}`
+  }, [categoryPageMeta, fixedCategorySlug, fixedSubcategorySlug])
 
   useEffect(() => {
     void loadInitialData()
@@ -301,9 +329,16 @@ export function Listings({
     verifiedEmployersOnly ? '1' : '',
   ].filter(Boolean).length
 
-  const listingsBasePath = fixedCategorySlug
-    ? categoryPagePath(fixedCategorySlug)
-    : '/listings'
+  const listingsBasePath = useMemo(() => {
+    if (fixedCategorySlug === MARKETPLACE_CATEGORY_SLUG || fixedCategorySlug === JOBS_CATEGORY_SLUG) {
+      return sectionCanonicalPath(
+        fixedCategorySlug === JOBS_CATEGORY_SLUG ? 'jobs' : 'marketplace',
+        fixedSubcategorySlug,
+      )
+    }
+    if (fixedCategorySlug) return categoryPagePath(fixedCategorySlug)
+    return '/listings'
+  }, [fixedCategorySlug, fixedSubcategorySlug])
 
   const applyFiltersToUrl = () => {
     const params = new URLSearchParams()
