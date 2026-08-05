@@ -41,7 +41,7 @@ export const SITE_CATEGORY_CONFIG: Record<SiteCategorySlug, SiteCategoryConfig> 
     pageDescriptionKey: 'category.page.vacancies.description',
   },
   'sell-rent': {
-    icon: '🏷️',
+    icon: '🛒',
     path: '/sell-rent',
     pageTitleKey: 'category.page.sellRent.title',
     pageDescriptionKey: 'category.page.sellRent.description',

@@ -162,6 +162,35 @@ export const SUBCATEGORY_WORK_MATCHERS: Record<string, WorkMatcher> = {
   'trailer-rental': { keywords: ['trailer rental'] },
   'generator-rental': { exact: ['rent-generators'], keywords: ['generator'] },
 
+  // Buy & Sell (marketplace listings)
+  'buy-sell-for-sale': {
+    prefixes: ['sell-', 'rent-'],
+    keywords: ['for sale', 'buy', 'sell', 'marketplace', 'item_sale'],
+  },
+  'buy-sell-wanted': {
+    prefixes: ['sell-', 'rent-'],
+    keywords: ['wanted', 'looking for', 'item_wanted'],
+  },
+  'buy-sell-equipment-rental': {
+    prefixes: ['rent-'],
+    exact: ['rent-excavator', 'rent-mini-excavator', 'rent-scaffolding', 'rent-lifts', 'rent-tools', 'rent-generators'],
+    keywords: ['equipment rental', 'tool rental'],
+  },
+  'buy-sell-property': {
+    prefixes: ['sell-property', 'rent-property'],
+    keywords: ['property', 'real estate', 'apartment for sale'],
+  },
+
+  // Jobs / vacancies
+  'jobs-vacancies': {
+    prefixes: ['vacancies'],
+    keywords: ['vacancy', 'vacancies', 'job', 'hiring', 'employment'],
+  },
+  'jobs-hiring': {
+    prefixes: ['vacancies'],
+    keywords: ['hiring', 'job offer', 'we are hiring', 'vacancy'],
+  },
+
   // Automotive
   'auto-repair': { prefixes: ['electrical-auto'], exact: ['electrical-auto-repair'], keywords: ['auto repair', 'taller'] },
   'auto-electrician': {
@@ -510,6 +539,8 @@ export function isReservedAppPath(segment: string): boolean {
     'advertising',
     'vacancies',
     'sell-rent',
+    'jobs',
+    'buy-sell',
     'api',
     'assets',
     'auth',
