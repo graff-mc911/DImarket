@@ -1,0 +1,58 @@
+name: Import Slovakia & Romania directory
+
+on:
+  workflow_dispatch:
+    inputs:
+      country:
+        description: 'slovakia | romania | both'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - slovakia
+          - romania
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install deps
+        run: npm ci --ignore-scripts || npm install --ignore-scripts
+      - name: Build seeds
+        run: |
+          node scripts/build-slovakia-directory-seed.mjs
+          node scripts/build-romania-directory-seed.mjs
+      - name: Import Slovakia
+        if: ${{ inputs.country == 'both' || inputs.country == 'slovakia' }}
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          node scripts/import-public-directory.mjs --data=data/directory/slovakia-directory-nationwide.json --apply
+          cp data/directory/import-run-report.json data/directory/slovakia-import-run-report.json || true
+          cp data/directory/import-run-report.md data/directory/slovakia-import-run-report.md || true
+      - name: Import Romania
+        if: ${{ inputs.country == 'both' || inputs.country == 'romania' }}
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          node scripts/import-public-directory.mjs --data=data/directory/romania-directory-nationwide.json --apply
+          cp data/directory/import-run-report.json data/directory/romania-import-run-report.json || true
+          cp data/directory/import-run-report.md data/directory/romania-import-run-report.md || true
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sk-ro-directory-import-reports
+          path: data/directory/*import-run-report*
+          if-no-files-found: ignore

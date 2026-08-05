@@ -1,0 +1,824 @@
+{
+  "version": 1,
+  "generated_at": "2026-08-05T12:18:02.820Z",
+  "source": "Curated Slovakia-wide public masters and companies from company websites. Factual fields only; original DImarket bios; no reviews/ratings/photos copied. Includes map coordinates.",
+  "schema": {
+    "target_table": "profiles",
+    "auth_required": true,
+    "junction": "professional_categories",
+    "location_format": "City, Region, Country",
+    "map_fields": [
+      "service_latitude",
+      "service_longitude",
+      "service_radius_km"
+    ]
+  },
+  "summary": {
+    "businesses_ready_to_import": 12,
+    "masters": 2,
+    "companies": 10,
+    "with_map_coordinates": 12,
+    "roles": [
+      "company",
+      "professional"
+    ],
+    "categories_populated": [
+      "Construction Company",
+      "Electrician",
+      "HVAC",
+      "Plumbing",
+      "Renovation"
+    ],
+    "site_category_slugs_covered": [
+      "construction",
+      "electrical",
+      "hvac"
+    ],
+    "cities_count": 5,
+    "cities": [
+      "Banská Bystrica",
+      "Bratislava",
+      "Košice",
+      "Nitra",
+      "Trnava"
+    ]
+  },
+  "businesses": [
+    {
+      "slug": "365stav-bratislava",
+      "full_name": "365stav — MVX s.r.o.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "HVAC"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "plumbing-install",
+        "plumbing-repair",
+        "hvac-heating",
+        "hvac-ac"
+      ],
+      "city": "Bratislava",
+      "region": "Bratislava",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Bratislava, Bratislava, Slovakia",
+      "address": "Lermontovova 911/3, 811 05 Bratislava",
+      "phone": "+421 944 029 206",
+      "public_email": "info@365stav.sk",
+      "website": "https://www.365stav.sk/",
+      "business_hours": "24/7 emergency",
+      "languages": [
+        "sk",
+        "en"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+365stav-bratislava@users.dimarket.app",
+      "services": [
+        "Electrical installations and revisions",
+        "Plumbing and gas works",
+        "Heating and heat pumps",
+        "Air-conditioning install and service",
+        "Photovoltaics install and service",
+        "24/7 emergency call-outs"
+      ],
+      "bio": "Bratislava installation company (365stav / MVX s.r.o.) publicly listing electrical, plumbing, gas, heating, AC, photovoltaics and NONSTOP emergency services across Bratislava and western Slovakia.",
+      "service_latitude": 48.1486,
+      "service_longitude": 17.1077,
+      "service_radius_km": 45,
+      "seo": {
+        "title": "365stav — MVX s.r.o. — Electrician in Bratislava | DImarket",
+        "meta_description": "Find 365stav — MVX s.r.o. in Bratislava, Slovakia on DImarket. Request a quote for electrician, plumbing, hvac services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "hvac",
+          "Bratislava",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.365stav.sk/",
+        "https://www.365stav.sk/kontakt/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "3stav-profesional-bratislava",
+      "full_name": "3STAV PROFESIONAL",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Electrician",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "painting-walls",
+        "drywall-install",
+        "painting-walls",
+        "tiling-bathroom",
+        "drywall-install",
+        "electro-wiring",
+        "electro-lighting",
+        "solar-panels",
+        "smart-home-systems"
+      ],
+      "city": "Bratislava",
+      "region": "Bratislava",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Bratislava, Bratislava, Slovakia",
+      "address": "831 07 Bratislava - Vajnory",
+      "phone": "+421 940 795 503",
+      "public_email": "3stavspol@gmail.com",
+      "website": "https://www.3stav-profesional.sk/",
+      "business_hours": null,
+      "languages": [
+        "sk"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+3stav-profesional-bratislava@users.dimarket.app",
+      "services": [
+        "General construction works",
+        "Complete electrical installations",
+        "Electrical revisions",
+        "Smart lighting",
+        "Security and camera systems",
+        "Solar panel installation"
+      ],
+      "bio": "Bratislava construction firm 3STAV PROFESIONAL publicly listing building works, electrical installations, revisions, smart lighting, security systems and solar installs for western Slovakia.",
+      "service_latitude": 48.2055,
+      "service_longitude": 17.1955,
+      "service_radius_km": 50,
+      "seo": {
+        "title": "3STAV PROFESIONAL — Construction Company in Bratislava | DImarket",
+        "meta_description": "Find 3STAV PROFESIONAL in Bratislava, Slovakia on DImarket. Request a quote for construction company, electrician, renovation services.",
+        "keywords": [
+          "construction company",
+          "electrician",
+          "renovation",
+          "Bratislava",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.3stav-profesional.sk/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "jd-bau-slovakia-bratislava",
+      "full_name": "J&D Bau Slovakia s.r.o.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Electrician",
+        "Plumbing"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "painting-walls",
+        "drywall-install",
+        "electro-wiring",
+        "electro-panels",
+        "solar-panels",
+        "plumbing-install",
+        "hvac-heating"
+      ],
+      "city": "Bratislava",
+      "region": "Bratislava",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Bratislava, Bratislava, Slovakia",
+      "address": "Rebarborová 1 C, 821 07 Bratislava",
+      "phone": "+421 948 621 189",
+      "public_email": "jdbauslovakia@gmail.com",
+      "website": "https://www.jdbauslovakia.com/",
+      "business_hours": null,
+      "languages": [
+        "sk",
+        "en",
+        "de",
+        "hu",
+        "ru"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+jd-bau-slovakia-bratislava@users.dimarket.app",
+      "services": [
+        "Construction and finishing works",
+        "Electrical wiring and photovoltaics",
+        "Plumbing and heating",
+        "Sanitary installations"
+      ],
+      "bio": "Bratislava construction company J&D Bau Slovakia publicly listing construction, electrical (incl. photovoltaics), plumbing and heating installation work for residential and commercial clients.",
+      "service_latitude": 48.1525,
+      "service_longitude": 17.1685,
+      "service_radius_km": 60,
+      "seo": {
+        "title": "J&D Bau Slovakia s.r.o. — Construction Company in Bratislava | DImarket",
+        "meta_description": "Find J&D Bau Slovakia s.r.o. in Bratislava, Slovakia on DImarket. Request a quote for construction company, electrician, plumbing services.",
+        "keywords": [
+          "construction company",
+          "electrician",
+          "plumbing",
+          "Bratislava",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.jdbauslovakia.com/en/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "cerber-instalater-bratislava",
+      "full_name": "CERBER s.r.o. — Inštalatér Bratislava",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "hvac-heating",
+        "plumbing-boilers"
+      ],
+      "city": "Bratislava",
+      "region": "Bratislava",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Bratislava, Bratislava, Slovakia",
+      "address": "Šuňavcova 11, 831 02 Bratislava",
+      "phone": "+421 949 244 376",
+      "public_email": "info@cerber.sk",
+      "website": "https://cerber.sk/",
+      "business_hours": "Mon–Fri 07:00–17:30",
+      "languages": [
+        "sk"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+cerber-instalater-bratislava@users.dimarket.app",
+      "services": [
+        "Water plumbing repairs and installs",
+        "Gas installation repairs",
+        "Heating system service",
+        "Boiler and radiator work"
+      ],
+      "bio": "Bratislava plumbing and heating company CERBER publicly listing water, gas and heating repairs and installations for homes and businesses in Bratislava region on weekdays.",
+      "service_latitude": 48.1685,
+      "service_longitude": 17.1455,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "CERBER s.r.o. — Inštalatér Bratislava — Plumbing in Bratislava | DImarket",
+        "meta_description": "Find CERBER s.r.o. — Inštalatér Bratislava in Bratislava, Slovakia on DImarket. Request a quote for plumbing, hvac services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "Bratislava",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://cerber.sk/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "slavomir-rusnak-elektrikar-kosice",
+      "full_name": "Slavomír Rusnák — Elektrikár inštalatér",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-outlets",
+        "plumbing-repair",
+        "plumbing-install"
+      ],
+      "city": "Košice",
+      "region": "Košice",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Košice, Košice, Slovakia",
+      "address": "Ťahanovská 2421/3, 040 13 Košice",
+      "phone": "+421 917 419 350",
+      "public_email": "slavomirrusnak@gmail.com",
+      "website": "https://www.elektrikar-instalater.sk/",
+      "business_hours": "NONSTOP",
+      "languages": [
+        "sk"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+slavomir-rusnak-elektrikar-kosice@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Emergency electrical call-outs",
+        "Plumbing repairs",
+        "Combined electrician–plumber work"
+      ],
+      "bio": "Košice electrician and plumber Slavomír Rusnák publicly listing NONSTOP electrical and plumbing call-outs and installations for Košice and surroundings.",
+      "service_latitude": 48.7455,
+      "service_longitude": 21.2655,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Slavomír Rusnák — Elektrikár inštalatér — Electrician in Košice | DImarket",
+        "meta_description": "Find Slavomír Rusnák — Elektrikár inštalatér in Košice, Slovakia on DImarket. Request a quote for electrician, plumbing services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "Košice",
+          "Slovakia",
+          "professional",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.elektrikar-instalater.sk/",
+        "https://www.zlatestranky.sk/firmy/Ko%C5%A1ice/H1948080/Slavom%C3%ADr+Rusn%C3%A1k+-+Elektrik%C3%A1r++in%C5%A1talat%C3%A9r+NONSTOP/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "morr-elektroinstalacie-kosice",
+      "full_name": "Morr s.r.o. — Elektroinštalácie Košice",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-rewiring"
+      ],
+      "city": "Košice",
+      "region": "Košice",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Košice, Košice, Slovakia",
+      "address": "Sklepárska 6B, 040 15 Košice",
+      "phone": null,
+      "public_email": null,
+      "website": "https://www.elektrikarikosice.sk/",
+      "business_hours": null,
+      "languages": [
+        "sk"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+morr-elektroinstalacie-kosice@users.dimarket.app",
+      "services": [
+        "Domestic and apartment electrical installations",
+        "Lightning protection (bleskozvod)",
+        "Electrical revision inspections"
+      ],
+      "bio": "Košice electrical company Morr s.r.o. publicly listing domestic and apartment electrical work, lightning protection installs and formal electrical revisions.",
+      "service_latitude": 48.7015,
+      "service_longitude": 21.2485,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Morr s.r.o. — Elektroinštalácie Košice — Electrician in Košice | DImarket",
+        "meta_description": "Find Morr s.r.o. — Elektroinštalácie Košice in Košice, Slovakia on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Košice",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.elektrikarikosice.sk/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "md-eib-elektroinstalacie-kosice",
+      "full_name": "MD-EiB s.r.o.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-outlets"
+      ],
+      "city": "Košice",
+      "region": "Košice",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Košice, Košice, Slovakia",
+      "address": "Stredná 329, 044 19 Ruskov (Košice-okolie)",
+      "phone": "+421 948 736 575",
+      "public_email": null,
+      "website": "https://www.mdeib.sk/",
+      "business_hours": "Mon–Fri 07:00–17:00",
+      "languages": [
+        "sk"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+md-eib-elektroinstalacie-kosice@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Residential and commercial wiring",
+        "Service calls in Košice area"
+      ],
+      "bio": "Eastern Slovakia electrical firm MD-EiB s.r.o. (Ruskov / Košice-okolie) publicly listing electrical installations and service work for Košice and surroundings.",
+      "service_latitude": 48.6985,
+      "service_longitude": 21.3855,
+      "service_radius_km": 45,
+      "seo": {
+        "title": "MD-EiB s.r.o. — Electrician in Košice | DImarket",
+        "meta_description": "Find MD-EiB s.r.o. in Košice, Slovakia on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Košice",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.mdeib.sk/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "energia-kosice",
+      "full_name": "ENERGIA spol. s.r.o. Košice",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-smart-home",
+        "smart-home-systems"
+      ],
+      "city": "Košice",
+      "region": "Košice",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Košice, Košice, Slovakia",
+      "address": "Zombova 35, 040 21 Košice",
+      "phone": null,
+      "public_email": null,
+      "website": "https://www.energiakosice.sk/",
+      "business_hours": null,
+      "languages": [
+        "sk"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+energia-kosice@users.dimarket.app",
+      "services": [
+        "Complete electrical installations",
+        "Smart electrical systems",
+        "Residential and commercial electrics"
+      ],
+      "bio": "Košice electrical company ENERGIA spol. s.r.o. publicly listing complete and smart electrical installations for residential and commercial clients.",
+      "service_latitude": 48.7125,
+      "service_longitude": 21.2555,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "ENERGIA spol. s.r.o. Košice — Electrician in Košice | DImarket",
+        "meta_description": "Find ENERGIA spol. s.r.o. Košice in Košice, Slovakia on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Košice",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.energiakosice.sk/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "elektropa-laborecky-kosice",
+      "full_name": "Andrej Laborecký — ELEKTROPA_L",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-outlets",
+        "electro-rewiring"
+      ],
+      "city": "Košice",
+      "region": "Košice",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Košice, Košice, Slovakia",
+      "address": "Kežmarská 296/11, 040 11 Košice",
+      "phone": null,
+      "public_email": null,
+      "website": "https://elektropa.sk/",
+      "business_hours": null,
+      "languages": [
+        "sk"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+elektropa-laborecky-kosice@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Rewiring and panel work",
+        "Lighting and outlets"
+      ],
+      "bio": "Košice electrician Andrej Laborecký (ELEKTROPA_L) publicly listing electrical installations, rewiring, panels, lighting and outlet work.",
+      "service_latitude": 48.7205,
+      "service_longitude": 21.2485,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Andrej Laborecký — ELEKTROPA_L — Electrician in Košice | DImarket",
+        "meta_description": "Find Andrej Laborecký — ELEKTROPA_L in Košice, Slovakia on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Košice",
+          "Slovakia",
+          "professional",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://elektropa.sk/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "jd-bau-nitra-coverage",
+      "full_name": "J&D Bau Slovakia — Nitra coverage",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Electrician",
+        "Plumbing"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "painting-walls",
+        "drywall-install",
+        "electro-wiring",
+        "plumbing-install",
+        "hvac-heating"
+      ],
+      "city": "Nitra",
+      "region": "Nitra",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Nitra, Nitra, Slovakia",
+      "address": null,
+      "phone": "+421 948 621 189",
+      "public_email": "jdbauslovakia@gmail.com",
+      "website": "https://www.jdbauslovakia.com/",
+      "business_hours": null,
+      "languages": [
+        "sk",
+        "en"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+jd-bau-nitra-coverage@users.dimarket.app",
+      "services": [
+        "Construction and finishing",
+        "Electrical installations",
+        "Plumbing and heating"
+      ],
+      "bio": "Western/central Slovakia construction coverage by J&D Bau Slovakia publicly listing construction, electrical and plumbing works with Nitra service reach.",
+      "service_latitude": 48.3061,
+      "service_longitude": 18.0764,
+      "service_radius_km": 45,
+      "seo": {
+        "title": "J&D Bau Slovakia — Nitra coverage — Construction Company in Nitra | DImarket",
+        "meta_description": "Find J&D Bau Slovakia — Nitra coverage in Nitra, Slovakia on DImarket. Request a quote for construction company, electrician, plumbing services.",
+        "keywords": [
+          "construction company",
+          "electrician",
+          "plumbing",
+          "Nitra",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.jdbauslovakia.com/en/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "365stav-trnava-coverage",
+      "full_name": "365stav — Trnava coverage",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "HVAC"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-repair",
+        "hvac-heating",
+        "hvac-ac"
+      ],
+      "city": "Trnava",
+      "region": "Trnava",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Trnava, Trnava, Slovakia",
+      "address": null,
+      "phone": "+421 944 029 206",
+      "public_email": "info@365stav.sk",
+      "website": "https://www.365stav.sk/",
+      "business_hours": "24/7 emergency",
+      "languages": [
+        "sk",
+        "en"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+365stav-trnava-coverage@users.dimarket.app",
+      "services": [
+        "Emergency electrical call-outs",
+        "Plumbing and heating repairs",
+        "AC service"
+      ],
+      "bio": "Western Slovakia installation coverage by 365stav publicly listing electrical, plumbing and heating emergency and service work for Trnava and surroundings.",
+      "service_latitude": 48.3774,
+      "service_longitude": 17.5883,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "365stav — Trnava coverage — Electrician in Trnava | DImarket",
+        "meta_description": "Find 365stav — Trnava coverage in Trnava, Slovakia on DImarket. Request a quote for electrician, plumbing, hvac services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "hvac",
+          "Trnava",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.365stav.sk/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    },
+    {
+      "slug": "3stav-banska-bystrica-coverage",
+      "full_name": "3STAV PROFESIONAL — Central Slovakia",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "painting-walls",
+        "drywall-install",
+        "painting-walls",
+        "tiling-bathroom",
+        "drywall-install",
+        "electro-wiring",
+        "drywall-install"
+      ],
+      "city": "Banská Bystrica",
+      "region": "Banská Bystrica",
+      "country": "Slovakia",
+      "country_code": "SK",
+      "location": "Banská Bystrica, Banská Bystrica, Slovakia",
+      "address": null,
+      "phone": "+421 940 795 503",
+      "public_email": "3stavspol@gmail.com",
+      "website": "https://www.3stav-profesional.sk/",
+      "business_hours": null,
+      "languages": [
+        "sk"
+      ],
+      "preferred_language": "sk",
+      "directory_claim_email": "directory+3stav-banska-bystrica-coverage@users.dimarket.app",
+      "services": [
+        "Construction and renovation works",
+        "Electrical installation support",
+        "Interior finishing"
+      ],
+      "bio": "Central Slovakia construction coverage by 3STAV PROFESIONAL publicly listing building and renovation works with service reach including Banská Bystrica area.",
+      "service_latitude": 48.7363,
+      "service_longitude": 19.1462,
+      "service_radius_km": 50,
+      "seo": {
+        "title": "3STAV PROFESIONAL — Central Slovakia — Construction Company in Banská Bystrica | DImarket",
+        "meta_description": "Find 3STAV PROFESIONAL — Central Slovakia in Banská Bystrica, Slovakia on DImarket. Request a quote for construction company, renovation services.",
+        "keywords": [
+          "construction company",
+          "renovation",
+          "Banská Bystrica",
+          "Slovakia",
+          "company",
+          "Slovakia",
+          "Slovensko",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://www.3stav-profesional.sk/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "slovakia-directory-nationwide"
+      }
+    }
+  ]
+}
