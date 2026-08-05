@@ -16,25 +16,50 @@ import {
   categoryPagePath,
   type SiteCategorySlug,
 } from '../lib/siteCategories'
-import { subcategorySlugsForGroup } from '../lib/categoryCatalog'
+import { subcategoryLabel, subcategorySlugsForGroup } from '../lib/categoryCatalog'
+import {
+  JOBS_CATEGORY_SLUG,
+  MARKETPLACE_CATEGORY_SLUG,
+  sectionCanonicalPath,
+} from '../lib/marketplaceSections'
 
 type ListingsProps = {
   fixedCategorySlug?: SiteCategorySlug
+  fixedSubcategorySlug?: string
+  initialLocationQuery?: string
 }
 
-export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
+export function Listings({
+  fixedCategorySlug,
+  fixedSubcategorySlug,
+  initialLocationQuery,
+}: ListingsProps = {}) {
   const { t, user, profile, location } = useApp()
 
-  const listingTypes = useMemo(
-    () => [
+  const listingTypes = useMemo(() => {
+    if (fixedCategorySlug === 'vacancies') {
+      return [
+        { value: '', label: t('listings.allTypes') },
+        { value: 'job_vacancy', label: t('listings.typeJobVacancy') },
+        { value: 'service_request', label: t('listings.typeServiceRequest') },
+      ]
+    }
+    if (fixedCategorySlug === 'sell-rent') {
+      return [
+        { value: '', label: t('listings.allTypes') },
+        { value: 'item_sale', label: t('listings.typeItemSale') },
+        { value: 'item_wanted', label: t('listings.typeItemWanted') },
+      ]
+    }
+    return [
       { value: '', label: t('listings.allTypes') },
       { value: 'service_request', label: t('listings.typeServiceRequest') },
       { value: 'service_offer', label: t('listings.typeServiceOffer') },
       { value: 'item_sale', label: t('listings.typeItemSale') },
       { value: 'item_wanted', label: t('listings.typeItemWanted') },
-    ],
-    [t],
-  )
+      { value: 'job_vacancy', label: t('listings.typeJobVacancy') },
+    ]
+  }, [fixedCategorySlug, t])
 
   const sortOptions = useMemo(
     () => [
@@ -58,18 +83,30 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
   const [maxPrice, setMaxPrice]               = useState('')
   const [sortBy, setSortBy]                   = useState('newest')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([])
+  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>(
+    fixedSubcategorySlug ? [fixedSubcategorySlug] : [],
+  )
+  const [itemCondition, setItemCondition] = useState('')
+  const [employmentType, setEmploymentType] = useState('')
+  const [workArrangement, setWorkArrangement] = useState('')
+  const [verifiedEmployersOnly, setVerifiedEmployersOnly] = useState(false)
 
   useEffect(() => {
     const syncFiltersFromUrl = () => {
       const params = new URLSearchParams(window.location.search)
       setSearchQuery(params.get('search') || '')
-      const urlLoc = params.get('location') || params.get('city') || ''
+      const urlLoc = params.get('location') || params.get('city') || initialLocationQuery || ''
       setLocationQuery(urlLoc)
       setSelectedCategory(fixedCategorySlug || params.get('category') || '')
       setSelectedType(params.get('type') || '')
+      setItemCondition(params.get('condition') || '')
+      setEmploymentType(params.get('employment') || '')
+      setWorkArrangement(params.get('arrangement') || params.get('remote') || '')
+      setVerifiedEmployersOnly(params.get('verified') === '1')
       const workGroup = params.get('work')
-      if (workGroup) {
+      if (fixedSubcategorySlug) {
+        setSelectedSubcategories([fixedSubcategorySlug])
+      } else if (workGroup) {
         const cat = fixedCategorySlug || params.get('category') || 'construction'
         if (!fixedCategorySlug) setSelectedCategory(cat)
         setSelectedSubcategories(subcategorySlugsForGroup(cat, workGroup))
@@ -82,13 +119,17 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     syncFiltersFromUrl()
     window.addEventListener('popstate', syncFiltersFromUrl)
     return () => window.removeEventListener('popstate', syncFiltersFromUrl)
-  }, [fixedCategorySlug])
+  }, [fixedCategorySlug, fixedSubcategorySlug, initialLocationQuery])
 
   useEffect(() => {
     if (locationQuery) return
+    if (initialLocationQuery) {
+      setLocationQuery(initialLocationQuery)
+      return
+    }
     const label = location.city || location.region || location.country
     if (label) setLocationQuery(label)
-  }, [location.city, location.region, location.country, locationQuery])
+  }, [location.city, location.region, location.country, locationQuery, initialLocationQuery])
 
   const categoryPageMeta = useMemo(() => {
     if (!fixedCategorySlug) return null
@@ -121,7 +162,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
         supabase.from('categories').select('*').order('name'),
         supabase
           .from('listings')
-          .select('*, images:listing_images(*), category:categories(*)')
+          .select('*, images:listing_images(*), category:categories(*), author:profiles!author_id(id, full_name, is_verified, user_role)')
           .eq('status', 'active')
           .gte('expires_at', now)
           .order('created_at', { ascending: false }),
@@ -170,6 +211,32 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
       result = result.filter(l => l.listing_type === selectedType)
     }
 
+    if (itemCondition) {
+      result = result.filter(
+        (l) => (l as ListingWithImages & { item_condition?: string | null }).item_condition === itemCondition,
+      )
+    }
+
+    if (employmentType) {
+      result = result.filter(
+        (l) =>
+          (l as ListingWithImages & { employment_type?: string | null }).employment_type ===
+          employmentType,
+      )
+    }
+
+    if (workArrangement) {
+      result = result.filter(
+        (l) =>
+          (l as ListingWithImages & { work_arrangement?: string | null }).work_arrangement ===
+          workArrangement,
+      )
+    }
+
+    if (verifiedEmployersOnly) {
+      result = result.filter((l) => Boolean((l as ListingWithImages & { author?: { is_verified?: boolean } }).author?.is_verified))
+    }
+
     if (normSearch) {
       result = result.filter(l =>
         (l.title?.toLowerCase() || '').includes(normSearch) ||
@@ -207,7 +274,20 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     }
 
     return [...promoted, ...regular.sort(sortFn)]
-  }, [allListings, searchQuery, locationQuery, selectedCategory, selectedSubcategories, selectedType, maxPrice, sortBy])
+  }, [
+    allListings,
+    searchQuery,
+    locationQuery,
+    selectedCategory,
+    selectedSubcategories,
+    selectedType,
+    maxPrice,
+    sortBy,
+    itemCondition,
+    employmentType,
+    workArrangement,
+    verifiedEmployersOnly,
+  ])
 
   const activeFiltersCount = [
     searchQuery,
@@ -215,6 +295,10 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     fixedCategorySlug ? '' : selectedCategory,
     selectedType,
     maxPrice,
+    itemCondition,
+    employmentType,
+    workArrangement,
+    verifiedEmployersOnly ? '1' : '',
   ].filter(Boolean).length
 
   const listingsBasePath = fixedCategorySlug
@@ -227,6 +311,10 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
     if (locationQuery.trim()) params.set('location', locationQuery.trim())
     if (selectedCategory && !fixedCategorySlug) params.set('category', selectedCategory)
     if (selectedType)         params.set('type',     selectedType)
+    if (itemCondition)        params.set('condition', itemCondition)
+    if (employmentType)       params.set('employment', employmentType)
+    if (workArrangement)      params.set('arrangement', workArrangement)
+    if (verifiedEmployersOnly) params.set('verified', '1')
     const query = params.toString()
     const base = listingsBasePath.split('?')[0]
     navigateTo(query ? `${base}?${query}` : base)
@@ -235,12 +323,16 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
 
   const resetFilters = () => {
     setSearchQuery('')
-    setLocationQuery('')
+    setLocationQuery(initialLocationQuery || '')
     setSelectedCategory(fixedCategorySlug || '')
     setSelectedType('')
     setMaxPrice('')
     setSortBy('newest')
-    setSelectedSubcategories([])
+    setSelectedSubcategories(fixedSubcategorySlug ? [fixedSubcategorySlug] : [])
+    setItemCondition('')
+    setEmploymentType('')
+    setWorkArrangement('')
+    setVerifiedEmployersOnly(false)
     navigateTo(listingsBasePath.split('?')[0])
     setMobileFiltersOpen(false)
   }
@@ -317,6 +409,65 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
             className="input-glass h-9 text-sm"
           />
         </div>
+
+        {(fixedCategorySlug === 'sell-rent' || selectedCategory === 'sell-rent') && (
+          <div className="amazon-filter-group">
+            <label>{t('listings.filterCondition')}</label>
+            <select
+              value={itemCondition}
+              onChange={(e) => setItemCondition(e.target.value)}
+              className="select-glass h-9 text-sm"
+            >
+              <option value="">{t('listings.allTypes')}</option>
+              <option value="new">{t('createAd.conditionNew')}</option>
+              <option value="used">{t('createAd.conditionUsed')}</option>
+            </select>
+          </div>
+        )}
+
+        {(fixedCategorySlug === 'vacancies' || selectedCategory === 'vacancies') && (
+          <>
+            <div className="amazon-filter-group">
+              <label>{t('listings.filterEmployment')}</label>
+              <select
+                value={employmentType}
+                onChange={(e) => setEmploymentType(e.target.value)}
+                className="select-glass h-9 text-sm"
+              >
+                <option value="">{t('listings.allTypes')}</option>
+                <option value="full_time">{t('createAd.employment.full_time')}</option>
+                <option value="part_time">{t('createAd.employment.part_time')}</option>
+                <option value="contract">{t('createAd.employment.contract')}</option>
+                <option value="temporary">{t('createAd.employment.temporary')}</option>
+                <option value="internship">{t('createAd.employment.internship')}</option>
+                <option value="freelance">{t('createAd.employment.freelance')}</option>
+              </select>
+            </div>
+            <div className="amazon-filter-group">
+              <label>{t('listings.filterRemote')}</label>
+              <select
+                value={workArrangement}
+                onChange={(e) => setWorkArrangement(e.target.value)}
+                className="select-glass h-9 text-sm"
+              >
+                <option value="">{t('listings.allTypes')}</option>
+                <option value="onsite">{t('createAd.work.onsite')}</option>
+                <option value="hybrid">{t('createAd.work.hybrid')}</option>
+                <option value="remote">{t('createAd.work.remote')}</option>
+              </select>
+            </div>
+            <div className="amazon-filter-group">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={verifiedEmployersOnly}
+                  onChange={(e) => setVerifiedEmployersOnly(e.target.checked)}
+                />
+                {t('advancedSearch.verifiedOnly') || 'Verified employers'}
+              </label>
+            </div>
+          </>
+        )}
 
         <div className="amazon-filter-group">
           <label>{t('listings.sortNewest').split(' ').slice(-1).join(' ') || 'Сортування'}</label>

@@ -76,9 +76,44 @@ export const STATIC_ROUTES = [
   {
     path: '/map',
     title: 'Карта майстрів і проєктів Європи | DImarket',
-    description: 'Інтерактивна карта DImarket: майстри, компанії та активні проєкти по всій Європі.',
+    description: 'Інтерактивна карта DImarket: майстри, компанії, проєкти, Marketplace і Jobs по всій Європі.',
     changefreq: 'daily',
     priority: 0.85,
+    schema: 'page',
+  },
+  {
+    path: '/buy-sell',
+    title: 'Marketplace (Buy & Sell) | DImarket',
+    description:
+      'Buy, sell and rent building materials, tools, equipment, vehicles and property on DImarket.',
+    changefreq: 'hourly',
+    priority: 0.9,
+    schema: 'page',
+  },
+  {
+    path: '/jobs',
+    title: 'Jobs — Construction & Trade Vacancies | DImarket',
+    description:
+      'Browse job vacancies across construction, skilled trades, logistics, office roles and remote work on DImarket.',
+    changefreq: 'hourly',
+    priority: 0.9,
+    schema: 'page',
+  },
+  {
+    path: '/sell-rent',
+    title: 'Marketplace (Buy & Sell) | DImarket',
+    description:
+      'Buy, sell and rent building materials, tools, equipment, vehicles and property on DImarket.',
+    changefreq: 'weekly',
+    priority: 0.5,
+    schema: 'page',
+  },
+  {
+    path: '/vacancies',
+    title: 'Jobs | DImarket',
+    description: 'Job vacancies and hiring across construction and related trades on DImarket.',
+    changefreq: 'weekly',
+    priority: 0.5,
     schema: 'page',
   },
   {
@@ -244,9 +279,108 @@ export function serviceSeoRoutes() {
   return routes
 }
 
+/** Marketplace (Buy & Sell) and Jobs SEO landings */
+export const BUY_SELL_SEO_PATHS = [
+  '/buy-sell/tools',
+  '/buy-sell/building-materials',
+  '/buy-sell/construction-equipment',
+  '/buy-sell/houses',
+  '/buy-sell/commercial-property',
+  '/buy-sell/land',
+  '/buy-sell/vehicles',
+  '/buy-sell/machinery',
+  '/buy-sell/rental-equipment',
+  '/buy-sell/scaffolding',
+  '/buy-sell/free-items',
+  '/buy-sell/wanted-to-buy',
+]
+
+export const JOBS_SEO_PATHS = [
+  '/jobs/electrician',
+  '/jobs/plumber',
+  '/jobs/construction-jobs',
+  '/jobs/skilled-trades',
+  '/jobs/drivers',
+  '/jobs/office-jobs',
+  '/jobs/warehouse-jobs',
+  '/jobs/cleaning-jobs',
+  '/jobs/accounting',
+  '/jobs/legal',
+  '/jobs/engineering',
+  '/jobs/it',
+  '/jobs/sales',
+  '/jobs/design',
+  '/jobs/remote-jobs',
+]
+
+export const GEO_MARKETPLACE_LANDINGS = [
+  '/spain/alicante/jobs',
+  '/spain/alicante/buy-sell',
+  '/spain/madrid/jobs',
+  '/spain/madrid/buy-sell',
+  '/spain/barcelona/jobs',
+  '/germany/darmstadt/jobs',
+  '/germany/darmstadt/buy-sell',
+  '/ukraine/kyiv/jobs',
+  '/ukraine/kyiv/buy-sell',
+  '/poland/warsaw/jobs',
+  '/poland/warsaw/buy-sell',
+]
+
+export function marketplaceSeoRoutes() {
+  const routes = []
+  for (const path of BUY_SELL_SEO_PATHS) {
+    const slug = path.split('/').pop()
+    const label = slug.replace(/-/g, ' ')
+    routes.push({
+      path,
+      title: `${label} — Marketplace (Buy & Sell) | DImarket`,
+      description: `Browse ${label} listings on DImarket Marketplace. Buy, sell or rent across Europe.`,
+      changefreq: 'daily',
+      priority: 0.85,
+      schema: 'service',
+    })
+  }
+  for (const path of JOBS_SEO_PATHS) {
+    const slug = path.split('/').pop()
+    const label = slug.replace(/-/g, ' ')
+    routes.push({
+      path,
+      title: `${label} jobs | DImarket`,
+      description: `Find ${label} job vacancies on DImarket. Apply to construction and trade employers across Europe.`,
+      changefreq: 'daily',
+      priority: 0.85,
+      schema: 'service',
+    })
+  }
+  for (const path of GEO_MARKETPLACE_LANDINGS) {
+    const parts = path.split('/').filter(Boolean)
+    const section = parts[parts.length - 1]
+    const place = parts.slice(0, -1).join(', ')
+    const label = section === 'jobs' ? 'Jobs' : 'Marketplace (Buy & Sell)'
+    routes.push({
+      path,
+      title: `${label} in ${place} | DImarket`,
+      description: `Browse ${label.toLowerCase()} near ${place} on DImarket.`,
+      changefreq: 'daily',
+      priority: 0.9,
+      schema: 'local',
+      city: parts[1],
+      trade: section,
+    })
+  }
+  return routes
+}
+
 /** All indexable public routes (sitemap + prerender targets). */
 export function allPublicRoutes() {
-  return [...STATIC_ROUTES, ...categoryRoutes(), ...landingRoutes(), ...serviceSeoRoutes()]
+  return [
+    ...STATIC_ROUTES,
+    ...categoryRoutes(),
+    ...landingRoutes(),
+    ...serviceSeoRoutes(),
+    ...marketplaceSeoRoutes(),
+  ]
 }
 
 /** Routes written as dist/<path>/index.html during seo-build. */
@@ -257,6 +391,14 @@ export function prerenderRoutes() {
     '/companies',
     '/map',
     '/listings',
+    '/buy-sell',
+    '/jobs',
+    '/buy-sell/tools',
+    '/buy-sell/building-materials',
+    '/jobs/electrician',
+    '/jobs/plumber',
+    '/spain/alicante/jobs',
+    '/spain/alicante/buy-sell',
     '/pricing',
     '/contact',
     '/for-professionals',

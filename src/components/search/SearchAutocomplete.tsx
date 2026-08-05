@@ -26,6 +26,8 @@ const TYPE_ICON: Record<SearchEntityType, typeof UserRound> = {
   service: Wrench,
   project: Briefcase,
   material: Building2,
+  marketplace: Building2,
+  job: Briefcase,
 }
 
 interface SearchAutocompleteProps {
@@ -277,7 +279,11 @@ export function SearchAutocomplete({
                             ? t('advancedSearch.type.service')
                             : s.type === 'project'
                               ? t('advancedSearch.type.project')
-                              : t('advancedSearch.type.material')}
+                              : s.type === 'job'
+                                ? t('advancedSearch.type.job')
+                                : s.type === 'marketplace'
+                                  ? t('advancedSearch.type.marketplace')
+                                  : t('advancedSearch.type.material')}
                     </span>
                   </button>
                 )

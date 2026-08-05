@@ -16,7 +16,7 @@ import {
   Scale,
   Sparkles,
   Sun,
-  Tag,
+  ShoppingBag,
   Thermometer,
   Truck,
   Waves,
@@ -33,7 +33,6 @@ import {
 import {
   categoryLabel,
   categoryPagePath,
-  type SiteCategorySlug,
 } from './siteCategories'
 
 export interface HomeCategoryTile {
@@ -90,7 +89,7 @@ const SITE_CATEGORY_ICONS: Record<string, LucideIcon> = {
   'legal-notary': Scale,
   'accounting-finance': Calculator,
   vacancies: Briefcase,
-  'sell-rent': Tag,
+  'sell-rent': ShoppingBag,
 }
 
 const EXTRA_SITE_SLUGS = [

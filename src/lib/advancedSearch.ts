@@ -20,6 +20,8 @@ export type SearchEntityType =
   | 'service'
   | 'project'
   | 'material'
+  | 'marketplace'
+  | 'job'
 
 export type SearchSuggestion = {
   id: string
@@ -51,6 +53,8 @@ export type AdvancedSearchResults = {
   services: Array<MarketplaceCategory & { parentSlug?: string; href?: string }>
   projects: ListingWithImages[]
   materials: ListingWithImages[]
+  marketplace: ListingWithImages[]
+  jobs: ListingWithImages[]
 }
 
 export const EMPTY_SEARCH_FILTERS: SearchFilters = {
@@ -103,7 +107,7 @@ export async function fetchSearchSuggestions(
   const like = `%${q}%`
   const resolved = resolveServiceQuery(q)
 
-  const [catsRes, prosRes, projectsRes, materialsRes] = await Promise.all([
+  const [catsRes, prosRes, projectsRes, materialsRes, jobsRes] = await Promise.all([
     supabase
       .from('categories')
       .select('id, name, slug, icon_key, is_main, is_service, parent_id, name_i18n')
@@ -126,9 +130,16 @@ export async function fetchSearchSuggestions(
       .limit(6),
     supabase
       .from('listings')
+      .select('id, title, city_name, location, status, listing_type, category:categories(slug)')
+      .eq('status', 'active')
+      .in('listing_type', ['item_sale', 'item_wanted'])
+      .or(`title.ilike.${like},description.ilike.${like}`)
+      .limit(6),
+    supabase
+      .from('listings')
       .select('id, title, city_name, location, status, listing_type')
       .eq('status', 'active')
-      .neq('listing_type', 'service_request')
+      .eq('listing_type', 'job_vacancy')
       .or(`title.ilike.${like},description.ilike.${like}`)
       .limit(6),
   ])
@@ -207,7 +218,22 @@ export async function fetchSearchSuggestions(
   }> | null) ?? []) {
     suggestions.push({
       id: `mat-${l.id}`,
-      type: 'material',
+      type: 'marketplace',
+      label: l.title,
+      sublabel: l.city_name || l.location || undefined,
+      path: `/listing/${l.id}`,
+    })
+  }
+
+  for (const l of (jobsRes.data as Array<{
+    id: string
+    title: string
+    city_name: string | null
+    location: string | null
+  }> | null) ?? []) {
+    suggestions.push({
+      id: `job-${l.id}`,
+      type: 'job',
       label: l.title,
       sublabel: l.city_name || l.location || undefined,
       path: `/listing/${l.id}`,
@@ -316,7 +342,7 @@ export async function runAdvancedSearch(
     .from('listings')
     .select('*, images:listing_images(*), category:categories(*)')
     .eq('status', 'active')
-    .neq('listing_type', 'service_request')
+    .in('listing_type', ['item_sale', 'item_wanted'])
     .order('created_at', { ascending: false })
     .limit(40)
 
@@ -326,12 +352,27 @@ export async function runAdvancedSearch(
     )
   }
 
-  const [catsRes, servicesRes, prosRes, projectsRes, materialsRes] = await Promise.all([
+  let jobsQuery = supabase
+    .from('listings')
+    .select('*, images:listing_images(*), category:categories(*), author:profiles!author_id(is_verified)')
+    .eq('status', 'active')
+    .eq('listing_type', 'job_vacancy')
+    .order('created_at', { ascending: false })
+    .limit(40)
+
+  if (like) {
+        jobsQuery = jobsQuery.or(
+      `title.ilike.${like},description.ilike.${like},location.ilike.${like},city_name.ilike.${like}`,
+    )
+  }
+
+  const [catsRes, servicesRes, prosRes, projectsRes, materialsRes, jobsRes] = await Promise.all([
     catsQuery,
     servicesQuery,
     prosQuery,
     projectsQuery,
     materialsQuery,
+    jobsQuery,
   ])
 
   let categories = (catsRes.data as MarketplaceCategory[] | null) ?? []
@@ -394,6 +435,7 @@ export async function runAdvancedSearch(
   let professionals = (prosRes.data as Profile[] | null) ?? []
   let projects = (projectsRes.data as ListingWithImages[] | null) ?? []
   let materials = (materialsRes.data as ListingWithImages[] | null) ?? []
+  let jobs = (jobsRes.data as ListingWithImages[] | null) ?? []
 
   if (resolved.length) {
     professionals = professionals.filter((p) =>
@@ -437,6 +479,20 @@ export async function runAdvancedSearch(
       { lat: l.latitude ?? null, lng: l.longitude ?? null },
     ),
   )
+
+  jobs = jobs.filter((l) => {
+    if (filters.verifiedOnly) {
+      const author = (l as ListingWithImages & { author?: { is_verified?: boolean | null } }).author
+      if (!author?.is_verified) return false
+    }
+    if (filters.priceMin != null && (l.price ?? 0) < filters.priceMin) return false
+    if (filters.priceMax != null && l.price != null && l.price > filters.priceMax) return false
+    return passesLocationFilters(
+      `${l.city_name ?? ''} ${l.location ?? ''} ${l.country_name ?? ''}`,
+      filters,
+      { lat: l.latitude ?? null, lng: l.longitude ?? null },
+    )
+  })
 
   const sortPros = (list: Profile[]) => {
     const copy = [...list]
@@ -531,6 +587,8 @@ export async function runAdvancedSearch(
     services: services.slice(0, 40),
     projects: sortListings(projects).slice(0, 40),
     materials: sortListings(materials).slice(0, 40),
+    marketplace: sortListings(materials).slice(0, 40),
+    jobs: sortListings(jobs).slice(0, 40),
   }
 }
 

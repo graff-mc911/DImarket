@@ -44,6 +44,8 @@ export function Footer() {
       title: t('footer.servicesCol'),
       links: [
         { label: t('footer.browseListings'), path: '/listings' },
+        { label: t('footer.marketplace'), path: '/buy-sell' },
+        { label: t('footer.jobs'), path: '/jobs' },
         { label: t('homePremium.postProject'), path: '/create-project' },
         { label: t('header.aiAssistant'), path: '/assistant' },
         { label: t('header.sell'), path: '/create-ad' },

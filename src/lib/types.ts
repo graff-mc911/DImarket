@@ -288,7 +288,7 @@ export interface Database {
           title: string
           description: string
           category_id: string | null
-          listing_type: 'service_request' | 'service_offer' | 'item_sale' | 'item_wanted'
+          listing_type: 'service_request' | 'service_offer' | 'item_sale' | 'item_wanted' | 'job_vacancy'
           price: number | null
           currency: string
           location: string
@@ -330,13 +330,30 @@ export interface Database {
           city_name: string | null
           latitude: number | null
           longitude: number | null
+          // Marketplace (Buy & Sell) + Jobs
+          item_condition: 'new' | 'used' | null
+          availability_status: 'available' | 'sold' | 'reserved' | null
+          company_name: string | null
+          employment_type:
+            | 'full_time'
+            | 'part_time'
+            | 'contract'
+            | 'temporary'
+            | 'internship'
+            | 'freelance'
+            | null
+          experience_level: 'none' | 'junior' | 'mid' | 'senior' | 'lead' | null
+          job_languages: string[]
+          work_arrangement: 'onsite' | 'hybrid' | 'remote' | null
+          requirements: string | null
+          benefits: string | null
         }
         Insert: {
           id?: string
           title: string
           description: string
           category_id?: string | null
-          listing_type: 'service_request' | 'service_offer' | 'item_sale' | 'item_wanted'
+          listing_type: 'service_request' | 'service_offer' | 'item_sale' | 'item_wanted' | 'job_vacancy'
           price?: number | null
           currency?: string
           location: string
@@ -375,13 +392,29 @@ export interface Database {
           city_name?: string | null
           latitude?: number | null
           longitude?: number | null
+          item_condition?: 'new' | 'used' | null
+          availability_status?: 'available' | 'sold' | 'reserved' | null
+          company_name?: string | null
+          employment_type?:
+            | 'full_time'
+            | 'part_time'
+            | 'contract'
+            | 'temporary'
+            | 'internship'
+            | 'freelance'
+            | null
+          experience_level?: 'none' | 'junior' | 'mid' | 'senior' | 'lead' | null
+          job_languages?: string[]
+          work_arrangement?: 'onsite' | 'hybrid' | 'remote' | null
+          requirements?: string | null
+          benefits?: string | null
         }
         Update: {
           id?: string
           title?: string
           description?: string
           category_id?: string | null
-          listing_type?: 'service_request' | 'service_offer' | 'item_sale' | 'item_wanted'
+          listing_type?: 'service_request' | 'service_offer' | 'item_sale' | 'item_wanted' | 'job_vacancy'
           price?: number | null
           currency?: string
           location?: string
@@ -420,6 +453,22 @@ export interface Database {
           city_name?: string | null
           latitude?: number | null
           longitude?: number | null
+          item_condition?: 'new' | 'used' | null
+          availability_status?: 'available' | 'sold' | 'reserved' | null
+          company_name?: string | null
+          employment_type?:
+            | 'full_time'
+            | 'part_time'
+            | 'contract'
+            | 'temporary'
+            | 'internship'
+            | 'freelance'
+            | null
+          experience_level?: 'none' | 'junior' | 'mid' | 'senior' | 'lead' | null
+          job_languages?: string[]
+          work_arrangement?: 'onsite' | 'hybrid' | 'remote' | null
+          requirements?: string | null
+          benefits?: string | null
         }
       }
 

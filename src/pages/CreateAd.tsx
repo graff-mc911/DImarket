@@ -37,6 +37,9 @@ export function CreateAd() {
   const [description, setDescription] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [categoryPicker, setCategoryPicker] = useState<CategoryPickerValue>(emptyPickerValue())
+  const [listingType, setListingType] = useState<
+    'service_request' | 'service_offer' | 'item_sale' | 'item_wanted' | 'job_vacancy'
+  >('service_request')
   const [price, setPrice] = useState('')
   const [location, setLocation] = useState('')
   const [contactName, setContactName] = useState('')
@@ -46,11 +49,27 @@ export function CreateAd() {
   const [imageUrls, setImageUrls] = useState<string[]>([''])
   const [error, setError] = useState('')
 
+  const [itemCondition, setItemCondition] = useState<'new' | 'used' | ''>('')
+  const [availabilityStatus, setAvailabilityStatus] = useState<'available' | 'sold' | 'reserved'>(
+    'available',
+  )
+  const [companyName, setCompanyName] = useState('')
+  const [employmentType, setEmploymentType] = useState('')
+  const [experienceLevel, setExperienceLevel] = useState('')
+  const [workArrangement, setWorkArrangement] = useState('')
+  const [jobLanguages, setJobLanguages] = useState('')
+  const [requirements, setRequirements] = useState('')
+  const [benefits, setBenefits] = useState('')
+
   const [locationSuggestions, setLocationSuggestions] = useState<LocationSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [loadingLocation, setLoadingLocation] = useState(false)
 
   const [visibilityRadius, setVisibilityRadius] = useState<VisibilityRadius>('city')
+
+  const selectedCategorySlug = categories.find((c) => c.id === categoryId)?.slug ?? ''
+  const isMarketplace = selectedCategorySlug === 'sell-rent' || listingType === 'item_sale' || listingType === 'item_wanted'
+  const isJob = selectedCategorySlug === 'vacancies' || listingType === 'job_vacancy'
 
   useEffect(() => {
     void loadCategories()
@@ -161,12 +180,18 @@ export function CreateAd() {
       const expiresAt = new Date()
       expiresAt.setDate(expiresAt.getDate() + duration)
 
-      const listingData = {
+      let resolvedType = listingType
+      if (selectedCategorySlug === 'vacancies') resolvedType = 'job_vacancy'
+      else if (selectedCategorySlug === 'sell-rent' && resolvedType === 'service_request') {
+        resolvedType = 'item_sale'
+      }
+
+      const listingData: Record<string, unknown> = {
         title: title.trim(),
         description: description.trim(),
         category_id: categoryId || null,
         subcategory_slugs: categoryPicker.subcategorySlugs,
-        listing_type: 'service_request' as const,
+        listing_type: resolvedType,
         price: price ? parseFloat(price) : null,
         currency: currency.code,
         location: location.trim(),
@@ -178,7 +203,26 @@ export function CreateAd() {
         duration_days: duration,
         expires_at: expiresAt.toISOString(),
         is_premium: false,
-        status: 'active' as const,
+        status: availabilityStatus === 'sold' ? 'sold' : 'active',
+      }
+
+      if (resolvedType === 'item_sale' || resolvedType === 'item_wanted') {
+        listingData.item_condition = itemCondition || null
+        listingData.availability_status = availabilityStatus
+      }
+
+      if (resolvedType === 'job_vacancy') {
+        listingData.company_name = companyName.trim() || profile?.full_name || null
+        listingData.employment_type = employmentType || null
+        listingData.experience_level = experienceLevel || null
+        listingData.work_arrangement = workArrangement || null
+        listingData.job_languages = jobLanguages
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+        listingData.requirements = requirements.trim() || null
+        listingData.benefits = benefits.trim() || null
+        listingData.availability_status = 'available'
       }
 
       const { data: listing, error: listingError } = await supabase
@@ -228,7 +272,9 @@ export function CreateAd() {
       setSuccess(true)
 
       setTimeout(() => {
-        navigateTo('/listings')
+        if (resolvedType === 'job_vacancy') navigateTo('/jobs')
+        else if (resolvedType === 'item_sale' || resolvedType === 'item_wanted') navigateTo('/buy-sell')
+        else navigateTo('/listings')
       }, 1200)
     } catch (submissionError) {
       setError(
@@ -305,6 +351,32 @@ export function CreateAd() {
                   <div className="space-y-5 rounded-[28px] border border-white/70 bg-white/45 p-5">
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                        {t('createAd.listingType')}
+                      </label>
+                      <select
+                        value={listingType}
+                        onChange={(event) =>
+                          setListingType(
+                            event.target.value as
+                              | 'service_request'
+                              | 'service_offer'
+                              | 'item_sale'
+                              | 'item_wanted'
+                              | 'job_vacancy',
+                          )
+                        }
+                        className="select-glass bg-white/80"
+                      >
+                        <option value="service_request">{t('createAd.needService')}</option>
+                        <option value="service_offer">{t('createAd.offerService')}</option>
+                        <option value="item_sale">{t('createAd.sellItem')}</option>
+                        <option value="item_wanted">{t('createAd.wantItem')}</option>
+                        <option value="job_vacancy">{t('createAd.jobVacancy')}</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
                         {t('createAd.categoryLabel')}
                       </label>
                       <select
@@ -313,6 +385,11 @@ export function CreateAd() {
                           const id = event.target.value
                           setCategoryId(id)
                           setCategoryPicker(syncPickerWithCategoryId(categories, id, emptyPickerValue()))
+                          const slug = categories.find((c) => c.id === id)?.slug
+                          if (slug === 'vacancies') setListingType('job_vacancy')
+                          if (slug === 'sell-rent' && listingType === 'service_request') {
+                            setListingType('item_sale')
+                          }
                         }}
                         className="select-glass bg-white/80"
                       >
@@ -343,9 +420,121 @@ export function CreateAd() {
                       })()}
                     </div>
 
+                    {isMarketplace && (
+                      <>
+                        <div>
+                          <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                            {t('createAd.condition')}
+                          </label>
+                          <select
+                            value={itemCondition}
+                            onChange={(e) => setItemCondition(e.target.value as 'new' | 'used' | '')}
+                            className="select-glass bg-white/80"
+                          >
+                            <option value="">—</option>
+                            <option value="new">{t('createAd.conditionNew')}</option>
+                            <option value="used">{t('createAd.conditionUsed')}</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                            {t('createAd.availability')}
+                          </label>
+                          <select
+                            value={availabilityStatus}
+                            onChange={(e) =>
+                              setAvailabilityStatus(e.target.value as 'available' | 'sold' | 'reserved')
+                            }
+                            className="select-glass bg-white/80"
+                          >
+                            <option value="available">{t('createAd.available')}</option>
+                            <option value="sold">{t('createAd.sold')}</option>
+                            <option value="reserved">{t('createAd.reserved')}</option>
+                          </select>
+                        </div>
+                      </>
+                    )}
+
+                    {isJob && (
+                      <>
+                        <div>
+                          <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                            {t('createAd.companyName')}
+                          </label>
+                          <input
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
+                            className="input-glass"
+                            placeholder={profile?.full_name || ''}
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                            {t('createAd.employmentType')}
+                          </label>
+                          <select
+                            value={employmentType}
+                            onChange={(e) => setEmploymentType(e.target.value)}
+                            className="select-glass bg-white/80"
+                          >
+                            <option value="">—</option>
+                            <option value="full_time">{t('createAd.employment.full_time')}</option>
+                            <option value="part_time">{t('createAd.employment.part_time')}</option>
+                            <option value="contract">{t('createAd.employment.contract')}</option>
+                            <option value="temporary">{t('createAd.employment.temporary')}</option>
+                            <option value="internship">{t('createAd.employment.internship')}</option>
+                            <option value="freelance">{t('createAd.employment.freelance')}</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                            {t('createAd.experience')}
+                          </label>
+                          <select
+                            value={experienceLevel}
+                            onChange={(e) => setExperienceLevel(e.target.value)}
+                            className="select-glass bg-white/80"
+                          >
+                            <option value="">—</option>
+                            <option value="none">{t('createAd.experience.none')}</option>
+                            <option value="junior">{t('createAd.experience.junior')}</option>
+                            <option value="mid">{t('createAd.experience.mid')}</option>
+                            <option value="senior">{t('createAd.experience.senior')}</option>
+                            <option value="lead">{t('createAd.experience.lead')}</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                            {t('createAd.workArrangement')}
+                          </label>
+                          <select
+                            value={workArrangement}
+                            onChange={(e) => setWorkArrangement(e.target.value)}
+                            className="select-glass bg-white/80"
+                          >
+                            <option value="">—</option>
+                            <option value="onsite">{t('createAd.work.onsite')}</option>
+                            <option value="hybrid">{t('createAd.work.hybrid')}</option>
+                            <option value="remote">{t('createAd.work.remote')}</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                            {t('createAd.jobLanguages')}
+                          </label>
+                          <input
+                            value={jobLanguages}
+                            onChange={(e) => setJobLanguages(e.target.value)}
+                            className="input-glass"
+                            placeholder="EN, ES, UK"
+                          />
+                        </div>
+                      </>
+                    )}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
-                        {t('createAd.priceLabel')} ({currency.symbol})
+                        {isJob ? t('createAd.salaryLabel') : t('createAd.priceLabel')} ({currency.symbol})
                       </label>
                       <input
                         type="number"
@@ -375,6 +564,33 @@ export function CreateAd() {
                     </div>
                   </div>
                 </section>
+
+                {isJob && (
+                  <section className="space-y-5">
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                        {t('createAd.requirements')}
+                      </label>
+                      <textarea
+                        value={requirements}
+                        onChange={(e) => setRequirements(e.target.value)}
+                        rows={4}
+                        className="input-glass min-h-[120px] resize-y"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
+                        {t('createAd.benefits')}
+                      </label>
+                      <textarea
+                        value={benefits}
+                        onChange={(e) => setBenefits(e.target.value)}
+                        rows={3}
+                        className="input-glass min-h-[100px] resize-y"
+                      />
+                    </div>
+                  </section>
+                )}
 
                 <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
                   <div className="space-y-5">

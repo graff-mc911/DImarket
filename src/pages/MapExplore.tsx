@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Briefcase, Building2, Globe2, Map as MapIcon, UserRound } from 'lucide-react'
+import { Briefcase, Building2, Globe2, Map as MapIcon, ShoppingBag, UserRound } from 'lucide-react'
 import { EuropeMarketplaceMap } from '../components/map/EuropeMarketplaceMap'
 import { GeoSearchFilters } from '../components/GeoSearchFilters'
 import { useApp } from '../contexts/AppContext'
@@ -79,6 +79,8 @@ export function MapExplore() {
       professional: base.filter((m) => m.kind === 'professional').length,
       company: base.filter((m) => m.kind === 'company').length,
       project: base.filter((m) => m.kind === 'project').length,
+      marketplace: base.filter((m) => m.kind === 'marketplace').length,
+      job: base.filter((m) => m.kind === 'job').length,
     }
   }, [markers, location, serviceQuery])
 
@@ -91,6 +93,8 @@ export function MapExplore() {
     { id: 'professional', label: t('homePremium.mapPros'), icon: UserRound, count: counts.professional },
     { id: 'company', label: t('homePremium.mapCompanies'), icon: Building2, count: counts.company },
     { id: 'project', label: t('homePremium.mapProjects'), icon: Briefcase, count: counts.project },
+    { id: 'marketplace', label: t('mapExplore.kind.marketplace'), icon: ShoppingBag, count: counts.marketplace },
+    { id: 'job', label: t('mapExplore.kind.job'), icon: Briefcase, count: counts.job },
   ]
 
   return (

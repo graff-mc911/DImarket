@@ -11,7 +11,7 @@ import { matchProfileGeo } from './geoSearch'
 import { matchesServiceProfile, resolveServiceQuery } from './serviceTaxonomy'
 import { radiusModeToKm } from './geoSearch'
 
-export type MapMarkerKind = 'professional' | 'company' | 'project'
+export type MapMarkerKind = 'professional' | 'company' | 'project' | 'marketplace' | 'job'
 
 export type MarketplaceMapMarker = {
   id: string
@@ -93,6 +93,10 @@ type ListingRow = {
   status: string | null
   budget_min: number | null
   budget_max: number | null
+  price?: number | null
+  currency?: string | null
+  listing_type?: string | null
+  company_name?: string | null
   category?: { name?: string | null; slug?: string | null } | null
 }
 
@@ -192,10 +196,58 @@ function toProjectMarker(l: ListingRow): MarketplaceMapMarker | null {
   }
 }
 
+function toListingKindMarker(
+  l: ListingRow,
+  kind: 'marketplace' | 'job',
+): MarketplaceMapMarker | null {
+  const lat = l.latitude
+  const lng = l.longitude
+  if (lat == null || lng == null || !Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  const parts = formatLocationParts(l.location || l.city_name)
+  const price =
+    l.price != null
+      ? `${l.currency || 'EUR'} ${l.price}`
+      : budgetLabel(l)
+  return {
+    id: `${kind}-${l.id}`,
+    kind,
+    title: l.title,
+    subtitle:
+      kind === 'job'
+        ? l.company_name || l.category?.name || 'Job'
+        : l.category?.name || 'Marketplace',
+    description: truncate(l.description || ''),
+    city: l.city_name || parts.city,
+    country: l.country_name || parts.country,
+    rating: null,
+    verified: false,
+    photoUrl: null,
+    category: l.category?.name || '',
+    budgetLabel: price,
+    status: l.status || 'active',
+    availability: '',
+    lat,
+    lng,
+    path: `/listing/${l.id}`,
+    location: [l.city_name, l.location, l.country_name].filter(Boolean).join(', '),
+    service_latitude: lat,
+    service_longitude: lng,
+    service_radius_km: null,
+    work_subcategory_slugs: l.category?.slug ? [l.category.slug] : null,
+    user_role: null,
+  }
+}
+
 /** Fetch live markers from DB. New records with coords appear automatically. */
 export async function fetchMarketplaceMapMarkers(limit = 250): Promise<MarketplaceMapMarker[]> {
-  const half = Math.ceil(limit / 2)
-  const [prosRes, companiesRes, projectsRes] = await Promise.all([
+  const quarter = Math.ceil(limit / 4)
+  const listingSelect = `
+        id, title, description, city_name, location, country_name,
+        latitude, longitude, status, budget_min, budget_max, price, currency,
+        listing_type, company_name,
+        category:categories(name, slug)
+      `
+  const [prosRes, companiesRes, projectsRes, marketRes, jobsRes] = await Promise.all([
     supabase
       .from('profiles')
       .select(
@@ -211,7 +263,7 @@ export async function fetchMarketplaceMapMarkers(limit = 250): Promise<Marketpla
       .not('service_latitude', 'is', null)
       .not('service_longitude', 'is', null)
       .order('rating', { ascending: false })
-      .limit(half),
+      .limit(quarter),
     supabase
       .from('profiles')
       .select(
@@ -227,22 +279,34 @@ export async function fetchMarketplaceMapMarkers(limit = 250): Promise<Marketpla
       .not('service_latitude', 'is', null)
       .not('service_longitude', 'is', null)
       .order('rating', { ascending: false })
-      .limit(Math.ceil(half / 2)),
+      .limit(quarter),
     supabase
       .from('listings')
-      .select(
-        `
-        id, title, description, city_name, location, country_name,
-        latitude, longitude, status, budget_min, budget_max,
-        category:categories(name, slug)
-      `,
-      )
+      .select(listingSelect)
       .eq('listing_type', 'service_request')
       .eq('status', 'active')
       .not('latitude', 'is', null)
       .not('longitude', 'is', null)
       .order('created_at', { ascending: false })
-      .limit(half),
+      .limit(quarter),
+    supabase
+      .from('listings')
+      .select(listingSelect)
+      .in('listing_type', ['item_sale', 'item_wanted'])
+      .eq('status', 'active')
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(quarter),
+    supabase
+      .from('listings')
+      .select(listingSelect)
+      .eq('listing_type', 'job_vacancy')
+      .eq('status', 'active')
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(quarter),
   ])
 
   const markers: MarketplaceMapMarker[] = []
@@ -256,6 +320,14 @@ export async function fetchMarketplaceMapMarkers(limit = 250): Promise<Marketpla
   }
   for (const l of (projectsRes.data as ListingRow[] | null) ?? []) {
     const m = toProjectMarker(l)
+    if (m) markers.push(m)
+  }
+  for (const l of (marketRes.data as ListingRow[] | null) ?? []) {
+    const m = toListingKindMarker(l, 'marketplace')
+    if (m) markers.push(m)
+  }
+  for (const l of (jobsRes.data as ListingRow[] | null) ?? []) {
+    const m = toListingKindMarker(l, 'job')
     if (m) markers.push(m)
   }
   return markers

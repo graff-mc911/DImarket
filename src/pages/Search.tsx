@@ -24,7 +24,7 @@ import { marketplaceCategoryLabel, marketplaceServiceProsPath } from '../lib/mar
 import { navigateTo } from '../lib/navigation'
 import { pushRecentSearch } from '../lib/searchHistory'
 
-type ResultTab = 'all' | 'professionals' | 'categories' | 'services' | 'projects' | 'materials'
+type ResultTab = 'all' | 'professionals' | 'categories' | 'services' | 'projects' | 'materials' | 'marketplace' | 'jobs'
 
 const EMPTY_RESULTS: AdvancedSearchResults = {
   professionals: [],
@@ -32,6 +32,8 @@ const EMPTY_RESULTS: AdvancedSearchResults = {
   services: [],
   projects: [],
   materials: [],
+  marketplace: [],
+  jobs: [],
 }
 
 const POPULAR_FALLBACK = [
@@ -147,13 +149,16 @@ export function SearchPage() {
     services: results.services.length,
     projects: results.projects.length,
     materials: results.materials.length,
+    marketplace: results.marketplace.length,
+    jobs: results.jobs.length,
   }
   const total =
     counts.professionals +
     counts.categories +
     counts.services +
     counts.projects +
-    counts.materials
+    counts.marketplace +
+    counts.jobs
 
   const tabs: Array<{ id: ResultTab; label: string; count: number }> = [
     { id: 'all', label: t('advancedSearch.tabAll'), count: total },
@@ -161,7 +166,8 @@ export function SearchPage() {
     { id: 'categories', label: t('advancedSearch.tabCategories'), count: counts.categories },
     { id: 'services', label: t('advancedSearch.tabServices'), count: counts.services },
     { id: 'projects', label: t('advancedSearch.tabProjects'), count: counts.projects },
-    { id: 'materials', label: t('advancedSearch.tabMaterials'), count: counts.materials },
+    { id: 'marketplace', label: t('advancedSearch.tab.marketplace'), count: counts.marketplace },
+    { id: 'jobs', label: t('advancedSearch.tab.jobs'), count: counts.jobs },
   ]
 
   const show = (section: ResultTab) => tab === 'all' || tab === section
@@ -355,11 +361,22 @@ export function SearchPage() {
                 </section>
               )}
 
-              {show('materials') && counts.materials > 0 && (
+              {show('marketplace') && counts.marketplace > 0 && (
                 <section className="adv-search__section">
-                  <h2>{t('advancedSearch.tabMaterials')}</h2>
+                  <h2>{t('advancedSearch.tab.marketplace')}</h2>
                   <div className="adv-search__grid adv-search__grid--projects">
-                    {results.materials.map((l) => (
+                    {results.marketplace.map((l) => (
+                      <ListingCard key={l.id} listing={l} />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {show('jobs') && counts.jobs > 0 && (
+                <section className="adv-search__section">
+                  <h2>{t('advancedSearch.tab.jobs')}</h2>
+                  <div className="adv-search__grid adv-search__grid--projects">
+                    {results.jobs.map((l) => (
                       <ListingCard key={l.id} listing={l} />
                     ))}
                   </div>

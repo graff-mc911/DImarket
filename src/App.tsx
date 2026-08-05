@@ -72,6 +72,10 @@ import {
   SEO_SERVICE_ALIASES,
 } from './lib/serviceTaxonomy'
 import { parseGeoServicePath } from './lib/geoSearch'
+import {
+  parseGeoMarketplacePath,
+  resolveSectionPath,
+} from './lib/marketplaceSections'
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -104,6 +108,30 @@ function App() {
     }
     if (parts[0] === 'leads' && parts[1] && parts[2] === 'quote') {
       return <QuoteBuilder applicationId={parts[1]} />
+    }
+
+    // Geo marketplace/jobs: /spain/alicante/jobs or /spain/alicante/buy-sell
+    if (parts.length === 3) {
+      const geoMarket = parseGeoMarketplacePath(parts)
+      if (geoMarket) {
+        return (
+          <Listings
+            fixedCategorySlug={geoMarket.categorySlug}
+            initialLocationQuery={geoMarket.city}
+          />
+        )
+      }
+    }
+
+    // Marketplace / Jobs section routes: /buy-sell, /jobs, /buy-sell/tools, /jobs/electrician
+    const section = resolveSectionPath(path)
+    if (section) {
+      return (
+        <Listings
+          fixedCategorySlug={section.categorySlug}
+          fixedSubcategorySlug={section.subcategorySlug || undefined}
+        />
+      )
     }
 
     // SEO: /de/darmstadt/elektriker
@@ -147,8 +175,10 @@ function App() {
       case '/professionals': return <Professionals />
       case '/companies':     return <Companies />
       case '/listings':      return <Listings />
-      case '/vacancies':     return <Listings fixedCategorySlug="vacancies" />
-      case '/sell-rent':     return <Listings fixedCategorySlug="sell-rent" />
+      case '/vacancies':
+      case '/jobs':          return <Listings fixedCategorySlug="vacancies" />
+      case '/sell-rent':
+      case '/buy-sell':      return <Listings fixedCategorySlug="sell-rent" />
       case '/contact':       return <Contact />
       case '/advertise':
       case '/advertising':   return <Advertising />
