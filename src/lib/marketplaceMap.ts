@@ -4,12 +4,15 @@
  */
 
 import { supabase } from './supabase'
-import { formatLocationParts } from './geoSearch'
+import {
+  formatLocationParts,
+  inferCoordsFromLocationText,
+  matchProfileGeo,
+  radiusModeToKm,
+  type GeoSearchState,
+} from './geoSearch'
 import { resolveDirectoryAvatarUrl } from './directoryAvatars'
-import type { GeoSearchState } from './geoSearch'
-import { matchProfileGeo } from './geoSearch'
 import { matchesServiceProfile, resolveServiceQuery } from './serviceTaxonomy'
-import { radiusModeToKm } from './geoSearch'
 import {
   excludeSuppressedFromQuery,
   filterSuppressedListings,
@@ -91,8 +94,40 @@ export const MAP_KIND_GLYPH: Record<MapMarkerKind | 'mixed', string> = {
   mixed: '+',
 }
 
-const CACHE_KEY = 'dimarket_map_markers_v2'
+const CACHE_KEY = 'dimarket_map_markers_v3'
 const CACHE_TTL_MS = 90_000
+
+function resolveListingCoords(l: ListingRow): { lat: number; lng: number } | null {
+  if (
+    l.latitude != null &&
+    l.longitude != null &&
+    Number.isFinite(l.latitude) &&
+    Number.isFinite(l.longitude)
+  ) {
+    return { lat: Number(l.latitude), lng: Number(l.longitude) }
+  }
+  const text = [l.city_name, l.location, l.country_name].filter(Boolean).join(', ')
+  const inferred = inferCoordsFromLocationText(text)
+  if (!inferred) return null
+  // Tiny jitter so many listings in the same city do not stack perfectly
+  const hash = Array.from(l.id).reduce((s, ch) => s + ch.charCodeAt(0), 0)
+  const jitter = ((hash % 17) - 8) * 0.004
+  return { lat: inferred.lat + jitter, lng: inferred.lon + jitter * 0.7 }
+}
+
+function resolveProfileCoords(p: ProfileRow): { lat: number; lng: number } | null {
+  if (
+    p.service_latitude != null &&
+    p.service_longitude != null &&
+    Number.isFinite(p.service_latitude) &&
+    Number.isFinite(p.service_longitude)
+  ) {
+    return { lat: Number(p.service_latitude), lng: Number(p.service_longitude) }
+  }
+  const inferred = inferCoordsFromLocationText(p.location)
+  if (!inferred) return null
+  return { lat: inferred.lat, lng: inferred.lon }
+}
 
 type ProfileRow = {
   id: string
@@ -186,9 +221,9 @@ function isMarketplaceListing(l: ListingRow): boolean {
 }
 
 function toProfileMarker(p: ProfileRow, kind: 'professional' | 'company'): MarketplaceMapMarker | null {
-  const lat = p.service_latitude
-  const lng = p.service_longitude
-  if (lat == null || lng == null || !Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  const coords = resolveProfileCoords(p)
+  if (!coords) return null
+  const { lat, lng } = coords
   const parts = formatLocationParts(p.location)
   const availability = p.availability_status || ''
   return {
@@ -225,9 +260,9 @@ function toListingMarker(
   l: ListingRow,
   kind: 'project' | 'marketplace' | 'job',
 ): MarketplaceMapMarker | null {
-  const lat = l.latitude
-  const lng = l.longitude
-  if (lat == null || lng == null || !Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  const coords = resolveListingCoords(l)
+  if (!coords) return null
+  const { lat, lng } = coords
   const parts = formatLocationParts(l.location || l.city_name)
   const path = `/listing/${l.id}`
   return {
@@ -315,8 +350,7 @@ export async function fetchMarketplaceMapMarkers(
       )
       .eq('is_professional', true)
       .eq('user_role', 'professional')
-      .not('service_latitude', 'is', null)
-      .not('service_longitude', 'is', null)
+      .or('service_latitude.not.is.null,location.not.is.null')
       .order('rating', { ascending: false })
       .limit(slice),
     supabase
@@ -331,8 +365,7 @@ export async function fetchMarketplaceMapMarkers(
       )
       .eq('is_professional', true)
       .eq('user_role', 'company')
-      .not('service_latitude', 'is', null)
-      .not('service_longitude', 'is', null)
+      .or('service_latitude.not.is.null,location.not.is.null')
       .order('rating', { ascending: false })
       .limit(Math.ceil(slice / 2)),
     excludeSuppressedFromQuery(
@@ -341,8 +374,7 @@ export async function fetchMarketplaceMapMarkers(
         .select(listingSelect)
         .eq('listing_type', 'service_request')
         .eq('status', 'active')
-        .not('latitude', 'is', null)
-        .not('longitude', 'is', null)
+        .or('latitude.not.is.null,location.not.is.null,city_name.not.is.null')
         .order('created_at', { ascending: false })
         .limit(slice),
     ),
@@ -352,8 +384,7 @@ export async function fetchMarketplaceMapMarkers(
         .select(listingSelect)
         .in('listing_type', ['item_sale', 'item_wanted'])
         .eq('status', 'active')
-        .not('latitude', 'is', null)
-        .not('longitude', 'is', null)
+        .or('latitude.not.is.null,location.not.is.null,city_name.not.is.null')
         .order('created_at', { ascending: false })
         .limit(slice),
     ),
@@ -363,8 +394,7 @@ export async function fetchMarketplaceMapMarkers(
         .from('listings')
         .select(listingSelect)
         .eq('status', 'active')
-        .not('latitude', 'is', null)
-        .not('longitude', 'is', null)
+        .or('latitude.not.is.null,location.not.is.null,city_name.not.is.null')
         .order('created_at', { ascending: false })
         .limit(slice),
     ),

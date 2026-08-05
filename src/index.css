@@ -4840,6 +4840,39 @@
   color: #fff;
 }
 
+.map-kind-filter {
+  border-color: color-mix(in srgb, var(--kind-color, #b07e55) 35%, #d2d2d7);
+}
+
+.map-kind-filter__dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--kind-color, #ff9900);
+  flex-shrink: 0;
+}
+
+.map-kind-filter.is-active {
+  background: var(--kind-color, #1a2330);
+  border-color: var(--kind-color, #1a2330);
+  color: #fff;
+}
+
+.map-kind-filter.is-active .map-kind-filter__dot {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+.map-kind-filter__count {
+  opacity: 0.65;
+  font-variant-numeric: tabular-nums;
+}
+
+.map-kind-filters {
+  max-width: 36rem;
+}
+
 .home-map-marker {
   background: transparent !important;
   border: 0 !important;

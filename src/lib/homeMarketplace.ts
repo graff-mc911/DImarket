@@ -7,6 +7,7 @@ import {
   excludeSuppressedFromQuery,
   filterSuppressedListings,
 } from './suppressedListings'
+import { inferCoordsFromLocationText } from './geoSearch'
 import type { ListingWithImages, Profile } from './types'
 
 export type HomeMetrics = {
@@ -41,7 +42,7 @@ export type HomeReview = {
 
 export type HomeMapPoint = {
   id: string
-  kind: 'professional' | 'project' | 'company'
+  kind: 'professional' | 'project' | 'company' | 'marketplace' | 'job'
   title: string
   subtitle?: string
   lat: number
@@ -296,32 +297,51 @@ const EUROPE_FALLBACK_COORDS: Array<{ lat: number; lng: number; city: string }> 
 ]
 
 export async function fetchHomeMapPoints(limit = 40): Promise<HomeMapPoint[]> {
-  const [prosRes, companiesRes, projectsRes] = await Promise.all([
+  const listingSelect =
+    'id, title, city_name, location, country_name, latitude, longitude, status, listing_type, category:categories(slug, name)'
+
+  const [prosRes, companiesRes, projectsRes, marketRes, moreListingsRes] = await Promise.all([
     supabase
       .from('profiles')
       .select('id, full_name, location, service_latitude, service_longitude, user_role')
       .eq('is_professional', true)
       .eq('user_role', 'professional')
-      .not('service_latitude', 'is', null)
-      .not('service_longitude', 'is', null)
+      .or('service_latitude.not.is.null,location.not.is.null')
       .order('rating', { ascending: false })
       .limit(limit),
     supabase
       .from('profiles')
       .select('id, full_name, location, service_latitude, service_longitude, user_role')
       .eq('user_role', 'company')
-      .not('service_latitude', 'is', null)
-      .not('service_longitude', 'is', null)
+      .or('service_latitude.not.is.null,location.not.is.null')
       .order('rating', { ascending: false })
       .limit(Math.ceil(limit / 2)),
     excludeSuppressedFromQuery(
       supabase
         .from('listings')
-        .select('id, title, city_name, location, latitude, longitude, status')
+        .select(listingSelect)
         .eq('listing_type', 'service_request')
         .eq('status', 'active')
-        .not('latitude', 'is', null)
-        .not('longitude', 'is', null)
+        .or('latitude.not.is.null,location.not.is.null,city_name.not.is.null')
+        .order('created_at', { ascending: false })
+        .limit(limit),
+    ),
+    excludeSuppressedFromQuery(
+      supabase
+        .from('listings')
+        .select(listingSelect)
+        .in('listing_type', ['item_sale', 'item_wanted'])
+        .eq('status', 'active')
+        .or('latitude.not.is.null,location.not.is.null,city_name.not.is.null')
+        .order('created_at', { ascending: false })
+        .limit(Math.ceil(limit / 2)),
+    ),
+    excludeSuppressedFromQuery(
+      supabase
+        .from('listings')
+        .select(listingSelect)
+        .eq('status', 'active')
+        .or('latitude.not.is.null,location.not.is.null,city_name.not.is.null')
         .order('created_at', { ascending: false })
         .limit(limit),
     ),
@@ -339,49 +359,142 @@ export async function fetchHomeMapPoints(limit = 40): Promise<HomeMapPoint[]> {
     title: string
     city_name: string | null
     location: string | null
+    country_name?: string | null
     latitude: number | null
     longitude: number | null
+    listing_type?: string | null
+    category?: { slug?: string | null; name?: string | null } | null
+  }
+
+  const resolveProfile = (p: GeoProfile): { lat: number; lng: number } | null => {
+    if (p.service_latitude != null && p.service_longitude != null) {
+      return { lat: Number(p.service_latitude), lng: Number(p.service_longitude) }
+    }
+    const inferred = inferCoordsFromLocationText(p.location)
+    return inferred ? { lat: inferred.lat, lng: inferred.lon } : null
+  }
+
+  const resolveListing = (l: GeoListing): { lat: number; lng: number } | null => {
+    if (l.latitude != null && l.longitude != null) {
+      return { lat: Number(l.latitude), lng: Number(l.longitude) }
+    }
+    const text = [l.city_name, l.location, l.country_name].filter(Boolean).join(', ')
+    const inferred = inferCoordsFromLocationText(text)
+    if (!inferred) return null
+    const hash = Array.from(l.id).reduce((s, ch) => s + ch.charCodeAt(0), 0)
+    const jitter = ((hash % 17) - 8) * 0.004
+    return { lat: inferred.lat + jitter, lng: inferred.lon + jitter * 0.7 }
+  }
+
+  const isJob = (l: GeoListing) => {
+    const slug = (l.category?.slug || '').toLowerCase()
+    if (slug === 'vacancies' || slug.startsWith('vacancies-') || slug.includes('job')) return true
+    return false
+  }
+  const isMarketplace = (l: GeoListing) => {
+    if (l.listing_type === 'item_sale' || l.listing_type === 'item_wanted') return true
+    const slug = (l.category?.slug || '').toLowerCase()
+    return slug === 'sell-rent' || slug.startsWith('sell-rent') || slug === 'furniture'
   }
 
   const points: HomeMapPoint[] = []
+  const seen = new Set<string>()
+  const push = (p: HomeMapPoint) => {
+    if (seen.has(p.id)) return
+    seen.add(p.id)
+    points.push(p)
+  }
 
   for (const p of (prosRes.data as GeoProfile[] | null) ?? []) {
-    if (p.service_latitude == null || p.service_longitude == null) continue
-    points.push({
+    const coords = resolveProfile(p)
+    if (!coords) continue
+    push({
       id: `pro-${p.id}`,
       kind: 'professional',
       title: p.full_name || 'Professional',
       subtitle: p.location || undefined,
-      lat: Number(p.service_latitude),
-      lng: Number(p.service_longitude),
+      lat: coords.lat,
+      lng: coords.lng,
       path: `/professional/${p.id}`,
     })
   }
 
   for (const c of (companiesRes.data as GeoProfile[] | null) ?? []) {
-    if (c.service_latitude == null || c.service_longitude == null) continue
-    points.push({
+    const coords = resolveProfile(c)
+    if (!coords) continue
+    push({
       id: `co-${c.id}`,
       kind: 'company',
       title: c.full_name || 'Company',
       subtitle: c.location || undefined,
-      lat: Number(c.service_latitude),
-      lng: Number(c.service_longitude),
+      lat: coords.lat,
+      lng: coords.lng,
       path: `/professional/${c.id}`,
     })
   }
 
   for (const l of filterSuppressedListings((projectsRes.data as GeoListing[] | null) ?? [])) {
-    if (l.latitude == null || l.longitude == null) continue
-    points.push({
+    const coords = resolveListing(l)
+    if (!coords) continue
+    push({
       id: `proj-${l.id}`,
       kind: 'project',
       title: l.title,
       subtitle: l.city_name || l.location || undefined,
-      lat: Number(l.latitude),
-      lng: Number(l.longitude),
+      lat: coords.lat,
+      lng: coords.lng,
       path: `/listing/${l.id}`,
     })
+  }
+
+  for (const l of filterSuppressedListings((marketRes.data as GeoListing[] | null) ?? [])) {
+    const coords = resolveListing(l)
+    if (!coords) continue
+    push({
+      id: `mkt-${l.id}`,
+      kind: 'marketplace',
+      title: l.title,
+      subtitle: l.city_name || l.location || undefined,
+      lat: coords.lat,
+      lng: coords.lng,
+      path: `/listing/${l.id}`,
+    })
+  }
+
+  for (const l of filterSuppressedListings((moreListingsRes.data as GeoListing[] | null) ?? [])) {
+    const coords = resolveListing(l)
+    if (!coords) continue
+    if (isJob(l)) {
+      push({
+        id: `job-${l.id}`,
+        kind: 'job',
+        title: l.title,
+        subtitle: l.city_name || l.location || undefined,
+        lat: coords.lat,
+        lng: coords.lng,
+        path: `/listing/${l.id}`,
+      })
+    } else if (isMarketplace(l)) {
+      push({
+        id: `mkt-${l.id}`,
+        kind: 'marketplace',
+        title: l.title,
+        subtitle: l.city_name || l.location || undefined,
+        lat: coords.lat,
+        lng: coords.lng,
+        path: `/listing/${l.id}`,
+      })
+    } else if (l.listing_type === 'service_request') {
+      push({
+        id: `proj-${l.id}`,
+        kind: 'project',
+        title: l.title,
+        subtitle: l.city_name || l.location || undefined,
+        lat: coords.lat,
+        lng: coords.lng,
+        path: `/listing/${l.id}`,
+      })
+    }
   }
 
   if (points.length >= 6) return points
@@ -389,8 +502,14 @@ export async function fetchHomeMapPoints(limit = 40): Promise<HomeMapPoint[]> {
   // Seed sample Europe markers so the map is useful before geo data is dense
   EUROPE_FALLBACK_COORDS.forEach((c, i) => {
     if (points.length >= 18) return
-    const kind: HomeMapPoint['kind'] =
-      i % 3 === 0 ? 'professional' : i % 3 === 1 ? 'project' : 'company'
+    const kinds: HomeMapPoint['kind'][] = [
+      'professional',
+      'project',
+      'company',
+      'marketplace',
+      'job',
+    ]
+    const kind = kinds[i % kinds.length]
     points.push({
       id: `seed-${kind}-${i}`,
       kind,
@@ -399,13 +518,17 @@ export async function fetchHomeMapPoints(limit = 40): Promise<HomeMapPoint[]> {
           ? `Pro near ${c.city}`
           : kind === 'project'
             ? `Project in ${c.city}`
-            : `Company in ${c.city}`,
+            : kind === 'company'
+              ? `Company in ${c.city}`
+              : kind === 'marketplace'
+                ? `Shop in ${c.city}`
+                : `Job in ${c.city}`,
       subtitle: c.city,
       lat: c.lat + (i % 5) * 0.03,
       lng: c.lng + (i % 4) * 0.03,
       path:
-        kind === 'project'
-          ? '/projects'
+        kind === 'project' || kind === 'marketplace' || kind === 'job'
+          ? '/map'
           : kind === 'company'
             ? '/companies'
             : '/professionals',

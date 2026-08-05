@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react'
 import {
   Briefcase,
   Building2,
@@ -17,6 +17,7 @@ import {
   EMPTY_MAP_FILTERS,
   fetchMarketplaceMapMarkers,
   filterMapMarkers,
+  MAP_KIND_COLORS,
   nextWiderRadius,
   type MapExploreFilters,
   type MapMarkerKind,
@@ -130,6 +131,7 @@ export function MapExplore() {
     label: string
     icon: typeof UserRound
     count: number
+    color?: string
   }> = [
     { id: 'all', label: t('homePremium.mapAll'), icon: Globe2, count: counts.all },
     {
@@ -137,26 +139,36 @@ export function MapExplore() {
       label: t('homePremium.mapPros'),
       icon: UserRound,
       count: counts.professional,
+      color: MAP_KIND_COLORS.professional,
     },
     {
       id: 'company',
       label: t('homePremium.mapCompanies'),
       icon: Building2,
       count: counts.company,
+      color: MAP_KIND_COLORS.company,
     },
     {
       id: 'project',
       label: t('homePremium.mapProjects'),
       icon: Briefcase,
       count: counts.project,
+      color: MAP_KIND_COLORS.project,
     },
     {
       id: 'marketplace',
       label: t('mapExplore.kindMarketplace'),
       icon: ShoppingBag,
       count: counts.marketplace,
+      color: MAP_KIND_COLORS.marketplace,
     },
-    { id: 'job', label: t('mapExplore.kindJobs'), icon: Briefcase, count: counts.job },
+    {
+      id: 'job',
+      label: t('mapExplore.kindJobs'),
+      icon: Briefcase,
+      count: counts.job,
+      color: MAP_KIND_COLORS.job,
+    },
   ]
 
   const showMap = viewMode === 'map' || viewMode === 'split'
@@ -203,19 +215,28 @@ export function MapExplore() {
                 )
               })}
             </div>
-            <div className="home-map__filters" role="group" aria-label={t('homePremium.mapFilters')}>
+            <div className="home-map__filters map-kind-filters" role="group" aria-label={t('homePremium.mapFilters')}>
               {kindFilters.map((f) => {
                 const Icon = f.icon
                 return (
                   <button
                     key={f.id}
                     type="button"
-                    className={`home-map__filter ${kind === f.id ? 'is-active' : ''}`}
+                    className={`home-map__filter map-kind-filter ${kind === f.id ? 'is-active' : ''}`}
+                    style={
+                      f.color
+                        ? ({ '--kind-color': f.color } as CSSProperties)
+                        : undefined
+                    }
                     onClick={() => setKind(f.id)}
                   >
-                    <Icon className="h-4 w-4" aria-hidden />
+                    {f.color ? (
+                      <span className="map-kind-filter__dot" aria-hidden />
+                    ) : (
+                      <Icon className="h-4 w-4" aria-hidden />
+                    )}
                     {f.label}
-                    <span className="opacity-60">{f.count}</span>
+                    <span className="map-kind-filter__count">{f.count}</span>
                   </button>
                 )
               })}
@@ -350,25 +371,28 @@ export function MapExplore() {
             </label>
           </div>
 
-          <div className="mt-4 space-y-1 border-t border-[var(--ink-100,#eee)] pt-3 text-[11px] text-[var(--ink-500)]">
-            <p>
-              <span className="inline-block h-2 w-2 rounded-full bg-[#16a34a]" />{' '}
+          <div className="mt-4 space-y-2 border-t border-[var(--ink-100,#eee)] pt-3 text-[12px] text-[var(--ink-600)]">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-500)]">
+              {t('mapExplore.legendTitle')}
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#16a34a]" />{' '}
               {t('mapExplore.legendPro')}
             </p>
-            <p>
-              <span className="inline-block h-2 w-2 rounded-full bg-[#2563eb]" />{' '}
+            <p className="flex items-center gap-2">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#2563eb]" />{' '}
               {t('mapExplore.legendCompany')}
             </p>
-            <p>
-              <span className="inline-block h-2 w-2 rounded-full bg-[#ea580c]" />{' '}
+            <p className="flex items-center gap-2">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#ea580c]" />{' '}
               {t('mapExplore.legendProject')}
             </p>
-            <p>
-              <span className="inline-block h-2 w-2 rounded-full bg-[#7c3aed]" />{' '}
+            <p className="flex items-center gap-2">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7c3aed]" />{' '}
               {t('mapExplore.legendJob')}
             </p>
-            <p>
-              <span className="inline-block h-2 w-2 rounded-full bg-[#92400e]" />{' '}
+            <p className="flex items-center gap-2">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#92400e]" />{' '}
               {t('mapExplore.legendShop')}
             </p>
           </div>
