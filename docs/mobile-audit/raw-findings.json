@@ -1,0 +1,3065 @@
+{
+  "generatedAt": "2026-08-05T07:15:46.225Z",
+  "baseUrl": "https://dimarket.app",
+  "method": "Playwright Chromium mobile emulation across listed viewports. Not a substitute for real Safari iOS / Samsung Internet device lab, but exercises layout, overflow, tap targets, nav presence, and form input types.",
+  "viewports": [
+    {
+      "id": "iphone-se",
+      "width": 320,
+      "height": 568,
+      "deviceScaleFactor": 2
+    },
+    {
+      "id": "iphone-se-3",
+      "width": 375,
+      "height": 667,
+      "deviceScaleFactor": 2
+    },
+    {
+      "id": "iphone-13",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 3
+    },
+    {
+      "id": "iphone-15-pro",
+      "width": 393,
+      "height": 852,
+      "deviceScaleFactor": 3
+    },
+    {
+      "id": "iphone-16-pro",
+      "width": 402,
+      "height": 874,
+      "deviceScaleFactor": 3
+    },
+    {
+      "id": "pixel-8",
+      "width": 412,
+      "height": 915,
+      "deviceScaleFactor": 2.625
+    },
+    {
+      "id": "galaxy-s24",
+      "width": 360,
+      "height": 780,
+      "deviceScaleFactor": 3
+    },
+    {
+      "id": "iphone-14-pro-max",
+      "width": 430,
+      "height": 932,
+      "deviceScaleFactor": 3
+    },
+    {
+      "id": "ipad-mini",
+      "width": 768,
+      "height": 1024,
+      "deviceScaleFactor": 2
+    },
+    {
+      "id": "ipad-air",
+      "width": 820,
+      "height": 1180,
+      "deviceScaleFactor": 2
+    },
+    {
+      "id": "ipad-air-landscape",
+      "width": 1180,
+      "height": 820,
+      "deviceScaleFactor": 2
+    },
+    {
+      "id": "breakpoint-414",
+      "width": 414,
+      "height": 896,
+      "deviceScaleFactor": 2
+    },
+    {
+      "id": "breakpoint-1024",
+      "width": 1024,
+      "height": 768,
+      "deviceScaleFactor": 1
+    }
+  ],
+  "pages": [
+    {
+      "path": "/",
+      "name": "Home"
+    },
+    {
+      "path": "/search",
+      "name": "Global Search"
+    },
+    {
+      "path": "/professionals",
+      "name": "Professionals"
+    },
+    {
+      "path": "/companies",
+      "name": "Companies"
+    },
+    {
+      "path": "/listings",
+      "name": "Listings / Projects"
+    },
+    {
+      "path": "/buy-sell",
+      "name": "Buy & Sell",
+      "fallback": "/sell-rent"
+    },
+    {
+      "path": "/jobs",
+      "name": "Jobs",
+      "fallback": "/vacancies"
+    },
+    {
+      "path": "/map",
+      "name": "Map"
+    },
+    {
+      "path": "/create-ad",
+      "name": "Create Ad"
+    },
+    {
+      "path": "/create-project",
+      "name": "Create Project"
+    },
+    {
+      "path": "/login",
+      "name": "Login"
+    },
+    {
+      "path": "/register",
+      "name": "Register"
+    },
+    {
+      "path": "/contact",
+      "name": "Contact"
+    },
+    {
+      "path": "/pricing",
+      "name": "Pricing"
+    }
+  ],
+  "screensChecked": 183,
+  "screensFailed": 0,
+  "findings": [
+    {
+      "page": "Home",
+      "path": "/",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; [class*=\"filter\"] button 60x32 \"All\"; [class*=\"filter\"] button 129x32 \"Professionals\"; [class*=\"filter\"] button 95x32 \"Projects\"; [class*=\"filter\"] button 115x32 \"Companies\"",
+      "reproduction": "Open https://dimarket.app/ at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Home",
+      "path": "/",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/ on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "path": "/search",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; header button 88x32 \"Electrician\"; header button 75x32 \"Plumber\"; header button 68x32 \"Painter\"; header button 57x32 \"Tiling\"",
+      "reproduction": "Open https://dimarket.app/search at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "path": "/search",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/search on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "path": "/professionals",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; .directory-expert button 126x20 \"Майстер-Львів\"; .directory-expert button 31x38 \"Favorites\"; .directory-expert button 154x20 \"B-f Elektryka Paweł\"; .directory-expert button 151x20 \"Firma Eltak Andrzej\"",
+      "reproduction": "Open https://dimarket.app/professionals at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "path": "/professionals",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/professionals on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Companies",
+      "path": "/companies",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; .directory-expert button 143x20 \"Римейк — Дніпро\"; .directory-expert button 31x38 \"Favorites\"; .directory-expert button 138x20 \"Римейк — Харків\"; .directory-expert button 158x20 \"СанСанич — Харків\"",
+      "reproduction": "Open https://dimarket.app/companies at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Companies",
+      "path": "/companies",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/companies on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "path": "/listings",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; footer button 93x20 \"↑ Back to top\"; footer button 85x20 \"How It Works\"; footer button 38x20 \"About\"; footer button 133x20 \"Advertise on the site\"",
+      "reproduction": "Open https://dimarket.app/listings at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "path": "/listings",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/listings on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "path": "/buy-sell",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; [class*=\"filter\"] button 60x32 \"All\"; [class*=\"filter\"] button 129x32 \"Professionals\"; [class*=\"filter\"] button 95x32 \"Projects\"; [class*=\"filter\"] button 115x32 \"Companies\"",
+      "reproduction": "Open https://dimarket.app/buy-sell at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "path": "/buy-sell",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/buy-sell on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "path": "/jobs",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; [class*=\"filter\"] button 60x32 \"All\"; [class*=\"filter\"] button 129x32 \"Professionals\"; [class*=\"filter\"] button 95x32 \"Projects\"; [class*=\"filter\"] button 115x32 \"Companies\"",
+      "reproduction": "Open https://dimarket.app/jobs at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "path": "/jobs",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/jobs on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Map",
+      "path": "/map",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; [class*=\"filter\"] button 75x32 \"All\n0\"; [class*=\"filter\"] button 143x32 \"Professionals\n0\"; [class*=\"filter\"] button 130x32 \"Companies\n0\"; [class*=\"filter\"] button 110x32 \"Projects\n0\"",
+      "reproduction": "Open https://dimarket.app/map at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Map",
+      "path": "/map",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/map on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "path": "/create-ad",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; footer button 93x20 \"↑ Back to top\"; footer button 85x20 \"How It Works\"; footer button 38x20 \"About\"; footer button 133x20 \"Advertise on the site\"",
+      "reproduction": "Open https://dimarket.app/create-ad at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "path": "/create-ad",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/create-ad on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "path": "/create-project",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; footer button 93x20 \"↑ Back to top\"; footer button 85x20 \"How It Works\"; footer button 38x20 \"About\"; footer button 133x20 \"Advertise on the site\"",
+      "reproduction": "Open https://dimarket.app/create-project at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "path": "/create-project",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/create-project on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Login",
+      "path": "/login",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; form button 20x20 \"Show password\"; footer button 93x20 \"↑ Back to top\"; footer button 85x20 \"How It Works\"; footer button 38x20 \"About\"",
+      "reproduction": "Open https://dimarket.app/login at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Login",
+      "path": "/login",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/login on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Register",
+      "path": "/register",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; footer button 93x20 \"↑ Back to top\"; footer button 85x20 \"How It Works\"; footer button 38x20 \"About\"; footer button 133x20 \"Advertise on the site\"",
+      "reproduction": "Open https://dimarket.app/register at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Register",
+      "path": "/register",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/register on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Contact",
+      "path": "/contact",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; footer button 93x20 \"↑ Back to top\"; footer button 85x20 \"How It Works\"; footer button 38x20 \"About\"; footer button 133x20 \"Advertise on the site\"",
+      "reproduction": "Open https://dimarket.app/contact at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Contact",
+      "path": "/contact",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/contact on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "path": "/pricing",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 91x24 \"D\nI\nmarket\"; header button 60x31 \"Sign in\nAccount\"; header button 32x36 \"0\"; header button 32x32 \"\"; footer button 93x20 \"↑ Back to top\"; footer button 85x20 \"How It Works\"; footer button 38x20 \"About\"; footer button 133x20 \"Advertise on the site\"",
+      "reproduction": "Open https://dimarket.app/pricing at 320px; inspect interactive controls size.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "path": "/pricing",
+      "device": "iphone-se (320x568) (+8 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Mobile bottom navigation missing",
+      "severity": "Critical",
+      "detail": ".mobile-bottom-nav not present in DOM/visible. Component exists in codebase but is not mounted in App.",
+      "reproduction": "Open https://dimarket.app/pricing on phone viewport; look for bottom tab bar.",
+      "devices": [
+        "iphone-se (320x568)",
+        "iphone-se-3 (375x667)",
+        "iphone-13 (390x844)",
+        "iphone-15-pro (393x852)",
+        "iphone-16-pro (402x874)",
+        "pixel-8 (412x915)",
+        "galaxy-s24 (360x780)",
+        "iphone-14-pro-max (430x932)",
+        "breakpoint-414 (414x896)"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "path": "/create-ad",
+      "device": "iphone-13 (390x844)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Missing inputMode / enterKeyHint",
+      "severity": "Medium",
+      "detail": "5 text inputs lack inputMode/enterKeyHint",
+      "reproduction": "Inspect form inputs on /create-ad.",
+      "devices": [
+        "iphone-13 (390x844)"
+      ]
+    },
+    {
+      "page": "Contact",
+      "path": "/contact",
+      "device": "iphone-13 (390x844)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Missing inputMode / enterKeyHint",
+      "severity": "Medium",
+      "detail": "4 text inputs lack inputMode/enterKeyHint",
+      "reproduction": "Inspect form inputs on /contact.",
+      "devices": [
+        "iphone-13 (390x844)"
+      ]
+    },
+    {
+      "page": "Home",
+      "path": "/",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/ at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "path": "/search",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/search at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "path": "/professionals",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/professionals at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Companies",
+      "path": "/companies",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/companies at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "path": "/listings",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/listings at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "path": "/buy-sell",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/buy-sell at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "path": "/jobs",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/jobs at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Map",
+      "path": "/map",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/map at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "path": "/create-ad",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/create-ad at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "path": "/create-project",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/create-project at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Login",
+      "path": "/login",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "High",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/login at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Register",
+      "path": "/register",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/register at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Contact",
+      "path": "/contact",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/contact at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "path": "/pricing",
+      "device": "ipad-mini (768x1024) (+3 viewports)",
+      "browser": "Chromium (mobile emulation)",
+      "check": "Touch targets < 44px",
+      "severity": "Medium",
+      "detail": "header button 109x32 \"Categories\"; header button 103x32 \"Today's Deals\"; header button 131x32 \"Find Professionals\"; header button 90x32 \"Companies\"; header button 47x32 \"Map\"; header button 77x32 \"Post a job\"; header button 108x32 \"Cost estimator\"; header button 41x32 \"Sell\"",
+      "reproduction": "Open https://dimarket.app/pricing at 768px; inspect interactive controls size.",
+      "devices": [
+        "ipad-mini (768x1024)",
+        "ipad-air (820x1180)",
+        "ipad-air-landscape (1180x820)",
+        "breakpoint-1024 (1024x768)"
+      ]
+    }
+  ],
+  "checkedScreens": [
+    {
+      "page": "Home",
+      "device": "iphone-se",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "iphone-se",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "iphone-se",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "iphone-se",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "iphone-se",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "iphone-se",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "iphone-se",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "iphone-se",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "iphone-se",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "iphone-se",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "iphone-se",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "iphone-se",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "iphone-se",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "iphone-se",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "iphone-se-3",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "iphone-se-3",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "iphone-se-3",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "iphone-se-3",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "iphone-se-3",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "iphone-se-3",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "iphone-se-3",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "iphone-se-3",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "iphone-se-3",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "iphone-se-3",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "iphone-se-3",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "iphone-se-3",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "iphone-se-3",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "iphone-se-3",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "iphone-13",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "iphone-13",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "iphone-13",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "iphone-13",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "iphone-13",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "iphone-13",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "iphone-13",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "iphone-13",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "iphone-13",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "iphone-13",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "iphone-13",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "iphone-13",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "iphone-13",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "iphone-13",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "iphone-13-landscape",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "iphone-15-pro",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "iphone-15-pro",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "iphone-15-pro",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "iphone-15-pro",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "iphone-15-pro",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "iphone-15-pro",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "iphone-15-pro",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "iphone-15-pro",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "iphone-15-pro",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "iphone-15-pro",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "iphone-15-pro",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "iphone-15-pro",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "iphone-15-pro",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "iphone-15-pro",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "iphone-16-pro",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "iphone-16-pro",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "iphone-16-pro",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "iphone-16-pro",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "iphone-16-pro",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "iphone-16-pro",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "iphone-16-pro",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "iphone-16-pro",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "iphone-16-pro",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "iphone-16-pro",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "iphone-16-pro",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "iphone-16-pro",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "iphone-16-pro",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "iphone-16-pro",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "pixel-8",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "pixel-8",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "pixel-8",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "pixel-8",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "pixel-8",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "pixel-8",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "pixel-8",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "pixel-8",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "pixel-8",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "pixel-8",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "pixel-8",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "pixel-8",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "pixel-8",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "pixel-8",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "galaxy-s24",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "galaxy-s24",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "galaxy-s24",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "galaxy-s24",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "galaxy-s24",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "galaxy-s24",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "galaxy-s24",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "galaxy-s24",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "galaxy-s24",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "galaxy-s24",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "galaxy-s24",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "galaxy-s24",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "galaxy-s24",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "galaxy-s24",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "iphone-14-pro-max",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "iphone-14-pro-max",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "iphone-14-pro-max",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "iphone-14-pro-max",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "iphone-14-pro-max",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "iphone-14-pro-max",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "iphone-14-pro-max",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "iphone-14-pro-max",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "iphone-14-pro-max",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "iphone-14-pro-max",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "iphone-14-pro-max",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "iphone-14-pro-max",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "iphone-14-pro-max",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "iphone-14-pro-max",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "ipad-mini",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "ipad-mini",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "ipad-mini",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "ipad-mini",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "ipad-mini",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "ipad-mini",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "ipad-mini",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "ipad-mini",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "ipad-mini",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "ipad-mini",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "ipad-mini",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "ipad-mini",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "ipad-mini",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "ipad-mini",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "ipad-air",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "ipad-air",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "ipad-air",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "ipad-air",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "ipad-air",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "ipad-air",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "ipad-air",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "ipad-air",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "ipad-air",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "ipad-air",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "ipad-air",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "ipad-air",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "ipad-air",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "ipad-air",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "ipad-air-landscape",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "ipad-air-landscape",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "ipad-air-landscape",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "ipad-air-landscape",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "ipad-air-landscape",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "ipad-air-landscape",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "ipad-air-landscape",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "ipad-air-landscape",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "ipad-air-landscape",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "ipad-air-landscape",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "ipad-air-landscape",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "ipad-air-landscape",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "ipad-air-landscape",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "ipad-air-landscape",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "breakpoint-414",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "breakpoint-414",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "breakpoint-414",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "breakpoint-414",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "breakpoint-414",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "breakpoint-414",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "breakpoint-414",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "breakpoint-414",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "breakpoint-414",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "breakpoint-414",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "breakpoint-414",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "breakpoint-414",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "breakpoint-414",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "breakpoint-414",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Home",
+      "device": "breakpoint-1024",
+      "path": "/",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Global Search",
+      "device": "breakpoint-1024",
+      "path": "/search",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Professionals",
+      "device": "breakpoint-1024",
+      "path": "/professionals",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Companies",
+      "device": "breakpoint-1024",
+      "path": "/companies",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Listings / Projects",
+      "device": "breakpoint-1024",
+      "path": "/listings",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Buy & Sell",
+      "device": "breakpoint-1024",
+      "path": "/buy-sell",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Jobs",
+      "device": "breakpoint-1024",
+      "path": "/jobs",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Map",
+      "device": "breakpoint-1024",
+      "path": "/map",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    },
+    {
+      "page": "Create Ad",
+      "device": "breakpoint-1024",
+      "path": "/create-ad",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=14"
+      ]
+    },
+    {
+      "page": "Create Project",
+      "device": "breakpoint-1024",
+      "path": "/create-project",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=3"
+      ]
+    },
+    {
+      "page": "Login",
+      "device": "breakpoint-1024",
+      "path": "/login",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=6"
+      ]
+    },
+    {
+      "page": "Register",
+      "device": "breakpoint-1024",
+      "path": "/register",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=4"
+      ]
+    },
+    {
+      "page": "Contact",
+      "device": "breakpoint-1024",
+      "path": "/contact",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false",
+        "inputs=8"
+      ]
+    },
+    {
+      "page": "Pricing",
+      "device": "breakpoint-1024",
+      "path": "/pricing",
+      "ok": true,
+      "notes": [
+        "overflow=0px",
+        "smallTargets=25",
+        "bottomNav=false"
+      ]
+    }
+  ]
+}
