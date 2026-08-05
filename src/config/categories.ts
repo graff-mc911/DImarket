@@ -129,6 +129,36 @@ export const serviceCategories: ServiceCategory[] = [
     sub('Specialists', '🪚', 'Carpenter'),
     sub('Specialists', '📐', 'Architect & Designer'),
   ]),
+  category(
+    'buy-sell',
+    '🛒',
+    'Buy & Sell',
+    'Marketplace for selling, buying, and renting equipment, materials, and property.',
+    [
+      sub('Buy & Sell', '🏷', 'For Sale', 'buy-sell-for-sale', 'Items and materials listed for sale.'),
+      sub('Buy & Sell', '🔍', 'Wanted', 'buy-sell-wanted', 'Wanted / looking-to-buy listings.'),
+      sub(
+        'Buy & Sell',
+        '🏗',
+        'Equipment Rental',
+        'buy-sell-equipment-rental',
+        'Construction equipment and tool rentals.',
+      ),
+      sub('Buy & Sell', '🏠', 'Property', 'buy-sell-property', 'Property sale and rental listings.'),
+    ],
+    { href: '/sell-rent' },
+  ),
+  category(
+    'jobs',
+    '💼',
+    'Jobs',
+    'Job vacancies and hiring offers across construction and home services.',
+    [
+      sub('Jobs', '📋', 'Vacancies', 'jobs-vacancies', 'Open vacancies from companies and pros.'),
+      sub('Jobs', '👷', 'Hiring Trades', 'jobs-hiring', 'Hiring electricians, plumbers, and other trades.'),
+    ],
+    { href: '/vacancies' },
+  ),
   category('renovation', '🏠', 'Renovation', 'Home and business renovation services from planning to handover.', [
     sub('Renovation', '🏡', 'Home Renovation'),
     sub('Renovation', '🛁', 'Bathroom'),
@@ -205,36 +235,6 @@ export const serviceCategories: ServiceCategory[] = [
     sub('Rentals', '🚚', 'Trailer Rental'),
     sub('Rentals', '⚡', 'Generator Rental'),
   ]),
-  category(
-    'buy-sell',
-    '🛒',
-    'Buy & Sell',
-    'Marketplace for selling, buying, and renting equipment, materials, and property.',
-    [
-      sub('Buy & Sell', '🏷', 'For Sale', 'buy-sell-for-sale', 'Items and materials listed for sale.'),
-      sub('Buy & Sell', '🔍', 'Wanted', 'buy-sell-wanted', 'Wanted / looking-to-buy listings.'),
-      sub(
-        'Buy & Sell',
-        '🏗',
-        'Equipment Rental',
-        'buy-sell-equipment-rental',
-        'Construction equipment and tool rentals.',
-      ),
-      sub('Buy & Sell', '🏠', 'Property', 'buy-sell-property', 'Property sale and rental listings.'),
-    ],
-    { href: '/sell-rent' },
-  ),
-  category(
-    'jobs',
-    '💼',
-    'Jobs',
-    'Job vacancies and hiring offers across construction and home services.',
-    [
-      sub('Jobs', '📋', 'Vacancies', 'jobs-vacancies', 'Open vacancies from companies and pros.'),
-      sub('Jobs', '👷', 'Hiring Trades', 'jobs-hiring', 'Hiring electricians, plumbers, and other trades.'),
-    ],
-    { href: '/vacancies' },
-  ),
   category('automotive', '🚗', 'Automotive', 'Vehicle repair, diagnostics, towing, and tire services.', [
     sub('Automotive', '🔧', 'Auto Repair'),
     sub('Automotive', '⚡', 'Auto Electrician'),

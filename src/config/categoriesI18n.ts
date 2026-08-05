@@ -3278,8 +3278,8 @@ export const SERVIYA_CATEGORY_I18N: Record<string, ServiyaLabelMap> = {
 
   'buy-sell': {
     en: 'Buy & Sell',
-    uk: 'Купівля та продаж',
-    ru: 'Купить и продать',
+    uk: 'Продам / Здам',
+    ru: 'Продам / Сдам',
     pl: 'Kupno i sprzedaż',
     de: 'Kaufen & Verkaufen',
     fr: 'Achat & vente',
