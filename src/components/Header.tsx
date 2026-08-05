@@ -17,7 +17,6 @@ import {
   Bot,
   ClipboardList,
   FileText,
-  Globe,
   Hammer,
   LayoutDashboard,
   LogOut,
@@ -35,12 +34,13 @@ import {
 } from 'lucide-react'
 import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
-import { CURRENCIES, LANGUAGES } from '../lib/types'
+import { CURRENCIES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
 import { appendLocationToPath } from '../lib/globalLocation'
 import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
 import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { HeaderLocationControl } from './HeaderLocationControl'
+import { LanguageSelector } from './LanguageSelector'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
@@ -69,7 +69,7 @@ interface Announcement {
 export function Header() {
   const {
     user, profile, currency, language,
-    setCurrency, setLanguage, signOut, t, location,
+    setCurrency, signOut, t, location,
   } = useApp()
 
   // Оновлення при навігації
@@ -454,30 +454,18 @@ export function Header() {
               <div className="hidden items-center gap-0 sm:flex">
 
                 <div ref={languageRef} className="relative">
-                  <button
-                    onClick={() => { setLanguageOpen(o => !o); setCurrencyOpen(false); setAccountOpen(false); setCategoriesOpen(false) }}
-                    type="button"
-                    className="amazon-header-lang"
-                  >
-                    <Globe className="h-4 w-4" />
-                    <span>{language.code.toUpperCase()}</span>
-                  </button>
-                  {languageOpen && (
-                    <div className={dropdownPanelClass} style={{ maxHeight: '320px', overflowY: 'auto' }}>
-                      {LANGUAGES.map(lang => (
-                        <button
-                          key={lang.code}
-                          onClick={() => { setLanguage(lang); setLanguageOpen(false) }}
-                          type="button"
-                          className={language.code === lang.code
-                            ? dropdownItemClass + ' text-[var(--accent-700)]'
-                            : dropdownItemClass}
-                        >
-                          {lang.name}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <LanguageSelector
+                    variant="header"
+                    open={languageOpen}
+                    onOpenChange={(next) => {
+                      setLanguageOpen(next)
+                      if (next) {
+                        setCurrencyOpen(false)
+                        setAccountOpen(false)
+                        setCategoriesOpen(false)
+                      }
+                    }}
+                  />
                 </div>
 
                 <div ref={accountRef} className="relative">
@@ -835,25 +823,13 @@ export function Header() {
 
                 <div className="my-3 border-t border-[var(--glass-border)]" />
 
-                {/* Мова та валюта */}
+                {/* Мова та валюта — мова = мова інтерфейсу (прапор + код), не країна */}
                 <div className="grid gap-3 rounded-[24px] bg-[rgba(255,249,243,0.74)] p-3">
                   <div>
-                    <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--ink-700)]">
-                      <Globe className="h-4 w-4" />
-                      <span>{t('header.language')}</span>
-                    </label>
-                    <select
-                      value={language.code}
-                      onChange={e => {
-                        const lang = LANGUAGES.find(l => l.code === e.target.value)
-                        if (lang) setLanguage(lang)
-                      }}
-                      className="select-glass"
-                    >
-                      {LANGUAGES.map(lang => (
-                        <option key={lang.code} value={lang.code}>{lang.name}</option>
-                      ))}
-                    </select>
+                    <p className="mb-2 text-sm font-semibold text-[var(--ink-700)]">
+                      {t('header.language')}
+                    </p>
+                    <LanguageSelector variant="menu" />
                   </div>
 
                   <div>

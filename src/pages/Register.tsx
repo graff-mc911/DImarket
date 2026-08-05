@@ -1,7 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { Building2, ChevronDown, Globe, HardHat, Loader, Megaphone, Shield, User } from 'lucide-react'
+import { Building2, ChevronDown, HardHat, Loader, Megaphone, Shield, User } from 'lucide-react'
 import { PasswordField } from '../components/PasswordField'
 import { Logo } from '../components/Logo'
+import { LanguageSelector } from '../components/LanguageSelector'
 import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
 import {
   ensureUserProfile,
@@ -13,7 +14,6 @@ import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { triggerRegistrationMarketing } from '../lib/marketing/agentApi'
-import { LANGUAGES }  from '../lib/types'
 import {
   IP_COUNTRY_MAP,
   isRegistrationCountry,
@@ -29,7 +29,7 @@ import {
 } from '../lib/adGeoCatalog'
 
 export function Register() {
-  const { t, language, setLanguage } = useApp()
+  const { t } = useApp()
 
   const ROLE_OPTIONS: {
     role: RegistrationRole
@@ -330,22 +330,7 @@ export function Register() {
           <div className="mb-4 flex items-center justify-between gap-3">
             <Logo variant="text" size="sm" />
             <div className="flex items-center gap-2">
-              <Globe className="h-4 w-4 text-[var(--ink-500)]" />
-              <select
-                value={language.code}
-                onChange={(e) => {
-                  const lang = LANGUAGES.find((l) => l.code === e.target.value)
-                  if (lang) setLanguage(lang)
-                }}
-                className="input-glass py-1 text-xs"
-                style={{ width: 'auto', minWidth: '120px' }}
-              >
-                {LANGUAGES.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.name}
-                  </option>
-                ))}
-              </select>
+              <LanguageSelector variant="menu" className="min-w-[180px]" />
             </div>
           </div>
 
