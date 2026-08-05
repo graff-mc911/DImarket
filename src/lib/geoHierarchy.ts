@@ -73,14 +73,83 @@ const PROVINCE_OVERLAY: Record<string, Record<string, Record<string, string[]>>>
   },
   Germany: {
     Hessen: {
-      Darmstadt: ['Darmstadt', 'Frankfurt'],
+      Darmstadt: ['Darmstadt'],
       Frankfurt: ['Frankfurt', 'Frankfurt am Main'],
+    },
+    Berlin: {
+      Berlin: ['Berlin'],
     },
     Hamburg: {
       Hamburg: ['Hamburg'],
     },
     Bavaria: {
       Munich: ['Munich', 'München'],
+      Nuremberg: ['Nuremberg', 'Nürnberg', 'Fürth'],
+    },
+    'North Rhine-Westphalia': {
+      Cologne: ['Cologne', 'Köln'],
+      Düsseldorf: ['Düsseldorf', 'Dusseldorf'],
+      Dortmund: ['Dortmund'],
+      Essen: ['Essen'],
+    },
+    'Baden-Württemberg': {
+      Stuttgart: ['Stuttgart'],
+    },
+    Saxony: {
+      Leipzig: ['Leipzig'],
+      Dresden: ['Dresden'],
+    },
+    'Lower Saxony': {
+      Hannover: ['Hannover', 'Hanover'],
+    },
+    Bremen: {
+      Bremen: ['Bremen'],
+    },
+  },
+  Poland: {
+    Masovian: {
+      Warsaw: ['Warsaw', 'Warszawa'],
+    },
+    'Lesser Poland': {
+      Kraków: ['Kraków', 'Krakow'],
+    },
+    'Lower Silesian': {
+      Wrocław: ['Wrocław', 'Wroclaw'],
+    },
+    Pomeranian: {
+      Gdańsk: ['Gdańsk', 'Gdansk'],
+    },
+    'Greater Poland': {
+      Poznań: ['Poznań', 'Poznan'],
+    },
+    Łódź: {
+      Łódź: ['Łódź', 'Lodz'],
+    },
+    Silesian: {
+      Katowice: ['Katowice'],
+    },
+    Lublin: {
+      Lublin: ['Lublin'],
+    },
+    'West Pomeranian': {
+      Szczecin: ['Szczecin'],
+    },
+  },
+  Ukraine: {
+    Kyiv: {
+      Kyiv: ['Kyiv', 'Kiev', 'Київ'],
+    },
+    Lviv: {
+      Lviv: ['Lviv', 'Львів'],
+    },
+    Odesa: {
+      Odesa: ['Odesa', 'Odessa', 'Одеса'],
+    },
+    Kharkiv: {
+      Kharkiv: ['Kharkiv', 'Харків'],
+    },
+    Dnipropetrovsk: {
+      Dnipro: ['Dnipro', 'Дніпро'],
     },
   },
   France: {

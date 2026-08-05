@@ -23,3 +23,6 @@ supabase/functions/.env
 /playwright/.cache/
 
 .translation-cache.json
+data/directory/.germany-avatars-tmp/
+data/directory/.poland-avatars-tmp/
+data/directory/.ukraine-avatars-tmp/

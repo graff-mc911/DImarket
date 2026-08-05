@@ -15,7 +15,7 @@ import { readFileSync, existsSync, writeFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { createClient } from '@supabase/supabase-js'
-import { randomBytes } from 'crypto'
+import { createHash } from 'crypto'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
@@ -51,7 +51,23 @@ function categorySlugForSubcategory(subSlug) {
     return 'accounting-finance'
   if (subSlug.startsWith('handyman-')) return 'handyman'
   if (subSlug.startsWith('furniture-')) return 'furniture'
-  if (subSlug.startsWith('electrical-')) return 'electrical'
+  if (
+    subSlug.startsWith('electrical-') ||
+    subSlug.startsWith('electro-') ||
+    subSlug.startsWith('smart-home')
+  )
+    return 'electro'
+  if (subSlug.startsWith('solar-')) return 'solar'
+  if (subSlug.startsWith('plumbing-')) return 'plumbing'
+  if (subSlug.startsWith('hvac-')) return 'hvac'
+  if (subSlug.startsWith('painting-') || subSlug.startsWith('wallpaper-')) return 'painting'
+  if (subSlug.startsWith('drywall-')) return 'drywall'
+  if (subSlug.startsWith('flooring-')) return 'flooring'
+  if (subSlug.startsWith('tiling-')) return 'tiling'
+  if (subSlug.startsWith('demolition-')) return 'demolition'
+  if (subSlug.startsWith('masonry-')) return 'masonry'
+  if (subSlug.startsWith('plastering-') || subSlug.startsWith('facade-') || subSlug.startsWith('insulation-'))
+    return 'construction'
   return 'construction'
 }
 
@@ -119,6 +135,20 @@ function profilePatch(biz) {
     work_subcategory_slugs: biz.work_subcategory_slugs || [],
     availability_status: 'available',
   }
+  if (biz.service_latitude != null && Number.isFinite(Number(biz.service_latitude))) {
+    patch.service_latitude = Number(biz.service_latitude)
+  }
+  if (biz.service_longitude != null && Number.isFinite(Number(biz.service_longitude))) {
+    patch.service_longitude = Number(biz.service_longitude)
+  }
+  // service_radius_km only when the column exists in production (migration may lag).
+  if (
+    process.env.DIRECTORY_IMPORT_SET_RADIUS === '1' &&
+    biz.service_radius_km != null &&
+    Number.isFinite(Number(biz.service_radius_km))
+  ) {
+    patch.service_radius_km = Number(biz.service_radius_km)
+  }
   const extras = []
   if (biz.address) extras.push(`Address: ${biz.address}`)
   if (biz.business_hours) extras.push(`Hours: ${biz.business_hours}`)
@@ -159,8 +189,31 @@ async function findExistingByWebsiteOrName(client, biz) {
 }
 
 function claimPassword(slug) {
-  // Deterministic-enough local secret for re-runs via signIn; not published.
-  return `DmDir_${slug}_${randomBytes(8).toString('hex')}!`
+  // Deterministic so re-import can signIn and refresh profile (incl. map coords).
+  const h = createHash('sha256').update(`dimarket-directory-claim:v1:${slug}`).digest('hex').slice(0, 24)
+  return `DmDir_${h}!`
+}
+
+async function trySignInAndPatch(url, anonKey, biz) {
+  const email = biz.directory_claim_email
+  const password = claimPassword(biz.slug)
+  const client = createClient(url, anonKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
+  const { data, error } = await client.auth.signInWithPassword({ email, password })
+  if (error || !data?.session?.access_token || !data?.user?.id) {
+    await client.auth.signOut().catch(() => {})
+    return null
+  }
+  const patch = profilePatch(biz)
+  const { error: upErr } = await client.from('profiles').update(patch).eq('id', data.user.id)
+  if (upErr) {
+    await client.auth.signOut().catch(() => {})
+    throw new Error(`profile update ${biz.slug}: ${upErr.message}`)
+  }
+  await syncProfessionalCategories(client, data.user.id, biz.work_subcategory_slugs)
+  await client.auth.signOut().catch(() => {})
+  return { id: data.user.id, action: 'updated_via_signin' }
 }
 
 async function ensureViaAdmin(admin, biz) {
@@ -209,8 +262,13 @@ async function ensureViaSignup(anonClient, url, anonKey, biz) {
   const email = biz.directory_claim_email
   const patch = profilePatch(biz)
 
+  // Prefer claim-account sign-in so we can refresh map coords / contacts on re-import.
+  const signedIn = await trySignInAndPatch(url, anonKey, biz)
+  if (signedIn) return signedIn
+
   const existing = await findExistingByWebsiteOrName(anonClient, biz)
   if (existing?.id) {
+    // Public profile exists but we cannot update it without the claim password/session.
     return { id: existing.id, action: 'skipped_existing_public_profile' }
   }
 
@@ -236,6 +294,8 @@ async function ensureViaSignup(anonClient, url, anonKey, biz) {
   if (signErr || !userId) {
     const msg = signErr?.message || 'signUp failed'
     if (/already|registered|exists/i.test(msg)) {
+      const again = await trySignInAndPatch(url, anonKey, biz)
+      if (again) return again
       return { id: null, action: 'exists_needs_service_role', error: msg }
     }
     throw new Error(`signUp ${biz.slug}: ${msg}`)

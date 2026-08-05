@@ -1,0 +1,145 @@
+{
+  "started_at": "2026-08-05T05:33:43.720Z",
+  "mode": "apply:anon_signup",
+  "imported": [
+    {
+      "slug": "electric-solutions-nowak-warsaw",
+      "full_name": "Electric Solutions Krzysztof Nowak",
+      "id": "ec863a50-08fa-464b-9b6b-3727feb6bfbc",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "elektryk-hydraulik-warsaw",
+      "full_name": "Elektryk Hydraulik Warszawa",
+      "id": "9f2bafd7-1bb8-4b3e-919a-20c1fb8a35b0",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "elektryk24h-warsaw",
+      "full_name": "Elektryk24h",
+      "id": "95e93673-a643-4dca-bab7-a18a3ea6a124",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "voltserwis-bando-krakow",
+      "full_name": "VoltSerwis Damian Bańdo",
+      "id": "756474d1-a698-42ab-b9cf-a42d7bfcc2cd",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "stachura-budownictwo-wroclaw",
+      "full_name": "Stachura Budownictwo",
+      "id": "9b04e576-fc42-47a5-b006-befaffb1b252",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "malt-uslugi-malarskie-wroclaw",
+      "full_name": "MALT Usługi Malarskie",
+      "id": "a67448fa-edc8-4004-83f6-a482e9a5a498",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "mo-wykonczenia-wnetrz-wroclaw",
+      "full_name": "M.O Wykończenia Wnętrz Marcin Owsianka",
+      "id": "0771ca76-7e9b-4ec9-b502-14a085b661d3",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "wojcik-uslugi-ogolnobudowlane-wroclaw",
+      "full_name": "Usługi Ogólnobudowlane Robert Wójcik",
+      "id": "1e8dbd9c-6254-4bf6-b223-e82659987b5d",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "tgm-remonty-wroclaw",
+      "full_name": "TGM Remonty Wrocław",
+      "id": "2dc233cb-ba78-43c9-b7e1-f5e90254d030",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "hydraulik-gdansk-kaminski",
+      "full_name": "Drobne Naprawy Hydrauliczne Michał Kamiński",
+      "id": "947feed1-32eb-4390-bd35-951fabbd9792",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "eltak-nobis-lodz",
+      "full_name": "Firma Eltak Andrzej Nobis",
+      "id": "e1b912f3-6437-41be-b4e1-9990cad09d8b",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "hydraulik-awarie-peczek-lodz",
+      "full_name": "Hydraulik Łódź Michał Pęczek",
+      "id": "489958ea-e67b-4ac5-9ff0-71622aacacaa",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "bf-elektryka-luczak-lodz",
+      "full_name": "B-f Elektryka Paweł Łuczak",
+      "id": "79f618f5-7bdb-45ef-89db-5ec7c826f278",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "elektryk-gda-spzoo-gdansk",
+      "full_name": "ELEKTRYK-GDA Sp. z o.o.",
+      "id": "e609d4b6-416d-443b-bde0-46ae3576e01b",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "hydraf-hydraulik-poznan",
+      "full_name": "Hydraf — Hydraulik Poznań",
+      "id": "137da278-5e58-4211-92fb-563ead6dff26",
+      "action": "created_via_signup"
+    }
+  ],
+  "failed": [],
+  "created": 15,
+  "updated": 0,
+  "linked": 0,
+  "skipped": 0,
+  "finished_at": "2026-08-05T05:34:05.628Z",
+  "totals": {
+    "attempted": 15,
+    "succeeded": 15,
+    "failed": 0,
+    "created": 15,
+    "updated": 0,
+    "linked": 0,
+    "skipped": 0,
+    "seed_summary": {
+      "businesses_ready_to_import": 15,
+      "masters": 8,
+      "companies": 7,
+      "with_map_coordinates": 15,
+      "roles": [
+        "company",
+        "professional"
+      ],
+      "categories_populated": [
+        "Construction Company",
+        "Drywall",
+        "Electrician",
+        "HVAC",
+        "Painting",
+        "Plastering",
+        "Plumbing",
+        "Renovation",
+        "Tiles"
+      ],
+      "site_category_slugs_covered": [
+        "construction",
+        "electrical"
+      ],
+      "cities_count": 6,
+      "cities": [
+        "Gdańsk",
+        "Kraków",
+        "Poznań",
+        "Warsaw",
+        "Wrocław",
+        "Łódź"
+      ]
+    }
+  }
+}
