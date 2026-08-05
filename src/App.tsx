@@ -149,8 +149,10 @@ function App() {
       case '/professionals': return <Professionals />
       case '/companies':     return <Companies />
       case '/listings':      return <Listings />
-      case '/vacancies':     return <Listings fixedCategorySlug="vacancies" />
-      case '/sell-rent':     return <Listings fixedCategorySlug="sell-rent" />
+      case '/vacancies':
+      case '/jobs':          return <Listings fixedCategorySlug="vacancies" />
+      case '/sell-rent':
+      case '/buy-sell':      return <Listings fixedCategorySlug="sell-rent" />
       case '/contact':       return <Contact />
       case '/advertise':
       case '/advertising':   return <Advertising />

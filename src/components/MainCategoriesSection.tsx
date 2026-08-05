@@ -66,9 +66,12 @@ function categorySearchText(category: ServiceCategory, languageCode: string): st
 }
 
 function professionalPath(
-  _category: ServiceCategory,
+  category: ServiceCategory,
   subcategory: ServiceSubcategory,
 ): string {
+  if (category.href) return category.href
+  if (category.slug === 'buy-sell' || subcategory.slug.startsWith('buy-sell')) return '/sell-rent'
+  if (category.slug === 'jobs' || subcategory.slug.startsWith('jobs-')) return '/vacancies'
   return servicesPath(subcategory.slug)
 }
 
@@ -161,6 +164,14 @@ export function MainCategoriesSection({
   }
 
   const handlePopularClick = (itemId: string) => {
+    if (itemId === 'buy-sell') {
+      navigateTo(appendLocationToPath('/sell-rent', location))
+      return
+    }
+    if (itemId === 'jobs') {
+      navigateTo(appendLocationToPath('/vacancies', location))
+      return
+    }
     const resolved = findServiceBySlug(itemId)
     if (resolved) {
       navigateTo(appendLocationToPath(servicesPath(resolved.subcategory.slug), location))
@@ -168,6 +179,15 @@ export function MainCategoriesSection({
     }
     const popular = popularCategorySearches.find((p) => p.id === itemId)
     if (popular) setQuery(popular.query)
+  }
+
+  const handleCategoryCardClick = (category: ServiceCategory) => {
+    // Buy & Sell / Jobs: open dedicated listing page immediately.
+    if (category.href) {
+      navigateTo(appendLocationToPath(category.href, location))
+      return
+    }
+    setExpandedId(expandedId === category.id ? null : category.id)
   }
 
   const formatCategoryStats = (category: ServiceCategory): string => {
@@ -254,7 +274,7 @@ export function MainCategoriesSection({
                   <button
                     type="button"
                     className="serviya-category-card__button"
-                    onClick={() => setExpandedId(expanded ? null : category.id)}
+                    onClick={() => handleCategoryCardClick(category)}
                     aria-expanded={expanded}
                     aria-label={`${expanded ? t('serviya.closeCategory') : t('serviya.openCategory')}: ${categoryTitle}`}
                   >
@@ -278,6 +298,18 @@ export function MainCategoriesSection({
                         transition={{ duration: 0.2, ease: 'easeOut' }}
                       >
                         <div>
+                          {category.href ? (
+                            <button
+                              type="button"
+                              className="serviya-subcategory-chip serviya-subcategory-chip--primary"
+                              onClick={() =>
+                                navigateTo(appendLocationToPath(category.href!, location))
+                              }
+                            >
+                              <span aria-hidden>{category.icon}</span>
+                              {categoryTitle}
+                            </button>
+                          ) : null}
                           {category.subcategories.map((subcategory) => (
                             <button
                               key={subcategory.id}

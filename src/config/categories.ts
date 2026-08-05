@@ -26,6 +26,8 @@ export type ServiceCategory = {
   image: string
   serviceCount: number
   subcategories: ServiceSubcategory[]
+  /** When set, chips open this path instead of /services/:slug (e.g. /sell-rent, /vacancies). */
+  href?: string
 }
 
 export const categoriesUiText = {
@@ -47,6 +49,8 @@ export const popularCategorySearches = [
   { id: 'electrician', label: { en: 'Electrician' }, query: 'Electrician' },
   { id: 'plumber', label: { en: 'Plumber' }, query: 'Plumber' },
   { id: 'renovation', label: { en: 'Renovation' }, query: 'Renovation' },
+  { id: 'buy-sell', label: { en: 'Buy & Sell' }, query: 'Buy & Sell' },
+  { id: 'jobs', label: { en: 'Jobs' }, query: 'Jobs' },
   { id: 'architect', label: { en: 'Architect' }, query: 'Architect' },
   { id: 'accountant', label: { en: 'Accountant' }, query: 'Accountant' },
   { id: 'lawyer', label: { en: 'Lawyer' }, query: 'Lawyer' },
@@ -98,6 +102,7 @@ const category = (
   title: string,
   description: string,
   subcategories: ServiceSubcategory[],
+  extras?: { href?: string },
 ): ServiceCategory => ({
   id,
   slug: id,
@@ -107,6 +112,7 @@ const category = (
   image: image(id),
   serviceCount: subcategories.length,
   subcategories,
+  href: extras?.href,
 })
 
 export const serviceCategories: ServiceCategory[] = [
@@ -199,6 +205,36 @@ export const serviceCategories: ServiceCategory[] = [
     sub('Rentals', '🚚', 'Trailer Rental'),
     sub('Rentals', '⚡', 'Generator Rental'),
   ]),
+  category(
+    'buy-sell',
+    '🛒',
+    'Buy & Sell',
+    'Marketplace for selling, buying, and renting equipment, materials, and property.',
+    [
+      sub('Buy & Sell', '🏷', 'For Sale', 'buy-sell-for-sale', 'Items and materials listed for sale.'),
+      sub('Buy & Sell', '🔍', 'Wanted', 'buy-sell-wanted', 'Wanted / looking-to-buy listings.'),
+      sub(
+        'Buy & Sell',
+        '🏗',
+        'Equipment Rental',
+        'buy-sell-equipment-rental',
+        'Construction equipment and tool rentals.',
+      ),
+      sub('Buy & Sell', '🏠', 'Property', 'buy-sell-property', 'Property sale and rental listings.'),
+    ],
+    { href: '/sell-rent' },
+  ),
+  category(
+    'jobs',
+    '💼',
+    'Jobs',
+    'Job vacancies and hiring offers across construction and home services.',
+    [
+      sub('Jobs', '📋', 'Vacancies', 'jobs-vacancies', 'Open vacancies from companies and pros.'),
+      sub('Jobs', '👷', 'Hiring Trades', 'jobs-hiring', 'Hiring electricians, plumbers, and other trades.'),
+    ],
+    { href: '/vacancies' },
+  ),
   category('automotive', '🚗', 'Automotive', 'Vehicle repair, diagnostics, towing, and tire services.', [
     sub('Automotive', '🔧', 'Auto Repair'),
     sub('Automotive', '⚡', 'Auto Electrician'),
