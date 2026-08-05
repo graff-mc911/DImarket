@@ -313,7 +313,6 @@ export function EuropeMarketplaceMap({
   useEffect(() => {
     if (!selectedId) return
     const map = mapRef.current
-    const marker = markerById.current.get(selectedId)
     const point = markers.find((m) => m.id === selectedId)
     if (!map || !point) return
     map.setView([point.lat, point.lng], Math.max(map.getZoom(), 12), { animate: true })
