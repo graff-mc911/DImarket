@@ -13,9 +13,12 @@ export function bindPathListener(listener: PathListener | null): void {
 }
 
 export function navigateTo(path: string): void {
+  const hashIndex = path.indexOf('#')
+  const hash = hashIndex >= 0 ? path.slice(hashIndex + 1) : ''
+  const pathWithoutHash = hashIndex >= 0 ? path.slice(0, hashIndex) : path
   const currentPath = `${window.location.pathname}${window.location.search}`
 
-  if (currentPath === path) {
+  if (currentPath === pathWithoutHash && !hash) {
     pathListener?.(window.location.pathname)
     return
   }
@@ -25,6 +28,17 @@ export function navigateTo(path: string): void {
 
   // Для зовнішніх слухачів (Header, Footer) та кнопки «Назад»
   window.dispatchEvent(new PopStateEvent('popstate'))
+
+  if (hash) {
+    const scrollToHash = () => {
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    requestAnimationFrame(() => {
+      scrollToHash()
+      window.setTimeout(scrollToHash, 120)
+    })
+    return
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }

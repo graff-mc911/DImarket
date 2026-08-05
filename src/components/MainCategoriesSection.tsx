@@ -102,6 +102,8 @@ export function MainCategoriesSection({
     : 'all-europe'
 
   const filtered = useMemo(() => {
+    // Intentionally no .slice() / MAX_CATEGORIES — render every serviceCategories entry
+    // (including buy-sell and jobs). Search only filters; it never caps the list.
     const q = query.trim().toLowerCase()
     if (!q) return serviceCategories
     return serviceCategories.filter((category) =>
@@ -265,7 +267,13 @@ export function MainCategoriesSection({
         <p className="serviya-categories__empty">{t('serviya.noResults')}</p>
       ) : (
         <LazyMotion features={domAnimation}>
-          <m.div className="serviya-category-grid" layout>
+          <m.div
+            className="serviya-category-grid"
+            layout
+            data-category-count={filtered.length}
+            data-includes-buy-sell={filtered.some((c) => c.id === 'buy-sell') ? '1' : '0'}
+            data-includes-jobs={filtered.some((c) => c.id === 'jobs') ? '1' : '0'}
+          >
             {filtered.map((category) => {
               const expanded = expandedId === category.id
               const categoryTitle = localizedTitle(category.title, lang, category.slug)

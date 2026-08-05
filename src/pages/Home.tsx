@@ -72,6 +72,17 @@ export function Home() {
     }
   }, [])
 
+  useEffect(() => {
+    if (loading) return
+    if (window.location.hash !== '#choose-category') return
+    const node = document.getElementById('choose-category')
+    if (!node) return
+    const timer = window.setTimeout(() => {
+      node.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 80)
+    return () => window.clearTimeout(timer)
+  }, [loading])
+
   const metrics = data?.metrics ?? EMPTY_METRICS
 
   return (
