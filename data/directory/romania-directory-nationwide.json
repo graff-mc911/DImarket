@@ -1,0 +1,756 @@
+{
+  "version": 1,
+  "generated_at": "2026-08-05T12:17:40.311Z",
+  "source": "Curated Romania-wide public masters and companies from company websites. Factual fields only; original DImarket bios; no reviews/ratings/photos copied. Includes map coordinates.",
+  "schema": {
+    "target_table": "profiles",
+    "auth_required": true,
+    "junction": "professional_categories",
+    "location_format": "City, Region, Country",
+    "map_fields": [
+      "service_latitude",
+      "service_longitude",
+      "service_radius_km"
+    ]
+  },
+  "summary": {
+    "businesses_ready_to_import": 11,
+    "masters": 3,
+    "companies": 8,
+    "with_map_coordinates": 11,
+    "roles": [
+      "company",
+      "professional"
+    ],
+    "categories_populated": [
+      "Construction Company",
+      "Electrician",
+      "HVAC",
+      "Handyman",
+      "Plumbing",
+      "Renovation"
+    ],
+    "site_category_slugs_covered": [
+      "construction",
+      "electrical",
+      "hvac"
+    ],
+    "cities_count": 5,
+    "cities": [
+      "Bucharest",
+      "Cluj-Napoca",
+      "Constanța",
+      "Iași",
+      "Timișoara"
+    ]
+  },
+  "businesses": [
+    {
+      "slug": "caseba-electric-bucharest",
+      "full_name": "Caseba Electric",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-rewiring",
+        "electro-lighting",
+        "smart-home-systems",
+        "electro-outlets"
+      ],
+      "city": "Bucharest",
+      "region": "Bucharest",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Bucharest, Bucharest, Romania",
+      "address": "Drumul Dobroești-Fundeni nr. 8-8A, Dobroești, Ilfov",
+      "phone": "+40 770 835 611",
+      "public_email": "office@casebaelectric.ro",
+      "website": "https://casebaelectric.ro/",
+      "business_hours": null,
+      "languages": [
+        "ro",
+        "en"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+caseba-electric-bucharest@users.dimarket.app",
+      "services": [
+        "ANRE-authorized electrical installations",
+        "Panel modernisation",
+        "Emergency electrical repairs",
+        "EV charger installs",
+        "Smart home and CCTV"
+      ],
+      "bio": "Bucharest / Ilfov electrician Caseba Electric (SC Caseba Com SRL) publicly listing ANRE-authorized electrical installs, panel upgrades, emergency repairs, EV chargers and smart-home / CCTV work.",
+      "service_latitude": 44.4565,
+      "service_longitude": 26.1785,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Caseba Electric — Electrician in Bucharest | DImarket",
+        "meta_description": "Find Caseba Electric in Bucharest, Romania on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Bucharest",
+          "Romania",
+          "professional",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://casebaelectric.ro/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "mestereanu-bucharest",
+      "full_name": "Meștereanu — Instalator București",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Electrician",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "electro-wiring",
+        "electro-outlets",
+        "plumbing-repair"
+      ],
+      "city": "Bucharest",
+      "region": "Bucharest",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Bucharest, Bucharest, Romania",
+      "address": null,
+      "phone": null,
+      "public_email": "contact@mestereanu.ro",
+      "website": "https://mestereanu.ro/",
+      "business_hours": "Mon–Fri 09:00–17:00",
+      "languages": [
+        "ro"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+mestereanu-bucharest@users.dimarket.app",
+      "services": [
+        "Plumbing repairs and installs",
+        "Electrical repairs",
+        "Locksmith and carpentry call-outs",
+        "General home repairs in Bucharest & Ilfov"
+      ],
+      "bio": "Bucharest home-service company Meștereanu publicly listing plumbing, electrical, locksmith and general household repairs across Bucharest and Ilfov.",
+      "service_latitude": 44.4268,
+      "service_longitude": 26.1025,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Meștereanu — Instalator București — Plumbing in Bucharest | DImarket",
+        "meta_description": "Find Meștereanu — Instalator București in Bucharest, Romania on DImarket. Request a quote for plumbing, electrician, handyman services.",
+        "keywords": [
+          "plumbing",
+          "electrician",
+          "handyman",
+          "Bucharest",
+          "Romania",
+          "company",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://mestereanu.ro/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "ceetrus-romania-bucharest",
+      "full_name": "CEETRUS ROMANIA S.R.L.",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Electrician",
+        "Plumbing",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "painting-walls",
+        "drywall-install",
+        "painting-walls",
+        "tiling-bathroom",
+        "drywall-install",
+        "electro-wiring",
+        "electro-panels",
+        "plumbing-install",
+        "hvac-heating"
+      ],
+      "city": "Bucharest",
+      "region": "Bucharest",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Bucharest, Bucharest, Romania",
+      "address": null,
+      "phone": "+40 700 295 097",
+      "public_email": "mail@ceetrusromania.com",
+      "website": "http://ceetrusromania.com/",
+      "business_hours": null,
+      "languages": [
+        "ro",
+        "en"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+ceetrus-romania-bucharest@users.dimarket.app",
+      "services": [
+        "Repair and renovation",
+        "Structural and finishing works",
+        "MEP electrical installations",
+        "Plumbing and heating"
+      ],
+      "bio": "Bucharest construction company CEETRUS ROMANIA publicly listing repair, renovation, structural works and MEP electrical / plumbing / heating installations for private and corporate clients.",
+      "service_latitude": 44.4395,
+      "service_longitude": 26.0965,
+      "service_radius_km": 45,
+      "seo": {
+        "title": "CEETRUS ROMANIA S.R.L. — Construction Company in Bucharest | DImarket",
+        "meta_description": "Find CEETRUS ROMANIA S.R.L. in Bucharest, Romania on DImarket. Request a quote for construction company, electrician, plumbing services.",
+        "keywords": [
+          "construction company",
+          "electrician",
+          "plumbing",
+          "renovation",
+          "Bucharest",
+          "Romania",
+          "company",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "http://ceetrusromania.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "cexpert-bucharest",
+      "full_name": "Construction & Electrical Xpert",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Electrician",
+        "Plumbing"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "painting-walls",
+        "drywall-install",
+        "electro-wiring",
+        "electro-panels",
+        "plumbing-install",
+        "plumbing-repair",
+        "painting-walls"
+      ],
+      "city": "Bucharest",
+      "region": "Bucharest",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Bucharest, Bucharest, Romania",
+      "address": null,
+      "phone": "+40 771 469 854",
+      "public_email": "contact@cexpert.ro",
+      "website": "https://cexpert.ro/",
+      "business_hours": "Mon–Fri 10:00–18:00",
+      "languages": [
+        "ro"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+cexpert-bucharest@users.dimarket.app",
+      "services": [
+        "Construction works",
+        "Electrical installations",
+        "Sanitary / plumbing installations",
+        "Post-renovation cleaning"
+      ],
+      "bio": "Bucharest company Construction & Electrical Xpert publicly listing construction, electrical and sanitary installations plus cleaning services.",
+      "service_latitude": 44.4125,
+      "service_longitude": 26.1185,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Construction & Electrical Xpert — Construction Company in Bucharest | DImarket",
+        "meta_description": "Find Construction & Electrical Xpert in Bucharest, Romania on DImarket. Request a quote for construction company, electrician, plumbing services.",
+        "keywords": [
+          "construction company",
+          "electrician",
+          "plumbing",
+          "Bucharest",
+          "Romania",
+          "company",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://cexpert.ro/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "anconi-group-bucharest",
+      "full_name": "Anconi Group",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC",
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "hvac-heating",
+        "hvac-ventilation",
+        "electro-wiring",
+        "electro-panels"
+      ],
+      "city": "Bucharest",
+      "region": "Bucharest",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Bucharest, Bucharest, Romania",
+      "address": null,
+      "phone": null,
+      "public_email": null,
+      "website": "https://anconigroup.ro/",
+      "business_hours": null,
+      "languages": [
+        "ro"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+anconi-group-bucharest@users.dimarket.app",
+      "services": [
+        "Sanitary installations",
+        "Thermal / heating installations",
+        "Electrical installations",
+        "Ventilation systems"
+      ],
+      "bio": "Romanian MEP contractor Anconi Group publicly listing sanitary, thermal, electrical and ventilation installation works for commercial and institutional projects.",
+      "service_latitude": 44.4485,
+      "service_longitude": 26.0855,
+      "service_radius_km": 50,
+      "seo": {
+        "title": "Anconi Group — Plumbing in Bucharest | DImarket",
+        "meta_description": "Find Anconi Group in Bucharest, Romania on DImarket. Request a quote for plumbing, hvac, electrician services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "electrician",
+          "Bucharest",
+          "Romania",
+          "company",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://anconigroup.ro/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "dris-electro-expert-cluj",
+      "full_name": "DRIS ELECTRO EXPERT — ClujElectrician",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-rewiring",
+        "smart-home-systems"
+      ],
+      "city": "Cluj-Napoca",
+      "region": "Cluj",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Cluj-Napoca, Cluj, Romania",
+      "address": null,
+      "phone": "+40 745 121 068",
+      "public_email": "office@clujelectrician.ro",
+      "website": "https://clujelectrician.ro/",
+      "business_hours": null,
+      "languages": [
+        "ro"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+dris-electro-expert-cluj@users.dimarket.app",
+      "services": [
+        "ANRE-authorized electrical design and install",
+        "Residential and commercial wiring",
+        "CCTV and access control",
+        "PRAM checks and maintenance",
+        "Emergency electrical call-outs"
+      ],
+      "bio": "Cluj-Napoca electrician DRIS ELECTRO EXPERT (ClujElectrician.ro) publicly listing ANRE-authorized electrical design, installs, CCTV/access, PRAM checks and emergency call-outs.",
+      "service_latitude": 46.7712,
+      "service_longitude": 23.6236,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "DRIS ELECTRO EXPERT — ClujElectrician — Electrician in Cluj-Napoca | DImarket",
+        "meta_description": "Find DRIS ELECTRO EXPERT — ClujElectrician in Cluj-Napoca, Romania on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Cluj-Napoca",
+          "Romania",
+          "professional",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://clujelectrician.ro/",
+        "https://clujelectrician.ro/despre-noi/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "neuron-instal-cluj",
+      "full_name": "Neuron Instal",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "smart-home-systems"
+      ],
+      "city": "Cluj-Napoca",
+      "region": "Cluj",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Cluj-Napoca, Cluj, Romania",
+      "address": "Cluj-Napoca, CJ",
+      "phone": "+40 742 924 883",
+      "public_email": "contact@neuroninstal.ro",
+      "website": "https://neuroninstal.ro/",
+      "business_hours": null,
+      "languages": [
+        "ro"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+neuron-instal-cluj@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Automation systems",
+        "New builds and renovations electrics"
+      ],
+      "bio": "Cluj-Napoca electrical company Neuron Instal publicly listing electrical installations and automation for residential and commercial projects.",
+      "service_latitude": 46.7685,
+      "service_longitude": 23.5915,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Neuron Instal — Electrician in Cluj-Napoca | DImarket",
+        "meta_description": "Find Neuron Instal in Cluj-Napoca, Romania on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Cluj-Napoca",
+          "Romania",
+          "company",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://neuroninstal.ro/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "anca-pro-instal-cluj",
+      "full_name": "ANCA Pro Instal Construct",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-outlets",
+        "electro-lighting"
+      ],
+      "city": "Cluj-Napoca",
+      "region": "Cluj",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Cluj-Napoca, Cluj, Romania",
+      "address": "Eugen Lovinescu nr. 5, Cluj-Napoca",
+      "phone": "+40 741 131 851",
+      "public_email": "contact@proinstalcluj.ro",
+      "website": "https://proinstalcluj.ro/",
+      "business_hours": "24/7",
+      "languages": [
+        "ro"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+anca-pro-instal-cluj@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Earthing and lightning protection",
+        "Electrical troubleshooting and maintenance",
+        "24/7 interventions"
+      ],
+      "bio": "Cluj-Napoca electrical company ANCA Pro Instal Construct publicly listing installations, earthing / lightning protection, troubleshooting and 24/7 interventions.",
+      "service_latitude": 46.7755,
+      "service_longitude": 23.6055,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "ANCA Pro Instal Construct — Electrician in Cluj-Napoca | DImarket",
+        "meta_description": "Find ANCA Pro Instal Construct in Cluj-Napoca, Romania on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Cluj-Napoca",
+          "Romania",
+          "company",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://proinstalcluj.ro/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "caseba-electric-timisoara-coverage",
+      "full_name": "Caseba Electric — West Romania coverage",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting"
+      ],
+      "city": "Timișoara",
+      "region": "Timiș",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Timișoara, Timiș, Romania",
+      "address": null,
+      "phone": "+40 770 835 611",
+      "public_email": "office@casebaelectric.ro",
+      "website": "https://casebaelectric.ro/",
+      "business_hours": null,
+      "languages": [
+        "ro",
+        "en"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+caseba-electric-timisoara-coverage@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Panel upgrades",
+        "Emergency electrical repairs"
+      ],
+      "bio": "West Romania electrical coverage listing for Caseba Electric publicly advertising installations, panel upgrades and emergency repairs with Timișoara service reach.",
+      "service_latitude": 45.7489,
+      "service_longitude": 21.2087,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Caseba Electric — West Romania coverage — Electrician in Timișoara | DImarket",
+        "meta_description": "Find Caseba Electric — West Romania coverage in Timișoara, Romania on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Timișoara",
+          "Romania",
+          "professional",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://casebaelectric.ro/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "ceetrus-iasi-coverage",
+      "full_name": "CEETRUS ROMANIA — Iași coverage",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Construction Company",
+        "Renovation"
+      ],
+      "work_subcategory_slugs": [
+        "masonry-partitions",
+        "painting-walls",
+        "drywall-install",
+        "painting-walls",
+        "tiling-bathroom",
+        "drywall-install",
+        "electro-wiring",
+        "plumbing-install"
+      ],
+      "city": "Iași",
+      "region": "Iași",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Iași, Iași, Romania",
+      "address": null,
+      "phone": "+40 700 295 097",
+      "public_email": "mail@ceetrusromania.com",
+      "website": "http://ceetrusromania.com/",
+      "business_hours": null,
+      "languages": [
+        "ro",
+        "en"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+ceetrus-iasi-coverage@users.dimarket.app",
+      "services": [
+        "Renovation and finishing",
+        "Electrical and plumbing MEP",
+        "Repair works"
+      ],
+      "bio": "Eastern Romania construction coverage by CEETRUS ROMANIA publicly listing renovation, repair and MEP works with Iași service reach.",
+      "service_latitude": 47.1585,
+      "service_longitude": 27.6014,
+      "service_radius_km": 45,
+      "seo": {
+        "title": "CEETRUS ROMANIA — Iași coverage — Construction Company in Iași | DImarket",
+        "meta_description": "Find CEETRUS ROMANIA — Iași coverage in Iași, Romania on DImarket. Request a quote for construction company, renovation services.",
+        "keywords": [
+          "construction company",
+          "renovation",
+          "Iași",
+          "Romania",
+          "company",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "http://ceetrusromania.com/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    },
+    {
+      "slug": "cexpert-constanta-coverage",
+      "full_name": "Construction & Electrical Xpert — Constanța",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Construction Company"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-install",
+        "masonry-partitions",
+        "painting-walls",
+        "drywall-install"
+      ],
+      "city": "Constanța",
+      "region": "Constanța",
+      "country": "Romania",
+      "country_code": "RO",
+      "location": "Constanța, Constanța, Romania",
+      "address": null,
+      "phone": "+40 744 300 393",
+      "public_email": "contact@cexpert.ro",
+      "website": "https://cexpert.ro/",
+      "business_hours": "Mon–Fri 10:00–18:00",
+      "languages": [
+        "ro"
+      ],
+      "preferred_language": "ro",
+      "directory_claim_email": "directory+cexpert-constanta-coverage@users.dimarket.app",
+      "services": [
+        "Electrical installations",
+        "Plumbing installations",
+        "Construction support"
+      ],
+      "bio": "Black Sea coast coverage by Construction & Electrical Xpert publicly listing electrical, plumbing and construction services with Constanța service reach.",
+      "service_latitude": 44.1598,
+      "service_longitude": 28.6348,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Construction & Electrical Xpert — Constanța — Electrician in Constanța | DImarket",
+        "meta_description": "Find Construction & Electrical Xpert — Constanța in Constanța, Romania on DImarket. Request a quote for electrician, plumbing, construction company services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "construction company",
+          "Constanța",
+          "Romania",
+          "company",
+          "Romania",
+          "România",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://cexpert.ro/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "romania-directory-nationwide"
+      }
+    }
+  ]
+}

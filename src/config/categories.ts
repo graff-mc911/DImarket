@@ -57,6 +57,8 @@ export const categoryLocationOptions = [
   { id: 'germany', label: { en: 'Germany' } },
   { id: 'spain', label: { en: 'Spain' } },
   { id: 'poland', label: { en: 'Poland' } },
+  { id: 'slovakia', label: { en: 'Slovakia' } },
+  { id: 'romania', label: { en: 'Romania' } },
   { id: 'france', label: { en: 'France' } },
   { id: 'italy', label: { en: 'Italy' } },
 ]

@@ -119,6 +119,20 @@ function profilePatch(biz) {
     work_subcategory_slugs: biz.work_subcategory_slugs || [],
     availability_status: 'available',
   }
+  if (biz.service_latitude != null && Number.isFinite(Number(biz.service_latitude))) {
+    patch.service_latitude = Number(biz.service_latitude)
+  }
+  if (biz.service_longitude != null && Number.isFinite(Number(biz.service_longitude))) {
+    patch.service_longitude = Number(biz.service_longitude)
+  }
+  // service_radius_km only when explicitly enabled (column may lag in some envs).
+  if (
+    process.env.DIRECTORY_IMPORT_SET_RADIUS === '1' &&
+    biz.service_radius_km != null &&
+    Number.isFinite(Number(biz.service_radius_km))
+  ) {
+    patch.service_radius_km = Number(biz.service_radius_km)
+  }
   const extras = []
   if (biz.address) extras.push(`Address: ${biz.address}`)
   if (biz.business_hours) extras.push(`Hours: ${biz.business_hours}`)
