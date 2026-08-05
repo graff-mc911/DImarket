@@ -1,0 +1,1070 @@
+{
+  "version": 1,
+  "generated_at": "2026-08-05T06:10:31.362Z",
+  "source": "Curated Ukraine-wide public masters and companies from company websites / Impressum. Factual fields only; original DImarket bios; no reviews/ratings/photos copied. Includes map coordinates.",
+  "schema": {
+    "target_table": "profiles",
+    "auth_required": true,
+    "junction": "professional_categories",
+    "location_format": "City, Region, Country",
+    "map_fields": [
+      "service_latitude",
+      "service_longitude",
+      "service_radius_km"
+    ]
+  },
+  "summary": {
+    "businesses_ready_to_import": 16,
+    "masters": 2,
+    "companies": 14,
+    "with_map_coordinates": 16,
+    "roles": [
+      "company",
+      "professional"
+    ],
+    "categories_populated": [
+      "Electrician",
+      "HVAC",
+      "Handyman",
+      "Interior Design",
+      "Painting",
+      "Plumbing",
+      "Renovation"
+    ],
+    "site_category_slugs_covered": [
+      "construction",
+      "electrical",
+      "handyman"
+    ],
+    "cities_count": 5,
+    "cities": [
+      "Dnipro",
+      "Kharkiv",
+      "Kyiv",
+      "Lviv",
+      "Odesa"
+    ]
+  },
+  "businesses": [
+    {
+      "slug": "domashnij-master-kyiv",
+      "full_name": "Домашній майстер — Київ",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-outlets",
+        "electro-lighting",
+        "plumbing-repair",
+        "plumbing-install",
+        "handyman-general"
+      ],
+      "city": "Kyiv",
+      "region": "Kyiv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Kyiv, Kyiv, Ukraine",
+      "address": null,
+      "phone": "+380 97 911 4004",
+      "public_email": "domashnyj.master@gmail.com",
+      "website": "https://domashnij-master.com.ua/",
+      "business_hours": "Daily 08:00–21:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+domashnij-master-kyiv@users.dimarket.app",
+      "services": [
+        "Electrician call-out",
+        "Plumbing repairs",
+        "Home handyman services"
+      ],
+      "bio": "Kyiv branch of Домашній майстер. Public hotline lists electrician, plumber, and home-handyman services daily 08:00–21:00 across Kyiv.",
+      "service_latitude": 50.4501,
+      "service_longitude": 30.5234,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Домашній майстер — Київ — Electrician in Kyiv | DImarket",
+        "meta_description": "Find Домашній майстер — Київ in Kyiv, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Kyiv",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://domashnij-master.com.ua/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "san-sanych-kyiv",
+      "full_name": "СанСанич — Київ",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Electrician",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "electro-wiring",
+        "electro-outlets",
+        "handyman-general"
+      ],
+      "city": "Kyiv",
+      "region": "Kyiv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Kyiv, Kyiv, Ukraine",
+      "address": null,
+      "phone": "+380 73 805 2098",
+      "public_email": null,
+      "website": "https://san-sanych.ua/",
+      "business_hours": "Daily 08:00–21:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+san-sanych-kyiv@users.dimarket.app",
+      "services": [
+        "Plumbing and sanitary works",
+        "Electrical repairs",
+        "Appliance connection",
+        "Home master call-outs"
+      ],
+      "bio": "Kyiv household repair company СанСанич publicly listing plumber, electrician, and home-master call-outs with same-day arrival windows.",
+      "service_latitude": 50.4625,
+      "service_longitude": 30.5055,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "СанСанич — Київ — Plumbing in Kyiv | DImarket",
+        "meta_description": "Find СанСанич — Київ in Kyiv, Ukraine on DImarket. Request a quote for plumbing, electrician, handyman services.",
+        "keywords": [
+          "plumbing",
+          "electrician",
+          "handyman",
+          "Kyiv",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://san-sanych.ua/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "kyivkey-remont-kyiv",
+      "full_name": "KYIVKEY",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Renovation",
+        "Electrician",
+        "Plumbing",
+        "Painting",
+        "Interior Design"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-install",
+        "painting-walls",
+        "drywall-install",
+        "tiling-bathroom",
+        "design-engineering-interior"
+      ],
+      "city": "Kyiv",
+      "region": "Kyiv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Kyiv, Kyiv, Ukraine",
+      "address": null,
+      "phone": "+380 73 350 2600",
+      "public_email": null,
+      "website": "https://kyiv-key.com/",
+      "business_hours": null,
+      "languages": [
+        "uk",
+        "ru",
+        "en"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+kyivkey-remont-kyiv@users.dimarket.app",
+      "services": [
+        "Apartment renovation turnkey",
+        "Electrical installation",
+        "Plumbing installation",
+        "Painting and finishing",
+        "Interior design projects"
+      ],
+      "bio": "Kyiv renovation company KYIVKEY publicly listing turnkey apartment renovations plus electrical, plumbing, painting, and interior design services.",
+      "service_latitude": 50.4395,
+      "service_longitude": 30.5212,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "KYIVKEY — Renovation in Kyiv | DImarket",
+        "meta_description": "Find KYIVKEY in Kyiv, Ukraine on DImarket. Request a quote for renovation, electrician, plumbing services.",
+        "keywords": [
+          "renovation",
+          "electrician",
+          "plumbing",
+          "painting",
+          "interior design",
+          "Kyiv",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://kyiv-key.com/",
+        "https://kyiv-key.com/montaj/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "rimeik-kyiv",
+      "full_name": "Римейк — Київ",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "plumbing-repair",
+        "plumbing-install",
+        "handyman-general"
+      ],
+      "city": "Kyiv",
+      "region": "Kyiv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Kyiv, Kyiv, Ukraine",
+      "address": null,
+      "phone": "+380 97 275 6987",
+      "public_email": "info@rimeik.com.ua",
+      "website": "https://rimeik.com.ua/ua",
+      "business_hours": "07:00–22:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+rimeik-kyiv@users.dimarket.app",
+      "services": [
+        "Electrician call-out",
+        "Plumbing repairs",
+        "Handyman / hour master",
+        "Appliance connection"
+      ],
+      "bio": "Kyiv branch of Римейк. Public site lists electrician, plumber, and handyman services with hotline coverage across Kyiv.",
+      "service_latitude": 50.4558,
+      "service_longitude": 30.5485,
+      "service_radius_km": 40,
+      "seo": {
+        "title": "Римейк — Київ — Electrician in Kyiv | DImarket",
+        "meta_description": "Find Римейк — Київ in Kyiv, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Kyiv",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://rimeik.com.ua/ua"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "artelektryka-lviv",
+      "full_name": "АртЕлектрика Львів",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Electrician"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-panels",
+        "electro-lighting",
+        "electro-rewiring",
+        "electro-smart-home"
+      ],
+      "city": "Lviv",
+      "region": "Lviv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Lviv, Lviv, Ukraine",
+      "address": null,
+      "phone": "+380 97 424 8482",
+      "public_email": "artelektryka@gmail.com",
+      "website": "https://artelektryka.com.ua/",
+      "business_hours": "Mon–Fri 09:00–",
+      "languages": [
+        "uk"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+artelektryka-lviv@users.dimarket.app",
+      "services": [
+        "Turnkey electrical installations",
+        "Panel and lighting work",
+        "Rewiring and modernisation"
+      ],
+      "bio": "Lviv electrical company АртЕлектрика publicly listing turnkey electrical installations, panel work, lighting, and modernisation across Lviv.",
+      "service_latitude": 49.8397,
+      "service_longitude": 24.0297,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "АртЕлектрика Львів — Electrician in Lviv | DImarket",
+        "meta_description": "Find АртЕлектрика Львів in Lviv, Ukraine on DImarket. Request a quote for electrician services.",
+        "keywords": [
+          "electrician",
+          "Lviv",
+          "Ukraine",
+          "professional",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://artelektryka.com.ua/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "maister-lviv-santehnik",
+      "full_name": "Майстер-Львів",
+      "user_role": "professional",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "plumbing-showers",
+        "hvac-heating",
+        "handyman-general"
+      ],
+      "city": "Lviv",
+      "region": "Lviv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Lviv, Lviv, Ukraine",
+      "address": null,
+      "phone": "+380 98 055 6028",
+      "public_email": null,
+      "website": "https://maister-lviv.com/",
+      "business_hours": "Mon–Sun 08:00–21:00",
+      "languages": [
+        "uk"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+maister-lviv-santehnik@users.dimarket.app",
+      "services": [
+        "Plumbing repairs",
+        "Heating works",
+        "Sanitary fixture installation",
+        "Appliance repair support"
+      ],
+      "bio": "Lviv service company Майстер-Львів publicly listing plumbing, heating, and related home-service call-outs daily 08:00–21:00.",
+      "service_latitude": 49.8326,
+      "service_longitude": 24.0155,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "Майстер-Львів — Plumbing in Lviv | DImarket",
+        "meta_description": "Find Майстер-Львів in Lviv, Ukraine on DImarket. Request a quote for plumbing, hvac, handyman services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "handyman",
+          "Lviv",
+          "Ukraine",
+          "professional",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://maister-lviv.com/santekhnik-lviv"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "rimeik-lviv",
+      "full_name": "Римейк — Львів",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "electro-lighting",
+        "plumbing-repair",
+        "handyman-general"
+      ],
+      "city": "Lviv",
+      "region": "Lviv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Lviv, Lviv, Ukraine",
+      "address": "вул. Академіка Гнатюка 11, Львів",
+      "phone": "+380 97 275 6987",
+      "public_email": "info@rimeik.com.ua",
+      "website": "https://rimeik.com.ua/ua",
+      "business_hours": "07:00–22:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+rimeik-lviv@users.dimarket.app",
+      "services": [
+        "Electrician call-out",
+        "Plumbing repairs",
+        "Handyman services"
+      ],
+      "bio": "Lviv office of Римейк at вул. Академіка Гнатюка 11. Public services cover electrician, plumber, and handyman call-outs.",
+      "service_latitude": 49.8412,
+      "service_longitude": 24.0265,
+      "service_radius_km": 30,
+      "seo": {
+        "title": "Римейк — Львів — Electrician in Lviv | DImarket",
+        "meta_description": "Find Римейк — Львів in Lviv, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Lviv",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://rimeik.com.ua/elektrik-lviv-ru"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "domashnij-master-lviv",
+      "full_name": "Домашній майстер — Львів",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-repair",
+        "handyman-general"
+      ],
+      "city": "Lviv",
+      "region": "Lviv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Lviv, Lviv, Ukraine",
+      "address": null,
+      "phone": "+380 66 911 8120",
+      "public_email": "domashnyj.master@gmail.com",
+      "website": "https://domashnij-master.com.ua/",
+      "business_hours": "Daily 08:00–21:00",
+      "languages": [
+        "uk"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+domashnij-master-lviv@users.dimarket.app",
+      "services": [
+        "Electrician",
+        "Plumber",
+        "Home handyman"
+      ],
+      "bio": "Lviv coverage of Домашній майстер. Public hotline lists electrician, plumber, and home-handyman services for Lviv.",
+      "service_latitude": 49.8455,
+      "service_longitude": 24.0355,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Домашній майстер — Львів — Electrician in Lviv | DImarket",
+        "meta_description": "Find Домашній майстер — Львів in Lviv, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Lviv",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://domashnij-master.com.ua/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "rema-service-odesa",
+      "full_name": "РЕМА СЕРВІС — Одеса",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "HVAC",
+        "Electrician",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-install",
+        "plumbing-repair",
+        "hvac-heating",
+        "electro-wiring",
+        "handyman-general"
+      ],
+      "city": "Odesa",
+      "region": "Odesa",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Odesa, Odesa, Ukraine",
+      "address": "вул. Академіка Заболотного 66, Одеса",
+      "phone": "+380 93 734 1551",
+      "public_email": null,
+      "website": "https://remaservice.od.ua/",
+      "business_hours": "Call centre 08:00–23:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+rema-service-odesa@users.dimarket.app",
+      "services": [
+        "Plumbing and heating",
+        "Bathroom works",
+        "Electrical call-outs",
+        "Home finishing support"
+      ],
+      "bio": "Odesa home-service company РЕМА СЕРВІС at вул. Академіка Заболотного 66. Public services cover plumbing, heating, electrical call-outs, and related household works.",
+      "service_latitude": 46.4485,
+      "service_longitude": 30.6855,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "РЕМА СЕРВІС — Одеса — Plumbing in Odesa | DImarket",
+        "meta_description": "Find РЕМА СЕРВІС — Одеса in Odesa, Ukraine on DImarket. Request a quote for plumbing, hvac, electrician services.",
+        "keywords": [
+          "plumbing",
+          "hvac",
+          "electrician",
+          "handyman",
+          "Odesa",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://remaservice.od.ua/",
+        "https://remaservice.od.ua/services/poslugi-santehnika/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "domashnij-master-odesa",
+      "full_name": "Домашній майстер — Одеса",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-repair",
+        "handyman-general"
+      ],
+      "city": "Odesa",
+      "region": "Odesa",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Odesa, Odesa, Ukraine",
+      "address": null,
+      "phone": "+380 97 911 4004",
+      "public_email": "domashnyj.master@gmail.com",
+      "website": "https://domashnij-master.com.ua/",
+      "business_hours": "Daily 08:00–21:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+domashnij-master-odesa@users.dimarket.app",
+      "services": [
+        "Electrician",
+        "Plumber",
+        "Home handyman"
+      ],
+      "bio": "Odesa coverage of Домашній майстер. Public hotline lists electrician, plumber, and home-handyman services for Odesa.",
+      "service_latitude": 46.4825,
+      "service_longitude": 30.7233,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Домашній майстер — Одеса — Electrician in Odesa | DImarket",
+        "meta_description": "Find Домашній майстер — Одеса in Odesa, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Odesa",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://domashnij-master.com.ua/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "rimeik-odesa",
+      "full_name": "Римейк — Одеса",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-repair",
+        "plumbing-install",
+        "handyman-general"
+      ],
+      "city": "Odesa",
+      "region": "Odesa",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Odesa, Odesa, Ukraine",
+      "address": null,
+      "phone": "+380 68 677 1970",
+      "public_email": "info@rimeik.com.ua",
+      "website": "https://rimeik.com.ua/ua",
+      "business_hours": "07:00–22:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+rimeik-odesa@users.dimarket.app",
+      "services": [
+        "Electrician call-out",
+        "Plumbing",
+        "Handyman"
+      ],
+      "bio": "Odesa branch of Римейк. Public site lists electrician, plumber, and handyman services for Odesa.",
+      "service_latitude": 46.4755,
+      "service_longitude": 30.7355,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Римейк — Одеса — Electrician in Odesa | DImarket",
+        "meta_description": "Find Римейк — Одеса in Odesa, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Odesa",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://rimeik.com.ua/ua"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "san-sanych-kharkiv",
+      "full_name": "СанСанич — Харків",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Plumbing",
+        "Electrician",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "plumbing-repair",
+        "plumbing-install",
+        "electro-wiring",
+        "handyman-general"
+      ],
+      "city": "Kharkiv",
+      "region": "Kharkiv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Kharkiv, Kharkiv, Ukraine",
+      "address": null,
+      "phone": "+380 73 805 2098",
+      "public_email": null,
+      "website": "https://san-sanych.ua/kharkiv.html",
+      "business_hours": "Daily 08:00–21:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+san-sanych-kharkiv@users.dimarket.app",
+      "services": [
+        "Plumbing",
+        "Electrical repairs",
+        "Home master call-outs"
+      ],
+      "bio": "Kharkiv branch of СанСанич. Public city page lists plumber, electrician, and home-master services across Kharkiv districts.",
+      "service_latitude": 49.9935,
+      "service_longitude": 36.2304,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "СанСанич — Харків — Plumbing in Kharkiv | DImarket",
+        "meta_description": "Find СанСанич — Харків in Kharkiv, Ukraine on DImarket. Request a quote for plumbing, electrician, handyman services.",
+        "keywords": [
+          "plumbing",
+          "electrician",
+          "handyman",
+          "Kharkiv",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://san-sanych.ua/kharkiv.html"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "domashnij-master-kharkiv",
+      "full_name": "Домашній майстер — Харків",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-repair",
+        "handyman-general"
+      ],
+      "city": "Kharkiv",
+      "region": "Kharkiv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Kharkiv, Kharkiv, Ukraine",
+      "address": null,
+      "phone": "+380 66 911 8120",
+      "public_email": "domashnyj.master@gmail.com",
+      "website": "https://domashnij-master.com.ua/",
+      "business_hours": "Daily 08:00–21:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+domashnij-master-kharkiv@users.dimarket.app",
+      "services": [
+        "Electrician",
+        "Plumber",
+        "Home handyman"
+      ],
+      "bio": "Kharkiv coverage of Домашній майстер. Public hotline lists electrician, plumber, and home-handyman services for Kharkiv.",
+      "service_latitude": 50.0055,
+      "service_longitude": 36.2455,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Домашній майстер — Харків — Electrician in Kharkiv | DImarket",
+        "meta_description": "Find Домашній майстер — Харків in Kharkiv, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Kharkiv",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://domashnij-master.com.ua/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "rimeik-kharkiv",
+      "full_name": "Римейк — Харків",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-repair",
+        "handyman-general"
+      ],
+      "city": "Kharkiv",
+      "region": "Kharkiv",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Kharkiv, Kharkiv, Ukraine",
+      "address": null,
+      "phone": "+380 97 186 5642",
+      "public_email": "info@rimeik.com.ua",
+      "website": "https://rimeik.com.ua/ua",
+      "business_hours": "07:00–22:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+rimeik-kharkiv@users.dimarket.app",
+      "services": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "bio": "Kharkiv branch of Римейк. Public multi-city directory lists electrician, plumber, and handyman services for Kharkiv.",
+      "service_latitude": 49.9805,
+      "service_longitude": 36.2525,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Римейк — Харків — Electrician in Kharkiv | DImarket",
+        "meta_description": "Find Римейк — Харків in Kharkiv, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Kharkiv",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://rimeik.com.ua/ua"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "domashnij-master-dnipro",
+      "full_name": "Домашній майстер — Дніпро",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-repair",
+        "handyman-general"
+      ],
+      "city": "Dnipro",
+      "region": "Dnipropetrovsk",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Dnipro, Dnipropetrovsk, Ukraine",
+      "address": null,
+      "phone": "+380 97 911 4004",
+      "public_email": "domashnyj.master@gmail.com",
+      "website": "https://domashnij-master.com.ua/",
+      "business_hours": "Daily 08:00–21:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+domashnij-master-dnipro@users.dimarket.app",
+      "services": [
+        "Electrician",
+        "Plumber",
+        "Home handyman"
+      ],
+      "bio": "Dnipro coverage of Домашній майстер. Public hotline lists electrician, plumber, and home-handyman services for Dnipro.",
+      "service_latitude": 48.4647,
+      "service_longitude": 35.0462,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Домашній майстер — Дніпро — Electrician in Dnipro | DImarket",
+        "meta_description": "Find Домашній майстер — Дніпро in Dnipro, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Dnipro",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://domashnij-master.com.ua/"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    },
+    {
+      "slug": "rimeik-dnipro",
+      "full_name": "Римейк — Дніпро",
+      "user_role": "company",
+      "is_professional": true,
+      "categories": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "work_subcategory_slugs": [
+        "electro-wiring",
+        "plumbing-repair",
+        "handyman-general"
+      ],
+      "city": "Dnipro",
+      "region": "Dnipropetrovsk",
+      "country": "Ukraine",
+      "country_code": "UA",
+      "location": "Dnipro, Dnipropetrovsk, Ukraine",
+      "address": null,
+      "phone": "+380 68 677 1970",
+      "public_email": "info@rimeik.com.ua",
+      "website": "https://rimeik.com.ua/ua",
+      "business_hours": "07:00–22:00",
+      "languages": [
+        "uk",
+        "ru"
+      ],
+      "preferred_language": "uk",
+      "directory_claim_email": "directory+rimeik-dnipro@users.dimarket.app",
+      "services": [
+        "Electrician",
+        "Plumbing",
+        "Handyman"
+      ],
+      "bio": "Dnipro branch of Римейк. Public multi-city directory lists electrician, plumber, and handyman services for Dnipro.",
+      "service_latitude": 48.4755,
+      "service_longitude": 35.0285,
+      "service_radius_km": 35,
+      "seo": {
+        "title": "Римейк — Дніпро — Electrician in Dnipro | DImarket",
+        "meta_description": "Find Римейк — Дніпро in Dnipro, Ukraine on DImarket. Request a quote for electrician, plumbing, handyman services.",
+        "keywords": [
+          "electrician",
+          "plumbing",
+          "handyman",
+          "Dnipro",
+          "Ukraine",
+          "company",
+          "Ukraine",
+          "DImarket"
+        ]
+      },
+      "sources": [
+        "https://rimeik.com.ua/ua"
+      ],
+      "import": {
+        "claimable": true,
+        "source": "ukraine-directory-nationwide"
+      }
+    }
+  ]
+}

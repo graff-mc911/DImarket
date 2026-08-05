@@ -2,13 +2,15 @@
  * Public directory avatars hosted on DImarket Supabase Storage (ad-media).
  * Used when profile_photo / avatar_url are still empty (RLS blocks anon profile updates).
  * Prefer DB fields once service-role backfill has run.
- * Poland entries are original generated art (initials) — not third-party photos.
+ * Ukraine entries are original generated art (initials) — not third-party photos.
  */
 export const DIRECTORY_AVATAR_BY_PROFILE_ID: Record<string, string> = {
   '0000b137-1ab4-48d6-8c8a-8d8f1f5d0f5f':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/0000b137-1ab4-48d6-8c8a-8d8f1f5d0f5f/avatar.jpeg',
   '0771ca76-7e9b-4ec9-b502-14a085b661d3':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/0771ca76-7e9b-4ec9-b502-14a085b661d3/avatar.jpeg',
+  '09adc71b-ba08-4ff5-8508-43e6d11bfbd6':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/09adc71b-ba08-4ff5-8508-43e6d11bfbd6/avatar.jpeg',
   '0f8d834b-a8cb-4582-b3f2-ed4957f9118f':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/0f8d834b-a8cb-4582-b3f2-ed4957f9118f/avatar.jpeg',
   '137da278-5e58-4211-92fb-563ead6dff26':
@@ -31,6 +33,10 @@ export const DIRECTORY_AVATAR_BY_PROFILE_ID: Record<string, string> = {
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/358eb5f3-d7f9-4228-9b21-4d1c4f2ab3b0/avatar.jpeg',
   '37c6f253-06cb-42ca-9d72-ab8e49d51e13':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/37c6f253-06cb-42ca-9d72-ab8e49d51e13/avatar.jpeg',
+  '3944e717-d65d-4886-b9e6-93be691dad71':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/3944e717-d65d-4886-b9e6-93be691dad71/avatar.jpeg',
+  '3c01420c-faec-41dc-870c-68f4449fe5e3':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/3c01420c-faec-41dc-870c-68f4449fe5e3/avatar.jpeg',
   '41e720df-5d2d-4fb7-b77a-78d87b4eeab2':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/41e720df-5d2d-4fb7-b77a-78d87b4eeab2/avatar.jpeg',
   '489958ea-e67b-4ac5-9ff0-71622aacacaa':
@@ -45,10 +51,14 @@ export const DIRECTORY_AVATAR_BY_PROFILE_ID: Record<string, string> = {
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/5bcb0ccd-7ff9-4d53-927a-7d721b0f4df3/avatar.jpeg',
   '5fafcffa-2591-4c48-abfc-392e79c2b7ad':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/5fafcffa-2591-4c48-abfc-392e79c2b7ad/avatar.jpeg',
+  '63126c2c-53c2-4448-9a31-455c45004d25':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/63126c2c-53c2-4448-9a31-455c45004d25/avatar.jpeg',
   '64499076-6d49-4e81-8373-a234aaaab964':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/64499076-6d49-4e81-8373-a234aaaab964/avatar.jpeg',
   '6484548b-a5ec-443a-87de-af18543f2834':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/6484548b-a5ec-443a-87de-af18543f2834/avatar.jpeg',
+  '64e7d2ff-0d84-4bd1-ba79-7fb29eaf635f':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/64e7d2ff-0d84-4bd1-ba79-7fb29eaf635f/avatar.jpeg',
   '6b8e25c0-e4e1-407f-933a-f48f334ef4ad':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/6b8e25c0-e4e1-407f-933a-f48f334ef4ad/avatar.jpeg',
   '6d6517d5-565a-40a7-9f80-6f8d9b9c03cf':
@@ -59,14 +69,26 @@ export const DIRECTORY_AVATAR_BY_PROFILE_ID: Record<string, string> = {
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/74d22af9-67ea-4dbf-baae-7640d638ea7d/avatar.jpeg',
   '756474d1-a698-42ab-b9cf-a42d7bfcc2cd':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/756474d1-a698-42ab-b9cf-a42d7bfcc2cd/avatar.jpeg',
+  '761e04a6-a727-4839-9862-f725402950d9':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/761e04a6-a727-4839-9862-f725402950d9/avatar.jpeg',
   '79f618f5-7bdb-45ef-89db-5ec7c826f278':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/79f618f5-7bdb-45ef-89db-5ec7c826f278/avatar.jpeg',
   '7b21cd37-4495-4dfc-9a0b-6d07dfe03b9f':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/7b21cd37-4495-4dfc-9a0b-6d07dfe03b9f/avatar.jpeg',
+  '7e1bec0e-c81b-409e-abc7-49017f34aaff':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/7e1bec0e-c81b-409e-abc7-49017f34aaff/avatar.jpeg',
+  '83ac72f9-f65e-437f-baed-293b13aebed4':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/83ac72f9-f65e-437f-baed-293b13aebed4/avatar.jpeg',
+  '83f1886e-57c6-47d5-a989-7cbb02b7ef83':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/83f1886e-57c6-47d5-a989-7cbb02b7ef83/avatar.jpeg',
+  '87cc99c4-c85b-4f17-bd5c-4f8d7f11e568':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/87cc99c4-c85b-4f17-bd5c-4f8d7f11e568/avatar.jpeg',
   '89ccac50-eded-47be-9426-ae6087bd16da':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/89ccac50-eded-47be-9426-ae6087bd16da/avatar.jpeg',
   '8afd890a-2ea0-40d3-9ad1-675799aae2ca':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/8afd890a-2ea0-40d3-9ad1-675799aae2ca/avatar.jpeg',
+  '93ec17e3-77cf-4205-9dee-d0abb3a96fce':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/93ec17e3-77cf-4205-9dee-d0abb3a96fce/avatar.jpeg',
   '947feed1-32eb-4390-bd35-951fabbd9792':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/947feed1-32eb-4390-bd35-951fabbd9792/avatar.jpeg',
   '95e93673-a643-4dca-bab7-a18a3ea6a124':
@@ -77,6 +99,8 @@ export const DIRECTORY_AVATAR_BY_PROFILE_ID: Record<string, string> = {
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/9b04e576-fc42-47a5-b006-befaffb1b252/avatar.jpeg',
   '9c241aa8-b6a7-4f1c-b22d-455e7b6e9941':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/9c241aa8-b6a7-4f1c-b22d-455e7b6e9941/avatar.jpeg',
+  '9c644620-34b9-42a1-be17-214f5224049d':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/9c644620-34b9-42a1-be17-214f5224049d/avatar.jpeg',
   '9f2bafd7-1bb8-4b3e-919a-20c1fb8a35b0':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/9f2bafd7-1bb8-4b3e-919a-20c1fb8a35b0/avatar.jpeg',
   'a04fbbfc-f65a-49c4-8a9e-24bebad7f787':
@@ -95,12 +119,18 @@ export const DIRECTORY_AVATAR_BY_PROFILE_ID: Record<string, string> = {
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/b232929a-eefe-4d47-9862-9dd5acaa56bb/avatar.jpeg',
   'b2a7e44d-128a-4cf3-9906-097efa8a7c8b':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/b2a7e44d-128a-4cf3-9906-097efa8a7c8b/avatar.png',
+  'bb7ea519-28de-4774-85df-bedfbc1abb6a':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/bb7ea519-28de-4774-85df-bedfbc1abb6a/avatar.jpeg',
   'c8fe9419-9049-4a14-a440-38c44ae7be51':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/c8fe9419-9049-4a14-a440-38c44ae7be51/avatar.jpeg',
   'd66cd1b7-49a7-4602-80f9-e22f00c674f5':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/d66cd1b7-49a7-4602-80f9-e22f00c674f5/avatar.jpeg',
+  'd67be8dc-dec4-42de-8eec-3e8f06ae66e1':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/d67be8dc-dec4-42de-8eec-3e8f06ae66e1/avatar.jpeg',
   'd72561fd-8ee5-4b4c-9390-3ba341ec5022':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/d72561fd-8ee5-4b4c-9390-3ba341ec5022/avatar.jpeg',
+  'd790a279-c133-42cb-8b36-e507b9f96f2e':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/d790a279-c133-42cb-8b36-e507b9f96f2e/avatar.jpeg',
   'e1b912f3-6437-41be-b4e1-9990cad09d8b':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/e1b912f3-6437-41be-b4e1-9990cad09d8b/avatar.jpeg',
   'e609d4b6-416d-443b-bde0-46ae3576e01b':
@@ -117,6 +147,8 @@ export const DIRECTORY_AVATAR_BY_PROFILE_ID: Record<string, string> = {
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/f7d7ad33-733a-4531-ae57-0ccd9e01392e/avatar.jpeg',
   'fc2519f7-3bea-43c3-a9d6-d9a0b7c52bc7':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/fc2519f7-3bea-43c3-a9d6-d9a0b7c52bc7/avatar.jpeg',
+  'fc27833c-9f57-44fb-aaa7-992cdf97cb0f':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/fc27833c-9f57-44fb-aaa7-992cdf97cb0f/avatar.jpeg',
 }
 
 export function resolveDirectoryAvatarUrl(

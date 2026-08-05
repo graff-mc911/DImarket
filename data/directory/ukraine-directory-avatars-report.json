@@ -1,0 +1,146 @@
+[
+  {
+    "name": "Домашній майстер — Київ",
+    "slug": "domashnij-master-kyiv",
+    "id": "7e1bec0e-c81b-409e-abc7-49017f34aaff",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/7e1bec0e-c81b-409e-abc7-49017f34aaff/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15112,
+    "patched": true
+  },
+  {
+    "name": "СанСанич — Київ",
+    "slug": "san-sanych-kyiv",
+    "id": "3944e717-d65d-4886-b9e6-93be691dad71",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/3944e717-d65d-4886-b9e6-93be691dad71/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15153,
+    "patched": true
+  },
+  {
+    "name": "KYIVKEY",
+    "slug": "kyivkey-remont-kyiv",
+    "id": "761e04a6-a727-4839-9862-f725402950d9",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/761e04a6-a727-4839-9862-f725402950d9/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15173,
+    "patched": true
+  },
+  {
+    "name": "Римейк — Київ",
+    "slug": "rimeik-kyiv",
+    "id": "93ec17e3-77cf-4205-9dee-d0abb3a96fce",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/93ec17e3-77cf-4205-9dee-d0abb3a96fce/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15267,
+    "patched": true
+  },
+  {
+    "name": "АртЕлектрика Львів",
+    "slug": "artelektryka-lviv",
+    "id": "d790a279-c133-42cb-8b36-e507b9f96f2e",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/d790a279-c133-42cb-8b36-e507b9f96f2e/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14950,
+    "patched": true
+  },
+  {
+    "name": "Майстер-Львів",
+    "slug": "maister-lviv-santehnik",
+    "id": "09adc71b-ba08-4ff5-8508-43e6d11bfbd6",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/09adc71b-ba08-4ff5-8508-43e6d11bfbd6/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14967,
+    "patched": true
+  },
+  {
+    "name": "Римейк — Львів",
+    "slug": "rimeik-lviv",
+    "id": "63126c2c-53c2-4448-9a31-455c45004d25",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/63126c2c-53c2-4448-9a31-455c45004d25/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15183,
+    "patched": true
+  },
+  {
+    "name": "Домашній майстер — Львів",
+    "slug": "domashnij-master-lviv",
+    "id": "d67be8dc-dec4-42de-8eec-3e8f06ae66e1",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/d67be8dc-dec4-42de-8eec-3e8f06ae66e1/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 14992,
+    "patched": true
+  },
+  {
+    "name": "РЕМА СЕРВІС — Одеса",
+    "slug": "rema-service-odesa",
+    "id": "64e7d2ff-0d84-4bd1-ba79-7fb29eaf635f",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/64e7d2ff-0d84-4bd1-ba79-7fb29eaf635f/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15085,
+    "patched": true
+  },
+  {
+    "name": "Домашній майстер — Одеса",
+    "slug": "domashnij-master-odesa",
+    "id": "fc27833c-9f57-44fb-aaa7-992cdf97cb0f",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/fc27833c-9f57-44fb-aaa7-992cdf97cb0f/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15294,
+    "patched": true
+  },
+  {
+    "name": "Римейк — Одеса",
+    "slug": "rimeik-odesa",
+    "id": "3c01420c-faec-41dc-870c-68f4449fe5e3",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/3c01420c-faec-41dc-870c-68f4449fe5e3/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15430,
+    "patched": true
+  },
+  {
+    "name": "СанСанич — Харків",
+    "slug": "san-sanych-kharkiv",
+    "id": "9c644620-34b9-42a1-be17-214f5224049d",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/9c644620-34b9-42a1-be17-214f5224049d/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15231,
+    "patched": true
+  },
+  {
+    "name": "Домашній майстер — Харків",
+    "slug": "domashnij-master-kharkiv",
+    "id": "87cc99c4-c85b-4f17-bd5c-4f8d7f11e568",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/87cc99c4-c85b-4f17-bd5c-4f8d7f11e568/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15171,
+    "patched": true
+  },
+  {
+    "name": "Римейк — Харків",
+    "slug": "rimeik-kharkiv",
+    "id": "83f1886e-57c6-47d5-a989-7cbb02b7ef83",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/83f1886e-57c6-47d5-a989-7cbb02b7ef83/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15267,
+    "patched": true
+  },
+  {
+    "name": "Домашній майстер — Дніпро",
+    "slug": "domashnij-master-dnipro",
+    "id": "bb7ea519-28de-4774-85df-bedfbc1abb6a",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/bb7ea519-28de-4774-85df-bedfbc1abb6a/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15339,
+    "patched": true
+  },
+  {
+    "name": "Римейк — Дніпро",
+    "slug": "rimeik-dnipro",
+    "id": "83ac72f9-f65e-437f-baed-293b13aebed4",
+    "final_photo": "https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/83ac72f9-f65e-437f-baed-293b13aebed4/avatar.jpeg",
+    "mode": "generated+storage",
+    "bytes": 15301,
+    "patched": true
+  }
+]

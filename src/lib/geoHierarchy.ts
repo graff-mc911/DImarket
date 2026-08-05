@@ -135,6 +135,23 @@ const PROVINCE_OVERLAY: Record<string, Record<string, Record<string, string[]>>>
       Szczecin: ['Szczecin'],
     },
   },
+  Ukraine: {
+    Kyiv: {
+      Kyiv: ['Kyiv', 'Kiev', 'Київ'],
+    },
+    Lviv: {
+      Lviv: ['Lviv', 'Львів'],
+    },
+    Odesa: {
+      Odesa: ['Odesa', 'Odessa', 'Одеса'],
+    },
+    Kharkiv: {
+      Kharkiv: ['Kharkiv', 'Харків'],
+    },
+    Dnipropetrovsk: {
+      Dnipro: ['Dnipro', 'Дніпро'],
+    },
+  },
   France: {
     'Île-de-France': {
       Paris: ['Paris', 'Versailles'],
