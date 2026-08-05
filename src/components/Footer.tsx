@@ -1,11 +1,17 @@
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { fetchHomepageMetrics, type HomeMetrics } from '../lib/homeMarketplace'
+import {
+  languageDisplayCode,
+  languageOptionLabel,
+  type AppLanguage,
+} from '../lib/languageDisplay'
 import { navigateTo } from '../lib/navigation'
 import { LANGUAGES } from '../lib/types'
 import { FooterStats } from './FooterStats'
 import { HomeDownloadApp } from './home/HomeDownloadApp'
+import { LanguageFlag } from './LanguageFlag'
 
 export function Footer() {
   const { t, user, language, setLanguage } = useApp()
@@ -73,8 +79,12 @@ export function Footer() {
     },
   ]
 
-  const primaryLangs = LANGUAGES.filter((l) =>
-    ['en', 'uk', 'ru', 'de', 'pl', 'es', 'fr', 'it'].includes(l.code),
+  const primaryLangs = useMemo(
+    () =>
+      LANGUAGES.filter((l) =>
+        ['en', 'uk', 'ru', 'de', 'pl', 'es', 'fr', 'it'].includes(l.code),
+      ) as AppLanguage[],
+    [],
   )
 
   return (
@@ -136,21 +146,24 @@ export function Footer() {
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#aeb4bc]">
                 {t('footer.languages')}
               </p>
-              <div className="flex flex-wrap gap-2">
-                {primaryLangs.map((lang) => (
-                  <button
-                    key={lang.code}
-                    type="button"
-                    onClick={() => setLanguage(lang)}
-                    className={`rounded-full border px-2.5 py-1 text-xs transition ${
-                      language.code === lang.code
-                        ? 'border-[#ff9900] text-[#ff9900]'
-                        : 'border-[#3a4553] text-[#c9cdd3] hover:border-[#ff9900] hover:text-[#ff9900]'
-                    }`}
-                  >
-                    {lang.name}
-                  </button>
-                ))}
+              <div className="flex flex-wrap gap-2" role="group" aria-label={t('footer.languages')}>
+                {primaryLangs.map((lang) => {
+                  const selected = language.code === lang.code
+                  return (
+                    <button
+                      key={lang.code}
+                      type="button"
+                      onClick={() => setLanguage(lang)}
+                      aria-pressed={selected}
+                      aria-label={languageOptionLabel(lang)}
+                      className={`lang-footer-chip ${selected ? 'is-selected' : ''}`}
+                    >
+                      <LanguageFlag languageCode={lang.code} size={20} />
+                      <span className="lang-footer-chip__code">{languageDisplayCode(lang.code)}</span>
+                      <span className="lang-footer-chip__name">{lang.name}</span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 

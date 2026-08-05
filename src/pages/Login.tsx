@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { Globe, LogIn } from 'lucide-react'
+import { LogIn } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
-import { LANGUAGES } from '../lib/types'
 import { PasswordField } from '../components/PasswordField'
+import { LanguageSelector } from '../components/LanguageSelector'
 import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
 import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
 export function Login() {
-  const { t, language, setLanguage } = useApp()
+  const { t } = useApp()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -58,23 +58,8 @@ export function Login() {
       <div className="mx-auto flex max-w-md items-center justify-center">
         <div className="w-full">
           <div className="glass-panel p-6 md:p-8">
-            <div className="mb-4 flex items-center justify-end gap-2">
-              <Globe className="h-4 w-4 text-[var(--ink-500)]" />
-              <select
-                value={language.code}
-                onChange={e => {
-                  const lang = LANGUAGES.find(l => l.code === e.target.value)
-                  if (lang) setLanguage(lang)
-                }}
-                className="select-glass py-1 text-xs"
-                style={{ width: 'auto', minWidth: '120px' }}
-              >
-                {LANGUAGES.map(lang => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.name}
-                  </option>
-                ))}
-              </select>
+            <div className="mb-4 flex items-center justify-end">
+              <LanguageSelector variant="menu" className="w-full max-w-[220px]" />
             </div>
 
             <div className="text-center">

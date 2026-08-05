@@ -20,6 +20,10 @@ import { changeUserPassword, userHasEmailPassword } from '../lib/changePassword'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
+import {
+  languageDisplayCode,
+  languageFlagEmoji,
+} from '../lib/languageDisplay'
 import { CategorySubcategoryPicker } from '../components/CategorySubcategoryPicker'
 import { OnboardingChecklist } from '../components/OnboardingChecklist'
 import { ReferralPanel } from '../components/ReferralPanel'
@@ -105,6 +109,14 @@ export function Settings() {
       /* ignore */
     }
   }, [user])
+
+  useEffect(() => {
+    setPreferredLanguage(language.code)
+  }, [language.code])
+
+  useEffect(() => {
+    setPreferredCurrency(currency.code)
+  }, [currency.code])
 
   const resetProfileForm = () => {
     setFullName('')
@@ -744,7 +756,8 @@ export function Settings() {
                         >
                           {LANGUAGES.map((item) => (
                             <option key={item.code} value={item.code}>
-                              {item.name}
+                              {languageFlagEmoji(item.code)} {item.name} —{' '}
+                              {languageDisplayCode(item.code)}
                             </option>
                           ))}
                         </select>
