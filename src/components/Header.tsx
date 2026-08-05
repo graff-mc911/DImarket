@@ -199,9 +199,21 @@ export function Header() {
   }
 
   const isSiteOwner  = profile?.is_site_owner === true || isOwnerEmail(user?.email)
-  const accountGreeting = user && profile?.full_name
-    ? profile.full_name.split(' ')[0]
-    : t('header.signIn')
+  const accountDisplayName = (() => {
+    if (!user) return ''
+    const fromProfile = profile?.full_name?.trim()
+    if (fromProfile) return fromProfile.split(/\s+/)[0]
+    const metaName =
+      typeof user.user_metadata?.full_name === 'string'
+        ? user.user_metadata.full_name.trim()
+        : ''
+    if (metaName) return metaName.split(/\s+/)[0]
+    const emailLocal = user.email?.split('@')[0]?.trim()
+    if (emailLocal) return emailLocal
+    return t('header.account')
+  })()
+  const accountGreeting = user ? accountDisplayName : t('header.signIn')
+  const isLoggedIn = Boolean(user)
 
   // Навігаційні пункти
   const navItems: NavItem[] = [
@@ -471,7 +483,7 @@ export function Header() {
                 <div ref={accountRef} className="relative">
                   <button
                     onClick={() => {
-                      if (user && profile) {
+                      if (isLoggedIn) {
                         setAccountOpen(o => !o)
                         setLanguageOpen(false)
                         setCurrencyOpen(false)
@@ -482,14 +494,22 @@ export function Header() {
                     }}
                     type="button"
                     className="amazon-header-block"
+                    aria-label={
+                      isLoggedIn
+                        ? `${t('header.hello')}, ${accountGreeting}`
+                        : `${t('header.hello')}, ${t('header.signIn')}`
+                    }
+                    aria-expanded={isLoggedIn ? accountOpen : undefined}
                   >
                     <span className="amazon-header-block__top">
-                      {user ? `${t('header.hello')}, ${accountGreeting}` : `${t('header.hello')}, ${t('header.signIn')}`}
+                      {isLoggedIn
+                        ? `${t('header.hello')}, ${accountGreeting}`
+                        : `${t('header.hello')}, ${t('header.signIn')}`}
                     </span>
                     <span className="amazon-header-block__bottom">{t('header.accountLists')}</span>
                   </button>
 
-                  {user && profile && accountOpen && (
+                  {isLoggedIn && accountOpen && (
                     <div className={dropdownPanelClass}>
                       <button onClick={() => goTo('/profile')} type="button" className={dropdownItemClass}>
                         <User className="mr-2 inline h-4 w-4" />
@@ -586,7 +606,7 @@ export function Header() {
                           </button>
                         </>
                       )}
-                      {user && profile && (
+                      {isLoggedIn && (
                         <>
                           <div className="my-1 border-t border-[#e7e7e7]" />
                           <button
@@ -632,10 +652,17 @@ export function Header() {
                 {user ? <NotificationCenter /> : null}
                 <button
                   type="button"
-                  onClick={() => goTo(user ? '/profile' : '/login')}
+                  onClick={() => goTo(isLoggedIn ? '/profile' : '/login')}
                   className="amazon-header-block px-1 py-0.5"
+                  aria-label={
+                    isLoggedIn
+                      ? `${t('header.hello')}, ${accountGreeting}`
+                      : `${t('header.hello')}, ${t('header.signIn')}`
+                  }
                 >
-                  <span className="amazon-header-block__top text-[10px]">{t('header.signIn')}</span>
+                  <span className="amazon-header-block__top text-[10px]">
+                    {isLoggedIn ? accountGreeting : t('header.signIn')}
+                  </span>
                   <span className="amazon-header-block__bottom text-xs">{t('header.account')}</span>
                 </button>
 
@@ -851,11 +878,11 @@ export function Header() {
                   </div>
                 </div>
 
-                {user && profile ? (
+                {isLoggedIn ? (
                   <div className="mt-3 grid gap-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]">
                     <button onClick={() => goTo('/profile')} type="button" className={mobileNavItemClass}>
                       <User className="h-5 w-5" />
-                      <span>{t('header.myProfile')}</span>
+                      <span>{accountGreeting}</span>
                     </button>
 
                     {!(profile?.user_role === 'professional' ||

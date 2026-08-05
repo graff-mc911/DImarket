@@ -19,6 +19,7 @@ import {
 } from '../../lib/portfolioMediaUpload'
 import { PortfolioMasonry } from './PortfolioMasonry'
 import { PROJECT_TRADES } from '../../lib/projectWizard'
+import { useApp } from '../../contexts/AppContext'
 
 const field =
   'w-full rounded-xl border border-[#d2d2d7] bg-[#fafafa] px-3 py-2.5 text-[14px] text-[#1d1d1f] outline-none focus:border-[#1d1d1f] focus:bg-white'
@@ -36,6 +37,7 @@ export function PortfolioManager({
   editable = false,
   highlightItemId = null,
 }: Props) {
+  const { t } = useApp()
   const [items, setItems] = useState<PortfolioItemRow[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')

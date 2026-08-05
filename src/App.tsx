@@ -71,6 +71,7 @@ import {
   isReservedAppPath,
   SEO_SERVICE_ALIASES,
 } from './lib/serviceTaxonomy'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { parseGeoServicePath } from './lib/geoSearch'
 
 function App() {
@@ -201,11 +202,21 @@ function App() {
     <AppProvider>
       <PaidAdsProvider>
         <div className="app-shell min-h-screen flex flex-col">
-          <Header />
+          <ErrorBoundary name="Header">
+            <Header />
+          </ErrorBoundary>
           <main className="flex-1">
-            <PageWithSideAds>{getPage()}</PageWithSideAds>
+            <ErrorBoundary
+              name="Page"
+              fallbackTitle="This page could not be loaded"
+              fallbackMessage="Please try again or go back to the home page. Your account session is still safe."
+            >
+              <PageWithSideAds>{getPage()}</PageWithSideAds>
+            </ErrorBoundary>
           </main>
-          <Footer />
+          <ErrorBoundary name="Footer">
+            <Footer />
+          </ErrorBoundary>
           <AiChatWidget />
         </div>
       </PaidAdsProvider>

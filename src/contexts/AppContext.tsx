@@ -21,6 +21,8 @@ import {
 interface AppContextType {
   user: User | null
   profile: Profile | null
+  /** True after first getSession + profile sync attempt finishes */
+  authReady: boolean
   currency: typeof CURRENCIES[number]
   language: typeof LANGUAGES[number]
   /** Single source of truth for search location across the app */
@@ -30,6 +32,7 @@ interface AppContextType {
   setLocation: (next: GeoSearchState) => void
   patchLocation: (partial: Partial<GeoSearchState>) => void
   clearLocation: () => void
+  refreshProfile: () => Promise<Profile | null>
   signOut: () => Promise<void>
   t: (key: TranslationKey) => string
 }
@@ -39,6 +42,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined)
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [authReady, setAuthReady] = useState(false)
   const [currency, setCurrency] = useState<typeof CURRENCIES[number]>(() => {
     const saved = localStorage.getItem('dimarket_currency')
     return CURRENCIES.find((c) => c.code === saved) ?? CURRENCIES[0]
@@ -48,6 +52,88 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return LANGUAGES.find((l) => l.code === saved) ?? LANGUAGES[0]
   })
   const [location, setLocationState] = useState<GeoSearchState>(() => initializeGlobalLocation())
+
+  const syncProfile = useCallback(async (authUser: User, redirectAfterOAuth: boolean) => {
+    let resolved = await ensureUserProfile(authUser)
+
+    if (!resolved) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authUser.id)
+        .maybeSingle()
+      resolved = data ?? null
+    }
+
+    // Fallback display profile so Header never looks logged-out while row is missing
+    if (!resolved) {
+      const meta = authUser.user_metadata ?? {}
+      const fallbackName =
+        (typeof meta.full_name === 'string' && meta.full_name.trim()) ||
+        authUser.email?.split('@')[0] ||
+        'User'
+      resolved = {
+        id: authUser.id,
+        full_name: fallbackName,
+        bio: null,
+        phone: typeof meta.phone === 'string' ? meta.phone : null,
+        location: typeof meta.location === 'string' ? meta.location : null,
+        avatar_url: null,
+        profile_photo: null,
+        website: null,
+        user_role: 'client',
+        is_professional: false,
+        is_site_owner: false,
+        rating: 0,
+        total_reviews: 0,
+        client_rating: null,
+        client_total_reviews: null,
+        is_verified: false,
+        verified_at: null,
+        verification_level: 'none',
+        email_verified_at: null,
+        phone_verified_at: null,
+        is_premium: false,
+        premium_expires_at: null,
+        is_featured: false,
+        featured_expires_at: null,
+        plan_id: null,
+        stripe_customer_id: null,
+        stripe_subscription_id: null,
+        subscription_status: null,
+        subscription_period_end: null,
+        lead_credits: null,
+        support_tier: null,
+        profile_views: null,
+        response_rate: null,
+        portfolio_images: null,
+        notifications_enabled: null,
+        preferred_language: null,
+        preferred_currency: null,
+        work_subcategory_slugs: [],
+        completed_jobs: 0,
+        languages: [],
+        availability_status: 'available',
+        service_latitude: null,
+        service_longitude: null,
+        service_radius_km: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      } as Profile
+    }
+
+    setProfile(resolved)
+
+    if (redirectAfterOAuth && resolved) {
+      const path = getPostLoginPath(resolved, {
+        intendedRole: getIntendedRole(resolved, authUser),
+      })
+      window.history.replaceState({}, '', path)
+      navigateTo(path)
+    }
+
+    return resolved
+  }, [])
 
   useEffect(() => {
     const savedCurrency = localStorage.getItem('dimarket_currency')
@@ -65,28 +151,51 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     registerVisitOncePerSession()
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    let cancelled = false
+
+    const bootstrap = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (cancelled) return
+
       setUser(session?.user ?? null)
 
       if (session?.user) {
-        void syncProfile(session.user, false)
+        await syncProfile(session.user, false)
+      } else {
+        setProfile(null)
       }
-    })
+
+      if (!cancelled) setAuthReady(true)
+    }
+
+    void bootstrap()
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null)
+      // Defer Supabase client calls — sync work inside the callback deadlocks auth.
+      setTimeout(() => {
+        if (cancelled) return
+        setUser(session?.user ?? null)
 
-      if (session?.user) {
-        void syncProfile(session.user, event === 'SIGNED_IN' && isOAuthCallbackUrl())
-      } else {
-        setProfile(null)
-      }
+        if (session?.user) {
+          void syncProfile(session.user, event === 'SIGNED_IN' && isOAuthCallbackUrl()).finally(
+            () => {
+              if (!cancelled) setAuthReady(true)
+            },
+          )
+        } else {
+          setProfile(null)
+          setAuthReady(true)
+        }
+      }, 0)
     })
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => {
+      cancelled = true
+      subscription.unsubscribe()
+    }
+  }, [syncProfile])
 
   useEffect(() => {
     document.documentElement.lang = language.code
@@ -137,28 +246,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const syncProfile = async (authUser: User, redirectAfterOAuth: boolean) => {
-    let resolved = await ensureUserProfile(authUser)
-
-    if (!resolved) {
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', authUser.id)
-        .maybeSingle()
-      resolved = data ?? null
+  const refreshProfile = useCallback(async () => {
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (!authUser) {
+      setUser(null)
+      setProfile(null)
+      return null
     }
-
-    if (resolved) setProfile(resolved)
-
-    if (redirectAfterOAuth && resolved) {
-      const path = getPostLoginPath(resolved, {
-        intendedRole: getIntendedRole(resolved, authUser),
-      })
-      window.history.replaceState({}, '', path)
-      navigateTo(path)
-    }
-  }
+    setUser(authUser)
+    return syncProfile(authUser, false)
+  }, [syncProfile])
 
   const handleSetCurrency = (newCurrency: typeof CURRENCIES[number]) => {
     setCurrency(newCurrency)
@@ -197,6 +294,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         profile,
+        authReady,
         currency,
         language,
         location,
@@ -205,6 +303,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setLocation,
         patchLocation,
         clearLocation,
+        refreshProfile,
         signOut,
         t,
       }}

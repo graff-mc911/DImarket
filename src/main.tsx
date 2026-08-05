@@ -5,6 +5,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { applyAdSlotCssVars } from './lib/adSlotCssVars'
 import './index.css'
 
@@ -20,6 +21,12 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
-  </StrictMode>
+    <ErrorBoundary
+      name="Root"
+      fallbackTitle="DImarket could not start"
+      fallbackMessage="Please reload the page. If the problem continues, try again later."
+    >
+      <App />
+    </ErrorBoundary>
+  </StrictMode>,
 )
