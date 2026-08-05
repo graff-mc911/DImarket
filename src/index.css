@@ -4860,6 +4860,31 @@
   border: 2px solid #fff;
 }
 
+.home-map-pin.is-online {
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.35), 0 6px 14px rgba(0, 0, 0, 0.22);
+}
+
+.map-explore-fullscreen .dimarket-map__canvas,
+.map-explore-fullscreen.home-map .home-map__canvas {
+  min-height: min(70vh, 720px);
+}
+
+.dimarket-map-popup__online {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.map-results-sidebar {
+  min-height: 280px;
+}
+
 .home-map-popup-list {
   margin: 0.4rem 0 0;
   padding-left: 1.1rem;

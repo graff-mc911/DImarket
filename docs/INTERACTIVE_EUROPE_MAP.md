@@ -1,0 +1,47 @@
+# Interactive Europe Map — DImarket (original implementation)
+
+## Goal
+Interactive Europe map UX for professionals, companies, projects, marketplace and jobs — built on DImarket architecture (Leaflet + OSM + Supabase). No third-party site code or design was copied.
+
+## Architecture
+- **Page:** `src/pages/MapExplore.tsx` — filters, Map/List/Both toggle, global location binding
+- **Map:** `src/components/map/EuropeMarketplaceMap.tsx` — Leaflet, custom grid clustering, popups, bounds events, selection sync
+- **Sidebar:** `src/components/map/MapResultsSidebar.tsx` — synchronized results list
+- **Data:** `src/lib/marketplaceMap.ts` — fetch, filter, cache, distances, kind colors
+
+## Marker kinds (DB-backed only)
+| Kind | Color | Source |
+|------|-------|--------|
+| Professional | Green `#16a34a` | `profiles` professional + coords |
+| Company | Blue `#2563eb` | `profiles` company + coords |
+| Project | Orange `#ea580c` | `listings` service_request |
+| Job | Purple `#7c3aed` | listings under vacancies / job heuristics |
+| Marketplace | Brown `#92400e` | `item_sale` / `item_wanted` / sell-rent |
+
+## Synchronization
+- Header / AppContext geo → map center + radius filter
+- Search + category filters → markers + sidebar + counters
+- Map move → optional viewport-only filter
+- Sidebar select → map pan + popup
+- Marker click → sidebar highlight
+
+## Performance
+- Session cache (~90s) for marker payload
+- Client-side filter (no full reload)
+- Zoom-aware clustering
+- Lazy images in popups/sidebar
+- Incremental listing queries in parallel
+
+## Routes (existing DImarket)
+- Professionals/companies → `/professional/:id`
+- Projects/jobs/marketplace → `/listing/:id`
+
+## Verification
+- [x] Build passes
+- [x] Kind filters + legend
+- [x] Map / List / Both toggle preserves filters
+- [x] Global location sync
+- [x] Clustering + popups
+- [x] Sidebar sync
+- [ ] Live GPS via existing GeoSearchFilters control
+- [ ] Dense production coords depend on profiles/listings having lat/lng

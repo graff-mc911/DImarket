@@ -4,6 +4,9 @@ import 'leaflet/dist/leaflet.css'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import {
+  formatMapDistance,
+  MAP_KIND_COLORS,
+  MAP_KIND_GLYPH,
   mapFocusFromGeo,
   type MarketplaceMapMarker,
   type MapMarkerKind,
@@ -18,13 +21,17 @@ type Cluster = {
   points: MarketplaceMapMarker[]
 }
 
+export type MapBounds = { south: number; west: number; north: number; east: number }
+
 interface EuropeMarketplaceMapProps {
   markers: MarketplaceMapMarker[]
   geo: GeoSearchState
   loading?: boolean
   className?: string
-  /** When true, fit/pan to global location focus */
   followLocation?: boolean
+  selectedId?: string | null
+  onSelectMarker?: (id: string | null) => void
+  onBoundsChange?: (bounds: MapBounds) => void
 }
 
 function clusterCellForZoom(zoom: number): number {
@@ -53,23 +60,20 @@ function clusterPoints(points: MarketplaceMapMarker[], cell: number): Cluster[] 
 }
 
 function kindGlyph(kind: MapMarkerKind | 'mixed'): string {
-  if (kind === 'professional') return 'M'
-  if (kind === 'company') return 'C'
-  if (kind === 'project') return 'P'
-  return '+'
+  return MAP_KIND_GLYPH[kind]
 }
 
-function kindColor(kind: MapMarkerKind | 'mixed'): string {
-  if (kind === 'professional') return '#1a2330'
-  if (kind === 'company') return '#2f6fed'
-  if (kind === 'project') return '#c96d2c'
-  return '#ff9900'
+function kindColor(kind: MapMarkerKind | 'mixed', online?: boolean): string {
+  if (kind === 'professional' && online) return '#16a34a'
+  if (kind === 'professional' && !online) return '#15803d'
+  return MAP_KIND_COLORS[kind]
 }
 
-function markerHtml(count: number, kind: MapMarkerKind | 'mixed'): string {
-  const color = kindColor(kind)
+function markerHtml(count: number, kind: MapMarkerKind | 'mixed', online?: boolean): string {
+  const color = kindColor(kind, online)
   const label = count > 1 ? String(count) : kindGlyph(kind)
-  return `<span class="home-map-pin dimarket-map-pin" style="--pin:${color}" title="${kind}">${label}</span>`
+  const pulse = count === 1 && kind === 'professional' && online ? ' is-online' : ''
+  return `<span class="home-map-pin dimarket-map-pin${pulse}" style="--pin:${color}" title="${kind}">${label}</span>`
 }
 
 function escapeHtml(value: string): string {
@@ -80,10 +84,17 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;')
 }
 
+function ctaLabel(m: MarketplaceMapMarker, t: (k: string) => string): string {
+  if (m.kind === 'project') return t('mapExplore.viewProject')
+  if (m.kind === 'job') return t('mapExplore.viewJob')
+  if (m.kind === 'marketplace') return t('mapExplore.viewListing')
+  return t('mapExplore.viewProfile')
+}
+
 function popupHtml(m: MarketplaceMapMarker, t: (k: string) => string): string {
   const photo = m.photoUrl
-    ? `<img class="dimarket-map-popup__photo" src="${escapeHtml(m.photoUrl)}" alt="" width="56" height="56" />`
-    : `<span class="dimarket-map-popup__photo dimarket-map-popup__photo--placeholder">${kindGlyph(m.kind)}</span>`
+    ? `<img class="dimarket-map-popup__photo" src="${escapeHtml(m.photoUrl)}" alt="" width="56" height="56" loading="lazy" />`
+    : `<span class="dimarket-map-popup__photo dimarket-map-popup__photo--placeholder" style="background:${kindColor(m.kind, m.online)}">${kindGlyph(m.kind)}</span>`
 
   const rating =
     m.rating != null && m.rating > 0
@@ -94,43 +105,51 @@ function popupHtml(m: MarketplaceMapMarker, t: (k: string) => string): string {
     ? `<span class="dimarket-map-popup__badge">${escapeHtml(t('mapExplore.verified'))}</span>`
     : ''
 
+  const online =
+    m.kind === 'professional' && m.online
+      ? `<span class="dimarket-map-popup__online">${escapeHtml(t('mapExplore.online'))}</span>`
+      : ''
+
   const place = [m.city, m.country].filter(Boolean).join(', ')
-  const cta =
-    m.kind === 'project'
-      ? t('mapExplore.viewProject')
-      : t('mapExplore.viewProfile')
+  const dist = formatMapDistance(m.distanceKm)
+  const distHtml = dist
+    ? `<div class="dimarket-map-popup__place">${escapeHtml(dist)} · ${escapeHtml(t('mapExplore.distance'))}</div>`
+    : ''
 
   const extra =
-    m.kind === 'project'
+    m.kind === 'project' || m.kind === 'job' || m.kind === 'marketplace'
       ? [
-          m.category ? `<div>${escapeHtml(m.category)}</div>` : '',
+          m.subtitle ? `<div>${escapeHtml(m.subtitle)}</div>` : '',
           m.budgetLabel ? `<div>${escapeHtml(m.budgetLabel)}</div>` : '',
           m.status ? `<div>${escapeHtml(m.status)}</div>` : '',
+          m.description ? `<p>${escapeHtml(m.description)}</p>` : '',
         ].join('')
       : [
           m.subtitle ? `<div>${escapeHtml(m.subtitle)}</div>` : '',
           m.description ? `<p>${escapeHtml(m.description)}</p>` : '',
+          m.availability ? `<div>${escapeHtml(m.availability)}</div>` : '',
         ].join('')
 
   return `
-    <div class="dimarket-map-popup">
+    <div class="dimarket-map-popup" data-marker-id="${escapeHtml(m.id)}">
       <div class="dimarket-map-popup__head">
         ${photo}
         <div>
           <strong>${escapeHtml(m.title)}</strong>
-          <div class="dimarket-map-popup__meta">${rating}${verified}</div>
+          <div class="dimarket-map-popup__meta">${rating}${verified}${online}</div>
           ${place ? `<div class="dimarket-map-popup__place">${escapeHtml(place)}</div>` : ''}
+          ${distHtml}
         </div>
       </div>
       <div class="dimarket-map-popup__body">${extra}</div>
-      <a class="dimarket-map-popup__cta" data-path="${escapeHtml(m.path)}" href="${escapeHtml(m.path)}">${escapeHtml(cta)}</a>
+      <a class="dimarket-map-popup__cta" data-path="${escapeHtml(m.path)}" href="${escapeHtml(m.path)}">${escapeHtml(ctaLabel(m, t))}</a>
     </div>
   `
 }
 
 /**
  * Full-page Europe marketplace map (Leaflet + OSM).
- * Zoom-aware clustering; rich popups; syncs focus with global location.
+ * Original DImarket implementation — zoom clustering, rich popups, location sync.
  */
 export function EuropeMarketplaceMap({
   markers,
@@ -138,11 +157,15 @@ export function EuropeMarketplaceMap({
   loading,
   className = '',
   followLocation = true,
+  selectedId = null,
+  onSelectMarker,
+  onBoundsChange,
 }: EuropeMarketplaceMapProps) {
   const { t } = useApp()
   const mapEl = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
   const layerRef = useRef<L.LayerGroup | null>(null)
+  const markerById = useRef<Map<string, L.Marker>>(new Map())
   const zoomRef = useRef(4)
 
   useEffect(() => {
@@ -151,6 +174,8 @@ export function EuropeMarketplaceMap({
       center: [50.1, 10.5],
       zoom: 4,
       scrollWheelZoom: true,
+      touchZoom: true,
+      dragging: true,
       attributionControl: true,
     })
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -160,16 +185,37 @@ export function EuropeMarketplaceMap({
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
     zoomRef.current = map.getZoom()
+
+    const emitBounds = () => {
+      const b = map.getBounds()
+      onBoundsChange?.({
+        south: b.getSouth(),
+        west: b.getWest(),
+        north: b.getNorth(),
+        east: b.getEast(),
+      })
+    }
+
     map.on('zoomend', () => {
       zoomRef.current = map.getZoom()
+      emitBounds()
     })
-    window.setTimeout(() => map.invalidateSize(), 80)
+    map.on('moveend', emitBounds)
+    window.setTimeout(() => {
+      map.invalidateSize()
+      emitBounds()
+    }, 80)
 
     return () => {
+      map.off('zoomend')
+      map.off('moveend')
       map.remove()
       mapRef.current = null
       layerRef.current = null
+      markerById.current.clear()
     }
+    // onBoundsChange identity intentionally omitted — parent should stabilize via useCallback
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const clusters = useMemo(() => {
@@ -177,7 +223,6 @@ export function EuropeMarketplaceMap({
     return clusterPoints(markers, cell)
   }, [markers])
 
-  // Re-render markers when clusters/markers change; also on zoom to re-cluster
   useEffect(() => {
     const map = mapRef.current
     const layer = layerRef.current
@@ -185,6 +230,7 @@ export function EuropeMarketplaceMap({
 
     const render = () => {
       layer.clearLayers()
+      markerById.current.clear()
       const cell = clusterCellForZoom(map.getZoom())
       const nextClusters = clusterPoints(markers, cell)
 
@@ -192,19 +238,23 @@ export function EuropeMarketplaceMap({
         const kinds = new Set(cluster.points.map((p) => p.kind))
         const kind: MapMarkerKind | 'mixed' =
           kinds.size === 1 ? cluster.points[0].kind : 'mixed'
+        const online = cluster.points.length === 1 && cluster.points[0].online
         const icon = L.divIcon({
           className: 'home-map-marker',
-          html: markerHtml(cluster.points.length, kind),
+          html: markerHtml(cluster.points.length, kind, online),
           iconSize: [36, 36],
           iconAnchor: [18, 18],
         })
         const marker = L.marker([cluster.lat, cluster.lng], { icon })
 
         if (cluster.points.length === 1) {
-          marker.bindPopup(popupHtml(cluster.points[0], t as (k: string) => string), {
-            maxWidth: 280,
+          const point = cluster.points[0]
+          markerById.current.set(point.id, marker)
+          marker.bindPopup(popupHtml(point, t as (k: string) => string), {
+            maxWidth: 300,
             className: 'dimarket-map-popup-wrap',
           })
+          marker.on('click', () => onSelectMarker?.(point.id))
         } else {
           marker.on('click', () => {
             map.setView([cluster.lat, cluster.lng], Math.min(map.getZoom() + 2, 16), {
@@ -215,14 +265,14 @@ export function EuropeMarketplaceMap({
             .slice(0, 8)
             .map(
               (p) =>
-                `<li><a data-path="${escapeHtml(p.path)}" href="${escapeHtml(p.path)}">${escapeHtml(p.title)}</a> <em>${escapeHtml(p.kind)}</em></li>`,
+                `<li><a data-path="${escapeHtml(p.path)}" data-marker-id="${escapeHtml(p.id)}" href="${escapeHtml(p.path)}">${escapeHtml(p.title)}</a> <em>${escapeHtml(p.kind)}</em></li>`,
             )
             .join('')
           marker.bindPopup(
             `<strong>${cluster.points.length} ${escapeHtml(t('homePremium.mapNearby'))}</strong>
              <ul class="home-map-popup-list">${list}</ul>
              <button type="button" class="dimarket-map-zoom" data-zoom="1">${escapeHtml(t('mapExplore.zoomCluster'))}</button>`,
-            { maxWidth: 280 },
+            { maxWidth: 300 },
           )
         }
 
@@ -232,6 +282,8 @@ export function EuropeMarketplaceMap({
             a.addEventListener('click', (ev) => {
               ev.preventDefault()
               const path = (a as HTMLAnchorElement).getAttribute('data-path')
+              const mid = (a as HTMLAnchorElement).getAttribute('data-marker-id')
+              if (mid) onSelectMarker?.(mid)
               if (path) navigateTo(path)
             })
           })
@@ -255,9 +307,21 @@ export function EuropeMarketplaceMap({
     return () => {
       map.off('zoomend', render)
     }
-  }, [markers, clusters, t])
+  }, [markers, clusters, t, onSelectMarker])
 
-  // Sync map focus with global location
+  // Open popup when sidebar selects a marker
+  useEffect(() => {
+    if (!selectedId) return
+    const map = mapRef.current
+    const marker = markerById.current.get(selectedId)
+    const point = markers.find((m) => m.id === selectedId)
+    if (!map || !point) return
+    map.setView([point.lat, point.lng], Math.max(map.getZoom(), 12), { animate: true })
+    window.setTimeout(() => {
+      markerById.current.get(selectedId)?.openPopup()
+    }, 280)
+  }, [selectedId, markers])
+
   useEffect(() => {
     const map = mapRef.current
     if (!map || !followLocation) return
@@ -286,7 +350,7 @@ export function EuropeMarketplaceMap({
     const map = mapRef.current
     if (!map) return
     window.setTimeout(() => map.invalidateSize(), 60)
-  }, [markers.length, loading])
+  }, [markers.length, loading, className])
 
   return (
     <div className={`home-map dimarket-map ${className}`.trim()}>

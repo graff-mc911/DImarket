@@ -1,5 +1,5 @@
 /**
- * Marketplace map data: professionals, companies, projects with coordinates.
+ * Marketplace map data: professionals, companies, projects, marketplace & jobs.
  * Loaded live from Supabase — never hardcoded for production markers.
  */
 
@@ -14,8 +14,14 @@ import {
   excludeSuppressedFromQuery,
   filterSuppressedListings,
 } from './suppressedListings'
+import { haversineKm } from './projectFeed'
 
-export type MapMarkerKind = 'professional' | 'company' | 'project'
+export type MapMarkerKind =
+  | 'professional'
+  | 'company'
+  | 'project'
+  | 'marketplace'
+  | 'job'
 
 export type MarketplaceMapMarker = {
   id: string
@@ -32,16 +38,19 @@ export type MarketplaceMapMarker = {
   budgetLabel: string
   status: string
   availability: string
+  /** True when professional signals available / online-ready */
+  online: boolean
   lat: number
   lng: number
   path: string
-  /** Fields for geo / taxonomy matching */
   location: string | null
   service_latitude: number | null
   service_longitude: number | null
   service_radius_km: number | null
   work_subcategory_slugs: string[] | null
   user_role: string | null
+  listingType: string | null
+  distanceKm: number | null
 }
 
 export type MapExploreFilters = {
@@ -63,6 +72,27 @@ export const EMPTY_MAP_FILTERS: MapExploreFilters = {
   minRating: 0,
   availableOnly: false,
 }
+
+export const MAP_KIND_COLORS: Record<MapMarkerKind | 'mixed', string> = {
+  professional: '#16a34a', // green — master / online-capable
+  company: '#2563eb', // blue
+  project: '#ea580c', // orange — active project
+  job: '#7c3aed', // purple — vacancy
+  marketplace: '#92400e', // brown — shop / manufacturer listing
+  mixed: '#ff9900',
+}
+
+export const MAP_KIND_GLYPH: Record<MapMarkerKind | 'mixed', string> = {
+  professional: 'P',
+  company: 'C',
+  project: 'J',
+  job: 'V',
+  marketplace: 'S',
+  mixed: '+',
+}
+
+const CACHE_KEY = 'dimarket_map_markers_v2'
+const CACHE_TTL_MS = 90_000
 
 type ProfileRow = {
   id: string
@@ -97,6 +127,9 @@ type ListingRow = {
   status: string | null
   budget_min: number | null
   budget_max: number | null
+  price: number | null
+  currency: string | null
+  listing_type: string | null
   category?: { name?: string | null; slug?: string | null } | null
 }
 
@@ -124,7 +157,13 @@ function categoryLabel(p: ProfileRow): string {
 }
 
 function budgetLabel(l: ListingRow): string {
-  if (l.budget_min == null && l.budget_max == null) return ''
+  if (l.budget_min == null && l.budget_max == null) {
+    if (l.price != null) {
+      const cur = l.currency === 'EUR' || !l.currency ? '€' : `${l.currency} `
+      return `${cur}${Math.round(l.price).toLocaleString()}`
+    }
+    return ''
+  }
   if (l.budget_min != null && l.budget_max != null) {
     return `€${l.budget_min} – €${l.budget_max}`
   }
@@ -132,11 +171,26 @@ function budgetLabel(l: ListingRow): string {
   return `up to €${l.budget_max}`
 }
 
+function isJobListing(l: ListingRow): boolean {
+  const slug = (l.category?.slug || '').toLowerCase()
+  if (slug === 'vacancies' || slug.startsWith('vacancies-') || slug.includes('job')) return true
+  if (l.listing_type === 'service_offer' && /vacanc|job|hire|hiring/i.test(`${l.title} ${l.description}`))
+    return true
+  return false
+}
+
+function isMarketplaceListing(l: ListingRow): boolean {
+  if (l.listing_type === 'item_sale' || l.listing_type === 'item_wanted') return true
+  const slug = (l.category?.slug || '').toLowerCase()
+  return slug === 'sell-rent' || slug.startsWith('sell-rent') || slug === 'furniture'
+}
+
 function toProfileMarker(p: ProfileRow, kind: 'professional' | 'company'): MarketplaceMapMarker | null {
   const lat = p.service_latitude
   const lng = p.service_longitude
   if (lat == null || lng == null || !Number.isFinite(lat) || !Number.isFinite(lng)) return null
   const parts = formatLocationParts(p.location)
+  const availability = p.availability_status || ''
   return {
     id: `${kind}-${p.id}`,
     kind,
@@ -150,8 +204,9 @@ function toProfileMarker(p: ProfileRow, kind: 'professional' | 'company'): Marke
     photoUrl: resolveDirectoryAvatarUrl(p.id, p.profile_photo, p.avatar_url),
     category: categoryLabel(p),
     budgetLabel: '',
-    status: p.availability_status || '',
-    availability: p.availability_status || '',
+    status: availability,
+    availability,
+    online: availability === 'available' || availability === 'online',
     lat,
     lng,
     path: `/professional/${p.id}`,
@@ -161,19 +216,30 @@ function toProfileMarker(p: ProfileRow, kind: 'professional' | 'company'): Marke
     service_radius_km: p.service_radius_km,
     work_subcategory_slugs: p.work_subcategory_slugs,
     user_role: p.user_role,
+    listingType: null,
+    distanceKm: null,
   }
 }
 
-function toProjectMarker(l: ListingRow): MarketplaceMapMarker | null {
+function toListingMarker(
+  l: ListingRow,
+  kind: 'project' | 'marketplace' | 'job',
+): MarketplaceMapMarker | null {
   const lat = l.latitude
   const lng = l.longitude
   if (lat == null || lng == null || !Number.isFinite(lat) || !Number.isFinite(lng)) return null
   const parts = formatLocationParts(l.location || l.city_name)
+  const path = `/listing/${l.id}`
   return {
-    id: `project-${l.id}`,
-    kind: 'project',
+    id: `${kind}-${l.id}`,
+    kind,
     title: l.title,
-    subtitle: l.category?.name || 'Project',
+    subtitle:
+      kind === 'job'
+        ? l.category?.name || 'Job'
+        : kind === 'marketplace'
+          ? l.category?.name || 'Marketplace'
+          : l.category?.name || 'Project',
     description: truncate(l.description || ''),
     city: l.city_name || parts.city,
     country: l.country_name || parts.country,
@@ -184,22 +250,59 @@ function toProjectMarker(l: ListingRow): MarketplaceMapMarker | null {
     budgetLabel: budgetLabel(l),
     status: l.status || 'active',
     availability: '',
+    online: false,
     lat,
     lng,
-    path: `/listing/${l.id}`,
+    path,
     location: [l.city_name, l.location, l.country_name].filter(Boolean).join(', '),
     service_latitude: lat,
     service_longitude: lng,
     service_radius_km: null,
     work_subcategory_slugs: l.category?.slug ? [l.category.slug] : null,
     user_role: null,
+    listingType: l.listing_type,
+    distanceKm: null,
+  }
+}
+
+function readCache(): MarketplaceMapMarker[] | null {
+  try {
+    const raw = sessionStorage.getItem(CACHE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { at: number; markers: MarketplaceMapMarker[] }
+    if (Date.now() - parsed.at > CACHE_TTL_MS) return null
+    return parsed.markers
+  } catch {
+    return null
+  }
+}
+
+function writeCache(markers: MarketplaceMapMarker[]) {
+  try {
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), markers }))
+  } catch {
+    /* ignore quota */
   }
 }
 
 /** Fetch live markers from DB. New records with coords appear automatically. */
-export async function fetchMarketplaceMapMarkers(limit = 250): Promise<MarketplaceMapMarker[]> {
-  const half = Math.ceil(limit / 2)
-  const [prosRes, companiesRes, projectsRes] = await Promise.all([
+export async function fetchMarketplaceMapMarkers(
+  limit = 400,
+  opts?: { bypassCache?: boolean },
+): Promise<MarketplaceMapMarker[]> {
+  if (!opts?.bypassCache) {
+    const cached = readCache()
+    if (cached?.length) return cached
+  }
+
+  const slice = Math.ceil(limit / 4)
+  const listingSelect = `
+    id, title, description, city_name, location, country_name,
+    latitude, longitude, status, budget_min, budget_max, price, currency, listing_type,
+    category:categories(name, slug)
+  `
+
+  const [prosRes, companiesRes, projectsRes, marketRes, moreListingsRes] = await Promise.all([
     supabase
       .from('profiles')
       .select(
@@ -215,7 +318,7 @@ export async function fetchMarketplaceMapMarkers(limit = 250): Promise<Marketpla
       .not('service_latitude', 'is', null)
       .not('service_longitude', 'is', null)
       .order('rating', { ascending: false })
-      .limit(half),
+      .limit(slice),
     supabase
       .from('profiles')
       .select(
@@ -231,40 +334,84 @@ export async function fetchMarketplaceMapMarkers(limit = 250): Promise<Marketpla
       .not('service_latitude', 'is', null)
       .not('service_longitude', 'is', null)
       .order('rating', { ascending: false })
-      .limit(Math.ceil(half / 2)),
+      .limit(Math.ceil(slice / 2)),
     excludeSuppressedFromQuery(
       supabase
         .from('listings')
-        .select(
-          `
-        id, title, description, city_name, location, country_name,
-        latitude, longitude, status, budget_min, budget_max,
-        category:categories(name, slug)
-      `,
-        )
+        .select(listingSelect)
         .eq('listing_type', 'service_request')
         .eq('status', 'active')
         .not('latitude', 'is', null)
         .not('longitude', 'is', null)
         .order('created_at', { ascending: false })
-        .limit(half),
+        .limit(slice),
+    ),
+    excludeSuppressedFromQuery(
+      supabase
+        .from('listings')
+        .select(listingSelect)
+        .in('listing_type', ['item_sale', 'item_wanted'])
+        .eq('status', 'active')
+        .not('latitude', 'is', null)
+        .not('longitude', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(slice),
+    ),
+    // Broader active listings to catch vacancies / sell-rent categorized rows
+    excludeSuppressedFromQuery(
+      supabase
+        .from('listings')
+        .select(listingSelect)
+        .eq('status', 'active')
+        .not('latitude', 'is', null)
+        .not('longitude', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(slice),
     ),
   ])
 
   const markers: MarketplaceMapMarker[] = []
+  const seen = new Set<string>()
+
+  const push = (m: MarketplaceMapMarker | null) => {
+    if (!m || seen.has(m.id)) return
+    seen.add(m.id)
+    markers.push(m)
+  }
+
   for (const p of (prosRes.data as ProfileRow[] | null) ?? []) {
-    const m = toProfileMarker(p, 'professional')
-    if (m) markers.push(m)
+    push(toProfileMarker(p, 'professional'))
   }
   for (const p of (companiesRes.data as ProfileRow[] | null) ?? []) {
-    const m = toProfileMarker(p, 'company')
-    if (m) markers.push(m)
+    push(toProfileMarker(p, 'company'))
   }
   for (const l of filterSuppressedListings((projectsRes.data as ListingRow[] | null) ?? [])) {
-    const m = toProjectMarker(l)
-    if (m) markers.push(m)
+    push(toListingMarker(l, 'project'))
   }
+  for (const l of filterSuppressedListings((marketRes.data as ListingRow[] | null) ?? [])) {
+    push(toListingMarker(l, 'marketplace'))
+  }
+  for (const l of filterSuppressedListings((moreListingsRes.data as ListingRow[] | null) ?? [])) {
+    if (isJobListing(l)) push(toListingMarker(l, 'job'))
+    else if (isMarketplaceListing(l)) push(toListingMarker(l, 'marketplace'))
+    else if (l.listing_type === 'service_request') push(toListingMarker(l, 'project'))
+  }
+
+  writeCache(markers)
   return markers
+}
+
+export function attachDistances(
+  markers: MarketplaceMapMarker[],
+  origin: { lat: number; lon: number } | null,
+): MarketplaceMapMarker[] {
+  if (!origin) {
+    return markers.map((m) => ({ ...m, distanceKm: null }))
+  }
+  return markers.map((m) => ({
+    ...m,
+    distanceKm: haversineKm(origin, { lat: m.lat, lon: m.lng }),
+  }))
 }
 
 export function filterMapMarkers(
@@ -278,6 +425,7 @@ export function filterMapMarkers(
     : filters.subcategorySlug
       ? resolveServiceQuery(filters.subcategorySlug)
       : []
+  const q = filters.serviceQuery.trim().toLowerCase()
 
   return markers.filter((m) => {
     if (filters.kinds !== 'all' && !filters.kinds.has(m.kind)) return false
@@ -293,11 +441,12 @@ export function filterMapMarkers(
       }
     }
 
-    if (m.kind === 'project') {
+    const isListingKind = m.kind === 'project' || m.kind === 'marketplace' || m.kind === 'job'
+
+    if (isListingKind) {
       if (filters.verifiedOnly) return false
       if (filters.minRating > 0) return false
       if (filters.availableOnly) return false
-      // geo match using same admin/radius logic via profile-shaped object
       const geoHit = matchProfileGeo(
         {
           location: m.location,
@@ -308,9 +457,8 @@ export function filterMapMarkers(
         geo,
       )
       if (!geoHit.matches) return false
-      if (resolved.length && filters.serviceQuery.trim()) {
-        const hay = `${m.title} ${m.category} ${m.description}`.toLowerCase()
-        const q = filters.serviceQuery.trim().toLowerCase()
+      if (q) {
+        const hay = `${m.title} ${m.category} ${m.description} ${m.subtitle}`.toLowerCase()
         if (!hay.includes(q) && !resolved.some((r) => hay.includes(r.subcategory.slug))) {
           return false
         }
@@ -334,7 +482,8 @@ export function filterMapMarkers(
     if (
       filters.availableOnly &&
       m.availability &&
-      m.availability !== 'available'
+      m.availability !== 'available' &&
+      m.availability !== 'online'
     ) {
       return false
     }
@@ -350,23 +499,41 @@ export function filterMapMarkers(
           r.matcher,
         ),
       )
-      if (!ok) return false
+      if (!ok && q) {
+        const hay = `${m.title} ${m.category} ${m.description}`.toLowerCase()
+        if (!hay.includes(q)) return false
+      } else if (!ok) {
+        return false
+      }
     } else if (filters.categorySlug) {
       const hay = `${m.category} ${(m.work_subcategory_slugs ?? []).join(' ')}`.toLowerCase()
-      if (!hay.includes(filters.categorySlug.toLowerCase().replace(/-/g, ' ')) &&
-          !hay.includes(filters.categorySlug.toLowerCase())) {
-        // soft: keep if no category text — don't over-filter empty categories
+      if (
+        !hay.includes(filters.categorySlug.toLowerCase().replace(/-/g, ' ')) &&
+        !hay.includes(filters.categorySlug.toLowerCase())
+      ) {
         if (m.category) return false
       }
+    } else if (q) {
+      const hay = `${m.title} ${m.category} ${m.description} ${m.subtitle}`.toLowerCase()
+      if (!hay.includes(q)) return false
     }
 
     return true
   })
 }
 
-/** Suggest next wider radius mode for empty-state CTA. */
 export function nextWiderRadius(current: GeoSearchState['radius']): GeoSearchState['radius'] {
-  const order: GeoSearchState['radius'][] = ['5', '10', '25', '50', '100', '200', 'province', 'region', 'country']
+  const order: GeoSearchState['radius'][] = [
+    '5',
+    '10',
+    '25',
+    '50',
+    '100',
+    '200',
+    'province',
+    'region',
+    'country',
+  ]
   const idx = order.indexOf(current)
   if (idx < 0 || idx >= order.length - 1) return 'country'
   return order[idx + 1]
@@ -403,4 +570,11 @@ export function mapFocusFromGeo(geo: GeoSearchState): {
     }
   }
   return null
+}
+
+export function formatMapDistance(km: number | null | undefined): string {
+  if (km == null || Number.isNaN(km)) return ''
+  if (km < 1) return `${Math.round(km * 1000)} m`
+  if (km < 10) return `${km.toFixed(1)} km`
+  return `${Math.round(km)} km`
 }
