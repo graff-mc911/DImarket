@@ -59,6 +59,7 @@ import { BookProfessional } from './pages/BookProfessional'
 import { CustomerDashboard } from './pages/CustomerDashboard'
 import { AdminPanel } from './pages/AdminPanel'
 import { CostEstimator } from './pages/CostEstimator'
+import { CostEstimatorHistory } from './pages/CostEstimatorHistory'
 import { Notifications } from './pages/Notifications'
 import { AiAssistant } from './pages/AiAssistant'
 import { Analytics } from './pages/Analytics'
@@ -168,6 +169,8 @@ function App() {
       case '/my':            return <CustomerDashboard />
       case '/cost-estimator':
       case '/estimate':      return <CostEstimator />
+      case '/cost-estimator/history':
+      case '/estimate/history': return <CostEstimatorHistory />
       case '/settings':      return <Settings />
       case '/notifications': return <Notifications />
       case '/profile':       return <Profile />

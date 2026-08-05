@@ -517,6 +517,8 @@ export function isReservedAppPath(segment: string): boolean {
     'project',
     'create-project',
     'create-ad',
+    'cost-estimator',
+    'estimate',
     'messages',
     'favorites',
     'notifications',

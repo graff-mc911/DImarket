@@ -28,6 +28,7 @@
     "db:verify-prod-ads": "node scripts/verify-prod-ad-schema.mjs",
     "db:delete-demo-ads": "node scripts/apply-delete-demo-ads.mjs",
     "db:delete-cursor-cloud-test": "node scripts/apply-delete-cursor-cloud-test-listing.mjs",
+    "db:apply-cost-estimates": "node scripts/apply-cost-estimates-migration.mjs",
     "geo:sync": "node scripts/sync-geo-catalog-dump.mjs",
     "geo:sync:one": "node scripts/sync-geo-catalog-dump.mjs --country=Germany",
     "geo:sync:api": "node scripts/sync-geo-catalog-geonames.mjs",

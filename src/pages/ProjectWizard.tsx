@@ -48,6 +48,45 @@ export function ProjectWizard() {
     }))
   }, [profile, user, language.code])
 
+  // Prefill from AI Cost Estimator (sessionStorage)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('dimarket_estimator_project_prefill')
+      if (!raw) return
+      const data = JSON.parse(raw) as {
+        tradeId?: string
+        subcategorySlug?: string
+        description?: string
+        country?: string
+        city?: string
+        postalCode?: string
+        locationLabel?: string
+        latitude?: number | null
+        longitude?: number | null
+        budgetMin?: number
+        budgetMax?: number
+      }
+      sessionStorage.removeItem('dimarket_estimator_project_prefill')
+      setState((s) => ({
+        ...s,
+        tradeId: data.tradeId || s.tradeId,
+        subcategorySlug: data.subcategorySlug || s.subcategorySlug,
+        description: data.description || s.description,
+        country: data.country || s.country,
+        city: data.city || s.city,
+        postalCode: data.postalCode || s.postalCode,
+        locationLabel: data.locationLabel || s.locationLabel,
+        latitude: data.latitude ?? s.latitude,
+        longitude: data.longitude ?? s.longitude,
+        budgetMin: data.budgetMin ?? s.budgetMin,
+        budgetMax: data.budgetMax ?? s.budgetMax,
+        step: data.tradeId ? 2 : s.step,
+      }))
+    } catch {
+      /* ignore */
+    }
+  }, [])
+
   const patch = (p: Partial<ProjectWizardState>) => {
     setState((s) => ({ ...s, ...p }))
     setFieldErrors({})
