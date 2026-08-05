@@ -56,6 +56,8 @@ function kindGlyph(kind: MapMarkerKind | 'mixed'): string {
   if (kind === 'professional') return 'M'
   if (kind === 'company') return 'C'
   if (kind === 'project') return 'P'
+  if (kind === 'marketplace') return 'S'
+  if (kind === 'job') return 'J'
   return '+'
 }
 
@@ -63,6 +65,8 @@ function kindColor(kind: MapMarkerKind | 'mixed'): string {
   if (kind === 'professional') return '#1a2330'
   if (kind === 'company') return '#2f6fed'
   if (kind === 'project') return '#c96d2c'
+  if (kind === 'marketplace') return '#0f766e'
+  if (kind === 'job') return '#7c3aed'
   return '#ff9900'
 }
 
@@ -96,14 +100,15 @@ function popupHtml(m: MarketplaceMapMarker, t: (k: string) => string): string {
 
   const place = [m.city, m.country].filter(Boolean).join(', ')
   const cta =
-    m.kind === 'project'
+    m.kind === 'project' || m.kind === 'marketplace' || m.kind === 'job'
       ? t('mapExplore.viewProject')
       : t('mapExplore.viewProfile')
 
   const extra =
-    m.kind === 'project'
+    m.kind === 'project' || m.kind === 'marketplace' || m.kind === 'job'
       ? [
           m.category ? `<div>${escapeHtml(m.category)}</div>` : '',
+          m.subtitle && m.kind !== 'project' ? `<div>${escapeHtml(m.subtitle)}</div>` : '',
           m.budgetLabel ? `<div>${escapeHtml(m.budgetLabel)}</div>` : '',
           m.status ? `<div>${escapeHtml(m.status)}</div>` : '',
         ].join('')

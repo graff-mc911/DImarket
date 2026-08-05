@@ -36,13 +36,13 @@ export const SITE_CATEGORY_CONFIG: Record<SiteCategorySlug, SiteCategoryConfig> 
   'accounting-finance': { icon: '📊' },
   vacancies: {
     icon: '💼',
-    path: '/vacancies',
+    path: '/jobs',
     pageTitleKey: 'category.page.vacancies.title',
     pageDescriptionKey: 'category.page.vacancies.description',
   },
   'sell-rent': {
-    icon: '🏷️',
-    path: '/sell-rent',
+    icon: '🛒',
+    path: '/buy-sell',
     pageTitleKey: 'category.page.sellRent.title',
     pageDescriptionKey: 'category.page.sellRent.description',
   },

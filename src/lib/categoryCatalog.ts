@@ -6,6 +6,7 @@ import { CONSTRUCTION_WORK_GROUPS } from './constructionWorkGroups'
 import { TRANSPORT_WORK_GROUPS } from './transportWorkGroups'
 import { CLEANING_WORK_GROUPS } from './cleaningWorkGroups'
 import { SELL_RENT_WORK_GROUPS } from './sellRentWorkGroups'
+import { VACANCIES_WORK_GROUPS } from './vacanciesWorkGroups'
 import { LEGAL_WORK_GROUPS } from './legalWorkGroups'
 import { ACCOUNTING_WORK_GROUPS } from './accountingWorkGroups'
 import { HANDYMAN_WORK_GROUPS } from './handymanWorkGroups'
@@ -80,12 +81,24 @@ export const SERVICE_CATEGORY_CATALOG: CategoryWithSubcategoriesDef[] = [
   {
     slug: 'sell-rent',
     label: {
-      uk: 'Продам / Оренда',
-      ru: 'Продам / Аренда',
-      en: 'For sale / Rent',
+      uk: 'Marketplace (Buy & Sell)',
+      ru: 'Marketplace (Buy & Sell)',
+      en: 'Marketplace (Buy & Sell)',
+      es: 'Marketplace (Buy & Sell)',
     },
     groups: SELL_RENT_WORK_GROUPS,
     subcategories: flattenGroups(SELL_RENT_WORK_GROUPS),
+  },
+  {
+    slug: 'vacancies',
+    label: {
+      uk: 'Jobs',
+      ru: 'Jobs',
+      en: 'Jobs',
+      es: 'Jobs',
+    },
+    groups: VACANCIES_WORK_GROUPS,
+    subcategories: flattenGroups(VACANCIES_WORK_GROUPS),
   },
   {
     slug: 'legal-notary',

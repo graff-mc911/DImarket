@@ -150,6 +150,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
       service_offer:   t('listing.serviceOffered'),
       item_sale:       t('listing.forSale'),
       item_wanted:     t('listing.wanted'),
+      job_vacancy:     t('listing.jobVacancy'),
     }
     return labels[type] || type
   }
@@ -161,6 +162,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
       service_offer:   'rgba(22,163,74,0.85)',
       item_sale:       'rgba(234,88,12,0.85)',
       item_wanted:     'rgba(124,58,237,0.85)',
+      job_vacancy:     'rgba(124,58,237,0.85)',
     }
     return colors[type] || 'rgba(71,85,105,0.85)'
   }
@@ -301,6 +303,69 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
               {listing.description}
             </p>
 
+            {(listing.listing_type === 'job_vacancy' ||
+              listing.listing_type === 'item_sale' ||
+              listing.listing_type === 'item_wanted') && (
+              <div className="mt-4 grid gap-2 text-sm text-[var(--ink-700)] sm:grid-cols-2">
+                {listing.item_condition && (
+                  <div>
+                    <span className="font-semibold">{t('createAd.condition')}: </span>
+                    {listing.item_condition === 'new'
+                      ? t('createAd.conditionNew')
+                      : t('createAd.conditionUsed')}
+                  </div>
+                )}
+                {listing.availability_status && (
+                  <div>
+                    <span className="font-semibold">{t('createAd.availability')}: </span>
+                    {listing.availability_status}
+                  </div>
+                )}
+                {listing.company_name && (
+                  <div>
+                    <span className="font-semibold">{t('createAd.companyName')}: </span>
+                    {listing.company_name}
+                  </div>
+                )}
+                {listing.employment_type && (
+                  <div>
+                    <span className="font-semibold">{t('createAd.employmentType')}: </span>
+                    {listing.employment_type}
+                  </div>
+                )}
+                {listing.work_arrangement && (
+                  <div>
+                    <span className="font-semibold">{t('createAd.workArrangement')}: </span>
+                    {listing.work_arrangement}
+                  </div>
+                )}
+                {listing.experience_level && (
+                  <div>
+                    <span className="font-semibold">{t('createAd.experience')}: </span>
+                    {listing.experience_level}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {listing.listing_type === 'job_vacancy' && listing.requirements && (
+              <div className="mt-4">
+                <h3 className="text-base font-bold text-[var(--ink-900)]">{t('listing.requirements')}</h3>
+                <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--ink-700)]">
+                  {listing.requirements}
+                </p>
+              </div>
+            )}
+
+            {listing.listing_type === 'job_vacancy' && listing.benefits && (
+              <div className="mt-4">
+                <h3 className="text-base font-bold text-[var(--ink-900)]">{t('listing.benefits')}</h3>
+                <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--ink-700)]">
+                  {listing.benefits}
+                </p>
+              </div>
+            )}
+
             <div className="amazon-pdp-divider" />
 
             <div className="grid gap-2 text-sm text-[var(--ink-600)] sm:grid-cols-2">
@@ -365,6 +430,22 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
           <div className="amazon-pdp-divider" />
 
           <div className="space-y-2">
+            {listing.listing_type === 'job_vacancy' && contactEmail && (
+              <a
+                href={contactEmail + '?subject=' + encodeURIComponent('Apply: ' + listing.title)}
+                className="btn-primary flex w-full items-center justify-center py-2.5 text-sm"
+              >
+                {t('listing.apply')}
+              </a>
+            )}
+            {listing.listing_type === 'job_vacancy' && !contactEmail && contactPhone && (
+              <a
+                href={contactPhone}
+                className="btn-primary flex w-full items-center justify-center py-2.5 text-sm"
+              >
+                {t('listing.apply')}
+              </a>
+            )}
             {user ? (
               <button
                 type="button"

@@ -510,6 +510,8 @@ export function isReservedAppPath(segment: string): boolean {
     'advertising',
     'vacancies',
     'sell-rent',
+    'buy-sell',
+    'jobs',
     'api',
     'assets',
     'auth',
