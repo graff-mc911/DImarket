@@ -45,8 +45,8 @@ export const ASSISTANT_TOOLS: AssistantTool[] = [
   {
     id: 'create_project',
     audience: 'customer',
-    title: 'Create project',
-    description: 'Start a guided AI chat or project wizard to post your job.',
+    title: 'Describe a problem',
+    description: 'No light, leak, ads, vacancy, sell… AI asks what is missing and helps publish.',
     icon: ClipboardList,
     href: '/assistant/job',
   },

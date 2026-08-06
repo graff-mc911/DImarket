@@ -1,4 +1,4 @@
-/** Структурований чернетка заявки на роботу (listings.service_request). */
+/** Структурований чернетка заявки / гіда AI (listings + інші інтенти). */
 
 export type JobRequestVisibilityRadius =
   | 'city'
@@ -8,6 +8,19 @@ export type JobRequestVisibilityRadius =
   | 'state'
   | 'land'
   | 'global'
+
+/** Що клієнт хоче зробити — визначає асистент з вільного тексту. */
+export type GuideIntent =
+  | 'job_service'
+  | 'advertising'
+  | 'profile_pro'
+  | 'profile_company'
+  | 'vacancy'
+  | 'sell_rent'
+
+export type TradeRole = 'electrician' | 'handyman' | 'plumber' | 'cleaner' | 'general'
+
+export type ListingType = 'service_request' | 'service_offer' | 'item_sale' | 'item_wanted'
 
 export type JobRequestDraft = {
   title?: string
@@ -24,11 +37,28 @@ export type JobRequestDraft = {
   contactPhone?: string
   contactEmail?: string
   visibilityRadius?: JobRequestVisibilityRadius
+  /** Multi-intent guide fields */
+  intent?: GuideIntent | null
+  problemText?: string
+  diagnoseDuration?: string
+  diagnoseSymptoms?: string
+  tradeRole?: TradeRole
+  latitude?: number | null
+  longitude?: number | null
+  listingType?: ListingType
+  /** Extra collected fields (salary, ad goal, sell mode…) */
+  guideMeta?: Record<string, string>
 }
 
 export type SalesBotStep =
   | 'welcome'
   | 'category'
+  | 'diagnose_duration'
+  | 'diagnose_symptoms'
+  | 'trade_confirm'
+  | 'geo'
+  | 'show_matches'
+  | 'ask_publish'
   | 'city'
   | 'budget'
   | 'deadline'
@@ -36,11 +66,37 @@ export type SalesBotStep =
   | 'photos'
   | 'contact'
   | 'confirm'
+  | 'ad_goal'
+  | 'ad_geo'
+  | 'ad_budget'
+  | 'ad_ready'
+  | 'profile_name'
+  | 'profile_city'
+  | 'profile_trade'
+  | 'profile_phone'
+  | 'profile_ready'
+  | 'vacancy_title'
+  | 'vacancy_city'
+  | 'vacancy_salary'
+  | 'vacancy_desc'
+  | 'vacancy_confirm'
+  | 'sell_mode'
+  | 'sell_what'
+  | 'sell_city'
+  | 'sell_price'
+  | 'sell_desc'
+  | 'sell_confirm'
   | 'done'
 
 export const SALES_BOT_STEPS_ORDER: SalesBotStep[] = [
   'welcome',
   'category',
+  'diagnose_duration',
+  'diagnose_symptoms',
+  'trade_confirm',
+  'geo',
+  'show_matches',
+  'ask_publish',
   'city',
   'budget',
   'deadline',
@@ -48,6 +104,26 @@ export const SALES_BOT_STEPS_ORDER: SalesBotStep[] = [
   'photos',
   'contact',
   'confirm',
+  'ad_goal',
+  'ad_geo',
+  'ad_budget',
+  'ad_ready',
+  'profile_name',
+  'profile_city',
+  'profile_trade',
+  'profile_phone',
+  'profile_ready',
+  'vacancy_title',
+  'vacancy_city',
+  'vacancy_salary',
+  'vacancy_desc',
+  'vacancy_confirm',
+  'sell_mode',
+  'sell_what',
+  'sell_city',
+  'sell_price',
+  'sell_desc',
+  'sell_confirm',
   'done',
 ]
 
@@ -58,7 +134,13 @@ export type SalesCategoryOption = {
 }
 
 export function emptyJobRequestDraft(): JobRequestDraft {
-  return { imageUrls: [], visibilityRadius: 'city' }
+  return {
+    imageUrls: [],
+    visibilityRadius: 'city',
+    intent: null,
+    guideMeta: {},
+    listingType: 'service_request',
+  }
 }
 
 export function draftNeedsContact(draft: JobRequestDraft): boolean {
@@ -67,6 +149,10 @@ export function draftNeedsContact(draft: JobRequestDraft): boolean {
 
 export function buildDraftTitle(draft: JobRequestDraft, categoryLabel?: string): string {
   if (draft.title?.trim()) return draft.title.trim()
+  if (draft.problemText?.trim()) {
+    const city = draft.location?.split(',')[0]?.trim() || ''
+    return city ? `${draft.problemText.trim().slice(0, 60)} — ${city}` : draft.problemText.trim().slice(0, 80)
+  }
   const cat = categoryLabel || draft.categorySlug || ''
   const city = draft.location?.split(',')[0]?.trim() || ''
   const parts = [cat, city].filter(Boolean)

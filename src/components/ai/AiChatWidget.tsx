@@ -138,8 +138,31 @@ export function AiChatWidget() {
               AI Assistant · {audience === 'professional' ? 'Professional' : 'Customer'}
             </p>
             <h2 className="text-[16px] font-semibold text-[#1d1d1f]">What do you need?</h2>
+            <p className="mt-1 text-[12px] leading-snug text-[#6e6e73]">
+              Describe the problem — we ask only what is missing.
+            </p>
           </div>
           <div className="flex-1 space-y-1 overflow-y-auto p-2">
+            <button
+              type="button"
+              onClick={() => {
+                closePanel()
+                navigateTo('/assistant/job')
+              }}
+              className="mb-1 flex w-full items-start gap-3 rounded-xl bg-[#eef2ff] px-3 py-2.5 text-left transition hover:bg-[#e0e7ff]"
+            >
+              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white text-[#4338ca]">
+                <Bot className="h-4 w-4" />
+              </span>
+              <span>
+                <span className="block text-[13px] font-semibold text-[#1d1d1f]">
+                  Start guided chat
+                </span>
+                <span className="mt-0.5 block text-[12px] leading-snug text-[#6e6e73]">
+                  No light, ads, pro profile, vacancy, sell/rent…
+                </span>
+              </span>
+            </button>
             {tools.map((tool) => {
               const Icon = tool.icon
               return (
@@ -167,11 +190,11 @@ export function AiChatWidget() {
               type="button"
               onClick={() => {
                 closePanel()
-                navigateTo('/assistant')
+                navigateTo('/assistant/job')
               }}
               className="w-full rounded-full bg-[#1d1d1f] py-2.5 text-[13px] font-semibold text-white"
             >
-              Open full assistant
+              Open AI guide
             </button>
           </div>
         </div>

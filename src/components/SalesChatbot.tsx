@@ -20,20 +20,18 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
     error,
     listingId,
     topMatches,
+    quickReplies,
     adWizardActive,
     sendMessage,
+    resetChat,
   } = useSalesChat()
 
   const [input, setInput] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  if (adWizardActive) {
-    return <AdWizardChatbot compact={compact} className={className} />
-  }
-
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages, loading])
+  }, [messages, loading, topMatches, quickReplies])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,12 +41,23 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
     void sendMessage(text)
   }
 
+  if (adWizardActive) {
+    return <AdWizardChatbot compact={compact} className={className} />
+  }
+
   return (
     <div
       className={`flex flex-col overflow-hidden rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.55)] shadow-[0_8px_32px_rgba(67,44,26,0.08)] ${compact ? 'max-h-[32rem]' : 'min-h-[28rem]'} ${className}`}
     >
-      <div className="border-b border-[rgba(148,163,184,0.15)] px-4 py-3">
+      <div className="flex items-center justify-between gap-2 border-b border-[rgba(148,163,184,0.15)] px-4 py-3">
         <p className="text-sm font-semibold text-[#2f2a24]">{t('salesBot.cardMessage')}</p>
+        <button
+          type="button"
+          onClick={() => resetChat()}
+          className="text-xs font-semibold text-[#6366f1] underline"
+        >
+          {t('salesBot.reset')}
+        </button>
       </div>
 
       <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
@@ -76,6 +85,26 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
         )}
         {topMatches.length > 0 && (
           <TopMatchCards matches={topMatches} listingId={listingId} compact />
+        )}
+        {quickReplies.length > 0 && !loading && !publishing && (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {quickReplies.map((q) => (
+              <button
+                key={q}
+                type="button"
+                onClick={() => void sendMessage(q)}
+                className="rounded-full border border-[rgba(99,102,241,0.35)] bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#4338ca] transition hover:bg-[rgba(99,102,241,0.08)]"
+              >
+                {q === 'yes' || q === 'Так, опублікувати' || q === 'Так, опублікувати заявку'
+                  ? t('salesBot.quickYes')
+                  : q === 'no' || q === 'Ні'
+                    ? t('salesBot.quickNo')
+                    : q === 'skip' || q === 'пропустити'
+                      ? t('salesBot.quickSkip')
+                      : q}
+              </button>
+            ))}
+          </div>
         )}
       </div>
 

@@ -43,7 +43,7 @@ export async function publishJobRequestFromDraft(
     title: buildDraftTitle(draft, categoryLabel),
     description: draft.description!.trim(),
     category_id: draft.categoryId || null,
-    listing_type: 'service_request' as const,
+    listing_type: draft.listingType ?? 'service_request',
     price: draft.price ?? null,
     currency: draft.currency || currencyCode,
     location: draft.location!.trim(),
@@ -83,12 +83,19 @@ export async function publishJobRequestFromDraft(
     if (imagesError) console.error('listing_images insert:', imagesError)
   }
 
-  const matchResult = await runMatchingForListing(listing.id, {
-    categorySlug: draft.categorySlug,
-    subcategorySlugs: draft.subcategorySlugs,
-    city: listingCityFromLocation(listing.location),
-    language: undefined,
-  })
+  let matchCount = 0
+  if ((draft.listingType ?? 'service_request') === 'service_request') {
+    const matchResult = await runMatchingForListing(listing.id, {
+      categorySlug: draft.categorySlug,
+      subcategorySlugs: draft.subcategorySlugs,
+      city: listingCityFromLocation(listing.location),
+      latitude: draft.latitude,
+      longitude: draft.longitude,
+      radiusKm: 40,
+      language: undefined,
+    })
+    matchCount = matchResult.notifiedCount
+  }
 
-  return { ok: true, listing, matchCount: matchResult.notifiedCount }
+  return { ok: true, listing, matchCount }
 }

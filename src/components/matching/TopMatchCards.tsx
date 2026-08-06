@@ -6,6 +6,7 @@ import type { VerificationLevel } from '../../lib/types'
 
 export type TopMatchRow = {
   score: number
+  distanceKm?: number | null
   contractor?: {
     id: string
     full_name: string | null
@@ -14,6 +15,7 @@ export type TopMatchRow = {
     total_reviews: number | null
     is_verified: boolean | null
     verification_level?: VerificationLevel | null
+    phone?: string | null
   } | null
 }
 
@@ -52,19 +54,41 @@ export function TopMatchCards({ matches, listingId, compact = false }: TopMatchC
                   </p>
                   <VerificationBadge level={c.verification_level} />
                 </div>
-                <p className="truncate text-[11px] text-[var(--ink-500)]">{c.location}</p>
+                <p className="truncate text-[11px] text-[var(--ink-500)]">
+                  {c.location}
+                  {row.distanceKm != null && Number.isFinite(row.distanceKm)
+                    ? ` · ${Math.round(row.distanceKm)} km`
+                    : ''}
+                </p>
                 <div className="mt-0.5 flex items-center gap-1 text-[11px] text-amber-600">
                   <Star className="h-3 w-3 fill-current" />
                   {c.rating ?? 0} ({c.total_reviews ?? 0})
                 </div>
+                {c.phone ? (
+                  <a
+                    href={`tel:${c.phone}`}
+                    className="mt-0.5 block text-[11px] font-semibold text-[#4338ca]"
+                  >
+                    {c.phone}
+                  </a>
+                ) : null}
               </div>
-              <button
-                type="button"
-                onClick={() => navigateTo(`/professional/${c.id}`)}
-                className="shrink-0 text-xs font-semibold text-[#4338ca] underline"
-              >
-                {t('matching.viewProfile')}
-              </button>
+              <div className="flex shrink-0 flex-col items-end gap-1">
+                <button
+                  type="button"
+                  onClick={() => navigateTo(`/professional/${c.id}`)}
+                  className="text-xs font-semibold text-[#4338ca] underline"
+                >
+                  {t('matching.viewProfile')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigateTo(`/messages?with=${c.id}`)}
+                  className="text-[11px] font-semibold text-[var(--ink-600)] underline"
+                >
+                  {t('matching.contactChat')}
+                </button>
+              </div>
             </li>
           )
         })}

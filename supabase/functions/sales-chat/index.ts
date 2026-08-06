@@ -35,17 +35,8 @@ function localeLanguage(code?: string): string {
 }
 
 type Draft = Record<string, unknown>
-type Step =
-  | 'welcome'
-  | 'category'
-  | 'city'
-  | 'budget'
-  | 'deadline'
-  | 'description'
-  | 'photos'
-  | 'contact'
-  | 'confirm'
-  | 'done'
+/** Client owns the step machine (problem-first guide); edge only polishes text. */
+type Step = string
 
 type Body = {
   message?: string

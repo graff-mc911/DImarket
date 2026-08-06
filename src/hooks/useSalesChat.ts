@@ -9,6 +9,7 @@ import {
 } from '../lib/ai/jobRequestDraft'
 import { publishJobRequestFromDraft, validateJobRequestDraft } from '../lib/ai/publishJobRequest'
 import { fetchMatchScoresForListing } from '../lib/matching/persistMatches'
+import { rankProfessionals } from '../lib/matching/aiMatchService'
 import type { TopMatchRow } from '../components/matching/TopMatchCards'
 import {
   appendJobLeadMessage,
@@ -22,8 +23,10 @@ import { runSalesChatTurn } from '../lib/ai/salesBotApi'
 import type { Category } from '../lib/types'
 import { supabase } from '../lib/supabase'
 import { navigateTo } from '../lib/navigation'
+import { getCurrentLocationDetailed } from '../lib/geocoding'
+import { getViewerGeo } from '../lib/viewerGeo'
 
-const STORAGE_KEY = 'dimarket_ai_sales_chat_v2'
+const STORAGE_KEY = 'dimarket_ai_sales_chat_v3'
 const AD_GUIDE_START_KEY = 'dimarket_ad_guide_start'
 
 type StoredChat = {
@@ -52,33 +55,17 @@ function saveStored(state: StoredChat) {
 
 const JOB_CATEGORY_BLOCKLIST = new Set(['vacancies', 'sell-rent'])
 
-function detectGuideRoute(text: string): { reply: string; path?: string; adWizard?: boolean; adGuide?: boolean } | null {
-  const q = text.toLowerCase()
-  if (/(реклам|банер|advert|ads?|маркетинг)/i.test(q)) {
-    return {
-      reply:
-        'Відкриваю сторінку реклами і вмикаю покроковий AI гід: слоти → контент → гео → ціна → оплата.',
-      path: '/advertising',
-      adGuide: true,
+function applySessionFlags(flags?: Record<string, string>) {
+  if (!flags) return
+  try {
+    for (const [k, v] of Object.entries(flags)) {
+      if (k === 'request_geo') continue
+      if (k === 'dimarket_ad_guide_start') sessionStorage.setItem(AD_GUIDE_START_KEY, v)
+      else sessionStorage.setItem(k, v)
     }
+  } catch {
+    /* ignore */
   }
-  if (/(майстр|компан|підрядник|specialist|contractor)/i.test(q) && /(чат|зв.?яз|contact)/i.test(q)) {
-    return {
-      reply:
-        'Відкрив сторінку майстрів: оберіть виконавця, і я переведу вас у чат з майстром або компанією.',
-      path: '/professionals',
-    }
-  }
-  if (
-    /(оголош|замовлен|послуг|пофарб|прибра|підключ|ремонт|монтаж|clean|paint|install|fix)/i.test(q)
-  ) {
-    return {
-      reply:
-        'Працюємо як AI гід: формую оголошення під потрібну підкатегорію, покажу готовий варіант, запропоную майстрів/компанії. Якщо не оберете виконавця — опублікую оголошення і відкрию сторінку клієнта.',
-      path: '/assistant/job',
-    }
-  }
-  return null
 }
 
 export function useSalesChat() {
@@ -96,31 +83,56 @@ export function useSalesChat() {
   const [adWizardActive, setAdWizardActive] = useState(false)
   const initialized = useRef(false)
   const sessionIdRef = useRef<string | null>(null)
+  const [geoHint, setGeoHint] = useState<{
+    city?: string
+    lat?: number | null
+    lon?: number | null
+  }>({})
 
   const salesCategories = useMemo(
     () => categories.filter((c) => !JOB_CATEGORY_BLOCKLIST.has(c.slug)),
     [categories],
   )
 
+  /** All categories including vacancies / sell-rent for those intents */
+  const allCategoryOptions = useMemo(
+    () => categories.map((c) => ({ id: c.id, slug: c.slug, name: c.name })),
+    [categories],
+  )
+
   const categoryLabels = useMemo(() => {
     const map: Record<string, string> = {}
-    for (const c of salesCategories) {
+    for (const c of categories) {
       map[c.slug] = categoryLabel(c.slug, t)
     }
     return map
-  }, [salesCategories, t])
+  }, [categories, t])
 
   const botContext = useMemo(
     () => ({
       locale: language.code,
-      categories: salesCategories.map((c) => ({ id: c.id, slug: c.slug, name: c.name })),
+      categories: allCategoryOptions.length
+        ? allCategoryOptions
+        : salesCategories.map((c) => ({ id: c.id, slug: c.slug, name: c.name })),
       categoryLabels,
       profileName: profile?.full_name ?? undefined,
       profileEmail: user?.email ?? undefined,
       profilePhone: profile?.phone ?? undefined,
       currencyCode: currency.code,
+      suggestedCity: geoHint.city || getViewerGeo(profile).city || undefined,
+      suggestedLat: geoHint.lat,
+      suggestedLon: geoHint.lon,
     }),
-    [salesCategories, categoryLabels, language.code, profile, user, currency.code],
+    [
+      allCategoryOptions,
+      salesCategories,
+      categoryLabels,
+      language.code,
+      profile,
+      user,
+      currency.code,
+      geoHint,
+    ],
   )
 
   const appendAssistant = useCallback(
@@ -133,6 +145,34 @@ export function useSalesChat() {
     [t],
   )
 
+  const loadMatchesForDraft = useCallback(async (d: JobRequestDraft) => {
+    const ranked = await rankProfessionals(
+      {
+        categorySlug: d.categorySlug,
+        city: d.location?.split(',')[0]?.trim(),
+        latitude: d.latitude,
+        longitude: d.longitude,
+        radiusKm: 40,
+      },
+      5,
+    )
+    setTopMatches(
+      ranked.map((m) => ({
+        score: m.score,
+        distanceKm: m.distanceKm,
+        contractor: {
+          id: m.profileId,
+          full_name: m.fullName,
+          location: m.location,
+          rating: m.rating,
+          total_reviews: m.totalReviews,
+          is_verified: Boolean(m.verificationLevel && m.verificationLevel !== 'none'),
+          verification_level: m.verificationLevel ?? null,
+        },
+      })),
+    )
+  }, [])
+
   useEffect(() => {
     void (async () => {
       const { data } = await supabase.from('categories').select('*').order('name')
@@ -141,7 +181,14 @@ export function useSalesChat() {
   }, [])
 
   useEffect(() => {
-    if (!salesCategories.length || initialized.current) return
+    const viewer = getViewerGeo(profile)
+    if (viewer.city) {
+      setGeoHint((g) => ({ ...g, city: g.city || viewer.city || undefined }))
+    }
+  }, [profile])
+
+  useEffect(() => {
+    if (!categories.length || initialized.current) return
     initialized.current = true
     const stored = loadStored()
     if (stored?.messages?.length) {
@@ -155,24 +202,33 @@ export function useSalesChat() {
     setStep(initial.step)
     setDraft(initial.draft)
     setQuickReplies(initial.quickReplies ?? [])
-  }, [salesCategories.length, botContext, t])
+  }, [categories.length, botContext, t])
 
-  /** Переклад повідомлень бота та підказок категорій при зміні мови. */
   useEffect(() => {
     setMessages((prev) => remapAssistantMessages(prev, t))
-    if (step === 'category' && salesCategories.length) {
-      setQuickReplies(
-        salesCategories
-          .slice(0, 6)
-          .map((c) => categoryLabels[c.slug] || c.name),
-      )
-    }
-  }, [language.code, t, categoryLabels, salesCategories, step, draft, botContext])
+  }, [language.code, t])
 
   useEffect(() => {
     if (!messages.length) return
     saveStored({ step, draft, messages })
   }, [step, draft, messages])
+
+  const resolveGeoIntoDraft = useCallback(async (d: JobRequestDraft): Promise<JobRequestDraft> => {
+    try {
+      const loc = await getCurrentLocationDetailed()
+      if (!loc) return d
+      const cityLine = [loc.city, loc.country].filter(Boolean).join(', ')
+      setGeoHint({ city: loc.city, lat: loc.lat, lon: loc.lon })
+      return {
+        ...d,
+        location: cityLine || d.location,
+        latitude: loc.lat,
+        longitude: loc.lon,
+      }
+    } catch {
+      return d
+    }
+  }, [])
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -181,24 +237,6 @@ export function useSalesChat() {
 
       setError(null)
       setMessages((prev) => [...prev, { role: 'user', content: trimmed }])
-      const guide = detectGuideRoute(trimmed)
-      if (guide) {
-        setMessages((prev) => [...prev, { role: 'assistant', content: guide.reply }])
-        setQuickReplies([])
-        if (guide.adGuide) {
-          try {
-            sessionStorage.setItem(AD_GUIDE_START_KEY, '1')
-          } catch {
-            /* ignore */
-          }
-        }
-        if (guide.adWizard) {
-          setAdWizardActive(true)
-          return
-        }
-        if (guide.path) navigateTo(guide.path)
-        return
-      }
       setLoading(true)
       setQuickReplies([])
 
@@ -210,13 +248,52 @@ export function useSalesChat() {
       }
 
       try {
-        const turn = await runSalesChatTurn({
+        let workingDraft = draft
+        const wantsGeo =
+          /^(гео|geo|моє місце|my location|визначити|авто|gps)$/i.test(trimmed) ||
+          step === 'geo' ||
+          step === 'profile_city'
+
+        if (wantsGeo && /гео|geo|місце|location|gps|авто/i.test(trimmed)) {
+          workingDraft = await resolveGeoIntoDraft(workingDraft)
+        }
+
+        let turn = await runSalesChatTurn({
           message: trimmed,
           step,
-          draft,
+          draft: workingDraft,
           locale: language.code,
           context: botContext,
         })
+
+        applySessionFlags(turn.sessionFlags)
+
+        if (turn.sessionFlags?.request_geo === '1') {
+          const geoDraft = await resolveGeoIntoDraft(turn.draft)
+          const resumeStep = turn.step === 'profile_city' ? 'profile_city' : 'geo'
+          turn = await runSalesChatTurn({
+            message: geoDraft.location || trimmed,
+            step: resumeStep,
+            draft: geoDraft,
+            locale: language.code,
+            context: { ...botContext, suggestedCity: geoDraft.location },
+          })
+          applySessionFlags(turn.sessionFlags)
+        }
+
+        if (turn.needsMatches) {
+          await loadMatchesForDraft(turn.draft)
+        }
+
+        if (turn.navigateTo && (turn.step === 'ad_ready' || turn.step === 'profile_ready' || turn.step === 'done')) {
+          appendAssistant(turn)
+          if (sessionIdRef.current) {
+            await updateJobLeadDraft(sessionIdRef.current, turn.draft)
+          }
+          navigateTo(turn.navigateTo)
+          setLoading(false)
+          return
+        }
 
         if (turn.canPublish) {
           setPublishing(true)
@@ -231,6 +308,12 @@ export function useSalesChat() {
             )
             setPublishing(false)
             setLoading(false)
+            appendAssistant({
+              ...turn,
+              canPublish: false,
+              replyKey: 'salesBot.askContact',
+              step: 'contact',
+            })
             return
           }
 
@@ -252,8 +335,10 @@ export function useSalesChat() {
           }
 
           setListingId(result.listing.id)
-          const scores = await fetchMatchScoresForListing(result.listing.id, 3)
-          setTopMatches(scores as TopMatchRow[])
+          if ((turn.draft.listingType ?? 'service_request') === 'service_request') {
+            const scores = await fetchMatchScoresForListing(result.listing.id, 5)
+            setTopMatches(scores as TopMatchRow[])
+          }
 
           if (sessionIdRef.current) {
             const title = buildDraftTitle(turn.draft, catLabel)
@@ -271,7 +356,7 @@ export function useSalesChat() {
             replyKey: 'salesBot.published' as const,
             replyParams: {
               id: result.listing.id,
-              count: String(scores.length || result.matchCount || 0),
+              count: String(result.matchCount || 0),
             },
             step: 'done' as const,
             canPublish: false,
@@ -309,6 +394,8 @@ export function useSalesChat() {
       user?.id,
       currency.code,
       categoryLabels,
+      resolveGeoIntoDraft,
+      loadMatchesForDraft,
     ],
   )
 
