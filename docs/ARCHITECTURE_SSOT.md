@@ -29,7 +29,8 @@ Surfaces: `HomeInteractiveMap`, `MapExplore`, `EstimatorResultsMap` — chrome o
 | Site chrome order/icons | `siteCategories.ts` | Professionals filters, listings paths |
 | Work specialization | `categoryCatalog.ts` + `*WorkGroups.ts` | Create ad, Settings, matching |
 | Work matching helpers | `categoryMatching.ts` | Professionals, category pages |
-| Marketing Home cards (legacy) | `config/categories.ts` + `categoriesI18n.ts` | Home `MainCategoriesSection` only until migrated |
+| Serviya ↔ site bridge | `homeCategoryAdapter.ts` | Home cards paths + DB count overlay |
+| Marketing Home cards (legacy tree) | `config/categories.ts` + `categoriesI18n.ts` | Expandable Home UI until full DB migration |
 
 **Alias table (do not invent a third slug):**
 

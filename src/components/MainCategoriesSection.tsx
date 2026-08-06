@@ -14,6 +14,11 @@ import {
 import { serviyaLabel } from '../config/categoriesI18n'
 import type { TranslationKey } from '../lib/i18n'
 import type { MarketplaceCategory } from '../lib/marketplaceCategories'
+import {
+  dbOverlayForServiya,
+  homeCategoryPath,
+  marketplaceBySiteSlug,
+} from '../lib/homeCategoryAdapter'
 import { supabase } from '../lib/supabase'
 import {
   findServiceBySlug,
@@ -69,21 +74,21 @@ function professionalPath(
   category: ServiceCategory,
   subcategory: ServiceSubcategory,
 ): string {
-  if (category.href) return category.href
-  if (category.slug === 'buy-sell' || subcategory.slug.startsWith('buy-sell')) return '/sell-rent'
-  if (category.slug === 'jobs' || subcategory.slug.startsWith('jobs-')) return '/vacancies'
-  return servicesPath(subcategory.slug)
+  return homeCategoryPath(category, subcategory)
 }
 
 /**
- * Serviya-inspired category browser for DImarket.
- * Main category click expands; subcategory navigates to /services/:slug results.
+ * Home / Serviya category browser.
+ * Paints marketing tree from serviceCategories; enriches counts from DB mains
+ * via homeCategoryAdapter when `categories` prop is provided (SSoT bridge).
  */
 export function MainCategoriesSection({
   id = 'choose-category',
   title,
   subtitle,
   eyebrow,
+  categories: marketplaceCategories,
+  loading: marketplaceLoading,
   className = '',
 }: MainCategoriesSectionProps) {
   const { language, t, location, setLocation } = useApp()
@@ -91,6 +96,11 @@ export function MainCategoriesSection({
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [statsByCategory, setStatsByCategory] = useState<Record<string, CategoryStats>>({})
   const lang = language.code
+
+  const dbBySite = useMemo(
+    () => marketplaceBySiteSlug(marketplaceCategories),
+    [marketplaceCategories],
+  )
 
   const countrySlug = countrySlugFromGeo(location)
   const locationDisplay = formatGlobalLocationLabel(
@@ -167,11 +177,11 @@ export function MainCategoriesSection({
 
   const handlePopularClick = (itemId: string) => {
     if (itemId === 'buy-sell') {
-      navigateTo(appendLocationToPath('/sell-rent', location))
+      navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'buy-sell', href: '/sell-rent' }), location))
       return
     }
     if (itemId === 'jobs') {
-      navigateTo(appendLocationToPath('/vacancies', location))
+      navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'jobs', href: '/vacancies' }), location))
       return
     }
     const resolved = findServiceBySlug(itemId)
@@ -186,15 +196,25 @@ export function MainCategoriesSection({
   const handleCategoryCardClick = (category: ServiceCategory) => {
     // Buy & Sell / Jobs: open dedicated listing page immediately.
     if (category.href) {
-      navigateTo(appendLocationToPath(category.href, location))
+      navigateTo(appendLocationToPath(homeCategoryPath(category), location))
       return
     }
     setExpandedId(expandedId === category.id ? null : category.id)
   }
 
   const formatCategoryStats = (category: ServiceCategory): string => {
+    const overlay = dbOverlayForServiya(category.slug, dbBySite)
+    if (overlay.professionalsCount != null && !marketplaceLoading) {
+      const companies = statsByCategory[category.id]?.companies ?? 0
+      return t('services.statsSpecialistsCompanies')
+        .replace('{specialists}', String(overlay.professionalsCount))
+        .replace('{companies}', String(companies))
+    }
     const stats = statsByCategory[category.id]
     if (!stats) {
+      if (overlay.servicesCount != null) {
+        return `${overlay.servicesCount} ${t('serviya.servicesLabel')}`
+      }
       return `${category.serviceCount} ${t('serviya.servicesLabel')}`
     }
     return t('services.statsSpecialistsCompanies')
@@ -311,7 +331,7 @@ export function MainCategoriesSection({
                               type="button"
                               className="serviya-subcategory-chip serviya-subcategory-chip--primary"
                               onClick={() =>
-                                navigateTo(appendLocationToPath(category.href!, location))
+                                navigateTo(appendLocationToPath(homeCategoryPath(category), location))
                               }
                             >
                               <span aria-hidden>{category.icon}</span>

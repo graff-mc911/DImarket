@@ -14,6 +14,7 @@ export type NavSurface =
   | 'mobile-more'
   | 'mobile-account'
   | 'header-dept'
+  | 'header-dept-extra'
   | 'header-center'
   | 'footer-company'
   | 'footer-services'
@@ -48,8 +49,9 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     labelKey: 'nav.search',
     labelKeyBySurface: {
       'footer-services': 'footer.browseListings',
+      'header-dept-extra': 'header.todaysDeals',
     },
-    surfaces: ['mobile-bar', 'footer-services'],
+    surfaces: ['mobile-bar', 'footer-services', 'header-dept-extra'],
   },
   {
     id: 'categories',
@@ -95,43 +97,57 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     path: '/create-project',
     aliases: ['/project/new'],
     labelKey: 'nav.publishRequest',
-    labelKeyBySurface: { 'footer-services': 'homePremium.postProject' },
-    surfaces: ['mobile-more', 'footer-services'],
+    labelKeyBySurface: {
+      'footer-services': 'homePremium.postProject',
+      'header-dept-extra': 'header.postJob',
+    },
+    surfaces: ['mobile-more', 'footer-services', 'header-dept-extra'],
   },
   {
     id: 'cost-estimator',
     path: '/cost-estimator',
     aliases: ['/estimate'],
     labelKey: 'nav.costEstimator',
-    surfaces: ['mobile-more'],
+    labelKeyBySurface: { 'header-dept-extra': 'header.costEstimator' },
+    surfaces: ['mobile-more', 'header-dept-extra'],
   },
   {
     id: 'publish',
     path: '/create-ad',
     labelKey: 'nav.publish',
-    labelKeyBySurface: { 'footer-services': 'header.sell' },
-    surfaces: ['mobile-more', 'footer-services'],
+    labelKeyBySurface: {
+      'footer-services': 'header.sell',
+      'header-dept-extra': 'header.sell',
+    },
+    surfaces: ['mobile-more', 'footer-services', 'header-dept-extra'],
   },
   {
     id: 'pricing',
     path: '/pricing',
     aliases: ['/plans'],
     labelKey: 'nav.pricing',
-    labelKeyBySurface: { 'footer-company': 'footer.pricing' },
-    surfaces: ['mobile-more', 'footer-company'],
+    labelKeyBySurface: {
+      'footer-company': 'footer.pricing',
+      'header-dept-extra': 'header.pricing',
+    },
+    surfaces: ['mobile-more', 'footer-company', 'header-dept-extra'],
   },
   {
     id: 'assistant',
     path: '/assistant',
     labelKey: 'nav.aiAssistant',
-    labelKeyBySurface: { 'footer-services': 'header.aiAssistant' },
-    surfaces: ['mobile-more', 'footer-services'],
+    labelKeyBySurface: {
+      'footer-services': 'header.aiAssistant',
+      'header-dept-extra': 'header.aiAssistant',
+    },
+    surfaces: ['mobile-more', 'footer-services', 'header-dept-extra'],
   },
   {
     id: 'analytics',
     path: '/analytics',
     labelKey: 'nav.analytics',
-    surfaces: ['mobile-more'],
+    labelKeyBySurface: { 'header-dept-extra': 'header.analytics' },
+    surfaces: ['mobile-more', 'header-dept-extra'],
   },
   {
     id: 'jobs',
@@ -198,8 +214,11 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     id: 'contact',
     path: '/contact',
     labelKey: 'footer.contactButton',
-    labelKeyBySurface: { 'footer-company': 'footer.contactLink' },
-    surfaces: ['header-center', 'footer-company'],
+    labelKeyBySurface: {
+      'footer-company': 'footer.contactLink',
+      'header-dept-extra': 'header.customerService',
+    },
+    surfaces: ['header-center', 'footer-company', 'header-dept-extra'],
   },
   {
     id: 'login',
@@ -363,6 +382,34 @@ const EXTRA_RESERVED_SEGMENTS = [
 
 export function navEntriesFor(surface: NavSurface): NavEntry[] {
   return NAV_ENTRIES.filter((e) => e.surfaces.includes(surface))
+}
+
+/**
+ * Header department bar link order around primary `header-dept` items.
+ * Matches historical Header.tsx: Deals → (pros/companies/map) → actions → contact.
+ */
+export const HEADER_DEPT_BEFORE_ORDER = ['search'] as const
+export const HEADER_DEPT_AFTER_ORDER = [
+  'publish-request',
+  'cost-estimator',
+  'publish',
+  'pricing',
+  'assistant',
+  'analytics',
+  'contact',
+] as const
+
+function pickNavByIds(surface: NavSurface, ids: readonly string[]): NavEntry[] {
+  const byId = new Map(navEntriesFor(surface).map((e) => [e.id, e]))
+  return ids.map((id) => byId.get(id)).filter(Boolean) as NavEntry[]
+}
+
+export function headerDeptBeforeEntries(): NavEntry[] {
+  return pickNavByIds('header-dept-extra', HEADER_DEPT_BEFORE_ORDER)
+}
+
+export function headerDeptAfterEntries(): NavEntry[] {
+  return pickNavByIds('header-dept-extra', HEADER_DEPT_AFTER_ORDER)
 }
 
 export function labelKeyFor(entry: NavEntry, surface: NavSurface): TranslationKey {

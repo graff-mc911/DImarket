@@ -43,7 +43,12 @@ import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
 import { CategoriesMegaMenu } from './CategoriesMegaMenu'
-import { labelKeyFor, navEntriesFor } from '../lib/navMap'
+import {
+  headerDeptAfterEntries,
+  headerDeptBeforeEntries,
+  labelKeyFor,
+  navEntriesFor,
+} from '../lib/navMap'
 
 interface NavItem {
   label: string
@@ -650,9 +655,16 @@ export function Header() {
                   </button>
                 </div>
 
-                <button type="button" onClick={() => goTo('/listings')} className="amazon-dept-link">
-                  {t('header.todaysDeals')}
-                </button>
+                {headerDeptBeforeEntries().map((entry) => (
+                  <button
+                    key={entry.id}
+                    type="button"
+                    onClick={() => goTo(entry.path)}
+                    className="amazon-dept-link"
+                  >
+                    {t(labelKeyFor(entry, 'header-dept-extra'))}
+                  </button>
+                ))}
 
                 {navItems.map((item) => (
                   <button
@@ -665,31 +677,16 @@ export function Header() {
                   </button>
                 ))}
 
-                <button type="button" onClick={() => goTo('/create-project')} className="amazon-dept-link">
-                  {t('header.postJob')}
-                </button>
-                <button type="button" onClick={() => goTo('/cost-estimator')} className="amazon-dept-link">
-                  {t('header.costEstimator')}
-                </button>
-                <button type="button" onClick={() => goTo('/create-ad')} className="amazon-dept-link">
-                  {t('header.sell')}
-                </button>
-
-                <button type="button" onClick={() => goTo('/pricing')} className="amazon-dept-link">
-                  {t('header.pricing')}
-                </button>
-
-                <button type="button" onClick={() => goTo('/assistant')} className="amazon-dept-link">
-                  {t('header.aiAssistant')}
-                </button>
-
-                <button type="button" onClick={() => goTo('/analytics')} className="amazon-dept-link">
-                  {t('header.analytics')}
-                </button>
-
-                <button type="button" onClick={() => goTo('/contact')} className="amazon-dept-link">
-                  {t('header.customerService')}
-                </button>
+                {headerDeptAfterEntries().map((entry) => (
+                  <button
+                    key={entry.id}
+                    type="button"
+                    onClick={() => goTo(entry.path)}
+                    className="amazon-dept-link"
+                  >
+                    {t(labelKeyFor(entry, 'header-dept-extra'))}
+                  </button>
+                ))}
 
                 <button type="button" onClick={goToHowItWorks} className="amazon-dept-link">
                   {t('footer.howItWorks')}

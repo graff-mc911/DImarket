@@ -55,8 +55,10 @@ Home.tsx
 - [x] `categoryMatching.ts` — shared `matchesWorkPrefix` / `matchesWorkLoose`
 - [x] Professionals + marketplace category pages use matching helpers
 - [x] Telegram bot icons synced to `SITE_CATEGORY_CONFIG` (handyman 🛠️, sell-rent 🛒)
-- [ ] Home cards consume DB mains via adapter (next phase — behavior-preserving)
-- [ ] Collapse Serviya i18n into DB / one slug map after Home migration
+- [x] `homeCategoryAdapter.ts` — Serviya ↔ site/DB alias map; Home uses DB counts via props
+- [x] Header dept secondary links from `navMap` (`header-dept-extra`)
+- [ ] Replace Serviya paint tree with DB mains entirely (would drop marketing-only cards)
+- [ ] Collapse Serviya i18n into DB / one slug map after full Home migration
 
 ---
 
