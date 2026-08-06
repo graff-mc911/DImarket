@@ -123,9 +123,9 @@
 
 ## Прибрано в цьому cleanup (безпечно)
 
-- Мертві обгортки: `ai/bots.ts`, `HomeCategoryCard`, `CategoryCard`, `LeadFeed`
-- Невикористаний клієнтський виклик `invokeAiJobLead`
-- Deprecated aliases без callers: `HEADER_CATEGORY_SLUGS`, `pickCenterAnimatedCampaigns`, `printQuoteAsPdf`, portfolio `categoryLabel`
-- Thin re-export `bots/matching/rank.ts` → прямий імпорт з `aiMatchService`
+- Мертві UI: `AiBotPanel`, `VoiceRecorder`, `AdminAIPanel`, `HomeCategoryCard`, `CategoryCard`, `LeadFeed`
+- Мертві AI helpers: `ai/bots.ts`, `conversationService`, `ai/config`, `ai/locale`, `invokeAiJobLead`
+- Невикористані bot wrappers: fraud/lead/review/ocr/translation client modules (edge `ai-router` лишається)
+- Deprecated aliases без callers + `bots/matching/rank.ts`
 
-Edge `ai-job-lead` / `marketplace-matching` **залишені** в репо (deployed), щоб не ламати зовнішні/майбутні виклики; UI ними не користується.
+Edge `ai-job-lead` / `marketplace-matching` **залишені** в репо (deployed); UI ними не користується.
