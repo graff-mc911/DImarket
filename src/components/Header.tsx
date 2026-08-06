@@ -201,20 +201,6 @@ export function Header() {
     icon: HEADER_DEPT_ICONS[entry.id] ?? MapPin,
   }))
 
-  /** Центр нижньої панелі шапки — посилання з футера (між «Знайти майстрів» і «Перегляд оголошень») */
-  const centerNavItems = useMemo(() => {
-    const items = navEntriesFor('header-center')
-      .filter((e) => {
-        if (e.id === 'login' || e.id === 'register') return !user
-        return true
-      })
-      .map((entry) => ({
-        label: t(labelKeyFor(entry, 'header-center')),
-        path: entry.path,
-      }))
-    return items
-  }, [user, t])
-
   const closeAllMenus = () => {
     setLanguageOpen(false)
     setCurrencyOpen(false)
