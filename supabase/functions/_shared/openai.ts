@@ -1,3 +1,11 @@
+/** LLM often returns 0–1; UI expects 0–100 percent points. */
+export function normalizeConfidence(raw: unknown, fallback = 70): number {
+  const n = Number(raw)
+  if (!Number.isFinite(n)) return fallback
+  const pct = n <= 1 ? n * 100 : n
+  return Math.max(0, Math.min(100, Math.round(pct)))
+}
+
 export async function chatCompletion(
   apiKey: string,
   system: string,

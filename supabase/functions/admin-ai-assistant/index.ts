@@ -77,7 +77,7 @@ async function logAction(
   success: boolean,
   errorMessage?: string,
 ) {
-  await admin.from('admin_ai_logs').insert({
+  const { error } = await admin.from('admin_ai_logs').insert({
     admin_id: adminId,
     action_type: actionType,
     payload,
@@ -85,6 +85,7 @@ async function logAction(
     success,
     error_message: errorMessage ?? null,
   })
+  if (error) console.error('admin_ai_logs insert failed', error.message)
 }
 
 async function callClaude(
@@ -229,12 +230,16 @@ Deno.serve(async (req: Request) => {
       if (!question || !answer) {
         return jsonResponse({ ok: false, error: 'missing_fields' }, 400)
       }
-      await gate.admin.from('ai_knowledge_base').insert({
+      const { error: kbErr } = await gate.admin.from('ai_knowledge_base').insert({
         question,
         answer,
         source: 'admin',
         created_by: gate.userId,
       })
+      if (kbErr) {
+        await logAction(gate.admin, gate.userId, 'save_correction', { question }, null, false, kbErr.message)
+        return jsonResponse({ ok: false, error: 'knowledge_save_failed', detail: kbErr.message }, 500)
+      }
       return jsonResponse({
         ok: true,
         data: { reply: '✅ Зрозумів. Запам\'ятав на майбутнє.' },
@@ -260,12 +265,15 @@ Deno.serve(async (req: Request) => {
     const correction = message.match(/^(?:ні|no)[,:\s]+(?:це неправильно[,:\s]+)?(?:правильна відповідь|correct)[:\s]+(.+)$/is)
     if (correction) {
       const lastQ = body.history?.filter((h) => h.role === 'user').pop()?.content ?? 'admin correction'
-      await gate.admin.from('ai_knowledge_base').insert({
+      const { error: kbErr } = await gate.admin.from('ai_knowledge_base').insert({
         question: lastQ,
         answer: correction[1].trim(),
         source: 'admin',
         created_by: gate.userId,
       })
+      if (kbErr) {
+        return jsonResponse({ ok: false, error: 'knowledge_save_failed', detail: kbErr.message }, 500)
+      }
       return jsonResponse({
         ok: true,
         data: { reply: '✅ Зрозумів. Запам\'ятав на майбутнє.' },

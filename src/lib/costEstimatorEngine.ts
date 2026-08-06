@@ -765,7 +765,14 @@ export async function runFullCostEstimate(
         ...local,
         totals: scaled,
         source: 'blended',
-        confidence: Math.max(local.confidence, res.data.confidence || 70),
+        confidence: Math.max(
+          local.confidence,
+          (() => {
+            const n = Number(res.data.confidence)
+            if (!Number.isFinite(n)) return 70
+            return n <= 1 ? Math.round(n * 100) : Math.round(n)
+          })(),
+        ),
         explanation: res.data.explanation || local.explanation,
         factors: [...local.factors, ...visual.map((v) => `Visual: ${v}`)].slice(0, 8),
       }

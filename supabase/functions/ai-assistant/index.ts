@@ -1,7 +1,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
-import { chatCompletion } from '../_shared/openai.ts'
+import { chatCompletion, normalizeConfidence } from '../_shared/openai.ts'
 
 type Body = {
   tool: string
@@ -175,7 +175,7 @@ async function estimateBudget(
   if (openaiKey && description) {
     const ai = await chatCompletion(
       openaiKey,
-      `Return ONLY JSON: {"min":number,"max":number,"explanation":string,"confidence":number,"labor":number,"materials":number}. Currency EUR. Language for explanation: ${locale}.`,
+      `Return ONLY JSON: {"min":number,"max":number,"explanation":string,"confidence":number,"labor":number,"materials":number}. Currency EUR. Language for explanation: ${locale}. confidence must be integer 0-100.`,
       `Trade: ${trade}. City: ${city}. Area m2: ${area || 'n/a'}. Job: ${description}`,
       undefined,
       400,
@@ -187,7 +187,7 @@ async function estimateBudget(
           minPrice = Number(parsed.min)
           maxPrice = Number(parsed.max)
           explanation = String(parsed.explanation || explanation)
-          confidence = Number(parsed.confidence || 70)
+          confidence = normalizeConfidence(parsed.confidence, 70)
           fallback = false
           return {
             ok: true,

@@ -2,7 +2,7 @@
 
 **Never put these in `VITE_*`.** Set as Supabase Edge secrets (and optionally `.env.local` for `npm run secrets:ai`).
 
-Last audit: 2026-08-06.
+Last audit: 2026-08-06 (post billing + confidence/warning fixes).
 
 ---
 
@@ -14,11 +14,13 @@ Last audit: 2026-08-06.
 | AI Assistant tools | `/assistant` | `OPENAI_API_KEY` for rich replies | **Yes** — offline fallback |
 | Cost Estimator | `/cost-estimator` | Optional for LLM blend | **Yes** — local engine |
 | Analyst Q&A | estimator step | No | **Yes** — heuristics |
-| Matcher / Dispatcher | after publish | No | **Yes** — scoring + notify |
+| Matcher / Dispatcher | after publish | No | **Yes** — scoring + notify (**not LLM**) |
 | Project Manager / Procurement | project + estimator | No | **Yes** — ops / search |
 | Telegram bot | webhook | `TELEGRAM_BOT_TOKEN` | **No** (503 without token) |
-| Admin AI | `/admin/ai` | `ANTHROPIC_API_KEY` for NL chat | Shortcuts only |
+| Admin AI | `/admin/ai` | `ANTHROPIC_API_KEY` for NL chat | Shortcuts only; needs `admin_ai_*` tables |
 | Marketing agent | `/admin/marketing-agent` | Anthropic or OpenAI | Template copy only |
+| `ai-job-lead` edge | none (UI unused) | OpenAI | Deployed only — job chat does not call it |
+| `marketplace-matching` edge | none (UI unused) | No | Deployed only — client matcher is SSOT |
 
 ---
 
@@ -83,6 +85,12 @@ npx supabase functions deploy ai-router --project-ref wjlfvajloxkevggwjgtk
 npx supabase functions deploy admin-ai-assistant --project-ref wjlfvajloxkevggwjgtk
 npx supabase functions deploy marketing-agent --project-ref wjlfvajloxkevggwjgtk
 npx supabase functions deploy telegram-bot --project-ref wjlfvajloxkevggwjgtk
+```
+
+Also apply admin AI migration if tables missing:
+
+```bash
+# supabase/migrations/20260701120000_admin_ai_assistant.sql → admin_ai_logs, ai_knowledge_base
 ```
 
 ---

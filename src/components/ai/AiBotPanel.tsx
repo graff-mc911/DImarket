@@ -47,12 +47,44 @@ export function AiBotPanel({ botId }: AiBotPanelProps) {
           break
         }
         case 'quote': {
-          const q = estimateQuoteLocally({
+          let q = estimateQuoteLocally({
             categorySlug: category,
             city,
             description: text,
             currency: 'EUR',
           })
+          if (text.trim()) {
+            const edge = await invokeAiBot<{
+              minPrice: number
+              maxPrice: number
+              currency: string
+              explanation: string
+              confidence: number
+            }>({
+              bot: 'quote',
+              action: 'estimate',
+              payload: {
+                categorySlug: category,
+                city,
+                description: text,
+                currency: 'EUR',
+                quantity: 1,
+              },
+              locale: language.code,
+            })
+            if (edge.ok && edge.data && typeof edge.data.minPrice === 'number') {
+              const raw = Number(edge.data.confidence)
+              const conf =
+                Number.isFinite(raw) ? (raw <= 1 ? Math.round(raw * 100) : Math.round(raw)) : q.confidence
+              q = {
+                minPrice: edge.data.minPrice,
+                maxPrice: edge.data.maxPrice,
+                currency: edge.data.currency || q.currency,
+                explanation: edge.data.explanation || q.explanation,
+                confidence: Math.max(0, Math.min(100, conf)),
+              }
+            }
+          }
           setResult(`${q.minPrice}–${q.maxPrice} ${q.currency}\n${q.explanation}\n${t('ai.quote.confidence')}: ${q.confidence}%`)
           break
         }

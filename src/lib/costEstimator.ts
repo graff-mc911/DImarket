@@ -265,7 +265,14 @@ export async function runCostEstimate(
       const blended = tiersFromMinMax(min, max, {
         ...local,
         explanation: ai.explanation || local.explanation,
-        confidence: Math.max(local.confidence, ai.confidence || 70),
+        confidence: Math.max(
+          local.confidence,
+          (() => {
+            const n = Number(ai.confidence)
+            if (!Number.isFinite(n)) return 70
+            return n <= 1 ? Math.round(n * 100) : Math.round(n)
+          })(),
+        ),
       })
       return blended
     }

@@ -1,7 +1,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
-import { translateWithOpenai } from '../_shared/openai.ts'
+import { chatCompletion, normalizeConfidence, translateWithOpenai } from '../_shared/openai.ts'
 
 type Body = {
   bot?: string
@@ -99,6 +99,9 @@ Deno.serve(async (req: Request) => {
           })
         }
 
+        const openaiFailed =
+          sourceLang !== targetLang && provider !== 'openai' && Boolean(openaiKey)
+
         return jsonResponse({
           ok: true,
           data: {
@@ -107,9 +110,7 @@ Deno.serve(async (req: Request) => {
             targetLang,
             fallbackUsed,
             provider,
-            ...(fallbackUsed && openaiKey
-              ? { warning: 'openai_unavailable_check_billing' }
-              : {}),
+            ...(openaiFailed ? { warning: 'openai_unavailable_check_billing' } : {}),
           },
         })
       }
@@ -186,11 +187,12 @@ Deno.serve(async (req: Request) => {
         let confidence = 55
 
         if (openaiKey && payload.description) {
-          const ai = await translateWithOpenai(
+          const ai = await chatCompletion(
             openaiKey,
-            `Estimate construction job in ${payload.city}, ${payload.country}. Category: ${slug}. Qty: ${qty}. Description: ${payload.description}. Reply JSON: {"min":number,"max":number,"explanation":string,"confidence":number}`,
-            'en',
-            'en',
+            'Return ONLY JSON: {"min":number,"max":number,"explanation":string,"confidence":number}. Currency EUR. confidence must be integer 0-100.',
+            `Estimate construction job in ${payload.city}, ${payload.country}. Category: ${slug}. Qty: ${qty}. Description: ${payload.description}.`,
+            undefined,
+            400,
           )
           if (ai) {
             try {
@@ -203,7 +205,7 @@ Deno.serve(async (req: Request) => {
                     maxPrice: parsed.max,
                     currency: String(payload.currency ?? 'EUR'),
                     explanation: parsed.explanation ?? explanation,
-                    confidence: parsed.confidence ?? 70,
+                    confidence: normalizeConfidence(parsed.confidence, 70),
                   },
                 })
               }

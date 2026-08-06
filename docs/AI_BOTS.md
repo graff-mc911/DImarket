@@ -34,21 +34,31 @@ This runs `supabase secrets set` and redeploys `ai-router`.
 
 ## Database
 
-Apply migration:
+Apply migrations:
 
 ```bash
 supabase db push
-# or run supabase/migrations/20260602120000_ai_platform.sql
+# core: supabase/migrations/20260602120000_ai_platform.sql
+# admin AI: supabase/migrations/20260701120000_admin_ai_assistant.sql
 ```
 
-Tables: `ai_conversations`, `ai_messages`, `ai_bot_tasks`, `ai_leads`, `ai_matches`, `ai_translations`, `ai_fraud_reports`, `ai_quote_estimates`, `ai_ocr_documents`, `ai_profile_suggestions`, `ai_review_analysis`, `ai_voice_transcripts`, `ai_messaging_channels`, `ad_image_assets`, `ad_image_variants`.
+Tables: `ai_conversations`, `ai_messages`, `ai_bot_tasks`, `ai_leads`, `ai_matches`, `ai_translations`, `ai_fraud_reports`, `ai_quote_estimates`, `ai_ocr_documents`, `ai_profile_suggestions`, `ai_review_analysis`, `ai_voice_transcripts`, `ai_messaging_channels`, `ad_image_assets`, `ad_image_variants`, `admin_ai_logs`, `ai_knowledge_base`.
 
 ## Edge Functions
 
 ```bash
 supabase functions deploy ai-router
-supabase functions deploy sales-chat   # legacy sales endpoint
+supabase functions deploy sales-chat
+supabase functions deploy ai-assistant
+supabase functions deploy admin-ai-assistant
 ```
+
+Also in repo but **not wired from the main UI**:
+
+| Function | Status |
+|----------|--------|
+| `ai-job-lead` | Deployed; freeform extract API. Job chat uses `salesBotEngine` + `sales-chat` polish instead (`invokeAiJobLead` has no callers). |
+| `marketplace-matching` | Deployed; production matching is client `aiMatchService` (scoring heuristics, no LLM). |
 
 `ai-router` body:
 
@@ -79,16 +89,16 @@ Routes:
 | ID | Client | Edge | Notes |
 |----|--------|------|-------|
 | sales | ✓ engine | ✓ polish | Job request dialog — local step machine; OpenAI polishes `replyText` when keyed |
-| matching | ✓ rank | — | Profile scoring |
+| matching | ✓ rank | edge unused | Weighted score (distance, rating…) — **not LLM** |
 | translation | ✓ + cache | ✓ OpenAI | Keeps original + translated |
-| fraud | ✓ heuristics | ✓ persist | trust/risk scores |
-| quote | ✓ ranges | ✓ optional AI | min/max EUR |
-| ocr | ✓ text parse | ✓ store | Vision TODO |
-| profile | ✓ analyze | — | quality score |
-| review | ✓ sentiment | — | moderation flag |
-| lead | ✓ qualify | — | lead_quality_score |
+| fraud | ✓ heuristics | ✓ persist | Regex + disposable domains — **not LLM** |
+| quote | ✓ ranges | ✓ optional AI | min/max EUR; confidence 0–100 |
+| ocr | ✓ text parse | ✓ store | Vision TODO (`GOOGLE_VISION_API_KEY`) |
+| profile | ✓ analyze | — | quality score — heuristics |
+| review | ✓ sentiment | — | moderation flag — heuristics |
+| lead | ✓ qualify | — | lead_quality_score — heuristics |
 | voice | ✓ Web Speech | — | transcript → chat |
-| messaging | placeholders | status | Telegram/WhatsApp TODO |
+| messaging | placeholders | status | Telegram token set; WhatsApp TODO |
 | ad_image | ✓ canvas resize | — | 4 storage variants |
 
 ## Test checklist
@@ -97,8 +107,9 @@ Routes:
 - [ ] `/assistant/job` completes → listing in `listings`
 - [ ] Floating AI widget opens, matching returns ranked profiles
 - [ ] Translation returns text when OpenAI missing (fallback = original)
+- [ ] Same-lang translate does **not** show billing warning
 - [ ] Fraud scan flags disposable email pattern
-- [ ] Quote estimate shows min/max
+- [ ] Quote estimate shows min/max and confidence as integer % (not `0.85%`)
 - [ ] Ad image panel generates 4 previews (logged-in advertiser)
-- [ ] `/admin/ai` visible only to site owner
+- [ ] `/admin/ai` visible only to site owner; knowledge/corrections persist
 - [ ] No API keys in browser network tab (only `ai-router` invoke)
