@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Copy, FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
+import { Archive, Copy, FileSpreadsheet, FileText, Share2, Trash2 } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { formatEuro } from '../lib/costEstimator'
 import { downloadCsv, estimateToCsv, openEstimatePdfPrint } from '../lib/costEstimatorExport'
 import {
+  archiveCostEstimate,
   deleteCostEstimate,
   duplicateCostEstimate,
   listCostEstimates,
@@ -85,6 +86,24 @@ export function CostEstimatorHistory() {
       },
     }
     downloadCsv(`dimarket-estimate-${row.id.slice(0, 8)}.csv`, estimateToCsv(est, state))
+  }
+
+  const shareRow = async (row: SavedCostEstimateRow) => {
+    const url = `${window.location.origin}/cost-estimator?id=${encodeURIComponent(row.id)}`
+    const text = `${row.title} — ${formatEuro(Number(row.total_standard) || 0)} (reference estimate)`
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: row.title, text, url })
+        return
+      }
+    } catch {
+      /* fall through */
+    }
+    try {
+      await navigator.clipboard.writeText(`${text}\n${url}`)
+    } catch {
+      /* ignore */
+    }
   }
 
   return (
@@ -213,6 +232,24 @@ export function CostEstimatorHistory() {
                   >
                     <FileSpreadsheet className="h-3.5 w-3.5" />
                     CSV
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] px-4 py-2 text-[12px] font-semibold text-[#1d1d1f]"
+                    onClick={() => void shareRow(row)}
+                  >
+                    <Share2 className="h-3.5 w-3.5" />
+                    Share
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] px-4 py-2 text-[12px] font-semibold text-[#1d1d1f]"
+                    onClick={() =>
+                      void archiveCostEstimate(row.id, user?.id ?? null, true).then(() => reload())
+                    }
+                  >
+                    <Archive className="h-3.5 w-3.5" />
+                    Archive
                   </button>
                   <button
                     type="button"

@@ -100,7 +100,7 @@ export const ESTIMATOR_PROJECT_TYPES: EstimatorProjectType[] = [
   { id: 'tiling', icon: LayoutGrid, labelKey: 'costEstimator.type.tiling', labelEn: 'Tiling', tradeId: 'flooring', subcategorySlug: 'tiling-bathroom', perSqm: 65, laborShare: 0.5, daysPer10Sqm: 1.6 },
   { id: 'windows', icon: Square, labelKey: 'costEstimator.type.windows', labelEn: 'Windows', tradeId: 'windows', subcategorySlug: 'windows-install', perSqm: 180, laborShare: 0.35, daysPer10Sqm: 0.8 },
   { id: 'doors', icon: DoorOpen, labelKey: 'costEstimator.type.doors', labelEn: 'Doors', tradeId: 'doors', subcategorySlug: 'carpentry-doors', perSqm: 160, laborShare: 0.4, daysPer10Sqm: 0.6 },
-  { id: 'landscaping', icon: Leaf, labelKey: 'costEstimator.type.landscaping', labelEn: 'Landscaping', tradeId: 'general', subcategorySlug: 'garden-landscaping', perSqm: 35, laborShare: 0.55, daysPer10Sqm: 1.2 },
+  { id: 'landscaping', icon: Leaf, labelKey: 'costEstimator.type.landscaping', labelEn: 'Garden / landscaping', tradeId: 'general', subcategorySlug: 'garden-landscaping', perSqm: 35, laborShare: 0.55, daysPer10Sqm: 1.2 },
   { id: 'pool', icon: Waves, labelKey: 'costEstimator.type.pool', labelEn: 'Swimming Pool', tradeId: 'general', subcategorySlug: 'pool-install', perSqm: 450, laborShare: 0.4, daysPer10Sqm: 5.0 },
   { id: 'solar', icon: Sun, labelKey: 'costEstimator.type.solar', labelEn: 'Solar Installation', tradeId: 'electrician', subcategorySlug: 'electro-solar', perSqm: 220, laborShare: 0.35, daysPer10Sqm: 1.0 },
   { id: 'other', icon: Wrench, labelKey: 'costEstimator.type.other', labelEn: 'Other', tradeId: 'general', subcategorySlug: 'design-engineering-general', perSqm: 70, laborShare: 0.55, daysPer10Sqm: 2.0 },
@@ -131,6 +131,8 @@ export type EstimatorLocation = {
   locationLabel: string
   latitude: number | null
   longitude: number | null
+  /** Search radius in km (synced with global geo when available) */
+  radiusKm: number | null
 }
 
 export type EstimatorState = {
@@ -153,6 +155,7 @@ export const EMPTY_ESTIMATOR_LOCATION: EstimatorLocation = {
   locationLabel: '',
   latitude: null,
   longitude: null,
+  radiusKm: 25,
 }
 
 export const EMPTY_ESTIMATOR_STATE: EstimatorState = {
@@ -162,7 +165,7 @@ export const EMPTY_ESTIMATOR_STATE: EstimatorState = {
   files: [],
   location: { ...EMPTY_ESTIMATOR_LOCATION },
   measurements: {
-    areaSqm: 20,
+    areaSqm: 0,
     lengthM: null,
     widthM: null,
     heightM: null,
@@ -226,7 +229,7 @@ export type SpecialistNeed = {
 
 export type AiInsight = {
   id: string
-  kind: 'saving' | 'upgrade' | 'risk' | 'sequence' | 'missing' | 'mistake'
+  kind: 'saving' | 'upgrade' | 'risk' | 'sequence' | 'missing' | 'mistake' | 'energy' | 'maintenance'
   text: string
 }
 

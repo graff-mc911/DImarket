@@ -29,6 +29,7 @@ import {
   buildAnalystQuestions,
 } from '../lib/aiAnalyst'
 import { runFullCostEstimate, tierLabel } from '../lib/costEstimatorEngine'
+import { GEO_RADIUS_OPTIONS, radiusModeToKm } from '../lib/geoSearch'
 import {
   downloadCsv,
   downloadExcelCsv,
@@ -98,6 +99,7 @@ export function CostEstimator() {
         .join(', '),
       latitude: globalLoc.originLat,
       longitude: globalLoc.originLng,
+      radiusKm: radiusModeToKm(globalLoc.radius) ?? 25,
     },
   }))
   const [error, setError] = useState<string | null>(null)
@@ -192,10 +194,11 @@ export function CostEstimator() {
           [globalLoc.city, globalLoc.province, globalLoc.country].filter(Boolean).join(', '),
         latitude: globalLoc.originLat ?? state.location.latitude,
         longitude: globalLoc.originLng ?? state.location.longitude,
+        radiusKm: radiusModeToKm(globalLoc.radius) ?? state.location.radiusKm ?? 25,
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalLoc.city, globalLoc.country, state.step])
+  }, [globalLoc.city, globalLoc.country, globalLoc.radius, state.step])
 
   // Write estimator location back into AppContext (SSoT) when leaving location step
   useEffect(() => {
@@ -305,7 +308,10 @@ export function CostEstimator() {
         setState((s) => ({ ...s, step: 6 }))
         setProgressLabel('Searching professionals & companies…')
         setBusy(false)
-        void fetchEstimatorMatches(result, nextState.location).then(setMatches)
+        void fetchEstimatorMatches(result, nextState.location).then((m) => {
+          setMatches(m)
+          setProgressLabel('Searching materials…')
+        })
         void saveCostEstimate({
           userId: user?.id ?? null,
           state: nextState,
@@ -648,7 +654,7 @@ export function CostEstimator() {
                 {new Date(estimate.estimatedCompletionIso).toLocaleDateString()}
               </strong>
             </p>
-            <div className="grid gap-2 sm:grid-cols-3">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {estimate.timeline.map((ph) => (
                 <div key={ph.id} className="rounded-2xl bg-[#f5f5f7] px-4 py-3">
                   <p className="text-[12px] font-semibold text-[#86868b]">{ph.label}</p>
@@ -691,6 +697,8 @@ export function CostEstimator() {
           <Section title={t('costEstimator.mapTitle')}>
             <EstimatorResultsMap
               preferKinds={['professional', 'company', 'marketplace', 'project', 'job']}
+              subcategorySlug={estimate.specialists[0]?.subcategorySlug || getProjectType(state.projectTypeId).subcategorySlug}
+              serviceQuery={estimate.tradeLabel}
             />
           </Section>
 
@@ -734,6 +742,7 @@ export function CostEstimator() {
                     <th className="pb-2 font-semibold">Qty</th>
                     <th className="pb-2 font-semibold">Category</th>
                     <th className="pb-2 font-semibold">{tierLabel(tier)}</th>
+                    <th className="pb-2 font-semibold">Shop</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -752,6 +761,17 @@ export function CostEstimator() {
                         </td>
                         <td className="py-2.5 text-[#86868b]">{m.category}</td>
                         <td className="py-2.5 tabular-nums">{formatEuro(unit * m.quantity)}</td>
+                        <td className="py-2.5">
+                          <button
+                            type="button"
+                            className="text-[12px] font-semibold text-[#0066cc] hover:underline"
+                            onClick={() =>
+                              navigateTo(`/sell-rent?q=${encodeURIComponent(m.searchQuery)}`)
+                            }
+                          >
+                            Find offers
+                          </button>
+                        </td>
                       </tr>
                     )
                   })}
@@ -1046,31 +1066,82 @@ export function CostEstimator() {
       )}
 
       {state.step === 4 && (
-        <LocationStep
-          country={state.location.country}
-          city={state.location.city}
-          postalCode={state.location.postalCode}
-          locationLabel={state.location.locationLabel}
-          onChange={(p) =>
-            patch({
-              location: {
-                ...state.location,
-                country: p.country ?? state.location.country,
-                city: p.city ?? state.location.city,
-                postalCode: p.postalCode ?? state.location.postalCode,
-                locationLabel: p.locationLabel ?? state.location.locationLabel,
-                latitude: p.latitude !== undefined ? p.latitude : state.location.latitude,
-                longitude: p.longitude !== undefined ? p.longitude : state.location.longitude,
-              },
-            })
-          }
-          labels={{
-            country: 'Country',
-            city: 'City',
-            postal: 'Postal code',
-            search: 'Search address',
-          }}
-        />
+        <div className="space-y-4">
+          <LocationStep
+            country={state.location.country}
+            city={state.location.city}
+            postalCode={state.location.postalCode}
+            locationLabel={state.location.locationLabel}
+            onChange={(p) =>
+              patch({
+                location: {
+                  ...state.location,
+                  country: p.country ?? state.location.country,
+                  city: p.city ?? state.location.city,
+                  postalCode: p.postalCode ?? state.location.postalCode,
+                  locationLabel: p.locationLabel ?? state.location.locationLabel,
+                  latitude: p.latitude !== undefined ? p.latitude : state.location.latitude,
+                  longitude: p.longitude !== undefined ? p.longitude : state.location.longitude,
+                },
+              })
+            }
+            labels={{
+              country: 'Country',
+              city: 'City',
+              postal: 'Postal code',
+              search: 'Search address',
+            }}
+          />
+          <div className="grid gap-3 sm:grid-cols-3">
+            <label className="block">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+                Region
+              </span>
+              <input
+                className={field}
+                value={state.location.region}
+                onChange={(e) =>
+                  patch({ location: { ...state.location, region: e.target.value } })
+                }
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+                Province
+              </span>
+              <input
+                className={field}
+                value={state.location.province}
+                onChange={(e) =>
+                  patch({ location: { ...state.location, province: e.target.value } })
+                }
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+                Radius
+              </span>
+              <select
+                className={field}
+                value={String(state.location.radiusKm ?? 25)}
+                onChange={(e) => {
+                  const km = Number(e.target.value) || 25
+                  patch({ location: { ...state.location, radiusKm: km } })
+                  const mode =
+                    GEO_RADIUS_OPTIONS.find((o) => o.km === km)?.id ||
+                    (km <= 25 ? '25' : km <= 50 ? '50' : '100')
+                  setLocation({ ...globalLoc, radius: mode as typeof globalLoc.radius })
+                }}
+              >
+                {GEO_RADIUS_OPTIONS.filter((o) => o.km != null).map((o) => (
+                  <option key={o.id} value={String(o.km)}>
+                    {o.km} km
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
       )}
 
       {state.step === 5 && (
@@ -1093,16 +1164,28 @@ export function CostEstimator() {
             <NumField
               label="Length (m)"
               value={state.measurements.lengthM}
-              onChange={(n) =>
-                patch({ measurements: { ...state.measurements, lengthM: n || null } })
-              }
+              onChange={(n) => {
+                const lengthM = n || null
+                const widthM = state.measurements.widthM
+                const areaSqm =
+                  lengthM && widthM
+                    ? Math.round(lengthM * widthM * 10) / 10
+                    : state.measurements.areaSqm
+                patch({ measurements: { ...state.measurements, lengthM, areaSqm } })
+              }}
             />
             <NumField
               label="Width (m)"
               value={state.measurements.widthM}
-              onChange={(n) =>
-                patch({ measurements: { ...state.measurements, widthM: n || null } })
-              }
+              onChange={(n) => {
+                const widthM = n || null
+                const lengthM = state.measurements.lengthM
+                const areaSqm =
+                  lengthM && widthM
+                    ? Math.round(lengthM * widthM * 10) / 10
+                    : state.measurements.areaSqm
+                patch({ measurements: { ...state.measurements, widthM, areaSqm } })
+              }}
             />
             <NumField
               label="Height (m)"

@@ -62,6 +62,7 @@ export async function fetchEstimatorMatches(
     ...new Set(estimate.specialists.map((s) => s.subcategorySlug).filter(Boolean)),
   ]
   const groups = [...new Set(slugs.map((s) => s.split('-')[0]).filter(Boolean))]
+  const radiusKm = location.radiusKm && location.radiusKm > 0 ? location.radiusKm : 50
 
   const { data: profiles } = await supabase
     .from('profiles')
@@ -86,7 +87,6 @@ export async function fetchEstimatorMatches(
         subs.some((s) => slugs.includes(s) || groups.some((g) => s.startsWith(`${g}-`)))
       if (!tradeHit && slugs.length) return null
       if (!matchesLocation(locHaystack(p), location) && location.city) {
-        // soft: still allow if no city match but has coords nearby
         if (!origin || p.service_latitude == null || p.service_longitude == null) return null
       }
       let distanceKm: number | null = null
@@ -95,6 +95,7 @@ export async function fetchEstimatorMatches(
           lat: Number(p.service_latitude),
           lon: Number(p.service_longitude),
         })
+        if (distanceKm != null && distanceKm > radiusKm) return null
       }
       return {
         ...p,

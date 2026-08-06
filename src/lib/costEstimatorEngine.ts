@@ -199,9 +199,10 @@ const SPECIALIST_TEMPLATES: Record<string, Array<Omit<SpecialistNeed, 'id' | 'la
     { tradeId: 'general', label: 'Demolition', subcategorySlug: 'demolition-partitions' },
     { tradeId: 'plumber', label: 'Plumber', subcategorySlug: 'plumbing-bathroom' },
     { tradeId: 'electrician', label: 'Electrician', subcategorySlug: 'electro-wiring' },
+    { tradeId: 'drywall', label: 'Drywall / waterproofing', subcategorySlug: 'drywall-install' },
     { tradeId: 'flooring', label: 'Tiler', subcategorySlug: 'tiling-bathroom' },
     { tradeId: 'painter', label: 'Painter', subcategorySlug: 'painting-interior' },
-    { tradeId: 'doors', label: 'Carpenter', subcategorySlug: 'carpentry-doors' },
+    { tradeId: 'doors', label: 'Installer', subcategorySlug: 'carpentry-doors' },
   ],
   kitchen: [
     { tradeId: 'general', label: 'Demolition', subcategorySlug: 'demolition-partitions' },
@@ -394,27 +395,34 @@ function buildWorkStages(specialists: SpecialistNeed[]): WorkStage[] {
 }
 
 function buildTimeline(daysMin: number, daysMax: number): TimelinePhase[] {
-  const prep = Math.max(1, Math.round(daysMin * 0.15))
-  const build = Math.max(1, Math.round(daysMin * 0.55))
-  const finish = Math.max(1, daysMin - prep - build)
+  const prep = Math.max(1, Math.round(daysMin * 0.12))
+  const build = Math.max(1, Math.round(daysMin * 0.5))
+  const finish = Math.max(1, Math.round(daysMin * 0.28))
+  const inspect = Math.max(1, daysMin - prep - build - finish)
   return [
     {
       id: 'prep',
       label: 'Preparation',
       daysMin: prep,
-      daysMax: Math.max(prep, Math.round(daysMax * 0.15)),
+      daysMax: Math.max(prep, Math.round(daysMax * 0.12)),
     },
     {
       id: 'build',
       label: 'Construction',
       daysMin: build,
-      daysMax: Math.max(build, Math.round(daysMax * 0.55)),
+      daysMax: Math.max(build, Math.round(daysMax * 0.5)),
     },
     {
       id: 'finish',
       label: 'Finishing',
       daysMin: finish,
-      daysMax: Math.max(finish, Math.round(daysMax * 0.3)),
+      daysMax: Math.max(finish, Math.round(daysMax * 0.28)),
+    },
+    {
+      id: 'inspect',
+      label: 'Inspection',
+      daysMin: inspect,
+      daysMax: Math.max(inspect, Math.round(daysMax * 0.1)),
     },
   ]
 }
@@ -450,6 +458,16 @@ function buildInsights(
       id: 'mistake',
       kind: 'mistake',
       text: 'Common mistake: skipping waterproofing or underestimating waste disposal and furniture protection.',
+    },
+    {
+      id: 'energy',
+      kind: 'energy',
+      text: 'Energy tip: LED lighting, better insulation and efficient HVAC often pay back within a few seasons.',
+    },
+    {
+      id: 'maint',
+      kind: 'maintenance',
+      text: 'Plan annual maintenance (sealants, filters, paint touch-ups) — budget ~1–2% of project cost per year.',
     },
   ]
   if (photoCount < 2) {
@@ -540,8 +558,22 @@ export function buildFullCostEstimateLocal(state: EstimatorState): FullCostEstim
 
   const photoMul = photos >= 6 ? 1.05 : photos >= 3 ? 1.02 : 1
   const damageMul = visual.includes('Visible damage') ? 1.1 : 1
+  const heightMul =
+    state.measurements.heightM && state.measurements.heightM > 2.8
+      ? 1 + Math.min(0.2, (state.measurements.heightM - 2.8) * 0.08)
+      : 1
+  if (state.measurements.heightM && state.measurements.heightM > 2.8) {
+    factors.push(`High ceilings (${state.measurements.heightM} m)`)
+  }
   const base =
-    type.perSqm * area * geo * complexity * photoMul * damageMul * (1 + (floors - 1) * 0.08)
+    type.perSqm *
+    area *
+    geo *
+    complexity *
+    photoMul *
+    damageMul *
+    heightMul *
+    (1 + (floors - 1) * 0.08)
 
   const laborMid = roundEuro(base * type.laborShare)
   const materialsMid = roundEuro(base * (1 - type.laborShare) * 0.82)
@@ -642,14 +674,16 @@ export async function runFullCostEstimate(
   onProgress?: (pct: number, label: string) => void,
 ): Promise<FullCostEstimate> {
   const uploading = state.files.length > 0
-  onProgress?.(8, uploading ? 'Uploading media…' : 'Analysing project type…')
+  onProgress?.(8, uploading ? 'Uploading…' : 'Analysing project type…')
   await sleep(80)
   onProgress?.(22, 'Analysing photos & drawings…')
   await sleep(60)
   onProgress?.(38, 'Calculating labour & materials…')
   const local = buildFullCostEstimateLocal(state)
-  onProgress?.(52, 'Building work breakdown…')
-  await sleep(50)
+  onProgress?.(48, 'Searching materials…')
+  await sleep(40)
+  onProgress?.(55, 'Building work breakdown…')
+  await sleep(40)
 
   onProgress?.(65, 'Consulting AI cost model…')
   try {

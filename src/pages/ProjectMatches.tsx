@@ -13,6 +13,8 @@ import { navigateTo } from '../lib/navigation'
 import { fetchMatchScoresForListing, TOP_MATCH_LIMIT } from '../lib/matching'
 import { MatchScoreBadge, VerificationBadge } from '../components/MatchScoreBadge'
 import type { VerificationLevel } from '../lib/types'
+import { rankQuotesForListing, type RankedOffer } from '../lib/aiOfferRanking'
+import { formatEuro } from '../lib/costEstimator'
 
 type MatchRow = {
   score: number
@@ -96,14 +98,19 @@ function ScoreRing({ score }: { score: number }) {
 export function ProjectMatches({ listingId }: { listingId: string }) {
   const { t } = useApp()
   const [rows, setRows] = useState<MatchRow[]>([])
+  const [offers, setOffers] = useState<RankedOffer[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let cancelled = false
     setLoading(true)
-    void fetchMatchScoresForListing(listingId, TOP_MATCH_LIMIT).then((data) => {
+    void Promise.all([
+      fetchMatchScoresForListing(listingId, TOP_MATCH_LIMIT),
+      rankQuotesForListing(listingId),
+    ]).then(([data, ranked]) => {
       if (!cancelled) {
         setRows((data as MatchRow[]) ?? [])
+        setOffers(ranked)
         setLoading(false)
       }
     })
@@ -182,12 +189,54 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
           </div>
         ) : (
           <>
-            {/* Tender comparison board — reused match data, no duplicate system */}
+            {/* Tender comparison board — real quotes when present, else match board */}
             <div className="mb-6 overflow-x-auto rounded-[20px] border border-[#e8e8ed] bg-white p-4">
               <p className="text-[15px] font-semibold text-[#1d1d1f]">
                 {t('costEstimator.tenderBoard')}
               </p>
-              <p className="mt-1 text-[13px] text-[#6e6e73]">{t('costEstimator.tenderBoardSub')}</p>
+              <p className="mt-1 text-[13px] text-[#6e6e73]">
+                {offers.length
+                  ? 'Binding offers ranked by AI (price, rating, experience, match fit).'
+                  : t('costEstimator.tenderBoardSub')}
+              </p>
+              {offers.length > 0 ? (
+                <table className="mt-4 w-full min-w-[720px] text-left text-[12px]">
+                  <thead>
+                    <tr className="text-[10px] uppercase tracking-wide text-[#86868b]">
+                      <th className="pb-2 pr-2 font-semibold">Professional</th>
+                      <th className="pb-2 pr-2 font-semibold">Price</th>
+                      <th className="pb-2 pr-2 font-semibold">AI score</th>
+                      <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colRating')}</th>
+                      <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colJobs')}</th>
+                      <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colReviews')}</th>
+                      <th className="pb-2 font-semibold">{t('costEstimator.colGuarantee')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {offers.map((o) => (
+                      <tr key={o.quoteId} className="border-t border-[#f0f0f2]">
+                        <td className="py-2.5 pr-2">
+                          <button
+                            type="button"
+                            className="font-semibold text-[#1d1d1f] hover:underline"
+                            onClick={() => navigateTo(`/professional/${o.professionalId}`)}
+                          >
+                            {o.professionalName}
+                          </button>
+                        </td>
+                        <td className="py-2.5 pr-2 font-semibold tabular-nums">
+                          {formatEuro(o.total)}
+                        </td>
+                        <td className="py-2.5 pr-2 tabular-nums text-[#248a3d]">{o.rankScore}%</td>
+                        <td className="py-2.5 pr-2 tabular-nums">{o.rating.toFixed(1)}</td>
+                        <td className="py-2.5 pr-2 tabular-nums">{o.completedJobs}</td>
+                        <td className="py-2.5 pr-2 tabular-nums">{o.reviews}</td>
+                        <td className="py-2.5">{o.verification || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
               <table className="mt-4 w-full min-w-[640px] text-left text-[12px]">
                 <thead>
                   <tr className="text-[10px] uppercase tracking-wide text-[#86868b]">
@@ -217,10 +266,10 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                           </button>
                         </td>
                         <td className="py-2.5 pr-2 tabular-nums font-semibold text-[#248a3d]">
-                          {Math.round(Number(row.score))}%
+                          {Math.round(Number(row.score))}% fit
                         </td>
                         <td className="py-2.5 pr-2 capitalize text-[#6e6e73]">
-                          {(p.availability_status || 'flexible').replace(/_/g, ' ')}
+                          {(p.availability_status || 'awaiting quote').replace(/_/g, ' ')}
                         </td>
                         <td className="py-2.5 pr-2 tabular-nums">
                           {(p.rating ?? 0).toFixed(1)}
@@ -239,6 +288,20 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                   })}
                 </tbody>
               </table>
+              )}
+              {offers.length === 0 ? (
+                <p className="mt-3 text-[12px] text-[#86868b]">
+                  Binding prices appear here after professionals submit quotes — open{' '}
+                  <button
+                    type="button"
+                    className="font-semibold text-[#0066cc]"
+                    onClick={() => navigateTo(`/project/${listingId}/offers`)}
+                  >
+                    Ranked offers
+                  </button>
+                  .
+                </p>
+              ) : null}
             </div>
 
             <div className="mb-4 flex items-baseline justify-between gap-2">

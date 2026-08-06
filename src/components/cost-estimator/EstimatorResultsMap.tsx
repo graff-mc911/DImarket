@@ -13,6 +13,10 @@ import { navigateTo } from '../../lib/navigation'
 type Props = {
   /** Trade labels / kinds hint — filters map markers loosely */
   preferKinds?: MapMarkerKind[]
+  /** Primary subcategory from estimate for map filter SSoT */
+  subcategorySlug?: string
+  /** Free-text service query (trade label) */
+  serviceQuery?: string
   heightClassName?: string
 }
 
@@ -21,6 +25,8 @@ type Props = {
  */
 export function EstimatorResultsMap({
   preferKinds,
+  subcategorySlug = '',
+  serviceQuery = '',
   heightClassName = 'min-h-[280px] h-[320px]',
 }: Props) {
   const { t, location } = useApp()
@@ -46,8 +52,13 @@ export function EstimatorResultsMap({
   const filtered = useMemo(() => {
     const kinds: 'all' | Set<MapMarkerKind> =
       preferKinds && preferKinds.length > 0 ? new Set(preferKinds) : 'all'
-    return filterMapMarkers(markers, location, { ...EMPTY_MAP_FILTERS, kinds }).slice(0, 80)
-  }, [markers, location, preferKinds])
+    return filterMapMarkers(markers, location, {
+      ...EMPTY_MAP_FILTERS,
+      kinds,
+      subcategorySlug: subcategorySlug || '',
+      serviceQuery: serviceQuery || subcategorySlug || '',
+    }).slice(0, 80)
+  }, [markers, location, preferKinds, subcategorySlug, serviceQuery])
 
   return (
     <div className="space-y-3">

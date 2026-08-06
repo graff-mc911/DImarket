@@ -19,6 +19,7 @@ export type SavedCostEstimateRow = {
   estimate_json: FullCostEstimate
   input_json: Record<string, unknown>
   listing_id: string | null
+  archived?: boolean | null
   created_at: string
   updated_at: string
 }
@@ -96,7 +97,10 @@ export async function saveCostEstimate(opts: {
   return { id, remote: false }
 }
 
-export async function listCostEstimates(userId: string | null): Promise<SavedCostEstimateRow[]> {
+export async function listCostEstimates(
+  userId: string | null,
+  opts?: { includeArchived?: boolean },
+): Promise<SavedCostEstimateRow[]> {
   const local = (() => {
     try {
       return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]') as SavedCostEstimateRow[]
@@ -105,7 +109,10 @@ export async function listCostEstimates(userId: string | null): Promise<SavedCos
     }
   })()
 
-  if (!userId) return local
+  const filterArchived = (rows: SavedCostEstimateRow[]) =>
+    opts?.includeArchived ? rows : rows.filter((r) => !r.archived)
+
+  if (!userId) return filterArchived(local)
 
   const { data, error } = await db
     .from('cost_estimates')
@@ -114,8 +121,31 @@ export async function listCostEstimates(userId: string | null): Promise<SavedCos
     .order('created_at', { ascending: false })
     .limit(40)
 
-  if (error || !data) return local
-  return data as SavedCostEstimateRow[]
+  if (error || !data) return filterArchived(local)
+  return filterArchived(data as SavedCostEstimateRow[])
+}
+
+export async function archiveCostEstimate(
+  id: string,
+  userId: string | null,
+  archived = true,
+): Promise<void> {
+  if (userId) {
+    await db
+      .from('cost_estimates')
+      .update({ archived, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', userId)
+  }
+  try {
+    const prev = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]') as SavedCostEstimateRow[]
+    localStorage.setItem(
+      LOCAL_KEY,
+      JSON.stringify(prev.map((x) => (x.id === id ? { ...x, archived } : x))),
+    )
+  } catch {
+    /* ignore */
+  }
 }
 
 export async function deleteCostEstimate(id: string, userId: string | null): Promise<void> {
