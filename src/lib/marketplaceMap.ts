@@ -117,8 +117,60 @@ export const MAP_KIND_GLYPH: Record<MapMarkerKind | 'mixed', string> = {
   mixed: '+',
 }
 
-const CACHE_KEY = 'dimarket_map_markers_v4'
+const CACHE_KEY = 'dimarket_map_markers_v5'
 const CACHE_TTL_MS = 90_000
+
+const PROFILE_MAP_SELECT = `
+  id, full_name, bio, location, service_latitude, service_longitude,
+  rating, is_verified, verification_level, profile_photo, avatar_url, user_role,
+  work_subcategory_slugs, availability_status,
+  professional_categories(category:categories(name, slug))
+`
+
+/**
+ * Prefer profiles that already have lat/lng so Eastern Europe (UA, etc.) is not
+ * crowded out by higher-rated Western profiles that only have city text.
+ * Then fill remaining slots from location-text profiles.
+ */
+async function fetchProfilesForMap(
+  role: 'professional' | 'company',
+  limit: number,
+): Promise<{ data: ProfileRow[]; error: { message: string } | null }> {
+  if (limit <= 0) return { data: [], error: null }
+
+  const base = () =>
+    supabase
+      .from('profiles')
+      .select(PROFILE_MAP_SELECT)
+      .eq('is_professional', true)
+      .eq('user_role', role)
+
+  const [coordsRes, textRes] = await Promise.all([
+    base()
+      .not('service_latitude', 'is', null)
+      .not('service_longitude', 'is', null)
+      .order('rating', { ascending: false })
+      .limit(limit),
+    base()
+      .is('service_latitude', null)
+      .not('location', 'is', null)
+      .order('rating', { ascending: false })
+      .limit(limit),
+  ])
+
+  const error = coordsRes.error || textRes.error
+  if (error) return { data: [], error: { message: error.message } }
+
+  const seen = new Set<string>()
+  const merged: ProfileRow[] = []
+  for (const row of [...((coordsRes.data as ProfileRow[]) ?? []), ...((textRes.data as ProfileRow[]) ?? [])]) {
+    if (seen.has(row.id)) continue
+    seen.add(row.id)
+    merged.push(row)
+    if (merged.length >= limit) break
+  }
+  return { data: merged, error: null }
+}
 
 function resolveListingCoords(l: ListingRow): { lat: number; lng: number } | null {
   if (
@@ -364,37 +416,14 @@ export async function fetchMarketplaceMapMarkers(
     category:categories(name, slug)
   `
 
+  // Profiles with real coords first (geo coverage), then fill with city-text rows.
+  // Flat rating-only order previously pushed all UA companies past index ~70.
+  const proLimit = Math.max(slice, Math.min(120, Math.ceil(limit * 0.4)))
+  const companyLimit = Math.max(slice, Math.min(160, Math.ceil(limit * 0.5)))
+
   const [prosRes, companiesRes, projectsRes, marketRes, moreListingsRes] = await Promise.all([
-    supabase
-      .from('profiles')
-      .select(
-        `
-        id, full_name, bio, location, service_latitude, service_longitude,
-        rating, is_verified, verification_level, profile_photo, avatar_url, user_role,
-        work_subcategory_slugs, availability_status,
-        professional_categories(category:categories(name, slug))
-      `,
-      )
-      .eq('is_professional', true)
-      .eq('user_role', 'professional')
-      .or('service_latitude.not.is.null,location.not.is.null')
-      .order('rating', { ascending: false })
-      .limit(slice),
-    supabase
-      .from('profiles')
-      .select(
-        `
-        id, full_name, bio, location, service_latitude, service_longitude,
-        rating, is_verified, verification_level, profile_photo, avatar_url, user_role,
-        work_subcategory_slugs, availability_status,
-        professional_categories(category:categories(name, slug))
-      `,
-      )
-      .eq('is_professional', true)
-      .eq('user_role', 'company')
-      .or('service_latitude.not.is.null,location.not.is.null')
-      .order('rating', { ascending: false })
-      .limit(Math.max(slice, Math.ceil(limit / 3))),
+    fetchProfilesForMap('professional', proLimit),
+    fetchProfilesForMap('company', companyLimit),
     excludeSuppressedFromQuery(
       supabase
         .from('listings')
@@ -443,11 +472,11 @@ export async function fetchMarketplaceMapMarkers(
     markers.push(m)
   }
 
-  for (const p of (prosRes.data as ProfileRow[] | null) ?? []) {
+  for (const p of prosRes.data) {
     // service_radius_km may be absent until migration is applied on the project DB
     push(toProfileMarker({ ...p, service_radius_km: p.service_radius_km ?? null }, 'professional'))
   }
-  for (const p of (companiesRes.data as ProfileRow[] | null) ?? []) {
+  for (const p of companiesRes.data) {
     push(toProfileMarker({ ...p, service_radius_km: p.service_radius_km ?? null }, 'company'))
   }
   for (const l of filterSuppressedListings((projectsRes.data as ListingRow[] | null) ?? [])) {
