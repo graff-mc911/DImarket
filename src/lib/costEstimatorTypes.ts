@@ -140,6 +140,8 @@ export type EstimatorState = {
   files: EstimatorDraftFile[]
   location: EstimatorLocation
   measurements: EstimatorMeasurements
+  /** AI Analyst clarifying answers (field → text) */
+  clarifications: Record<string, string>
 }
 
 export const EMPTY_ESTIMATOR_LOCATION: EstimatorLocation = {
@@ -167,6 +169,7 @@ export const EMPTY_ESTIMATOR_STATE: EstimatorState = {
     rooms: null,
     floors: 1,
   },
+  clarifications: {},
 }
 
 export type CostBreakdownLine = {

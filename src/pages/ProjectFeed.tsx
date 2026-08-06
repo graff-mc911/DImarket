@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Bookmark,
+  CheckCircle2,
   Clock,
-  EyeOff,
+  ClipboardCheck,
   MapPin,
   Navigation,
   Radio,
   Send,
   Wallet,
+  XCircle,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
@@ -15,7 +17,7 @@ import { navigateTo } from '../lib/navigation'
 import {
   applyToProject,
   fetchMyApplications,
-  hideApplication,
+  respondToProject,
   setApplicationSaved,
 } from '../lib/projectApplications'
 import {
@@ -467,7 +469,16 @@ export function ProjectFeed() {
               const photos = (project.project_files || [])
                 .filter((f) => f.kind === 'photo' || f.mime_type?.startsWith('image/'))
                 .slice(0, 4)
-              const applied = app?.status === 'applied' || app?.status === 'accepted'
+              const applied =
+                app?.status === 'applied' ||
+                app?.status === 'accepted' ||
+                app?.status === 'ready' ||
+                app?.status === 'needs_inspection'
+              const responded =
+                app?.status === 'ready' ||
+                app?.status === 'needs_inspection' ||
+                app?.status === 'declined' ||
+                app?.status === 'withdrawn'
               const urgency = project.urgency || 'normal'
 
               return (
@@ -552,8 +563,55 @@ export function ProjectFeed() {
                       <div className="mt-4 flex flex-wrap gap-2 border-t border-[#f0f0f2] pt-4">
                         <button
                           type="button"
-                          disabled={busyId === project.id || applied}
+                          disabled={busyId === project.id || app?.status === 'ready'}
                           className="inline-flex items-center gap-1.5 rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-black disabled:opacity-50"
+                          onClick={async () => {
+                            setBusyId(project.id)
+                            const res = await respondToProject(project.id, user.id, 'ready')
+                            setBusyId(null)
+                            if ('id' in res) {
+                              setApps(await fetchMyApplications(user.id))
+                              navigateTo(`/leads/${res.id}/quote`)
+                            }
+                          }}
+                        >
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          {app?.status === 'ready' ? 'Ready' : '✔ Ready'}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busyId === project.id || app?.status === 'needs_inspection'}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#1d1d1f] transition hover:bg-[#f5f5f7] disabled:opacity-50"
+                          onClick={async () => {
+                            setBusyId(project.id)
+                            await respondToProject(project.id, user.id, 'needs_inspection')
+                            setBusyId(null)
+                            setApps(await fetchMyApplications(user.id))
+                          }}
+                        >
+                          <ClipboardCheck className="h-3.5 w-3.5" />
+                          Need inspection
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busyId === project.id}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#6e6e73] transition hover:bg-[#f5f5f7] hover:text-[#c41e3a]"
+                          onClick={async () => {
+                            setBusyId(project.id)
+                            await respondToProject(project.id, user.id, 'declined')
+                            setBusyId(null)
+                            const next = await fetchMyApplications(user.id)
+                            setApps(next)
+                            setItems((prev) => prev.filter((p) => p.id !== project.id))
+                          }}
+                        >
+                          <XCircle className="h-3.5 w-3.5" />
+                          Decline
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busyId === project.id || applied}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#1d1d1f] transition hover:bg-[#f5f5f7] disabled:opacity-50"
                           onClick={async () => {
                             setBusyId(project.id)
                             const res = await applyToProject(project.id, user.id)
@@ -565,7 +623,7 @@ export function ProjectFeed() {
                           }}
                         >
                           <Send className="h-3.5 w-3.5" />
-                          {applied ? 'Applied' : 'Generate Quote'}
+                          {applied ? 'Quote' : 'Generate Quote'}
                         </button>
                         <button
                           type="button"
@@ -582,23 +640,15 @@ export function ProjectFeed() {
                           <Bookmark className="h-3.5 w-3.5" />
                           {app?.saved ? 'Saved' : 'Save'}
                         </button>
-                        <button
-                          type="button"
-                          className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#6e6e73] transition hover:bg-[#f5f5f7] hover:text-[#1d1d1f]"
-                          onClick={async () => {
-                            await hideApplication(project.id, user.id)
-                            const next = await fetchMyApplications(user.id)
-                            setApps(next)
-                            setItems((prev) => prev.filter((p) => p.id !== project.id))
-                          }}
-                        >
-                          <EyeOff className="h-3.5 w-3.5" />
-                          Hide
-                        </button>
+                        {responded ? (
+                          <span className="ml-auto self-center text-[12px] font-semibold capitalize text-[#86868b]">
+                            Status: {String(app?.status || '').replace(/_/g, ' ')}
+                          </span>
+                        ) : null}
                         {app?.id && applied ? (
                           <button
                             type="button"
-                            className="ml-auto text-[13px] font-semibold text-[#0066cc]"
+                            className="text-[13px] font-semibold text-[#0066cc]"
                             onClick={() => navigateTo(`/leads/${app.id}/quote`)}
                           >
                             Open Quote Builder →

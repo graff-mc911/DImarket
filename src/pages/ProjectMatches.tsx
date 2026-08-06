@@ -130,6 +130,20 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
             <button
               type="button"
               className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#1d1d1f]"
+              onClick={() => navigateTo(`/project/${listingId}/offers`)}
+            >
+              Ranked offers
+            </button>
+            <button
+              type="button"
+              className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#1d1d1f]"
+              onClick={() => navigateTo(`/project/${listingId}/manage`)}
+            >
+              Project manager
+            </button>
+            <button
+              type="button"
+              className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#1d1d1f]"
               onClick={() => navigateTo(`/listing/${listingId}`)}
             >
               {t('project.matches.viewProject' as never) || 'View project'}

@@ -24,6 +24,10 @@ import { ProfessionalCard } from '../components/ProfessionalCard'
 import { useApp } from '../contexts/AppContext'
 import { useVoiceInput } from '../hooks/useVoiceInput'
 import { formatEuro } from '../lib/costEstimator'
+import {
+  appendClarificationsToDescription,
+  buildAnalystQuestions,
+} from '../lib/aiAnalyst'
 import { runFullCostEstimate, tierLabel } from '../lib/costEstimatorEngine'
 import {
   downloadCsv,
@@ -277,8 +281,22 @@ export function CostEstimator() {
               areaSqm: Math.round(state.measurements.lengthM * state.measurements.widthM * 10) / 10,
             },
           }
-          setState(nextState)
         }
+        // Apply AI Analyst clarifications into description for the engine
+        const clarifiedDesc = appendClarificationsToDescription(
+          nextState.description,
+          nextState.clarifications || {},
+        )
+        nextState = { ...nextState, description: clarifiedDesc }
+        setState(nextState)
+
+        const analyst = buildAnalystQuestions(nextState, nextState.clarifications || {})
+        if (!analyst.readyForEstimate) {
+          setBusy(false)
+          setError(analyst.missing.find((q) => q.required)?.question || 'Please answer the clarifying questions')
+          return
+        }
+
         const result = await runFullCostEstimate(nextState, (pct, label) => {
           setProgress(pct)
           setProgressLabel(label)
@@ -1056,49 +1074,125 @@ export function CostEstimator() {
       )}
 
       {state.step === 5 && (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <NumField
-            label="Area (m²) *"
-            value={state.measurements.areaSqm}
-            onChange={(n) =>
-              patch({ measurements: { ...state.measurements, areaSqm: n } })
-            }
-          />
-          <NumField
-            label="Rooms"
-            value={state.measurements.rooms}
-            onChange={(n) =>
-              patch({ measurements: { ...state.measurements, rooms: n || null } })
-            }
-          />
-          <NumField
-            label="Length (m)"
-            value={state.measurements.lengthM}
-            onChange={(n) =>
-              patch({ measurements: { ...state.measurements, lengthM: n || null } })
-            }
-          />
-          <NumField
-            label="Width (m)"
-            value={state.measurements.widthM}
-            onChange={(n) =>
-              patch({ measurements: { ...state.measurements, widthM: n || null } })
-            }
-          />
-          <NumField
-            label="Height (m)"
-            value={state.measurements.heightM}
-            onChange={(n) =>
-              patch({ measurements: { ...state.measurements, heightM: n || null } })
-            }
-          />
-          <NumField
-            label="Floors"
-            value={state.measurements.floors}
-            onChange={(n) =>
-              patch({ measurements: { ...state.measurements, floors: n || null } })
-            }
-          />
+        <div className="space-y-5">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <NumField
+              label="Area (m²) *"
+              value={state.measurements.areaSqm}
+              onChange={(n) =>
+                patch({ measurements: { ...state.measurements, areaSqm: n } })
+              }
+            />
+            <NumField
+              label="Rooms"
+              value={state.measurements.rooms}
+              onChange={(n) =>
+                patch({ measurements: { ...state.measurements, rooms: n || null } })
+              }
+            />
+            <NumField
+              label="Length (m)"
+              value={state.measurements.lengthM}
+              onChange={(n) =>
+                patch({ measurements: { ...state.measurements, lengthM: n || null } })
+              }
+            />
+            <NumField
+              label="Width (m)"
+              value={state.measurements.widthM}
+              onChange={(n) =>
+                patch({ measurements: { ...state.measurements, widthM: n || null } })
+              }
+            />
+            <NumField
+              label="Height (m)"
+              value={state.measurements.heightM}
+              onChange={(n) =>
+                patch({ measurements: { ...state.measurements, heightM: n || null } })
+              }
+            />
+            <NumField
+              label="Floors"
+              value={state.measurements.floors}
+              onChange={(n) =>
+                patch({ measurements: { ...state.measurements, floors: n || null } })
+              }
+            />
+          </div>
+
+          {/* AI Analyst clarifying questions */}
+          {(() => {
+            const analyst = buildAnalystQuestions(state, state.clarifications || {})
+            if (!analyst.missing.length && !analyst.workHints.length) return null
+            return (
+              <div className="rounded-[18px] border border-[#e8e8ed] bg-[#fafafa] p-4">
+                <p className="text-[12px] font-semibold uppercase tracking-wide text-[#86868b]">
+                  AI Analyst
+                </p>
+                {analyst.workHints.length ? (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {analyst.workHints.map((h) => (
+                      <span
+                        key={h}
+                        className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-[#1d1d1f] ring-1 ring-[#e8e8ed]"
+                      >
+                        {h}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+                {analyst.missing.length ? (
+                  <ul className="mt-3 space-y-3">
+                    {analyst.missing.map((q) => (
+                      <li key={q.id}>
+                        <label className="block">
+                          <span className="text-[13px] font-semibold text-[#1d1d1f]">
+                            {q.question}
+                            {q.required ? ' *' : ''}
+                          </span>
+                          {q.hint ? (
+                            <span className="mt-0.5 block text-[12px] text-[#86868b]">{q.hint}</span>
+                          ) : null}
+                          <input
+                            type="text"
+                            className={field + ' mt-1.5'}
+                            value={state.clarifications?.[q.field] || ''}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              const clarifications = {
+                                ...(state.clarifications || {}),
+                                [q.field]: value,
+                              }
+                              const patchState: Partial<EstimatorState> = { clarifications }
+                              if (q.field === 'area') {
+                                const n = Number(value.replace(',', '.'))
+                                if (n > 0) {
+                                  patchState.measurements = {
+                                    ...state.measurements,
+                                    areaSqm: n,
+                                  }
+                                }
+                              }
+                              if (q.field === 'city' && value.trim()) {
+                                patchState.location = {
+                                  ...state.location,
+                                  city: value.trim(),
+                                }
+                              }
+                              patch(patchState)
+                            }}
+                            placeholder="Your answer"
+                          />
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-2 text-[13px] text-[#248a3d]">Ready for estimate</p>
+                )}
+              </div>
+            )
+          })()}
         </div>
       )}
     </EstimatorShell>

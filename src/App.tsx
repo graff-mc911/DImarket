@@ -51,6 +51,8 @@ import { SeoMarketLanding } from './pages/SeoMarketLanding'
 import { isSeoLocale } from './lib/seoRoutes'
 import { CreateProject } from './pages/CreateProject'
 import { ProjectMatches } from './pages/ProjectMatches'
+import { ProjectOffers } from './pages/ProjectOffers'
+import { ProjectManage } from './pages/ProjectManage'
 import { ProjectFeed } from './pages/ProjectFeed'
 import { QuoteBuilder } from './pages/QuoteBuilder'
 import { MyProjects } from './pages/MyProjects'
@@ -104,6 +106,12 @@ function App() {
     if (parts[0] === 'create-project') return <CreateProject />
     if (parts[0] === 'project' && parts[1] && parts[2] === 'matches') {
       return <ProjectMatches listingId={parts[1]} />
+    }
+    if (parts[0] === 'project' && parts[1] && parts[2] === 'offers') {
+      return <ProjectOffers listingId={parts[1]} />
+    }
+    if (parts[0] === 'project' && parts[1] && parts[2] === 'manage') {
+      return <ProjectManage listingId={parts[1]} />
     }
     if (parts[0] === 'leads' && parts[1] && parts[2] === 'quote') {
       return <QuoteBuilder applicationId={parts[1]} />

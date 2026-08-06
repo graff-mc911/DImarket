@@ -35,6 +35,7 @@ function serializableState(state: EstimatorState) {
     description: state.description,
     location: state.location,
     measurements: state.measurements,
+    clarifications: state.clarifications || {},
     fileCount: state.files.length,
     photoCount: state.files.filter((f) => f.kind === 'photo').length,
   }
