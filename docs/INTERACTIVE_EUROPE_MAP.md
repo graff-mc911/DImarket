@@ -35,11 +35,12 @@ Listings without `latitude`/`longitude` are placed via `inferCoordsFromLocationT
 - Changing location anywhere updates the same map SSoT via `useApp().location`
 
 ## Performance
-- Session cache key `dimarket_map_markers_v3` (~90s) for marker payload
+- Session cache key `dimarket_map_markers_v4` (~90s) for marker payload
 - Client-side filter (no full reload)
 - Zoom-aware clustering
 - Lazy images in popups/sidebar
 - Incremental listing queries in parallel
+- Profile queries must not select columns that are not yet migrated (e.g. `service_radius_km`) — missing columns abort the whole pros/companies fetch
 
 ## Routes (existing DImarket)
 - Professionals/companies → `/professional/:id`

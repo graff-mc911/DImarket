@@ -117,7 +117,7 @@ export const MAP_KIND_GLYPH: Record<MapMarkerKind | 'mixed', string> = {
   mixed: '+',
 }
 
-const CACHE_KEY = 'dimarket_map_markers_v3'
+const CACHE_KEY = 'dimarket_map_markers_v4'
 const CACHE_TTL_MS = 90_000
 
 function resolveListingCoords(l: ListingRow): { lat: number; lng: number } | null {
@@ -149,7 +149,10 @@ function resolveProfileCoords(p: ProfileRow): { lat: number; lng: number } | nul
   }
   const inferred = inferCoordsFromLocationText(p.location)
   if (!inferred) return null
-  return { lat: inferred.lat, lng: inferred.lon }
+  // Jitter inferred city pins so many pros in one city do not stack
+  const hash = Array.from(p.id).reduce((s, ch) => s + ch.charCodeAt(0), 0)
+  const jitter = ((hash % 17) - 8) * 0.004
+  return { lat: inferred.lat + jitter, lng: inferred.lon + jitter * 0.7 }
 }
 
 type ProfileRow = {
@@ -159,7 +162,8 @@ type ProfileRow = {
   location: string | null
   service_latitude: number | null
   service_longitude: number | null
-  service_radius_km: number | null
+  /** Optional — column may be missing until migration is applied. */
+  service_radius_km?: number | null
   rating: number | null
   is_verified: boolean | null
   verification_level: string | null
@@ -271,7 +275,7 @@ function toProfileMarker(p: ProfileRow, kind: 'professional' | 'company'): Marke
     location: p.location,
     service_latitude: lat,
     service_longitude: lng,
-    service_radius_km: p.service_radius_km,
+    service_radius_km: p.service_radius_km ?? null,
     work_subcategory_slugs: p.work_subcategory_slugs,
     user_role: p.user_role,
     listingType: null,
@@ -365,7 +369,7 @@ export async function fetchMarketplaceMapMarkers(
       .from('profiles')
       .select(
         `
-        id, full_name, bio, location, service_latitude, service_longitude, service_radius_km,
+        id, full_name, bio, location, service_latitude, service_longitude,
         rating, is_verified, verification_level, profile_photo, avatar_url, user_role,
         work_subcategory_slugs, availability_status,
         professional_categories(category:categories(name, slug))
@@ -380,7 +384,7 @@ export async function fetchMarketplaceMapMarkers(
       .from('profiles')
       .select(
         `
-        id, full_name, bio, location, service_latitude, service_longitude, service_radius_km,
+        id, full_name, bio, location, service_latitude, service_longitude,
         rating, is_verified, verification_level, profile_photo, avatar_url, user_role,
         work_subcategory_slugs, availability_status,
         professional_categories(category:categories(name, slug))
@@ -390,7 +394,7 @@ export async function fetchMarketplaceMapMarkers(
       .eq('user_role', 'company')
       .or('service_latitude.not.is.null,location.not.is.null')
       .order('rating', { ascending: false })
-      .limit(Math.ceil(slice / 2)),
+      .limit(Math.max(slice, Math.ceil(limit / 3))),
     excludeSuppressedFromQuery(
       supabase
         .from('listings')
@@ -426,6 +430,13 @@ export async function fetchMarketplaceMapMarkers(
   const markers: MarketplaceMapMarker[] = []
   const seen = new Set<string>()
 
+  if (prosRes.error) {
+    console.warn('[marketplaceMap] professionals query failed:', prosRes.error.message)
+  }
+  if (companiesRes.error) {
+    console.warn('[marketplaceMap] companies query failed:', companiesRes.error.message)
+  }
+
   const push = (m: MarketplaceMapMarker | null) => {
     if (!m || seen.has(m.id)) return
     seen.add(m.id)
@@ -433,10 +444,11 @@ export async function fetchMarketplaceMapMarkers(
   }
 
   for (const p of (prosRes.data as ProfileRow[] | null) ?? []) {
-    push(toProfileMarker(p, 'professional'))
+    // service_radius_km may be absent until migration is applied on the project DB
+    push(toProfileMarker({ ...p, service_radius_km: p.service_radius_km ?? null }, 'professional'))
   }
   for (const p of (companiesRes.data as ProfileRow[] | null) ?? []) {
-    push(toProfileMarker(p, 'company'))
+    push(toProfileMarker({ ...p, service_radius_km: p.service_radius_km ?? null }, 'company'))
   }
   for (const l of filterSuppressedListings((projectsRes.data as ListingRow[] | null) ?? [])) {
     push(toListingMarker(l, 'project'))
