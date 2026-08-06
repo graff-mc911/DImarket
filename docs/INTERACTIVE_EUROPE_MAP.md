@@ -5,9 +5,11 @@ Interactive Europe map UX for professionals, companies, projects, marketplace an
 
 ## Architecture
 - **Page:** `src/pages/MapExplore.tsx` — filters, Map/List/Both toggle, global location binding
-- **Map:** `src/components/map/EuropeMarketplaceMap.tsx` — Leaflet, custom grid clustering, popups, bounds events, selection sync
+- **Map SSoT:** `src/components/map/EuropeMarketplaceMap.tsx` — Leaflet, custom grid clustering, popups, bounds events, selection sync
+- **Home preview:** `src/components/home/HomeInteractiveMap.tsx` — section chrome only; **reuses** `EuropeMarketplaceMap` + `fetchMarketplaceMapMarkers` (no second Leaflet instance)
 - **Sidebar:** `src/components/map/MapResultsSidebar.tsx` — synchronized results list
-- **Data:** `src/lib/marketplaceMap.ts` — fetch, filter, cache, distances, kind colors
+- **Data SSoT:** `src/lib/marketplaceMap.ts` — fetch, filter, cache, distances, kind colors
+
 
 ## Marker kinds (DB-backed only)
 | Kind | Color | Source |
@@ -21,11 +23,12 @@ Interactive Europe map UX for professionals, companies, projects, marketplace an
 Listings without `latitude`/`longitude` are placed via `inferCoordsFromLocationText()` (city name → approximate center).
 
 ## Synchronization
-- Header / AppContext geo → map center + radius filter
+- Header / AppContext geo → map center + radius filter (Home + `/map`)
 - Search + category filters → markers + sidebar + counters
 - Map move → optional viewport-only filter
 - Sidebar select → map pan + popup
 - Marker click → sidebar highlight
+- Changing location anywhere updates the same map SSoT via `useApp().location`
 
 ## Performance
 - Session cache key `dimarket_map_markers_v3` (~90s) for marker payload

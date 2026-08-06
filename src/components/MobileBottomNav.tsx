@@ -1,7 +1,13 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import {
+  BarChart3,
+  Bot,
   Briefcase,
   Building2,
+  Calculator,
+  ClipboardList,
+  CreditCard,
+  Flame,
   FolderKanban,
   Grid3X3,
   Hammer,
@@ -12,27 +18,29 @@ import {
   MessageSquare,
   Plus,
   Search,
+  Settings,
   ShoppingBag,
   User,
   X,
 } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { CURRENCIES } from '../lib/types'
 import { navigateTo } from '../lib/navigation'
+import { LanguageSelector } from './LanguageSelector'
 
 type MoreItem = {
   id: string
   label: string
   path: string
   icon: React.ReactNode
-  auth?: boolean
 }
 
 /**
- * Marketplace-style mobile chrome: 5 primary tabs + overflow "More" sheet.
- * Jobs / Marketplace / Companies / Projects live in More (and Categories).
+ * Single mobile navigation SSoT (bottom bar + More sheet).
+ * Do not add a second mobile menu (no Header hamburger).
  */
 export function MobileBottomNav() {
-  const { t, user } = useApp()
+  const { t, user, currency, setCurrency } = useApp()
   const [path, setPath] = useState(window.location.pathname)
   const [hash, setHash] = useState(window.location.hash)
   const [moreOpen, setMoreOpen] = useState(false)
@@ -44,7 +52,6 @@ export function MobileBottomNav() {
       setPath(window.location.pathname)
       setHash(window.location.hash)
     }
-    // Do not call bindPathListener here — App owns the SPA path listener.
     window.addEventListener('popstate', sync)
     window.addEventListener('hashchange', sync)
     return () => {
@@ -69,31 +76,16 @@ export function MobileBottomNav() {
   }, [moreOpen])
 
   const isActive = (target: string) => {
-    if (target === '/') return path === '/'
-    if (target === 'more') {
-      return [
-        '/listings',
-        '/search',
-        '/vacancies',
-        '/jobs',
-        '/sell-rent',
-        '/buy-sell',
-        '/companies',
-        '/professionals',
-        '/projects',
-        '/leads',
-        '/messages',
-        '/favorites',
-        '/profile',
-        '/login',
-      ].some((p) => path === p || path.startsWith(`${p}/`))
+    if (target === '/') return path === '/' && hash !== '#choose-category'
+    if (target === '/listings' || target === '/search') {
+      return path === '/listings' || path === '/search' || path.startsWith('/listings/')
     }
     return path === target || path.startsWith(`${target}/`)
   }
 
   const go = (target: string) => {
     setMoreOpen(false)
-    if (target === path) return
+    if (target === path && !target.includes('#')) return
     navigateTo(target)
   }
 
@@ -101,6 +93,10 @@ export function MobileBottomNav() {
     setMoreOpen(false)
     if (path === '/') {
       document.getElementById('choose-category')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      if (window.location.hash !== '#choose-category') {
+        window.history.replaceState({}, '', '/#choose-category')
+        setHash('#choose-category')
+      }
       return
     }
     navigateTo('/#choose-category')
@@ -108,24 +104,12 @@ export function MobileBottomNav() {
 
   const profilePath = user ? '/profile' : '/login'
 
-  const moreItems: MoreItem[] = [
+  const primaryMore: MoreItem[] = [
     {
-      id: 'search',
-      label: t('nav.search'),
+      id: 'trending',
+      label: t('nav.trendingRequests'),
       path: '/listings',
-      icon: <Search className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'jobs',
-      label: t('nav.jobs'),
-      path: '/vacancies',
-      icon: <Briefcase className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'marketplace',
-      label: t('nav.marketplace'),
-      path: '/sell-rent',
-      icon: <ShoppingBag className="h-5 w-5" aria-hidden />,
+      icon: <Flame className="h-5 w-5" aria-hidden />,
     },
     {
       id: 'professionals',
@@ -140,24 +124,79 @@ export function MobileBottomNav() {
       icon: <Building2 className="h-5 w-5" aria-hidden />,
     },
     {
+      id: 'publish-request',
+      label: t('nav.publishRequest'),
+      path: '/create-project',
+      icon: <ClipboardList className="h-5 w-5" aria-hidden />,
+    },
+    {
+      id: 'cost-estimator',
+      label: t('nav.costEstimator'),
+      path: '/cost-estimator',
+      icon: <Calculator className="h-5 w-5" aria-hidden />,
+    },
+    {
+      id: 'publish',
+      label: t('nav.publish'),
+      path: '/create-ad',
+      icon: <Plus className="h-5 w-5" aria-hidden />,
+    },
+    {
+      id: 'pricing',
+      label: t('nav.pricing'),
+      path: '/pricing',
+      icon: <CreditCard className="h-5 w-5" aria-hidden />,
+    },
+    {
+      id: 'assistant',
+      label: t('nav.aiAssistant'),
+      path: '/assistant',
+      icon: <Bot className="h-5 w-5" aria-hidden />,
+    },
+    {
+      id: 'analytics',
+      label: t('nav.analytics'),
+      path: '/analytics',
+      icon: <BarChart3 className="h-5 w-5" aria-hidden />,
+    },
+    {
+      id: 'jobs',
+      label: t('nav.jobs'),
+      path: '/vacancies',
+      icon: <Briefcase className="h-5 w-5" aria-hidden />,
+    },
+    {
+      id: 'marketplace',
+      label: t('nav.marketplace'),
+      path: '/sell-rent',
+      icon: <ShoppingBag className="h-5 w-5" aria-hidden />,
+    },
+    {
       id: 'projects',
       label: t('nav.projects'),
       path: '/projects',
       icon: <FolderKanban className="h-5 w-5" aria-hidden />,
     },
+  ]
+
+  const accountMore: MoreItem[] = [
     {
       id: 'favorites',
       label: t('nav.favorites'),
       path: user ? '/favorites' : '/login',
       icon: <Heart className="h-5 w-5" aria-hidden />,
-      auth: true,
     },
     {
       id: 'messages',
       label: t('nav.messages'),
       path: user ? '/messages' : '/login',
       icon: <MessageSquare className="h-5 w-5" aria-hidden />,
-      auth: true,
+    },
+    {
+      id: 'settings',
+      label: t('header.settings'),
+      path: user ? '/settings' : '/login',
+      icon: <Settings className="h-5 w-5" aria-hidden />,
     },
     {
       id: 'profile',
@@ -181,29 +220,25 @@ export function MobileBottomNav() {
             onClick={() => go('/')}
           />
           <NavItem
-            active={path === '/' && hash === '#choose-category'}
+            active={isActive('/listings') && !moreOpen}
+            icon={<Search className="h-5 w-5" aria-hidden />}
+            label={t('nav.search')}
+            onClick={() => go('/listings')}
+          />
+          <NavItem
+            active={path === '/' && hash === '#choose-category' && !moreOpen}
             icon={<Grid3X3 className="h-5 w-5" aria-hidden />}
             label={t('nav.categories')}
             onClick={goCategories}
           />
-          <button
-            type="button"
-            onClick={() => go('/create-ad')}
-            className="relative -top-3 mx-0.5 flex flex-1 flex-col items-center justify-end"
-            aria-label={t('nav.post')}
-          >
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#ff9900] text-[#0f1111] shadow-[0_4px_14px_rgba(255,153,0,0.35)]">
-              <Plus className="h-6 w-6" strokeWidth={2.5} aria-hidden />
-            </span>
-          </button>
           <NavItem
-            active={isActive('/map')}
+            active={isActive('/map') && !moreOpen}
             icon={<MapPin className="h-5 w-5" aria-hidden />}
             label={t('nav.map')}
             onClick={() => go('/map')}
           />
           <NavItem
-            active={moreOpen || isActive('more')}
+            active={moreOpen}
             icon={<Menu className="h-5 w-5" aria-hidden />}
             label={t('nav.more')}
             onClick={() => setMoreOpen((open) => !open)}
@@ -240,8 +275,9 @@ export function MobileBottomNav() {
                 <X className="h-5 w-5" aria-hidden />
               </button>
             </div>
+
             <ul className="mobile-nav-more__list">
-              {moreItems.map((item) => (
+              {primaryMore.map((item) => (
                 <li key={item.id}>
                   <button type="button" className="mobile-nav-more__item" onClick={() => go(item.path)}>
                     <span className="mobile-nav-more__icon" aria-hidden>
@@ -252,6 +288,47 @@ export function MobileBottomNav() {
                 </li>
               ))}
             </ul>
+
+            <p className="mobile-nav-more__section">{t('nav.accountSection')}</p>
+            <ul className="mobile-nav-more__list">
+              {accountMore.map((item) => (
+                <li key={item.id}>
+                  <button type="button" className="mobile-nav-more__item" onClick={() => go(item.path)}>
+                    <span className="mobile-nav-more__icon" aria-hidden>
+                      {item.icon}
+                    </span>
+                    <span>{item.label}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mobile-nav-more__prefs">
+              <div>
+                <p className="mobile-nav-more__prefs-label">{t('header.language')}</p>
+                <LanguageSelector variant="menu" />
+              </div>
+              <div>
+                <label className="mobile-nav-more__prefs-label" htmlFor="mobile-nav-currency">
+                  {t('header.currency')}
+                </label>
+                <select
+                  id="mobile-nav-currency"
+                  value={currency.code}
+                  onChange={(event) => {
+                    const next = CURRENCIES.find((c) => c.code === event.target.value)
+                    if (next) setCurrency(next)
+                  }}
+                  className="mobile-nav-more__select"
+                >
+                  {CURRENCIES.map((curr) => (
+                    <option key={curr.code} value={curr.code}>
+                      {curr.symbol} {curr.code}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
         </div>
       ) : null}

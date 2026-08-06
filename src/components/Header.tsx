@@ -28,7 +28,6 @@ import {
   Settings,
   Shield,
   User,
-  X,
   Zap,
   type LucideIcon,
 } from 'lucide-react'
@@ -37,7 +36,6 @@ import { useApp }      from '../contexts/AppContext'
 import { CURRENCIES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
 import { appendLocationToPath } from '../lib/globalLocation'
-import { useOnlineVisitors } from '../hooks/useOnlineVisitors'
 import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { HeaderLocationControl } from './HeaderLocationControl'
 import { LanguageSelector } from './LanguageSelector'
@@ -75,7 +73,6 @@ export function Header() {
   // Оновлення при навігації
   const [routeTick, setRouteTick]         = useState(0)
   const [searchQuery, setSearchQuery]     = useState('')
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [, setCurrencyOpen] = useState(false)
   const [languageOpen, setLanguageOpen]   = useState(false)
   const [accountOpen, setAccountOpen]     = useState(false)
@@ -86,7 +83,6 @@ export function Header() {
 
   // Лічильник непрочитаних повідомлень
   const [unreadCount, setUnreadCount]     = useState(0)
-  const onlineVisitors = useOnlineVisitors()
 
   const languageRef = useRef<HTMLDivElement | null>(null)
   const currencyRef = useRef<HTMLDivElement | null>(null)
@@ -143,29 +139,6 @@ export function Header() {
     }
   }, [])
 
-  // Блокуємо скрол сторінки при відкритому меню (iOS: position fixed надійніше за overflow:hidden)
-  useEffect(() => {
-    if (!mobileMenuOpen) return
-
-    const scrollY = window.scrollY
-    const prevOverflow = document.body.style.overflow
-    const prevPosition = document.body.style.position
-    const prevTop = document.body.style.top
-    const prevWidth = document.body.style.width
-
-    document.body.style.overflow = 'hidden'
-    document.body.style.position = 'fixed'
-    document.body.style.top = `-${scrollY}px`
-    document.body.style.width = '100%'
-
-    return () => {
-      document.body.style.overflow = prevOverflow
-      document.body.style.position = prevPosition
-      document.body.style.top = prevTop
-      document.body.style.width = prevWidth
-      window.scrollTo(0, scrollY)
-    }
-  }, [mobileMenuOpen])
 
   // Завантаження активного банера від власника
   const loadAnnouncement = async () => {
@@ -240,7 +213,6 @@ export function Header() {
     setCurrencyOpen(false)
     setAccountOpen(false)
     setCategoriesOpen(false)
-    setMobileMenuOpen(false)
   }
 
   const closeDropdowns = () => {
@@ -311,8 +283,6 @@ export function Header() {
 
 
 
-  const mobileIconButtonClass =
-    'header-link flex h-8 w-8 items-center justify-center rounded-sm border-0 bg-transparent shadow-none outline-none sm:h-9 sm:w-9'
 
   const showAnnouncement = announcements.length > 0
 
@@ -344,7 +314,7 @@ export function Header() {
       ro.disconnect()
       window.removeEventListener('resize', sync)
     }
-  }, [showAnnouncement, mobileMenuOpen, user, unreadCount, language.code, currency.code])
+  }, [showAnnouncement, user, unreadCount, language.code, currency.code])
 
   const dropdownPanelClass =
     'absolute right-0 top-full mt-2 w-64 rounded-md border border-[#d5d9d9] bg-white p-2 shadow-[0_4px_12px_rgba(15,17,17,0.15)]'
@@ -352,8 +322,6 @@ export function Header() {
   const dropdownItemClass =
     'block w-full rounded-sm px-3 py-2.5 text-left text-sm text-[var(--ink-900)] transition hover:bg-[#f7fafa]'
 
-  const mobileNavItemClass =
-    'flex w-full items-center gap-3 rounded-md px-4 py-3 text-left text-base font-medium text-[var(--ink-900)] transition hover:bg-[#f7fafa]'
 
   const categoryGroups = useMemo(
     () => buildHomeCategoryGroups(language.code, t),
@@ -399,10 +367,7 @@ export function Header() {
       {/* ===== Основна шапка (фіксована) ===== */}
       <header className="site-header-shell w-full">
         <div
-          className={
-            'w-full ' +
-            (mobileMenuOpen ? 'xl:overflow-visible max-xl:flex max-xl:max-h-[100dvh] max-xl:flex-col max-xl:overflow-hidden' : '')
-          }
+          className="w-full"
         >
           <div className="shrink-0 px-[max(var(--layout-gutter),env(safe-area-inset-left,0px))] py-2 md:px-[max(1.25rem,var(--layout-gutter))] md:py-2.5">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
@@ -665,14 +630,6 @@ export function Header() {
                   </span>
                 </button>
 
-                <button
-                  onClick={() => { setMobileMenuOpen(o => !o); closeDropdowns() }}
-                  type="button"
-                  aria-expanded={mobileMenuOpen}
-                  className={mobileIconButtonClass + (mobileMenuOpen ? ' text-[#ff9900]' : '')}
-                >
-                  {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                </button>
               </div>
             </div>
 
@@ -774,187 +731,7 @@ export function Header() {
             </form>
           </div>
 
-          {/* Мобільне меню */}
-          {mobileMenuOpen && (
-            <div className="min-h-0 shrink-0 px-[max(var(--layout-gutter),env(safe-area-inset-left,0px))] pb-2 pt-3 xl:hidden">
-              <div className="mobile-nav-menu">
-                <div className="mobile-nav-menu__scroll">
-                <div className="mb-3 flex justify-center">
-                  <OnlineVisitorsPill count={onlineVisitors} />
-                </div>
-                <div className="grid gap-2">
-                  {navItems.map(item => (
-                    <button key={item.path} onClick={() => goTo(item.path)} type="button" className={mobileNavItemClass}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.label}</span>
-                    </button>
-                  ))}
 
-                  {centerNavItems
-                    .filter(item => item.path !== '/login' && item.path !== '/register')
-                    .map(item => (
-                    <button
-                      key={item.path + item.label}
-                      onClick={() => goTo(item.path)}
-                      type="button"
-                      className={mobileNavItemClass}
-                    >
-                      <span>{item.label}</span>
-                    </button>
-                  ))}
-
-                  <button
-                    type="button"
-                    className={mobileNavItemClass}
-                    onClick={() => {
-                      setMobileMenuOpen(false)
-                      setCategoriesOpen(true)
-                    }}
-                  >
-                    <Menu className="h-5 w-5" />
-                    <span>{t('header.categories')}</span>
-                  </button>
-
-                  <button onClick={() => goTo('/listings')} type="button" className={mobileNavItemClass}>
-                    <Search className="h-5 w-5" />
-                    <span>{t('listings.title')}</span>
-                  </button>
-                </div>
-
-                <div className="my-3 border-t border-[var(--glass-border)]" />
-
-                {/* Мова та валюта — мова = мова інтерфейсу (прапор + код), не країна */}
-                <div className="grid gap-3 rounded-[24px] bg-[rgba(255,249,243,0.74)] p-3">
-                  <div>
-                    <p className="mb-2 text-sm font-semibold text-[var(--ink-700)]">
-                      {t('header.language')}
-                    </p>
-                    <LanguageSelector variant="menu" />
-                  </div>
-
-                  <div>
-                    <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--ink-700)]">
-                      <span className="text-base">{currency.symbol}</span>
-                      <span>{t('header.currency')}</span>
-                    </label>
-                    <select
-                      value={currency.code}
-                      onChange={e => {
-                        const curr = CURRENCIES.find(c => c.code === e.target.value)
-                        if (curr) setCurrency(curr)
-                      }}
-                      className="select-glass"
-                    >
-                      {CURRENCIES.map(curr => (
-                        <option key={curr.code} value={curr.code}>
-                          {curr.symbol} {curr.code} - {curr.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {isLoggedIn ? (
-                  <div className="mt-3 grid gap-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]">
-                    <button onClick={() => goTo('/profile')} type="button" className={mobileNavItemClass}>
-                      <User className="h-5 w-5" />
-                      <span>{accountGreeting}</span>
-                    </button>
-
-                    {!(profile?.user_role === 'professional' ||
-                      profile?.user_role === 'company' ||
-                      profile?.is_professional) && (
-                      <button onClick={() => goTo('/customer/dashboard')} type="button" className={mobileNavItemClass}>
-                        <LayoutDashboard className="h-5 w-5" />
-                        <span>{t('header.customerDashboard')}</span>
-                      </button>
-                    )}
-
-                    <button onClick={() => goTo('/settings')} type="button" className={mobileNavItemClass}>
-                      <Settings className="h-5 w-5" />
-                      <span>{t('header.settings')}</span>
-                    </button>
-
-                    {(profile?.is_professional ||
-                      profile?.user_role === 'professional' ||
-                      profile?.user_role === 'company') && (
-                      <button onClick={() => goTo('/pro/dashboard')} type="button" className={mobileNavItemClass}>
-                        <LayoutDashboard className="h-5 w-5" />
-                        <span>{t('header.proDashboard')}</span>
-                      </button>
-                    )}
-
-                    <button onClick={() => goTo('/my-listings')} type="button" className={mobileNavItemClass}>
-                      <FileText className="h-5 w-5" />
-                      <span>{t('header.myListings')}</span>
-                    </button>
-
-                    <button onClick={() => goTo('/favorites')} type="button" className={mobileNavItemClass}>
-                      <Bookmark className="h-5 w-5" />
-                      <span>{t('header.favorites')}</span>
-                    </button>
-
-                    <button onClick={() => goTo('/messages')} type="button" className={mobileNavItemClass}>
-                      <MessageSquare className="h-5 w-5" />
-                      <div className="flex flex-1 items-center justify-between">
-                        <span>{t('header.messages')}</span>
-                        {unreadCount > 0 && (
-                          <span className="rounded-full px-2 py-0.5 text-xs font-bold text-white"
-                            style={{ background: 'var(--accent-700)' }}>
-                            {unreadCount}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-
-                    {isSiteOwner && (
-                      <>
-                        <button onClick={() => goTo('/admin')} type="button" className={mobileNavItemClass}>
-                          <ClipboardList className="h-5 w-5" />
-                          <span>{t('header.adminPanel')}</span>
-                        </button>
-                        <button onClick={() => goTo('/dashboard')} type="button" className={mobileNavItemClass}>
-                          <ClipboardList className="h-5 w-5" />
-                          <span>{t('header.dashboard')}</span>
-                        </button>
-                        <button onClick={() => goTo('/admin/ai')} type="button" className={mobileNavItemClass}>
-                          <Bot className="h-5 w-5" />
-                          <span>{t('ai.admin.title')}</span>
-                        </button>
-                        <button onClick={() => goTo('/admin/marketing-agent')} type="button" className={mobileNavItemClass}>
-                          <Megaphone className="h-5 w-5" />
-                          <span>{t('marketing.admin.title')}</span>
-                        </button>
-                      </>
-                    )}
-
-                    <button
-                      onClick={handleSignOut}
-                      type="button"
-                      className="flex w-full items-center gap-3 rounded-[20px] px-4 py-3 text-left text-base font-semibold text-[#a04b39] transition-all hover:text-[#c2614a]"
-                    >
-                      <LogOut className="h-5 w-5" />
-                      <span>{t('header.signOut')}</span>
-                    </button>
-                  </div>
-                ) : null}
-                </div>
-
-                {!user ? (
-                  <div className="mobile-nav-menu__footer">
-                    <button onClick={() => goTo('/login')} type="button" className={mobileNavItemClass}>
-                      <User className="h-5 w-5" />
-                      <span>{t('header.professionalLogin')}</span>
-                    </button>
-                    <button onClick={() => goTo('/register')} type="button" className={mobileNavItemClass}>
-                      <User className="h-5 w-5" />
-                      <span>{t('footer.register')}</span>
-                    </button>
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          )}
         </div>
       </header>
       </div>
@@ -964,29 +741,3 @@ export function Header() {
   )
 }
 
-function OnlineVisitorsPill({
-  count,
-  className = '',
-}: {
-  count: number
-  className?: string
-}) {
-  const { t, language } = useApp()
-  const locale =
-    language.code === 'uk' ? 'uk-UA' : language.code === 'de' ? 'de-DE' : 'en-US'
-  const formatted = new Intl.NumberFormat(locale).format(Math.max(1, count))
-
-  return (
-    <div
-      className={
-        'inline-flex shrink-0 items-center gap-1.5 rounded-sm border border-[#3a4553] bg-[#37475a] px-2.5 py-1 text-[11px] font-medium text-white sm:text-xs ' +
-        className
-      }
-      aria-live="polite"
-    >
-      <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-500" aria-hidden />
-      <span className="whitespace-nowrap">{t('header.onlineVisitors')}</span>
-      <span className="tabular-nums font-extrabold text-[#ff9900]">{formatted}</span>
-    </div>
-  )
-}

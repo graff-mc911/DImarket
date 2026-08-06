@@ -299,6 +299,41 @@
     color: #ff9900;
   }
 
+  .mobile-nav-more__section {
+    margin: 1rem 0 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .mobile-nav-more__prefs {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.85rem;
+    padding: 0.85rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .mobile-nav-more__prefs-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .mobile-nav-more__select {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: #1a2430;
+    color: #fff;
+    padding: 0.55rem 0.65rem;
+  }
+
   .page-bg {
     background-color: var(--bg-canvas);
   }
@@ -1611,47 +1646,7 @@
     }
   }
 
-  /** Мобільне меню шапки — скрол на iOS Safari / Android */
-  .mobile-nav-menu {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 7.5rem);
-  }
-
-  .mobile-nav-menu__scroll {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    touch-action: pan-y;
-    border-radius: 26px;
-    border: 1px solid var(--glass-border);
-    background: rgba(255, 252, 248, 0.92);
-    box-shadow: 0 18px 42px rgba(67, 44, 26, 0.08);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 0.75rem;
-    padding-bottom: 0.5rem;
-  }
-
-  .mobile-nav-menu__footer {
-    flex-shrink: 0;
-    display: grid;
-    gap: 0.5rem;
-    padding: 0.625rem 0.25rem 0;
-    padding-bottom: max(0.625rem, env(safe-area-inset-bottom, 0px));
-  }
-
-  @media (min-width: 80rem) {
-    .mobile-nav-menu,
-    .mobile-nav-menu__scroll,
-    .mobile-nav-menu__footer {
-      display: none;
-    }
-  }
+  /** Мобільне меню шапки — видалено: єдина навігація = MobileBottomNav + More */
 
   .glass-card {
     background: var(--panel);
