@@ -1,7 +1,6 @@
 export { AnimatedStat } from './AnimatedStat'
 export { HomeHero } from './HomeHero'
 export { HomeTrustBar } from './HomeTrustBar'
-export { HomeCategoryCard } from './HomeCategoryCard'
 export { HomeCategoriesPreview } from './HomeCategoriesPreview'
 export { HomePopularProjects } from './HomePopularProjects'
 export { HomeTopProfessionals } from './HomeTopProfessionals'

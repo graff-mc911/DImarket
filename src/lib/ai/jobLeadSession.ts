@@ -80,17 +80,3 @@ export async function recordPublishedJob(
       .eq('id', sessionId),
   ])
 }
-
-export async function invokeAiJobLead(input: {
-  message: string
-  locale: string
-  draft: JobRequestDraft
-  sessionId?: string
-}): Promise<{ reply: string; extracted?: Record<string, unknown>; missing?: string[] } | null> {
-  const { data, error } = await supabase.functions.invoke('ai-job-lead', { body: input })
-  if (error) {
-    console.error('ai-job-lead:', error)
-    return null
-  }
-  return data as { reply: string; extracted?: Record<string, unknown>; missing?: string[] }
-}

@@ -48,22 +48,10 @@ export const SITE_CATEGORY_CONFIG: Record<SiteCategorySlug, SiteCategoryConfig> 
   },
 }
 
-/** @deprecated використовуйте SITE_CATEGORY_SLUGS */
-export const HEADER_CATEGORY_SLUGS = SITE_CATEGORY_SLUGS
-
-export type HeaderCategorySlug = SiteCategorySlug
-
 export function categoryPagePath(slug: SiteCategorySlug | string): string {
   const cfg = SITE_CATEGORY_CONFIG[slug as SiteCategorySlug]
   if (cfg?.path) return cfg.path
   return `/listings?category=${encodeURIComponent(slug)}`
-}
-
-export function headerCategoryLabel(
-  slug: SiteCategorySlug,
-  t: (key: TranslationKey) => string,
-): string {
-  return categoryLabel(slug, t)
 }
 
 export function categoryLabel(
@@ -104,6 +92,3 @@ export function buildDisplayCategories(
     }
   })
 }
-
-/** @deprecated */
-export const listingsCategoryPath = categoryPagePath

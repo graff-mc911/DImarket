@@ -57,7 +57,7 @@ Also in repo but **not wired from the main UI**:
 
 | Function | Status |
 |----------|--------|
-| `ai-job-lead` | Deployed; freeform extract API. Job chat uses `salesBotEngine` + `sales-chat` polish instead (`invokeAiJobLead` has no callers). |
+| `ai-job-lead` | Deployed; freeform extract API. Job chat uses `salesBotEngine` + `sales-chat` polish; client invoke removed. |
 | `marketplace-matching` | Deployed; production matching is client `aiMatchService` (scoring heuristics, no LLM). |
 
 `ai-router` body:

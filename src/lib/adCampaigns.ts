@@ -408,15 +408,6 @@ export function pickCenterHeroCampaign(
   return legacyCenter && campaignRendersInSlot(legacyCenter, centerId) ? legacyCenter : null
 }
 
-/** @deprecated використовуйте pickCenterHeroCampaign */
-export function pickCenterAnimatedCampaigns(
-  all: AdCampaignWithAdvertiser[],
-  limit: number,
-): AdCampaignWithAdvertiser[] {
-  const hero = pickCenterHeroCampaign(all)
-  return hero ? [hero].slice(0, limit) : []
-}
-
 export function pickCampaignByPlacement(
   campaigns: AdCampaign[],
   preferred: AdPlacement,

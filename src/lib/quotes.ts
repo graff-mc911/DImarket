@@ -210,12 +210,6 @@ export function printQuotePdf(html: string): void {
   openQuotePdfPrint(html)
 }
 
-/** @deprecated use printQuotePdf with generated HTML */
-export function printQuoteAsPdf(title: string): void {
-  document.title = title
-  window.print()
-}
-
 export async function emailQuoteToCustomer(opts: {
   quoteId: string
   toEmail: string

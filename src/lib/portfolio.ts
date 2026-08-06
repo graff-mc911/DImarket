@@ -56,13 +56,6 @@ export function portfolioCategoryKey(slug: string | null | undefined): string {
   return PROJECT_TRADES.find((trade) => trade.id === slug)?.labelKey || 'portfolio.cat.general'
 }
 
-/** @deprecated Prefer portfolioCategoryKey + t() */
-export function categoryLabel(slug: string | null | undefined): string {
-  if (!slug) return 'General'
-  if (slug === 'certificate') return 'Certificates'
-  return PROJECT_TRADES.find((trade) => trade.id === slug)?.labelEn || slug
-}
-
 export function coverUrl(item: PortfolioItemRow): string | null {
   if (item.media_type === 'before_after') {
     return item.after_url || item.before_url || item.image_url

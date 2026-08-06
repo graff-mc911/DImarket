@@ -1,7 +1,7 @@
 export * from './types'
 export * from './registry'
 export * from './client'
-export { rankProfessionals } from './matching/rank'
+export { rankProfessionals } from '../matching/aiMatchService'
 export { translateText } from './translation/translate'
 export { analyzeFraudLocally } from './fraud/analyze'
 export { estimateQuoteLocally } from './quote/estimate'
