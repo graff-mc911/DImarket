@@ -50,11 +50,19 @@ type Step =
 type Body = {
   message?: string
   step?: Step
+  /** Step after local engine advanced (client-owned state machine). */
+  nextStep?: Step
   draft?: Draft
   locale?: string
+  suggestedReplyKey?: string
+  suggestedParams?: Record<string, string>
 }
 
-/** Мінімальний серверний fallback (повна логіка — у клієнтському salesBotEngine). */
+/**
+ * Optional LLM polish for Dimarket job-request chat.
+ * Client always runs salesBotEngine for draft/step; this only returns replyText.
+ * Without OPENAI_API_KEY → 501 so client keeps local i18n reply.
+ */
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders })
@@ -67,48 +75,74 @@ Deno.serve(async (req: Request) => {
     const body = (await req.json()) as Body
     const openaiKey = Deno.env.get('OPENAI_API_KEY')
 
-    if (openaiKey && body.message?.trim()) {
-      const system = `You are Dimarket sales assistant. Help user post a construction job request. 
-Respond in ${localeLanguage(body.locale)}. 
-Keep answers short. Current step: ${body.step ?? 'welcome'}. 
-Extract structured fields into JSON when possible: category, city, budget, deadline_days, description, photo_urls.`
-
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${openaiKey}`,
-          'Content-Type': 'application/json',
+    if (!openaiKey || !body.message?.trim()) {
+      return jsonResponse(
+        {
+          error: 'use_client_engine',
+          step: body.nextStep ?? body.step,
+          draft: body.draft,
         },
-        body: JSON.stringify({
-          model: Deno.env.get('OPENAI_MODEL') ?? 'gpt-4o-mini',
-          messages: [
-            { role: 'system', content: system },
-            { role: 'user', content: body.message },
-          ],
-          max_tokens: 400,
-          temperature: 0.4,
-        }),
-      })
+        501,
+      )
+    }
 
-      if (res.ok) {
-        const data = await res.json()
-        const replyText = data?.choices?.[0]?.message?.content?.trim()
-        if (replyText) {
-          return jsonResponse({
-            replyText,
-            step: body.step ?? 'category',
-            draft: body.draft ?? {},
-            canPublish: false,
-          })
-        }
-      }
+    const draftJson = JSON.stringify(body.draft ?? {})
+    const paramsJson = JSON.stringify(body.suggestedParams ?? {})
+    const system = `You are Dimarket's job-request assistant for a European construction marketplace.
+Respond in ${localeLanguage(body.locale)} only.
+The client already advanced the form: previous step=${body.step ?? 'welcome'}, next step=${body.nextStep ?? body.step ?? 'category'}.
+Your job: write ONE short friendly assistant message (1–3 sentences) that asks for / confirms the next field.
+Do not invent categories or cities that contradict the draft JSON.
+Do not ask for multiple fields at once.
+Do not wrap the answer in quotes or markdown.
+Draft JSON: ${draftJson}
+Suggested template key: ${body.suggestedReplyKey ?? 'none'}
+Suggested template params: ${paramsJson}`
+
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${openaiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: Deno.env.get('OPENAI_MODEL') ?? 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: system },
+          {
+            role: 'user',
+            content: `User just said: ${body.message}\nWrite the next assistant prompt.`,
+          },
+        ],
+        max_tokens: 220,
+        temperature: 0.35,
+      }),
+    })
+
+    if (!res.ok) {
+      return jsonResponse(
+        {
+          error: 'openai_failed',
+          status: res.status,
+          step: body.nextStep ?? body.step,
+          draft: body.draft,
+        },
+        502,
+      )
+    }
+
+    const data = await res.json()
+    const replyText = String(data?.choices?.[0]?.message?.content ?? '').trim()
+    if (!replyText) {
+      return jsonResponse({ error: 'empty_reply' }, 502)
     }
 
     return jsonResponse({
-      error: 'use_client_engine',
-      step: body.step,
-      draft: body.draft,
-    }, 501)
+      replyText,
+      step: body.nextStep ?? body.step ?? 'category',
+      draft: body.draft ?? {},
+      canPublish: false,
+    })
   } catch (e) {
     return jsonResponse({ error: String(e) }, 500)
   }

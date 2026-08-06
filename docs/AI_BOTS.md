@@ -1,13 +1,16 @@
 # Dimarket AI Bots Platform
 
+**Env secrets checklist (what to enable):** [`docs/AI_ENV_CHECKLIST.md`](./AI_ENV_CHECKLIST.md)
+
 ## Environment variables (Supabase Edge secrets / Vercel)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `OPENAI_API_KEY` | Recommended | Translation, enhanced quotes, optional sales replies |
+| `OPENAI_API_KEY` | Recommended | Translation, enhanced quotes, sales-chat reply polish |
 | `OPENAI_MODEL` | Optional | Default `gpt-4o-mini` |
+| `ANTHROPIC_API_KEY` | Admin / marketing | Claude for `/admin/ai` and marketing agent |
 | `GOOGLE_VISION_API_KEY` | Optional | OCR on PDF/images (client fallback: text parse) |
-| `TELEGRAM_BOT_TOKEN` | Optional | Future Telegram bot webhook |
+| `TELEGRAM_BOT_TOKEN` | For Telegram bot | Webhook bot (edge `telegram-bot`) |
 | `WHATSAPP_ACCESS_TOKEN` | Optional | Future WhatsApp Cloud API |
 
 Never put these keys in `VITE_*` frontend env vars.
@@ -75,7 +78,7 @@ Routes:
 
 | ID | Client | Edge | Notes |
 |----|--------|------|-------|
-| sales | ✓ engine | fallback | Job request dialog |
+| sales | ✓ engine | ✓ polish | Job request dialog — local step machine; OpenAI polishes `replyText` when keyed |
 | matching | ✓ rank | — | Profile scoring |
 | translation | ✓ + cache | ✓ OpenAI | Keeps original + translated |
 | fraud | ✓ heuristics | ✓ persist | trust/risk scores |

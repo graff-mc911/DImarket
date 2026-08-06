@@ -17,28 +17,54 @@ export type SalesChatRequest = {
 
 export type SalesChatResponse = SalesBotTurnResult
 
-/** Виклик edge-функції з fallback на локальний движок. */
+type EdgeSalesResponse = {
+  replyText?: string
+  replyKey?: string
+  step?: SalesBotStep
+  draft?: JobRequestDraft
+  canPublish?: boolean
+  error?: string
+}
+
+/**
+ * Job-request chat turn.
+ * Local engine owns step machine + draft (publish-safe).
+ * Edge `sales-chat` optionally polishes the assistant reply with OpenAI when keyed.
+ */
 export async function runSalesChatTurn(req: SalesChatRequest): Promise<SalesChatResponse> {
+  const local: SalesBotTurnResult =
+    !req.message.trim() && req.step === 'welcome'
+      ? getInitialTurn(req.context)
+      : processSalesBotTurn(req.step, req.draft, req.message, req.context)
+
+  // Skip LLM polish for initial welcome / publish terminal turns
+  if (!req.message.trim() || local.canPublish || local.step === 'done') {
+    return local
+  }
+
   try {
-    const { data, error } = await supabase.functions.invoke<SalesChatResponse>('sales-chat', {
+    const { data, error } = await supabase.functions.invoke<EdgeSalesResponse>('sales-chat', {
       body: {
         message: req.message,
         step: req.step,
-        draft: req.draft,
+        nextStep: local.step,
+        draft: local.draft,
         locale: req.locale,
+        suggestedReplyKey: local.replyKey,
+        suggestedParams: local.replyParams ?? {},
       },
     })
-    // Лише відповіді з replyKey — текст з LLM (replyText) не підтримує i18n UI
-    if (!error && data?.step && data.replyKey && !('error' in data)) {
-      return { ...data, draft: data.draft ?? req.draft }
+
+    const polished = data?.replyText?.trim()
+    if (!error && polished && !data?.error) {
+      return {
+        ...local,
+        replyText: polished,
+      }
     }
   } catch {
-    /* локальний fallback */
+    /* keep deterministic local turn */
   }
 
-  if (!req.message.trim() && req.step === 'welcome') {
-    return getInitialTurn(req.context)
-  }
-
-  return processSalesBotTurn(req.step, req.draft, req.message, req.context)
+  return local
 }
