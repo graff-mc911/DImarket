@@ -1,18 +1,14 @@
-import { Briefcase, Building2, Globe2, ShoppingBag, UserRound } from 'lucide-react'
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useMemo, useState } from 'react'
 import { useApp } from '../../contexts/AppContext'
-import {
-  EMPTY_MAP_FILTERS,
-  fetchMarketplaceMapMarkers,
-  filterMapMarkers,
-  MAP_KIND_COLORS,
-  type MapMarkerKind,
-  type MarketplaceMapMarker,
-} from '../../lib/marketplaceMap'
+import { useMarketplaceMapMarkers } from '../../hooks/useMarketplaceMapMarkers'
+import type { MapMarkerKind } from '../../lib/marketplaceMap'
 import { navigateTo } from '../../lib/navigation'
 import { EuropeMarketplaceMap } from '../map/EuropeMarketplaceMap'
-
-type MapFilter = 'all' | MapMarkerKind
+import {
+  countMapKinds,
+  MapKindFilters,
+  type MapKindFilterId,
+} from '../map/MapKindFilters'
 
 interface HomeInteractiveMapProps {
   /** @deprecated Home map loads from marketplaceMap SSoT; kept for call-site compat. */
@@ -22,93 +18,26 @@ interface HomeInteractiveMapProps {
 
 /**
  * Home map section — UI chrome only.
- * Leaflet rendering + marker data come from the single map SSoT:
- * EuropeMarketplaceMap + fetchMarketplaceMapMarkers (same as /map).
+ * Leaflet + marker data: EuropeMarketplaceMap + useMarketplaceMapMarkers (map SSoT).
  */
 export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMapProps) {
   const { t, location } = useApp()
-  const [filter, setFilter] = useState<MapFilter>('all')
-  const [markers, setMarkers] = useState<MarketplaceMapMarker[]>([])
-  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<MapKindFilterId>('all')
 
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      setLoading(true)
-      try {
-        const next = await fetchMarketplaceMapMarkers(80)
-        if (!cancelled) setMarkers(next)
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  const filtered = useMemo(() => {
-    const kinds: MapExploreKinds = filter === 'all' ? 'all' : new Set<MapMarkerKind>([filter])
-    return filterMapMarkers(markers, location, { ...EMPTY_MAP_FILTERS, kinds })
-  }, [markers, location, filter])
-
-  const counts = useMemo(
+  const filters = useMemo(
     () => ({
-      all: markers.length,
-      professional: markers.filter((p) => p.kind === 'professional').length,
-      company: markers.filter((p) => p.kind === 'company').length,
-      project: markers.filter((p) => p.kind === 'project').length,
-      marketplace: markers.filter((p) => p.kind === 'marketplace').length,
-      job: markers.filter((p) => p.kind === 'job').length,
+      kinds: filter === 'all' ? ('all' as const) : new Set<MapMarkerKind>([filter]),
     }),
-    [markers],
+    [filter],
   )
 
-  const filters: Array<{
-    id: MapFilter
-    label: string
-    icon: typeof UserRound
-    count: number
-    color?: string
-  }> = [
-    { id: 'all', label: t('homePremium.mapAll'), icon: Globe2, count: counts.all },
-    {
-      id: 'professional',
-      label: t('homePremium.mapPros'),
-      icon: UserRound,
-      count: counts.professional,
-      color: MAP_KIND_COLORS.professional,
-    },
-    {
-      id: 'company',
-      label: t('homePremium.mapCompanies'),
-      icon: Building2,
-      count: counts.company,
-      color: MAP_KIND_COLORS.company,
-    },
-    {
-      id: 'project',
-      label: t('homePremium.mapProjects'),
-      icon: Briefcase,
-      count: counts.project,
-      color: MAP_KIND_COLORS.project,
-    },
-    {
-      id: 'marketplace',
-      label: t('mapExplore.kindMarketplace'),
-      icon: ShoppingBag,
-      count: counts.marketplace,
-      color: MAP_KIND_COLORS.marketplace,
-    },
-    {
-      id: 'job',
-      label: t('mapExplore.kindJobs'),
-      icon: Briefcase,
-      count: counts.job,
-      color: MAP_KIND_COLORS.job,
-    },
-  ]
+  const { markers, visible, loading } = useMarketplaceMapMarkers({
+    limit: 80,
+    geo: location,
+    filters,
+  })
 
+  const counts = useMemo(() => countMapKinds(markers), [markers])
   const busy = loading || Boolean(parentLoading)
 
   return (
@@ -125,28 +54,20 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
           <p className="home-section__subtitle">{t('homePremium.mapSubtitle')}</p>
         </div>
         <div className="flex flex-col items-stretch gap-2 sm:items-end">
-          <div className="home-map__filters map-kind-filters" role="group" aria-label={t('homePremium.mapFilters')}>
-            {filters.map((f) => {
-              const Icon = f.icon
-              return (
-                <button
-                  key={f.id}
-                  type="button"
-                  className={`home-map__filter map-kind-filter ${filter === f.id ? 'is-active' : ''}`}
-                  style={f.color ? ({ '--kind-color': f.color } as CSSProperties) : undefined}
-                  onClick={() => setFilter(f.id)}
-                >
-                  {f.color ? (
-                    <span className="map-kind-filter__dot" aria-hidden />
-                  ) : (
-                    <Icon className="h-4 w-4" aria-hidden />
-                  )}
-                  {f.label}
-                  <span className="map-kind-filter__count">{f.count}</span>
-                </button>
-              )
-            })}
-          </div>
+          <MapKindFilters
+            value={filter}
+            onChange={setFilter}
+            counts={counts}
+            labels={{
+              all: t('homePremium.mapAll'),
+              professional: t('homePremium.mapPros'),
+              company: t('homePremium.mapCompanies'),
+              project: t('homePremium.mapProjects'),
+              marketplace: t('mapExplore.kindMarketplace'),
+              job: t('mapExplore.kindJobs'),
+              filtersAria: t('homePremium.mapFilters'),
+            }}
+          />
           <button type="button" className="btn-secondary text-sm" onClick={() => navigateTo('/map')}>
             {t('homePremium.mapOpenFull')}
           </button>
@@ -154,7 +75,7 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
       </div>
 
       <EuropeMarketplaceMap
-        markers={filtered}
+        markers={visible}
         geo={location}
         loading={busy}
         followLocation
@@ -164,5 +85,3 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
     </section>
   )
 }
-
-type MapExploreKinds = 'all' | Set<MapMarkerKind>

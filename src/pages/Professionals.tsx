@@ -8,6 +8,7 @@ import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { buildDisplayCategories, SITE_CATEGORY_SLUGS } from '../lib/siteCategories'
 import { findServiceBySlug, matchesServiceProfile } from '../lib/serviceTaxonomy'
+import { matchesWorkLoose, matchesWorkPrefix } from '../lib/categoryMatching'
 import { GeoSearchFilters } from '../components/GeoSearchFilters'
 import {
   EMPTY_GEO_SEARCH,
@@ -162,21 +163,14 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
             const slug = item.category?.slug || ''
             return slug === selectedCategory || item.category_id === selectedCategory
           }) ||
-          (professional.work_subcategory_slugs ?? []).some(
-            (w) => w === selectedCategory || w.startsWith(`${selectedCategory}-`),
-          )
+          matchesWorkPrefix(professional.work_subcategory_slugs, selectedCategory)
 
         const workResolved = selectedWork ? findServiceBySlug(selectedWork) : null
         const matchesWork =
           selectedWork === '' ||
           (workResolved
             ? matchesServiceProfile(professional, workResolved.matcher)
-            : (professional.work_subcategory_slugs ?? []).some(
-                (w) =>
-                  w === selectedWork ||
-                  w.startsWith(`${selectedWork}-`) ||
-                  w.includes(selectedWork),
-              ))
+            : matchesWorkLoose(professional.work_subcategory_slugs, selectedWork))
 
         if (!(matchesSearch && matchesRating && geoHit.matches && matchesCategory && matchesWork)) {
           return null

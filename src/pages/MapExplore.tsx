@@ -1,42 +1,35 @@
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react'
-import {
-  Briefcase,
-  Building2,
-  Globe2,
-  List,
-  Map as MapIcon,
-  ShoppingBag,
-  UserRound,
-} from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Globe2, List, Map as MapIcon } from 'lucide-react'
 import { EuropeMarketplaceMap, type MapBounds } from '../components/map/EuropeMarketplaceMap'
 import { MapResultsSidebar } from '../components/map/MapResultsSidebar'
+import {
+  countMapKinds,
+  MapKindFilters,
+  type MapKindFilterId,
+} from '../components/map/MapKindFilters'
 import { GeoSearchFilters } from '../components/GeoSearchFilters'
 import { useApp } from '../contexts/AppContext'
+import { useMarketplaceMapMarkers } from '../hooks/useMarketplaceMapMarkers'
 import {
   attachDistances,
   EMPTY_MAP_FILTERS,
-  fetchMarketplaceMapMarkers,
   filterMapMarkers,
   MAP_KIND_COLORS,
   nextWiderRadius,
   type MapExploreFilters,
   type MapMarkerKind,
-  type MarketplaceMapMarker,
 } from '../lib/marketplaceMap'
 import { serviceCategories } from '../config/categories'
 import { serviyaLabel } from '../config/categoriesI18n'
 import { navigateTo } from '../lib/navigation'
 
-type KindFilter = 'all' | MapMarkerKind
 type ViewMode = 'map' | 'list' | 'split'
 
 export function MapExplore() {
   const { t, language, location, setLocation, patchLocation } = useApp()
   const lang = language.code
 
-  const [markers, setMarkers] = useState<MarketplaceMapMarker[]>([])
-  const [loading, setLoading] = useState(true)
-  const [kind, setKind] = useState<KindFilter>('all')
+  const [kind, setKind] = useState<MapKindFilterId>('all')
   const [filters, setFilters] = useState<MapExploreFilters>({ ...EMPTY_MAP_FILTERS })
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [serviceQuery, setServiceQuery] = useState('')
@@ -49,16 +42,6 @@ export function MapExplore() {
 
   useEffect(() => {
     document.title = `${t('mapExplore.title')} | DImarket`
-    let cancelled = false
-    setLoading(true)
-    void fetchMarketplaceMapMarkers(400).then((rows) => {
-      if (cancelled) return
-      setMarkers(rows)
-      setLoading(false)
-    })
-    return () => {
-      cancelled = true
-    }
   }, [t])
 
   useEffect(() => {
@@ -72,29 +55,28 @@ export function MapExplore() {
     if (view === 'map' || view === 'list' || view === 'split') setViewMode(view)
   }, [])
 
-  const activeFilters: MapExploreFilters = useMemo(
+  const activePartial = useMemo(
     () => ({
       ...filters,
       serviceQuery,
-      kinds: kind === 'all' ? 'all' : new Set<MapMarkerKind>([kind]),
+      kinds: kind === 'all' ? ('all' as const) : new Set<MapMarkerKind>([kind]),
     }),
     [filters, kind, serviceQuery],
   )
+
+  const { markers, visible, loading } = useMarketplaceMapMarkers({
+    limit: 400,
+    geo: location,
+    filters: activePartial,
+    withDistances: true,
+    bounds,
+    viewportFilter,
+  })
 
   const origin =
     location.originLat != null && location.originLng != null
       ? { lat: location.originLat, lon: location.originLng }
       : null
-
-  const visible = useMemo(() => {
-    const filtered = filterMapMarkers(
-      markers,
-      location,
-      activeFilters,
-      viewportFilter ? bounds : null,
-    )
-    return attachDistances(filtered, origin)
-  }, [markers, location, activeFilters, bounds, viewportFilter, origin])
 
   const counts = useMemo(() => {
     const base = attachDistances(
@@ -104,14 +86,7 @@ export function MapExplore() {
       }),
       origin,
     )
-    return {
-      all: base.length,
-      professional: base.filter((m) => m.kind === 'professional').length,
-      company: base.filter((m) => m.kind === 'company').length,
-      project: base.filter((m) => m.kind === 'project').length,
-      marketplace: base.filter((m) => m.kind === 'marketplace').length,
-      job: base.filter((m) => m.kind === 'job').length,
-    }
+    return countMapKinds(base)
   }, [markers, location, serviceQuery, origin])
 
   const expandRadius = () => {
@@ -126,53 +101,16 @@ export function MapExplore() {
     setSelectedId(id)
   }, [])
 
-  const kindFilters: Array<{
-    id: KindFilter
-    label: string
-    icon: typeof UserRound
-    count: number
-    color?: string
-  }> = [
-    { id: 'all', label: t('homePremium.mapAll'), icon: Globe2, count: counts.all },
-    {
-      id: 'professional',
-      label: t('homePremium.mapPros'),
-      icon: UserRound,
-      count: counts.professional,
-      color: MAP_KIND_COLORS.professional,
-    },
-    {
-      id: 'company',
-      label: t('homePremium.mapCompanies'),
-      icon: Building2,
-      count: counts.company,
-      color: MAP_KIND_COLORS.company,
-    },
-    {
-      id: 'project',
-      label: t('homePremium.mapProjects'),
-      icon: Briefcase,
-      count: counts.project,
-      color: MAP_KIND_COLORS.project,
-    },
-    {
-      id: 'marketplace',
-      label: t('mapExplore.kindMarketplace'),
-      icon: ShoppingBag,
-      count: counts.marketplace,
-      color: MAP_KIND_COLORS.marketplace,
-    },
-    {
-      id: 'job',
-      label: t('mapExplore.kindJobs'),
-      icon: Briefcase,
-      count: counts.job,
-      color: MAP_KIND_COLORS.job,
-    },
-  ]
-
   const showMap = viewMode === 'map' || viewMode === 'split'
   const showList = viewMode === 'list' || viewMode === 'split'
+
+  const legendItems: Array<{ kind: MapMarkerKind; label: string }> = [
+    { kind: 'professional', label: t('mapExplore.legendPro') },
+    { kind: 'company', label: t('mapExplore.legendCompany') },
+    { kind: 'project', label: t('mapExplore.legendProject') },
+    { kind: 'job', label: t('mapExplore.legendJob') },
+    { kind: 'marketplace', label: t('mapExplore.legendShop') },
+  ]
 
   return (
     <div className="directory-page map-explore-page pb-24 lg:pb-8">
@@ -215,32 +153,20 @@ export function MapExplore() {
                 )
               })}
             </div>
-            <div className="home-map__filters map-kind-filters" role="group" aria-label={t('homePremium.mapFilters')}>
-              {kindFilters.map((f) => {
-                const Icon = f.icon
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    className={`home-map__filter map-kind-filter ${kind === f.id ? 'is-active' : ''}`}
-                    style={
-                      f.color
-                        ? ({ '--kind-color': f.color } as CSSProperties)
-                        : undefined
-                    }
-                    onClick={() => setKind(f.id)}
-                  >
-                    {f.color ? (
-                      <span className="map-kind-filter__dot" aria-hidden />
-                    ) : (
-                      <Icon className="h-4 w-4" aria-hidden />
-                    )}
-                    {f.label}
-                    <span className="map-kind-filter__count">{f.count}</span>
-                  </button>
-                )
-              })}
-            </div>
+            <MapKindFilters
+              value={kind}
+              onChange={setKind}
+              counts={counts}
+              labels={{
+                all: t('homePremium.mapAll'),
+                professional: t('homePremium.mapPros'),
+                company: t('homePremium.mapCompanies'),
+                project: t('homePremium.mapProjects'),
+                marketplace: t('mapExplore.kindMarketplace'),
+                job: t('mapExplore.kindJobs'),
+                filtersAria: t('homePremium.mapFilters'),
+              }}
+            />
           </div>
         </div>
       </section>
@@ -375,26 +301,15 @@ export function MapExplore() {
             <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-500)]">
               {t('mapExplore.legendTitle')}
             </p>
-            <p className="flex items-center gap-2">
-              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#16a34a]" />{' '}
-              {t('mapExplore.legendPro')}
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#2563eb]" />{' '}
-              {t('mapExplore.legendCompany')}
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#ea580c]" />{' '}
-              {t('mapExplore.legendProject')}
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7c3aed]" />{' '}
-              {t('mapExplore.legendJob')}
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#92400e]" />{' '}
-              {t('mapExplore.legendShop')}
-            </p>
+            {legendItems.map((item) => (
+              <p key={item.kind} className="flex items-center gap-2">
+                <span
+                  className="inline-block h-2.5 w-2.5 rounded-full"
+                  style={{ backgroundColor: MAP_KIND_COLORS[item.kind] }}
+                />{' '}
+                {item.label}
+              </p>
+            ))}
           </div>
         </aside>
 

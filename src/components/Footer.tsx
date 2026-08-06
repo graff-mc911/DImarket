@@ -8,10 +8,48 @@ import {
   type AppLanguage,
 } from '../lib/languageDisplay'
 import { navigateTo } from '../lib/navigation'
+import { labelKeyFor, navEntriesFor, type NavEntry } from '../lib/navMap'
 import { LANGUAGES } from '../lib/types'
 import { FooterStats } from './FooterStats'
 import { HomeDownloadApp } from './home/HomeDownloadApp'
 import { LanguageFlag } from './LanguageFlag'
+
+const FOOTER_COLUMNS: Array<{
+  titleKey: 'footer.companyCol' | 'footer.servicesCol' | 'footer.professionalsCol' | 'footer.supportCol'
+  surface:
+    | 'footer-company'
+    | 'footer-services'
+    | 'footer-professionals'
+    | 'footer-support'
+  /** Preserve historical link order within each column. */
+  ids: string[]
+}> = [
+  {
+    titleKey: 'footer.companyCol',
+    surface: 'footer-company',
+    ids: ['how-it-works-footer', 'about', 'advertising', 'contact', 'pricing'],
+  },
+  {
+    titleKey: 'footer.servicesCol',
+    surface: 'footer-services',
+    ids: ['search', 'publish-request', 'assistant', 'publish', 'advanced-search'],
+  },
+  {
+    titleKey: 'footer.professionalsCol',
+    surface: 'footer-professionals',
+    ids: ['professionals', 'for-companies', 'register', 'verification', 'for-pros'],
+  },
+  {
+    titleKey: 'footer.supportCol',
+    surface: 'footer-support',
+    ids: ['help', 'privacy', 'cookies', 'gdpr', 'terms', 'impressum'],
+  },
+]
+
+function pickEntries(surface: (typeof FOOTER_COLUMNS)[number]['surface'], ids: string[]): NavEntry[] {
+  const byId = new Map(navEntriesFor(surface).map((e) => [e.id, e]))
+  return ids.map((id) => byId.get(id)).filter(Boolean) as NavEntry[]
+}
 
 export function Footer() {
   const { t, user, language, setLanguage } = useApp()
@@ -35,49 +73,13 @@ export function Footer() {
   const go = (path: string) => navigateTo(path)
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
-  const columnLinks = [
-    {
-      title: t('footer.companyCol'),
-      links: [
-        { label: t('footer.howItWorks'), path: '/for-professionals' },
-        { label: t('footer.about'), path: '/contact' },
-        { label: t('footer.advertisingLink'), path: '/advertising' },
-        { label: t('footer.contactLink'), path: '/contact' },
-        { label: t('footer.pricing'), path: '/pricing' },
-      ],
-    },
-    {
-      title: t('footer.servicesCol'),
-      links: [
-        { label: t('footer.browseListings'), path: '/listings' },
-        { label: t('homePremium.postProject'), path: '/create-project' },
-        { label: t('header.aiAssistant'), path: '/assistant' },
-        { label: t('header.sell'), path: '/create-ad' },
-        { label: t('advancedSearch.title'), path: '/search' },
-      ],
-    },
-    {
-      title: t('footer.professionalsCol'),
-      links: [
-        { label: t('header.findProfessionals'), path: '/professionals' },
-        { label: t('footer.forCompanies'), path: '/for-companies' },
-        { label: t('footer.register'), path: '/register' },
-        { label: t('footer.verification'), path: '/verification' },
-        { label: t('footer.forPros'), path: '/for-professionals' },
-      ],
-    },
-    {
-      title: t('footer.supportCol'),
-      links: [
-        { label: t('footer.helpCenter'), path: '/contact' },
-        { label: t('footer.privacy'), path: '/contact?topic=privacy' },
-        { label: t('footer.cookies'), path: '/contact?topic=cookies' },
-        { label: t('footer.gdpr'), path: '/contact?topic=gdpr' },
-        { label: t('footer.terms'), path: '/contact?topic=terms' },
-        { label: t('footer.impressum'), path: '/contact?topic=legal' },
-      ],
-    },
-  ]
+  const columnLinks = FOOTER_COLUMNS.map((col) => ({
+    title: t(col.titleKey),
+    links: pickEntries(col.surface, col.ids).map((entry) => ({
+      label: t(labelKeyFor(entry, col.surface)),
+      path: entry.path,
+    })),
+  }))
 
   const primaryLangs = useMemo(
     () =>

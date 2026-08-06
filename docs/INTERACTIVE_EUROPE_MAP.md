@@ -6,9 +6,13 @@ Interactive Europe map UX for professionals, companies, projects, marketplace an
 ## Architecture
 - **Page:** `src/pages/MapExplore.tsx` — filters, Map/List/Both toggle, global location binding
 - **Map SSoT:** `src/components/map/EuropeMarketplaceMap.tsx` — Leaflet, custom grid clustering, popups, bounds events, selection sync
-- **Home preview:** `src/components/home/HomeInteractiveMap.tsx` — section chrome only; **reuses** `EuropeMarketplaceMap` + `fetchMarketplaceMapMarkers` (no second Leaflet instance)
+- **Hook SSoT:** `src/hooks/useMarketplaceMapMarkers.ts` — shared fetch → filter → distances (Home / Estimator / MapExplore)
+- **Kind filters UI:** `src/components/map/MapKindFilters.tsx`
+- **Home preview:** `src/components/home/HomeInteractiveMap.tsx` — section chrome only; reuses map SSoT
 - **Sidebar:** `src/components/map/MapResultsSidebar.tsx` — synchronized results list
-- **Data SSoT:** `src/lib/marketplaceMap.ts` — fetch, filter, cache, distances, kind colors
+- **Data SSoT:** `src/lib/marketplaceMap.ts` — fetch, filter, cache, distances, `MAP_KIND_COLORS`, `DEFAULT_EUROPE_VIEW`, `COUNTRY_MAP_CENTERS`
+
+See also: `docs/ARCHITECTURE_SSOT.md`.
 
 
 ## Marker kinds (DB-backed only)

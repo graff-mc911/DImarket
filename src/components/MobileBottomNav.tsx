@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import {
   BarChart3,
   Bot,
@@ -26,17 +26,43 @@ import {
 import { useApp } from '../contexts/AppContext'
 import { CURRENCIES } from '../lib/types'
 import { navigateTo } from '../lib/navigation'
+import {
+  labelKeyFor,
+  navEntriesFor,
+  resolveNavPath,
+  type NavEntry,
+} from '../lib/navMap'
 import { LanguageSelector } from './LanguageSelector'
 
 type MoreItem = {
   id: string
   label: string
   path: string
-  icon: React.ReactNode
+  icon: ReactNode
+}
+
+const MORE_ICONS: Record<string, ReactNode> = {
+  trending: <Flame className="h-5 w-5" aria-hidden />,
+  professionals: <Hammer className="h-5 w-5" aria-hidden />,
+  companies: <Building2 className="h-5 w-5" aria-hidden />,
+  'publish-request': <ClipboardList className="h-5 w-5" aria-hidden />,
+  'cost-estimator': <Calculator className="h-5 w-5" aria-hidden />,
+  publish: <Plus className="h-5 w-5" aria-hidden />,
+  pricing: <CreditCard className="h-5 w-5" aria-hidden />,
+  assistant: <Bot className="h-5 w-5" aria-hidden />,
+  analytics: <BarChart3 className="h-5 w-5" aria-hidden />,
+  jobs: <Briefcase className="h-5 w-5" aria-hidden />,
+  marketplace: <ShoppingBag className="h-5 w-5" aria-hidden />,
+  projects: <FolderKanban className="h-5 w-5" aria-hidden />,
+  favorites: <Heart className="h-5 w-5" aria-hidden />,
+  messages: <MessageSquare className="h-5 w-5" aria-hidden />,
+  settings: <Settings className="h-5 w-5" aria-hidden />,
+  profile: <User className="h-5 w-5" aria-hidden />,
 }
 
 /**
  * Single mobile navigation SSoT (bottom bar + More sheet).
+ * Routes/labels come from lib/navMap.ts — do not hardcode paths here.
  * Do not add a second mobile menu (no Header hamburger).
  *
  * Layout contract (native app style):
@@ -107,109 +133,15 @@ export function MobileBottomNav() {
     navigateTo('/#choose-category')
   }
 
-  const profilePath = user ? '/profile' : '/login'
+  const toMoreItem = (entry: NavEntry, surface: 'mobile-more' | 'mobile-account'): MoreItem => ({
+    id: entry.id,
+    label: t(labelKeyFor(entry, surface)),
+    path: resolveNavPath(entry, Boolean(user)),
+    icon: MORE_ICONS[entry.id] ?? <Menu className="h-5 w-5" aria-hidden />,
+  })
 
-  const primaryMore: MoreItem[] = [
-    {
-      id: 'trending',
-      label: t('nav.trendingRequests'),
-      path: '/listings',
-      icon: <Flame className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'professionals',
-      label: t('nav.professionals'),
-      path: '/professionals',
-      icon: <Hammer className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'companies',
-      label: t('nav.companies'),
-      path: '/companies',
-      icon: <Building2 className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'publish-request',
-      label: t('nav.publishRequest'),
-      path: '/create-project',
-      icon: <ClipboardList className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'cost-estimator',
-      label: t('nav.costEstimator'),
-      path: '/cost-estimator',
-      icon: <Calculator className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'publish',
-      label: t('nav.publish'),
-      path: '/create-ad',
-      icon: <Plus className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'pricing',
-      label: t('nav.pricing'),
-      path: '/pricing',
-      icon: <CreditCard className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'assistant',
-      label: t('nav.aiAssistant'),
-      path: '/assistant',
-      icon: <Bot className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'analytics',
-      label: t('nav.analytics'),
-      path: '/analytics',
-      icon: <BarChart3 className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'jobs',
-      label: t('nav.jobs'),
-      path: '/vacancies',
-      icon: <Briefcase className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'marketplace',
-      label: t('nav.marketplace'),
-      path: '/sell-rent',
-      icon: <ShoppingBag className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'projects',
-      label: t('nav.projects'),
-      path: '/projects',
-      icon: <FolderKanban className="h-5 w-5" aria-hidden />,
-    },
-  ]
-
-  const accountMore: MoreItem[] = [
-    {
-      id: 'favorites',
-      label: t('nav.favorites'),
-      path: user ? '/favorites' : '/login',
-      icon: <Heart className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'messages',
-      label: t('nav.messages'),
-      path: user ? '/messages' : '/login',
-      icon: <MessageSquare className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'settings',
-      label: t('header.settings'),
-      path: user ? '/settings' : '/login',
-      icon: <Settings className="h-5 w-5" aria-hidden />,
-    },
-    {
-      id: 'profile',
-      label: t('nav.profile'),
-      path: profilePath,
-      icon: <User className="h-5 w-5" aria-hidden />,
-    },
-  ]
+  const primaryMore = navEntriesFor('mobile-more').map((e) => toMoreItem(e, 'mobile-more'))
+  const accountMore = navEntriesFor('mobile-account').map((e) => toMoreItem(e, 'mobile-account'))
 
   return (
     <>

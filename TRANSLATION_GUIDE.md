@@ -1,7 +1,22 @@
-# Buildster Translation System
+# DImarket Translation System
+
+## Source of Truth (2026-08-06)
+
+| Layer | Location |
+|-------|----------|
+| English keys | `src/lib/Translations/en.ts` (`TranslationKey`) |
+| Locale overlays | `src/lib/Translations/{uk,ru,…}.ts` |
+| Loader | `src/lib/locales/index.ts` → `withEnglishFallback` |
+| Runtime API | `useApp().t(key)` / `getTranslation` |
+| Nav label keys | Prefer `src/lib/navMap.ts` for chrome destinations |
+
+Do **not** edit a monolithic `i18n.ts` string table — that path is obsolete.  
+Category slug labels are separate (`categoryLabelI18n`, Serviya, DB `name_i18n`); see `docs/ARCHITECTURE_SSOT.md`.
+
+---
 
 ## Overview
-Buildster now includes a complete internationalization (i18n) system that automatically translates all interface text based on the user's selected language.
+DImarket includes an internationalization (i18n) system that translates interface text from the user's selected language.
 
 ## How It Works
 

@@ -4,6 +4,7 @@ import { SERVIYA_CATEGORY_I18N } from '../config/categoriesI18n'
 import { CATEGORY_LABEL_I18N } from './categoryLabelI18n'
 import { getTranslation, type LanguageCode, type TranslationKey } from './i18n'
 import { findServiceBySlug, servicesPath } from './serviceTaxonomy'
+import { matchesWorkPrefix } from './categoryMatching'
 
 export type MarketplaceCategory = Category & {
   cover_image_url?: string | null
@@ -282,8 +283,7 @@ export async function fetchMarketplaceCategoryPage(
       .filter((p) => {
         const works = p.work_subcategory_slugs ?? []
         return (
-          works.some((w) => w === slug || w.startsWith(`${slug}-`)) ||
-          services.some((s) => works.includes(s.slug))
+          matchesWorkPrefix(works, slug) || services.some((s) => works.includes(s.slug))
         )
       })
       .slice(0, 12)
@@ -299,7 +299,7 @@ export async function fetchMarketplaceCategoryPage(
     projects = ((projectRows as ListingWithImages[] | null) ?? [])
       .filter((l) => {
         const works = l.subcategory_slugs ?? []
-        if (works.some((w) => w === slug || w.startsWith(`${slug}-`))) return true
+        if (matchesWorkPrefix(works, slug)) return true
         if (l.category_id === category!.id) return true
         if (l.category && (l.category.slug === slug || l.category.parent_id === category!.id)) {
           return true

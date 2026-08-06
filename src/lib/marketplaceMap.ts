@@ -17,7 +17,30 @@ import {
   excludeSuppressedFromQuery,
   filterSuppressedListings,
 } from './suppressedListings'
-import { haversineKm } from './projectFeed'
+import { formatDistanceKm, haversineKm } from './projectFeed'
+
+/** Default Leaflet view — Europe overview (sole constant for map init). */
+export const DEFAULT_EUROPE_VIEW = {
+  center: [50.1, 10.5] as [number, number],
+  zoom: 4,
+}
+
+/** Country focus centers for mapFocusFromGeo (extend when adding directory countries). */
+export const COUNTRY_MAP_CENTERS: Record<string, [number, number]> = {
+  germany: [51.1, 10.4],
+  spain: [40.4, -3.7],
+  france: [46.6, 2.2],
+  italy: [42.5, 12.5],
+  poland: [52.1, 19.4],
+  portugal: [39.4, -8.2],
+  ukraine: [48.4, 31.2],
+  slovakia: [48.7, 19.7],
+  romania: [45.9, 24.97],
+  netherlands: [52.1, 5.3],
+  belgium: [50.5, 4.5],
+  czech: [49.8, 15.5],
+  austria: [47.6, 14.1],
+}
 
 export type MapMarkerKind =
   | 'professional'
@@ -585,26 +608,16 @@ export function mapFocusFromGeo(geo: GeoSearchState): {
     return { center: [geo.originLat, geo.originLng], zoom }
   }
   if (geo.country && !geo.city) {
-    const centers: Record<string, [number, number]> = {
-      germany: [51.1, 10.4],
-      spain: [40.4, -3.7],
-      france: [46.6, 2.2],
-      italy: [42.5, 12.5],
-      poland: [52.1, 19.4],
-      portugal: [39.4, -8.2],
-      ukraine: [48.4, 31.2],
-    }
     const key = geo.country.toLowerCase()
-    for (const [slug, center] of Object.entries(centers)) {
+    for (const [slug, center] of Object.entries(COUNTRY_MAP_CENTERS)) {
       if (key.includes(slug)) return { center, zoom: 6 }
     }
   }
   return null
 }
 
+/** Map popup/sidebar distance — same formatter as directory, empty when unknown. */
 export function formatMapDistance(km: number | null | undefined): string {
   if (km == null || Number.isNaN(km)) return ''
-  if (km < 1) return `${Math.round(km * 1000)} m`
-  if (km < 10) return `${km.toFixed(1)} km`
-  return `${Math.round(km)} km`
+  return formatDistanceKm(km)
 }

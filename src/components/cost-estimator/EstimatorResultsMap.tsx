@@ -1,12 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useApp } from '../../contexts/AppContext'
-import {
-  EMPTY_MAP_FILTERS,
-  fetchMarketplaceMapMarkers,
-  filterMapMarkers,
-  type MapMarkerKind,
-  type MarketplaceMapMarker,
-} from '../../lib/marketplaceMap'
+import { useMarketplaceMapMarkers } from '../../hooks/useMarketplaceMapMarkers'
+import type { MapMarkerKind } from '../../lib/marketplaceMap'
 import { EuropeMarketplaceMap } from '../map/EuropeMarketplaceMap'
 import { navigateTo } from '../../lib/navigation'
 
@@ -30,35 +25,26 @@ export function EstimatorResultsMap({
   heightClassName = 'min-h-[280px] h-[320px]',
 }: Props) {
   const { t, location } = useApp()
-  const [markers, setMarkers] = useState<MarketplaceMapMarker[]>([])
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      setLoading(true)
-      try {
-        const all = await fetchMarketplaceMapMarkers(120)
-        if (!cancelled) setMarkers(all)
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  const filtered = useMemo(() => {
-    const kinds: 'all' | Set<MapMarkerKind> =
-      preferKinds && preferKinds.length > 0 ? new Set(preferKinds) : 'all'
-    return filterMapMarkers(markers, location, {
-      ...EMPTY_MAP_FILTERS,
-      kinds,
+  const filters = useMemo(
+    () => ({
+      kinds:
+        preferKinds && preferKinds.length > 0
+          ? new Set<MapMarkerKind>(preferKinds)
+          : ('all' as const),
       subcategorySlug: subcategorySlug || '',
       serviceQuery: serviceQuery || subcategorySlug || '',
-    }).slice(0, 80)
-  }, [markers, location, preferKinds, subcategorySlug, serviceQuery])
+    }),
+    [preferKinds, subcategorySlug, serviceQuery],
+  )
+
+  const { visible, loading } = useMarketplaceMapMarkers({
+    limit: 120,
+    geo: location,
+    filters,
+  })
+
+  const markers = useMemo(() => visible.slice(0, 80), [visible])
 
   return (
     <div className="space-y-3">
@@ -74,7 +60,7 @@ export function EstimatorResultsMap({
       </div>
       <div className={`overflow-hidden rounded-[22px] border border-[#e8e8ed] ${heightClassName}`}>
         <EuropeMarketplaceMap
-          markers={filtered}
+          markers={markers}
           geo={location}
           loading={loading}
           followLocation

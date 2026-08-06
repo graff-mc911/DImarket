@@ -4,6 +4,7 @@
  */
 
 import { serviceCategories, type ServiceCategory, type ServiceSubcategory } from '../config/categories'
+import { isReservedNavPath } from './navMap'
 
 /** Work-slug prefixes (or exact slugs) that match a Serviya subcategory. */
 export type WorkMatcher = {
@@ -518,47 +519,5 @@ export function resolveServiceQuery(query: string): ResolvedService[] {
 }
 
 export function isReservedAppPath(segment: string): boolean {
-  const reserved = new Set([
-    'services',
-    'professionals',
-    'companies',
-    'listings',
-    'category',
-    'professional',
-    'listing',
-    'profile',
-    'login',
-    'register',
-    'settings',
-    'dashboard',
-    'admin',
-    'search',
-    'map',
-    'contact',
-    'advertise',
-    'advertising',
-    'vacancies',
-    'sell-rent',
-    'jobs',
-    'buy-sell',
-    'api',
-    'assets',
-    'auth',
-    'book',
-    'project',
-    'create-project',
-    'create-ad',
-    'cost-estimator',
-    'estimate',
-    'messages',
-    'favorites',
-    'notifications',
-    'pricing',
-    'billing',
-    'checkout',
-    'verification',
-    'analytics',
-    'ai',
-  ])
-  return reserved.has(segment.toLowerCase())
+  return isReservedNavPath(segment)
 }

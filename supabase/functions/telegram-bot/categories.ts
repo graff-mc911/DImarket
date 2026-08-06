@@ -1,7 +1,7 @@
 import { categoryLabel, type BotLocale } from './i18n.ts'
 import type { CategoryRow } from './flow.ts'
 
-/** Як на головній: src/lib/siteCategories.ts */
+/** Як на сайті: src/lib/siteCategories.ts SITE_CATEGORY_CONFIG (SSoT). Mirror only — Deno edge cannot import Vite src. */
 export const SITE_CATEGORY_SLUGS = [
   'cleaning',
   'construction',
@@ -15,20 +15,21 @@ export const SITE_CATEGORY_SLUGS = [
   'sell-rent',
 ] as const
 
+/** Keep in sync with SITE_CATEGORY_CONFIG icons in siteCategories.ts */
 const SITE_ICONS: Record<string, string> = {
   cleaning: '🧹',
   construction: '🏗️',
   electrical: '🚗',
   tools: '🚚',
-  handyman: '🧰',
+  handyman: '🛠️',
   furniture: '🪑',
   'legal-notary': '⚖️',
   'accounting-finance': '📊',
   vacancies: '💼',
-  'sell-rent': '🏷️',
+  'sell-rent': '🛒',
 }
 
-/** Як на головній: src/lib/homeFeaturedWorkTypes.ts */
+/** Як на сайті: src/lib/homeFeaturedWorkTypes.ts HOME_FEATURED_WORK_GROUPS (SSoT). */
 export const FEATURED_WORK_GROUPS = [
   { slug: 'hvac', icon: '🌡️', parentCategory: 'construction' },
   { slug: 'windows', icon: '🪟', parentCategory: 'construction' },

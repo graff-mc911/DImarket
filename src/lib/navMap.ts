@@ -1,0 +1,402 @@
+/**
+ * Navigation Single Source of Truth.
+ *
+ * All chrome surfaces (mobile bar, More sheet, header, footer) and route
+ * aliases should be defined here. Components map icons/layout only.
+ *
+ * Canonical paths are preferred in links; aliases stay for bookmarks/SEO.
+ */
+
+import type { TranslationKey } from './i18n'
+
+export type NavSurface =
+  | 'mobile-bar'
+  | 'mobile-more'
+  | 'mobile-account'
+  | 'header-dept'
+  | 'header-center'
+  | 'footer-company'
+  | 'footer-services'
+  | 'footer-professionals'
+  | 'footer-support'
+
+export type NavEntry = {
+  id: string
+  /** Preferred path for new links. */
+  path: string
+  /** Optional legacy / SEO aliases that resolve to the same page. */
+  aliases?: readonly string[]
+  /** Default label (mobile / shared). */
+  labelKey: TranslationKey
+  /** Per-surface label overrides (keeps existing Header/Footer copy). */
+  labelKeyBySurface?: Partial<Record<NavSurface, TranslationKey>>
+  surfaces: readonly NavSurface[]
+  /** When true, path depends on auth (resolved in the surface component). */
+  authAware?: boolean
+}
+
+/**
+ * Primary app destinations. Order within each surface is preserved by filter.
+ */
+export const NAV_ENTRIES: readonly NavEntry[] = [
+  // —— Mobile bottom bar ——
+  { id: 'home', path: '/', labelKey: 'nav.home', surfaces: ['mobile-bar'] },
+  {
+    id: 'search',
+    path: '/listings',
+    aliases: ['/search'],
+    labelKey: 'nav.search',
+    labelKeyBySurface: {
+      'footer-services': 'footer.browseListings',
+    },
+    surfaces: ['mobile-bar', 'footer-services'],
+  },
+  {
+    id: 'categories',
+    path: '/#choose-category',
+    labelKey: 'nav.categories',
+    surfaces: ['mobile-bar'],
+  },
+  {
+    id: 'map',
+    path: '/map',
+    labelKey: 'nav.map',
+    labelKeyBySurface: { 'header-dept': 'header.map' },
+    surfaces: ['mobile-bar', 'header-dept'],
+  },
+  { id: 'more', path: '#more', labelKey: 'nav.more', surfaces: ['mobile-bar'] },
+
+  // —— Mobile More (primary) ——
+  {
+    id: 'trending',
+    path: '/listings',
+    labelKey: 'nav.trendingRequests',
+    surfaces: ['mobile-more'],
+  },
+  {
+    id: 'professionals',
+    path: '/professionals',
+    labelKey: 'nav.professionals',
+    labelKeyBySurface: {
+      'header-dept': 'header.findProfessionals',
+      'footer-professionals': 'header.findProfessionals',
+    },
+    surfaces: ['mobile-more', 'header-dept', 'footer-professionals'],
+  },
+  {
+    id: 'companies',
+    path: '/companies',
+    labelKey: 'nav.companies',
+    labelKeyBySurface: { 'header-dept': 'header.findCompanies' },
+    surfaces: ['mobile-more', 'header-dept'],
+  },
+  {
+    id: 'publish-request',
+    path: '/create-project',
+    aliases: ['/project/new'],
+    labelKey: 'nav.publishRequest',
+    labelKeyBySurface: { 'footer-services': 'homePremium.postProject' },
+    surfaces: ['mobile-more', 'footer-services'],
+  },
+  {
+    id: 'cost-estimator',
+    path: '/cost-estimator',
+    aliases: ['/estimate'],
+    labelKey: 'nav.costEstimator',
+    surfaces: ['mobile-more'],
+  },
+  {
+    id: 'publish',
+    path: '/create-ad',
+    labelKey: 'nav.publish',
+    labelKeyBySurface: { 'footer-services': 'header.sell' },
+    surfaces: ['mobile-more', 'footer-services'],
+  },
+  {
+    id: 'pricing',
+    path: '/pricing',
+    aliases: ['/plans'],
+    labelKey: 'nav.pricing',
+    labelKeyBySurface: { 'footer-company': 'footer.pricing' },
+    surfaces: ['mobile-more', 'footer-company'],
+  },
+  {
+    id: 'assistant',
+    path: '/assistant',
+    labelKey: 'nav.aiAssistant',
+    labelKeyBySurface: { 'footer-services': 'header.aiAssistant' },
+    surfaces: ['mobile-more', 'footer-services'],
+  },
+  {
+    id: 'analytics',
+    path: '/analytics',
+    labelKey: 'nav.analytics',
+    surfaces: ['mobile-more'],
+  },
+  {
+    id: 'jobs',
+    path: '/vacancies',
+    aliases: ['/jobs'],
+    labelKey: 'nav.jobs',
+    surfaces: ['mobile-more'],
+  },
+  {
+    id: 'marketplace',
+    path: '/sell-rent',
+    aliases: ['/buy-sell'],
+    labelKey: 'nav.marketplace',
+    surfaces: ['mobile-more'],
+  },
+  {
+    id: 'projects',
+    path: '/projects',
+    aliases: ['/leads'],
+    labelKey: 'nav.projects',
+    surfaces: ['mobile-more'],
+  },
+
+  // —— Mobile account sheet ——
+  {
+    id: 'favorites',
+    path: '/favorites',
+    labelKey: 'nav.favorites',
+    surfaces: ['mobile-account'],
+    authAware: true,
+  },
+  {
+    id: 'messages',
+    path: '/messages',
+    labelKey: 'nav.messages',
+    surfaces: ['mobile-account'],
+    authAware: true,
+  },
+  {
+    id: 'settings',
+    path: '/settings',
+    labelKey: 'header.settings',
+    surfaces: ['mobile-account'],
+    authAware: true,
+  },
+  {
+    id: 'profile',
+    path: '/profile',
+    labelKey: 'nav.profile',
+    surfaces: ['mobile-account'],
+    authAware: true,
+  },
+
+  // —— Header center / footer extras ——
+  {
+    id: 'advertising',
+    path: '/advertising',
+    aliases: ['/advertise'],
+    labelKey: 'footer.adsButton',
+    labelKeyBySurface: { 'footer-company': 'footer.advertisingLink' },
+    surfaces: ['header-center', 'footer-company'],
+  },
+  {
+    id: 'contact',
+    path: '/contact',
+    labelKey: 'footer.contactButton',
+    labelKeyBySurface: { 'footer-company': 'footer.contactLink' },
+    surfaces: ['header-center', 'footer-company'],
+  },
+  {
+    id: 'login',
+    path: '/login',
+    labelKey: 'footer.signIn',
+    surfaces: ['header-center'],
+  },
+  {
+    id: 'register',
+    path: '/register',
+    labelKey: 'footer.register',
+    surfaces: ['header-center', 'footer-professionals'],
+  },
+  {
+    id: 'about',
+    path: '/contact',
+    labelKey: 'footer.about',
+    surfaces: ['footer-company'],
+  },
+  {
+    id: 'how-it-works-footer',
+    path: '/for-professionals',
+    labelKey: 'footer.howItWorks',
+    surfaces: ['footer-company'],
+  },
+  {
+    id: 'advanced-search',
+    path: '/search',
+    labelKey: 'advancedSearch.title',
+    surfaces: ['footer-services'],
+  },
+  {
+    id: 'for-companies',
+    path: '/for-companies',
+    labelKey: 'footer.forCompanies',
+    surfaces: ['footer-professionals'],
+  },
+  {
+    id: 'verification',
+    path: '/verification',
+    labelKey: 'footer.verification',
+    surfaces: ['footer-professionals'],
+  },
+  {
+    id: 'for-pros',
+    path: '/for-professionals',
+    labelKey: 'footer.forPros',
+    surfaces: ['footer-professionals'],
+  },
+  {
+    id: 'help',
+    path: '/contact',
+    labelKey: 'footer.helpCenter',
+    surfaces: ['footer-support'],
+  },
+  {
+    id: 'privacy',
+    path: '/contact?topic=privacy',
+    labelKey: 'footer.privacy',
+    surfaces: ['footer-support'],
+  },
+  {
+    id: 'cookies',
+    path: '/contact?topic=cookies',
+    labelKey: 'footer.cookies',
+    surfaces: ['footer-support'],
+  },
+  {
+    id: 'gdpr',
+    path: '/contact?topic=gdpr',
+    labelKey: 'footer.gdpr',
+    surfaces: ['footer-support'],
+  },
+  {
+    id: 'terms',
+    path: '/contact?topic=terms',
+    labelKey: 'footer.terms',
+    surfaces: ['footer-support'],
+  },
+  {
+    id: 'impressum',
+    path: '/contact?topic=legal',
+    labelKey: 'footer.impressum',
+    surfaces: ['footer-support'],
+  },
+
+  // —— Routes not always in chrome but need reserved-path / alias coverage ——
+  {
+    id: 'pro-dashboard',
+    path: '/pro/dashboard',
+    aliases: ['/pro'],
+    labelKey: 'nav.profile',
+    surfaces: [],
+  },
+  {
+    id: 'customer-dashboard',
+    path: '/customer/dashboard',
+    aliases: ['/customer', '/my'],
+    labelKey: 'nav.profile',
+    surfaces: [],
+  },
+  {
+    id: 'pro-calendar',
+    path: '/pro/calendar',
+    aliases: ['/calendar'],
+    labelKey: 'nav.profile',
+    surfaces: [],
+  },
+  {
+    id: 'admin',
+    path: '/admin',
+    aliases: ['/admin/panel'],
+    labelKey: 'nav.profile',
+    surfaces: [],
+  },
+  {
+    id: 'billing',
+    path: '/billing',
+    labelKey: 'nav.pricing',
+    surfaces: [],
+  },
+  {
+    id: 'boost',
+    path: '/boost',
+    labelKey: 'nav.profile',
+    surfaces: [],
+  },
+  {
+    id: 'checkout',
+    path: '/checkout',
+    labelKey: 'nav.pricing',
+    surfaces: [],
+  },
+  {
+    id: 'for-advertisers',
+    path: '/for-advertisers',
+    labelKey: 'footer.advertisingLink',
+    surfaces: [],
+  },
+] as const
+
+/** Extra first-path segments that are app routes but not in NAV_ENTRIES. */
+const EXTRA_RESERVED_SEGMENTS = [
+  'services',
+  'category',
+  'professional',
+  'listing',
+  'dashboard',
+  'api',
+  'assets',
+  'auth',
+  'book',
+  'project',
+  'my-listings',
+  'my-projects',
+  'notifications',
+  'ai',
+  'admin',
+  'estimate',
+] as const
+
+export function navEntriesFor(surface: NavSurface): NavEntry[] {
+  return NAV_ENTRIES.filter((e) => e.surfaces.includes(surface))
+}
+
+export function labelKeyFor(entry: NavEntry, surface: NavSurface): TranslationKey {
+  return entry.labelKeyBySurface?.[surface] ?? entry.labelKey
+}
+
+export function canonicalPath(pathOrAlias: string): string {
+  const clean = pathOrAlias.split('?')[0].split('#')[0]
+  for (const entry of NAV_ENTRIES) {
+    if (entry.path === clean) return entry.path
+    if (entry.aliases?.includes(clean)) return entry.path
+  }
+  return clean
+}
+
+export function resolveNavPath(entry: NavEntry, loggedIn: boolean): string {
+  if (!entry.authAware) return entry.path
+  if (loggedIn) return entry.path
+  return '/login'
+}
+
+/** All first-path segments reserved from SEO short aliases (/electrician, …). */
+export function reservedAppPathSegments(): Set<string> {
+  const reserved = new Set<string>(EXTRA_RESERVED_SEGMENTS)
+  for (const entry of NAV_ENTRIES) {
+    const paths = [entry.path, ...(entry.aliases ?? [])]
+    for (const p of paths) {
+      const seg = p.replace(/^\//, '').split(/[/?#]/)[0]
+      if (seg && seg !== '') reserved.add(seg.toLowerCase())
+    }
+  }
+  return reserved
+}
+
+export function isReservedNavPath(segment: string): boolean {
+  return reservedAppPathSegments().has(segment.toLowerCase())
+}

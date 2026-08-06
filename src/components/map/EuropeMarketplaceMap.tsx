@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import {
+  DEFAULT_EUROPE_VIEW,
   formatMapDistance,
   MAP_KIND_COLORS,
   MAP_KIND_GLYPH,
@@ -169,13 +170,13 @@ export function EuropeMarketplaceMap({
   const mapRef = useRef<L.Map | null>(null)
   const layerRef = useRef<L.LayerGroup | null>(null)
   const markerById = useRef<Map<string, L.Marker>>(new Map())
-  const zoomRef = useRef(4)
+  const zoomRef = useRef(DEFAULT_EUROPE_VIEW.zoom)
 
   useEffect(() => {
     if (!mapEl.current || mapRef.current) return
     const map = L.map(mapEl.current, {
-      center: [50.1, 10.5],
-      zoom: 4,
+      center: DEFAULT_EUROPE_VIEW.center,
+      zoom: DEFAULT_EUROPE_VIEW.zoom,
       scrollWheelZoom,
       touchZoom: true,
       dragging: true,

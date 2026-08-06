@@ -43,6 +43,7 @@ import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
 import { CategoriesMegaMenu } from './CategoriesMegaMenu'
+import { labelKeyFor, navEntriesFor } from '../lib/navMap'
 
 interface NavItem {
   label: string
@@ -188,23 +189,29 @@ export function Header() {
   const accountGreeting = user ? accountDisplayName : t('header.signIn')
   const isLoggedIn = Boolean(user)
 
-  // Навігаційні пункти
-  const navItems: NavItem[] = [
-    { label: t('header.findProfessionals'), path: '/professionals', icon: Hammer },
-    { label: t('header.findCompanies'), path: '/companies', icon: Building2 },
-    { label: t('header.map'), path: '/map', icon: MapPin },
-  ]
+  // Навігаційні пункти — paths/labels from navMap SSoT
+  const HEADER_DEPT_ICONS: Record<string, LucideIcon> = {
+    professionals: Hammer,
+    companies: Building2,
+    map: MapPin,
+  }
+  const navItems: NavItem[] = navEntriesFor('header-dept').map((entry) => ({
+    label: t(labelKeyFor(entry, 'header-dept')),
+    path: entry.path,
+    icon: HEADER_DEPT_ICONS[entry.id] ?? MapPin,
+  }))
 
   /** Центр нижньої панелі шапки — посилання з футера (між «Знайти майстрів» і «Перегляд оголошень») */
   const centerNavItems = useMemo(() => {
-    const items: Array<{ label: string; path: string }> = [
-      { label: t('footer.adsButton'), path: '/advertising' },
-      { label: t('footer.contactButton'), path: '/contact' },
-    ]
-    if (!user) {
-      items.push({ label: t('footer.signIn'), path: '/login' })
-      items.push({ label: t('footer.register'), path: '/register' })
-    }
+    const items = navEntriesFor('header-center')
+      .filter((e) => {
+        if (e.id === 'login' || e.id === 'register') return !user
+        return true
+      })
+      .map((entry) => ({
+        label: t(labelKeyFor(entry, 'header-center')),
+        path: entry.path,
+      }))
     return items
   }, [user, t])
 
