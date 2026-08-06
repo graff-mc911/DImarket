@@ -204,12 +204,111 @@
 
   @media (max-width: 1279px) {
     .app-shell {
-      padding-bottom: calc(3.75rem + env(safe-area-inset-bottom, 0px));
+      /* Match mobile-bottom-nav content (4.5rem) + device safe area */
+      padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
     }
   }
 
+  /**
+   * Mobile bottom nav — native app layout (Airbnb / Telegram style)
+   *
+   * Root cause of previous label clipping:
+   * safe-area padding was applied INSIDE a fixed h-[3.75rem] box, so on
+   * iPhone the usable content height collapsed (~26px) and cropped labels.
+   *
+   * Fix: safe-area is outer padding only; content row keeps a full 72px.
+   */
   .mobile-bottom-nav {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 40;
+    border-top: 1px solid #3a4553;
+    background: #232f3e;
+    color: #fff;
+    /* Safe area sits BELOW the tap row — never steals content height */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     box-shadow: 0 -1px 0 rgba(26, 26, 26, 0.06);
+    overflow: visible;
+  }
+
+  .mobile-bottom-nav__bar {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 32rem;
+    margin-inline: auto;
+    /* Content-only height (icon + gap + label). Safe-area is outside. */
+    height: 4.5rem; /* 72px */
+    min-height: 4.5rem;
+    padding-inline: 0.25rem;
+    overflow: visible;
+  }
+
+  .mobile-bottom-nav__item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem; /* ~6.5px between icon and label */
+    margin: 0;
+    padding: 0.35rem 0.15rem;
+    border: 0;
+    background: transparent;
+    color: #cccccc;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    overflow: visible;
+    transition: color 160ms ease, transform 120ms ease;
+  }
+
+  .mobile-bottom-nav__item:active {
+    transform: scale(0.94);
+  }
+
+  .mobile-bottom-nav__item.is-active {
+    color: #ff9900;
+  }
+
+  .mobile-bottom-nav__glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    line-height: 0;
+    overflow: visible;
+  }
+
+  .mobile-bottom-nav__icon {
+    width: 1.35rem;
+    height: 1.35rem;
+    stroke-width: 2;
+  }
+
+  .mobile-bottom-nav__label {
+    display: block;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    text-align: center;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  @media (min-width: 375px) {
+    .mobile-bottom-nav__label {
+      font-size: 0.75rem; /* 12px */
+    }
   }
 
   .mobile-nav-more {
@@ -235,7 +334,7 @@
     border-radius: 1rem 1rem 0 0;
     background: #232f3e;
     color: #fff;
-    padding: 1rem 1rem calc(5rem + env(safe-area-inset-bottom, 0px));
+    padding: 1rem 1rem calc(5.5rem + env(safe-area-inset-bottom, 0px));
     box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.28);
   }
 

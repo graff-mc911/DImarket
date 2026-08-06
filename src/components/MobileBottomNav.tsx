@@ -38,6 +38,11 @@ type MoreItem = {
 /**
  * Single mobile navigation SSoT (bottom bar + More sheet).
  * Do not add a second mobile menu (no Header hamburger).
+ *
+ * Layout contract (native app style):
+ * - Content row height is independent of safe-area
+ * - safe-area is padding on the outer nav only (never eats content height)
+ * - Icon + label always fully visible (no overflow clipping)
  */
 export function MobileBottomNav() {
   const { t, user, currency, setCurrency } = useApp()
@@ -209,37 +214,37 @@ export function MobileBottomNav() {
   return (
     <>
       <nav
-        className="mobile-bottom-nav fixed inset-x-0 bottom-0 z-40 border-t border-[#3a4553] bg-[#232f3e] text-white xl:hidden"
+        className="mobile-bottom-nav xl:hidden"
         aria-label={t('nav.mobileNavigation')}
       >
-        <div className="mx-auto flex h-[3.75rem] max-w-lg items-stretch px-1 pb-[env(safe-area-inset-bottom,0px)]">
+        <div className="mobile-bottom-nav__bar">
           <NavItem
             active={isActive('/') && !moreOpen}
-            icon={<Home className="h-5 w-5" aria-hidden />}
+            icon={<Home className="mobile-bottom-nav__icon" aria-hidden />}
             label={t('nav.home')}
             onClick={() => go('/')}
           />
           <NavItem
             active={isActive('/listings') && !moreOpen}
-            icon={<Search className="h-5 w-5" aria-hidden />}
+            icon={<Search className="mobile-bottom-nav__icon" aria-hidden />}
             label={t('nav.search')}
             onClick={() => go('/listings')}
           />
           <NavItem
             active={path === '/' && hash === '#choose-category' && !moreOpen}
-            icon={<Grid3X3 className="h-5 w-5" aria-hidden />}
+            icon={<Grid3X3 className="mobile-bottom-nav__icon" aria-hidden />}
             label={t('nav.categories')}
             onClick={goCategories}
           />
           <NavItem
             active={isActive('/map') && !moreOpen}
-            icon={<MapPin className="h-5 w-5" aria-hidden />}
+            icon={<MapPin className="mobile-bottom-nav__icon" aria-hidden />}
             label={t('nav.map')}
             onClick={() => go('/map')}
           />
           <NavItem
             active={moreOpen}
-            icon={<Menu className="h-5 w-5" aria-hidden />}
+            icon={<Menu className="mobile-bottom-nav__icon" aria-hidden />}
             label={t('nav.more')}
             onClick={() => setMoreOpen((open) => !open)}
             ariaExpanded={moreOpen}
@@ -358,12 +363,12 @@ function NavItem({
       aria-current={active ? 'page' : undefined}
       aria-expanded={ariaExpanded}
       aria-controls={ariaControls}
-      className={`flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition ${
-        active ? 'text-[#ff9900]' : 'text-[#cccccc]'
-      }`}
+      className={`mobile-bottom-nav__item${active ? ' is-active' : ''}`}
     >
-      {icon}
-      <span className="max-w-[4.5rem] truncate">{label}</span>
+      <span className="mobile-bottom-nav__glyph" aria-hidden>
+        {icon}
+      </span>
+      <span className="mobile-bottom-nav__label">{label}</span>
     </button>
   )
 }
