@@ -29,6 +29,8 @@ interface EuropeMarketplaceMapProps {
   loading?: boolean
   className?: string
   followLocation?: boolean
+  /** Home preview disables wheel zoom; full /map keeps it on. */
+  scrollWheelZoom?: boolean
   selectedId?: string | null
   onSelectMarker?: (id: string | null) => void
   onBoundsChange?: (bounds: MapBounds) => void
@@ -157,6 +159,7 @@ export function EuropeMarketplaceMap({
   loading,
   className = '',
   followLocation = true,
+  scrollWheelZoom = true,
   selectedId = null,
   onSelectMarker,
   onBoundsChange,
@@ -173,7 +176,7 @@ export function EuropeMarketplaceMap({
     const map = L.map(mapEl.current, {
       center: [50.1, 10.5],
       zoom: 4,
-      scrollWheelZoom: true,
+      scrollWheelZoom,
       touchZoom: true,
       dragging: true,
       attributionControl: true,

@@ -102,7 +102,7 @@ export function Home() {
       <HomeWhyDimarket />
       <HomeCustomerReviews reviews={data?.reviews ?? []} />
       <HomeFeaturedCompanies />
-      <HomeInteractiveMap points={data?.mapPoints ?? []} loading={loading} />
+      <HomeInteractiveMap loading={loading} />
       <HomeFaq />
       <HomeDownloadApp
         appStoreUrl={metrics.appStoreUrl}
