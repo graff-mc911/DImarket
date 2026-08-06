@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { EstimatorShell } from '../components/cost-estimator/EstimatorShell'
 import { EstimatorResultsMap } from '../components/cost-estimator/EstimatorResultsMap'
+import { EstimatorProcurementPanel } from '../components/cost-estimator/EstimatorProcurementPanel'
 import { LocationStep } from '../components/project-wizard/LocationStep'
 import { ProfessionalCard } from '../components/ProfessionalCard'
 import { useApp } from '../contexts/AppContext'
@@ -798,6 +799,17 @@ export function CostEstimator() {
                 ))}
               </div>
             ) : null}
+          </Section>
+
+          <Section title="AI Procurement">
+            <EstimatorProcurementPanel
+              materials={estimate.materials}
+              city={state.location.city}
+              lat={state.location.latitude}
+              lng={state.location.longitude}
+              listingId={null}
+              estimateId={savedId}
+            />
           </Section>
 
           {/* Insights */}

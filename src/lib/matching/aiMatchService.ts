@@ -7,6 +7,7 @@ import { supabase } from '../supabase'
 import { haversineKm, type GeoPoint } from '../projectFeed'
 import type { VerificationLevel } from '../types'
 import type { MatchScoreBreakdown, RankedMatch } from '../bots/types'
+import { fetchProPerformanceMap, performanceMatchBoost } from '../proPerformance'
 
 export const TOP_MATCH_LIMIT = 10
 
@@ -378,6 +379,25 @@ export async function rankProfessionals(
   let ranked = data
     .map((p) => scoreMatchCandidate(p, criteria))
     .sort((a, b) => b.score - a.score || b.rating - a.rating)
+
+  // Learning boost: satisfaction / on-time / specialty success likelihood
+  try {
+    const perfMap = await fetchProPerformanceMap(ranked.map((m) => m.profileId))
+    ranked = ranked
+      .map((m) => {
+        const boost = performanceMatchBoost(perfMap.get(m.profileId), criteria.subcategorySlugs)
+        if (!boost.points) return m
+        const next = {
+          ...m,
+          score: Math.min(99, m.score + Math.round(boost.points * 0.8)),
+          reasons: boost.reason ? [...m.reasons, boost.reason] : m.reasons,
+        }
+        return next
+      })
+      .sort((a, b) => b.score - a.score || b.rating - a.rating)
+  } catch {
+    /* table may be missing until migration */
+  }
 
   // Soft dedupe of identical display scores: nudge ranks apart for Top display (98, 95, 92…)
   ranked = applyTopScoreLadder(ranked)
