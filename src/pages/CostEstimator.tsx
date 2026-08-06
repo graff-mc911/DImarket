@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   Building2,
   Check,
+  ClipboardList,
   Clock,
   Download,
   FileSpreadsheet,
   Hammer,
   ImagePlus,
+  Mic,
+  MicOff,
   Package,
   Sparkles,
   Store,
@@ -15,9 +18,11 @@ import {
   X,
 } from 'lucide-react'
 import { EstimatorShell } from '../components/cost-estimator/EstimatorShell'
+import { EstimatorResultsMap } from '../components/cost-estimator/EstimatorResultsMap'
 import { LocationStep } from '../components/project-wizard/LocationStep'
 import { ProfessionalCard } from '../components/ProfessionalCard'
 import { useApp } from '../contexts/AppContext'
+import { useVoiceInput } from '../hooks/useVoiceInput'
 import { formatEuro } from '../lib/costEstimator'
 import { runFullCostEstimate, tierLabel } from '../lib/costEstimatorEngine'
 import {
@@ -31,7 +36,16 @@ import {
   type EstimatorMarketplaceMatches,
   type EstimatorMatchProfile,
 } from '../lib/costEstimatorMatch'
-import { listCostEstimates, saveCostEstimate } from '../lib/costEstimatorPersist'
+import {
+  getCostEstimateById,
+  listCostEstimates,
+  saveCostEstimate,
+  saveCostEstimateOutcome,
+} from '../lib/costEstimatorPersist'
+import {
+  buildTenderPrefill,
+  ESTIMATOR_PREFILL_KEY,
+} from '../lib/costEstimatorTender'
 import {
   EMPTY_ESTIMATOR_STATE,
   ESTIMATOR_PROJECT_TYPES,
@@ -50,11 +64,23 @@ import type { Profile } from '../lib/types'
 const field =
   'w-full rounded-[14px] border border-[#e8e8ed] bg-[#fafafa] px-4 py-3 text-[15px] text-[#1d1d1f] outline-none transition focus:border-[#1d1d1f] focus:bg-white focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]'
 
-const PREFILL_KEY = 'dimarket_estimator_project_prefill'
+const PREFILL_KEY = ESTIMATOR_PREFILL_KEY
+
+const ESTIMATOR_VOICE_LANG: Record<string, string> = {
+  en: 'en-US',
+  uk: 'uk-UA',
+  ru: 'ru-RU',
+  de: 'de-DE',
+  pl: 'pl-PL',
+  fr: 'fr-FR',
+  es: 'es-ES',
+  it: 'it-IT',
+  pt: 'pt-PT',
+}
 
 /** AI Cost Estimator — /cost-estimator · /estimate */
 export function CostEstimator() {
-  const { t, location: globalLoc, user } = useApp()
+  const { t, location: globalLoc, user, setLocation, language } = useApp()
   const [state, setState] = useState<EstimatorState>(() => ({
     ...EMPTY_ESTIMATOR_STATE,
     location: {
@@ -80,7 +106,30 @@ export function CostEstimator() {
   const [selectedPros, setSelectedPros] = useState<Set<string>>(new Set())
   const [savedId, setSavedId] = useState<string | null>(null)
   const [historyCount, setHistoryCount] = useState(0)
+  const [actualTotal, setActualTotal] = useState('')
+  const [outcomeConsent, setOutcomeConsent] = useState(false)
+  const [outcomeSaved, setOutcomeSaved] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const cameraRef = useRef<HTMLInputElement>(null)
+
+  const onVoiceFinal = useCallback((text: string) => {
+    const cleaned = text.trim()
+    if (!cleaned) return
+    setState((prev) => ({
+      ...prev,
+      description: `${prev.description}${prev.description ? ' ' : ''}${cleaned}`.trim(),
+    }))
+  }, [])
+
+  const {
+    listening,
+    supported: voiceSupported,
+    start: startVoice,
+    stop: stopVoice,
+  } = useVoiceInput({
+    lang: ESTIMATOR_VOICE_LANG[language.code] || 'en-US',
+    onFinal: onVoiceFinal,
+  })
 
   const patch = (partial: Partial<EstimatorState>) =>
     setState((prev) => ({ ...prev, ...partial }))
@@ -88,6 +137,40 @@ export function CostEstimator() {
   useEffect(() => {
     void listCostEstimates(user?.id ?? null).then((rows) => setHistoryCount(rows.length))
   }, [user?.id, savedId])
+
+  // Re-open a saved estimate from history (?id=)
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('id')
+    if (!id) return
+    let cancelled = false
+    ;(async () => {
+      const row = await getCostEstimateById(id, user?.id ?? null)
+      if (cancelled || !row?.estimate_json) return
+      setEstimate(row.estimate_json)
+      setSavedId(row.id)
+      const input = (row.input_json || {}) as {
+        projectTypeId?: EstimatorProjectTypeId
+        description?: string
+        location?: EstimatorState['location']
+        measurements?: EstimatorState['measurements']
+      }
+      setState((prev) => ({
+        ...prev,
+        step: 6,
+        projectTypeId: input.projectTypeId || prev.projectTypeId,
+        description: input.description || prev.description,
+        location: input.location ? { ...prev.location, ...input.location } : prev.location,
+        measurements: {
+          ...prev.measurements,
+          ...(input.measurements || {}),
+          areaSqm: input.measurements?.areaSqm ?? row.area_sqm ?? prev.measurements.areaSqm,
+        },
+      }))
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [user?.id])
 
   // Sync global location when user hasn't typed a custom city yet
   useEffect(() => {
@@ -109,6 +192,29 @@ export function CostEstimator() {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [globalLoc.city, globalLoc.country, state.step])
+
+  // Write estimator location back into AppContext (SSoT) when leaving location step
+  useEffect(() => {
+    if (state.step < 5) return
+    if (!state.location.city && !state.location.country) return
+    setLocation({
+      ...globalLoc,
+      country: state.location.country || globalLoc.country,
+      region: state.location.region || globalLoc.region,
+      province: state.location.province || globalLoc.province,
+      city: state.location.city || globalLoc.city,
+      originLat: state.location.latitude ?? globalLoc.originLat,
+      originLng: state.location.longitude ?? globalLoc.originLng,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.step])
+
+  // Ensure marketplace matches load when estimate is restored from history
+  useEffect(() => {
+    if (!estimate || matches) return
+    void fetchEstimatorMatches(estimate, state.location).then(setMatches)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estimate])
 
   const addFiles = (files: FileList | File[]) => {
     const list = Array.from(files)
@@ -179,6 +285,7 @@ export function CostEstimator() {
         })
         setEstimate(result)
         setState((s) => ({ ...s, step: 6 }))
+        setProgressLabel('Searching professionals & companies…')
         setBusy(false)
         void fetchEstimatorMatches(result, nextState.location).then(setMatches)
         void saveCostEstimate({
@@ -205,32 +312,43 @@ export function CostEstimator() {
     patch({ step: Math.max(1, state.step - 1) as EstimatorStep })
   }
 
-  const storePrefill = () => {
-    if (!estimate) return
+  const storePrefill = (opts?: { tender?: boolean }) => {
+    if (!estimate || !state.projectTypeId) return
     const type = getProjectType(state.projectTypeId)
-    const payload = {
-      tradeId: type.tradeId,
-      subcategorySlug: type.subcategorySlug,
-      description: [
-        state.description,
-        '',
-        `Reference budget (Standard): ${formatEuro(estimate.totals.standard.grandTotal)}`,
-        `Economy–Premium: ${formatEuro(estimate.totals.economy.grandTotal)} – ${formatEuro(estimate.totals.premium.grandTotal)}`,
-        `Area: ${state.measurements.areaSqm} m²`,
-        `Timeline: ${estimate.totalDaysMin}–${estimate.totalDaysMax} days`,
-        `Specialists: ${estimate.specialists.map((s) => s.label).join(', ')}`,
-      ].join('\n'),
-      country: state.location.country,
-      city: state.location.city,
-      postalCode: state.location.postalCode,
-      locationLabel: state.location.locationLabel,
-      latitude: state.location.latitude,
-      longitude: state.location.longitude,
-      budgetMin: estimate.totals.economy.grandTotal,
-      budgetMax: estimate.totals.premium.grandTotal,
-      selectedProfessionalIds: [...selectedPros],
-      estimateId: savedId,
-    }
+    const payload = opts?.tender
+      ? buildTenderPrefill({
+          estimate,
+          state,
+          tier,
+          selectedProfessionalIds: [...selectedPros],
+          estimateId: savedId,
+          tradeId: type.tradeId,
+          subcategorySlug: type.subcategorySlug,
+        })
+      : {
+          tradeId: type.tradeId,
+          subcategorySlug: type.subcategorySlug,
+          description: [
+            state.description,
+            '',
+            `Reference budget (Standard): ${formatEuro(estimate.totals.standard.grandTotal)}`,
+            `Economy–Premium: ${formatEuro(estimate.totals.economy.grandTotal)} – ${formatEuro(estimate.totals.premium.grandTotal)}`,
+            `Area: ${state.measurements.areaSqm} m²`,
+            `Timeline: ${estimate.totalDaysMin}–${estimate.totalDaysMax} days`,
+            `Specialists: ${estimate.specialists.map((s) => s.label).join(', ')}`,
+          ].join('\n'),
+          country: state.location.country,
+          city: state.location.city,
+          postalCode: state.location.postalCode,
+          locationLabel: state.location.locationLabel,
+          latitude: state.location.latitude,
+          longitude: state.location.longitude,
+          budgetMin: estimate.totals.economy.grandTotal,
+          budgetMax: estimate.totals.premium.grandTotal,
+          selectedProfessionalIds: [...selectedPros],
+          estimateId: savedId,
+          tenderMode: false,
+        }
     try {
       sessionStorage.setItem(PREFILL_KEY, JSON.stringify(payload))
     } catch {
@@ -243,13 +361,33 @@ export function CostEstimator() {
     navigateTo('/create-project')
   }
 
-  const requestQuotes = () => {
-    storePrefill()
-    if (selectedPros.size === 0) {
-      navigateTo('/create-project')
-      return
-    }
+  const createTender = () => {
+    storePrefill({ tender: true })
     navigateTo('/create-project')
+  }
+
+  const requestQuotes = () => {
+    storePrefill({ tender: selectedPros.size > 0 })
+    navigateTo('/create-project')
+  }
+
+  const submitActualCost = async () => {
+    if (!user?.id || !estimate || !outcomeConsent) return
+    const actual = Number(actualTotal.replace(',', '.'))
+    if (!(actual > 0)) return
+    const res = await saveCostEstimateOutcome({
+      userId: user.id,
+      estimateId: savedId,
+      projectType: estimate.projectTypeId,
+      country: state.location.country,
+      region: state.location.region || state.location.province,
+      areaSqm: state.measurements.areaSqm,
+      estimatedStandard: estimate.totals.standard.grandTotal,
+      actualTotal: actual,
+      currency: estimate.currency,
+      consented: true,
+    })
+    if (res.ok) setOutcomeSaved(true)
   }
 
   const searchPros = () => {
@@ -335,6 +473,18 @@ export function CostEstimator() {
             </h1>
             <p className="mt-2 max-w-2xl text-[15px] text-[#6e6e73]">{estimate.explanation}</p>
             <p className="mt-2 text-[13px] font-medium text-[#86868b]">{t('costEstimator.disclaimer')}</p>
+            {estimate.factors.length > 0 ? (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {estimate.factors.map((f) => (
+                  <span
+                    key={f}
+                    className="rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[11px] font-medium text-[#6e6e73]"
+                  >
+                    {f}
+                  </span>
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
 
@@ -352,6 +502,9 @@ export function CostEstimator() {
             </ActionBtn>
             <ActionBtn icon={<Hammer className="h-4 w-4" />} onClick={convertToProject} primary>
               {t('costEstimator.createProject')}
+            </ActionBtn>
+            <ActionBtn icon={<ClipboardList className="h-4 w-4" />} onClick={createTender} primary>
+              {t('costEstimator.createTender')}
             </ActionBtn>
             <ActionBtn
               icon={<Download className="h-4 w-4" />}
@@ -489,6 +642,40 @@ export function CostEstimator() {
             </div>
           </Section>
 
+          {/* Work breakdown structure */}
+          <Section title={t('costEstimator.workBreakdown')}>
+            <ol className="space-y-2">
+              {[...estimate.workStages]
+                .sort((a, b) => a.order - b.order)
+                .map((stage, i) => (
+                  <li
+                    key={stage.id}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#f0f0f2] px-4 py-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] text-[12px] font-bold text-white">
+                        {i + 1}
+                      </span>
+                      <div>
+                        <p className="text-[14px] font-semibold text-[#1d1d1f]">{stage.label}</p>
+                        <p className="text-[12px] text-[#86868b]">Trade: {stage.tradeId}</p>
+                      </div>
+                    </div>
+                    <p className="text-[13px] font-medium tabular-nums text-[#1d1d1f]">
+                      ~{stage.laborHours} h
+                    </p>
+                  </li>
+                ))}
+            </ol>
+          </Section>
+
+          {/* Interactive map — EuropeMarketplaceMap SSoT */}
+          <Section title={t('costEstimator.mapTitle')}>
+            <EstimatorResultsMap
+              preferKinds={['professional', 'company', 'marketplace', 'project', 'job']}
+            />
+          </Section>
+
           {/* Work stages + specialists */}
           <Section title={t('costEstimator.specialists')}>
             <ol className="space-y-2">
@@ -590,6 +777,48 @@ export function CostEstimator() {
                 </li>
               ))}
             </ul>
+          </Section>
+
+          {/* Learning loop — actual final cost */}
+          <Section title={t('costEstimator.actualCostTitle')}>
+            <p className="mb-3 text-[13px] text-[#6e6e73]">{t('costEstimator.actualCostHint')}</p>
+            {outcomeSaved ? (
+              <p className="rounded-2xl bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
+                {t('costEstimator.actualCostThanks')}
+              </p>
+            ) : (
+              <div className="space-y-3">
+                <input
+                  type="number"
+                  min={0}
+                  step={50}
+                  value={actualTotal}
+                  onChange={(e) => setActualTotal(e.target.value)}
+                  placeholder={t('costEstimator.actualCostPlaceholder')}
+                  className={field}
+                />
+                <label className="flex items-start gap-2 text-[13px] text-[#3a3a3c]">
+                  <input
+                    type="checkbox"
+                    checked={outcomeConsent}
+                    onChange={(e) => setOutcomeConsent(e.target.checked)}
+                    className="mt-1"
+                  />
+                  <span>{t('costEstimator.actualCostConsent')}</span>
+                </label>
+                <button
+                  type="button"
+                  disabled={!user || !outcomeConsent || !actualTotal}
+                  onClick={() => void submitActualCost()}
+                  className="rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white disabled:opacity-40"
+                >
+                  {t('costEstimator.actualCostSubmit')}
+                </button>
+                {!user ? (
+                  <p className="text-[12px] text-[#86868b]">{t('costEstimator.actualCostLogin')}</p>
+                ) : null}
+              </div>
+            )}
           </Section>
 
           {/* Recommended pros */}
@@ -709,13 +938,28 @@ export function CostEstimator() {
       )}
 
       {state.step === 2 && (
-        <textarea
-          value={state.description}
-          onChange={(e) => patch({ description: e.target.value })}
-          rows={7}
-          placeholder='e.g. "I want to renovate my 8 m² bathroom with new tiles, shower and vanity."'
-          className={field + ' resize-y'}
-        />
+        <div className="space-y-3">
+          <textarea
+            value={state.description}
+            onChange={(e) => patch({ description: e.target.value })}
+            rows={7}
+            placeholder='e.g. "I want to renovate my 8 m² bathroom with new tiles, shower and vanity."'
+            className={field + ' resize-y'}
+          />
+          <button
+            type="button"
+            onClick={() => (listening ? stopVoice() : startVoice())}
+            disabled={!voiceSupported}
+            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[12px] font-semibold disabled:opacity-40 ${
+              listening
+                ? 'bg-[#c41e3a] text-white'
+                : 'border border-[#d2d2d7] bg-white text-[#1d1d1f]'
+            }`}
+          >
+            {listening ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+            {listening ? t('costEstimator.voiceStop') : t('costEstimator.voiceStart')}
+          </button>
+        </div>
       )}
 
       {state.step === 3 && (
@@ -732,18 +976,38 @@ export function CostEstimator() {
             <p className="mt-2 text-[14px] font-medium text-[#1d1d1f]">
               Photos, video, PDF or CAD
             </p>
-            <button
-              type="button"
-              className="mt-3 rounded-full bg-[#1d1d1f] px-4 py-2 text-[12px] font-semibold text-white"
-              onClick={() => inputRef.current?.click()}
-            >
-              Upload files
-            </button>
+            <div className="mt-3 flex flex-wrap justify-center gap-2">
+              <button
+                type="button"
+                className="rounded-full bg-[#1d1d1f] px-4 py-2 text-[12px] font-semibold text-white"
+                onClick={() => inputRef.current?.click()}
+              >
+                Gallery / files
+              </button>
+              <button
+                type="button"
+                className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[12px] font-semibold text-[#1d1d1f]"
+                onClick={() => cameraRef.current?.click()}
+              >
+                Camera
+              </button>
+            </div>
             <input
               ref={inputRef}
               type="file"
               accept="image/*,video/*,.pdf,.dwg,.dxf"
               multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files) addFiles(e.target.files)
+                e.target.value = ''
+              }}
+            />
+            <input
+              ref={cameraRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
               className="hidden"
               onChange={(e) => {
                 if (e.target.files) addFiles(e.target.files)

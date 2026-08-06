@@ -108,12 +108,56 @@ function countryMul(country?: string): number {
   return 1
 }
 
+/** Approximate VAT rate for reference estimates (not legal advice). */
+export function vatRateForCountry(country?: string): number {
+  const c = (country || '').toLowerCase()
+  if (/switzerland|schweiz|\bch\b/.test(c)) return 0.081
+  if (/luxembourg/.test(c)) return 0.17
+  if (/germany|deutschland|\bde\b/.test(c)) return 0.19
+  if (/ireland|\bie\b/.test(c)) return 0.23
+  if (/denmark|danmark|sweden|sverige|norway|norge|finland/.test(c)) return 0.25
+  if (/hungary|\bhu\b/.test(c)) return 0.27
+  return 0.2
+}
+
 function cityMul(city?: string): number {
   const key = (city || '').toLowerCase()
   for (const [k, m] of Object.entries(CITY_MUL)) {
     if (key.includes(k)) return m
   }
   return 1
+}
+
+/** Heuristic visual cues from filenames + description (no separate vision API). */
+export function inferVisualFeatures(state: EstimatorState): string[] {
+  const blob = [
+    state.description,
+    ...state.files.map((f) => `${f.file.name} ${f.kind}`),
+  ]
+    .join(' ')
+    .toLowerCase()
+  const found: string[] = []
+  const rules: Array<[RegExp, string]> = [
+    [/wall|стін|wand|parete/, 'Walls'],
+    [/floor|підлог|boden|paviment/, 'Floors'],
+    [/window|вікн|fenster|ventana/, 'Windows'],
+    [/door|двер|tür|puerta/, 'Doors'],
+    [/roof|дах|dach|tejado/, 'Roof'],
+    [/bath|ванн|sanitär|toilet|shower/, 'Bathroom fixtures'],
+    [/kitchen|кухн|küche|cocina/, 'Kitchen'],
+    [/outlet|socket|розет|schalter|electrical/, 'Electrical points'],
+    [/crack|damage|mold|плесен|wasserschaden|leak|тріщин/, 'Visible damage'],
+  ]
+  for (const [re, label] of rules) {
+    if (re.test(blob)) found.push(label)
+  }
+  if (state.files.some((f) => f.kind === 'photo') && found.length === 0) {
+    found.push('Site photos attached (manual review recommended)')
+  }
+  if (state.files.some((f) => f.kind === 'pdf' || f.kind === 'cad')) {
+    found.push('Drawings / blueprints uploaded')
+  }
+  return found.slice(0, 8)
 }
 
 function complexityFromDescription(desc: string): { mul: number; factors: string[] } {
@@ -174,6 +218,16 @@ const SPECIALIST_TEMPLATES: Record<string, Array<Omit<SpecialistNeed, 'id' | 'la
     { tradeId: 'drywall', label: 'Drywall', subcategorySlug: 'drywall-install' },
     { tradeId: 'painter', label: 'Painter', subcategorySlug: 'painting-interior' },
     { tradeId: 'flooring', label: 'Flooring', subcategorySlug: 'flooring-laminate' },
+  ],
+  house_renovation: [
+    { tradeId: 'general', label: 'General contractor', subcategorySlug: 'design-engineering-general' },
+    { tradeId: 'electrician', label: 'Electrician', subcategorySlug: 'electro-wiring' },
+    { tradeId: 'plumber', label: 'Plumber', subcategorySlug: 'plumbing-pipes' },
+    { tradeId: 'drywall', label: 'Drywall', subcategorySlug: 'drywall-install' },
+    { tradeId: 'painter', label: 'Painter', subcategorySlug: 'painting-interior' },
+    { tradeId: 'flooring', label: 'Flooring', subcategorySlug: 'flooring-laminate' },
+    { tradeId: 'facade', label: 'Facade', subcategorySlug: 'facade-cladding' },
+    { tradeId: 'roofing', label: 'Roofer', subcategorySlug: 'roofing-install' },
   ],
   new_construction: [
     { tradeId: 'general', label: 'General contractor', subcategorySlug: 'design-engineering-general' },
@@ -478,9 +532,16 @@ export function buildFullCostEstimateLocal(state: EstimatorState): FullCostEstim
   if (photos >= 3) factors.push(`${photos} photos reviewed`)
   if (state.files.some((f) => f.kind === 'pdf' || f.kind === 'cad')) factors.push('Plans uploaded')
   if (floors > 1) factors.push(`${floors} floors`)
+  const visual = inferVisualFeatures(state)
+  for (const v of visual) factors.push(`Visual: ${v}`)
+  if (visual.includes('Visible damage')) {
+    /* already in complexity via description; bump mild if filename-only */
+  }
 
   const photoMul = photos >= 6 ? 1.05 : photos >= 3 ? 1.02 : 1
-  const base = type.perSqm * area * geo * complexity * photoMul * (1 + (floors - 1) * 0.08)
+  const damageMul = visual.includes('Visible damage') ? 1.1 : 1
+  const base =
+    type.perSqm * area * geo * complexity * photoMul * damageMul * (1 + (floors - 1) * 0.08)
 
   const laborMid = roundEuro(base * type.laborShare)
   const materialsMid = roundEuro(base * (1 - type.laborShare) * 0.82)
@@ -493,6 +554,8 @@ export function buildFullCostEstimateLocal(state: EstimatorState): FullCostEstim
     ? roundEuro(base * 0.04)
     : 0
 
+  const taxPct = vatRateForCountry(state.location.country)
+
   const totals = sumTier(
     laborMid,
     materialsMid,
@@ -501,7 +564,7 @@ export function buildFullCostEstimateLocal(state: EstimatorState): FullCostEstim
     wasteMid,
     permitsMid,
     0.08,
-    0,
+    taxPct,
   )
 
   const specialists = buildSpecialists(type.id, area)
@@ -525,6 +588,7 @@ export function buildFullCostEstimateLocal(state: EstimatorState): FullCostEstim
       ['waste', 'Waste disposal', wasteMid],
       ['permits', 'Permits (optional)', permitsMid],
       ['contingency', 'Contingency (8%)', totals.standard.contingency],
+      ['taxes', `VAT / tax (~${Math.round(taxPct * 100)}%)`, totals.standard.taxes],
     ] as const
   ).map(([category, label, std], i) => ({
     id: `bd-${i}`,
@@ -577,16 +641,21 @@ export async function runFullCostEstimate(
   state: EstimatorState,
   onProgress?: (pct: number, label: string) => void,
 ): Promise<FullCostEstimate> {
-  onProgress?.(10, 'Analysing project type…')
-  await sleep(100)
-  onProgress?.(30, 'Estimating labour & materials…')
-  const local = buildFullCostEstimateLocal(state)
-  onProgress?.(50, 'Building work breakdown…')
+  const uploading = state.files.length > 0
+  onProgress?.(8, uploading ? 'Uploading media…' : 'Analysing project type…')
+  await sleep(80)
+  onProgress?.(22, 'Analysing photos & drawings…')
   await sleep(60)
+  onProgress?.(38, 'Calculating labour & materials…')
+  const local = buildFullCostEstimateLocal(state)
+  onProgress?.(52, 'Building work breakdown…')
+  await sleep(50)
 
   onProgress?.(65, 'Consulting AI cost model…')
   try {
     const type = getProjectType(state.projectTypeId)
+    const visual = inferVisualFeatures(state)
+    const taxPct = vatRateForCountry(state.location.country)
     const res = await invokeAiBot<QuoteEstimate>({
       bot: 'quote',
       action: 'estimate',
@@ -603,14 +672,17 @@ export async function runFullCostEstimate(
           `Rooms: ${state.measurements.rooms ?? '—'}`,
           `Floors: ${state.measurements.floors ?? '—'}`,
           `Photos: ${state.files.filter((f) => f.kind === 'photo').length}`,
-        ].join('\n'),
+          visual.length ? `Visual cues: ${visual.join(', ')}` : '',
+        ]
+          .filter(Boolean)
+          .join('\n'),
         currency: 'EUR',
         areaSqm: state.measurements.areaSqm,
         photoCount: state.files.length,
       },
     })
 
-    onProgress?.(88, 'Blending reference ranges…')
+    onProgress?.(82, 'Blending reference ranges…')
     if (res.ok && res.data && typeof res.data.minPrice === 'number') {
       const stdLocal = local.totals.standard.grandTotal
       let low = roundEuro(res.data.minPrice)
@@ -620,7 +692,13 @@ export async function runFullCostEstimate(
         premium = roundEuro((premium + local.totals.premium.grandTotal) / 2)
       }
       const average = roundEuro((low + premium) / 2)
-      const scale = average / Math.max(1, stdLocal)
+      // Scale pre-tax components; re-apply VAT so totals stay consistent
+      const localPreTax = Math.max(
+        1,
+        local.totals.standard.grandTotal - local.totals.standard.taxes,
+      )
+      const targetPreTax = average / (1 + taxPct)
+      const scale = targetPreTax / localPreTax
       const scaled = sumTier(
         roundEuro(local.totals.standard.labor * scale),
         roundEuro(local.totals.standard.materials * scale),
@@ -629,12 +707,25 @@ export async function runFullCostEstimate(
         roundEuro(local.totals.standard.waste * scale),
         roundEuro(local.totals.standard.permits * scale),
         0.08,
-        0,
+        taxPct,
       )
-      scaled.economy.grandTotal = low
+      // Soft-anchor economy/premium grand totals to AI range while keeping structure
+      const ecoScale = low / Math.max(1, scaled.economy.grandTotal)
+      const premScale = premium / Math.max(1, scaled.premium.grandTotal)
+      scaled.economy = {
+        ...scaled.economy,
+        grandTotal: low,
+        taxes: roundEuro(scaled.economy.taxes * ecoScale),
+      }
+      scaled.premium = {
+        ...scaled.premium,
+        grandTotal: premium,
+        taxes: roundEuro(scaled.premium.taxes * premScale),
+      }
       scaled.standard.grandTotal = average
-      scaled.premium.grandTotal = premium
 
+      onProgress?.(95, 'Generating report…')
+      await sleep(40)
       onProgress?.(100, 'Done')
       return {
         ...local,
@@ -642,13 +733,14 @@ export async function runFullCostEstimate(
         source: 'blended',
         confidence: Math.max(local.confidence, res.data.confidence || 70),
         explanation: res.data.explanation || local.explanation,
+        factors: [...local.factors, ...visual.map((v) => `Visual: ${v}`)].slice(0, 8),
       }
     }
   } catch {
     /* keep local */
   }
 
-  onProgress?.(100, 'Done')
+  onProgress?.(100, 'Generating report…')
   return local
 }
 

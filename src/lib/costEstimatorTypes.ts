@@ -39,6 +39,7 @@ export type EstimatorStep =
 
 export type EstimatorProjectTypeId =
   | 'renovation'
+  | 'house_renovation'
   | 'new_construction'
   | 'bathroom'
   | 'kitchen'
@@ -78,7 +79,8 @@ export type EstimatorProjectType = {
 }
 
 export const ESTIMATOR_PROJECT_TYPES: EstimatorProjectType[] = [
-  { id: 'renovation', icon: Hammer, labelKey: 'costEstimator.type.renovation', labelEn: 'Renovation', tradeId: 'general', subcategorySlug: 'design-engineering-general', perSqm: 95, laborShare: 0.5, daysPer10Sqm: 2.8 },
+  { id: 'renovation', icon: Hammer, labelKey: 'costEstimator.type.renovation', labelEn: 'Apartment renovation', tradeId: 'general', subcategorySlug: 'design-engineering-general', perSqm: 95, laborShare: 0.5, daysPer10Sqm: 2.8 },
+  { id: 'house_renovation', icon: Home, labelKey: 'costEstimator.type.houseRenovation', labelEn: 'House renovation', tradeId: 'general', subcategorySlug: 'design-engineering-general', perSqm: 105, laborShare: 0.5, daysPer10Sqm: 3.0 },
   { id: 'new_construction', icon: HardHat, labelKey: 'costEstimator.type.newConstruction', labelEn: 'New Construction', tradeId: 'general', subcategorySlug: 'design-engineering-general', perSqm: 140, laborShare: 0.45, daysPer10Sqm: 4.0 },
   { id: 'bathroom', icon: Bath, labelKey: 'costEstimator.type.bathroom', labelEn: 'Bathroom', tradeId: 'bathroom', subcategorySlug: 'plumbing-bathroom', perSqm: 280, laborShare: 0.45, daysPer10Sqm: 3.2 },
   { id: 'kitchen', icon: LayoutGrid, labelKey: 'costEstimator.type.kitchen', labelEn: 'Kitchen', tradeId: 'kitchen', subcategorySlug: 'carpentry-furniture', perSqm: 320, laborShare: 0.4, daysPer10Sqm: 3.5 },

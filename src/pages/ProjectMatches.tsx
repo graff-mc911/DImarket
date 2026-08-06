@@ -168,6 +168,65 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
           </div>
         ) : (
           <>
+            {/* Tender comparison board — reused match data, no duplicate system */}
+            <div className="mb-6 overflow-x-auto rounded-[20px] border border-[#e8e8ed] bg-white p-4">
+              <p className="text-[15px] font-semibold text-[#1d1d1f]">
+                {t('costEstimator.tenderBoard')}
+              </p>
+              <p className="mt-1 text-[13px] text-[#6e6e73]">{t('costEstimator.tenderBoardSub')}</p>
+              <table className="mt-4 w-full min-w-[640px] text-left text-[12px]">
+                <thead>
+                  <tr className="text-[10px] uppercase tracking-wide text-[#86868b]">
+                    <th className="pb-2 pr-2 font-semibold">Professional</th>
+                    <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colPrice')}</th>
+                    <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colTimeline')}</th>
+                    <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colRating')}</th>
+                    <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colJobs')}</th>
+                    <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colReviews')}</th>
+                    <th className="pb-2 font-semibold">{t('costEstimator.colGuarantee')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row) => {
+                    const p = row.contractor
+                    if (!p) return null
+                    const jobs = p.completed_jobs ?? 0
+                    return (
+                      <tr key={p.id} className="border-t border-[#f0f0f2]">
+                        <td className="py-2.5 pr-2">
+                          <button
+                            type="button"
+                            className="font-semibold text-[#1d1d1f] hover:underline"
+                            onClick={() => navigateTo(`/professional/${p.id}`)}
+                          >
+                            {p.full_name || 'Professional'}
+                          </button>
+                        </td>
+                        <td className="py-2.5 pr-2 tabular-nums font-semibold text-[#248a3d]">
+                          {Math.round(Number(row.score))}%
+                        </td>
+                        <td className="py-2.5 pr-2 capitalize text-[#6e6e73]">
+                          {(p.availability_status || 'flexible').replace(/_/g, ' ')}
+                        </td>
+                        <td className="py-2.5 pr-2 tabular-nums">
+                          {(p.rating ?? 0).toFixed(1)}
+                        </td>
+                        <td className="py-2.5 pr-2 tabular-nums">{jobs}</td>
+                        <td className="py-2.5 pr-2 tabular-nums">{p.total_reviews ?? 0}</td>
+                        <td className="py-2.5">
+                          {p.verification_level && p.verification_level !== 'none'
+                            ? p.verification_level
+                            : p.is_verified
+                              ? 'verified'
+                              : '—'}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+
             <div className="mb-4 flex items-baseline justify-between gap-2">
               <p className="text-[13px] font-semibold text-[#86868b]">
                 Top {rows.length} of {TOP_MATCH_LIMIT}

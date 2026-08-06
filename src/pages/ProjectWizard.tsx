@@ -8,6 +8,7 @@ import {
   type ProjectWizardState,
   type WizardFieldErrors,
 } from '../lib/projectWizard'
+import { linkEstimateToListing } from '../lib/costEstimatorPersist'
 import { submitProjectWizard } from '../lib/submitProjectWizard'
 import { WizardShell } from '../components/project-wizard/WizardShell'
 import { CategoryStep } from '../components/project-wizard/CategoryStep'
@@ -65,13 +66,27 @@ export function ProjectWizard() {
         longitude?: number | null
         budgetMin?: number
         budgetMax?: number
+        selectedProfessionalIds?: string[]
+        estimateId?: string | null
+        tenderMode?: boolean
+        scopeOfWork?: string
       }
       sessionStorage.removeItem('dimarket_estimator_project_prefill')
+      const description =
+        data.tenderMode && data.scopeOfWork
+          ? data.scopeOfWork
+          : data.description || ''
+      const invited =
+        Array.isArray(data.selectedProfessionalIds) && data.selectedProfessionalIds.length > 0
+          ? `\n\n--- Invited professionals (from Cost Estimator) ---\n${data.selectedProfessionalIds
+              .map((id) => `• profile:${id}`)
+              .join('\n')}`
+          : ''
       setState((s) => ({
         ...s,
         tradeId: data.tradeId || s.tradeId,
         subcategorySlug: data.subcategorySlug || s.subcategorySlug,
-        description: data.description || s.description,
+        description: `${description}${invited}`.trim() || s.description,
         country: data.country || s.country,
         city: data.city || s.city,
         postalCode: data.postalCode || s.postalCode,
@@ -80,8 +95,15 @@ export function ProjectWizard() {
         longitude: data.longitude ?? s.longitude,
         budgetMin: data.budgetMin ?? s.budgetMin,
         budgetMax: data.budgetMax ?? s.budgetMax,
-        step: data.tradeId ? 2 : s.step,
+        step: data.tradeId ? (data.tenderMode ? 6 : 2) : s.step,
       }))
+      if (data.estimateId) {
+        try {
+          sessionStorage.setItem('dimarket_estimator_link_id', data.estimateId)
+        } catch {
+          /* ignore */
+        }
+      }
     } catch {
       /* ignore */
     }
@@ -159,6 +181,15 @@ export function ProjectWizard() {
     if ('error' in result) {
       setError(result.error === 'incomplete' ? 'Please complete all required fields' : result.error)
       return
+    }
+    try {
+      const estimateId = sessionStorage.getItem('dimarket_estimator_link_id')
+      if (estimateId) {
+        await linkEstimateToListing(estimateId, result.listingId, user.id)
+        sessionStorage.removeItem('dimarket_estimator_link_id')
+      }
+    } catch {
+      /* non-blocking */
     }
     navigateTo(`/project/${result.listingId}/matches`)
   }

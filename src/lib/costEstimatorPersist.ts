@@ -129,6 +129,101 @@ export async function deleteCostEstimate(id: string, userId: string | null): Pro
   }
 }
 
+export async function getCostEstimateById(
+  id: string,
+  userId: string | null,
+): Promise<SavedCostEstimateRow | null> {
+  if (userId) {
+    const { data, error } = await db
+      .from('cost_estimates')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', userId)
+      .maybeSingle()
+    if (!error && data) return data as SavedCostEstimateRow
+  }
+  try {
+    const prev = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]') as SavedCostEstimateRow[]
+    return prev.find((x) => x.id === id) ?? null
+  } catch {
+    return null
+  }
+}
+
+export async function duplicateCostEstimate(
+  id: string,
+  userId: string | null,
+): Promise<{ id: string } | null> {
+  const row = await getCostEstimateById(id, userId)
+  if (!row) return null
+  const title = `${row.title} (copy)`
+  if (userId) {
+    const { data, error } = await db
+      .from('cost_estimates')
+      .insert({
+        user_id: userId,
+        title,
+        project_type: row.project_type,
+        location_label: row.location_label,
+        area_sqm: row.area_sqm,
+        currency: row.currency,
+        total_economy: row.total_economy,
+        total_standard: row.total_standard,
+        total_premium: row.total_premium,
+        confidence: row.confidence,
+        estimate_json: row.estimate_json,
+        input_json: row.input_json,
+      })
+      .select('id')
+      .single()
+    if (!error && data?.id) return { id: String(data.id) }
+  }
+  const newId = crypto.randomUUID()
+  try {
+    const prev = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]') as SavedCostEstimateRow[]
+    prev.unshift({
+      ...row,
+      id: newId,
+      title,
+      listing_id: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(prev.slice(0, 30)))
+  } catch {
+    return null
+  }
+  return { id: newId }
+}
+
+export async function saveCostEstimateOutcome(opts: {
+  userId: string
+  estimateId: string | null
+  projectType: string
+  country: string
+  region: string
+  areaSqm: number
+  estimatedStandard: number
+  actualTotal: number
+  currency: string
+  consented: boolean
+}): Promise<{ ok: boolean }> {
+  if (!opts.consented || !opts.userId || !(opts.actualTotal > 0)) return { ok: false }
+  const { error } = await db.from('cost_estimate_outcomes').insert({
+    cost_estimate_id: opts.estimateId,
+    user_id: opts.userId,
+    project_type: opts.projectType,
+    country: opts.country || null,
+    region: opts.region || null,
+    area_sqm: opts.areaSqm,
+    estimated_standard: opts.estimatedStandard,
+    actual_total: opts.actualTotal,
+    currency: opts.currency || 'EUR',
+    consented: true,
+  })
+  return { ok: !error }
+}
+
 export async function linkEstimateToListing(
   estimateId: string,
   listingId: string,
