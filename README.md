@@ -91,7 +91,7 @@ buildster/
 │   ├── components/        # Reusable UI components
 │   │   ├── Header.tsx
 │   │   ├── Footer.tsx
-│   │   ├── CategoryCard.tsx
+│   │   ├── CategoryServiceCard.tsx
 │   │   ├── ListingCard.tsx
 │   │   └── ProfessionalCard.tsx
 │   ├── pages/            # Page components
