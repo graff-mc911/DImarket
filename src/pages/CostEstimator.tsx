@@ -44,6 +44,7 @@ import {
 } from '../lib/costEstimatorMatch'
 import {
   getCostEstimateById,
+  linkEstimateToListing,
   listCostEstimates,
   saveCostEstimate,
   saveCostEstimateOutcome,
@@ -51,6 +52,7 @@ import {
 import {
   buildTenderPrefill,
   ESTIMATOR_PREFILL_KEY,
+  wizardStateFromTenderPrefill,
 } from '../lib/costEstimatorTender'
 import {
   EMPTY_ESTIMATOR_STATE,
@@ -64,6 +66,8 @@ import {
   type FullCostEstimate,
   type PricingTierId,
 } from '../lib/costEstimatorTypes'
+import { PROJECT_TRADES } from '../lib/projectWizard'
+import { submitProjectWizard } from '../lib/submitProjectWizard'
 import { readEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 import { navigateTo } from '../lib/navigation'
 import type { Profile } from '../lib/types'
@@ -87,7 +91,7 @@ const ESTIMATOR_VOICE_LANG: Record<string, string> = {
 
 /** AI Cost Estimator — /cost-estimator · /estimate */
 export function CostEstimator() {
-  const { t, location: globalLoc, user, setLocation, language } = useApp()
+  const { t, location: globalLoc, user, profile, setLocation, language } = useApp()
   const [state, setState] = useState<EstimatorState>(() => ({
     ...EMPTY_ESTIMATOR_STATE,
     location: {
@@ -117,6 +121,7 @@ export function CostEstimator() {
   const [actualTotal, setActualTotal] = useState('')
   const [outcomeConsent, setOutcomeConsent] = useState(false)
   const [outcomeSaved, setOutcomeSaved] = useState(false)
+  const [publishingTender, setPublishingTender] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const cameraRef = useRef<HTMLInputElement>(null)
 
@@ -407,9 +412,103 @@ export function CostEstimator() {
     navigateTo('/create-project')
   }
 
-  const createTender = () => {
-    storePrefill({ tender: true })
-    navigateTo('/create-project')
+  const createTender = async () => {
+    if (!estimate || !state.projectTypeId || publishingTender) return
+    const type = getProjectType(state.projectTypeId)
+    const prefill = buildTenderPrefill({
+      estimate,
+      state,
+      tier,
+      selectedProfessionalIds: [...selectedPros],
+      estimateId: savedId,
+      tradeId: type.tradeId,
+      subcategorySlug: type.subcategorySlug,
+    })
+    // Soften location: fill gaps from global DImarket location; postal optional for tender
+    const city = prefill.city || globalLoc.city || ''
+    const country = prefill.country || globalLoc.country || ''
+    const enriched = {
+      ...prefill,
+      city,
+      country,
+      postalCode: prefill.postalCode || '',
+      locationLabel:
+        prefill.locationLabel ||
+        [city, globalLoc.province || globalLoc.region, country].filter(Boolean).join(', '),
+      latitude: prefill.latitude ?? globalLoc.originLat ?? null,
+      longitude: prefill.longitude ?? globalLoc.originLng ?? null,
+    }
+
+    if (!user?.id) {
+      try {
+        sessionStorage.setItem(PREFILL_KEY, JSON.stringify(enriched))
+      } catch {
+        /* ignore */
+      }
+      navigateTo('/login')
+      return
+    }
+
+    const contactName = (profile?.full_name || '').trim()
+    const contactEmail = (user.email || '').trim()
+    const contactPhone = (profile?.phone || '').trim()
+    const canOneClick =
+      Boolean(contactName) &&
+      Boolean(contactEmail || contactPhone) &&
+      Boolean(city && country) &&
+      Boolean(enriched.scopeOfWork?.trim() || enriched.description?.trim())
+
+    if (!canOneClick) {
+      try {
+        sessionStorage.setItem(PREFILL_KEY, JSON.stringify(enriched))
+      } catch {
+        /* ignore */
+      }
+      navigateTo('/create-project')
+      return
+    }
+
+    setPublishingTender(true)
+    setError(null)
+    try {
+      const wizardState = wizardStateFromTenderPrefill(enriched, {
+        name: contactName,
+        email: contactEmail,
+        phone: contactPhone,
+        language: language.code || 'en',
+      })
+      const trade = PROJECT_TRADES.find((x) => x.id === wizardState.tradeId)
+      const tradeKey = trade?.labelKey as never
+      const tradeLabel =
+        trade && t(tradeKey) !== trade.labelKey ? t(tradeKey) : trade?.labelEn || estimate.tradeLabel
+      const result = await submitProjectWizard(user.id, wizardState, tradeLabel)
+      if ('error' in result) {
+        try {
+          sessionStorage.setItem(PREFILL_KEY, JSON.stringify(enriched))
+        } catch {
+          /* ignore */
+        }
+        navigateTo('/create-project')
+        return
+      }
+      if (savedId) {
+        try {
+          await linkEstimateToListing(savedId, result.listingId, user.id)
+        } catch {
+          /* non-blocking */
+        }
+      }
+      navigateTo(`/project/${result.listingId}/matches`)
+    } catch {
+      try {
+        sessionStorage.setItem(PREFILL_KEY, JSON.stringify(enriched))
+      } catch {
+        /* ignore */
+      }
+      navigateTo('/create-project')
+    } finally {
+      setPublishingTender(false)
+    }
   }
 
   const requestQuotes = () => {
@@ -546,11 +645,18 @@ export function CostEstimator() {
             <ActionBtn icon={<Store className="h-4 w-4" />} onClick={searchShops}>
               {t('costEstimator.findShops')}
             </ActionBtn>
-            <ActionBtn icon={<Hammer className="h-4 w-4" />} onClick={convertToProject} primary>
+            <ActionBtn icon={<Hammer className="h-4 w-4" />} onClick={convertToProject}>
               {t('costEstimator.createProject')}
             </ActionBtn>
-            <ActionBtn icon={<ClipboardList className="h-4 w-4" />} onClick={createTender} primary>
-              {t('costEstimator.createTender')}
+            <ActionBtn
+              icon={<ClipboardList className="h-4 w-4" />}
+              onClick={() => void createTender()}
+              primary
+              disabled={publishingTender}
+            >
+              {publishingTender
+                ? t('costEstimator.publishingTender')
+                : t('costEstimator.createTender')}
             </ActionBtn>
             <ActionBtn
               icon={<Download className="h-4 w-4" />}
@@ -1379,17 +1485,20 @@ function ActionBtn({
   onClick,
   icon,
   primary,
+  disabled,
 }: {
   children: ReactNode
   onClick: () => void
   icon: ReactNode
   primary?: boolean
+  disabled?: boolean
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold transition ${
+      disabled={disabled}
+      className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
         primary
           ? 'bg-[#1d1d1f] text-white hover:bg-black'
           : 'border border-[#d2d2d7] bg-white text-[#1d1d1f] hover:bg-[#fafafa]'

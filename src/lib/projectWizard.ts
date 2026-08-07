@@ -124,7 +124,7 @@ export function validateWizardStep(step: number, state: ProjectWizardState): Wiz
     case 4:
       if (!state.country.trim()) errors.country = 'Country is required'
       if (!state.city.trim()) errors.city = 'City is required'
-      if (!state.postalCode.trim()) errors.postalCode = 'Postal code is required'
+      // Postal optional when city+country set (tender / estimator one-click path)
       break
     case 5:
       if (state.budgetMin < 0) errors.budgetMin = 'Invalid minimum'

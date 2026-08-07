@@ -102,4 +102,39 @@ export function buildTenderPrefill(opts: {
   }
 }
 
+/** Map tender prefill + contact into ProjectWizardState for one-click publish. */
+export function wizardStateFromTenderPrefill(
+  prefill: EstimatorTenderPrefill,
+  contact: { name?: string; phone?: string; email?: string; language?: string },
+): import('./projectWizard').ProjectWizardState {
+  const invited =
+    prefill.selectedProfessionalIds.length > 0
+      ? `\n\n--- Invited professionals (from Cost Estimator) ---\n${prefill.selectedProfessionalIds
+          .map((id) => `• profile:${id}`)
+          .join('\n')}`
+      : ''
+  return {
+    step: 7,
+    tradeId: prefill.tradeId,
+    subcategorySlug: prefill.subcategorySlug,
+    description: `${prefill.scopeOfWork || prefill.description}${invited}`.trim(),
+    files: [],
+    country: prefill.country || '',
+    city: prefill.city || '',
+    postalCode: prefill.postalCode || '',
+    locationLabel: prefill.locationLabel || '',
+    latitude: prefill.latitude,
+    longitude: prefill.longitude,
+    budgetMin: Math.max(0, Math.round(prefill.budgetMin || 0)),
+    budgetMax: Math.max(0, Math.round(prefill.budgetMax || 0)),
+    deadlineType: 'flexible',
+    deadlineAt: '',
+    urgency: 'normal',
+    contactName: (contact.name || '').trim(),
+    contactPhone: (contact.phone || '').trim(),
+    contactEmail: (contact.email || '').trim(),
+    preferredLanguage: contact.language || 'en',
+  }
+}
+
 export const ESTIMATOR_PREFILL_KEY = 'dimarket_estimator_project_prefill'

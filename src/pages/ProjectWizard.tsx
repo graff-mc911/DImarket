@@ -95,7 +95,14 @@ export function ProjectWizard() {
         longitude: data.longitude ?? s.longitude,
         budgetMin: data.budgetMin ?? s.budgetMin,
         budgetMax: data.budgetMax ?? s.budgetMax,
-        step: data.tradeId ? (data.tenderMode ? 6 : 2) : s.step,
+        // Tender from cost estimator: skip to preview when location is known (postal optional)
+        step: data.tradeId
+          ? data.tenderMode
+            ? data.city && data.country
+              ? 7
+              : 4
+            : 2
+          : s.step,
       }))
       if (data.estimateId) {
         try {
