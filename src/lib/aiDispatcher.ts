@@ -170,5 +170,42 @@ export async function dispatchToProfessionals(
     console.warn('dispatch channels:', err)
   }
 
+  try {
+    await supabase
+      .from('listings')
+      .update({
+        pipeline_stage: 'awaiting_responses',
+        updated_at: new Date().toISOString(),
+      } as never)
+      .eq('id', listingId)
+  } catch {
+    /* column may be missing until migration */
+  }
+
   return { notified: Math.max(notified, profileIds.length) }
+}
+
+/** Profile IDs invited from Cost Estimator (embedded in listing description). */
+export function parseInvitedProfileIds(description: string | null | undefined): string[] {
+  if (!description) return []
+  const ids = new Set<string>()
+  const re = /profile:([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/gi
+  let m: RegExpExecArray | null
+  while ((m = re.exec(description)) != null) {
+    ids.add(m[1].toLowerCase())
+  }
+  return [...ids]
+}
+
+/** Default package selection: score ≥ 70 and/or estimator-invited. */
+export function defaultMatchPackageIds(
+  matches: { profileId: string; score: number }[],
+  invitedIds: string[] = [],
+): string[] {
+  const invited = new Set(invitedIds.map((id) => id.toLowerCase()))
+  const selected = matches
+    .filter((m) => m.score >= 70 || invited.has(m.profileId.toLowerCase()))
+    .map((m) => m.profileId)
+  if (selected.length) return selected
+  return matches.slice(0, Math.min(5, matches.length)).map((m) => m.profileId)
 }

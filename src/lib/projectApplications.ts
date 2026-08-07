@@ -137,3 +137,70 @@ export async function fetchMyApplications(professionalId: string): Promise<Proje
   }
   return (data ?? []) as ProjectApplication[]
 }
+
+export type ListingApplicationRow = {
+  id: string
+  listing_id: string
+  professional_id: string
+  status: string
+  message: string | null
+  updated_at: string | null
+  created_at?: string | null
+  professional?: {
+    id: string
+    full_name: string | null
+    profile_photo?: string | null
+    avatar_url?: string | null
+  } | null
+}
+
+/** Client-side inbox: triad responses + applications for one project. */
+export async function fetchApplicationsForListing(
+  listingId: string,
+): Promise<ListingApplicationRow[]> {
+  const { data, error } = await supabase
+    .from('project_applications')
+    .select(
+      'id, listing_id, professional_id, status, message, updated_at, created_at, professional:profiles!project_applications_professional_id_fkey(id, full_name, profile_photo, avatar_url)',
+    )
+    .eq('listing_id', listingId)
+    .order('updated_at', { ascending: false })
+
+  if (error) {
+    // Retry without join if FK alias missing
+    const retry = await supabase
+      .from('project_applications')
+      .select('id, listing_id, professional_id, status, message, updated_at, created_at')
+      .eq('listing_id', listingId)
+      .order('updated_at', { ascending: false })
+    if (retry.error) {
+      console.error('fetchApplicationsForListing:', error)
+      return []
+    }
+    return (retry.data ?? []) as ListingApplicationRow[]
+  }
+  return (data ?? []) as ListingApplicationRow[]
+}
+
+export function normalizeProResponseLabel(status: string | null | undefined): {
+  key: 'ready' | 'needs_inspection' | 'declined' | 'applied' | 'awaiting' | 'other'
+  label: string
+} {
+  switch (status) {
+    case 'ready':
+      return { key: 'ready', label: 'Ready' }
+    case 'needs_inspection':
+      return { key: 'needs_inspection', label: 'Need inspection' }
+    case 'declined':
+    case 'withdrawn':
+    case 'rejected':
+      return { key: 'declined', label: 'Declined' }
+    case 'applied':
+    case 'accepted':
+      return { key: 'applied', label: status === 'accepted' ? 'Selected' : 'Applied' }
+    case 'saved':
+      return { key: 'other', label: 'Saved' }
+    default:
+      return { key: 'awaiting', label: 'Awaiting' }
+  }
+}
