@@ -126,6 +126,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'nav.more': 'Ещё',
   'nav.moreMenu': 'Ещё',
   'nav.closeMore': 'Закрыть меню',
+  'nav.ownerSection': 'Кабинет владельца',
   'nav.jobs': 'Вакансии',
   'nav.marketplace': 'Продам / Сдам',
   'nav.companies': 'Компании',
