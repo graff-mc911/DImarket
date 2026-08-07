@@ -23,3 +23,6 @@ supabase/functions/.env
 /playwright/.cache/
 
 .translation-cache.json
+
+supabase/.temp/
+docs/auth-fix-after-login-mobile.png
