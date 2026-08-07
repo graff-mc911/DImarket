@@ -490,7 +490,7 @@ function askGeo(draft: JobRequestDraft): SalesBotTurnResult {
     step: 'geo',
     draft,
     quickReplies: hasCity
-      ? [draft.location!, 'Гео', 'Інше місто']
+      ? ['Гео', draft.location!, 'Інше місто']
       : ['Гео', 'Київ', 'Львів', 'Warsaw'],
     canPublish: false,
   }
@@ -508,25 +508,49 @@ function afterTradeResolved(
 ): SalesBotTurnResult {
   const label =
     ctx.categoryLabels[draft.categorySlug || ''] || draft.categorySlug || ''
+  const nextDraft: JobRequestDraft = {
+    ...draft,
+    description: buildJobDescription(draft),
+    deadlineDays: draft.deadlineDays ?? 7,
+    listingType: 'service_request',
+  }
+  const geoAsk = askGeo(nextDraft)
+  const tradeLine = (resolved.replyText || '').trim()
+  const geoHintUk =
+    'Щоб показати майстрів поруч, потрібно визначити вашу геолокацію — зараз спробую «Гео», або напишіть місто.'
+  const geoHintEn =
+    'To show nearby pros I need your location — detecting GPS now, or type your city.'
+  const geoHint =
+    (ctx.locale || '').toLowerCase().startsWith('uk') ||
+    (ctx.locale || '').toLowerCase().startsWith('ru')
+      ? geoHintUk
+      : geoHintEn
   return {
+    ...geoAsk,
     replyKey: resolved.reasonKey,
-    replyText: resolved.replyText,
-    replyParams: { trade: label },
-    step: 'geo',
-    draft: {
-      ...draft,
-      description: buildJobDescription(draft),
-      deadlineDays: draft.deadlineDays ?? 7,
-      listingType: 'service_request',
-    },
-    quickReplies: draft.location
-      ? [draft.location, 'Гео']
-      : ['Гео', 'Київ', 'Львів'],
-    canPublish: false,
+    replyParams: { trade: label, city: nextDraft.location || '' },
+    replyText: [tradeLine, geoHint].filter(Boolean).join('\n\n'),
+    quickReplies: geoAsk.quickReplies,
+    // Auto-trigger browser geolocation in useSalesChat.
+    sessionFlags: { request_geo: '1' },
   }
 }
 
+function hasUsableGeo(draft: JobRequestDraft): boolean {
+  const city = draft.location?.trim()
+  if (!city || city.length < 2) return false
+  return (
+    draft.latitude != null &&
+    draft.longitude != null &&
+    Number.isFinite(draft.latitude) &&
+    Number.isFinite(draft.longitude)
+  )
+}
+
 function matchesTurn(draft: JobRequestDraft): SalesBotTurnResult {
+  if (!draft.location?.trim()) {
+    return askGeo(draft)
+  }
   return {
     replyKey: 'salesBot.showMatches',
     replyParams: {
@@ -733,8 +757,21 @@ export function processSalesBotTurn(
         replyKey: 'salesBot.askCity',
         replyParams: { category: ctx.categoryLabels[next.categorySlug || ''] || '' },
         step: 'geo',
-        draft: { ...next, location: undefined },
+        draft: { ...next, location: undefined, latitude: null, longitude: null },
+        quickReplies: ['Гео', 'Київ', 'Львів', 'Warsaw'],
         canPublish: false,
+      }
+    }
+    // "Так" alone is not enough — require city text, chip, or successful GPS.
+    if (YES.test(text)) {
+      if (hasUsableGeo(next) || next.location?.trim()) {
+        next.description = buildJobDescription(next)
+        next.title = buildDraftTitle(next, ctx.categoryLabels[next.categorySlug || ''])
+        return matchesTurn(next)
+      }
+      return {
+        ...askGeo(next),
+        sessionFlags: { request_geo: '1' },
       }
     }
     if (text.length < 2 && !next.location) {
@@ -742,14 +779,23 @@ export function processSalesBotTurn(
         replyKey: 'salesBot.cityTooShort',
         step: 'geo',
         draft: next,
+        quickReplies: ['Гео', 'Київ', 'Львів'],
         canPublish: false,
       }
     }
-    if (text.length >= 2 && !USE_GEO.test(text) && !YES.test(text)) {
+    if (text.length >= 2 && !USE_GEO.test(text)) {
       next.location = text
+      // City typed without coords — still usable for matching; prefer GPS when possible.
+      if (next.latitude == null || next.longitude == null) {
+        next.latitude = null
+        next.longitude = null
+      }
     }
     if (!next.location?.trim()) {
-      return askGeo(next)
+      return {
+        ...askGeo(next),
+        sessionFlags: { request_geo: '1' },
+      }
     }
     next.description = buildJobDescription(next)
     next.title = buildDraftTitle(next, ctx.categoryLabels[next.categorySlug || ''])
@@ -757,6 +803,12 @@ export function processSalesBotTurn(
   }
 
   if (step === 'show_matches' || step === 'ask_publish') {
+    if (!next.location?.trim()) {
+      return {
+        ...askGeo(next),
+        sessionFlags: { request_geo: '1' },
+      }
+    }
     if (YES.test(text) || /опублік|заявк|publish/i.test(text)) {
       if (draftNeedsContact(next)) {
         return {
@@ -800,6 +852,12 @@ export function processSalesBotTurn(
 
   if (step === 'confirm' && next.intent === 'job_service') {
     if (YES.test(text)) {
+      if (!next.location?.trim()) {
+        return {
+          ...askGeo(next),
+          sessionFlags: { request_geo: '1' },
+        }
+      }
       return {
         replyKey: 'salesBot.publishing',
         step: 'confirm',

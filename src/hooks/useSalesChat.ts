@@ -24,6 +24,7 @@ import type { Category } from '../lib/types'
 import { supabase } from '../lib/supabase'
 import { navigateTo } from '../lib/navigation'
 import { getCurrentLocationDetailed } from '../lib/geocoding'
+import { formatGlobalLocationLabel, loadGlobalLocation } from '../lib/globalLocation'
 import { getViewerGeo } from '../lib/viewerGeo'
 
 const STORAGE_KEY = 'dimarket_ai_sales_chat_v3'
@@ -109,20 +110,38 @@ export function useSalesChat() {
   }, [categories, t])
 
   const botContext = useMemo(
-    () => ({
-      locale: language.code,
-      categories: allCategoryOptions.length
-        ? allCategoryOptions
-        : salesCategories.map((c) => ({ id: c.id, slug: c.slug, name: c.name })),
-      categoryLabels,
-      profileName: profile?.full_name ?? undefined,
-      profileEmail: user?.email ?? undefined,
-      profilePhone: profile?.phone ?? undefined,
-      currencyCode: currency.code,
-      suggestedCity: geoHint.city || getViewerGeo(profile).city || undefined,
-      suggestedLat: geoHint.lat,
-      suggestedLon: geoHint.lon,
-    }),
+    () => {
+      const globalGeo = loadGlobalLocation()
+      const globalCity =
+        globalGeo.city ||
+        (globalGeo.region && globalGeo.country
+          ? formatGlobalLocationLabel(globalGeo, '')
+          : '') ||
+        undefined
+      const viewerCity = getViewerGeo(profile).city || undefined
+      return {
+        locale: language.code,
+        categories: allCategoryOptions.length
+          ? allCategoryOptions
+          : salesCategories.map((c) => ({ id: c.id, slug: c.slug, name: c.name })),
+        categoryLabels,
+        profileName: profile?.full_name ?? undefined,
+        profileEmail: user?.email ?? undefined,
+        profilePhone: profile?.phone ?? undefined,
+        currencyCode: currency.code,
+        suggestedCity: geoHint.city || globalCity || viewerCity || undefined,
+        suggestedLat:
+          geoHint.lat ??
+          (globalGeo.originLat != null && Number.isFinite(globalGeo.originLat)
+            ? globalGeo.originLat
+            : undefined),
+        suggestedLon:
+          geoHint.lon ??
+          (globalGeo.originLng != null && Number.isFinite(globalGeo.originLng)
+            ? globalGeo.originLng
+            : undefined),
+      }
+    },
     [
       allCategoryOptions,
       salesCategories,
@@ -218,10 +237,10 @@ export function useSalesChat() {
       const loc = await getCurrentLocationDetailed()
       if (!loc) return d
       const cityLine = [loc.city, loc.country].filter(Boolean).join(', ')
-      setGeoHint({ city: loc.city, lat: loc.lat, lon: loc.lon })
+      setGeoHint({ city: loc.city || loc.country, lat: loc.lat, lon: loc.lon })
       return {
         ...d,
-        location: cityLine || d.location,
+        location: cityLine || d.location || loc.country || 'GPS',
         latitude: loc.lat,
         longitude: loc.lon,
       }
@@ -269,16 +288,71 @@ export function useSalesChat() {
         applySessionFlags(turn.sessionFlags)
 
         if (turn.sessionFlags?.request_geo === '1') {
+          const before = turn.draft
           const geoDraft = await resolveGeoIntoDraft(turn.draft)
-          const resumeStep = turn.step === 'profile_city' ? 'profile_city' : 'geo'
-          turn = await runSalesChatTurn({
-            message: geoDraft.location || trimmed,
-            step: resumeStep,
-            draft: geoDraft,
-            locale: language.code,
-            context: { ...botContext, suggestedCity: geoDraft.location },
-          })
-          applySessionFlags(turn.sessionFlags)
+          const gotCoords =
+            geoDraft.latitude != null &&
+            geoDraft.longitude != null &&
+            Number.isFinite(geoDraft.latitude) &&
+            Number.isFinite(geoDraft.longitude)
+          const gotCity = Boolean(geoDraft.location?.trim())
+
+          if (gotCoords || (gotCity && geoDraft.location !== before.location)) {
+            const resumeStep = turn.step === 'profile_city' ? 'profile_city' : 'geo'
+            // Never resume with «Гео» — that would re-trigger GPS in a loop.
+            const resumeMessage =
+              geoDraft.location?.trim() ||
+              (gotCoords ? 'ok' : trimmed)
+            turn = await runSalesChatTurn({
+              message: resumeMessage,
+              step: resumeStep,
+              draft: geoDraft,
+              locale: language.code,
+              context: {
+                ...botContext,
+                suggestedCity: geoDraft.location,
+                suggestedLat: geoDraft.latitude ?? undefined,
+                suggestedLon: geoDraft.longitude ?? undefined,
+              },
+            })
+            applySessionFlags(turn.sessionFlags)
+          } else {
+            // GPS denied/failed — keep geo step and ask for city (do NOT reuse last user text as city).
+            turn = {
+              ...turn,
+              replyKey: 'salesBot.askGeo',
+              replyText: turn.replyText,
+              step: 'geo',
+              draft: geoDraft,
+              quickReplies: ['Гео', 'Київ', 'Львів', 'Warsaw'],
+              canPublish: false,
+              sessionFlags: undefined,
+            }
+          }
+        }
+
+        if (turn.canPublish && !turn.draft.location?.trim()) {
+          turn = {
+            ...turn,
+            canPublish: false,
+            replyKey: 'salesBot.askGeo',
+            replyText: undefined,
+            step: 'geo',
+            quickReplies: ['Гео', 'Київ', 'Львів'],
+            sessionFlags: { request_geo: '1' },
+          }
+          // Fall through — will request geo again below only if we loop; instead force ask.
+          const geoDraft = await resolveGeoIntoDraft(turn.draft)
+          if (geoDraft.location?.trim()) {
+            turn = await runSalesChatTurn({
+              message: geoDraft.location,
+              step: 'geo',
+              draft: geoDraft,
+              locale: language.code,
+              context: botContext,
+            })
+            applySessionFlags(turn.sessionFlags)
+          }
         }
 
         if (turn.needsMatches) {
