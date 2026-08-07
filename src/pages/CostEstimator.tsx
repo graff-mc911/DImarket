@@ -145,6 +145,34 @@ export function CostEstimator() {
     void listCostEstimates(user?.id ?? null).then((rows) => setHistoryCount(rows.length))
   }, [user?.id, savedId])
 
+  // Prefill from AI sales chat (“повний ремонт + кошторис”)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('dimarket_estimator_ai_prefill')
+      if (!raw) return
+      sessionStorage.removeItem('dimarket_estimator_ai_prefill')
+      const parsed = JSON.parse(raw) as {
+        description?: string
+        projectTypeId?: EstimatorProjectTypeId
+      }
+      const desc = parsed.description?.trim()
+      if (!desc && !parsed.projectTypeId) return
+      const typeOk =
+        parsed.projectTypeId &&
+        ESTIMATOR_PROJECT_TYPES.some((t) => t.id === parsed.projectTypeId)
+          ? parsed.projectTypeId
+          : undefined
+      setState((prev) => ({
+        ...prev,
+        step: desc ? 2 : typeOk ? 1 : prev.step,
+        description: desc || prev.description,
+        projectTypeId: typeOk || prev.projectTypeId,
+      }))
+    } catch {
+      /* ignore */
+    }
+  }, [])
+
   // Re-open a saved estimate from history (?id=)
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get('id')

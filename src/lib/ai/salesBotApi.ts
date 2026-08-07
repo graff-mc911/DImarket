@@ -31,6 +31,7 @@ type EdgeSalesResponse = {
 const SKIP_POLISH_STEPS = new Set<SalesBotStep>([
   'welcome',
   'trade_confirm',
+  'renovation_choice',
   'geo',
   'show_matches',
   'ask_publish',
@@ -56,6 +57,7 @@ const SKIP_POLISH_STEPS = new Set<SalesBotStep>([
   'sell_confirm',
   'confirm',
   'contact',
+  'done',
 ])
 
 /**

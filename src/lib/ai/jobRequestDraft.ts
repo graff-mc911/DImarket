@@ -65,6 +65,7 @@ export type SalesBotStep =
   | 'diagnose_duration'
   | 'diagnose_symptoms'
   | 'trade_confirm'
+  | 'renovation_choice'
   | 'geo'
   | 'show_matches'
   | 'ask_publish'
@@ -103,6 +104,7 @@ export const SALES_BOT_STEPS_ORDER: SalesBotStep[] = [
   'diagnose_duration',
   'diagnose_symptoms',
   'trade_confirm',
+  'renovation_choice',
   'geo',
   'show_matches',
   'ask_publish',

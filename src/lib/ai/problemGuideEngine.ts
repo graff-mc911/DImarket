@@ -62,6 +62,33 @@ const NO = /^(ні|no|не треба|потім|later|неа)/i
 const SKIP = /^(skip|пропустити|немає|не знаю|хз|idk|—|-)$/i
 const USE_GEO = /^(гео|geo|моє місце|my location|визначити|авто|gps)/i
 
+/** Cost estimate / budget calculator — not an emergency job diagnose. */
+function wantsCostEstimate(text: string): boolean {
+  return /(кошторис|оцінк\w*\s+варт|скільки\s*(це\s*)?кошт|калькулятор\s*варт|зроби(ти)?\s*коштор|estimate|cost\s*estim|budget\s*estim|how\s*much\s*(will\s*it\s*)?cost)/i.test(
+    text,
+  )
+}
+
+/** Planned renovation / remodel — not “how long has it been broken”. */
+function isPlannedRenovation(text: string): boolean {
+  const q = text.toLowerCase()
+  if (/(злама|тече|аварі|немає\s*світл|нема\s*світл|кондиц|кондец|затоп|іскри)/i.test(q)) {
+    return false
+  }
+  return /(повн\w*\s*ремонт|капремонт|євроремонт|ремонт\s*(будинк|квартир|дому|хат|оселі)|house\s*renov|full\s*renov|apartment\s*renov|renovation|remodel)/i.test(
+    q,
+  )
+}
+
+function estimatorProjectTypeFromText(text: string): string {
+  const q = text.toLowerCase()
+  if (/(будинк|дому|хат|house)/i.test(q)) return 'house_renovation'
+  if (/(квартир|apartment|flat)/i.test(q)) return 'renovation'
+  if (/(ванн|bathroom)/i.test(q)) return 'bathroom'
+  if (/(кухн|kitchen)/i.test(q)) return 'kitchen'
+  return 'house_renovation'
+}
+
 function meta(draft: JobRequestDraft): Record<string, string> {
   return { ...(draft.guideMeta ?? {}) }
 }
@@ -92,8 +119,10 @@ function detectIntent(text: string): GuideIntent | null {
     if (/(компан|company|фірм|ООО|ТОВ)/i.test(q)) return 'profile_company'
     return 'profile_pro'
   }
+  // Planned renovation / estimate handled separately in welcome — do not force job_service here.
+  if (wantsCostEstimate(q) || isPlannedRenovation(q)) return 'job_service'
   if (
-    /(нема|немає|злама|протік|тече|не працю|погано|потріб|виклик|ремонт|пофарб|прибра|електр|сантех|світл|розетк|щиток|запах|загоря|майстр|кондиц|кондец|охолод|help|fix|broken|leak)/i.test(
+    /(нема|немає|злама|протік|тече|не працю|погано|виклик|пофарб|прибра|електр|сантех|світл|розетк|щиток|запах|загоря|майстр|кондиц|кондец|охолод|help|fix|broken|leak)/i.test(
       q,
     )
   ) {
@@ -191,6 +220,16 @@ function guessProblem(text: string): ProblemGuess | null {
       summary: 'Малярні / фарбування',
       urgent: false,
       kind: 'painting',
+    }
+  }
+
+  if (isPlannedRenovation(text)) {
+    return {
+      tradeRole: 'general',
+      categorySlug: 'construction',
+      summary: text.trim().slice(0, 80) || 'Ремонт / реконструкція',
+      urgent: false,
+      kind: 'general',
     }
   }
 
@@ -324,11 +363,11 @@ function symptomPrompt(kind: ProblemKind, locale: string): {
     default:
       return {
         replyText: uk
-          ? 'Опишіть коротко що саме не так (звук, запах, не вмикається…)?'
-          : 'Briefly: what exactly is wrong (noise, smell, won’t start…)?',
+          ? 'Що саме потрібно зробити? Коротко опишіть обсяг робіт.'
+          : 'What exactly needs to be done? Briefly describe the scope.',
         quickReplies: uk
-          ? ['Не працює зовсім', 'Працює погано', 'Дивний звук', 'Тече / капає', 'Не знаю']
-          : ['Completely dead', 'Works poorly', 'Strange noise', 'Leaking', 'Not sure'],
+          ? ['Повний ремонт', 'Частковий ремонт', 'Кошторис', 'Знайти бригаду', 'Не знаю']
+          : ['Full renovation', 'Partial work', 'Cost estimate', 'Find a crew', 'Not sure'],
       }
   }
 }
@@ -621,11 +660,90 @@ function startSell(draft: JobRequestDraft): SalesBotTurnResult {
   }
 }
 
+function startCostEstimate(text: string, draft: JobRequestDraft, ctx: SalesBotContext): SalesBotTurnResult {
+  const uk = !ctx.locale || ctx.locale.startsWith('uk') || ctx.locale.startsWith('ru')
+  const projectTypeId = estimatorProjectTypeFromText(text)
+  try {
+    sessionStorage.setItem(
+      'dimarket_estimator_ai_prefill',
+      JSON.stringify({
+        description: text.trim(),
+        projectTypeId,
+        source: 'sales_chat',
+      }),
+    )
+  } catch {
+    /* ignore */
+  }
+  return {
+    replyKey: 'salesBot.welcome',
+    replyText: uk
+      ? 'Це виглядає як проєкт з кошторисом — відкриваю калькулятор вартості. Там уточнимо площу й деталі, і AI порахує орієнтовний бюджет.'
+      : 'This looks like a budget estimate — opening the cost calculator. We’ll confirm size and details, then AI will give a Low–High range.',
+    step: 'done',
+    draft: {
+      ...draft,
+      intent: 'job_service',
+      problemText: text.trim(),
+      problemKind: 'general',
+      guideMeta: { ...meta(draft), estimate: '1', projectTypeId },
+    },
+    quickReplies: [],
+    canPublish: false,
+    navigateTo: '/cost-estimator',
+  }
+}
+
+function startPlannedRenovation(
+  text: string,
+  draft: JobRequestDraft,
+  ctx: SalesBotContext,
+): SalesBotTurnResult {
+  const uk = !ctx.locale || ctx.locale.startsWith('uk') || ctx.locale.startsWith('ru')
+  const guess = guessProblem(text)
+  let next: JobRequestDraft = {
+    ...draft,
+    intent: 'job_service',
+    problemText: text.trim(),
+    problemKind: 'general',
+    listingType: 'service_request',
+    deadlineDays: 30,
+  }
+  if (guess) {
+    next = applyCategory(
+      { ...next, tradeRole: guess.tradeRole, problemKind: guess.kind },
+      guess.categorySlug,
+      ctx,
+    )
+  } else {
+    next = applyCategory({ ...next, tradeRole: 'general' }, 'construction', ctx)
+  }
+  return {
+    replyKey: 'salesBot.welcome',
+    replyText: uk
+      ? 'Зрозумів: плановий ремонт (не аварія). Що зробимо далі?'
+      : 'Got it: planned renovation (not an emergency). What next?',
+    step: 'renovation_choice',
+    draft: next,
+    quickReplies: uk
+      ? ['Зробити кошторис', 'Знайти майстрів', 'Опублікувати заявку']
+      : ['Make cost estimate', 'Find pros', 'Publish job request'],
+    canPublish: false,
+  }
+}
+
 function startJobFromText(
   text: string,
   draft: JobRequestDraft,
   ctx: SalesBotContext,
 ): SalesBotTurnResult {
+  if (wantsCostEstimate(text)) {
+    return startCostEstimate(text, draft, ctx)
+  }
+  if (isPlannedRenovation(text)) {
+    return startPlannedRenovation(text, draft, ctx)
+  }
+
   const guess = guessProblem(text)
   let next: JobRequestDraft = {
     ...draft,
@@ -647,6 +765,28 @@ function startJobFromText(
   } else {
     next.problemKind = 'general'
   }
+
+  // Planned / non-urgent work: skip “how long has it been broken?” chips.
+  const skipDuration =
+    !guess?.urgent &&
+    (guess?.kind === 'painting' ||
+      guess?.kind === 'cleaning' ||
+      guess?.kind === 'general' ||
+      !guess)
+
+  if (skipDuration) {
+    const kind = (next.problemKind || 'general') as ProblemKind
+    const pack = symptomPrompt(kind, ctx.locale)
+    return {
+      replyKey: 'salesBot.diagnoseSymptoms',
+      replyText: pack.replyText,
+      step: 'diagnose_symptoms',
+      draft: { ...next, diagnoseDuration: 'планово' },
+      quickReplies: pack.quickReplies,
+      canPublish: false,
+    }
+  }
+
   return {
     replyKey: 'salesBot.diagnoseDuration',
     replyParams: { problem: guess?.summary || text.trim().slice(0, 60) },
@@ -668,6 +808,12 @@ export function processSalesBotTurn(
 
   // ——— Welcome: detect intent from free text ———
   if (step === 'welcome' || step === 'category') {
+    if (wantsCostEstimate(text)) {
+      return startCostEstimate(text, next, ctx)
+    }
+    if (isPlannedRenovation(text)) {
+      return startPlannedRenovation(text, next, ctx)
+    }
     const intent = detectIntent(text) || (guessProblem(text) ? 'job_service' : null)
     if (!intent) {
       return {
@@ -676,6 +822,7 @@ export function processSalesBotTurn(
         draft: next,
         quickReplies: [
           'Немає світла',
+          'Кошторис ремонту',
           'Реклама',
           'Стати майстром',
           'Вакансія',
@@ -690,6 +837,33 @@ export function processSalesBotTurn(
     if (intent === 'vacancy') return startVacancy(next)
     if (intent === 'sell_rent') return startSell(next)
     return startJobFromText(text, next, ctx)
+  }
+
+  if (step === 'renovation_choice') {
+    if (wantsCostEstimate(text) || /кошторис|estimate|бюджет|budget|калькулятор/i.test(text)) {
+      return startCostEstimate(next.problemText || text, next, ctx)
+    }
+    if (/майстр|про|find|знайти|підібр/i.test(text)) {
+      next.description = buildJobDescription(next)
+      next.title = buildDraftTitle(next, ctx.categoryLabels[next.categorySlug || ''])
+      return {
+        ...askGeo(next),
+        sessionFlags: { request_geo: '1' },
+        replyText:
+          !ctx.locale || ctx.locale.startsWith('uk') || ctx.locale.startsWith('ru')
+            ? 'Добре — знайдемо майстрів поруч. Потрібна локація (або «Гео»).'
+            : 'OK — I’ll find nearby pros. Need your location (or tap “Гео”).',
+      }
+    }
+    if (YES.test(text) || /опублік|заявк|publish/i.test(text)) {
+      next.description = buildJobDescription(next)
+      next.title = buildDraftTitle(next, ctx.categoryLabels[next.categorySlug || ''])
+      return {
+        ...askGeo(next),
+        sessionFlags: { request_geo: '1' },
+      }
+    }
+    return startPlannedRenovation(next.problemText || text, next, ctx)
   }
 
   // ——— Job diagnostics ———
