@@ -1,4 +1,5 @@
 import type { TranslationKey } from './i18n'
+import { isSiteOwner } from './siteOwner'
 
 export function getAuthErrorMessage(
   err: unknown,
@@ -74,8 +75,6 @@ export function getChangePasswordMessage(
       return getAuthErrorMessage({ message: code }, t)
   }
 }
-
-import { isSiteOwner } from './siteOwner'
 
 export function getPostLoginPath(
   profile: {
