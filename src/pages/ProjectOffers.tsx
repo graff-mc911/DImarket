@@ -100,7 +100,13 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
     })
     setBusyId(null)
     if ('error' in res) {
-      setError(res.error)
+      setError(
+        /owner|author|not_owner/i.test(res.error)
+          ? t('pipeline.hireOwnerOnly' as never) || res.error
+          : /already hired/i.test(res.error)
+            ? t('pipeline.hiredBanner' as never) || res.error
+            : res.error,
+      )
       return
     }
     setHiredId(offer.professionalId)
