@@ -424,18 +424,6 @@ export function Header() {
                   />
                 </div>
 
-                {isSiteOwner && user ? (
-                  <button
-                    type="button"
-                    onClick={() => goTo('/dashboard')}
-                    className="amazon-header-block"
-                    aria-label={t('header.dashboard')}
-                  >
-                    <span className="amazon-header-block__top">{t('nav.ownerSection')}</span>
-                    <span className="amazon-header-block__bottom">{t('header.dashboard')}</span>
-                  </button>
-                ) : null}
-
                 <div ref={accountRef} className="relative">
                   <button
                     onClick={() => {
@@ -605,17 +593,6 @@ export function Header() {
               {/* Мобільні кнопки — Amazon: акаунт + збережене + меню */}
               <div className="flex shrink-0 items-center gap-0.5 sm:hidden">
                 {user ? <NotificationCenter /> : null}
-                {isSiteOwner && user ? (
-                  <button
-                    type="button"
-                    onClick={() => goTo('/dashboard')}
-                    className="amazon-header-block px-1 py-0.5"
-                    aria-label={t('header.dashboard')}
-                  >
-                    <span className="amazon-header-block__top text-[10px]">{t('nav.ownerSection')}</span>
-                    <span className="amazon-header-block__bottom text-xs">{t('header.dashboard')}</span>
-                  </button>
-                ) : null}
                 <button
                   type="button"
                   onClick={() => goTo(isLoggedIn ? '/profile' : '/login')}
