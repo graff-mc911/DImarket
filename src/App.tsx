@@ -10,7 +10,7 @@ import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
 import { MobileBottomNav }     from './components/MobileBottomNav'
 import { PageWithSideAds } from './components/PageWithSideAds'
-import { bindPathListener }    from './lib/navigation'
+import { bindPathListener, navigateTo } from './lib/navigation'
 
 // --- Публічні сторінки ---
 import { Home }               from './pages/Home'
@@ -60,7 +60,6 @@ import { ProDashboard } from './pages/ProDashboard'
 import { ProCalendar } from './pages/ProCalendar'
 import { BookProfessional } from './pages/BookProfessional'
 import { CustomerDashboard } from './pages/CustomerDashboard'
-import { AdminPanel } from './pages/AdminPanel'
 import { CostEstimator } from './pages/CostEstimator'
 import { CostEstimatorHistory } from './pages/CostEstimatorHistory'
 import { Notifications } from './pages/Notifications'
@@ -77,6 +76,14 @@ import {
 } from './lib/serviceTaxonomy'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { parseGeoServicePath } from './lib/geoSearch'
+
+/** Old Admin Panel URLs → owner cabinet (/dashboard). */
+function RedirectToOwnerCabinet() {
+  useEffect(() => {
+    navigateTo('/dashboard')
+  }, [])
+  return null
+}
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -170,7 +177,7 @@ function App() {
       case '/auth/callback': return <AuthCallback />
       case '/dashboard':     return <Dashboard />
       case '/admin':
-      case '/admin/panel':   return <AdminPanel />
+      case '/admin/panel':   return <RedirectToOwnerCabinet />
       case '/pro/dashboard':
       case '/pro':           return <ProDashboard />
       case '/pro/calendar':

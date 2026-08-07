@@ -83,7 +83,7 @@ export function getPostLoginPath(
   } | null,
   options?: { intendedRole?: string | null; email?: string | null },
 ): string {
-  if (isSiteOwner(profile, options?.email)) return '/admin'
+  if (isSiteOwner(profile, options?.email)) return '/dashboard'
   const role = options?.intendedRole ?? profile?.user_role
   if (role === 'advertiser') return '/advertising'
   if (role === 'client') return '/customer/dashboard'

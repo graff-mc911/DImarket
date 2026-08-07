@@ -60,7 +60,6 @@ const MORE_ICONS: Record<string, ReactNode> = {
   messages: <MessageSquare className="h-5 w-5" aria-hidden />,
   settings: <Settings className="h-5 w-5" aria-hidden />,
   profile: <User className="h-5 w-5" aria-hidden />,
-  'owner-admin': <ClipboardList className="h-5 w-5" aria-hidden />,
   'owner-dashboard': <BarChart3 className="h-5 w-5" aria-hidden />,
   'owner-ai': <Bot className="h-5 w-5" aria-hidden />,
   'owner-marketing': <Megaphone className="h-5 w-5" aria-hidden />,

@@ -2019,7 +2019,7 @@ export const enTranslations = {
   'marketHealth.nextWave': 'Next wave',
   'ownerDash.eyebrow': 'Owner dashboard',
   'ownerDash.controlTitle': 'Site control panel',
-  'ownerDash.controlHint': 'Admin panel, global announcements, AI and marketing tools.',
+  'ownerDash.controlHint': 'Owner cabinet, AI and marketing tools.',
   'ownerDash.accessDenied': 'Access denied',
   'ownerDash.accessDeniedText': 'The site owner dashboard opens only for your owner profile. Other users cannot access this page.',
   'ownerDash.loading': 'Loading your dashboard…',

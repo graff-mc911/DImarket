@@ -2021,7 +2021,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'marketHealth.nextWave': 'Наступна хвиля',
   'ownerDash.eyebrow': 'Особистий кабінет власника',
   'ownerDash.controlTitle': 'Панель керування сайтом',
-  'ownerDash.controlHint': 'Адмін-панель, глобальні оголошення, AI та маркетинг.',
+  'ownerDash.controlHint': 'Кабінет власника, AI та маркетинг.',
   'ownerDash.accessDenied': 'Доступ заборонено',
   'ownerDash.accessDeniedText': 'Особистий кабінет власника сайту відкривається тільки для вашого owner-профілю. Для інших користувачів ця сторінка недоступна.',
   'ownerDash.loading': 'Завантажуємо особистий кабінет...',

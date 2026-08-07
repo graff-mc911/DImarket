@@ -175,15 +175,6 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
 
   // —— Mobile account sheet ——
   {
-    id: 'owner-admin',
-    path: '/admin',
-    aliases: ['/admin/panel'],
-    labelKey: 'header.adminPanel',
-    surfaces: ['mobile-account'],
-    authAware: true,
-    ownerOnly: true,
-  },
-  {
     id: 'owner-dashboard',
     path: '/dashboard',
     labelKey: 'header.dashboard',
@@ -366,7 +357,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     id: 'admin',
     path: '/admin',
     aliases: ['/admin/panel'],
-    labelKey: 'header.adminPanel',
+    labelKey: 'header.dashboard',
     surfaces: [],
   },
   {

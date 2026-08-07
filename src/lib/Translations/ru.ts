@@ -1875,7 +1875,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'marketHealth.nextWave': 'Следующая волна',
   'ownerDash.eyebrow': 'Личный кабинет владельца',
   'ownerDash.controlTitle': 'Панель управления сайтом',
-  'ownerDash.controlHint': 'Админ-панель, глобальные объявления, AI и маркетинг.',
+  'ownerDash.controlHint': 'Кабинет владельца, AI и маркетинг.',
   'ownerDash.accessDenied': 'Доступ запрещён',
   'ownerDash.accessDeniedText': 'Личный кабинет владельца сайта открывается только для вашего owner-профиля. Для других пользователей эта страница недоступна.',
   'ownerDash.loading': 'Загружаем личный кабинет...',

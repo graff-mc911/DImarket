@@ -15,7 +15,6 @@ import {
   Building2,
   Bookmark,
   Bot,
-  ClipboardList,
   FileText,
   Hammer,
   LayoutDashboard,
@@ -428,12 +427,12 @@ export function Header() {
                 {isSiteOwner && user ? (
                   <button
                     type="button"
-                    onClick={() => goTo('/admin')}
+                    onClick={() => goTo('/dashboard')}
                     className="amazon-header-block"
-                    aria-label={t('header.adminPanel')}
+                    aria-label={t('header.dashboard')}
                   >
                     <span className="amazon-header-block__top">{t('nav.ownerSection')}</span>
-                    <span className="amazon-header-block__bottom">{t('header.adminPanel')}</span>
+                    <span className="amazon-header-block__bottom">{t('header.dashboard')}</span>
                   </button>
                 ) : null}
 
@@ -473,10 +472,6 @@ export function Header() {
                           <p className="px-3 py-1 text-[10px] font-bold uppercase text-[var(--ink-500)]">
                             {t('nav.ownerSection')}
                           </p>
-                          <button onClick={() => goTo('/admin')} type="button" className={dropdownItemClass}>
-                            <ClipboardList className="mr-2 inline h-4 w-4" />
-                            {t('header.adminPanel')}
-                          </button>
                           <button onClick={() => goTo('/dashboard')} type="button" className={dropdownItemClass}>
                             <LayoutDashboard className="mr-2 inline h-4 w-4" />
                             {t('header.dashboard')}
@@ -613,12 +608,12 @@ export function Header() {
                 {isSiteOwner && user ? (
                   <button
                     type="button"
-                    onClick={() => goTo('/admin')}
+                    onClick={() => goTo('/dashboard')}
                     className="amazon-header-block px-1 py-0.5"
-                    aria-label={t('header.adminPanel')}
+                    aria-label={t('header.dashboard')}
                   >
                     <span className="amazon-header-block__top text-[10px]">{t('nav.ownerSection')}</span>
-                    <span className="amazon-header-block__bottom text-xs">{t('header.adminPanel')}</span>
+                    <span className="amazon-header-block__bottom text-xs">{t('header.dashboard')}</span>
                   </button>
                 ) : null}
                 <button
