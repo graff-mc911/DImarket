@@ -18,6 +18,7 @@ import {
   updateJobLeadDraft,
 } from '../lib/ai/jobLeadSession'
 import { buildDraftTitle } from '../lib/ai/jobRequestDraft'
+import { saveEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 import { getInitialTurn, type SalesBotMessage } from '../lib/ai/salesBotEngine'
 import { runSalesChatTurn } from '../lib/ai/salesBotApi'
 import type { Category } from '../lib/types'
@@ -443,6 +444,25 @@ export function useSalesChat() {
               turn.draft.description?.trim() || title,
             )
           }
+          const descForEstimate = [
+            turn.draft.title,
+            turn.draft.description,
+            turn.draft.problemText,
+            turn.draft.location,
+          ]
+            .filter(Boolean)
+            .join('\n')
+            .trim()
+
+          const doneDraft = {
+            ...turn.draft,
+            guideMeta: {
+              ...(turn.draft.guideMeta ?? {}),
+              listingId: result.listing.id,
+              matchCount: String(result.matchCount || 0),
+            },
+          }
+
           const doneTurn = {
             ...turn,
             replyKey: 'salesBot.published' as const,
@@ -451,9 +471,22 @@ export function useSalesChat() {
               count: String(result.matchCount || 0),
             },
             step: 'done' as const,
+            draft: doneDraft,
             canPublish: false,
+            quickReplies: ['Зробити кошторис', 'Відкрити оголошення', 'Спочатку'],
+          }
+          // Keep estimate handoff ready if user taps CTA immediately
+          if (descForEstimate.length >= 8) {
+            saveEstimatorAiPrefill({
+              description: descForEstimate,
+              listingId: result.listing.id,
+              source: 'after_publish',
+            })
           }
           appendAssistant(doneTurn)
+          setDraft(doneDraft)
+          setStep('done')
+          setQuickReplies(doneTurn.quickReplies)
           sessionStorage.removeItem(STORAGE_KEY)
           setPublishing(false)
           setLoading(false)
@@ -502,9 +535,13 @@ export function useSalesChat() {
 
   const resetChat = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEY)
+    // Do NOT clear estimator prefill — user may open /cost-estimator next.
+    seedSent.current = false
+    setSeedPrompt(null)
     setListingId(null)
     setTopMatches([])
     setError(null)
+    setAdWizardActive(false)
     const initial = getInitialTurn(botContext)
     setMessages([assistantMessage(initial, t)])
     setStep(initial.step)
@@ -512,6 +549,19 @@ export function useSalesChat() {
     setQuickReplies(initial.quickReplies ?? [])
     initialized.current = true
   }, [botContext, t])
+
+  const openCostEstimate = useCallback(() => {
+    const desc = [draft.title, draft.description, draft.problemText, draft.location]
+      .filter(Boolean)
+      .join('\n')
+      .trim()
+    saveEstimatorAiPrefill({
+      description: desc || draft.problemText || 'Ремонт',
+      listingId: listingId || draft.guideMeta?.listingId,
+      source: 'sales_chat_cta',
+    })
+    navigateTo('/cost-estimator')
+  }, [draft, listingId])
 
   return {
     messages,
@@ -527,5 +577,6 @@ export function useSalesChat() {
     setAdWizardActive,
     sendMessage,
     resetChat,
+    openCostEstimate,
   }
 }

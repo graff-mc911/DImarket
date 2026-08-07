@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState } from 'react'
-import { Loader2, Send } from 'lucide-react'
+import { Calculator, Loader2, Send } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { messageDisplayContent } from '../lib/ai/formatBotReply'
 import { useSalesChat } from '../hooks/useSalesChat'
+import { navigateTo } from '../lib/navigation'
 import { AdWizardChatbot } from './ai/AdWizardChatbot'
 import { TopMatchCards } from './matching/TopMatchCards'
 
@@ -24,6 +25,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
     adWizardActive,
     sendMessage,
     resetChat,
+    openCostEstimate,
   } = useSalesChat()
 
   const [input, setInput] = useState('')
@@ -31,7 +33,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages, loading, topMatches, quickReplies])
+  }, [messages, loading, topMatches, quickReplies, listingId])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -86,13 +88,46 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
         {topMatches.length > 0 && (
           <TopMatchCards matches={topMatches} listingId={listingId} compact />
         )}
+        {listingId && !loading && !publishing && (
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => openCostEstimate()}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#1d1d1f] px-3.5 py-2 text-xs font-semibold text-white"
+            >
+              <Calculator className="h-3.5 w-3.5" aria-hidden />
+              {t('salesBot.ctaEstimate')}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigateTo(`/listing/${listingId}`)}
+              className="rounded-full border border-[rgba(99,102,241,0.35)] bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#4338ca]"
+            >
+              {t('salesBot.ctaOpenListing')}
+            </button>
+          </div>
+        )}
         {quickReplies.length > 0 && !loading && !publishing && (
           <div className="flex flex-wrap gap-2 pt-1">
             {quickReplies.map((q) => (
               <button
                 key={q}
                 type="button"
-                onClick={() => void sendMessage(q)}
+                onClick={() => {
+                  if (/кошторис|estimate|калькулятор/i.test(q)) {
+                    openCostEstimate()
+                    return
+                  }
+                  if (/оголошен|listing/i.test(q) && listingId) {
+                    navigateTo(`/listing/${listingId}`)
+                    return
+                  }
+                  if (/спочатку|reset|заново/i.test(q)) {
+                    resetChat()
+                    return
+                  }
+                  void sendMessage(q)
+                }}
                 className="rounded-full border border-[rgba(99,102,241,0.35)] bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#4338ca] transition hover:bg-[rgba(99,102,241,0.08)]"
               >
                 {q === 'yes' || q === 'Так, опублікувати' || q === 'Так, опублікувати заявку'
@@ -101,7 +136,11 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
                     ? t('salesBot.quickNo')
                     : q === 'skip' || q === 'пропустити'
                       ? t('salesBot.quickSkip')
-                      : q}
+                      : q === 'Зробити кошторис' || q === 'Make cost estimate'
+                        ? t('salesBot.ctaEstimate')
+                        : q === 'Відкрити оголошення'
+                          ? t('salesBot.ctaOpenListing')
+                          : q}
               </button>
             ))}
           </div>

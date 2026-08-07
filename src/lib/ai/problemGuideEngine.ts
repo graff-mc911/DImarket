@@ -13,6 +13,10 @@ import {
   type SalesCategoryOption,
   type TradeRole,
 } from './jobRequestDraft'
+import {
+  estimatorProjectTypeFromText,
+  saveEstimatorAiPrefill,
+} from './estimatorPrefill'
 
 export type SalesBotMessageTurn = {
   replyKey: TranslationKey
@@ -78,15 +82,6 @@ function isPlannedRenovation(text: string): boolean {
   return /(повн\w*\s*ремонт|капремонт|євроремонт|ремонт\s*(будинк|квартир|дому|хат|оселі)|house\s*renov|full\s*renov|apartment\s*renov|renovation|remodel)/i.test(
     q,
   )
-}
-
-function estimatorProjectTypeFromText(text: string): string {
-  const q = text.toLowerCase()
-  if (/(будинк|дому|хат|house)/i.test(q)) return 'house_renovation'
-  if (/(квартир|apartment|flat)/i.test(q)) return 'renovation'
-  if (/(ванн|bathroom)/i.test(q)) return 'bathroom'
-  if (/(кухн|kitchen)/i.test(q)) return 'kitchen'
-  return 'house_renovation'
 }
 
 function meta(draft: JobRequestDraft): Record<string, string> {
@@ -662,21 +657,16 @@ function startSell(draft: JobRequestDraft): SalesBotTurnResult {
 
 function startCostEstimate(text: string, draft: JobRequestDraft, ctx: SalesBotContext): SalesBotTurnResult {
   const uk = !ctx.locale || ctx.locale.startsWith('uk') || ctx.locale.startsWith('ru')
-  const projectTypeId = estimatorProjectTypeFromText(text)
-  try {
-    sessionStorage.setItem(
-      'dimarket_estimator_ai_prefill',
-      JSON.stringify({
-        description: text.trim(),
-        projectTypeId,
-        source: 'sales_chat',
-      }),
-    )
-  } catch {
-    /* ignore */
-  }
+  const sourceText = (text || draft.problemText || draft.description || '').trim()
+  const projectTypeId = estimatorProjectTypeFromText(sourceText)
+  saveEstimatorAiPrefill({
+    description: sourceText,
+    projectTypeId,
+    source: 'sales_chat',
+    listingId: draft.guideMeta?.listingId,
+  })
   return {
-    replyKey: 'salesBot.welcome',
+    replyKey: 'salesBot.openEstimate',
     replyText: uk
       ? 'Це виглядає як проєкт з кошторисом — відкриваю калькулятор вартості. Там уточнимо площу й деталі, і AI порахує орієнтовний бюджет.'
       : 'This looks like a budget estimate — opening the cost calculator. We’ll confirm size and details, then AI will give a Low–High range.',
@@ -684,7 +674,7 @@ function startCostEstimate(text: string, draft: JobRequestDraft, ctx: SalesBotCo
     draft: {
       ...draft,
       intent: 'job_service',
-      problemText: text.trim(),
+      problemText: sourceText || draft.problemText,
       problemKind: 'general',
       guideMeta: { ...meta(draft), estimate: '1', projectTypeId },
     },
@@ -1397,6 +1387,29 @@ export function processSalesBotTurn(
   }
 
   if (step === 'done') {
+    if (wantsCostEstimate(text) || /кошторис|estimate|калькулятор|budget/i.test(text)) {
+      const desc =
+        next.description ||
+        next.problemText ||
+        [next.title, next.location].filter(Boolean).join(' — ') ||
+        text
+      return startCostEstimate(desc, next, ctx)
+    }
+    if (/оголошен|listing|відкрити|open listing|перегляд/i.test(text) && next.guideMeta?.listingId) {
+      return {
+        replyKey: 'salesBot.published',
+        replyParams: { id: next.guideMeta.listingId, count: next.guideMeta.matchCount || '0' },
+        replyText: undefined,
+        step: 'done',
+        draft: next,
+        quickReplies: ['Зробити кошторис', 'Спочатку'],
+        canPublish: false,
+        navigateTo: `/listing/${next.guideMeta.listingId}`,
+      }
+    }
+    if (/спочатку|заново|reset|start over|почати/i.test(text)) {
+      return getInitialTurn(ctx)
+    }
     return getInitialTurn(ctx)
   }
 

@@ -64,6 +64,7 @@ import {
   type FullCostEstimate,
   type PricingTierId,
 } from '../lib/costEstimatorTypes'
+import { readEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 import { navigateTo } from '../lib/navigation'
 import type { Profile } from '../lib/types'
 
@@ -147,30 +148,22 @@ export function CostEstimator() {
 
   // Prefill from AI sales chat (“повний ремонт + кошторис”)
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem('dimarket_estimator_ai_prefill')
-      if (!raw) return
-      sessionStorage.removeItem('dimarket_estimator_ai_prefill')
-      const parsed = JSON.parse(raw) as {
-        description?: string
-        projectTypeId?: EstimatorProjectTypeId
-      }
-      const desc = parsed.description?.trim()
-      if (!desc && !parsed.projectTypeId) return
-      const typeOk =
-        parsed.projectTypeId &&
-        ESTIMATOR_PROJECT_TYPES.some((t) => t.id === parsed.projectTypeId)
-          ? parsed.projectTypeId
-          : undefined
-      setState((prev) => ({
-        ...prev,
-        step: desc ? 2 : typeOk ? 1 : prev.step,
-        description: desc || prev.description,
-        projectTypeId: typeOk || prev.projectTypeId,
-      }))
-    } catch {
-      /* ignore */
-    }
+    const parsed = readEstimatorAiPrefill()
+    if (!parsed) return
+    const desc = parsed.description?.trim()
+    if (!desc && !parsed.projectTypeId) return
+    const typeOk =
+      parsed.projectTypeId &&
+      ESTIMATOR_PROJECT_TYPES.some((t) => t.id === parsed.projectTypeId)
+        ? (parsed.projectTypeId as EstimatorProjectTypeId)
+        : undefined
+    setState((prev) => ({
+      ...prev,
+      // Type selected + description ready → land on description step to review/continue
+      step: typeOk && desc ? 2 : desc ? 2 : typeOk ? 1 : prev.step,
+      description: desc || prev.description,
+      projectTypeId: typeOk || prev.projectTypeId,
+    }))
   }, [])
 
   // Re-open a saved estimate from history (?id=)
