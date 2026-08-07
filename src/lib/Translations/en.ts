@@ -326,7 +326,7 @@ export const enTranslations = {
   'home.globalEyebrow': 'Trusted local services marketplace',
   'home.heroTrustTitle': 'Find a trusted professional near you',
   'home.heroTrustSubtitle': 'Electricians, plumbers, painters — free to post, free for masters.',
-  'home.headerSearchPlaceholder': 'What do you need? e.g. Electrician',
+  'home.headerSearchPlaceholder': 'Describe your problem — AI will guide you',
   'home.whatServicePlaceholder': 'What service do you need?',
   'home.heroAiCta': 'Or let AI help you describe the job',
   'home.heroSocialProof': '{rating} average · {pros} professionals · Active in Darmstadt, Alicante, Madrid',

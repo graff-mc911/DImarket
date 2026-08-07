@@ -38,7 +38,6 @@ import { CreateAd }       from './pages/CreateAd'
 import { JobRequestChat } from './pages/JobRequestChat'
 import { AiAdmin } from './pages/AiAdmin'
 import { MarketingAgentAdmin } from './pages/MarketingAgentAdmin'
-import { AiChatWidget } from './components/ai/AiChatWidget'
 import { Checkout }     from './pages/Checkout'
 import { BoostProfile } from './pages/BoostProfile'
 import { Pricing } from './pages/Pricing'
@@ -241,7 +240,6 @@ function App() {
           <ErrorBoundary name="MobileBottomNav">
             <MobileBottomNav />
           </ErrorBoundary>
-          <AiChatWidget />
         </div>
       </PaidAdsProvider>
     </AppProvider>

@@ -1979,22 +1979,19 @@
     background: #ffffff;
   }
 
-  .amazon-search-cat {
-    display: none;
-    border: none;
-    border-right: 1px solid #cdcdcd;
+  .amazon-search-ai-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0 0.65rem;
+    color: var(--brand-ai, #4338ca);
     background: #f3f3f3;
-    color: #0f1111;
-    padding: 0 0.75rem;
-    font-size: 0.75rem;
-    max-width: 8rem;
-    cursor: pointer;
+    border-right: 1px solid #cdcdcd;
   }
 
-  @media (min-width: 640px) {
-    .amazon-search-cat {
-      display: block;
-    }
+  .amazon-search-cat {
+    display: none;
   }
 
   .amazon-search-input {

@@ -228,7 +228,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'home.globalEyebrow': 'Надежный маркетплейс локальных услуг',
   'home.heroTrustTitle': 'Найдите проверенного мастера рядом',
   'home.heroTrustSubtitle': 'Электрики, сантехники, маляры — бесплатное объявление, бесплатно для мастеров.',
-  'home.headerSearchPlaceholder': 'Найти мастера — напр. Электрик в Дармштадте',
+  'home.headerSearchPlaceholder': 'Опишите проблему — AI проведёт шаг за шагом',
   'home.whatServicePlaceholder': 'Какая услуга нужна?',
   'home.heroAiCta': 'Или пусть AI поможет описать работу',
   'home.heroSocialProof': '{rating} в среднем · {pros} мастеров · Активно в Дармштадте, Аликанте, Мадриде',

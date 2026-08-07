@@ -82,8 +82,10 @@ export function useSalesChat() {
   const [topMatches, setTopMatches] = useState<TopMatchRow[]>([])
   const [quickReplies, setQuickReplies] = useState<string[]>([])
   const [adWizardActive, setAdWizardActive] = useState(false)
+  const [seedPrompt, setSeedPrompt] = useState<string | null>(null)
   const initialized = useRef(false)
   const sessionIdRef = useRef<string | null>(null)
+  const seedSent = useRef(false)
   const [geoHint, setGeoHint] = useState<{
     city?: string
     lat?: number | null
@@ -209,18 +211,34 @@ export function useSalesChat() {
   useEffect(() => {
     if (!categories.length || initialized.current) return
     initialized.current = true
-    const stored = loadStored()
-    if (stored?.messages?.length) {
-      setStep(stored.step)
-      setDraft(stored.draft)
-      setMessages(remapAssistantMessages(stored.messages, t, stored.draft, botContext))
-      return
+
+    let seed: string | null = null
+    try {
+      seed = new URLSearchParams(window.location.search).get('q')?.trim() || null
+      if (seed) {
+        window.history.replaceState({}, '', window.location.pathname)
+        sessionStorage.removeItem(STORAGE_KEY)
+      }
+    } catch {
+      seed = null
     }
+
+    if (!seed) {
+      const stored = loadStored()
+      if (stored?.messages?.length) {
+        setStep(stored.step)
+        setDraft(stored.draft)
+        setMessages(remapAssistantMessages(stored.messages, t, stored.draft, botContext))
+        return
+      }
+    }
+
     const initial = getInitialTurn(botContext)
     setMessages([assistantMessage(initial, t)])
     setStep(initial.step)
     setDraft(initial.draft)
     setQuickReplies(initial.quickReplies ?? [])
+    if (seed) setSeedPrompt(seed)
   }, [categories.length, botContext, t])
 
   useEffect(() => {
@@ -472,6 +490,15 @@ export function useSalesChat() {
       loadMatchesForDraft,
     ],
   )
+
+  useEffect(() => {
+    if (!seedPrompt || seedSent.current || loading || publishing) return
+    if (!messages.length || step !== 'welcome') return
+    seedSent.current = true
+    const text = seedPrompt
+    setSeedPrompt(null)
+    void sendMessage(text)
+  }, [seedPrompt, loading, publishing, messages.length, step, sendMessage])
 
   const resetChat = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEY)

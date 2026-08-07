@@ -23,7 +23,6 @@ import {
   MapPin,
   Menu,
   MessageSquare,
-  Search,
   Settings,
   Shield,
   User,
@@ -34,8 +33,6 @@ import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { CURRENCIES } from '../lib/types'
 import { navigateTo }  from '../lib/navigation'
-import { appendLocationToPath } from '../lib/globalLocation'
-import { buildHomeCategoryGroups } from '../lib/homeCategoryTiles'
 import { HeaderLocationControl } from './HeaderLocationControl'
 import { LanguageSelector } from './LanguageSelector'
 import { Logo }        from './Logo'
@@ -66,7 +63,7 @@ interface Announcement {
 export function Header() {
   const {
     user, profile, currency, language,
-    setCurrency, signOut, t, location,
+    setCurrency, signOut, t,
   } = useApp()
 
   // Оновлення при навігації
@@ -244,11 +241,12 @@ export function Header() {
     e.preventDefault()
     const query = searchQuery.trim()
     closeAllMenus()
+    setSearchQuery('')
     if (!query) {
-      navigateTo(appendLocationToPath('/search', location))
+      navigateTo('/assistant/job')
       return
     }
-    navigateTo(appendLocationToPath(`/search?q=${encodeURIComponent(query)}`, location))
+    navigateTo(`/assistant/job?q=${encodeURIComponent(query)}`)
   }
 
   // Колір банера залежно від типу
@@ -313,12 +311,6 @@ export function Header() {
   const dropdownItemClass =
     'block w-full rounded-sm px-3 py-2.5 text-left text-sm text-[var(--ink-900)] transition hover:bg-[#f7fafa]'
 
-
-  const categoryGroups = useMemo(
-    () => buildHomeCategoryGroups(language.code, t),
-    [language.code, t],
-  )
-
   return (
     <>
       <div ref={fixedHeaderRef} className="fixed inset-x-0 top-0 z-50 w-full">
@@ -371,37 +363,28 @@ export function Header() {
               {/* Work in / Deliver to — global location */}
               <HeaderLocationControl />
 
-              {/* Пошук Amazon-style */}
+              {/* AI assistant — replaces classic category + search */}
               <form
                 onSubmit={handleSearchSubmit}
                 className="amazon-search-bar mx-2 hidden min-w-0 flex-1 sm:flex sm:max-w-3xl"
+                role="search"
+                aria-label={t('ai.widget.open')}
               >
                 <div className="amazon-search-inner">
-                  <select
-                    className="amazon-search-cat"
-                    defaultValue="all"
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={(e) => {
-                      const val = e.target.value
-                      if (val && val !== 'all') goTo(val)
-                    }}
-                  >
-                    <option value="all">{t('listings.allCategories')}</option>
-                    {categoryGroups.flatMap((g) => g.tiles).slice(0, 14).map((tile) => (
-                      <option key={tile.id} value={tile.path}>
-                        {tile.label}
-                      </option>
-                    ))}
-                  </select>
+                  <span className="amazon-search-ai-badge" aria-hidden>
+                    <Bot className="h-4 w-4" />
+                  </span>
                   <input
                     type="search"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('home.headerSearchPlaceholder')}
                     className="amazon-search-input"
+                    enterKeyHint="go"
+                    autoComplete="off"
                   />
-                  <button type="submit" className="amazon-search-submit" aria-label={t('home.search')}>
-                    <Search className="h-5 w-5" />
+                  <button type="submit" className="amazon-search-submit" aria-label={t('ai.widget.open')}>
+                    <Bot className="h-5 w-5" />
                   </button>
                 </div>
               </form>
@@ -696,18 +679,28 @@ export function Header() {
               }}
             />
 
-            {/* Пошук (мобільний) */}
-            <form onSubmit={handleSearchSubmit} className="amazon-search-bar mt-2 sm:hidden">
+            {/* AI assistant (mobile) */}
+            <form
+              onSubmit={handleSearchSubmit}
+              className="amazon-search-bar mt-2 sm:hidden"
+              role="search"
+              aria-label={t('ai.widget.open')}
+            >
               <div className="amazon-search-inner">
+                <span className="amazon-search-ai-badge" aria-hidden>
+                  <Bot className="h-4 w-4" />
+                </span>
                 <input
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('home.headerSearchPlaceholder')}
                   className="amazon-search-input"
+                  enterKeyHint="go"
+                  autoComplete="off"
                 />
-                <button type="submit" className="amazon-search-submit" aria-label={t('home.search')}>
-                  <Search className="h-5 w-5" />
+                <button type="submit" className="amazon-search-submit" aria-label={t('ai.widget.open')}>
+                  <Bot className="h-5 w-5" />
                 </button>
               </div>
             </form>

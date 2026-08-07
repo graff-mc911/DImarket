@@ -328,7 +328,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'home.globalEyebrow': 'Надійний маркетплейс локальних послуг',
   'home.heroTrustTitle': 'Знайдіть перевіреного майстра поруч',
   'home.heroTrustSubtitle': 'Електрики, сантехніки, маляри — безкоштовне оголошення, безкоштовно для майстрів.',
-  'home.headerSearchPlaceholder': 'Що потрібно? Напр. Електрик',
+  'home.headerSearchPlaceholder': 'Опишіть проблему — AI проведе крок за кроком',
   'home.whatServicePlaceholder': 'Яка послуга потрібна?',
   'home.heroAiCta': 'Або нехай AI допоможе описати роботу',
   'home.heroSocialProof': '{rating} середній рейтинг · {pros} майстрів · Активно в Дармштадті, Аліканте, Мадриді',
