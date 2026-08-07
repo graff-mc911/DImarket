@@ -18,7 +18,14 @@ export type GuideIntent =
   | 'vacancy'
   | 'sell_rent'
 
-export type TradeRole = 'electrician' | 'handyman' | 'plumber' | 'cleaner' | 'general'
+export type TradeRole =
+  | 'electrician'
+  | 'handyman'
+  | 'plumber'
+  | 'cleaner'
+  | 'hvac'
+  | 'painter'
+  | 'general'
 
 export type ListingType = 'service_request' | 'service_offer' | 'item_sale' | 'item_wanted'
 
@@ -40,6 +47,8 @@ export type JobRequestDraft = {
   /** Multi-intent guide fields */
   intent?: GuideIntent | null
   problemText?: string
+  /** power_outage | ac_cooling | plumbing | heating | appliance | painting | cleaning | general */
+  problemKind?: string
   diagnoseDuration?: string
   diagnoseSymptoms?: string
   tradeRole?: TradeRole

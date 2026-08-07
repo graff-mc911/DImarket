@@ -93,7 +93,7 @@ function detectIntent(text: string): GuideIntent | null {
     return 'profile_pro'
   }
   if (
-    /(нема|немає|злама|протік|тече|не працю|потріб|виклик|ремонт|пофарб|прибра|електр|сантех|світл|розетк|щиток|запах|загоря|майстр|help|fix|broken|leak)/i.test(
+    /(нема|немає|злама|протік|тече|не працю|погано|потріб|виклик|ремонт|пофарб|прибра|електр|сантех|світл|розетк|щиток|запах|загоря|майстр|кондиц|кондец|охолод|help|fix|broken|leak)/i.test(
       q,
     )
   ) {
@@ -102,19 +102,45 @@ function detectIntent(text: string): GuideIntent | null {
   return null
 }
 
+type ProblemKind =
+  | 'power_outage'
+  | 'ac_cooling'
+  | 'plumbing'
+  | 'heating'
+  | 'appliance'
+  | 'painting'
+  | 'cleaning'
+  | 'general'
+
 type ProblemGuess = {
   tradeRole: TradeRole
   categorySlug: string
   summary: string
   urgent: boolean
+  kind: ProblemKind
 }
 
 function guessProblem(text: string): ProblemGuess | null {
-  const q = text.toLowerCase()
-  const urgent = /(терміново|зараз|сьогодні|аварі|asap|urgent|нема світл)/i.test(q)
+  const q = text.toLowerCase().replace(/і/g, 'і')
+  const urgent = /(терміново|зараз|сьогодні|аварі|asap|urgent)/i.test(q)
+
+  // Air conditioner / HVAC — before generic "нема" rules
+  if (
+    /(кондиц|кондец|кондеціон|кондиціон|спліт|спліт|cooler|air.?cond|не.?охолод|погано.?холод|не.?дує.?холод|ac\b)/i.test(
+      q,
+    )
+  ) {
+    return {
+      tradeRole: 'hvac',
+      categorySlug: 'handyman',
+      summary: 'Кондиціонер погано холодить / несправний',
+      urgent: false,
+      kind: 'ac_cooling',
+    }
+  }
 
   if (
-    /(нема\s*св[аіеіиі]*тл|немає\s*св[аіеіиі]*тл|вимкнуло\s*світл|пропал[оа]\s*світл|no\s*light|power\s*out|чорно|нема\s*електр|нема\s*сваітл|нема\s*свитл)/i.test(
+    /(нема\s*св[аіеіиі]*тл|немає\s*св[аіеіиі]*тл|вимкнуло\s*світл|пропал[оа]\s*світл|no\s*light|power\s*out|нема\s*електр|нема\s*сваітл|нема\s*свитл)/i.test(
       q,
     ) ||
     (/(нема|немає)/i.test(q) && /(світл|свет|светл|світло|сваітл|свитл|light|power)/i.test(q))
@@ -124,97 +150,286 @@ function guessProblem(text: string): ProblemGuess | null {
       categorySlug: 'electrical',
       summary: 'Немає світла / електрики',
       urgent: true,
+      kind: 'power_outage',
     }
   }
-  if (/(запах гару|горить|іскри|щиток|автомат вибив|коротк|spark|burn|smell)/i.test(q)) {
+
+  if (/(опален|батаре|радіатор|котел|тепло|не.?гріє|heating)/i.test(q)) {
     return {
-      tradeRole: 'electrician',
-      categorySlug: 'electrical',
-      summary: 'Підозра на електричну аварію',
-      urgent: true,
-    }
-  }
-  if (/(розетк|вимикач|люстр|лампоч|провід)/i.test(q) && !/(нема\s*світл)/i.test(q)) {
-    return {
-      tradeRole: 'handyman',
+      tradeRole: 'plumber',
       categorySlug: 'handyman',
-      summary: 'Дрібна електрика / фурнітура',
-      urgent: false,
+      summary: 'Проблема з опаленням',
+      urgent: /(не.?гріє|холодн)/i.test(q),
+      kind: 'heating',
     }
   }
+
   if (/(тече|протік|унітаз|кран|труб|затоп|сантех|leak|plumb)/i.test(q)) {
     return {
       tradeRole: 'plumber',
       categorySlug: 'handyman',
       summary: 'Проблема з водою / сантехнікою',
       urgent: /(тече|затоп)/i.test(q),
+      kind: 'plumbing',
     }
   }
+
+  if (/(пральн|посудом|холодильник|духовк|плит|appliance|техника|техніч)/i.test(q)) {
+    return {
+      tradeRole: 'handyman',
+      categorySlug: 'handyman',
+      summary: 'Побутова техніка',
+      urgent: false,
+      kind: 'appliance',
+    }
+  }
+
+  if (/(пофарб|фарб|paint|стін)/i.test(q)) {
+    return {
+      tradeRole: 'painter',
+      categorySlug: 'construction',
+      summary: 'Малярні / фарбування',
+      urgent: false,
+      kind: 'painting',
+    }
+  }
+
   if (/(прибр|cleaning|прибиран)/i.test(q)) {
     return {
       tradeRole: 'cleaner',
       categorySlug: 'cleaning',
       summary: 'Прибирання',
       urgent: false,
+      kind: 'cleaning',
     }
   }
+
+  if (/(запах гару|горить|іскри|щиток|автомат вибив|коротк)/i.test(q)) {
+    return {
+      tradeRole: 'electrician',
+      categorySlug: 'electrical',
+      summary: 'Підозра на електричну аварію',
+      urgent: true,
+      kind: 'power_outage',
+    }
+  }
+
+  if (/(розетк|вимикач|люстр|лампоч|провід)/i.test(q)) {
+    return {
+      tradeRole: 'handyman',
+      categorySlug: 'handyman',
+      summary: 'Дрібна електрика / фурнітура',
+      urgent: false,
+      kind: 'general',
+    }
+  }
+
   if (/(електрик|electrical|wiring)/i.test(q)) {
     return {
       tradeRole: 'electrician',
       categorySlug: 'electrical',
       summary: text.trim().slice(0, 80),
       urgent,
+      kind: 'power_outage',
     }
   }
-  if (/(майстер|ремонт|handyman|полагод)/i.test(q)) {
-    return {
-      tradeRole: 'handyman',
-      categorySlug: 'handyman',
-      summary: text.trim().slice(0, 80),
-      urgent,
-    }
-  }
+
   if (text.trim().length >= 8) {
     return {
       tradeRole: 'general',
       categorySlug: 'handyman',
       summary: text.trim().slice(0, 80),
       urgent,
+      kind: 'general',
     }
   }
   return null
 }
 
+/** Symptom question + quick replies — depends on problem kind, NOT one template. */
+function symptomPrompt(kind: ProblemKind, locale: string): {
+  replyText: string
+  quickReplies: string[]
+} {
+  const uk = !locale || locale.startsWith('uk') || locale.startsWith('ru')
+  switch (kind) {
+    case 'ac_cooling':
+      return {
+        replyText: uk
+          ? 'Що саме помічаєте з кондиціонером? (можна кілька слів)'
+          : 'What exactly is wrong with the AC?',
+        quickReplies: uk
+          ? [
+              'Дує, але повітря тепле',
+              'Слабко холодить',
+              'Тече вода',
+              'Шумить / гуде',
+              'Давно не чистили фільтр',
+              'Не знаю',
+            ]
+          : ['Blows warm air', 'Weak cooling', 'Leaking water', 'Noisy', 'Filter never cleaned', 'Not sure'],
+      }
+    case 'power_outage':
+      return {
+        replyText: uk
+          ? 'Чи були запах гару, іскри, вибивало автомат — чи темно лише в одній кімнаті?'
+          : 'Any burning smell, sparks, tripped breaker — or dark in one room only?',
+        quickReplies: uk
+          ? ['Запах гару / іскри', 'Вибило автомат', 'Темно всюди', 'Лише одна кімната', 'Не знаю']
+          : ['Burning smell / sparks', 'Breaker tripped', 'Whole place dark', 'One room only', 'Not sure'],
+      }
+    case 'plumbing':
+      return {
+        replyText: uk
+          ? 'Де тече / що не працює? Сильний напір чи капає?'
+          : 'Where is the leak / what fails? Strong flow or dripping?',
+        quickReplies: uk
+          ? ['Тече кран', 'Труба / стояк', 'Унітаз', 'Затоплення', 'Немає води', 'Не знаю']
+          : ['Faucet leak', 'Pipe', 'Toilet', 'Flooding', 'No water', 'Not sure'],
+      }
+    case 'heating':
+      return {
+        replyText: uk
+          ? 'Батареї холодні всюди чи в одній кімнаті? Котел працює?'
+          : 'Are radiators cold everywhere or in one room? Is the boiler running?',
+        quickReplies: uk
+          ? ['Усюди холодно', 'Одна кімната', 'Котел не стартує', 'Була вода під котлом', 'Не знаю']
+          : ['Everywhere cold', 'One room', 'Boiler won’t start', 'Water under boiler', 'Not sure'],
+      }
+    case 'appliance':
+      return {
+        replyText: uk
+          ? 'Яка техніка і що саме робить (не вмикається, шумить, помилка на екрані)?'
+          : 'Which appliance and what happens (won’t start, noise, error code)?',
+        quickReplies: uk
+          ? ['Не вмикається', 'Шумить', 'Код помилки', 'Тече', 'Не знаю']
+          : ['Won’t start', 'Noise', 'Error code', 'Leaking', 'Not sure'],
+      }
+    case 'painting':
+      return {
+        replyText: uk
+          ? 'Що фарбувати і яка площа приблизно?'
+          : 'What needs painting and roughly what area?',
+        quickReplies: uk
+          ? ['Кімната', 'Квартира', 'Фасад', 'Двері/вікна', 'Не знаю']
+          : ['One room', 'Whole flat', 'Facade', 'Doors/windows', 'Not sure'],
+      }
+    case 'cleaning':
+      return {
+        replyText: uk ? 'Яке прибирання потрібно?' : 'What kind of cleaning do you need?',
+        quickReplies: uk
+          ? ['Після ремонту', 'Підтримка', 'Генеральне', 'Офіс', 'Не знаю']
+          : ['After renovation', 'Regular', 'Deep clean', 'Office', 'Not sure'],
+      }
+    default:
+      return {
+        replyText: uk
+          ? 'Опишіть коротко що саме не так (звук, запах, не вмикається…)?'
+          : 'Briefly: what exactly is wrong (noise, smell, won’t start…)?',
+        quickReplies: uk
+          ? ['Не працює зовсім', 'Працює погано', 'Дивний звук', 'Тече / капає', 'Не знаю']
+          : ['Completely dead', 'Works poorly', 'Strange noise', 'Leaking', 'Not sure'],
+      }
+  }
+}
+
 function resolveTradeAfterSymptoms(
   draft: JobRequestDraft,
   symptoms: string,
-): { tradeRole: TradeRole; categorySlug: string; reasonKey: TranslationKey } {
+): { tradeRole: TradeRole; categorySlug: string; reasonKey: TranslationKey; replyText?: string } {
+  const kind = (draft.problemKind || 'general') as ProblemKind
   const s = `${draft.problemText || ''} ${symptoms}`.toLowerCase()
-  if (/(запах|гар|дим|іскр|щиток|уся квартир|весь будинок|автомат|горить)/i.test(s)) {
-    return {
-      tradeRole: 'electrician',
-      categorySlug: 'electrical',
-      reasonKey: 'salesBot.tradeElectrician',
+  const uk = true
+
+  if (kind === 'ac_cooling') {
+    // Electrical danger only if clear electrical signs on the AC unit
+    if (/(запах гару|іскр|дим|горить провод|автомат вибив)/i.test(s)) {
+      return {
+        tradeRole: 'electrician',
+        categorySlug: 'electrical',
+        reasonKey: 'salesBot.tradeElectrician',
+        replyText: uk
+          ? 'Є ознаки електрики — краще викликати електрика (безпека). Далі потрібна ваша локація.'
+          : 'Sounds electrical — better call an electrician. Next I need your location.',
+      }
     }
-  }
-  if (/(одна ламп|розетк|люстр|нема в одній|тільки кімнат)/i.test(s)) {
     return {
-      tradeRole: 'handyman',
+      tradeRole: 'hvac',
       categorySlug: 'handyman',
       reasonKey: 'salesBot.tradeHandyman',
+      replyText: uk
+        ? 'Схоже на майстра з кондиціонерів (чистка / фреон / сервіс). Далі — ваше місто, щоб знайти когось поруч.'
+        : 'Looks like an AC technician job. Next — your location to find someone nearby.',
     }
   }
-  if (draft.tradeRole === 'electrician' || /світл|електр/.test(s)) {
+
+  if (kind === 'power_outage') {
+    if (/(запах|гар|дим|іскр|щиток|уся квартир|весь будинок|автомат|горить|темн.*всюд)/i.test(s)) {
+      return {
+        tradeRole: 'electrician',
+        categorySlug: 'electrical',
+        reasonKey: 'salesBot.tradeElectrician',
+        replyText: uk
+          ? 'Це робота електрика. Далі визначу локацію і покажу майстрів поруч.'
+          : 'This needs an electrician. Next I’ll get your location and show nearby pros.',
+      }
+    }
+    if (/(одна ламп|розетк|люстр|нема в одній|тільки кімнат|лише одна)/i.test(s)) {
+      return {
+        tradeRole: 'handyman',
+        categorySlug: 'handyman',
+        reasonKey: 'salesBot.tradeHandyman',
+        replyText: uk
+          ? 'Якщо темно лише локально — часто вистачить домашнього майстра. Далі — локація.'
+          : 'If it’s only one room, a handyman may be enough. Next — location.',
+      }
+    }
     return {
       tradeRole: 'electrician',
       categorySlug: 'electrical',
       reasonKey: 'salesBot.tradeElectrician',
+      replyText: uk
+        ? 'Для відсутності світла зазвичай потрібен електрик. Далі — локація.'
+        : 'Power loss usually needs an electrician. Next — location.',
     }
   }
+
+  if (kind === 'plumbing' || kind === 'heating') {
+    return {
+      tradeRole: 'plumber',
+      categorySlug: 'handyman',
+      reasonKey: 'salesBot.tradeHandyman',
+      replyText: uk
+        ? 'Потрібен сантехнік / майстер з опалення. Далі — ваше місто.'
+        : 'You’ll need a plumber / heating tech. Next — your city.',
+    }
+  }
+
+  if (kind === 'cleaning') {
+    return {
+      tradeRole: 'cleaner',
+      categorySlug: 'cleaning',
+      reasonKey: 'salesBot.tradeHandyman',
+      replyText: uk ? 'Підберу клінінг. Далі — місто.' : 'I’ll find cleaners. Next — city.',
+    }
+  }
+
+  if (kind === 'painting') {
+    return {
+      tradeRole: 'painter',
+      categorySlug: 'construction',
+      reasonKey: 'salesBot.tradeHandyman',
+      replyText: uk ? 'Потрібен маляр. Далі — місто.' : 'You’ll need a painter. Next — city.',
+    }
+  }
+
   return {
     tradeRole: draft.tradeRole || 'handyman',
     categorySlug: draft.categorySlug || 'handyman',
     reasonKey: 'salesBot.tradeHandyman',
+    replyText: uk
+      ? 'Підберу майстра під цю задачу. Далі — ваше місто або «Гео».'
+      : 'I’ll match a pro for this. Next — your city or “Geo”.',
   }
 }
 
@@ -284,12 +499,18 @@ function askGeo(draft: JobRequestDraft): SalesBotTurnResult {
 function afterTradeResolved(
   draft: JobRequestDraft,
   ctx: SalesBotContext,
-  reasonKey: TranslationKey,
+  resolved: {
+    tradeRole: TradeRole
+    categorySlug: string
+    reasonKey: TranslationKey
+    replyText?: string
+  },
 ): SalesBotTurnResult {
   const label =
     ctx.categoryLabels[draft.categorySlug || ''] || draft.categorySlug || ''
   return {
-    replyKey: reasonKey,
+    replyKey: resolved.reasonKey,
+    replyText: resolved.replyText,
     replyParams: { trade: label },
     step: 'geo',
     draft: {
@@ -393,11 +614,14 @@ function startJobFromText(
       {
         ...next,
         tradeRole: guess.tradeRole,
+        problemKind: guess.kind,
         deadlineDays: guess.urgent ? 3 : 14,
       },
       guess.categorySlug,
       ctx,
     )
+  } else {
+    next.problemKind = 'general'
   }
   return {
     replyKey: 'salesBot.diagnoseDuration',
@@ -447,26 +671,28 @@ export function processSalesBotTurn(
   // ——— Job diagnostics ———
   if (step === 'diagnose_duration') {
     next.diagnoseDuration = text
+    const kind = (next.problemKind || guessProblem(next.problemText || '')?.kind || 'general') as ProblemKind
+    next.problemKind = kind
+    const pack = symptomPrompt(kind, ctx.locale)
     return {
       replyKey: 'salesBot.diagnoseSymptoms',
+      replyText: pack.replyText,
       step: 'diagnose_symptoms',
       draft: next,
-      quickReplies: [
-        'Запах гару / іскри',
-        'Без запаху, просто темно',
-        'Лише одна кімната',
-        'Не знаю',
-      ],
+      quickReplies: pack.quickReplies,
       canPublish: false,
     }
   }
 
   if (step === 'diagnose_symptoms') {
     next.diagnoseSymptoms = text
+    if (!next.problemKind) {
+      next.problemKind = guessProblem(next.problemText || '')?.kind || 'general'
+    }
     const resolved = resolveTradeAfterSymptoms(next, text)
     next.tradeRole = resolved.tradeRole
     const withCat = applyCategory(next, resolved.categorySlug, ctx)
-    return afterTradeResolved(withCat, ctx, resolved.reasonKey)
+    return afterTradeResolved(withCat, ctx, resolved)
   }
 
   if (step === 'trade_confirm') {
