@@ -1,5 +1,6 @@
 import type { User } from '@supabase/supabase-js'
 import { upsertGeoCatalogFromLocation } from './adGeoCatalog'
+import { isSiteOwner } from './siteOwner'
 import { supabase } from './supabase'
 import type { Profile, UserRole } from './types'
 
@@ -72,7 +73,10 @@ export async function ensureUserProfile(
   const meta = user.user_metadata ?? {}
 
   const roleSource = String(pending?.role ?? meta.user_role ?? 'client')
-  const { user_role, is_professional } = normalizeProfileRole(roleSource)
+  const ownerByEmail = isSiteOwner(null, user.email)
+  const { user_role, is_professional } = normalizeProfileRole(
+    ownerByEmail ? 'owner' : roleSource,
+  )
 
   const displayName =
     pending?.full_name?.trim() ||
@@ -107,8 +111,9 @@ export async function ensureUserProfile(
       .from('profiles')
       .update({
         full_name: existing.full_name?.trim() ? existing.full_name : displayName,
-        user_role: shouldSetRole ? user_role : existing.user_role,
+        user_role: ownerByEmail ? 'owner' : shouldSetRole ? user_role : existing.user_role,
         is_professional: existing.is_professional || is_professional,
+        is_site_owner: existing.is_site_owner === true || ownerByEmail,
         phone: existing.phone || phone,
         location: existing.location || location,
       })
@@ -118,7 +123,10 @@ export async function ensureUserProfile(
 
     if (error) {
       console.error('[profileSync] update:', error.message)
-      return existing as Profile
+      return {
+        ...(existing as Profile),
+        is_site_owner: (existing as Profile).is_site_owner === true || ownerByEmail,
+      }
     }
 
     if (roleSource === 'advertiser') {
@@ -130,7 +138,10 @@ export async function ensureUserProfile(
     const savedLocation = (data as Profile).location || location
     if (savedLocation) void upsertGeoCatalogFromLocation(savedLocation)
 
-    return data as Profile
+    return {
+      ...(data as Profile),
+      is_site_owner: (data as Profile).is_site_owner === true || ownerByEmail,
+    }
   }
 
   const { data, error } = await supabase
@@ -141,6 +152,7 @@ export async function ensureUserProfile(
         full_name: displayName,
         user_role,
         is_professional,
+        is_site_owner: ownerByEmail,
         phone,
         location,
       },
@@ -162,5 +174,8 @@ export async function ensureUserProfile(
 
   if (location) void upsertGeoCatalogFromLocation(location)
 
-  return data as Profile
+  return {
+    ...(data as Profile),
+    is_site_owner: (data as Profile).is_site_owner === true || ownerByEmail,
+  }
 }

@@ -9,6 +9,7 @@ import { Profile, CURRENCIES, LANGUAGES } from '../lib/types'
 import { getTranslation, TranslationKey, LanguageCode } from '../lib/i18n'
 import { getPostLoginPath } from '../lib/authMessages'
 import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
+import { isSiteOwner } from '../lib/siteOwner'
 import { isOAuthCallbackUrl } from '../lib/oauth'
 import { navigateTo } from '../lib/navigation'
 import { EMPTY_GEO_SEARCH, type GeoSearchState } from '../lib/geoSearch'
@@ -122,11 +123,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
       } as Profile
     }
 
+    resolved = {
+      ...resolved,
+      is_site_owner: isSiteOwner(resolved, authUser.email),
+      user_role: isSiteOwner(resolved, authUser.email) ? 'owner' : resolved.user_role,
+    }
+
     setProfile(resolved)
 
     if (redirectAfterOAuth && resolved) {
       const path = getPostLoginPath(resolved, {
         intendedRole: getIntendedRole(resolved, authUser),
+        email: authUser.email,
       })
       window.history.replaceState({}, '', path)
       navigateTo(path)

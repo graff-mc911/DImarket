@@ -44,6 +44,7 @@ export function Login() {
       navigateTo(
         getPostLoginPath(profile, {
           intendedRole: getIntendedRole(profile, data.user),
+          email: data.user.email,
         }),
       )
     } catch (err) {

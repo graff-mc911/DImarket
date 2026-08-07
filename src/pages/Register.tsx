@@ -254,6 +254,7 @@ export function Register() {
           navigateTo(
             getPostLoginPath(profile ?? { user_role, is_site_owner: false }, {
               intendedRole: selectedRole,
+              email: data.user?.email,
             }),
           )
         }, 1200)

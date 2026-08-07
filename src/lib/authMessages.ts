@@ -75,14 +75,16 @@ export function getChangePasswordMessage(
   }
 }
 
+import { isSiteOwner } from './siteOwner'
+
 export function getPostLoginPath(
   profile: {
     user_role?: string | null
     is_site_owner?: boolean | null
   } | null,
-  options?: { intendedRole?: string | null },
+  options?: { intendedRole?: string | null; email?: string | null },
 ): string {
-  if (profile?.is_site_owner) return '/admin'
+  if (isSiteOwner(profile, options?.email)) return '/admin'
   const role = options?.intendedRole ?? profile?.user_role
   if (role === 'advertiser') return '/advertising'
   if (role === 'client') return '/customer/dashboard'

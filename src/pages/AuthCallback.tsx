@@ -47,6 +47,7 @@ export function AuthCallback() {
 
         const path = getPostLoginPath(profile, {
           intendedRole: getIntendedRole(profile, after.session.user),
+          email: after.session.user.email,
         })
         window.history.replaceState({}, '', path)
         navigateTo(path)
