@@ -137,6 +137,8 @@ Deno.serve(async (req: Request) => {
             quantity: 1,
           }
 
+    const isProjectEscrow = body.payment_type === 'project_escrow'
+
     const session = await stripe.checkout.sessions.create({
       mode,
       customer: customerId,
@@ -147,7 +149,15 @@ Deno.serve(async (req: Request) => {
       client_reference_id: body.reference_id || undefined,
       metadata,
       subscription_data: mode === 'subscription' ? { metadata } : undefined,
-      allow_promotion_codes: true,
+      // Quote-total hold: authorize now, capture on project complete
+      payment_intent_data:
+        mode === 'payment' && isProjectEscrow
+          ? {
+              capture_method: 'manual',
+              metadata,
+            }
+          : undefined,
+      allow_promotion_codes: !isProjectEscrow,
     })
 
     if (!session.url) {

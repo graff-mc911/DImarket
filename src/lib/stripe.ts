@@ -14,6 +14,7 @@ export type PaymentType =
   | 'sponsored_project'
   | 'lead_credits'
   | 'google_ads'
+  | 'project_escrow'
 
 export interface CheckoutParams {
   payment_type: PaymentType

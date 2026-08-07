@@ -24,6 +24,7 @@ export function Checkout() {
   const [status, setStatus]         = useState<CheckoutStatus>('loading')
   const [message, setMessage]       = useState('')
   const [paymentType, setPaymentType] = useState('')
+  const [escrowListingId, setEscrowListingId] = useState('')
 
   useEffect(() => {
     void verifyPayment()
@@ -34,6 +35,8 @@ export function Checkout() {
     // Отримуємо session_id з URL
     const params    = new URLSearchParams(window.location.search)
     const sessionId = params.get('session_id')
+    const escrowListing = params.get('listing') || ''
+    const isEscrowReturn = params.get('escrow') === '1'
 
     if (!sessionId) {
       setStatus('no_session')
@@ -57,12 +60,33 @@ export function Checkout() {
         setPaymentType(data.payment_type || '')
         setMessage(data.description || 'Оплата успішна')
 
+        if (data.payment_type === 'project_escrow') {
+          const listingId =
+            escrowListing ||
+            (typeof data.metadata?.listing_id === 'string' ? data.metadata.listing_id : '')
+          setEscrowListingId(listingId)
+          setStatus('success')
+          window.history.replaceState({}, '', '/checkout')
+          if (listingId) {
+            window.setTimeout(() => navigateTo(`/project/${listingId}/manage`), 1200)
+          }
+          return
+        }
+
         // Активуємо куплену послугу в базі
         await activateService(data.payment_type, data.reference_id, data.metadata)
         setStatus('success')
 
         // Очищаємо URL від session_id
         window.history.replaceState({}, '', '/checkout')
+      } else if (isEscrowReturn && data.payment_type === 'project_escrow') {
+        setPaymentType('project_escrow')
+        setEscrowListingId(escrowListing)
+        setStatus('success')
+        window.history.replaceState({}, '', '/checkout')
+        if (escrowListing) {
+          window.setTimeout(() => navigateTo(`/project/${escrowListing}/manage`), 1200)
+        }
       } else {
         setStatus('error')
         setMessage('Оплата не завершена або скасована.')
@@ -145,7 +169,8 @@ export function Checkout() {
       case 'lead_credits':
       case 'subscription':
       case 'google_ads':
-        // Fulfilled by stripe-webhook (service role).
+      case 'project_escrow':
+        // Fulfilled by stripe-webhook / verify-checkout-session (service role).
         break
 
       case 'ad_campaign':
@@ -202,12 +227,16 @@ export function Checkout() {
       case 'subscription':      return 'Subscription active — your plan entitlements are unlocked!'
       case 'google_ads':        return 'Google Ads request received — our team will follow up!'
       case 'ad_campaign':       return 'Рекламна кампанія активована — ваш банер вже показується користувачам!'
+      case 'project_escrow':    return 'Кошти зарезервовано на картці. Після завершення проєкту холд буде знято (capture).'
       default:                  return 'Оплата успішна! Послуга активована.'
     }
   }
 
   // Куди перейти після оплати
   const getRedirectPath = () => {
+    if (paymentType === 'project_escrow') {
+      return escrowListingId ? `/project/${escrowListingId}/manage` : '/projects'
+    }
     switch (paymentType) {
       case 'premium_profile':
       case 'verified_badge':   return '/profile'
@@ -223,6 +252,7 @@ export function Checkout() {
       case 'verified_badge':   return 'Переглянути профіль'
       case 'featured_listing': return 'Мої оголошення'
       case 'ad_campaign':      return 'Мої кампанії'
+      case 'project_escrow':    return 'До менеджера проєкту'
       default:                 return 'На головну'
     }
   }

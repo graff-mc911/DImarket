@@ -27,6 +27,13 @@ import {
   type ProjectMediaPhase,
   type ProjectMilestone,
 } from '../lib/projectManager'
+import {
+  escrowStatusLabel,
+  fetchLatestEscrow,
+  releaseProjectEscrow,
+  startProjectEscrowCheckout,
+  type ProjectEscrow,
+} from '../lib/projectEscrow'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { formatEuro } from '../lib/costEstimator'
@@ -50,6 +57,9 @@ export function ProjectManage({ listingId }: { listingId: string }) {
   const [notice, setNotice] = useState<string | null>(null)
   const [reviewDone, setReviewDone] = useState(false)
   const [phase, setPhase] = useState<ProjectMediaPhase>('during')
+  const [escrow, setEscrow] = useState<ProjectEscrow | null>(null)
+  const [acceptedQuoteId, setAcceptedQuoteId] = useState<string | null>(null)
+  const [quoteTotal, setQuoteTotal] = useState<number | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const reload = async () => {
@@ -72,6 +82,9 @@ export function ProjectManage({ listingId }: { listingId: string }) {
     setStage(row?.pipeline_stage || 'intake')
     setHiredId(row?.hired_professional_id ?? null)
 
+    const latestEscrow = await fetchLatestEscrow(listingId)
+    setEscrow(latestEscrow)
+
     if (row?.hired_professional_id) {
       const { data: pro } = await supabase
         .from('profiles')
@@ -83,17 +96,31 @@ export function ProjectManage({ listingId }: { listingId: string }) {
       setMilestones(ms)
       setMedia(await fetchProjectMedia(listingId))
       setDocs(await fetchProjectDocuments(listingId))
-      if (user?.id && (row.pipeline_stage === 'completed')) {
+      if (user?.id && row.pipeline_stage === 'completed') {
         setReviewDone(await hasReviewForListing(listingId, user.id))
       } else {
         setReviewDone(false)
       }
+
+      const { data: quote } = await supabase
+        .from('quotes')
+        .select('id, total')
+        .eq('listing_id', listingId)
+        .eq('status', 'accepted')
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      const q = quote as { id?: string; total?: number } | null
+      setAcceptedQuoteId(q?.id ?? null)
+      setQuoteTotal(typeof q?.total === 'number' ? q.total : null)
     } else {
       setHiredName(null)
       setMilestones([])
       setMedia([])
       setDocs([])
       setReviewDone(false)
+      setAcceptedQuoteId(null)
+      setQuoteTotal(null)
     }
     setLoading(false)
   }
@@ -137,17 +164,68 @@ export function ProjectManage({ listingId }: { listingId: string }) {
     setBusy(false)
   }
 
-  const onComplete = async () => {
-    if (!user?.id) return
+  const onHoldFunds = async () => {
+    if (!user?.id || !hiredId || !acceptedQuoteId || !quoteTotal) {
+      setError(
+        t('pipeline.escrowMissingQuote' as never) ||
+          'Accepted quote not found — cannot start hold.',
+      )
+      return
+    }
     setBusy(true)
     setError(null)
+    const res = await startProjectEscrowCheckout({
+      listingId,
+      customerId: user.id,
+      professionalId: hiredId,
+      quoteId: acceptedQuoteId,
+      amountEur: quoteTotal,
+      projectTitle: title,
+    })
+    setBusy(false)
+    if ('error' in res) {
+      setError(res.error)
+      return
+    }
+    window.location.href = res.url
+  }
+
+  const onComplete = async () => {
+    if (!user?.id) return
+    if (escrow?.status === 'pending_checkout') {
+      setError(
+        t('pipeline.escrowHoldFirst' as never) ||
+          'Hold the quote total on your card before completing the project.',
+      )
+      return
+    }
+    setBusy(true)
+    setError(null)
+
+    if (escrow?.status === 'authorized') {
+      const released = await releaseProjectEscrow(listingId)
+      if ('error' in released) {
+        setBusy(false)
+        setError(
+          (t('pipeline.escrowReleaseFailed' as never) || 'Could not release escrow') +
+            `: ${released.error}`,
+        )
+        return
+      }
+    }
+
     const r = await completeProject({ listingId, customerId: user.id })
     setBusy(false)
     if ('error' in r) {
       setError(r.error === 'not_owner' ? (t('pipeline.hireOwnerOnly' as never) || 'Only the owner can complete') : r.error)
       return
     }
-    setNotice(t('pipeline.completedNotice' as never) || 'Project completed — leave a review below.')
+    setNotice(
+      escrow?.status === 'authorized'
+        ? t('pipeline.completedEscrowNotice' as never) ||
+            'Project completed — escrow released. Leave a review below.'
+        : t('pipeline.completedNotice' as never) || 'Project completed — leave a review below.',
+    )
     await reload()
   }
 
@@ -189,6 +267,59 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                 {progress}% {t('pipeline.completePct' as never) || 'complete'}
               </p>
             </>
+          ) : null}
+          {hired && escrow ? (
+            <div className="mt-4 rounded-2xl border border-[#e8e8ed] bg-[#f5f5f7] px-4 py-3">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+                {t('pipeline.escrowTitle' as never) || 'Project escrow'}
+              </p>
+              <p className="mt-1 text-[14px] font-semibold text-[#1d1d1f]">
+                {escrowStatusLabel(escrow.status)}
+                {escrow.amount > 0 ? ` · ${formatEuro(Number(escrow.amount))}` : ''}
+              </p>
+              <p className="mt-1 text-[12px] text-[#6e6e73]">
+                {escrow.status === 'authorized'
+                  ? t('pipeline.escrowHeldHint' as never) ||
+                    'Card authorized. Funds capture when you complete the project.'
+                  : escrow.status === 'pending_checkout'
+                    ? t('pipeline.escrowPendingHint' as never) ||
+                      'Authorize the quote total to hold funds securely until completion.'
+                    : escrow.status === 'captured'
+                      ? t('pipeline.escrowCapturedHint' as never) ||
+                        'Held funds were released after project completion.'
+                      : null}
+              </p>
+              {isOwner && !completed && escrow.status === 'pending_checkout' ? (
+                <button
+                  type="button"
+                  disabled={busy}
+                  className="mt-3 rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-40"
+                  onClick={() => void onHoldFunds()}
+                >
+                  {t('pipeline.escrowHoldCta' as never) || 'Hold funds on card'}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          {hired && isOwner && !completed && !escrow && acceptedQuoteId && quoteTotal ? (
+            <div className="mt-4 rounded-2xl border border-[#e8e8ed] bg-[#f5f5f7] px-4 py-3">
+              <p className="text-[14px] font-semibold text-[#1d1d1f]">
+                {t('pipeline.escrowTitle' as never) || 'Project escrow'}
+              </p>
+              <p className="mt-1 text-[12px] text-[#6e6e73]">
+                {t('pipeline.escrowPendingHint' as never) ||
+                  'Authorize the quote total to hold funds securely until completion.'}{' '}
+                ({formatEuro(quoteTotal)})
+              </p>
+              <button
+                type="button"
+                disabled={busy}
+                className="mt-3 rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-40"
+                onClick={() => void onHoldFunds()}
+              >
+                {t('pipeline.escrowHoldCta' as never) || 'Hold funds on card'}
+              </button>
+            </div>
           ) : null}
           <div className="mt-4 flex flex-wrap gap-2">
             <NavChip onClick={() => navigateTo(`/project/${listingId}/offers`)}>

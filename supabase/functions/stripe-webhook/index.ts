@@ -57,6 +57,88 @@ Deno.serve(async (req: Request) => {
   }
 })
 
+async function markProjectEscrowAuthorized(
+  session: Stripe.Checkout.Session,
+  paymentIntentId: string | null,
+) {
+  const meta = session.metadata ?? {}
+  const escrowId = String(meta.reference_id || '')
+  const userId = String(meta.user_id || '')
+  const now = new Date().toISOString()
+
+  const payload = {
+    status: 'authorized',
+    stripe_session_id: session.id,
+    stripe_payment_intent_id: paymentIntentId,
+    authorized_at: now,
+    updated_at: now,
+  }
+
+  if (isUuid(escrowId)) {
+    const { error } = await admin.from('project_escrows').update(payload).eq('id', escrowId)
+    if (error) console.error('stripe-webhook: project_escrow by id', error)
+  } else {
+    const { error } = await admin
+      .from('project_escrows')
+      .update(payload)
+      .eq('stripe_session_id', session.id)
+    if (error) console.error('stripe-webhook: project_escrow by session', error)
+  }
+
+  // Audit row in payments (status completed = authorization recorded; capture is separate)
+  const amount = (session.amount_total ?? 0) / 100
+  const currency = session.currency ?? 'eur'
+  const { data: existing } = await admin
+    .from('payments')
+    .select('id')
+    .eq('stripe_session_id', session.id)
+    .limit(1)
+    .maybeSingle()
+
+  if (!existing) {
+    const { error: payErr } = await admin.from('payments').insert({
+      user_id: userId || null,
+      payment_type: 'project_escrow',
+      reference_id: isUuid(escrowId) ? escrowId : null,
+      amount,
+      currency,
+      stripe_payment_intent_id: paymentIntentId,
+      stripe_session_id: session.id,
+      status: 'completed',
+    })
+    if (payErr) console.error('stripe-webhook: escrow payments insert', payErr)
+  }
+
+  if (session.customer && typeof session.customer === 'string' && userId) {
+    await admin.from('profiles').update({ stripe_customer_id: session.customer }).eq('id', userId)
+  }
+
+  if (userId) {
+    try {
+      let linkPath = '/projects'
+      if (isUuid(escrowId)) {
+        const { data: row } = await admin
+          .from('project_escrows')
+          .select('listing_id')
+          .eq('id', escrowId)
+          .maybeSingle()
+        if (row?.listing_id) linkPath = `/project/${row.listing_id}/manage`
+      }
+      await admin.rpc('create_notification', {
+        p_user_id: userId,
+        p_type: 'payment',
+        p_title: 'Project funds held',
+        p_body: 'Your card was authorized. Funds release when you complete the project.',
+        p_link_path: linkPath,
+        p_reference_type: 'payment',
+        p_reference_id: null,
+      })
+    } catch (e) {
+      console.error('stripe-webhook: escrow notification', e)
+    }
+  }
+}
+
 async function handlePaidSession(session: Stripe.Checkout.Session) {
   const meta = session.metadata ?? {}
   const paymentType = String(meta.payment_type || '')
@@ -78,6 +160,12 @@ async function handlePaidSession(session: Stripe.Checkout.Session) {
     typeof session.payment_intent === 'string'
       ? session.payment_intent
       : session.payment_intent?.id ?? null
+
+  // Project escrow: authorize-only (manual capture). Do not run ads activation.
+  if (paymentType === 'project_escrow') {
+    await markProjectEscrowAuthorized(session, paymentIntentId)
+    return
+  }
 
   const { data: existing } = await admin
     .from('payments')

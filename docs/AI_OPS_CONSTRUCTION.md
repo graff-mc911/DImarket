@@ -55,6 +55,15 @@ Client → AI Analyst → AI Estimator → AI Matcher → AI Dispatcher
 
 ## Honest gaps
 
-- Full payment escrow still uses checklist docs (payments table is ads/boost today)
+- Escrow V1: full-quote Stripe Checkout hold (`capture_method: manual`) on hire → capture on complete (`project_escrows`). No Connect C2C payout, milestones split, or disputes UI yet.
 - Supplier “order” is approve-intent + deep link (no checkout cart yet)
 - Learning quality grows with completed jobs + reviews volume
+
+## Escrow V1
+
+| Step | Surface |
+|------|---------|
+| Hire → Checkout authorize | `ProjectOffers` → `startProjectEscrowCheckout` |
+| Hold status | `ProjectManage` escrow banner |
+| Complete → capture | `release-project-escrow` edge + `completeProject` |
+| Table | `project_escrows` (`20260807200000_project_escrows.sql`) |
