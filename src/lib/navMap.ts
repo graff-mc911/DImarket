@@ -206,6 +206,13 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     authAware: true,
   },
   {
+    id: 'my-projects',
+    path: '/my-projects',
+    labelKey: 'header.myProjects',
+    surfaces: ['mobile-account', 'mobile-more'],
+    authAware: true,
+  },
+  {
     id: 'messages',
     path: '/messages',
     labelKey: 'nav.messages',

@@ -237,6 +237,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
       return
     }
     setNotice(`Quote emailed to ${email}`)
+    window.setTimeout(() => navigateTo('/projects'), 1200)
   }
 
   /** Send binding quote in-app (no email required) → customer /project/:id/offers */
@@ -271,7 +272,8 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
     }
 
     setBusy(false)
-    setNotice('Quote sent — customer notified on ranked offers')
+    setNotice('Quote sent — customer notified on ranked offers. Returning to leads…')
+    window.setTimeout(() => navigateTo('/projects'), 1200)
   }
 
   if (!user) {
@@ -312,9 +314,16 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
 
       <div className="mx-auto max-w-4xl px-4 py-6 md:px-6">
         {notice ? (
-          <p className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800">
-            {notice}
-          </p>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800">
+            <p>{notice}</p>
+            <button
+              type="button"
+              className="rounded-full bg-emerald-800 px-3 py-1.5 text-[12px] font-semibold text-white"
+              onClick={() => navigateTo('/projects')}
+            >
+              Back to leads
+            </button>
+          </div>
         ) : null}
         {error ? (
           <p className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">

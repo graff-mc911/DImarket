@@ -55,6 +55,7 @@ const EMPTY: ProDashboardStats = {
   quotesSent: 0,
   quotesAccepted: 0,
   quotesTotal: 0,
+  activeJobs: [],
   rating: 0,
   totalReviews: 0,
   recentReviews: [],
@@ -433,6 +434,40 @@ export function ProDashboard() {
                 >
                   Complete profile
                 </button>
+              </div>
+
+              <div className={`${card} p-5`}>
+                <div className="mb-3 flex items-center justify-between">
+                  <h2 className={`text-[17px] font-semibold ${ink}`}>
+                    {t('pipeline.activeJobs' as never) || 'Active jobs'}
+                  </h2>
+                  <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${chip}`}>
+                    {stats.activeJobs.length}
+                  </span>
+                </div>
+                <ul className="space-y-2">
+                  {stats.activeJobs.slice(0, 5).map((j) => (
+                    <li key={j.listingId}>
+                      <button
+                        type="button"
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition ${
+                          dark ? 'hover:bg-white/5' : 'hover:bg-[#f5f5f7]'
+                        }`}
+                        onClick={() => navigateTo(`/project/${j.listingId}/manage`)}
+                      >
+                        <span className={`truncate text-[13px] font-medium ${ink}`}>{j.title}</span>
+                        <span className={`shrink-0 text-[11px] font-semibold capitalize ${muted}`}>
+                          {(j.stage || 'in_progress').replace(/_/g, ' ')}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                  {stats.activeJobs.length === 0 ? (
+                    <p className={`py-4 text-center text-[13px] ${muted}`}>
+                      {t('pipeline.noActiveJobs' as never) || 'No hired jobs yet'}
+                    </p>
+                  ) : null}
+                </ul>
               </div>
 
               <div className={`${card} p-5`}>

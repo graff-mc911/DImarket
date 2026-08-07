@@ -25,6 +25,8 @@ export type ProDashboardStats = {
   quotesSent: number
   quotesAccepted: number
   quotesTotal: number
+  /** Hired / accepted jobs for quick manage entry */
+  activeJobs: Array<{ listingId: string; title: string; stage: string }>
   rating: number
   totalReviews: number
   recentReviews: Array<{
@@ -222,7 +224,12 @@ export async function fetchProDashboardStats(
       title: `Quote ${q.status}`,
       subtitle: `€${Math.round(Number(q.total) || 0).toLocaleString()}`,
       at: q.updated_at || q.created_at,
-      href: q.application_id ? `/leads/${q.application_id}/quote` : '/projects',
+      href:
+        q.status === 'accepted' && q.listing_id
+          ? `/project/${q.listing_id}/manage`
+          : q.application_id
+            ? `/leads/${q.application_id}/quote`
+            : '/projects',
     })
   }
   for (const r of recentReviews.slice(0, 4)) {
@@ -258,6 +265,48 @@ export async function fetchProDashboardStats(
 
   activity.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
 
+  const acceptedApps = apps.filter((a) => a.status === 'accepted')
+  const acceptedQuoteJobs = accepted
+    .filter((q) => q.listing_id)
+    .map((q) => ({
+      listingId: String(q.listing_id),
+      title: `Quote €${Math.round(Number(q.total) || 0)}`,
+      stage: 'in_progress',
+    }))
+  const activeJobMap = new Map<string, { listingId: string; title: string; stage: string }>()
+  for (const a of acceptedApps) {
+    activeJobMap.set(a.listing_id, {
+      listingId: a.listing_id,
+      title: 'Hired project',
+      stage: 'in_progress',
+    })
+  }
+  for (const j of acceptedQuoteJobs) {
+    if (!activeJobMap.has(j.listingId)) activeJobMap.set(j.listingId, j)
+  }
+  // Enrich titles from week leads if present
+  for (const l of weekLeads) {
+    const job = activeJobMap.get(l.id)
+    if (job && l.title) job.title = l.title
+  }
+  const activeJobs = [...activeJobMap.values()].slice(0, 8)
+
+  // Fetch titles for active jobs missing from week leads
+  const missingTitleIds = activeJobs.filter((j) => j.title === 'Hired project').map((j) => j.listingId)
+  if (missingTitleIds.length) {
+    const { data: titles } = await supabase
+      .from('listings')
+      .select('id, title, pipeline_stage')
+      .in('id', missingTitleIds)
+    for (const row of (titles as Array<{ id: string; title: string; pipeline_stage?: string }> | null) ?? []) {
+      const job = activeJobMap.get(row.id)
+      if (job) {
+        job.title = row.title || job.title
+        if (row.pipeline_stage) job.stage = row.pipeline_stage
+      }
+    }
+  }
+
   return {
     todaysLeads,
     openLeads,
@@ -269,6 +318,7 @@ export async function fetchProDashboardStats(
     quotesSent,
     quotesAccepted,
     quotesTotal: quotes.length,
+    activeJobs: [...activeJobMap.values()].slice(0, 8),
     rating: profile?.rating ?? 0,
     totalReviews: profile?.total_reviews ?? recentReviews.length,
     recentReviews,

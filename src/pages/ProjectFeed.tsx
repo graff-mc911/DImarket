@@ -561,6 +561,22 @@ export function ProjectFeed() {
                       </p>
 
                       <div className="mt-4 flex flex-wrap gap-2 border-t border-[#f0f0f2] pt-4">
+                        {app?.status === 'accepted' ? (
+                          <>
+                            <button
+                              type="button"
+                              className="inline-flex items-center gap-1.5 rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-black"
+                              onClick={() => navigateTo(`/project/${project.id}/manage`)}
+                            >
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                              Open project manager
+                            </button>
+                            <span className="ml-auto self-center text-[12px] font-semibold text-[#047857]">
+                              Hired
+                            </span>
+                          </>
+                        ) : (
+                          <>
                         <button
                           type="button"
                           disabled={busyId === project.id || app?.status === 'ready'}
@@ -654,6 +670,8 @@ export function ProjectFeed() {
                             Open Quote Builder →
                           </button>
                         ) : null}
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

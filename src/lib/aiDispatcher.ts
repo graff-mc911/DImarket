@@ -138,7 +138,7 @@ export async function dispatchToProfessionals(
         type: 'match',
         title: pkg?.title || 'New project match',
         body,
-        linkPath: '/leads',
+        linkPath: '/projects',
         referenceType: 'listing',
         referenceId: listingId,
       })

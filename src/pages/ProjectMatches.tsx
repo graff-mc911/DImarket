@@ -178,7 +178,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
       )
       setSelected((prev) => (prev.size ? prev : new Set(defaults)))
     } catch {
-      setError('Could not load matches')
+      setError(t('project.matches.loadError' as never) || 'Could not load matches')
     } finally {
       setLoading(false)
     }
@@ -354,15 +354,24 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
           <div className="rounded-[20px] border border-[#e8e8ed] bg-white px-6 py-14 text-center">
             <p className="text-[15px] text-[#86868b]">
               {t('project.matches.empty' as never) ||
-                'No matches yet. Professionals will be notified.'}
+                'No matches yet. Send a match package after pros are ranked, or refresh.'}
             </p>
-            <button
-              type="button"
-              className="mt-5 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white"
-              onClick={() => navigateTo('/professionals')}
-            >
-              Browse professionals
-            </button>
+            <div className="mt-5 flex flex-wrap justify-center gap-2">
+              <button
+                type="button"
+                className="rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white"
+                onClick={() => void load()}
+              >
+                {t('project.matches.refresh' as never) || 'Refresh'}
+              </button>
+              <button
+                type="button"
+                className="rounded-full border border-[#d2d2d7] bg-white px-5 py-2.5 text-[13px] font-semibold text-[#1d1d1f]"
+                onClick={() => navigateTo('/my-projects')}
+              >
+                {t('project.matches.myProjects' as never) || 'My projects'}
+              </button>
+            </div>
           </div>
         ) : (
           <>

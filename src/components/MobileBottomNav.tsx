@@ -56,6 +56,7 @@ const MORE_ICONS: Record<string, ReactNode> = {
   jobs: <Briefcase className="h-5 w-5" aria-hidden />,
   marketplace: <ShoppingBag className="h-5 w-5" aria-hidden />,
   projects: <FolderKanban className="h-5 w-5" aria-hidden />,
+  'my-projects': <FolderKanban className="h-5 w-5" aria-hidden />,
   favorites: <Heart className="h-5 w-5" aria-hidden />,
   messages: <MessageSquare className="h-5 w-5" aria-hidden />,
   settings: <Settings className="h-5 w-5" aria-hidden />,
