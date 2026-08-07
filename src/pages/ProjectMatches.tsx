@@ -188,9 +188,15 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
     void load()
   }, [load])
 
-  // Soft poll while waiting for pro responses
+  // Soft poll while waiting for pro responses / offers
   useEffect(() => {
-    if (pipelineStage !== 'awaiting_responses' && !sendNote) return
+    if (
+      pipelineStage !== 'awaiting_responses' &&
+      pipelineStage !== 'offers' &&
+      !sendNote
+    ) {
+      return
+    }
     const id = window.setInterval(() => {
       void fetchApplicationsForListing(listingId).then(setApplications)
       void rankQuotesForListing(listingId).then(setOffers)

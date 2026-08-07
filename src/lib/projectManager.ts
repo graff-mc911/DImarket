@@ -198,6 +198,26 @@ export async function selectProfessionalForProject(opts: {
 }): Promise<{ ok: true } | { error: string }> {
   const now = new Date().toISOString()
 
+  const { data: listingRow, error: listingErr } = await supabase
+    .from('listings')
+    .select('author_id, hired_professional_id, title')
+    .eq('id', opts.listingId)
+    .maybeSingle()
+
+  if (listingErr) return { error: listingErr.message }
+  const listing = listingRow as {
+    author_id?: string
+    hired_professional_id?: string | null
+    title?: string
+  } | null
+  if (!listing?.author_id) return { error: 'Project not found' }
+  if (listing.author_id !== opts.customerId) {
+    return { error: 'Only the project owner can hire a professional' }
+  }
+  if (listing.hired_professional_id) {
+    return { error: 'A professional is already hired for this project' }
+  }
+
   const { error: qErr } = await supabase
     .from('quotes')
     .update({ status: 'accepted', updated_at: now } as never)

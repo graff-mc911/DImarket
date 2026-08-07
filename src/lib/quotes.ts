@@ -171,7 +171,38 @@ export async function saveQuote(input: {
   }
 
   if (error || !data) return { error: error?.message || 'save_failed' }
-  return { id: (data as { id: string }).id }
+  const quoteId = (data as { id: string }).id
+  if (input.status === 'sent') {
+    await markListingComparingOffers(input.listingId)
+  }
+  return { id: quoteId }
+}
+
+/** Move listing into offers-comparison stage (does not overwrite hire/PM). */
+export async function markListingComparingOffers(listingId: string): Promise<void> {
+  try {
+    const { data } = await supabase
+      .from('listings')
+      .select('pipeline_stage, hired_professional_id')
+      .eq('id', listingId)
+      .maybeSingle()
+    const row = data as {
+      pipeline_stage?: string | null
+      hired_professional_id?: string | null
+    } | null
+    if (row?.hired_professional_id) return
+    const stage = row?.pipeline_stage || ''
+    if (stage === 'in_progress' || stage === 'completed' || stage === 'offers') return
+    await supabase
+      .from('listings')
+      .update({
+        pipeline_stage: 'offers',
+        updated_at: new Date().toISOString(),
+      } as never)
+      .eq('id', listingId)
+  } catch {
+    /* column may be missing */
+  }
 }
 
 export async function fetchQuoteForApplication(applicationId: string): Promise<Quote | null> {
@@ -254,8 +285,8 @@ export async function notifyCustomerQuoteInApp(opts: {
     userId: opts.customerId,
     type: 'quote',
     title: 'New quote received',
-    body: `You received a quote of €${opts.total.toFixed(2)} for “${opts.projectTitle}”.`,
-    linkPath: `/listing/${opts.listingId}`,
+    body: `You received a quote of €${opts.total.toFixed(2)} for “${opts.projectTitle}”. Compare ranked offers.`,
+    linkPath: `/project/${opts.listingId}/offers`,
     referenceType: 'listing',
     referenceId: opts.listingId,
   })

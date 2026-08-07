@@ -239,6 +239,41 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
     setNotice(`Quote emailed to ${email}`)
   }
 
+  /** Send binding quote in-app (no email required) → customer /project/:id/offers */
+  const onSendInApp = async () => {
+    if (!user || !listing) return
+    setBusy(true)
+    setError(null)
+    setNotice(null)
+
+    const id = (await persist('sent')) || quoteId
+    if (!id) {
+      setBusy(false)
+      return
+    }
+
+    const meta = { ...buildMeta(), quoteNumber: `Q-${id.slice(0, 8).toUpperCase()}` }
+    const { pdfUrl } = await generateAndStoreQuotePdf({
+      userId: user.id,
+      quoteId: id,
+      draft,
+      meta,
+    })
+    await persist('sent', pdfUrl)
+
+    if (listing.author_id) {
+      await notifyCustomerQuoteInApp({
+        customerId: listing.author_id,
+        listingId: listing.id,
+        projectTitle: listing.title,
+        total: totals.total,
+      })
+    }
+
+    setBusy(false)
+    setNotice('Quote sent — customer notified on ranked offers')
+  }
+
   if (!user) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
@@ -415,20 +450,21 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
             type="button"
             disabled={busy}
             className="inline-flex flex-[2] items-center justify-center gap-1.5 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white hover:bg-black disabled:opacity-50"
-            onClick={() => void onSendEmail()}
+            onClick={() => void onSendInApp()}
+            title="Save as sent and notify customer in-app"
           >
-            <Mail className="h-3.5 w-3.5" />
-            Email customer
+            <Send className="h-3.5 w-3.5" />
+            Send to customer
           </button>
           <button
             type="button"
             disabled={busy}
-            className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#0066cc] px-4 py-2.5 text-[13px] font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2.5 text-[13px] font-semibold text-[#1d1d1f] disabled:opacity-50"
             onClick={() => void onSendEmail()}
-            title="Save as sent and email"
+            title="Save as sent and email PDF"
           >
-            <Send className="h-3.5 w-3.5" />
-            Send
+            <Mail className="h-3.5 w-3.5" />
+            Email
           </button>
         </div>
       </div>
