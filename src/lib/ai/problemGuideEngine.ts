@@ -113,7 +113,12 @@ function guessProblem(text: string): ProblemGuess | null {
   const q = text.toLowerCase()
   const urgent = /(терміново|зараз|сьогодні|аварі|asap|urgent|нема світл)/i.test(q)
 
-  if (/(нема\s*світл|немає\s*світл|вимкнуло\s*світл|пропал[оа]\s*світл|no\s*light|power\s*out|чорно|нема\s*електр)/i.test(q)) {
+  if (
+    /(нема\s*св[аіеіиі]*тл|немає\s*св[аіеіиі]*тл|вимкнуло\s*світл|пропал[оа]\s*світл|no\s*light|power\s*out|чорно|нема\s*електр|нема\s*сваітл|нема\s*свитл)/i.test(
+      q,
+    ) ||
+    (/(нема|немає)/i.test(q) && /(світл|свет|светл|світло|сваітл|свитл|light|power)/i.test(q))
+  ) {
     return {
       tradeRole: 'electrician',
       categorySlug: 'electrical',
