@@ -34,6 +34,8 @@ export type NavEntry = {
   surfaces: readonly NavSurface[]
   /** When true, path depends on auth (resolved in the surface component). */
   authAware?: boolean
+  /** When true, only render for the site owner (ivan.sovban@gmail.com / is_site_owner). */
+  ownerOnly?: boolean
 }
 
 /**
@@ -172,6 +174,39 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
 
   // —— Mobile account sheet ——
+  {
+    id: 'owner-admin',
+    path: '/admin',
+    aliases: ['/admin/panel'],
+    labelKey: 'header.adminPanel',
+    surfaces: ['mobile-account'],
+    authAware: true,
+    ownerOnly: true,
+  },
+  {
+    id: 'owner-dashboard',
+    path: '/dashboard',
+    labelKey: 'header.dashboard',
+    surfaces: ['mobile-account'],
+    authAware: true,
+    ownerOnly: true,
+  },
+  {
+    id: 'owner-ai',
+    path: '/admin/ai',
+    labelKey: 'ai.admin.title',
+    surfaces: ['mobile-account'],
+    authAware: true,
+    ownerOnly: true,
+  },
+  {
+    id: 'owner-marketing',
+    path: '/admin/marketing-agent',
+    labelKey: 'header.marketingAgent',
+    surfaces: ['mobile-account'],
+    authAware: true,
+    ownerOnly: true,
+  },
   {
     id: 'favorites',
     path: '/favorites',
@@ -331,7 +366,13 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     id: 'admin',
     path: '/admin',
     aliases: ['/admin/panel'],
-    labelKey: 'nav.profile',
+    labelKey: 'header.adminPanel',
+    surfaces: [],
+  },
+  {
+    id: 'owner-dashboard-route',
+    path: '/dashboard',
+    labelKey: 'header.dashboard',
     surfaces: [],
   },
   {

@@ -406,7 +406,7 @@ export function Dashboard() {
     )
   }
 
-  if (!profile?.is_site_owner) {
+  if (!isSiteOwner(profile, user?.email)) {
     return (
       <div className="py-10">
         <div className="mx-auto max-w-3xl">

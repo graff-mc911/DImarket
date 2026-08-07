@@ -49,18 +49,12 @@ import {
   labelKeyFor,
   navEntriesFor,
 } from '../lib/navMap'
+import { isSiteOwner as checkSiteOwner } from '../lib/siteOwner'
 
 interface NavItem {
   label: string
   path: string
   icon: LucideIcon
-}
-
-// Email власника сайту — для перевірки доступу до Dashboard
-const OWNER_EMAIL = 'ivan.sovban@gmail.com'
-
-function isOwnerEmail(email: string | null | undefined) {
-  return (email || '').trim().toLowerCase() === OWNER_EMAIL.trim().toLowerCase()
 }
 
 // Тип глобального оголошення від власника
@@ -177,7 +171,7 @@ export function Header() {
     }
   }
 
-  const isSiteOwner  = profile?.is_site_owner === true || isOwnerEmail(user?.email)
+  const isSiteOwner  = checkSiteOwner(profile, user?.email)
   const accountDisplayName = (() => {
     if (!user) return ''
     const fromProfile = profile?.full_name?.trim()
@@ -431,6 +425,18 @@ export function Header() {
                   />
                 </div>
 
+                {isSiteOwner && user ? (
+                  <button
+                    type="button"
+                    onClick={() => goTo('/admin')}
+                    className="amazon-header-block"
+                    aria-label={t('header.adminPanel')}
+                  >
+                    <span className="amazon-header-block__top">{t('nav.ownerSection')}</span>
+                    <span className="amazon-header-block__bottom">{t('header.adminPanel')}</span>
+                  </button>
+                ) : null}
+
                 <div ref={accountRef} className="relative">
                   <button
                     onClick={() => {
@@ -462,6 +468,30 @@ export function Header() {
 
                   {isLoggedIn && accountOpen && (
                     <div className={dropdownPanelClass}>
+                      {isSiteOwner && user && (
+                        <>
+                          <p className="px-3 py-1 text-[10px] font-bold uppercase text-[var(--ink-500)]">
+                            {t('nav.ownerSection')}
+                          </p>
+                          <button onClick={() => goTo('/admin')} type="button" className={dropdownItemClass}>
+                            <ClipboardList className="mr-2 inline h-4 w-4" />
+                            {t('header.adminPanel')}
+                          </button>
+                          <button onClick={() => goTo('/dashboard')} type="button" className={dropdownItemClass}>
+                            <LayoutDashboard className="mr-2 inline h-4 w-4" />
+                            {t('header.dashboard')}
+                          </button>
+                          <button onClick={() => goTo('/admin/ai')} type="button" className={dropdownItemClass}>
+                            <Bot className="mr-2 inline h-4 w-4" />
+                            {t('ai.admin.title')}
+                          </button>
+                          <button onClick={() => goTo('/admin/marketing-agent')} type="button" className={dropdownItemClass}>
+                            <Megaphone className="mr-2 inline h-4 w-4" />
+                            {t('header.marketingAgent')}
+                          </button>
+                          <div className="my-1 border-t border-[#e7e7e7]" />
+                        </>
+                      )}
                       <button onClick={() => goTo('/profile')} type="button" className={dropdownItemClass}>
                         <User className="mr-2 inline h-4 w-4" />
                         {t('header.myProfile')}
@@ -536,27 +566,6 @@ export function Header() {
                           <span className="font-bold">{curr.symbol}</span> {curr.code}
                         </button>
                       ))}
-                      {isSiteOwner && user && (
-                        <>
-                          <div className="my-1 border-t border-[#e7e7e7]" />
-                          <button onClick={() => goTo('/admin')} type="button" className={dropdownItemClass}>
-                            <ClipboardList className="mr-2 inline h-4 w-4" />
-                            {t('header.adminPanel')}
-                          </button>
-                          <button onClick={() => goTo('/dashboard')} type="button" className={dropdownItemClass}>
-                            <ClipboardList className="mr-2 inline h-4 w-4" />
-                            {t('header.dashboard')}
-                          </button>
-                          <button onClick={() => goTo('/admin/ai')} type="button" className={dropdownItemClass}>
-                            <Bot className="mr-2 inline h-4 w-4" />
-                            {t('ai.admin.title')}
-                          </button>
-                          <button onClick={() => goTo('/admin/marketing-agent')} type="button" className={dropdownItemClass}>
-                            <Megaphone className="mr-2 inline h-4 w-4" />
-                            {t('header.marketingAgent')}
-                          </button>
-                        </>
-                      )}
                       {isLoggedIn && (
                         <>
                           <div className="my-1 border-t border-[#e7e7e7]" />
@@ -601,6 +610,17 @@ export function Header() {
               {/* Мобільні кнопки — Amazon: акаунт + збережене + меню */}
               <div className="flex shrink-0 items-center gap-0.5 sm:hidden">
                 {user ? <NotificationCenter /> : null}
+                {isSiteOwner && user ? (
+                  <button
+                    type="button"
+                    onClick={() => goTo('/admin')}
+                    className="amazon-header-block px-1 py-0.5"
+                    aria-label={t('header.adminPanel')}
+                  >
+                    <span className="amazon-header-block__top text-[10px]">{t('nav.ownerSection')}</span>
+                    <span className="amazon-header-block__bottom text-xs">{t('header.adminPanel')}</span>
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   onClick={() => goTo(isLoggedIn ? '/profile' : '/login')}

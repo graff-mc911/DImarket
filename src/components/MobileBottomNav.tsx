@@ -14,6 +14,7 @@ import {
   Heart,
   Home,
   MapPin,
+  Megaphone,
   Menu,
   MessageSquare,
   Plus,
@@ -32,6 +33,7 @@ import {
   resolveNavPath,
   type NavEntry,
 } from '../lib/navMap'
+import { isSiteOwner } from '../lib/siteOwner'
 import { LanguageSelector } from './LanguageSelector'
 
 type MoreItem = {
@@ -58,6 +60,10 @@ const MORE_ICONS: Record<string, ReactNode> = {
   messages: <MessageSquare className="h-5 w-5" aria-hidden />,
   settings: <Settings className="h-5 w-5" aria-hidden />,
   profile: <User className="h-5 w-5" aria-hidden />,
+  'owner-admin': <ClipboardList className="h-5 w-5" aria-hidden />,
+  'owner-dashboard': <BarChart3 className="h-5 w-5" aria-hidden />,
+  'owner-ai': <Bot className="h-5 w-5" aria-hidden />,
+  'owner-marketing': <Megaphone className="h-5 w-5" aria-hidden />,
 }
 
 /**
@@ -71,12 +77,13 @@ const MORE_ICONS: Record<string, ReactNode> = {
  * - Icon + label always fully visible (no overflow clipping)
  */
 export function MobileBottomNav() {
-  const { t, user, currency, setCurrency } = useApp()
+  const { t, user, profile, currency, setCurrency } = useApp()
   const [path, setPath] = useState(window.location.pathname)
   const [hash, setHash] = useState(window.location.hash)
   const [moreOpen, setMoreOpen] = useState(false)
   const sheetTitleId = useId()
   const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const owner = Boolean(user && isSiteOwner(profile, user.email))
 
   useEffect(() => {
     const sync = () => {
@@ -141,7 +148,13 @@ export function MobileBottomNav() {
   })
 
   const primaryMore = navEntriesFor('mobile-more').map((e) => toMoreItem(e, 'mobile-more'))
-  const accountMore = navEntriesFor('mobile-account').map((e) => toMoreItem(e, 'mobile-account'))
+  const accountEntries = navEntriesFor('mobile-account').filter((e) =>
+    e.ownerOnly ? owner : true,
+  )
+  const ownerAccount = accountEntries.filter((e) => e.ownerOnly)
+  const regularAccount = accountEntries.filter((e) => !e.ownerOnly)
+  const accountMore = regularAccount.map((e) => toMoreItem(e, 'mobile-account'))
+  const ownerMore = ownerAccount.map((e) => toMoreItem(e, 'mobile-account'))
 
   return (
     <>
@@ -239,6 +252,24 @@ export function MobileBottomNav() {
                 </li>
               ))}
             </ul>
+
+            {ownerMore.length > 0 ? (
+              <>
+                <p className="mobile-nav-more__section">{t('nav.ownerSection')}</p>
+                <ul className="mobile-nav-more__list">
+                  {ownerMore.map((item) => (
+                    <li key={item.id}>
+                      <button type="button" className="mobile-nav-more__item" onClick={() => go(item.path)}>
+                        <span className="mobile-nav-more__icon" aria-hidden>
+                          {item.icon}
+                        </span>
+                        <span>{item.label}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
 
             <div className="mobile-nav-more__prefs">
               <div>
