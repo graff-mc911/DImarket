@@ -473,7 +473,7 @@ export function useSalesChat() {
             step: 'done' as const,
             draft: doneDraft,
             canPublish: false,
-            quickReplies: ['Зробити кошторис', 'Відкрити оголошення', 'Спочатку'],
+            quickReplies: ['Дивитись матчі', 'Зробити кошторис', 'Відкрити оголошення', 'Спочатку'],
           }
           // Keep estimate handoff ready if user taps CTA immediately
           if (descForEstimate.length >= 8) {

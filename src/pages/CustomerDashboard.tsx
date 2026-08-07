@@ -33,6 +33,7 @@ import {
   fetchPendingReviewProjects,
   type PendingReviewProject,
 } from '../lib/reviews/reviews'
+import { pipelineNextAction } from '../lib/pipelineNext'
 
 function formatEuro(n: number): string {
   return `€${Math.round(n).toLocaleString()}`
@@ -263,6 +264,14 @@ export function CustomerDashboard() {
                 label="Quotes received"
                 value={String(stats.quotes.length)}
                 hint={`${stats.quotesPending} awaiting decision`}
+                onClick={() => {
+                  const withListing = stats.quotes.find((q) => q.listing_id)
+                  if (withListing?.listing_id) {
+                    navigateTo(`/project/${withListing.listing_id}/offers`)
+                    return
+                  }
+                  navigateTo('/my-projects')
+                }}
               />
               <Stat
                 card={card}
@@ -366,36 +375,30 @@ export function CustomerDashboard() {
                 ) : null}
                 <ul className="space-y-2">
                   {stats.projects.slice(0, 6).map((p) => {
-                    const goManage =
-                      Boolean(p.hired_professional_id) ||
-                      p.pipeline_stage === 'in_progress' ||
-                      p.pipeline_stage === 'completed'
                     const needsReview = pendingReviews.some((r) => r.listingId === p.id)
+                    const next = pipelineNextAction(p, { needsReview })
                     return (
                     <li key={p.id}>
                       <button
                         type="button"
                         className={`flex w-full items-center justify-between gap-3 rounded-2xl px-3 py-3 text-left transition ${hoverRow}`}
-                        onClick={() =>
-                          navigateTo(
-                            needsReview || goManage
-                              ? `/project/${p.id}/manage`
-                              : `/project/${p.id}/matches`,
-                          )
-                        }
+                        onClick={() => navigateTo(next.path)}
                       >
                         <div className="min-w-0">
                           <p className={`truncate text-[14px] font-semibold ${ink}`}>{p.title}</p>
                           <p className={`truncate text-[12px] ${muted}`}>
-                            {(p.pipeline_stage || p.status || '').replace(/_/g, ' ')} ·{' '}
-                            {p.city_name || p.location}
+                            {next.stageLabelEn} · {p.city_name || p.location}
                             {p.budget_min != null || p.budget_max != null
                               ? ` · €${p.budget_min ?? '—'}–€${p.budget_max ?? '—'}`
                               : ''}
                           </p>
                         </div>
                         <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize ${chip}`}>
-                          {needsReview ? 'review' : goManage ? 'manage' : p.urgency || 'normal'}
+                          {needsReview
+                            ? 'review'
+                            : t(next.labelKey as never) !== next.labelKey
+                              ? t(next.labelKey as never)
+                              : next.labelEn}
                         </span>
                       </button>
                     </li>
@@ -460,28 +463,37 @@ export function CustomerDashboard() {
                     const pro = q.professional
                     const photo = pro?.profile_photo || pro?.avatar_url
                     return (
-                      <li
-                        key={q.id}
-                        className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 ${dark ? 'bg-white/[0.03]' : 'bg-[#fafafa]'}`}
-                      >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#e8e8ed]">
-                          {photo ? (
-                            <img src={photo} alt="" className="h-full w-full object-cover" />
-                          ) : (
-                            <User className="h-4 w-4 text-[#86868b]" />
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className={`truncate text-[13px] font-semibold ${ink}`}>
-                            {pro?.full_name || 'Professional'}
+                      <li key={q.id}>
+                        <button
+                          type="button"
+                          className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition ${hoverRow} ${dark ? 'bg-white/[0.03]' : 'bg-[#fafafa]'}`}
+                          onClick={() =>
+                            navigateTo(
+                              q.listing_id
+                                ? `/project/${q.listing_id}/offers`
+                                : '/my-projects',
+                            )
+                          }
+                        >
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#e8e8ed]">
+                            {photo ? (
+                              <img src={photo} alt="" className="h-full w-full object-cover" />
+                            ) : (
+                              <User className="h-4 w-4 text-[#86868b]" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className={`truncate text-[13px] font-semibold ${ink}`}>
+                              {pro?.full_name || 'Professional'}
+                            </p>
+                            <p className={`truncate text-[11px] ${muted}`}>
+                              {q.listing?.title || 'Project'} · {q.status}
+                            </p>
+                          </div>
+                          <p className={`shrink-0 text-[13px] font-semibold tabular-nums ${ink}`}>
+                            {formatEuro(Number(q.total) || 0)}
                           </p>
-                          <p className={`truncate text-[11px] ${muted}`}>
-                            {q.listing?.title || 'Project'} · {q.status}
-                          </p>
-                        </div>
-                        <p className={`shrink-0 text-[13px] font-semibold tabular-nums ${ink}`}>
-                          {formatEuro(Number(q.total) || 0)}
-                        </p>
+                        </button>
                       </li>
                     )
                   })}

@@ -92,8 +92,15 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
           <div className="flex flex-wrap gap-2 pt-1">
             <button
               type="button"
-              onClick={() => openCostEstimate()}
+              onClick={() => navigateTo(`/project/${listingId}/matches`)}
               className="inline-flex items-center gap-1.5 rounded-full bg-[#1d1d1f] px-3.5 py-2 text-xs font-semibold text-white"
+            >
+              {t('pipeline.viewMatches' as never) || 'View matches'}
+            </button>
+            <button
+              type="button"
+              onClick={() => openCostEstimate()}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(99,102,241,0.35)] bg-white/90 px-3.5 py-2 text-xs font-semibold text-[#4338ca]"
             >
               <Calculator className="h-3.5 w-3.5" aria-hidden />
               {t('salesBot.ctaEstimate')}
@@ -101,7 +108,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
             <button
               type="button"
               onClick={() => navigateTo(`/listing/${listingId}`)}
-              className="rounded-full border border-[rgba(99,102,241,0.35)] bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#4338ca]"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#6f665d]"
             >
               {t('salesBot.ctaOpenListing')}
             </button>
@@ -114,6 +121,10 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
                 key={q}
                 type="button"
                 onClick={() => {
+                  if (/матч|matches|підібран|майстрів/i.test(q) && listingId) {
+                    navigateTo(`/project/${listingId}/matches`)
+                    return
+                  }
                   if (/кошторис|estimate|калькулятор/i.test(q)) {
                     openCostEstimate()
                     return
@@ -138,9 +149,11 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
                       ? t('salesBot.quickSkip')
                       : q === 'Зробити кошторис' || q === 'Make cost estimate'
                         ? t('salesBot.ctaEstimate')
-                        : q === 'Відкрити оголошення'
-                          ? t('salesBot.ctaOpenListing')
-                          : q}
+                        : q === 'Дивитись матчі' || q === 'View matches'
+                          ? t('pipeline.viewMatches' as never) || q
+                          : q === 'Відкрити оголошення'
+                            ? t('salesBot.ctaOpenListing')
+                            : q}
               </button>
             ))}
           </div>

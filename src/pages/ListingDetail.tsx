@@ -33,6 +33,8 @@ import type { ListingWithImages, Profile } from '../lib/types'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
 import { ListingInlineChat } from '../components/listing/ListingInlineChat'
 import { MobileAdBanner } from '../components/MobileAdBanner'
+import { pipelineNextAction, pipelineNextForPro } from '../lib/pipelineNext'
+import { PipelineNextCta, PipelineStageChip } from '../components/pipeline/PipelineNext'
 
 interface ListingDetailProps {
   listingId: string
@@ -326,6 +328,41 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
                 <span>{listing.views_count} {t('listing.views')}</span>
               </div>
             </div>
+
+            {listing.listing_type === 'service_request' &&
+              (user?.id === listing.author_id ||
+                user?.id === listing.hired_professional_id) && (
+              <div className="mt-4 rounded-[16px] border border-[#e8e8ed] bg-[#fafafa] p-4">
+                {(() => {
+                  const isOwner = user?.id === listing.author_id
+                  const next = isOwner
+                    ? pipelineNextAction(listing)
+                    : pipelineNextForPro(listing)
+                  return (
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-[14px] font-semibold text-[var(--ink-900)]">
+                            {t('pipeline.manageTitle' as never) || 'Project pipeline'}
+                          </p>
+                          <PipelineStageChip action={next} t={t as never} />
+                        </div>
+                        <p className="mt-1 text-[12px] text-[var(--ink-500)]">
+                          {t(next.labelKey as never) !== next.labelKey
+                            ? t(next.labelKey as never)
+                            : next.labelEn}
+                        </p>
+                      </div>
+                      <PipelineNextCta
+                        action={next}
+                        t={t as never}
+                        onClick={() => navigateTo(next.path)}
+                      />
+                    </div>
+                  )
+                })()}
+              </div>
+            )}
 
             {listing.listing_type === 'service_request' && user?.id === listing.author_id && (
               <div className="mt-4">

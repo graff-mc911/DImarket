@@ -1395,7 +1395,7 @@ export function processSalesBotTurn(
         text
       return startCostEstimate(desc, next, ctx)
     }
-    if (/оголошен|listing|відкрити|open listing|перегляд/i.test(text) && next.guideMeta?.listingId) {
+    if (/матч|matches|підібран|майстрів|дивитись матчі/i.test(text) && next.guideMeta?.listingId) {
       return {
         replyKey: 'salesBot.published',
         replyParams: { id: next.guideMeta.listingId, count: next.guideMeta.matchCount || '0' },
@@ -1403,6 +1403,18 @@ export function processSalesBotTurn(
         step: 'done',
         draft: next,
         quickReplies: ['Зробити кошторис', 'Спочатку'],
+        canPublish: false,
+        navigateTo: `/project/${next.guideMeta.listingId}/matches`,
+      }
+    }
+    if (/оголошен|listing|відкрити|open listing|перегляд/i.test(text) && next.guideMeta?.listingId) {
+      return {
+        replyKey: 'salesBot.published',
+        replyParams: { id: next.guideMeta.listingId, count: next.guideMeta.matchCount || '0' },
+        replyText: undefined,
+        step: 'done',
+        draft: next,
+        quickReplies: ['Дивитись матчі', 'Зробити кошторис', 'Спочатку'],
         canPublish: false,
         navigateTo: `/listing/${next.guideMeta.listingId}`,
       }

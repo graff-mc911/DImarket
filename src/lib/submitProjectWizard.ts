@@ -81,6 +81,7 @@ export async function submitProjectWizard(
       urgency: state.deadlineType === 'asap' ? 'urgent' : state.urgency,
       preferred_language: state.preferredLanguage || null,
       wizard_completed: true,
+      pipeline_stage: 'matched',
       postal_code: state.postalCode.trim() || null,
       country_name: state.country.trim() || null,
       city_name: state.city.trim() || null,

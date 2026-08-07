@@ -452,9 +452,11 @@ export function ProDashboard() {
                         }`}
                         onClick={() =>
                           navigateTo(
-                            q.application_id
-                              ? `/leads/${q.application_id}/quote`
-                              : '/projects',
+                            q.status === 'accepted' && q.listing_id
+                              ? `/project/${q.listing_id}/manage`
+                              : q.application_id
+                                ? `/leads/${q.application_id}/quote`
+                                : '/projects',
                           )
                         }
                       >

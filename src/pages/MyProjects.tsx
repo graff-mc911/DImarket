@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { supabase } from '../lib/supabase'
 import { navigateTo } from '../lib/navigation'
@@ -7,6 +7,8 @@ import {
   fetchPendingReviewProjects,
   type PendingReviewProject,
 } from '../lib/reviews/reviews'
+import { pipelineNextAction } from '../lib/pipelineNext'
+import { PipelineNextCta, PipelineStageChip } from '../components/pipeline/PipelineNext'
 
 export function MyProjects() {
   const { user, t } = useApp()
@@ -38,6 +40,8 @@ export function MyProjects() {
     }
   }, [user])
 
+  const pendingIds = useMemo(() => new Set(pendingReviews.map((p) => p.listingId)), [pendingReviews])
+
   if (!user) {
     return (
       <div className="py-16 text-center">
@@ -47,8 +51,6 @@ export function MyProjects() {
       </div>
     )
   }
-
-  const pendingIds = new Set(pendingReviews.map((p) => p.listingId))
 
   return (
     <div className="mx-auto max-w-3xl py-6 pb-24">
@@ -97,61 +99,40 @@ export function MyProjects() {
         </div>
       ) : (
         <ul className="space-y-3">
-          {projects.map((p) => (
-            <li key={p.id} className="amazon-section-card flex flex-wrap items-center justify-between gap-3 p-4">
-              <div>
-                <h2 className="font-bold text-[var(--ink-900)]">{p.title}</h2>
-                <p className="text-xs text-[var(--ink-500)]">
-                  {p.status} · {p.city_name || p.location}
-                  {p.pipeline_stage ? ` · ${String(p.pipeline_stage).replace(/_/g, ' ')}` : ''}
-                  {p.wizard_completed ? ' · wizard' : ''}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                {pendingIds.has(p.id) ? (
+          {projects.map((p) => {
+            const next = pipelineNextAction(p, { needsReview: pendingIds.has(p.id) })
+            return (
+              <li
+                key={p.id}
+                className="amazon-section-card flex flex-wrap items-center justify-between gap-3 p-4"
+              >
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="font-bold text-[var(--ink-900)]">{p.title}</h2>
+                    <PipelineStageChip action={next} t={t as never} />
+                  </div>
+                  <p className="text-xs text-[var(--ink-500)]">
+                    {p.city_name || p.location}
+                    {p.wizard_completed ? ' · wizard' : ''}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <PipelineNextCta
+                    action={next}
+                    t={t as never}
+                    onClick={() => navigateTo(next.path)}
+                  />
                   <button
                     type="button"
-                    className="btn-primary text-xs"
-                    onClick={() => navigateTo(`/project/${p.id}/manage`)}
+                    className="btn-secondary text-xs"
+                    onClick={() => navigateTo(`/listing/${p.id}`)}
                   >
-                    {t('pipeline.leaveReview' as never) || 'Review'}
+                    Open
                   </button>
-                ) : null}
-                {p.hired_professional_id ||
-                p.pipeline_stage === 'in_progress' ||
-                p.pipeline_stage === 'completed' ? (
-                  <button
-                    type="button"
-                    className={pendingIds.has(p.id) ? 'btn-secondary text-xs' : 'btn-primary text-xs'}
-                    onClick={() => navigateTo(`/project/${p.id}/manage`)}
-                  >
-                    Manage
-                  </button>
-                ) : null}
-                <button
-                  type="button"
-                  className="btn-secondary text-xs"
-                  onClick={() => navigateTo(`/project/${p.id}/matches`)}
-                >
-                  Matches
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary text-xs"
-                  onClick={() => navigateTo(`/project/${p.id}/offers`)}
-                >
-                  Offers
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary text-xs"
-                  onClick={() => navigateTo(`/listing/${p.id}`)}
-                >
-                  Open
-                </button>
-              </div>
-            </li>
-          ))}
+                </div>
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>

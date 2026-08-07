@@ -12,6 +12,7 @@ import {
   type AssistantTool,
   type AssistantToolId,
 } from '../lib/ai/assistantTools'
+import { saveEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 
 const inputClass =
   'w-full rounded-xl border border-[#d2d2d7] bg-white px-3 py-2.5 text-[13px] text-[#1d1d1f] outline-none transition focus:border-[#1d1d1f] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
@@ -406,7 +407,23 @@ export function AiAssistant() {
                 {toolId === 'estimate_budget' ? (
                   <button
                     type="button"
-                    onClick={() => navigateTo('/cost-estimator')}
+                    onClick={() => {
+                      const desc = [
+                        description.trim(),
+                        trade ? `Trade: ${trade}` : '',
+                        city ? `City: ${city}` : '',
+                        areaSqm ? `Area: ${areaSqm} m²` : '',
+                      ]
+                        .filter(Boolean)
+                        .join('\n')
+                      if (desc.length >= 8) {
+                        saveEstimatorAiPrefill({
+                          description: desc,
+                          source: 'ai_assistant',
+                        })
+                      }
+                      navigateTo('/cost-estimator')
+                    }}
                     className="rounded-full border border-[#d2d2d7] px-4 py-2.5 text-[13px] font-semibold"
                   >
                     Open full estimator

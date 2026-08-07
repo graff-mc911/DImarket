@@ -96,10 +96,10 @@ export function TopMatchCards({ matches, listingId, compact = false }: TopMatchC
       {listingId && (
         <button
           type="button"
-          onClick={() => navigateTo(`/listing/${listingId}`)}
+          onClick={() => navigateTo(`/project/${listingId}/matches`)}
           className="mt-2 text-xs font-semibold text-[var(--accent-700)] underline"
         >
-          {t('salesBot.viewListing')}
+          {t('pipeline.viewMatches' as never) || t('salesBot.viewListing')}
         </button>
       )}
     </div>
