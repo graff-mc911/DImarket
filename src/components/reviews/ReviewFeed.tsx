@@ -14,6 +14,7 @@ type Props = {
   viewerId?: string | null
   viewerName?: string | null
   showForm?: boolean
+  listingId?: string | null
   onSubmitted?: () => void
 }
 
@@ -28,6 +29,7 @@ export function ReviewFeed({
   viewerId,
   viewerName,
   showForm = false,
+  listingId = null,
   onSubmitted,
 }: Props) {
   const [sort, setSort] = useState<ReviewSort>('newest')
@@ -98,6 +100,7 @@ export function ReviewFeed({
       {showForm && !formDone ? (
         <ReviewFormV2
           professionalId={professionalId}
+          listingId={listingId}
           onSuccess={() => {
             setFormDone(true)
             onSubmitted?.()

@@ -51,6 +51,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
   const [error, setError]               = useState<string | null>(null)
   const [activeTab, setActiveTab]       = useState<ActiveTab>('about')
   const [highlightPortfolioId, setHighlightPortfolioId] = useState<string | null>(null)
+  const [reviewListingId, setReviewListingId] = useState<string | null>(null)
 
   // Збереження профілю
   const [isSaved, setIsSaved]           = useState(false)
@@ -65,10 +66,14 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const portfolioId = params.get('portfolio')
+    const listing = params.get('listing')
+    const review = params.get('review')
     if (portfolioId) {
       setHighlightPortfolioId(portfolioId)
       setActiveTab('portfolio')
     }
+    if (listing) setReviewListingId(listing)
+    if (review === '1' || listing) setActiveTab('reviews')
   }, [profileId])
 
   // Завантаження профілю та відгуків
@@ -312,6 +317,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
                     viewerId={user?.id ?? null}
                     viewerName={viewerProfile?.full_name || user?.email || null}
                     showForm={Boolean(user && user.id !== profileId)}
+                    listingId={reviewListingId}
                     onSubmitted={() => void loadProfile()}
                   />
                 </div>

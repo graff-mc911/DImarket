@@ -61,9 +61,21 @@ export async function fetchMilestones(listingId: string): Promise<ProjectMilesto
 export async function seedMilestonesFromStages(
   listingId: string,
   stages: Array<{ label: string; tradeId?: string; laborHours?: number; order?: number }>,
+  opts?: { force?: boolean },
 ): Promise<ProjectMilestone[]> {
   const existing = await fetchMilestones(listingId)
-  if (existing.length) return existing
+  if (existing.length && !opts?.force) return existing
+
+  if (existing.length && opts?.force) {
+    const { error: delErr } = await db
+      .from('project_milestones')
+      .delete()
+      .eq('listing_id', listingId)
+    if (delErr) {
+      console.warn('seedMilestones delete:', delErr.message)
+      return existing
+    }
+  }
 
   const start = new Date()
   const rows = (stages.length
@@ -164,24 +176,41 @@ export async function updateMilestoneStatus(
       })
     }
 
-    // Remind pro about next pending stage when one is done
+    // Remind pro about next pending stage when one is done — auto-start it
     if (status === 'done') {
       const all = await fetchMilestones(String(before.listing_id))
       const next = all.find((m) => m.status === 'pending')
-      if (next && parties.hiredId) {
-        await createNotification({
-          userId: parties.hiredId,
-          type: 'project',
-          title: 'Next stage reminder',
-          body: `Please start: ${next.label}${next.due_at ? ` (due ${new Date(next.due_at).toLocaleDateString()})` : ''}`,
-          linkPath: `/project/${before.listing_id}/manage`,
-          referenceType: 'listing',
-          referenceId: String(before.listing_id),
-        })
+      if (next) {
         await db
           .from('project_milestones')
-          .update({ reminder_sent_at: new Date().toISOString() })
+          .update({
+            status: 'in_progress',
+            reminder_sent_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
           .eq('id', next.id)
+        if (parties.hiredId) {
+          await createNotification({
+            userId: parties.hiredId,
+            type: 'project',
+            title: 'Next stage started',
+            body: `Please continue: ${next.label}${next.due_at ? ` (due ${new Date(next.due_at).toLocaleDateString()})` : ''}`,
+            linkPath: `/project/${before.listing_id}/manage`,
+            referenceType: 'listing',
+            referenceId: String(before.listing_id),
+          })
+        }
+        if (parties.authorId) {
+          await createNotification({
+            userId: parties.authorId,
+            type: 'project',
+            title: parties.title,
+            body: `Next stage: ${next.label}`,
+            linkPath: `/project/${before.listing_id}/manage`,
+            referenceType: 'listing',
+            referenceId: String(before.listing_id),
+          })
+        }
       }
     }
   }
@@ -272,7 +301,7 @@ export async function selectProfessionalForProject(opts: {
   } catch {
     /* ignore */
   }
-  await seedMilestonesFromStages(opts.listingId, stages)
+  await seedMilestonesFromStages(opts.listingId, stages, { force: true })
 
   await createNotification({
     userId: opts.professionalId,
@@ -500,7 +529,7 @@ export async function completeProject(opts: {
     title: 'Leave a review',
     body: 'How was the work? Your feedback trains better matching for everyone.',
     linkPath: parties.hiredId
-      ? `/professional/${parties.hiredId}`
+      ? `/professional/${parties.hiredId}?listing=${opts.listingId}&review=1`
       : `/project/${opts.listingId}/manage`,
     referenceType: 'listing',
     referenceId: opts.listingId,

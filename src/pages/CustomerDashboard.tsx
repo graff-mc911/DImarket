@@ -326,28 +326,41 @@ export function CustomerDashboard() {
                   </button>
                 </div>
                 <ul className="space-y-2">
-                  {stats.projects.slice(0, 6).map((p) => (
+                  {stats.projects.slice(0, 6).map((p) => {
+                    const goManage =
+                      Boolean(p.hired_professional_id) ||
+                      p.pipeline_stage === 'in_progress' ||
+                      p.pipeline_stage === 'completed'
+                    return (
                     <li key={p.id}>
                       <button
                         type="button"
                         className={`flex w-full items-center justify-between gap-3 rounded-2xl px-3 py-3 text-left transition ${hoverRow}`}
-                        onClick={() => navigateTo(`/project/${p.id}/matches`)}
+                        onClick={() =>
+                          navigateTo(
+                            goManage
+                              ? `/project/${p.id}/manage`
+                              : `/project/${p.id}/matches`,
+                          )
+                        }
                       >
                         <div className="min-w-0">
                           <p className={`truncate text-[14px] font-semibold ${ink}`}>{p.title}</p>
                           <p className={`truncate text-[12px] ${muted}`}>
-                            {p.status} · {p.city_name || p.location}
+                            {(p.pipeline_stage || p.status || '').replace(/_/g, ' ')} ·{' '}
+                            {p.city_name || p.location}
                             {p.budget_min != null || p.budget_max != null
                               ? ` · €${p.budget_min ?? '—'}–€${p.budget_max ?? '—'}`
                               : ''}
                           </p>
                         </div>
                         <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize ${chip}`}>
-                          {p.urgency || 'normal'}
+                          {goManage ? 'manage' : p.urgency || 'normal'}
                         </span>
                       </button>
                     </li>
-                  ))}
+                    )
+                  })}
                   {stats.projects.length === 0 ? (
                     <Empty
                       muted={muted}

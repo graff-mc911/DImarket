@@ -19,7 +19,6 @@ import {
   milestonesAsCalendar,
   openDocumentPrint,
   projectProgress,
-  seedMilestonesFromStages,
   updateMilestoneStatus,
   uploadProjectPhasePhoto,
   type MilestoneStatus,
@@ -31,10 +30,11 @@ import {
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { formatEuro } from '../lib/costEstimator'
+import { ReviewFormV2 } from '../components/reviews/ReviewFormV2'
 
 /** AI Project Manager — /project/:id/manage */
 export function ProjectManage({ listingId }: { listingId: string }) {
-  const { user } = useApp()
+  const { user, t } = useApp()
   const [milestones, setMilestones] = useState<ProjectMilestone[]>([])
   const [media, setMedia] = useState<ProjectMediaItem[]>([])
   const [docs, setDocs] = useState<ProjectDocument[]>([])
@@ -45,11 +45,15 @@ export function ProjectManage({ listingId }: { listingId: string }) {
   const [authorId, setAuthorId] = useState<string | null>(null)
   const [stage, setStage] = useState<string>('intake')
   const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
+  const [reviewDone, setReviewDone] = useState(false)
   const [phase, setPhase] = useState<ProjectMediaPhase>('during')
   const fileRef = useRef<HTMLInputElement>(null)
 
   const reload = async () => {
     setLoading(true)
+    setError(null)
     const { data: listing } = await supabase
       .from('listings')
       .select('title, hired_professional_id, author_id, description, pipeline_stage')
@@ -74,13 +78,16 @@ export function ProjectManage({ listingId }: { listingId: string }) {
         .eq('id', row.hired_professional_id)
         .maybeSingle()
       setHiredName((pro as { full_name?: string } | null)?.full_name || 'Professional')
+      const ms = await fetchMilestones(listingId)
+      setMilestones(ms)
+      setMedia(await fetchProjectMedia(listingId))
+      setDocs(await fetchProjectDocuments(listingId))
+    } else {
+      setHiredName(null)
+      setMilestones([])
+      setMedia([])
+      setDocs([])
     }
-
-    let ms = await fetchMilestones(listingId)
-    if (!ms.length) ms = await seedMilestonesFromStages(listingId, [])
-    setMilestones(ms)
-    setMedia(await fetchProjectMedia(listingId))
-    setDocs(await fetchProjectDocuments(listingId))
     setLoading(false)
   }
 
@@ -90,73 +97,120 @@ export function ProjectManage({ listingId }: { listingId: string }) {
 
   const setStatus = async (id: string, status: MilestoneStatus) => {
     setBusy(true)
+    setError(null)
     const ok = await updateMilestoneStatus(id, status)
-    if (ok) setMilestones(await fetchMilestones(listingId))
+    if (ok) {
+      setMilestones(await fetchMilestones(listingId))
+      setNotice(t('pipeline.milestoneUpdated' as never) || 'Milestone updated')
+    } else {
+      setError(
+        t('pipeline.milestoneUpdateFailed' as never) ||
+          'Could not update milestone (check permissions)',
+      )
+    }
     setBusy(false)
   }
 
   const onUpload = async (files: FileList | null) => {
     if (!files?.length || !user?.id) return
     setBusy(true)
+    setError(null)
     for (const file of Array.from(files).slice(0, 6)) {
-      await uploadProjectPhasePhoto({
+      const res = await uploadProjectPhasePhoto({
         listingId,
         userId: user.id,
         phase,
         file,
       })
+      if (!res) {
+        setError(t('pipeline.uploadFailed' as never) || 'Photo upload failed')
+      }
     }
     setMedia(await fetchProjectMedia(listingId))
     setBusy(false)
+  }
+
+  const onComplete = async () => {
+    if (!user?.id) return
+    setBusy(true)
+    setError(null)
+    const r = await completeProject({ listingId, customerId: user.id })
+    setBusy(false)
+    if ('error' in r) {
+      setError(r.error === 'not_owner' ? (t('pipeline.hireOwnerOnly' as never) || 'Only the owner can complete') : r.error)
+      return
+    }
+    setNotice(t('pipeline.completedNotice' as never) || 'Project completed — leave a review below.')
+    await reload()
   }
 
   const progress = projectProgress(milestones)
   const calendar = milestonesAsCalendar(milestones)
   const isOwner = Boolean(user?.id && authorId && user.id === authorId)
   const isHired = Boolean(user?.id && hiredId && user.id === hiredId)
+  const hired = Boolean(hiredId)
+  const completed = stage === 'completed'
 
   return (
     <div className="min-h-[70vh] bg-[#f5f5f7] pb-24">
       <div className="border-b border-[#e8e8ed] bg-white">
         <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
-            AI Project Manager
+            {t('pipeline.manageTitle' as never) || 'AI Project Manager'}
           </p>
           <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[#1d1d1f]">{title}</h1>
           <p className="mt-2 text-[15px] text-[#6e6e73]">
             {hiredName
-              ? `Hired: ${hiredName} · Stage: ${stage.replace(/_/g, ' ')}`
-              : 'Select an offer to assign a professional, then track the full project here.'}
+              ? `${t('pipeline.hiredLabel' as never) || 'Hired'}: ${hiredName} · ${t('pipeline.stageLabel' as never) || 'Stage'}: ${stage.replace(/_/g, ' ')}`
+              : t('pipeline.managePreHire' as never) ||
+                'Hire a professional from ranked offers to start the project calendar here.'}
           </p>
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#e8e8ed]">
-            <div
-              className="h-full rounded-full bg-[#1d1d1f] transition-all"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <p className="mt-1.5 text-[12px] font-semibold text-[#86868b]">{progress}% complete</p>
+          {isHired && !isOwner ? (
+            <p className="mt-1 text-[13px] font-medium text-[#0066cc]">
+              {t('pipeline.youAreHired' as never) || 'You are the hired professional on this project.'}
+            </p>
+          ) : null}
+          {hired ? (
+            <>
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#e8e8ed]">
+                <div
+                  className="h-full rounded-full bg-[#1d1d1f] transition-all"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="mt-1.5 text-[12px] font-semibold text-[#86868b]">
+                {progress}% {t('pipeline.completePct' as never) || 'complete'}
+              </p>
+            </>
+          ) : null}
           <div className="mt-4 flex flex-wrap gap-2">
-            <NavChip onClick={() => navigateTo(`/project/${listingId}/offers`)}>Offers</NavChip>
-            <NavChip onClick={() => navigateTo(`/project/${listingId}/matches`)}>Matches</NavChip>
-            <NavChip onClick={() => navigateTo(`/listing/${listingId}`)}>Listing</NavChip>
-            {hiredId ? (
-              <NavChip onClick={() => navigateTo(`/professional/${hiredId}`)}>
-                <Star className="h-3.5 w-3.5" /> Review pro
+            <NavChip onClick={() => navigateTo(`/project/${listingId}/offers`)}>
+              {t('pipeline.offersTitle' as never) || 'Offers'}
+            </NavChip>
+            <NavChip onClick={() => navigateTo(`/project/${listingId}/matches`)}>
+              {t('pipeline.backToMatches' as never) || 'Matches'}
+            </NavChip>
+            <NavChip onClick={() => navigateTo(`/listing/${listingId}`)}>
+              {t('project.matches.viewProject' as never) || 'Listing'}
+            </NavChip>
+            {hiredId && completed ? (
+              <NavChip
+                onClick={() =>
+                  navigateTo(`/professional/${hiredId}?listing=${listingId}&review=1`)
+                }
+              >
+                <Star className="h-3.5 w-3.5" />
+                {t('pipeline.reviewPro' as never) || 'Review pro'}
               </NavChip>
             ) : null}
-            {isOwner && stage !== 'completed' ? (
+            {isOwner && hired && !completed ? (
               <button
                 type="button"
                 disabled={busy}
                 className="rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-40"
-                onClick={() => {
-                  if (!user?.id) return
-                  void completeProject({ listingId, customerId: user.id }).then((r) => {
-                    if ('ok' in r) void reload()
-                  })
-                }}
+                onClick={() => void onComplete()}
               >
-                Complete project
+                {t('pipeline.completeProject' as never) || 'Complete project'}
               </button>
             ) : null}
           </div>
@@ -164,16 +218,66 @@ export function ProjectManage({ listingId }: { listingId: string }) {
       </div>
 
       <div className="mx-auto max-w-3xl space-y-5 px-4 py-6 md:px-6">
+        {error ? (
+          <p className="rounded-2xl bg-[#fef2f2] px-4 py-3 text-[13px] text-[#b91c1c]">{error}</p>
+        ) : null}
+        {notice ? (
+          <p className="rounded-2xl bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
+            {notice}
+          </p>
+        ) : null}
+
         {loading ? (
           <div className="flex justify-center py-16">
             <Loader2 className="h-6 w-6 animate-spin text-[#86868b]" />
           </div>
+        ) : !hired ? (
+          <div className="rounded-[20px] border border-[#e8e8ed] bg-white px-6 py-14 text-center">
+            <p className="text-[15px] text-[#86868b]">
+              {t('pipeline.manageEmpty' as never) ||
+                'No professional hired yet. Compare ranked offers and hire to unlock milestones, photos and documents.'}
+            </p>
+            <button
+              type="button"
+              className="mt-5 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white"
+              onClick={() => navigateTo(`/project/${listingId}/offers`)}
+            >
+              {t('pipeline.offersTitle' as never) || 'Ranked offers'}
+            </button>
+          </div>
         ) : (
           <>
+            {completed && isOwner && hiredId && !reviewDone ? (
+              <section className="rounded-[20px] border border-[#e8e8ed] bg-white p-5">
+                <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+                  <Star className="h-3.5 w-3.5" />
+                  {t('pipeline.leaveReview' as never) || 'Leave a review'}
+                </h2>
+                <p className="mb-4 text-[13px] text-[#6e6e73]">
+                  {t('pipeline.leaveReviewSub' as never) ||
+                    `How was the work with ${hiredName || 'the professional'}?`}
+                </p>
+                <ReviewFormV2
+                  professionalId={hiredId}
+                  listingId={listingId}
+                  onSuccess={() => {
+                    setReviewDone(true)
+                    setNotice(t('pipeline.reviewThanks' as never) || 'Thanks — review saved.')
+                  }}
+                />
+              </section>
+            ) : null}
+            {completed && reviewDone ? (
+              <p className="rounded-2xl bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
+                {t('pipeline.reviewThanks' as never) || 'Thanks — review saved.'}
+              </p>
+            ) : null}
+
             {/* Work calendar */}
             <section className="rounded-[20px] border border-[#e8e8ed] bg-white p-5">
               <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
-                <CalendarDays className="h-3.5 w-3.5" /> Work calendar
+                <CalendarDays className="h-3.5 w-3.5" />
+                {t('pipeline.workCalendar' as never) || 'Work calendar'}
               </h2>
               <ul className="space-y-2">
                 {calendar.map((c) => (
@@ -191,7 +295,9 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                   </li>
                 ))}
                 {!calendar.length ? (
-                  <p className="text-[13px] text-[#86868b]">No due dates yet — milestones will appear after hire.</p>
+                  <p className="text-[13px] text-[#86868b]">
+                    {t('pipeline.noDueDates' as never) || 'No due dates yet.'}
+                  </p>
                 ) : null}
               </ul>
             </section>
@@ -217,23 +323,23 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                         </p>
                       </div>
                     </div>
-                    {(isOwner || isHired) && stage !== 'completed' ? (
+                    {(isOwner || isHired) && !completed ? (
                       <div className="flex flex-wrap gap-1.5">
                         <StatusBtn
                           active={m.status === 'in_progress'}
-                          label="In progress"
+                          label={t('pipeline.statusInProgress' as never) || 'In progress'}
                           icon={<Circle className="h-3 w-3" />}
                           onClick={() => void setStatus(m.id, 'in_progress')}
                         />
                         <StatusBtn
                           active={m.status === 'blocked'}
-                          label="Blocked"
+                          label={t('pipeline.statusBlocked' as never) || 'Blocked'}
                           icon={<Pause className="h-3 w-3" />}
                           onClick={() => void setStatus(m.id, 'blocked')}
                         />
                         <StatusBtn
                           active={m.status === 'done'}
-                          label="Done"
+                          label={t('pipeline.statusDone' as never) || 'Done'}
                           icon={<Check className="h-3 w-3" />}
                           onClick={() => void setStatus(m.id, 'done')}
                         />
@@ -242,14 +348,21 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                   </div>
                 </li>
               ))}
+              {!milestones.length ? (
+                <p className="rounded-[20px] border border-[#e8e8ed] bg-white px-5 py-8 text-center text-[13px] text-[#86868b]">
+                  {t('pipeline.noMilestones' as never) ||
+                    'Milestones will appear after hire from the cost estimate work stages.'}
+                </p>
+              ) : null}
             </ol>
 
             {/* Phase photos */}
             <section className="rounded-[20px] border border-[#e8e8ed] bg-white p-5">
               <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
-                <Camera className="h-3.5 w-3.5" /> Before / during / after
+                <Camera className="h-3.5 w-3.5" />
+                {t('pipeline.phasePhotos' as never) || 'Before / during / after'}
               </h2>
-              {(isOwner || isHired) && stage !== 'completed' ? (
+              {(isOwner || isHired) && !completed ? (
                 <div className="mb-4 flex flex-wrap items-center gap-2">
                   {(['before', 'during', 'after'] as ProjectMediaPhase[]).map((p) => (
                     <button
@@ -271,7 +384,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                     onClick={() => fileRef.current?.click()}
                     disabled={busy || !user}
                   >
-                    Upload photo
+                    {t('pipeline.uploadPhoto' as never) || 'Upload photo'}
                   </button>
                   <input
                     ref={fileRef}
@@ -304,7 +417,8 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                 ))}
                 {!media.length ? (
                   <p className="col-span-full text-[13px] text-[#86868b]">
-                    No photos yet — document the site before, during and after works.
+                    {t('pipeline.noPhotos' as never) ||
+                      'No photos yet — document the site before, during and after works.'}
                   </p>
                 ) : null}
               </div>
@@ -314,21 +428,23 @@ export function ProjectManage({ listingId }: { listingId: string }) {
             <section className="rounded-[20px] border border-[#e8e8ed] bg-white p-5">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
-                  <FileText className="h-3.5 w-3.5" /> Acts · invoices · warranty · payments
+                  <FileText className="h-3.5 w-3.5" />
+                  {t('pipeline.documents' as never) || 'Acts · invoices · warranty · payments'}
                 </h2>
-                {(isOwner || isHired) ? (
+                {isOwner || isHired ? (
                   <button
                     type="button"
                     className="rounded-full border border-[#d2d2d7] px-3 py-1.5 text-[12px] font-semibold"
                     disabled={busy || !user}
                     onClick={() => {
                       if (!user?.id) return
-                      void issueProjectDocuments({ listingId, userId: user.id }).then((d) =>
-                        setDocs(d.length ? d : docs),
-                      ).then(() => fetchProjectDocuments(listingId).then(setDocs))
+                      setBusy(true)
+                      void issueProjectDocuments({ listingId, userId: user.id })
+                        .then(() => fetchProjectDocuments(listingId).then(setDocs))
+                        .finally(() => setBusy(false))
                     }}
                   >
-                    Generate documents
+                    {t('pipeline.generateDocs' as never) || 'Generate documents'}
                   </button>
                 ) : null}
               </div>
@@ -350,23 +466,18 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                       className="rounded-full bg-white px-3 py-1.5 text-[12px] font-semibold ring-1 ring-[#e8e8ed]"
                       onClick={() => openDocumentPrint(d)}
                     >
-                      Print / PDF
+                      {t('pipeline.printPdf' as never) || 'Print / PDF'}
                     </button>
                   </li>
                 ))}
                 {!docs.length ? (
                   <p className="text-[13px] text-[#86868b]">
-                    Generate acceptance act, invoice, warranty and payment checklist when ready.
+                    {t('pipeline.noDocs' as never) ||
+                      'Generate acceptance act, invoice, warranty and payment checklist when ready.'}
                   </p>
                 ) : null}
               </ul>
             </section>
-
-            <div className="rounded-[20px] border border-dashed border-[#d2d2d7] bg-white/70 px-5 py-4 text-[13px] text-[#6e6e73]">
-              AI Project Manager keeps the calendar, reminders, progress alerts, phase photos,
-              payment checklist and closing documents in one place — coordinated automatically after
-              hire.
-            </div>
           </>
         )}
       </div>

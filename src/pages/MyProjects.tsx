@@ -67,10 +67,22 @@ export function MyProjects() {
                 <h2 className="font-bold text-[var(--ink-900)]">{p.title}</h2>
                 <p className="text-xs text-[var(--ink-500)]">
                   {p.status} · {p.city_name || p.location}
+                  {p.pipeline_stage ? ` · ${String(p.pipeline_stage).replace(/_/g, ' ')}` : ''}
                   {p.wizard_completed ? ' · wizard' : ''}
                 </p>
               </div>
               <div className="flex gap-2">
+                {p.hired_professional_id ||
+                p.pipeline_stage === 'in_progress' ||
+                p.pipeline_stage === 'completed' ? (
+                  <button
+                    type="button"
+                    className="btn-primary text-xs"
+                    onClick={() => navigateTo(`/project/${p.id}/manage`)}
+                  >
+                    Manage
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   className="btn-secondary text-xs"
@@ -80,7 +92,14 @@ export function MyProjects() {
                 </button>
                 <button
                   type="button"
-                  className="btn-primary text-xs"
+                  className="btn-secondary text-xs"
+                  onClick={() => navigateTo(`/project/${p.id}/offers`)}
+                >
+                  Offers
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary text-xs"
                   onClick={() => navigateTo(`/listing/${p.id}`)}
                 >
                   Open
