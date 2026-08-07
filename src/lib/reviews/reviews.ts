@@ -4,6 +4,7 @@ import {
   normalizeMediaUrls,
   type ReviewMediaItem,
 } from '../reviewMediaUpload'
+import { recomputeProPerformance } from '../proPerformance'
 
 export type ReviewV2Input = {
   professional_id: string
@@ -157,6 +158,13 @@ export async function submitReviewV2(
     body: `${input.reviewer_name} left a ${rating}-star review`,
     linkPath: `/professional/${input.professional_id}`,
   })
+
+  // Learning loop: refresh matcher performance signals after the review lands
+  try {
+    await recomputeProPerformance(input.professional_id)
+  } catch (err) {
+    console.warn('recompute after review:', err)
+  }
 
   return { ok: true, id: (data as { id: string } | null)?.id }
 }
@@ -327,6 +335,87 @@ export async function toggleReviewLike(
     .eq('review_id', reviewId)
 
   return { liked: !currentlyLiked, likeCount: count ?? 0 }
+}
+
+/** True if this reviewer already left a review for the listing. */
+export async function hasReviewForListing(
+  listingId: string,
+  reviewerId: string,
+): Promise<boolean> {
+  const { data } = await supabase
+    .from('reviews')
+    .select('id')
+    .eq('listing_id', listingId)
+    .eq('reviewer_id', reviewerId)
+    .maybeSingle()
+  return Boolean(data)
+}
+
+export type PendingReviewProject = {
+  listingId: string
+  title: string
+  professionalId: string
+  professionalName: string | null
+  completedAt: string | null
+}
+
+/** Completed hired projects for this customer that still need a review. */
+export async function fetchPendingReviewProjects(
+  customerId: string,
+): Promise<PendingReviewProject[]> {
+  const { data: listings, error } = await supabase
+    .from('listings')
+    .select('id, title, hired_professional_id, pipeline_completed_at, pipeline_stage, review_prompted_at')
+    .eq('author_id', customerId)
+    .eq('listing_type', 'service_request')
+    .not('hired_professional_id', 'is', null)
+    .or('pipeline_stage.eq.completed,pipeline_completed_at.not.is.null')
+    .order('pipeline_completed_at', { ascending: false })
+    .limit(40)
+
+  if (error || !listings?.length) return []
+
+  const rows = listings as Array<{
+    id: string
+    title: string
+    hired_professional_id: string
+    pipeline_completed_at?: string | null
+    review_prompted_at?: string | null
+  }>
+
+  const listingIds = rows.map((r) => r.id)
+  const { data: existing } = await supabase
+    .from('reviews')
+    .select('listing_id')
+    .eq('reviewer_id', customerId)
+    .in('listing_id', listingIds)
+
+  const reviewed = new Set(
+    ((existing as Array<{ listing_id: string }> | null) ?? []).map((r) => r.listing_id),
+  )
+
+  const pending = rows.filter((r) => !reviewed.has(r.id))
+  if (!pending.length) return []
+
+  const proIds = [...new Set(pending.map((r) => r.hired_professional_id))]
+  const { data: pros } = await supabase
+    .from('profiles')
+    .select('id, full_name')
+    .in('id', proIds)
+  const nameById = new Map(
+    ((pros as Array<{ id: string; full_name: string | null }> | null) ?? []).map((p) => [
+      p.id,
+      p.full_name,
+    ]),
+  )
+
+  return pending.map((r) => ({
+    listingId: r.id,
+    title: r.title,
+    professionalId: r.hired_professional_id,
+    professionalName: nameById.get(r.hired_professional_id) ?? null,
+    completedAt: r.pipeline_completed_at ?? null,
+  }))
 }
 
 export async function addReviewReply(input: {

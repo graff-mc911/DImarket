@@ -139,6 +139,7 @@ export const enTranslations = {
   'pipeline.leaveReview': 'Leave a review',
   'pipeline.leaveReviewSub': 'How was the work?',
   'pipeline.reviewThanks': 'Thanks — review saved.',
+  'pipeline.pendingReviews': 'Pending reviews',
   'pipeline.workCalendar': 'Work calendar',
   'pipeline.noDueDates': 'No due dates yet.',
   'pipeline.noMilestones': 'Milestones will appear after hire from the cost estimate work stages.',

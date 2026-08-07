@@ -143,15 +143,27 @@ export async function recomputeProPerformance(
     updated_at: new Date().toISOString(),
   }
 
-  const { data, error } = await db
-    .from('pro_performance_profiles')
-    .upsert(payload, { onConflict: 'professional_id' })
-    .select('*')
-    .single()
+  // Prefer SECURITY DEFINER RPC so customer complete/review can persist learning
+  const { error: rpcErr } = await supabase.rpc('upsert_pro_performance_profile', {
+    p_professional_id: professionalId,
+    p_jobs_completed: payload.jobs_completed,
+    p_avg_quote_total: payload.avg_quote_total,
+    p_avg_duration_days: payload.avg_duration_days,
+    p_on_time_rate: payload.on_time_rate,
+    p_satisfaction_rate: payload.satisfaction_rate,
+    p_return_rate: payload.return_rate,
+    p_recommend_rate: payload.recommend_rate,
+    p_specialty_slugs: payload.specialty_slugs,
+  })
 
-  if (error) {
-    console.warn('recomputeProPerformance:', error.message)
-    return null
+  if (rpcErr) {
+    const { error } = await db
+      .from('pro_performance_profiles')
+      .upsert(payload, { onConflict: 'professional_id' })
+    if (error) {
+      console.warn('recomputeProPerformance:', rpcErr.message || error.message)
+      return null
+    }
   }
 
   // Soft bump completed_jobs on profile when learning has more evidence
@@ -162,7 +174,7 @@ export async function recomputeProPerformance(
       .eq('id', professionalId)
   }
 
-  return data as ProPerformanceProfile
+  return (await fetchProPerformance(professionalId)) || (payload as ProPerformanceProfile)
 }
 
 /** Match boost 0–8 from performance likelihood of success. */

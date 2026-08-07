@@ -31,6 +31,7 @@ import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { formatEuro } from '../lib/costEstimator'
 import { ReviewFormV2 } from '../components/reviews/ReviewFormV2'
+import { hasReviewForListing } from '../lib/reviews/reviews'
 
 /** AI Project Manager — /project/:id/manage */
 export function ProjectManage({ listingId }: { listingId: string }) {
@@ -82,18 +83,24 @@ export function ProjectManage({ listingId }: { listingId: string }) {
       setMilestones(ms)
       setMedia(await fetchProjectMedia(listingId))
       setDocs(await fetchProjectDocuments(listingId))
+      if (user?.id && (row.pipeline_stage === 'completed')) {
+        setReviewDone(await hasReviewForListing(listingId, user.id))
+      } else {
+        setReviewDone(false)
+      }
     } else {
       setHiredName(null)
       setMilestones([])
       setMedia([])
       setDocs([])
+      setReviewDone(false)
     }
     setLoading(false)
   }
 
   useEffect(() => {
     void reload()
-  }, [listingId])
+  }, [listingId, user?.id])
 
   const setStatus = async (id: string, status: MilestoneStatus) => {
     setBusy(true)

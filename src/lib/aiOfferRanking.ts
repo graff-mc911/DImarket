@@ -3,6 +3,7 @@
  * Complements match_scores (pros) with quote-level ranking (offers).
  */
 import { supabase } from './supabase'
+import { fetchProPerformanceMap, performanceMatchBoost } from './proPerformance'
 
 export type RankedOffer = {
   quoteId: string
@@ -64,6 +65,13 @@ export async function rankQuotesForListing(listingId: string): Promise<RankedOff
   for (const m of (matches as Array<{ contractor_id: string; score: number }> | null) ?? []) {
     matchByPro.set(m.contractor_id, Number(m.score) || 0)
   }
+
+  const proIds = [
+    ...new Set(
+      (quotes as Array<Record<string, unknown>>).map((q) => String(q.professional_id)),
+    ),
+  ]
+  const perfMap = await fetchProPerformanceMap(proIds)
 
   const ranked: RankedOffer[] = (quotes as Array<Record<string, unknown>>).map((q) => {
     const pro = q.professional as {
@@ -136,6 +144,14 @@ export async function rankQuotesForListing(listingId: string): Promise<RankedOff
     if (q.status === 'accepted') {
       score += 5
       reasons.push('accepted')
+    }
+
+    const perf = perfMap.get(String(q.professional_id))
+    const boost = performanceMatchBoost(perf)
+    if (boost.points > 0) {
+      score += Math.min(8, boost.points)
+      if (boost.reason) reasons.push(boost.reason)
+      else reasons.push('learned_performance')
     }
 
     return {

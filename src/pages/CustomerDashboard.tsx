@@ -29,6 +29,10 @@ import {
 import { AreaSparkline, BarChart, DonutProgress } from '../components/pro-dashboard/Charts'
 import { VerificationBadge } from '../components/MatchScoreBadge'
 import { OwnerCabinetEntry } from '../components/OwnerCabinetEntry'
+import {
+  fetchPendingReviewProjects,
+  type PendingReviewProject,
+} from '../lib/reviews/reviews'
 
 function formatEuro(n: number): string {
   return `€${Math.round(n).toLocaleString()}`
@@ -66,6 +70,7 @@ const EMPTY: CustomerDashboardStats = {
 export function CustomerDashboard() {
   const { user, profile, t } = useApp()
   const [stats, setStats] = useState<CustomerDashboardStats>(EMPTY)
+  const [pendingReviews, setPendingReviews] = useState<PendingReviewProject[]>([])
   const [loading, setLoading] = useState(true)
   const [live, setLive] = useState(false)
   const [dark, setDark] = useState(() => {
@@ -78,8 +83,12 @@ export function CustomerDashboard() {
 
   const refresh = useCallback(async () => {
     if (!user) return
-    const data = await fetchCustomerDashboardStats(user.id, profile)
+    const [data, pending] = await Promise.all([
+      fetchCustomerDashboardStats(user.id, profile),
+      fetchPendingReviewProjects(user.id),
+    ])
     setStats(data)
+    setPendingReviews(pending)
     setLoading(false)
   }, [user, profile])
 
@@ -325,12 +334,43 @@ export function CustomerDashboard() {
                     View all
                   </button>
                 </div>
+                {pendingReviews.length > 0 ? (
+                  <div
+                    className={`mb-4 rounded-2xl px-3 py-3 ${
+                      dark ? 'bg-amber-500/15' : 'bg-amber-50'
+                    }`}
+                  >
+                    <p
+                      className={`text-[12px] font-semibold ${
+                        dark ? 'text-amber-200' : 'text-amber-900'
+                      }`}
+                    >
+                      {t('pipeline.pendingReviews' as never) || 'Leave a review'} ·{' '}
+                      {pendingReviews.length}
+                    </p>
+                    <ul className="mt-2 space-y-2">
+                      {pendingReviews.slice(0, 3).map((p) => (
+                        <li key={p.listingId} className="flex items-center justify-between gap-2">
+                          <span className={`truncate text-[13px] ${ink}`}>{p.title}</span>
+                          <button
+                            type="button"
+                            className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold ${btnPrimary}`}
+                            onClick={() => navigateTo(`/project/${p.listingId}/manage`)}
+                          >
+                            {t('pipeline.leaveReview' as never) || 'Review'}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
                 <ul className="space-y-2">
                   {stats.projects.slice(0, 6).map((p) => {
                     const goManage =
                       Boolean(p.hired_professional_id) ||
                       p.pipeline_stage === 'in_progress' ||
                       p.pipeline_stage === 'completed'
+                    const needsReview = pendingReviews.some((r) => r.listingId === p.id)
                     return (
                     <li key={p.id}>
                       <button
@@ -338,7 +378,7 @@ export function CustomerDashboard() {
                         className={`flex w-full items-center justify-between gap-3 rounded-2xl px-3 py-3 text-left transition ${hoverRow}`}
                         onClick={() =>
                           navigateTo(
-                            goManage
+                            needsReview || goManage
                               ? `/project/${p.id}/manage`
                               : `/project/${p.id}/matches`,
                           )
@@ -355,7 +395,7 @@ export function CustomerDashboard() {
                           </p>
                         </div>
                         <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize ${chip}`}>
-                          {goManage ? 'manage' : p.urgency || 'normal'}
+                          {needsReview ? 'review' : goManage ? 'manage' : p.urgency || 'normal'}
                         </span>
                       </button>
                     </li>

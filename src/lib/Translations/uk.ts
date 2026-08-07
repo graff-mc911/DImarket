@@ -141,6 +141,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'pipeline.leaveReview': 'Залишити відгук',
   'pipeline.leaveReviewSub': 'Як пройшла робота?',
   'pipeline.reviewThanks': 'Дякуємо — відгук збережено.',
+  'pipeline.pendingReviews': 'Очікують відгуку',
   'pipeline.workCalendar': 'Календар робіт',
   'pipeline.noDueDates': 'Поки немає дедлайнів.',
   'pipeline.noMilestones': 'Етапи з’являться після найму з кошторису.',
