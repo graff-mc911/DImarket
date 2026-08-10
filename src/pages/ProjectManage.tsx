@@ -28,12 +28,14 @@ import {
   type ProjectMilestone,
 } from '../lib/projectManager'
 import {
+  escrowPayoutLabel,
   escrowStatusLabel,
   fetchLatestEscrow,
   releaseProjectEscrow,
   startProjectEscrowCheckout,
   type ProjectEscrow,
 } from '../lib/projectEscrow'
+import { retryEscrowPayout } from '../lib/stripeConnect'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { formatEuro } from '../lib/costEstimator'
@@ -190,6 +192,22 @@ export function ProjectManage({ listingId }: { listingId: string }) {
     window.location.href = res.url
   }
 
+  const onRetryPayout = async () => {
+    setBusy(true)
+    setError(null)
+    const res = await retryEscrowPayout(listingId)
+    setBusy(false)
+    if ('error' in res) {
+      setError(res.error)
+      return
+    }
+    setNotice(
+      t('pipeline.escrowPayoutRetried' as never) ||
+        `Payout status: ${res.payout_status.replace(/_/g, ' ')}`,
+    )
+    await reload()
+  }
+
   const onComplete = async () => {
     if (!user?.id) return
     if (escrow?.status === 'pending_checkout') {
@@ -277,6 +295,17 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                 {escrowStatusLabel(escrow.status)}
                 {escrow.amount > 0 ? ` · ${formatEuro(Number(escrow.amount))}` : ''}
               </p>
+              {escrow.status === 'captured' && escrow.payout_status ? (
+                <p className="mt-1 text-[13px] font-medium text-[#1d1d1f]">
+                  {escrowPayoutLabel(escrow.payout_status)}
+                  {escrow.transfer_amount != null
+                    ? ` · ${formatEuro(Number(escrow.transfer_amount))}`
+                    : ''}
+                  {escrow.platform_fee_amount != null
+                    ? ` (${t('pipeline.escrowFee' as never) || 'fee'} ${formatEuro(Number(escrow.platform_fee_amount))})`
+                    : ''}
+                </p>
+              ) : null}
               <p className="mt-1 text-[12px] text-[#6e6e73]">
                 {escrow.status === 'authorized'
                   ? t('pipeline.escrowHeldHint' as never) ||
@@ -285,8 +314,14 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                     ? t('pipeline.escrowPendingHint' as never) ||
                       'Authorize the quote total to hold funds securely until completion.'
                     : escrow.status === 'captured'
-                      ? t('pipeline.escrowCapturedHint' as never) ||
-                        'Held funds were released after project completion.'
+                      ? escrow.payout_status === 'skipped_no_connect'
+                        ? t('pipeline.escrowPayoutSkippedHint' as never) ||
+                          'Captured on platform — professional must finish Stripe Connect, then retry payout.'
+                        : escrow.payout_status === 'transferred'
+                          ? t('pipeline.escrowPayoutDoneHint' as never) ||
+                            'Held funds captured and transferred to the professional.'
+                          : t('pipeline.escrowCapturedHint' as never) ||
+                            'Held funds were released after project completion.'
                       : null}
               </p>
               {isOwner && !completed && escrow.status === 'pending_checkout' ? (
@@ -297,6 +332,19 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                   onClick={() => void onHoldFunds()}
                 >
                   {t('pipeline.escrowHoldCta' as never) || 'Hold funds on card'}
+                </button>
+              ) : null}
+              {(isOwner || isHired) &&
+              escrow.status === 'captured' &&
+              (escrow.payout_status === 'skipped_no_connect' ||
+                escrow.payout_status === 'failed') ? (
+                <button
+                  type="button"
+                  disabled={busy}
+                  className="mt-3 rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-40"
+                  onClick={() => void onRetryPayout()}
+                >
+                  {t('pipeline.escrowRetryPayout' as never) || 'Retry professional payout'}
                 </button>
               ) : null}
             </div>

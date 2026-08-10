@@ -26,13 +26,26 @@ export type ProjectEscrow = {
   authorized_at: string | null
   released_at: string | null
   created_at: string
+  platform_fee_bps?: number | null
+  platform_fee_amount?: number | null
+  transfer_amount?: number | null
+  stripe_transfer_id?: string | null
+  payout_status?:
+    | 'none'
+    | 'pending'
+    | 'transferred'
+    | 'failed'
+    | 'skipped_no_connect'
+    | null
+  payout_error?: string | null
+  paid_out_at?: string | null
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any
 
 const ESCROW_COLS =
-  'id, listing_id, quote_id, customer_id, professional_id, amount, currency, status, stripe_session_id, stripe_payment_intent_id, authorized_at, released_at, created_at'
+  'id, listing_id, quote_id, customer_id, professional_id, amount, currency, status, stripe_session_id, stripe_payment_intent_id, authorized_at, released_at, created_at, platform_fee_bps, platform_fee_amount, transfer_amount, stripe_transfer_id, payout_status, payout_error, paid_out_at'
 
 export async function fetchActiveEscrow(listingId: string): Promise<ProjectEscrow | null> {
   const { data, error } = await db
@@ -99,6 +112,8 @@ export async function startProjectEscrowCheckout(opts: {
         amount,
         currency,
         status: 'pending_checkout',
+        platform_fee_bps: 500,
+        payout_status: 'none',
       })
       .select(ESCROW_COLS)
       .maybeSingle()
@@ -169,5 +184,22 @@ export function escrowStatusLabel(status: EscrowStatus | string | null | undefin
       return 'Refunded'
     default:
       return 'No escrow'
+  }
+}
+
+export function escrowPayoutLabel(status: string | null | undefined): string {
+  switch (status) {
+    case 'transferred':
+      return 'Paid to professional'
+    case 'pending':
+      return 'Payout pending'
+    case 'skipped_no_connect':
+      return 'Waiting for pro Connect'
+    case 'failed':
+      return 'Payout failed'
+    case 'none':
+      return 'No payout yet'
+    default:
+      return ''
   }
 }

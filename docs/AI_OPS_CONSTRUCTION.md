@@ -55,7 +55,7 @@ Client → AI Analyst → AI Estimator → AI Matcher → AI Dispatcher
 
 ## Honest gaps
 
-- Escrow V1: full-quote Stripe Checkout hold (`capture_method: manual`) on hire → capture on complete (`project_escrows`). No Connect C2C payout, milestones split, or disputes UI yet.
+- Escrow V1 + Connect V1: full-quote hold → capture → Transfer to pro Express account minus 5% platform fee. Soft-skip if pro not onboarded (`skipped_no_connect` + retry). No milestone splits or disputes UI yet.
 - Supplier “order” is approve-intent + deep link (no checkout cart yet)
 - Learning quality grows with completed jobs + reviews volume
 
@@ -65,5 +65,15 @@ Client → AI Analyst → AI Estimator → AI Matcher → AI Dispatcher
 |------|---------|
 | Hire → Checkout authorize | `ProjectOffers` → `startProjectEscrowCheckout` |
 | Hold status | `ProjectManage` escrow banner |
-| Complete → capture | `release-project-escrow` edge + `completeProject` |
-| Table | `project_escrows` (`20260807200000_project_escrows.sql`) |
+| Complete → capture → Transfer | `release-project-escrow` (+ Connect payout) |
+| Table | `project_escrows` |
+
+## Connect payout V1 (Prompt #12)
+
+| Step | Surface |
+|------|---------|
+| Pro onboarding | Settings / ProDashboard → `stripe-connect` Express |
+| Sync flags | `account.updated` webhook + status action |
+| Transfer | After capture: `transfers.create` → pro `stripe_account_id` |
+| Retry | Manage “Retry professional payout” if skipped/failed |
+| Migration | `20260810120000_stripe_connect_escrow_payout.sql` |

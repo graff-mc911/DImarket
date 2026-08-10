@@ -28,6 +28,7 @@ import { CategorySubcategoryPicker } from '../components/CategorySubcategoryPick
 import { OnboardingChecklist } from '../components/OnboardingChecklist'
 import { ReferralPanel } from '../components/ReferralPanel'
 import { TelegramLinkPanel } from '../components/TelegramLinkPanel'
+import { ConnectPayoutPanel } from '../components/ConnectPayoutPanel'
 import { buildOnboardingState } from '../lib/onboardingProgress'
 import { syncProfessionalCategoriesFromWorkSlugs } from '../lib/syncProfessionalCategories'
 import {
@@ -581,6 +582,10 @@ export function Settings() {
                     role={userRole as 'professional' | 'company'}
                   />
                 )}
+
+              {(userRole === 'professional' || userRole === 'company') && currentUserId ? (
+                <ConnectPayoutPanel />
+              ) : null}
 
               <div className="space-y-6">
                 <form onSubmit={handleSaveProfile} className="glass-card p-5 md:p-6">

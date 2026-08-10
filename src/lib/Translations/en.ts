@@ -146,6 +146,21 @@ export const enTranslations = {
   'pipeline.escrowStartFailed': 'Could not start payment hold',
   'pipeline.escrowReleaseFailed': 'Could not release escrow',
   'pipeline.escrowMissingQuote': 'Accepted quote not found — cannot start hold.',
+  'pipeline.escrowFee': 'fee',
+  'pipeline.escrowPayoutSkippedHint':
+    'Captured on platform — professional must finish Stripe Connect, then retry payout.',
+  'pipeline.escrowPayoutDoneHint': 'Held funds captured and transferred to the professional.',
+  'pipeline.escrowRetryPayout': 'Retry professional payout',
+  'pipeline.escrowPayoutRetried': 'Payout updated',
+  'connect.title': 'Project payouts',
+  'connect.sub':
+    'Stripe Connect Express — receive escrow Transfers after the client completes the project (platform fee 5%).',
+  'connect.enableCta': 'Connect payouts',
+  'connect.continueCta': 'Continue onboarding',
+  'connect.manageCta': 'Manage Stripe',
+  'connect.bannerTitle': 'Enable payouts to receive escrow',
+  'connect.bannerSub':
+    'Connect Stripe Express so project funds transfer to you after completion.',
   'pipeline.reviewPro': 'Review pro',
   'pipeline.leaveReview': 'Leave a review',
   'pipeline.leaveReviewSub': 'How was the work?',

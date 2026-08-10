@@ -148,6 +148,21 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'pipeline.escrowStartFailed': 'Не вдалося почати холд оплати',
   'pipeline.escrowReleaseFailed': 'Не вдалося зняти escrow',
   'pipeline.escrowMissingQuote': 'Прийнятий офер не знайдено — холд неможливий.',
+  'pipeline.escrowFee': 'комісія',
+  'pipeline.escrowPayoutSkippedHint':
+    'Кошти на платформі — майстер має завершити Stripe Connect, потім повторити виплату.',
+  'pipeline.escrowPayoutDoneHint': 'Кошти знято з холду і переказано майстру.',
+  'pipeline.escrowRetryPayout': 'Повторити виплату майстру',
+  'pipeline.escrowPayoutRetried': 'Статус виплати оновлено',
+  'connect.title': 'Виплати за проєкти',
+  'connect.sub':
+    'Stripe Connect Express — отримуйте Transfer після завершення проєкту клієнтом (комісія платформи 5%).',
+  'connect.enableCta': 'Підключити виплати',
+  'connect.continueCta': 'Продовжити онбординг',
+  'connect.manageCta': 'Керувати Stripe',
+  'connect.bannerTitle': 'Увімкніть виплати для escrow',
+  'connect.bannerSub':
+    'Підключіть Stripe Express, щоб кошти проєкту переказувались вам після завершення.',
   'pipeline.reviewPro': 'Відгук про майстра',
   'pipeline.leaveReview': 'Залишити відгук',
   'pipeline.leaveReviewSub': 'Як пройшла робота?',

@@ -42,6 +42,8 @@ Deno.serve(async (req: Request) => {
       await handleSubscriptionDeleted(event.data.object as Stripe.Subscription)
     } else if (event.type === 'invoice.paid') {
       await handleInvoicePaid(event.data.object as Stripe.Invoice)
+    } else if (event.type === 'account.updated') {
+      await handleConnectAccountUpdated(event.data.object as Stripe.Account)
     }
 
     return new Response(JSON.stringify({ ok: true }), {
@@ -56,6 +58,36 @@ Deno.serve(async (req: Request) => {
     })
   }
 })
+
+async function handleConnectAccountUpdated(account: Stripe.Account) {
+  const userId = String(account.metadata?.user_id || '')
+  const ready =
+    Boolean(account.charges_enabled) &&
+    Boolean(account.payouts_enabled) &&
+    Boolean(account.details_submitted)
+
+  const payload: Record<string, unknown> = {
+    stripe_account_id: account.id,
+    stripe_connect_charges_enabled: Boolean(account.charges_enabled),
+    stripe_connect_payouts_enabled: Boolean(account.payouts_enabled),
+    stripe_connect_details_submitted: Boolean(account.details_submitted),
+  }
+  if (ready) {
+    payload.stripe_connect_onboarded_at = new Date().toISOString()
+  }
+
+  if (userId) {
+    const { error } = await admin.from('profiles').update(payload).eq('id', userId)
+    if (error) console.error('stripe-webhook: connect account by user_id', error)
+    return
+  }
+
+  const { error } = await admin
+    .from('profiles')
+    .update(payload)
+    .eq('stripe_account_id', account.id)
+  if (error) console.error('stripe-webhook: connect account by stripe_account_id', error)
+}
 
 async function markProjectEscrowAuthorized(
   session: Stripe.Checkout.Session,
