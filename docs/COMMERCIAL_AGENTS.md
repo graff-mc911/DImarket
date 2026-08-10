@@ -2,6 +2,18 @@
 
 B2B marketplace connecting manufacturers with independent commercial agents.
 
+## Positioning
+
+Commercial Agents is a **top-level DImarket section** (not a product/service subcategory clone):
+
+- Header dept + Mobile More + Footer + Home category tile (`commercial-agents` in `serviceCategories`)
+- Routes under `/commercial-agents`
+- Matching filters use **existing DImarket `serviceCategories`** (HVAC, Stores, Manufacturers, …)
+
+Landing CTAs: Find Agent · Find Manufacturer · Post Opportunity · Create Agent Profile.
+
+Manufacturer / Agent profiles include a **Commercial Representation** block and Find Agents / Find Manufacturers actions.
+
 ## Routes
 
 | Path | Page |

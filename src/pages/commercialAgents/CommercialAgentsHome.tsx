@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { ArrowRight, Building2, Handshake, Search } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { ArrowRight, Building2, Handshake, PlusCircle, UserPlus } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import { applyPageSeo } from '../../lib/pageSeo'
@@ -12,18 +12,25 @@ import {
   type ManufacturerProfile,
   type RepresentationOpportunity,
 } from '../../lib/commercialAgents'
-import { COMMERCIAL_CATEGORY_SLUGS, COMMERCIAL_FOCUS_COUNTRIES } from '../../lib/commercialAgents/categories'
+import {
+  COMMERCIAL_FOCUS_COUNTRIES,
+  dimarketParentCategoryOptions,
+} from '../../lib/commercialAgents/categories'
 import { AgentCard } from '../../components/commercialAgents/AgentCard'
 import { ManufacturerCard } from '../../components/commercialAgents/ManufacturerCard'
 import { OpportunityCard } from '../../components/commercialAgents/OpportunityCard'
 
 export function CommercialAgentsHome() {
-  const { t } = useApp()
+  const { t, language } = useApp()
   const [query, setQuery] = useState('')
   const [manufacturers, setManufacturers] = useState<ManufacturerProfile[]>([])
   const [agents, setAgents] = useState<AgentProfile[]>([])
   const [opportunities, setOpportunities] = useState<RepresentationOpportunity[]>([])
   const [loading, setLoading] = useState(true)
+  const parentCategories = useMemo(
+    () => dimarketParentCategoryOptions(language.code).slice(0, 16),
+    [language.code],
+  )
 
   useEffect(() => {
     return applyPageSeo({
@@ -76,37 +83,54 @@ export function CommercialAgentsHome() {
           </p>
 
           <div className="mt-8 flex max-w-2xl flex-col gap-3 sm:flex-row">
-            <div className="relative flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-400)]" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && runSearch()}
-                className="w-full rounded-full border-0 bg-white py-3.5 pl-10 pr-4 text-sm text-[var(--ink-900)] shadow-lg outline-none"
-                placeholder={t('commercialAgents.searchPlaceholder')}
-              />
-            </div>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && runSearch()}
+              className="w-full flex-1 rounded-full border-0 bg-white px-5 py-3.5 text-sm text-[var(--ink-900)] shadow-lg outline-none"
+              placeholder={t('commercialAgents.searchPlaceholder')}
+            />
             <button type="button" onClick={runSearch} className="btn-primary rounded-full px-6 py-3 text-sm font-bold">
               {t('commercialAgents.search')}
             </button>
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          {/* Primary two-way marketplace CTAs */}
+          <div className="mt-8 grid max-w-3xl gap-3 sm:grid-cols-2">
             <button
               type="button"
-              onClick={() => navigateTo('/commercial-agents/dashboard?role=manufacturer')}
-              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/25 backdrop-blur hover:bg-white/15"
+              onClick={() => navigateTo('/commercial-agents/representatives')}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff9900] px-5 py-3 text-sm font-bold text-[#0f1111] hover:bg-[#ffb84d]"
             >
-              <Building2 className="h-4 w-4" />
-              {t('commercialAgents.ctaManufacturer')}
+              <Handshake className="h-4 w-4" />
+              {t('commercialAgents.ctaFindAgent')}
             </button>
             <button
               type="button"
-              onClick={() => navigateTo('/commercial-agents/dashboard?role=agent')}
-              className="inline-flex items-center gap-2 rounded-full bg-[#ff9900] px-5 py-2.5 text-sm font-bold text-[#0f1111] hover:bg-[#ffb84d]"
+              onClick={() => navigateTo('/commercial-agents/manufacturers')}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#232f3e] hover:bg-white/90"
             >
-              <Handshake className="h-4 w-4" />
-              {t('commercialAgents.ctaAgent')}
+              <Building2 className="h-4 w-4" />
+              {t('commercialAgents.ctaFindManufacturer')}
+            </button>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => navigateTo('/commercial-agents/dashboard?role=manufacturer&tab=opportunities')}
+              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/25 backdrop-blur hover:bg-white/15"
+            >
+              <PlusCircle className="h-4 w-4" />
+              {t('commercialAgents.ctaPostOpportunity')}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigateTo('/commercial-agents/dashboard?role=agent&tab=profile')}
+              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/25 backdrop-blur hover:bg-white/15"
+            >
+              <UserPlus className="h-4 w-4" />
+              {t('commercialAgents.ctaCreateAgentProfile')}
             </button>
           </div>
         </div>
@@ -219,15 +243,16 @@ export function CommercialAgentsHome() {
 
         <section className="mt-12">
           <h2 className="text-xl font-bold text-[var(--ink-900)]">{t('commercialAgents.categoriesTitle')}</h2>
+          <p className="mt-1 text-sm text-[var(--ink-600)]">{t('commercialAgents.categoriesFromDimarket')}</p>
           <div className="mt-4 flex flex-wrap gap-2">
-            {COMMERCIAL_CATEGORY_SLUGS.slice(0, 16).map((slug) => (
+            {parentCategories.map((opt) => (
               <button
-                key={slug}
+                key={opt.slug}
                 type="button"
-                onClick={() => navigateTo(`/commercial-agents/opportunities?category=${slug}`)}
+                onClick={() => navigateTo(`/commercial-agents/opportunities?category=${opt.slug}`)}
                 className="rounded-full border border-[var(--line-200)] bg-white px-3.5 py-1.5 text-sm font-medium text-[var(--ink-700)] hover:border-[rgba(255,153,0,0.45)]"
               >
-                {t(`commercialAgents.cat.${slug}`)}
+                {opt.label}
               </button>
             ))}
           </div>

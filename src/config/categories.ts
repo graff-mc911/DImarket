@@ -228,6 +228,36 @@ export const serviceCategories: ServiceCategory[] = [
     sub('Manufacturers', '🏗', 'Metal Structures'),
     sub('Manufacturers', '🧱', 'Concrete Products'),
   ]),
+  category(
+    'commercial-agents',
+    '🤝',
+    'Commercial Agents',
+    'B2B network: find manufacturers seeking representation or commercial agents for your brand.',
+    [
+      sub(
+        'Commercial Agents',
+        '🏭',
+        'Find Manufacturers',
+        'commercial-agents-manufacturers',
+        'Manufacturers looking for independent commercial representatives.',
+      ),
+      sub(
+        'Commercial Agents',
+        '🤵',
+        'Find Agents',
+        'commercial-agents-representatives',
+        'Commercial agents available for new brands and territories.',
+      ),
+      sub(
+        'Commercial Agents',
+        '📋',
+        'Opportunities',
+        'commercial-agents-opportunities',
+        'Open representation mandates by country and category.',
+      ),
+    ],
+    { href: '/commercial-agents' },
+  ),
   category('rentals', '📦', 'Rentals', 'Rental services for tools, equipment, vehicles, and power systems.', [
     sub('Rentals', '🚜', 'Construction Equipment'),
     sub('Rentals', '🛠', 'Tool Rental'),

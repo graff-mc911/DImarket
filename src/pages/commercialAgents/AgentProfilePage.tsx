@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ExternalLink, Flag, Heart, MessageSquare, Send } from 'lucide-react'
+import { ExternalLink, Flag, Heart, MessageSquare, Search, Send } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import { applyPageSeo } from '../../lib/pageSeo'
@@ -15,11 +15,12 @@ import {
   trackCommercialEvent,
   type AgentProfile,
 } from '../../lib/commercialAgents'
+import { labelForMatchCategory } from '../../lib/commercialAgents/categories'
 import { VerifiedB2BBadge } from '../../components/commercialAgents/VerifiedB2BBadge'
 import { MatchScorePanel } from '../../components/commercialAgents/MatchScorePanel'
 
 export function AgentProfilePage({ slug }: { slug: string }) {
-  const { t, user } = useApp()
+  const { t, user, language } = useApp()
   const [item, setItem] = useState<AgentProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
@@ -147,11 +148,33 @@ export function AgentProfilePage({ slug }: { slug: string }) {
               {item.description || t('commercialAgents.noDescription')}
             </p>
 
-            <ChipBlock title={t('commercialAgents.categoriesTitle')} items={item.categories} t={t} asCat />
-            <ChipBlock title={t('commercialAgents.industries')} items={item.industries} t={t} />
-            <ChipBlock title={t('commercialAgents.regions')} items={item.service_regions} t={t} />
-            <ChipBlock title={t('commercialAgents.languages')} items={item.languages} t={t} />
-            <ChipBlock title={t('commercialAgents.clientTypes')} items={item.client_types} t={t} />
+            <section className="mt-8 rounded-2xl border border-[var(--line-200)] bg-white/90 p-5">
+              <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('commercialAgents.representationBlock')}</h2>
+              <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+                <AgentFact
+                  label={t('commercialAgents.categoriesTitle')}
+                  value={item.categories.map((c) => labelForMatchCategory(c, language.code)).join(', ')}
+                />
+                <AgentFact label={t('commercialAgents.countriesTitle')} value={[item.city, item.country].filter(Boolean).join(', ')} />
+                <AgentFact label={t('commercialAgents.regions')} value={item.service_regions.join(', ')} />
+                <AgentFact label={t('commercialAgents.languages')} value={item.languages.join(', ')} />
+                <AgentFact
+                  label={t('commercialAgents.experience')}
+                  value={
+                    item.years_experience != null
+                      ? `${item.years_experience}+ ${t('commercialAgents.yearsExp')}`
+                      : item.previous_experience
+                  }
+                />
+                <AgentFact
+                  label={t('commercialAgents.availableForBrands')}
+                  value={item.available_for_new_brands ? t('commercialAgents.yes') : t('commercialAgents.no')}
+                />
+              </dl>
+            </section>
+
+            <ChipBlock title={t('commercialAgents.industries')} items={item.industries} />
+            <ChipBlock title={t('commercialAgents.clientTypes')} items={item.client_types} />
 
             {item.years_experience != null ? (
               <p className="mt-4 text-sm text-[var(--ink-700)]">
@@ -192,7 +215,22 @@ export function AgentProfilePage({ slug }: { slug: string }) {
           <aside className="space-y-4">
             {matchPanel ? <MatchScorePanel match={matchPanel} t={t} /> : null}
             <div className="rounded-2xl border border-[var(--line-200)] bg-white/95 p-4">
-              <button type="button" onClick={message} className="btn-primary flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm">
+              <button
+                type="button"
+                onClick={() =>
+                  navigateTo(
+                    `/commercial-agents/manufacturers?${new URLSearchParams({
+                      ...(item.country ? { country: item.country } : {}),
+                      ...(item.categories[0] ? { category: item.categories[0] } : {}),
+                    }).toString()}`,
+                  )
+                }
+                className="btn-primary flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm"
+              >
+                <Search className="h-4 w-4" />
+                {t('commercialAgents.findManufacturersCta')}
+              </button>
+              <button type="button" onClick={message} className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-[var(--line-200)] py-2.5 text-sm font-semibold">
                 <MessageSquare className="h-4 w-4" />
                 {t('commercialAgents.messageAgent')}
               </button>
@@ -240,13 +278,9 @@ export function AgentProfilePage({ slug }: { slug: string }) {
 function ChipBlock({
   title,
   items,
-  t,
-  asCat,
 }: {
   title: string
   items: string[]
-  t: (k: string) => string
-  asCat?: boolean
 }) {
   if (!items?.length) return null
   return (
@@ -255,10 +289,20 @@ function ChipBlock({
       <div className="mt-2 flex flex-wrap gap-1.5">
         {items.map((c) => (
           <span key={c} className="rounded-full bg-[#f3f4f6] px-2.5 py-0.5 text-xs font-semibold text-[var(--ink-700)]">
-            {asCat ? t(`commercialAgents.cat.${c}` as never) || c : c}
+            {c}
           </span>
         ))}
       </div>
+    </div>
+  )
+}
+
+function AgentFact({ label, value }: { label: string; value: string | null | undefined }) {
+  if (!value) return null
+  return (
+    <div className="rounded-xl bg-[#f7f8fa] px-3 py-2.5">
+      <dt className="text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-500)]">{label}</dt>
+      <dd className="mt-0.5 text-sm font-medium text-[var(--ink-800)]">{value}</dd>
     </div>
   )
 }

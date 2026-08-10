@@ -43,6 +43,16 @@ export function homeCategoryPath(
   category: Pick<ServiceCategory, 'slug' | 'href'>,
   subcategory?: Pick<ServiceSubcategory, 'slug'> | null,
 ): string {
+  if (category.slug === 'commercial-agents' || category.href === '/commercial-agents') {
+    if (subcategory?.slug === 'commercial-agents-manufacturers') return '/commercial-agents/manufacturers'
+    if (subcategory?.slug === 'commercial-agents-representatives') {
+      return '/commercial-agents/representatives'
+    }
+    if (subcategory?.slug === 'commercial-agents-opportunities') {
+      return '/commercial-agents/opportunities'
+    }
+    return '/commercial-agents'
+  }
   if (category.href) return category.href
   const slug = category.slug
   if (slug === 'buy-sell' || subcategory?.slug?.startsWith('buy-sell')) return '/sell-rent'

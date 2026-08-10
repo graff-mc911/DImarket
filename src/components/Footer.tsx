@@ -32,12 +32,12 @@ const FOOTER_COLUMNS: Array<{
   {
     titleKey: 'footer.servicesCol',
     surface: 'footer-services',
-    ids: ['search', 'publish-request', 'assistant', 'publish', 'advanced-search'],
+    ids: ['search', 'publish-request', 'commercial-agents', 'manufacturers', 'assistant', 'publish', 'advanced-search'],
   },
   {
     titleKey: 'footer.professionalsCol',
     surface: 'footer-professionals',
-    ids: ['professionals', 'for-companies', 'register', 'verification', 'for-pros'],
+    ids: ['professionals', 'commercial-agents', 'for-companies', 'register', 'verification', 'for-pros'],
   },
   {
     titleKey: 'footer.supportCol',

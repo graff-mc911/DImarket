@@ -12,11 +12,14 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   Bell,
+  Briefcase,
   Building2,
   Bookmark,
   Bot,
+  Factory,
   FileText,
   Hammer,
+  Handshake,
   LayoutDashboard,
   LogOut,
   Megaphone,
@@ -188,6 +191,9 @@ export function Header() {
   const HEADER_DEPT_ICONS: Record<string, LucideIcon> = {
     professionals: Hammer,
     companies: Building2,
+    manufacturers: Factory,
+    'commercial-agents': Handshake,
+    jobs: Briefcase,
     map: MapPin,
   }
   const navItems: NavItem[] = navEntriesFor('header-dept').map((entry) => ({

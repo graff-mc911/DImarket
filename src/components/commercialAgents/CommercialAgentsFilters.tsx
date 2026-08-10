@@ -1,9 +1,11 @@
 import { Filter, Search, X } from 'lucide-react'
+import { useMemo } from 'react'
 import {
-  COMMERCIAL_CATEGORY_SLUGS,
   COMMERCIAL_FOCUS_COUNTRIES,
+  dimarketParentCategoryOptions,
 } from '../../lib/commercialAgents/categories'
 import type { CommercialSearchFilters } from '../../lib/commercialAgents/types'
+import { useApp } from '../../contexts/AppContext'
 
 const inputClass =
   'w-full rounded-xl border border-[#d2d2d7] bg-white px-3 py-2.5 text-[13px] text-[#1d1d1f] outline-none transition focus:border-[#1d1d1f] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
@@ -25,6 +27,12 @@ export function CommercialAgentsFilters({
   t: (key: string) => string
   mode?: 'all' | 'manufacturers' | 'agents' | 'opportunities'
 }) {
+  const { language } = useApp()
+  const categoryOptions = useMemo(
+    () => dimarketParentCategoryOptions(language.code),
+    [language.code],
+  )
+
   const panel = (
     <div className="space-y-3">
       <label className="block">
@@ -71,9 +79,9 @@ export function CommercialAgentsFilters({
             onChange={(e) => onChange({ ...value, category: e.target.value })}
           >
             <option value="">{t('commercialAgents.anyCategory')}</option>
-            {COMMERCIAL_CATEGORY_SLUGS.map((slug) => (
-              <option key={slug} value={slug}>
-                {t(`commercialAgents.cat.${slug}`)}
+            {categoryOptions.map((opt) => (
+              <option key={opt.slug} value={opt.slug}>
+                {opt.label}
               </option>
             ))}
           </select>

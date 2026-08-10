@@ -1,7 +1,9 @@
 import { MapPin } from 'lucide-react'
 import { navigateTo } from '../../lib/navigation'
+import { labelForMatchCategory } from '../../lib/commercialAgents/categories'
 import type { ManufacturerProfile } from '../../lib/commercialAgents/types'
 import { VerifiedB2BBadge } from './VerifiedB2BBadge'
+import { useApp } from '../../contexts/AppContext'
 
 export function ManufacturerCard({
   item,
@@ -12,6 +14,7 @@ export function ManufacturerCard({
   t: (key: string) => string
   matchScore?: number
 }) {
+  const { language } = useApp()
   return (
     <button
       type="button"
@@ -56,9 +59,7 @@ export function ManufacturerCard({
             key={c}
             className="rounded-full bg-[#f3f4f6] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--ink-700)]"
           >
-            {t(`commercialAgents.cat.${c}` as never) !== `commercialAgents.cat.${c}`
-              ? t(`commercialAgents.cat.${c}` as never)
-              : c}
+            {labelForMatchCategory(c, language.code)}
           </span>
         ))}
         {item.agent_required ? (

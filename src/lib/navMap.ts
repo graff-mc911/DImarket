@@ -95,15 +95,35 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     surfaces: ['mobile-more', 'header-dept'],
   },
   {
+    id: 'manufacturers',
+    path: '/category/manufacturers',
+    labelKey: 'nav.manufacturers',
+    labelKeyBySurface: {
+      'header-dept': 'header.manufacturers',
+      'footer-services': 'footer.manufacturers',
+      'mobile-more': 'nav.manufacturers',
+    },
+    surfaces: ['mobile-more', 'header-dept', 'footer-services'],
+  },
+  {
     id: 'commercial-agents',
     path: '/commercial-agents',
     labelKey: 'nav.commercialAgents',
     labelKeyBySurface: {
       'header-dept': 'header.commercialAgents',
       'footer-services': 'footer.commercialAgents',
+      'footer-professionals': 'footer.commercialAgents',
       'mobile-more': 'nav.commercialAgents',
     },
-    surfaces: ['mobile-more', 'header-dept', 'footer-services'],
+    surfaces: ['mobile-more', 'header-dept', 'footer-services', 'footer-professionals'],
+  },
+  {
+    id: 'jobs',
+    path: '/vacancies',
+    aliases: ['/jobs'],
+    labelKey: 'nav.jobs',
+    labelKeyBySurface: { 'header-dept': 'header.jobs' },
+    surfaces: ['mobile-more', 'header-dept'],
   },
   {
     id: 'publish-request',
@@ -161,13 +181,6 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     labelKey: 'nav.analytics',
     labelKeyBySurface: { 'header-dept-extra': 'header.analytics' },
     surfaces: ['mobile-more', 'header-dept-extra'],
-  },
-  {
-    id: 'jobs',
-    path: '/vacancies',
-    aliases: ['/jobs'],
-    labelKey: 'nav.jobs',
-    surfaces: ['mobile-more'],
   },
   {
     id: 'marketplace',

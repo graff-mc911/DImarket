@@ -23,7 +23,7 @@ import {
   type AgentProfile,
   type ManufacturerProfile,
 } from '../../lib/commercialAgents'
-import { COMMERCIAL_CATEGORY_SLUGS, COMMERCIAL_FOCUS_COUNTRIES } from '../../lib/commercialAgents/categories'
+import { COMMERCIAL_FOCUS_COUNTRIES, dimarketParentCategoryOptions } from '../../lib/commercialAgents/categories'
 import { AgentCard } from '../../components/commercialAgents/AgentCard'
 import { OpportunityCard } from '../../components/commercialAgents/OpportunityCard'
 
@@ -33,9 +33,16 @@ const input =
   'w-full rounded-xl border border-[#d2d2d7] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1d1d1f]'
 
 export function CommercialAgentsDashboard() {
-  const { t, user, profile, authReady } = useApp()
+  const { t, user, profile, authReady, language } = useApp()
   const roleHint = useMemo(() => new URLSearchParams(window.location.search).get('role'), [])
-  const [tab, setTab] = useState<Tab>('overview')
+  const tabHint = useMemo(() => new URLSearchParams(window.location.search).get('tab') as Tab | null, [])
+  const [tab, setTab] = useState<Tab>(
+    tabHint &&
+      ['overview', 'profile', 'opportunities', 'applications', 'invitations', 'recommended'].includes(tabHint)
+      ? tabHint
+      : 'overview',
+  )
+  const parentCategories = useMemo(() => dimarketParentCategoryOptions(language.code), [language.code])
   const [mode, setMode] = useState<'manufacturer' | 'agent'>(
     roleHint === 'agent' ? 'agent' : 'manufacturer',
   )
@@ -374,8 +381,8 @@ export function CommercialAgentsDashboard() {
                 <label className="block text-xs font-semibold uppercase text-[var(--ink-500)]">
                   {t('commercialAgents.category')}
                   <select className={`${input} mt-1`} value={oppForm.category} onChange={(e) => setOppForm({ ...oppForm, category: e.target.value })}>
-                    {COMMERCIAL_CATEGORY_SLUGS.map((s) => (
-                      <option key={s} value={s}>{t(`commercialAgents.cat.${s}`)}</option>
+                    {parentCategories.map((opt) => (
+                      <option key={opt.slug} value={opt.slug}>{opt.label}</option>
                     ))}
                   </select>
                 </label>

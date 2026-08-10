@@ -15,10 +15,11 @@ import {
   trackCommercialEvent,
   type RepresentationOpportunity,
 } from '../../lib/commercialAgents'
+import { labelForMatchCategory } from '../../lib/commercialAgents/categories'
 import { MatchScorePanel } from '../../components/commercialAgents/MatchScorePanel'
 
 export function OpportunityDetailPage({ id }: { id: string }) {
-  const { t, user } = useApp()
+  const { t, user, language } = useApp()
   const [item, setItem] = useState<RepresentationOpportunity | null>(null)
   const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
@@ -110,7 +111,7 @@ export function OpportunityDetailPage({ id }: { id: string }) {
 
             <dl className="mt-8 grid gap-3 sm:grid-cols-2">
               <Fact label={t('commercialAgents.country')} value={item.target_country} />
-              <Fact label={t('commercialAgents.category')} value={item.category ? t(`commercialAgents.cat.${item.category}` as never) : null} />
+              <Fact label={t('commercialAgents.category')} value={item.category ? labelForMatchCategory(item.category, language.code) : null} />
               <Fact label={t('commercialAgents.commission')} value={item.commission_range} />
               <Fact
                 label={t('commercialAgents.exclusivity')}
