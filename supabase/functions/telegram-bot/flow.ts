@@ -1,5 +1,4 @@
 import { matchPickByText, type CategoryPick } from './categories.ts'
-import { matchCityInRegion, type GeoTree } from './geo.ts'
 import { startCountryStep } from './geoFlow.ts'
 import { categoryLabel, t, type BotLocale } from './i18n.ts'
 

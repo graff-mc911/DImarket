@@ -7,7 +7,6 @@ import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
 import {
   ensureUserProfile,
   normalizeProfileRole,
-  savePendingRegistration,
   type RegistrationRole,
 } from '../lib/profileSync'
 import { supabase }   from '../lib/supabase'
@@ -119,21 +118,6 @@ export function Register() {
     })
     return () => { cancelled = true }
   }, [country])
-
-  const buildPendingRegistration = () => {
-    const displayName =
-      selectedRole === 'company' ? (companyName.trim() || fullName.trim()) : fullName.trim()
-    return {
-      role: selectedRole,
-      full_name: displayName || undefined,
-      phone: phone.trim() || undefined,
-      location:
-        city.trim() && country.trim()
-          ? [city.trim(), (region.trim() || 'Інші'), country.trim()].join(', ')
-          : undefined,
-      company_name: companyName.trim() || undefined,
-    }
-  }
 
   const handleCountryChange = (val: string) => {
     setCountry(val)
@@ -254,7 +238,7 @@ export function Register() {
           navigateTo(
             getPostLoginPath(profile ?? { user_role, is_site_owner: false }, {
               intendedRole: selectedRole,
-              email: data.user?.email,
+              email: authData.user?.email,
             }),
           )
         }, 1200)

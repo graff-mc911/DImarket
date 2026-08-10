@@ -20,15 +20,18 @@ import { navigateTo } from '../lib/navigation'
 type CheckoutStatus = 'loading' | 'success' | 'error' | 'no_session'
 
 export function Checkout() {
-  const { user } = useApp()
+  const { user, authReady } = useApp()
   const [status, setStatus]         = useState<CheckoutStatus>('loading')
   const [message, setMessage]       = useState('')
   const [paymentType, setPaymentType] = useState('')
   const [escrowListingId, setEscrowListingId] = useState('')
 
   useEffect(() => {
+    if (!authReady) return
     void verifyPayment()
-  }, [])
+    // verifyPayment closes over latest user/authReady
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authReady, user?.id])
 
   // Перевіряємо сесію Stripe і активуємо послугу
   const verifyPayment = async () => {
@@ -44,7 +47,9 @@ export function Checkout() {
     }
 
     if (!user) {
-      navigateTo('/login')
+      // Preserve return URL after login
+      const returnTo = `/checkout${window.location.search}`
+      navigateTo(`/login?redirect=${encodeURIComponent(returnTo)}`)
       return
     }
 

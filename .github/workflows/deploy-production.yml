@@ -29,6 +29,7 @@ jobs:
         run: npm ci
 
       - name: Check Vercel secrets
+        id: check_secrets
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -37,16 +38,19 @@ jobs:
           missing=0
           for key in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
             if [ -z "${!key}" ]; then
-              echo "::error::Missing GitHub Actions secret: $key"
+              echo "::warning::Missing GitHub Actions secret: $key"
               missing=1
             fi
           done
           if [ "$missing" -ne 0 ]; then
-            echo "::error::Add secrets, then re-run. Or Redeploy in Vercel Dashboard from branch main (commit d0c6320+)."
-            exit 1
+            echo "::warning::Skipping workflow deploy — secrets missing. Rely on Vercel Git auto-deploy or Redeploy from dashboard (main)."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Pull production env
+        if: steps.check_secrets.outputs.skip != 'true'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -54,6 +58,7 @@ jobs:
         run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build (production)
+        if: steps.check_secrets.outputs.skip != 'true'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -62,6 +67,7 @@ jobs:
         run: npx vercel build --prod --token="$VERCEL_TOKEN"
 
       - name: Deploy prebuilt to production
+        if: steps.check_secrets.outputs.skip != 'true'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -69,6 +75,7 @@ jobs:
         run: npx vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
 
       - name: Verify live build-id
+        if: steps.check_secrets.outputs.skip != 'true'
         run: |
           sleep 5
           live="$(curl -fsS 'https://dimarket.app/build-id.txt' | tr -d '[:space:]')"

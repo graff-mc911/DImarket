@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { PipelineNextAction } from '../lib/pipelineNext'
+import type { PipelineNextAction } from '../../lib/pipelineNext'
 
 type ChipProps = {
   action: PipelineNextAction

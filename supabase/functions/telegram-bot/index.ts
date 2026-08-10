@@ -321,7 +321,7 @@ Deno.serve(async (req: Request) => {
       }
 
       const locale = normalizeLocale(cq.from.language_code)
-      let session =
+      const session =
         (await getSession(admin, chatId)) ??
         ({
           chat_id: chatId,

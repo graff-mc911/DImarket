@@ -224,7 +224,6 @@ const CITY_ONLY_CENTERS: Record<string, GeoPoint> = {
   helsinki: { lat: 60.1699, lon: 24.9384 },
   dublin: { lat: 53.3498, lon: -6.2603 },
   budapest: { lat: 47.4979, lon: 19.0402 },
-  bucharest: { lat: 44.4268, lon: 26.1025 },
   sofia: { lat: 42.6977, lon: 23.3219 },
   belgrade: { lat: 44.7866, lon: 20.4489 },
   zagreb: { lat: 45.815, lon: 15.9819 },
@@ -239,7 +238,6 @@ const CITY_ONLY_CENTERS: Record<string, GeoPoint> = {
   мюнхен: { lat: 48.1351, lon: 11.582 },
   відень: { lat: 48.2082, lon: 16.3738 },
   прага: { lat: 50.0755, lon: 14.4378 },
-  kiev: { lat: 50.4501, lon: 30.5234 },
 }
 
 const cityCenterCache = new Map<string, GeoPoint | null>()

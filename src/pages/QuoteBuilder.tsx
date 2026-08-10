@@ -198,7 +198,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
     }
 
     const meta = { ...buildMeta(), quoteNumber: `Q-${id.slice(0, 8).toUpperCase()}` }
-    const { html, pdfUrl } = await generateAndStoreQuotePdf({
+    const { pdfUrl } = await generateAndStoreQuotePdf({
       userId: user.id,
       quoteId: id,
       draft,

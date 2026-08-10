@@ -41,11 +41,17 @@ export function Login() {
 
       const profile = await ensureUserProfile(data.user)
 
+      const params = new URLSearchParams(window.location.search)
+      const redirect = params.get('redirect')
+      const safeRedirect =
+        redirect && redirect.startsWith('/') && !redirect.startsWith('//') ? redirect : null
+
       navigateTo(
-        getPostLoginPath(profile, {
-          intendedRole: getIntendedRole(profile, data.user),
-          email: data.user.email,
-        }),
+        safeRedirect ||
+          getPostLoginPath(profile, {
+            intendedRole: getIntendedRole(profile, data.user),
+            email: data.user.email,
+          }),
       )
     } catch (err) {
       setError(getAuthErrorMessage(err, t))

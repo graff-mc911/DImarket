@@ -10,7 +10,6 @@ import {
   Radio,
   Star,
   Sun,
-  TrendingUp,
   Wallet,
 } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'

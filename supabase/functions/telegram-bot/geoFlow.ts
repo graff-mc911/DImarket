@@ -4,7 +4,6 @@ import {
   listCities,
   listCountries,
   listRegions,
-  matchCityInRegion,
   type GeoTree,
 } from './geo.ts'
 import type { BotStep, FlowReply, ListingDraft } from './flow.ts'

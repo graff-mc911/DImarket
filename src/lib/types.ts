@@ -103,6 +103,7 @@ export interface Database {
           completed_projects_count?: number
           updated_at?: string
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -153,6 +154,11 @@ export interface Database {
           // Monetization / Stripe subscriptions
           plan_id: string | null
           stripe_customer_id: string | null
+          stripe_account_id: string | null
+          stripe_connect_charges_enabled: boolean
+          stripe_connect_payouts_enabled: boolean
+          stripe_connect_details_submitted: boolean
+          stripe_connect_onboarded_at: string | null
           stripe_subscription_id: string | null
           subscription_status: string | null
           subscription_period_end: string | null
@@ -207,6 +213,11 @@ export interface Database {
           featured_expires_at?: string | null
           plan_id?: string
           stripe_customer_id?: string | null
+          stripe_account_id?: string | null
+          stripe_connect_charges_enabled?: boolean
+          stripe_connect_payouts_enabled?: boolean
+          stripe_connect_details_submitted?: boolean
+          stripe_connect_onboarded_at?: string | null
           stripe_subscription_id?: string | null
           subscription_status?: string
           subscription_period_end?: string | null
@@ -255,6 +266,11 @@ export interface Database {
           featured_expires_at?: string | null
           plan_id?: string
           stripe_customer_id?: string | null
+          stripe_account_id?: string | null
+          stripe_connect_charges_enabled?: boolean
+          stripe_connect_payouts_enabled?: boolean
+          stripe_connect_details_submitted?: boolean
+          stripe_connect_onboarded_at?: string | null
           stripe_subscription_id?: string | null
           subscription_status?: string
           subscription_period_end?: string | null
@@ -276,6 +292,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -330,6 +347,10 @@ export interface Database {
           city_name: string | null
           latitude: number | null
           longitude: number | null
+          hired_professional_id: string | null
+          pipeline_stage: string | null
+          pipeline_completed_at: string | null
+          review_prompted_at: string | null
         }
         Insert: {
           id?: string
@@ -375,6 +396,10 @@ export interface Database {
           city_name?: string | null
           latitude?: number | null
           longitude?: number | null
+          hired_professional_id?: string | null
+          pipeline_stage?: string | null
+          pipeline_completed_at?: string | null
+          review_prompted_at?: string | null
         }
         Update: {
           id?: string
@@ -420,7 +445,12 @@ export interface Database {
           city_name?: string | null
           latitude?: number | null
           longitude?: number | null
+          hired_professional_id?: string | null
+          pipeline_stage?: string | null
+          pipeline_completed_at?: string | null
+          review_prompted_at?: string | null
         }
+        Relationships: []
       }
 
       project_files: {
@@ -454,6 +484,7 @@ export interface Database {
           kind?: 'photo' | 'video' | 'pdf' | 'plan' | 'other'
           created_at?: string
         }
+        Relationships: []
       }
 
       project_applications: {
@@ -461,7 +492,7 @@ export interface Database {
           id: string
           listing_id: string
           professional_id: string
-          status: 'saved' | 'applied' | 'withdrawn' | 'accepted' | 'rejected'
+          status: 'saved' | 'applied' | 'withdrawn' | 'accepted' | 'rejected' | 'ready' | 'needs_inspection' | 'declined'
           message: string | null
           saved: boolean
           hidden: boolean
@@ -472,7 +503,7 @@ export interface Database {
           id?: string
           listing_id: string
           professional_id: string
-          status?: 'saved' | 'applied' | 'withdrawn' | 'accepted' | 'rejected'
+          status?: 'saved' | 'applied' | 'withdrawn' | 'accepted' | 'rejected' | 'ready' | 'needs_inspection' | 'declined'
           message?: string | null
           saved?: boolean
           hidden?: boolean
@@ -483,13 +514,14 @@ export interface Database {
           id?: string
           listing_id?: string
           professional_id?: string
-          status?: 'saved' | 'applied' | 'withdrawn' | 'accepted' | 'rejected'
+          status?: 'saved' | 'applied' | 'withdrawn' | 'accepted' | 'rejected' | 'ready' | 'needs_inspection' | 'declined'
           message?: string | null
           saved?: boolean
           hidden?: boolean
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
 
       quotes: {
@@ -553,6 +585,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -580,6 +613,7 @@ export interface Database {
           display_order?: number
           created_at?: string
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -634,6 +668,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
 
       portfolio_likes: {
@@ -655,6 +690,7 @@ export interface Database {
           user_id?: string
           created_at?: string
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -733,6 +769,7 @@ export interface Database {
           is_verified_customer?: boolean
           created_at?: string
         }
+        Relationships: []
       }
 
       review_likes: {
@@ -754,6 +791,7 @@ export interface Database {
           user_id?: string
           created_at?: string
         }
+        Relationships: []
       }
 
       review_replies: {
@@ -781,6 +819,7 @@ export interface Database {
           body?: string
           created_at?: string
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -828,6 +867,7 @@ export interface Database {
           is_blocked?: boolean | null
           created_at?: string
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -856,6 +896,7 @@ export interface Database {
           item_id?: string
           created_at?: string
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -975,6 +1016,7 @@ export interface Database {
           created_at?: string | null
           updated_at?: string | null
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -1017,6 +1059,7 @@ export interface Database {
           is_read?: boolean
           created_at?: string | null
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -1041,6 +1084,7 @@ export interface Database {
           category_id?: string
           created_at?: string
         }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -1074,6 +1118,80 @@ export interface Database {
           country_ranking?: Json
           updated_at?: string
         }
+        Relationships: []
+      }
+
+      project_escrows: {
+        Row: {
+          id: string
+          listing_id: string
+          quote_id: string | null
+          customer_id: string
+          professional_id: string
+          amount: number
+          currency: string
+          status: 'pending_checkout' | 'authorized' | 'captured' | 'canceled' | 'refunded'
+          stripe_session_id: string | null
+          stripe_payment_intent_id: string | null
+          authorized_at: string | null
+          released_at: string | null
+          created_at: string
+          updated_at: string | null
+          platform_fee_bps: number
+          platform_fee_amount: number | null
+          transfer_amount: number | null
+          stripe_transfer_id: string | null
+          payout_status: 'none' | 'pending' | 'transferred' | 'failed' | 'skipped_no_connect'
+          payout_error: string | null
+          paid_out_at: string | null
+        }
+        Insert: {
+          id?: string
+          listing_id: string
+          quote_id?: string | null
+          customer_id: string
+          professional_id: string
+          amount: number
+          currency?: string
+          status?: 'pending_checkout' | 'authorized' | 'captured' | 'canceled' | 'refunded'
+          stripe_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          authorized_at?: string | null
+          released_at?: string | null
+          created_at?: string
+          updated_at?: string | null
+          platform_fee_bps?: number
+          platform_fee_amount?: number | null
+          transfer_amount?: number | null
+          stripe_transfer_id?: string | null
+          payout_status?: 'none' | 'pending' | 'transferred' | 'failed' | 'skipped_no_connect'
+          payout_error?: string | null
+          paid_out_at?: string | null
+        }
+        Update: {
+          id?: string
+          listing_id?: string
+          quote_id?: string | null
+          customer_id?: string
+          professional_id?: string
+          amount?: number
+          currency?: string
+          status?: 'pending_checkout' | 'authorized' | 'captured' | 'canceled' | 'refunded'
+          stripe_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          authorized_at?: string | null
+          released_at?: string | null
+          created_at?: string
+          updated_at?: string | null
+          platform_fee_bps?: number
+          platform_fee_amount?: number | null
+          transfer_amount?: number | null
+          stripe_transfer_id?: string | null
+          payout_status?: 'none' | 'pending' | 'transferred' | 'failed' | 'skipped_no_connect'
+          payout_error?: string | null
+          paid_out_at?: string | null
+        }
+        Relationships: []
       }
 
       // ----------------------------------------------------------
@@ -1085,7 +1203,7 @@ export interface Database {
           id: string
           user_id: string
           // Тип платежу — за що саме
-          payment_type: 'ad_campaign' | 'premium_profile' | 'featured_listing' | 'verified_badge' | 'boost' | 'subscription' | 'featured_profile' | 'sponsored_project' | 'lead_credits' | 'google_ads'
+          payment_type: 'ad_campaign' | 'premium_profile' | 'featured_listing' | 'verified_badge' | 'boost' | 'subscription' | 'featured_profile' | 'sponsored_project' | 'lead_credits' | 'google_ads' | 'project_escrow'
           // ID пов'язаного об'єкта
           reference_id: string | null
           amount: number
@@ -1098,7 +1216,7 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
-          payment_type: 'ad_campaign' | 'premium_profile' | 'featured_listing' | 'verified_badge' | 'boost' | 'subscription' | 'featured_profile' | 'sponsored_project' | 'lead_credits' | 'google_ads'
+          payment_type: 'ad_campaign' | 'premium_profile' | 'featured_listing' | 'verified_badge' | 'boost' | 'subscription' | 'featured_profile' | 'sponsored_project' | 'lead_credits' | 'google_ads' | 'project_escrow'
           reference_id?: string | null
           amount: number
           currency: string
@@ -1110,7 +1228,7 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
-          payment_type?: 'ad_campaign' | 'premium_profile' | 'featured_listing' | 'verified_badge' | 'boost' | 'subscription' | 'featured_profile' | 'sponsored_project' | 'lead_credits' | 'google_ads'
+          payment_type?: 'ad_campaign' | 'premium_profile' | 'featured_listing' | 'verified_badge' | 'boost' | 'subscription' | 'featured_profile' | 'sponsored_project' | 'lead_credits' | 'google_ads' | 'project_escrow'
           reference_id?: string | null
           amount?: number
           currency?: string
@@ -1119,6 +1237,7 @@ export interface Database {
           status?: 'pending' | 'completed' | 'failed' | 'refunded'
           created_at?: string
         }
+        Relationships: []
       }
 
       sponsored_projects: {
@@ -1371,6 +1490,7 @@ export interface Database {
           created_by?: string | null
           created_at?: string
         }
+        Relationships: []
       }
     }
     Views: {

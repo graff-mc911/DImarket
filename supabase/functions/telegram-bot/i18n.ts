@@ -181,6 +181,7 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     linkInvalid: '❌ Code not found. Copy the code from Settings → Telegram on dimarket.app.',
     linkError: '⚠️ Link failed. Try again later.',
   },
+  pl: {
     welcome: '👋 Witamy w DImarket!',
     promo: 'Darmowa platforma budowlana.\nhttps://dimarket.app\n\nKliknij «Dodaj ogłoszenie».',
     newListing: 'Nowe ogłoszenie. Wybierz kategorię:',
@@ -222,6 +223,7 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     linkInvalid: '❌ Nie znaleziono kodu. Skopiuj kod z Ustawień → Telegram na dimarket.app.',
     linkError: '⚠️ Błąd połączenia. Spróbuj później.',
   },
+  de: {
     welcome: '👋 Willkommen bei DImarket!',
     promo: 'Kostenlose Bau-Plattform.\nhttps://dimarket.app',
     newListing: 'Neues Inserat. Kategorie wählen:',
@@ -262,6 +264,7 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     linkInvalid: '❌ Code nicht gefunden. Kopieren Sie den Code aus Einstellungen → Telegram.',
     linkError: '⚠️ Verknüpfung fehlgeschlagen. Bitte später erneut versuchen.',
   },
+  es: {
     welcome: '👋 ¡Bienvenido a DImarket!',
     promo: 'Plataforma gratuita de construcción.\nhttps://dimarket.app',
     newListing: 'Nuevo anuncio. Elige categoría:',
@@ -302,6 +305,7 @@ const M: Record<BotLocale, Record<MsgKey, string>> = {
     linkInvalid: '❌ Código no encontrado. Copia el código desde Ajustes → Telegram en dimarket.app.',
     linkError: '⚠️ Error al vincular. Inténtalo más tarde.',
   },
+}
 
 export function t(locale: BotLocale, key: MsgKey, params?: Record<string, string>): string {
   let s = M[locale]?.[key] ?? M.en[key]

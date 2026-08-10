@@ -100,6 +100,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         featured_expires_at: null,
         plan_id: null,
         stripe_customer_id: null,
+        stripe_account_id: null,
+        stripe_connect_charges_enabled: false,
+        stripe_connect_payouts_enabled: false,
+        stripe_connect_details_submitted: false,
+        stripe_connect_onboarded_at: null,
         stripe_subscription_id: null,
         subscription_status: null,
         subscription_period_end: null,
@@ -120,7 +125,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         service_radius_km: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      } as Profile
+      } as unknown as Profile
     }
 
     resolved = {
