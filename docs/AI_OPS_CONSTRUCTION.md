@@ -55,25 +55,10 @@ Client → AI Analyst → AI Estimator → AI Matcher → AI Dispatcher
 
 ## Honest gaps
 
-- Escrow V1 + Connect V1: full-quote hold → capture → Transfer to pro Express account minus 5% platform fee. Soft-skip if pro not onboarded (`skipped_no_connect` + retry). No milestone splits or disputes UI yet.
+- **Project payments deferred:** escrow + Connect payouts are implemented in code but **off in UI** (`PROJECT_PAYMENTS_ENABLED = false` in `src/lib/featureFlags.ts`) until audience justifies the money loop. Hire → Project Manager works without card hold.
 - Supplier “order” is approve-intent + deep link (no checkout cart yet)
 - Learning quality grows with completed jobs + reviews volume
 
-## Escrow V1
+## Escrow / Connect (deferred)
 
-| Step | Surface |
-|------|---------|
-| Hire → Checkout authorize | `ProjectOffers` → `startProjectEscrowCheckout` |
-| Hold status | `ProjectManage` escrow banner |
-| Complete → capture → Transfer | `release-project-escrow` (+ Connect payout) |
-| Table | `project_escrows` |
-
-## Connect payout V1 (Prompt #12)
-
-| Step | Surface |
-|------|---------|
-| Pro onboarding | Settings / ProDashboard → `stripe-connect` Express |
-| Sync flags | `account.updated` webhook + status action |
-| Transfer | After capture: `transfers.create` → pro `stripe_account_id` |
-| Retry | Manage “Retry professional payout” if skipped/failed |
-| Migration | `20260810120000_stripe_connect_escrow_payout.sql` |
+Code lives under `projectEscrow.ts`, `stripeConnect.ts`, `release-project-escrow`. Re-enable by setting `PROJECT_PAYMENTS_ENABLED = true` and deploying Connect edge + migration.

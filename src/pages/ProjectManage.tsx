@@ -36,6 +36,7 @@ import {
   type ProjectEscrow,
 } from '../lib/projectEscrow'
 import { retryEscrowPayout } from '../lib/stripeConnect'
+import { PROJECT_PAYMENTS_ENABLED } from '../lib/featureFlags'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { formatEuro } from '../lib/costEstimator'
@@ -84,7 +85,9 @@ export function ProjectManage({ listingId }: { listingId: string }) {
     setStage(row?.pipeline_stage || 'intake')
     setHiredId(row?.hired_professional_id ?? null)
 
-    const latestEscrow = await fetchLatestEscrow(listingId)
+    const latestEscrow = PROJECT_PAYMENTS_ENABLED
+      ? await fetchLatestEscrow(listingId)
+      : null
     setEscrow(latestEscrow)
 
     if (row?.hired_professional_id) {
@@ -210,7 +213,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
 
   const onComplete = async () => {
     if (!user?.id) return
-    if (escrow?.status === 'pending_checkout') {
+    if (PROJECT_PAYMENTS_ENABLED && escrow?.status === 'pending_checkout') {
       setError(
         t('pipeline.escrowHoldFirst' as never) ||
           'Hold the quote total on your card before completing the project.',
@@ -220,7 +223,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
     setBusy(true)
     setError(null)
 
-    if (escrow?.status === 'authorized') {
+    if (PROJECT_PAYMENTS_ENABLED && escrow?.status === 'authorized') {
       const released = await releaseProjectEscrow(listingId)
       if ('error' in released) {
         setBusy(false)
@@ -239,7 +242,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
       return
     }
     setNotice(
-      escrow?.status === 'authorized'
+      PROJECT_PAYMENTS_ENABLED && escrow?.status === 'authorized'
         ? t('pipeline.completedEscrowNotice' as never) ||
             'Project completed — escrow released. Leave a review below.'
         : t('pipeline.completedNotice' as never) || 'Project completed — leave a review below.',
@@ -286,7 +289,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
               </p>
             </>
           ) : null}
-          {hired && escrow ? (
+          {PROJECT_PAYMENTS_ENABLED && hired && escrow ? (
             <div className="mt-4 rounded-2xl border border-[#e8e8ed] bg-[#f5f5f7] px-4 py-3">
               <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
                 {t('pipeline.escrowTitle' as never) || 'Project escrow'}
@@ -349,7 +352,13 @@ export function ProjectManage({ listingId }: { listingId: string }) {
               ) : null}
             </div>
           ) : null}
-          {hired && isOwner && !completed && !escrow && acceptedQuoteId && quoteTotal ? (
+          {PROJECT_PAYMENTS_ENABLED &&
+          hired &&
+          isOwner &&
+          !completed &&
+          !escrow &&
+          acceptedQuoteId &&
+          quoteTotal ? (
             <div className="mt-4 rounded-2xl border border-[#e8e8ed] bg-[#f5f5f7] px-4 py-3">
               <p className="text-[14px] font-semibold text-[#1d1d1f]">
                 {t('pipeline.escrowTitle' as never) || 'Project escrow'}

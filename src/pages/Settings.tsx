@@ -29,6 +29,7 @@ import { OnboardingChecklist } from '../components/OnboardingChecklist'
 import { ReferralPanel } from '../components/ReferralPanel'
 import { TelegramLinkPanel } from '../components/TelegramLinkPanel'
 import { ConnectPayoutPanel } from '../components/ConnectPayoutPanel'
+import { PROJECT_PAYMENTS_ENABLED } from '../lib/featureFlags'
 import { buildOnboardingState } from '../lib/onboardingProgress'
 import { syncProfessionalCategoriesFromWorkSlugs } from '../lib/syncProfessionalCategories'
 import {
@@ -583,7 +584,9 @@ export function Settings() {
                   />
                 )}
 
-              {(userRole === 'professional' || userRole === 'company') && currentUserId ? (
+              {PROJECT_PAYMENTS_ENABLED &&
+              (userRole === 'professional' || userRole === 'company') &&
+              currentUserId ? (
                 <ConnectPayoutPanel />
               ) : null}
 

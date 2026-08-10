@@ -5,6 +5,7 @@ import { formatEuro } from '../lib/costEstimator'
 import { rankQuotesForListing, type RankedOffer } from '../lib/aiOfferRanking'
 import { selectProfessionalForProject } from '../lib/projectManager'
 import { startProjectEscrowCheckout } from '../lib/projectEscrow'
+import { PROJECT_PAYMENTS_ENABLED } from '../lib/featureFlags'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 
@@ -111,33 +112,42 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
       return
     }
     setHiredId(offer.professionalId)
-    setNotice(
-      t('pipeline.hiredEscrowNotice' as never) ||
-        'Professional hired — opening secure hold for the quote total…',
-    )
 
-    const escrow = await startProjectEscrowCheckout({
-      listingId,
-      customerId: user.id,
-      professionalId: offer.professionalId,
-      quoteId: offer.quoteId,
-      amountEur: offer.total,
-      currency: offer.currency || 'EUR',
-      projectTitle: title,
-    })
-    if ('error' in escrow) {
-      setError(
-        (t('pipeline.escrowStartFailed' as never) || 'Could not start payment hold') +
-          `: ${escrow.error}`,
-      )
+    if (PROJECT_PAYMENTS_ENABLED) {
       setNotice(
-        t('pipeline.hiredNotice' as never) ||
-          'Professional hired — open Project Manager to hold funds or track work.',
+        t('pipeline.hiredEscrowNotice' as never) ||
+          'Professional hired — opening secure hold for the quote total…',
       )
-      navigateTo(`/project/${listingId}/manage`)
+      const escrow = await startProjectEscrowCheckout({
+        listingId,
+        customerId: user.id,
+        professionalId: offer.professionalId,
+        quoteId: offer.quoteId,
+        amountEur: offer.total,
+        currency: offer.currency || 'EUR',
+        projectTitle: title,
+      })
+      if ('error' in escrow) {
+        setError(
+          (t('pipeline.escrowStartFailed' as never) || 'Could not start payment hold') +
+            `: ${escrow.error}`,
+        )
+        setNotice(
+          t('pipeline.hiredNotice' as never) ||
+            'Professional hired — open Project Manager to hold funds or track work.',
+        )
+        navigateTo(`/project/${listingId}/manage`)
+        return
+      }
+      window.location.href = escrow.url
       return
     }
-    window.location.href = escrow.url
+
+    setNotice(
+      t('pipeline.hiredNotice' as never) ||
+        'Professional hired — opening Project Manager…',
+    )
+    navigateTo(`/project/${listingId}/manage`)
   }
 
   return (

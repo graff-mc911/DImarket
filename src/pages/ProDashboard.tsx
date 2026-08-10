@@ -28,6 +28,7 @@ import { AreaSparkline, BarChart, DonutProgress } from '../components/pro-dashbo
 import { MiniCalendar } from '../components/pro-dashboard/MiniCalendar'
 import { OwnerCabinetEntry } from '../components/OwnerCabinetEntry'
 import { ConnectPayoutPanel } from '../components/ConnectPayoutPanel'
+import { PROJECT_PAYMENTS_ENABLED } from '../lib/featureFlags'
 
 function formatEuro(n: number): string {
   return `€${Math.round(n).toLocaleString()}`
@@ -296,7 +297,9 @@ export function ProDashboard() {
 
       <div className="mx-auto max-w-7xl px-4 py-6 md:px-6">
         <OwnerCabinetEntry variant="banner" className="mb-4" />
-        <ConnectPayoutPanel variant="banner" returnPath="/pro/dashboard?connect=return" />
+        {PROJECT_PAYMENTS_ENABLED ? (
+          <ConnectPayoutPanel variant="banner" returnPath="/pro/dashboard?connect=return" />
+        ) : null}
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[1, 2, 3, 4].map((i) => (
