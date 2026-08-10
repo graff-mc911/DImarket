@@ -3,7 +3,7 @@
 // Відповідає за маршрутизацію між усіми сторінками.
 // ============================================================
 
-import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react'
+import { Suspense, useEffect, useLayoutEffect, useState } from 'react'
 import { AppProvider }         from './contexts/AppContext'
 import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
@@ -12,6 +12,7 @@ import { MobileBottomNav }     from './components/MobileBottomNav'
 import { PageWithSideAds } from './components/PageWithSideAds'
 import { PageLoading } from './components/PageLoading'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { lazyWithRetry } from './lib/lazyWithRetry'
 import { bindPathListener, navigateTo } from './lib/navigation'
 import { isSeoLocale } from './lib/seoRoutes'
 import {
@@ -25,181 +26,181 @@ import { parseGeoServicePath } from './lib/geoSearch'
 import { Home } from './pages/Home'
 
 // Lazy: all other routes — keeps initial JS small
-const Professionals = lazy(() =>
+const Professionals = lazyWithRetry(() =>
   import('./pages/Professionals').then((m) => ({ default: m.Professionals })),
 )
-const Companies = lazy(() =>
+const Companies = lazyWithRetry(() =>
   import('./pages/Companies').then((m) => ({ default: m.Companies })),
 )
-const Listings = lazy(() =>
+const Listings = lazyWithRetry(() =>
   import('./pages/Listings').then((m) => ({ default: m.Listings })),
 )
-const ListingDetail = lazy(() =>
+const ListingDetail = lazyWithRetry(() =>
   import('./pages/ListingDetail').then((m) => ({ default: m.ListingDetail })),
 )
-const ProfessionalDetail = lazy(() =>
+const ProfessionalDetail = lazyWithRetry(() =>
   import('./pages/ProfessionalDetail').then((m) => ({ default: m.ProfessionalDetail })),
 )
-const Contact = lazy(() =>
+const Contact = lazyWithRetry(() =>
   import('./pages/Contact').then((m) => ({ default: m.Contact })),
 )
-const Advertising = lazy(() =>
+const Advertising = lazyWithRetry(() =>
   import('./pages/Advertising').then((m) => ({ default: m.Advertising })),
 )
-const Login = lazy(() =>
+const Login = lazyWithRetry(() =>
   import('./pages/Login').then((m) => ({ default: m.Login })),
 )
-const Register = lazy(() =>
+const Register = lazyWithRetry(() =>
   import('./pages/Register').then((m) => ({ default: m.Register })),
 )
-const AuthCallback = lazy(() =>
+const AuthCallback = lazyWithRetry(() =>
   import('./pages/AuthCallback').then((m) => ({ default: m.AuthCallback })),
 )
-const Dashboard = lazy(() =>
+const Dashboard = lazyWithRetry(() =>
   import('./pages/Dashboard').then((m) => ({ default: m.Dashboard })),
 )
-const Settings = lazy(() =>
+const Settings = lazyWithRetry(() =>
   import('./pages/Settings').then((m) => ({ default: m.Settings })),
 )
-const Profile = lazy(() =>
+const Profile = lazyWithRetry(() =>
   import('./pages/Profile').then((m) => ({ default: m.Profile })),
 )
-const MyListings = lazy(() =>
+const MyListings = lazyWithRetry(() =>
   import('./pages/MyListings').then((m) => ({ default: m.MyListings })),
 )
-const Messages = lazy(() =>
+const Messages = lazyWithRetry(() =>
   import('./pages/Messages').then((m) => ({ default: m.Messages })),
 )
-const Favorites = lazy(() =>
+const Favorites = lazyWithRetry(() =>
   import('./pages/Favorites').then((m) => ({ default: m.Favorites })),
 )
-const CreateAd = lazy(() =>
+const CreateAd = lazyWithRetry(() =>
   import('./pages/CreateAd').then((m) => ({ default: m.CreateAd })),
 )
-const JobRequestChat = lazy(() =>
+const JobRequestChat = lazyWithRetry(() =>
   import('./pages/JobRequestChat').then((m) => ({ default: m.JobRequestChat })),
 )
-const AiAdmin = lazy(() =>
+const AiAdmin = lazyWithRetry(() =>
   import('./pages/AiAdmin').then((m) => ({ default: m.AiAdmin })),
 )
-const MarketingAgentAdmin = lazy(() =>
+const MarketingAgentAdmin = lazyWithRetry(() =>
   import('./pages/MarketingAgentAdmin').then((m) => ({ default: m.MarketingAgentAdmin })),
 )
-const Checkout = lazy(() =>
+const Checkout = lazyWithRetry(() =>
   import('./pages/Checkout').then((m) => ({ default: m.Checkout })),
 )
-const BoostProfile = lazy(() =>
+const BoostProfile = lazyWithRetry(() =>
   import('./pages/BoostProfile').then((m) => ({ default: m.BoostProfile })),
 )
-const Pricing = lazy(() =>
+const Pricing = lazyWithRetry(() =>
   import('./pages/Pricing').then((m) => ({ default: m.Pricing })),
 )
-const Billing = lazy(() =>
+const Billing = lazyWithRetry(() =>
   import('./pages/Billing').then((m) => ({ default: m.Billing })),
 )
-const Verification = lazy(() =>
+const Verification = lazyWithRetry(() =>
   import('./pages/Verification').then((m) => ({ default: m.Verification })),
 )
-const ForProfessionals = lazy(() =>
+const ForProfessionals = lazyWithRetry(() =>
   import('./pages/ForProfessionals').then((m) => ({ default: m.ForProfessionals })),
 )
-const ForCompanies = lazy(() =>
+const ForCompanies = lazyWithRetry(() =>
   import('./pages/ForCompanies').then((m) => ({ default: m.ForCompanies })),
 )
-const ForAdvertisers = lazy(() =>
+const ForAdvertisers = lazyWithRetry(() =>
   import('./pages/ForAdvertisers').then((m) => ({ default: m.ForAdvertisers })),
 )
-const SeoMarketLanding = lazy(() =>
+const SeoMarketLanding = lazyWithRetry(() =>
   import('./pages/SeoMarketLanding').then((m) => ({ default: m.SeoMarketLanding })),
 )
-const CreateProject = lazy(() =>
+const CreateProject = lazyWithRetry(() =>
   import('./pages/CreateProject').then((m) => ({ default: m.CreateProject })),
 )
-const ProjectMatches = lazy(() =>
+const ProjectMatches = lazyWithRetry(() =>
   import('./pages/ProjectMatches').then((m) => ({ default: m.ProjectMatches })),
 )
-const ProjectOffers = lazy(() =>
+const ProjectOffers = lazyWithRetry(() =>
   import('./pages/ProjectOffers').then((m) => ({ default: m.ProjectOffers })),
 )
-const ProjectManage = lazy(() =>
+const ProjectManage = lazyWithRetry(() =>
   import('./pages/ProjectManage').then((m) => ({ default: m.ProjectManage })),
 )
-const ProjectFeed = lazy(() =>
+const ProjectFeed = lazyWithRetry(() =>
   import('./pages/ProjectFeed').then((m) => ({ default: m.ProjectFeed })),
 )
-const QuoteBuilder = lazy(() =>
+const QuoteBuilder = lazyWithRetry(() =>
   import('./pages/QuoteBuilder').then((m) => ({ default: m.QuoteBuilder })),
 )
-const MyProjects = lazy(() =>
+const MyProjects = lazyWithRetry(() =>
   import('./pages/MyProjects').then((m) => ({ default: m.MyProjects })),
 )
-const ProDashboard = lazy(() =>
+const ProDashboard = lazyWithRetry(() =>
   import('./pages/ProDashboard').then((m) => ({ default: m.ProDashboard })),
 )
-const ProCalendar = lazy(() =>
+const ProCalendar = lazyWithRetry(() =>
   import('./pages/ProCalendar').then((m) => ({ default: m.ProCalendar })),
 )
-const BookProfessional = lazy(() =>
+const BookProfessional = lazyWithRetry(() =>
   import('./pages/BookProfessional').then((m) => ({ default: m.BookProfessional })),
 )
-const CustomerDashboard = lazy(() =>
+const CustomerDashboard = lazyWithRetry(() =>
   import('./pages/CustomerDashboard').then((m) => ({ default: m.CustomerDashboard })),
 )
-const CostEstimator = lazy(() =>
+const CostEstimator = lazyWithRetry(() =>
   import('./pages/CostEstimator').then((m) => ({ default: m.CostEstimator })),
 )
-const CostEstimatorHistory = lazy(() =>
+const CostEstimatorHistory = lazyWithRetry(() =>
   import('./pages/CostEstimatorHistory').then((m) => ({
     default: m.CostEstimatorHistory,
   })),
 )
-const Notifications = lazy(() =>
+const Notifications = lazyWithRetry(() =>
   import('./pages/Notifications').then((m) => ({ default: m.Notifications })),
 )
-const AiAssistant = lazy(() =>
+const AiAssistant = lazyWithRetry(() =>
   import('./pages/AiAssistant').then((m) => ({ default: m.AiAssistant })),
 )
-const Analytics = lazy(() =>
+const Analytics = lazyWithRetry(() =>
   import('./pages/Analytics').then((m) => ({ default: m.Analytics })),
 )
-const CategoryPage = lazy(() =>
+const CategoryPage = lazyWithRetry(() =>
   import('./pages/CategoryPage').then((m) => ({ default: m.CategoryPage })),
 )
-const SearchPage = lazy(() =>
+const SearchPage = lazyWithRetry(() =>
   import('./pages/Search').then((m) => ({ default: m.SearchPage })),
 )
-const MapExplore = lazy(() =>
+const MapExplore = lazyWithRetry(() =>
   import('./pages/MapExplore').then((m) => ({ default: m.MapExplore })),
 )
-const ServiceResults = lazy(() =>
+const ServiceResults = lazyWithRetry(() =>
   import('./pages/ServiceResults').then((m) => ({ default: m.ServiceResults })),
 )
-const CommercialAgentsHome = lazy(() =>
+const CommercialAgentsHome = lazyWithRetry(() =>
   import('./pages/commercialAgents/CommercialAgentsHome').then((m) => ({
     default: m.CommercialAgentsHome,
   })),
 )
-const CommercialAgentsDirectory = lazy(() =>
+const CommercialAgentsDirectory = lazyWithRetry(() =>
   import('./pages/commercialAgents/CommercialAgentsDirectory').then((m) => ({
     default: m.CommercialAgentsDirectory,
   })),
 )
-const ManufacturerProfilePage = lazy(() =>
+const ManufacturerProfilePage = lazyWithRetry(() =>
   import('./pages/commercialAgents/ManufacturerProfilePage').then((m) => ({
     default: m.ManufacturerProfilePage,
   })),
 )
-const AgentProfilePage = lazy(() =>
+const AgentProfilePage = lazyWithRetry(() =>
   import('./pages/commercialAgents/AgentProfilePage').then((m) => ({
     default: m.AgentProfilePage,
   })),
 )
-const OpportunityDetailPage = lazy(() =>
+const OpportunityDetailPage = lazyWithRetry(() =>
   import('./pages/commercialAgents/OpportunityDetailPage').then((m) => ({
     default: m.OpportunityDetailPage,
   })),
 )
-const CommercialAgentsDashboard = lazy(() =>
+const CommercialAgentsDashboard = lazyWithRetry(() =>
   import('./pages/commercialAgents/CommercialAgentsDashboard').then((m) => ({
     default: m.CommercialAgentsDashboard,
   })),
@@ -382,6 +383,7 @@ function App() {
           <main className="flex-1">
             <ErrorBoundary
               name="Page"
+              resetKey={path}
               fallbackTitle="This page could not be loaded"
               fallbackMessage="Please try again or go back to the home page. Your account session is still safe."
             >

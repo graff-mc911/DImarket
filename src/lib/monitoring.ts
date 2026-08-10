@@ -25,7 +25,9 @@ export async function initMonitoring(): Promise<void> {
       ignoreErrors: [
         'ResizeObserver loop',
         'Non-Error promise rejection',
-        /Loading chunk \d+ failed/,
+        /Loading chunk [\w-]+ failed/,
+        /Failed to fetch dynamically imported module/i,
+        /Importing a module script failed/i,
       ],
     })
     sentryReady = true

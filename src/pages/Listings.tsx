@@ -97,7 +97,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
   const categoryPageMeta = useMemo(() => {
     if (!fixedCategorySlug) return null
     const cfg = SITE_CATEGORY_CONFIG[fixedCategorySlug]
-    if (!cfg.pageTitleKey) return null
+    if (!cfg?.pageTitleKey) return null
     return {
       title: t(cfg.pageTitleKey),
       description: cfg.pageDescriptionKey ? t(cfg.pageDescriptionKey) : '',

@@ -1,6 +1,11 @@
 import { enTranslations } from '../Translations/en'
 import type { TranslationKey } from '../Translations/en'
 import type { AiAssistantLocaleCode } from '../Translations/aiAssistant'
+import {
+  clearChunkReloadFlag,
+  isChunkLoadError,
+  reloadOnceForStaleChunk,
+} from '../chunkLoadError'
 
 export type { TranslationKey }
 
@@ -117,8 +122,18 @@ export async function ensureLanguageLoaded(code: string): Promise<void> {
       cache.en = enTranslations
       return
     }
-    const partial = await localeLoaders[languageCode]()
-    cache[languageCode] = await withEnglishFallback(partial, languageCode)
+    try {
+      const partial = await localeLoaders[languageCode]()
+      cache[languageCode] = await withEnglishFallback(partial, languageCode)
+      clearChunkReloadFlag()
+    } catch (error) {
+      if (isChunkLoadError(error) && reloadOnceForStaleChunk()) {
+        await new Promise(() => {})
+      }
+      // Keep English fallback so boot can continue if reload already happened.
+      console.warn(`[i18n] Failed to load locale "${languageCode}"`, error)
+      cache[languageCode] = enTranslations
+    }
   })()
 
   inflight.set(languageCode, task)
