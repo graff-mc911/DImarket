@@ -1,80 +1,179 @@
 // ============================================================
 // App.tsx — Кореневий компонент додатку DImarket
-// Відповідає за маршрутизацію між усіма сторінками.
+// Відповідає за маршрутизацію між усіми сторінками.
 // ============================================================
 
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react'
 import { AppProvider }         from './contexts/AppContext'
 import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
 import { MobileBottomNav }     from './components/MobileBottomNav'
 import { PageWithSideAds } from './components/PageWithSideAds'
+import { PageLoading } from './components/PageLoading'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { bindPathListener, navigateTo } from './lib/navigation'
-
-// --- Публічні сторінки ---
-import { Home }               from './pages/Home'
-import { Professionals }      from './pages/Professionals'
-import { Companies }          from './pages/Companies'
-import { Listings }           from './pages/Listings'
-import { ListingDetail }      from './pages/ListingDetail'
-import { ProfessionalDetail } from './pages/ProfessionalDetail'
-import { Contact }            from './pages/Contact'
-import { Advertising }        from './pages/Advertising'
-
-// --- Авторизація ---
-import { Login }    from './pages/Login'
-import { Register } from './pages/Register'
-import { AuthCallback } from './pages/AuthCallback'
-
-// --- Приватні сторінки ---
-import { Dashboard }    from './pages/Dashboard'
-import { Settings }     from './pages/Settings'
-import { Profile }      from './pages/Profile'
-import { MyListings }   from './pages/MyListings'
-import { Messages }     from './pages/Messages'
-import { Favorites }    from './pages/Favorites'
-import { CreateAd }       from './pages/CreateAd'
-import { JobRequestChat } from './pages/JobRequestChat'
-import { AiAdmin } from './pages/AiAdmin'
-import { MarketingAgentAdmin } from './pages/MarketingAgentAdmin'
-import { Checkout }     from './pages/Checkout'
-import { BoostProfile } from './pages/BoostProfile'
-import { Pricing } from './pages/Pricing'
-import { Billing } from './pages/Billing'
-import { Verification } from './pages/Verification'
-import { ForProfessionals } from './pages/ForProfessionals'
-import { ForCompanies }     from './pages/ForCompanies'
-import { ForAdvertisers }   from './pages/ForAdvertisers'
-import { SeoMarketLanding } from './pages/SeoMarketLanding'
 import { isSeoLocale } from './lib/seoRoutes'
-import { CreateProject } from './pages/CreateProject'
-import { ProjectMatches } from './pages/ProjectMatches'
-import { ProjectOffers } from './pages/ProjectOffers'
-import { ProjectManage } from './pages/ProjectManage'
-import { ProjectFeed } from './pages/ProjectFeed'
-import { QuoteBuilder } from './pages/QuoteBuilder'
-import { MyProjects } from './pages/MyProjects'
-import { ProDashboard } from './pages/ProDashboard'
-import { ProCalendar } from './pages/ProCalendar'
-import { BookProfessional } from './pages/BookProfessional'
-import { CustomerDashboard } from './pages/CustomerDashboard'
-import { CostEstimator } from './pages/CostEstimator'
-import { CostEstimatorHistory } from './pages/CostEstimatorHistory'
-import { Notifications } from './pages/Notifications'
-import { AiAssistant } from './pages/AiAssistant'
-import { Analytics } from './pages/Analytics'
-import { CategoryPage } from './pages/CategoryPage'
-import { SearchPage } from './pages/Search'
-import { MapExplore } from './pages/MapExplore'
-import { ServiceResults } from './pages/ServiceResults'
 import {
   findServiceBySlug,
   isReservedAppPath,
   SEO_SERVICE_ALIASES,
 } from './lib/serviceTaxonomy'
-import { ErrorBoundary } from './components/ErrorBoundary'
 import { parseGeoServicePath } from './lib/geoSearch'
+
+// Eager: first paint / shell
+import { Home } from './pages/Home'
+
+// Lazy: all other routes — keeps initial JS small
+const Professionals = lazy(() =>
+  import('./pages/Professionals').then((m) => ({ default: m.Professionals })),
+)
+const Companies = lazy(() =>
+  import('./pages/Companies').then((m) => ({ default: m.Companies })),
+)
+const Listings = lazy(() =>
+  import('./pages/Listings').then((m) => ({ default: m.Listings })),
+)
+const ListingDetail = lazy(() =>
+  import('./pages/ListingDetail').then((m) => ({ default: m.ListingDetail })),
+)
+const ProfessionalDetail = lazy(() =>
+  import('./pages/ProfessionalDetail').then((m) => ({ default: m.ProfessionalDetail })),
+)
+const Contact = lazy(() =>
+  import('./pages/Contact').then((m) => ({ default: m.Contact })),
+)
+const Advertising = lazy(() =>
+  import('./pages/Advertising').then((m) => ({ default: m.Advertising })),
+)
+const Login = lazy(() =>
+  import('./pages/Login').then((m) => ({ default: m.Login })),
+)
+const Register = lazy(() =>
+  import('./pages/Register').then((m) => ({ default: m.Register })),
+)
+const AuthCallback = lazy(() =>
+  import('./pages/AuthCallback').then((m) => ({ default: m.AuthCallback })),
+)
+const Dashboard = lazy(() =>
+  import('./pages/Dashboard').then((m) => ({ default: m.Dashboard })),
+)
+const Settings = lazy(() =>
+  import('./pages/Settings').then((m) => ({ default: m.Settings })),
+)
+const Profile = lazy(() =>
+  import('./pages/Profile').then((m) => ({ default: m.Profile })),
+)
+const MyListings = lazy(() =>
+  import('./pages/MyListings').then((m) => ({ default: m.MyListings })),
+)
+const Messages = lazy(() =>
+  import('./pages/Messages').then((m) => ({ default: m.Messages })),
+)
+const Favorites = lazy(() =>
+  import('./pages/Favorites').then((m) => ({ default: m.Favorites })),
+)
+const CreateAd = lazy(() =>
+  import('./pages/CreateAd').then((m) => ({ default: m.CreateAd })),
+)
+const JobRequestChat = lazy(() =>
+  import('./pages/JobRequestChat').then((m) => ({ default: m.JobRequestChat })),
+)
+const AiAdmin = lazy(() =>
+  import('./pages/AiAdmin').then((m) => ({ default: m.AiAdmin })),
+)
+const MarketingAgentAdmin = lazy(() =>
+  import('./pages/MarketingAgentAdmin').then((m) => ({ default: m.MarketingAgentAdmin })),
+)
+const Checkout = lazy(() =>
+  import('./pages/Checkout').then((m) => ({ default: m.Checkout })),
+)
+const BoostProfile = lazy(() =>
+  import('./pages/BoostProfile').then((m) => ({ default: m.BoostProfile })),
+)
+const Pricing = lazy(() =>
+  import('./pages/Pricing').then((m) => ({ default: m.Pricing })),
+)
+const Billing = lazy(() =>
+  import('./pages/Billing').then((m) => ({ default: m.Billing })),
+)
+const Verification = lazy(() =>
+  import('./pages/Verification').then((m) => ({ default: m.Verification })),
+)
+const ForProfessionals = lazy(() =>
+  import('./pages/ForProfessionals').then((m) => ({ default: m.ForProfessionals })),
+)
+const ForCompanies = lazy(() =>
+  import('./pages/ForCompanies').then((m) => ({ default: m.ForCompanies })),
+)
+const ForAdvertisers = lazy(() =>
+  import('./pages/ForAdvertisers').then((m) => ({ default: m.ForAdvertisers })),
+)
+const SeoMarketLanding = lazy(() =>
+  import('./pages/SeoMarketLanding').then((m) => ({ default: m.SeoMarketLanding })),
+)
+const CreateProject = lazy(() =>
+  import('./pages/CreateProject').then((m) => ({ default: m.CreateProject })),
+)
+const ProjectMatches = lazy(() =>
+  import('./pages/ProjectMatches').then((m) => ({ default: m.ProjectMatches })),
+)
+const ProjectOffers = lazy(() =>
+  import('./pages/ProjectOffers').then((m) => ({ default: m.ProjectOffers })),
+)
+const ProjectManage = lazy(() =>
+  import('./pages/ProjectManage').then((m) => ({ default: m.ProjectManage })),
+)
+const ProjectFeed = lazy(() =>
+  import('./pages/ProjectFeed').then((m) => ({ default: m.ProjectFeed })),
+)
+const QuoteBuilder = lazy(() =>
+  import('./pages/QuoteBuilder').then((m) => ({ default: m.QuoteBuilder })),
+)
+const MyProjects = lazy(() =>
+  import('./pages/MyProjects').then((m) => ({ default: m.MyProjects })),
+)
+const ProDashboard = lazy(() =>
+  import('./pages/ProDashboard').then((m) => ({ default: m.ProDashboard })),
+)
+const ProCalendar = lazy(() =>
+  import('./pages/ProCalendar').then((m) => ({ default: m.ProCalendar })),
+)
+const BookProfessional = lazy(() =>
+  import('./pages/BookProfessional').then((m) => ({ default: m.BookProfessional })),
+)
+const CustomerDashboard = lazy(() =>
+  import('./pages/CustomerDashboard').then((m) => ({ default: m.CustomerDashboard })),
+)
+const CostEstimator = lazy(() =>
+  import('./pages/CostEstimator').then((m) => ({ default: m.CostEstimator })),
+)
+const CostEstimatorHistory = lazy(() =>
+  import('./pages/CostEstimatorHistory').then((m) => ({
+    default: m.CostEstimatorHistory,
+  })),
+)
+const Notifications = lazy(() =>
+  import('./pages/Notifications').then((m) => ({ default: m.Notifications })),
+)
+const AiAssistant = lazy(() =>
+  import('./pages/AiAssistant').then((m) => ({ default: m.AiAssistant })),
+)
+const Analytics = lazy(() =>
+  import('./pages/Analytics').then((m) => ({ default: m.Analytics })),
+)
+const CategoryPage = lazy(() =>
+  import('./pages/CategoryPage').then((m) => ({ default: m.CategoryPage })),
+)
+const SearchPage = lazy(() =>
+  import('./pages/Search').then((m) => ({ default: m.SearchPage })),
+)
+const MapExplore = lazy(() =>
+  import('./pages/MapExplore').then((m) => ({ default: m.MapExplore })),
+)
+const ServiceResults = lazy(() =>
+  import('./pages/ServiceResults').then((m) => ({ default: m.ServiceResults })),
+)
 
 /** Old Admin Panel URLs → owner cabinet (/dashboard). */
 function RedirectToOwnerCabinet() {
@@ -231,7 +330,9 @@ function App() {
               fallbackTitle="This page could not be loaded"
               fallbackMessage="Please try again or go back to the home page. Your account session is still safe."
             >
-              <PageWithSideAds>{getPage()}</PageWithSideAds>
+              <PageWithSideAds>
+                <Suspense fallback={<PageLoading />}>{getPage()}</Suspense>
+              </PageWithSideAds>
             </ErrorBoundary>
           </main>
           <ErrorBoundary name="Footer">

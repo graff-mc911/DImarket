@@ -5,11 +5,7 @@ test.describe('Smoke — публічні сторінки', () => {
   test('головна завантажується з hero і шапкою', async ({ page }) => {
     await gotoPath(page, '/')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(HOME_HERO)
-    await expect(
-      page
-        .getByRole('navigation', { name: /Платформа|Platform/i })
-        .getByRole('button', { name: /Знайти майстрів|Find professionals/i }),
-    ).toBeVisible()
+    await expectAppShell(page)
   })
 
   test('маршрути без авторизації відкриваються', async ({ page }) => {
@@ -20,18 +16,18 @@ test.describe('Smoke — публічні сторінки', () => {
       },
       {
         path: '/listings',
-        heading: /Будівельні запити|Construction jobs from clients/i,
+        heading: /Активні оголошення|Active listings/i,
       },
       {
         path: '/advertising',
-        heading: /Додайте рекламу|Add your ad and choose/i,
-        extra: /Схема розміщення на сайті|Placement map on the site|Де показувати рекламу|Where to show the ad/i,
+        heading: /Додайте рекламу|Add your ad|самообслуговування|self-service|Advertising keeps/i,
+        extra: /Схема розміщення|Placement map|Де показувати|Where to show|placements|Розміщення/i,
       },
       { path: '/contact', heading: /Напишіть нам|Write to us directly/i },
       { path: '/login', heading: /Вхід до DImarket|Sign In/i },
       {
         path: '/register',
-        heading: /Реєстрація на DImarket|Register on DImarket|Sign up/i,
+        heading: /Реєстрація на DImarket|Register on DImarket|Sign up|Join DImarket/i,
       },
     ]
 

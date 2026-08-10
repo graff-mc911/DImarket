@@ -6,7 +6,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { Profile, CURRENCIES, LANGUAGES } from '../lib/types'
-import { getTranslation, TranslationKey, LanguageCode } from '../lib/i18n'
+import { getTranslation, ensureLanguageLoaded, TranslationKey, LanguageCode } from '../lib/i18n'
 import { getPostLoginPath } from '../lib/authMessages'
 import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
 import { isSiteOwner } from '../lib/siteOwner'
@@ -53,6 +53,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return LANGUAGES.find((l) => l.code === saved) ?? LANGUAGES[0]
   })
   const [location, setLocationState] = useState<GeoSearchState>(() => initializeGlobalLocation())
+  /** Bumps when a locale pack finishes loading so `t()` re-renders with real strings. */
+  const [, setI18nTick] = useState(0)
+
+  useEffect(() => {
+    let cancelled = false
+    void ensureLanguageLoaded(language.code).then(() => {
+      if (!cancelled) setI18nTick((n) => n + 1)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [language.code])
 
   const syncProfile = useCallback(async (authUser: User, redirectAfterOAuth: boolean) => {
     let resolved = await ensureUserProfile(authUser)
@@ -278,6 +290,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const handleSetLanguage = (newLanguage: typeof LANGUAGES[number]) => {
     setLanguage(newLanguage)
     localStorage.setItem('dimarket_language', newLanguage.code)
+    void ensureLanguageLoaded(newLanguage.code).then(() => setI18nTick((n) => n + 1))
   }
 
   const setLocation = useCallback((next: GeoSearchState) => {

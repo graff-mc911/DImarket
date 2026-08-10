@@ -28,4 +28,26 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('@sentry')) return 'sentry'
+          if (id.includes('@supabase')) return 'supabase'
+          if (id.includes('framer-motion')) return 'motion'
+          if (id.includes('i18next') || id.includes('react-i18next')) return 'i18n'
+          if (id.includes('lucide-react')) return 'icons'
+          if (
+            id.includes('node_modules/react-dom') ||
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/scheduler')
+          ) {
+            return 'react-vendor'
+          }
+          return 'vendor'
+        },
+      },
+    },
+  },
 })

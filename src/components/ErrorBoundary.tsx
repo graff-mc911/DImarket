@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { captureException } from '../lib/monitoring'
 
 type Props = {
   children: ReactNode
@@ -26,6 +27,10 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, info: ErrorInfo) {
     const scope = this.props.name || 'ErrorBoundary'
     console.error(`[${scope}]`, error, info.componentStack)
+    captureException(error, {
+      tags: { boundary: scope },
+      extra: { componentStack: info.componentStack },
+    })
   }
 
   private reset = () => {

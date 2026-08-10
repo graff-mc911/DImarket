@@ -7,6 +7,8 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { applyAdSlotCssVars } from './lib/adSlotCssVars'
+import { ensureLanguageLoaded } from './lib/i18n'
+import { initMonitoring } from './lib/monitoring'
 import './index.css'
 
 const rootElement = document.getElementById('root')
@@ -19,14 +21,26 @@ if (!rootElement) {
   throw new Error('Не знайдено елемент #root у index.html — перевірте розмітку.')
 }
 
-createRoot(rootElement).render(
-  <StrictMode>
-    <ErrorBoundary
-      name="Root"
-      fallbackTitle="DImarket could not start"
-      fallbackMessage="Please reload the page. If the problem continues, try again later."
-    >
-      <App />
-    </ErrorBoundary>
-  </StrictMode>,
-)
+async function boot() {
+  void initMonitoring()
+
+  const saved =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem('dimarket_language') || 'en'
+      : 'en'
+  await ensureLanguageLoaded(saved)
+
+  createRoot(rootElement!).render(
+    <StrictMode>
+      <ErrorBoundary
+        name="Root"
+        fallbackTitle="DImarket could not start"
+        fallbackMessage="Please reload the page. If the problem continues, try again later."
+      >
+        <App />
+      </ErrorBoundary>
+    </StrictMode>,
+  )
+}
+
+void boot()

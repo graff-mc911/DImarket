@@ -7,12 +7,13 @@ export function headerLogo(page: Page) {
   return page.locator('header').getByRole(LOGO.role, { name: LOGO.name }).first()
 }
 
-/** Заголовок hero на головній (UK або EN). */
-export const HOME_HERO = /Знайдіть майстра|Find a master/i
+/** Заголовок hero на головній (UK або EN — premium home). */
+export const HOME_HERO = /Будуйте з перевіреними|Build with trusted professionals/i
 
 export async function expectAppShell(page: Page) {
   await expect(headerLogo(page)).toBeVisible()
-  await expect(page.locator('footer')).toBeVisible()
+  // Site chrome footer (Home may also render an inner <footer> in content)
+  await expect(page.locator('footer.premium-footer')).toBeVisible()
 }
 
 export async function clickHeaderLogo(page: Page) {

@@ -26,3 +26,21 @@ jobs:
         run: npm run build:app
       - name: Registration role logic smoke
         run: node scripts/verify-registration-logic.mjs
+
+  e2e-prod-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: E2E smoke against production
+        env:
+          PLAYWRIGHT_BASE_URL: https://dimarket.app
+        run: npx playwright test e2e/smoke.spec.ts --project=chromium
