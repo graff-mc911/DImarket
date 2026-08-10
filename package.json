@@ -31,6 +31,8 @@
     "db:apply-cost-estimates": "node scripts/apply-cost-estimates-migration.mjs",
     "db:apply-project-escrows": "node scripts/apply-project-escrows-migration.mjs",
     "db:apply-stripe-connect": "node scripts/apply-stripe-connect-migration.mjs",
+    "db:apply-commercial-agents": "node scripts/apply-commercial-agents-migration.mjs",
+    "test:commercial-agents": "node scripts/verify-commercial-agents-matching.mjs",
     "geo:sync": "node scripts/sync-geo-catalog-dump.mjs",
     "geo:sync:one": "node scripts/sync-geo-catalog-dump.mjs --country=Germany",
     "geo:sync:api": "node scripts/sync-geo-catalog-geonames.mjs",

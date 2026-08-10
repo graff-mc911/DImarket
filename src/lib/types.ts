@@ -871,28 +871,28 @@ export interface Database {
       }
 
       // ----------------------------------------------------------
-      // saved_items — збережені оголошення і профілі
-      // item_type: 'listing' або 'profile'
+      // saved_items — збережені оголошення, профілі та B2B сутності
+      // item_type: listing | profile | manufacturer | agent | opportunity
       // ----------------------------------------------------------
       saved_items: {
         Row: {
           id: string
           user_id: string
-          item_type: 'listing' | 'profile'
+          item_type: 'listing' | 'profile' | 'manufacturer' | 'agent' | 'opportunity'
           item_id: string
           created_at: string
         }
         Insert: {
           id?: string
           user_id: string
-          item_type: 'listing' | 'profile'
+          item_type: 'listing' | 'profile' | 'manufacturer' | 'agent' | 'opportunity'
           item_id: string
           created_at?: string
         }
         Update: {
           id?: string
           user_id?: string
-          item_type?: 'listing' | 'profile'
+          item_type?: 'listing' | 'profile' | 'manufacturer' | 'agent' | 'opportunity'
           item_id?: string
           created_at?: string
         }

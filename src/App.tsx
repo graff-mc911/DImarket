@@ -174,6 +174,36 @@ const MapExplore = lazy(() =>
 const ServiceResults = lazy(() =>
   import('./pages/ServiceResults').then((m) => ({ default: m.ServiceResults })),
 )
+const CommercialAgentsHome = lazy(() =>
+  import('./pages/commercialAgents/CommercialAgentsHome').then((m) => ({
+    default: m.CommercialAgentsHome,
+  })),
+)
+const CommercialAgentsDirectory = lazy(() =>
+  import('./pages/commercialAgents/CommercialAgentsDirectory').then((m) => ({
+    default: m.CommercialAgentsDirectory,
+  })),
+)
+const ManufacturerProfilePage = lazy(() =>
+  import('./pages/commercialAgents/ManufacturerProfilePage').then((m) => ({
+    default: m.ManufacturerProfilePage,
+  })),
+)
+const AgentProfilePage = lazy(() =>
+  import('./pages/commercialAgents/AgentProfilePage').then((m) => ({
+    default: m.AgentProfilePage,
+  })),
+)
+const OpportunityDetailPage = lazy(() =>
+  import('./pages/commercialAgents/OpportunityDetailPage').then((m) => ({
+    default: m.OpportunityDetailPage,
+  })),
+)
+const CommercialAgentsDashboard = lazy(() =>
+  import('./pages/commercialAgents/CommercialAgentsDashboard').then((m) => ({
+    default: m.CommercialAgentsDashboard,
+  })),
+)
 
 /** Old Admin Panel URLs → owner cabinet (/dashboard). */
 function RedirectToOwnerCabinet() {
@@ -220,6 +250,31 @@ function App() {
     }
     if (parts[0] === 'leads' && parts[1] && parts[2] === 'quote') {
       return <QuoteBuilder applicationId={parts[1]} />
+    }
+
+    // Commercial Agents / Representation marketplace
+    if (parts[0] === 'commercial-agents') {
+      if (!parts[1]) return <CommercialAgentsHome />
+      if (parts[1] === 'manufacturers' && parts[2]) {
+        return <ManufacturerProfilePage slug={parts[2]} />
+      }
+      if (parts[1] === 'manufacturers') {
+        return <CommercialAgentsDirectory mode="manufacturers" />
+      }
+      if (parts[1] === 'representatives' && parts[2]) {
+        return <AgentProfilePage slug={parts[2]} />
+      }
+      if (parts[1] === 'representatives') {
+        return <CommercialAgentsDirectory mode="agents" />
+      }
+      if (parts[1] === 'opportunities' && parts[2]) {
+        return <OpportunityDetailPage id={parts[2]} />
+      }
+      if (parts[1] === 'opportunities') {
+        return <CommercialAgentsDirectory mode="opportunities" />
+      }
+      if (parts[1] === 'dashboard') return <CommercialAgentsDashboard />
+      return <CommercialAgentsHome />
     }
 
     // SEO: /de/darmstadt/elektriker

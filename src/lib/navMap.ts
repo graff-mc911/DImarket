@@ -95,6 +95,17 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     surfaces: ['mobile-more', 'header-dept'],
   },
   {
+    id: 'commercial-agents',
+    path: '/commercial-agents',
+    labelKey: 'nav.commercialAgents',
+    labelKeyBySurface: {
+      'header-dept': 'header.commercialAgents',
+      'footer-services': 'footer.commercialAgents',
+      'mobile-more': 'nav.commercialAgents',
+    },
+    surfaces: ['mobile-more', 'header-dept', 'footer-services'],
+  },
+  {
     id: 'publish-request',
     path: '/create-project',
     aliases: ['/project/new'],
@@ -417,6 +428,7 @@ const EXTRA_RESERVED_SEGMENTS = [
   'ai',
   'admin',
   'estimate',
+  'commercial-agents',
 ] as const
 
 export function navEntriesFor(surface: NavSurface): NavEntry[] {

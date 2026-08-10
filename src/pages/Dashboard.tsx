@@ -17,6 +17,7 @@ import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { VerificationAdminPanel } from '../components/verification/VerificationAdminPanel'
+import { CommercialAgentsAdminPanel } from '../components/commercialAgents/CommercialAgentsAdminPanel'
 import { AdCampaign, Announcement, FeedbackMessage, Message, Profile } from '../lib/types'
 import { isSiteOwner } from '../lib/siteOwner'
 import { OwnerAdManager } from '../components/OwnerAdManager'
@@ -511,6 +512,9 @@ export function Dashboard() {
                 <p className="mt-1 text-sm text-[#6f665d]">Заявки на перевірку документів</p>
                 <div className="mt-4">
                   <VerificationAdminPanel />
+                  <div className="mt-6">
+                    <CommercialAgentsAdminPanel />
+                  </div>
                 </div>
               </div>
 

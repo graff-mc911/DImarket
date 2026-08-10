@@ -26,6 +26,8 @@ jobs:
         run: npm run build:app
       - name: Registration role logic smoke
         run: node scripts/verify-registration-logic.mjs
+      - name: Commercial agents matching smoke
+        run: npm run test:commercial-agents
 
   e2e-prod-smoke:
     runs-on: ubuntu-latest
