@@ -45,6 +45,7 @@ export const COUNTRY_MAP_CENTERS: Record<string, [number, number]> = {
 export type MapMarkerKind =
   | 'professional'
   | 'company'
+  | 'manufacturer'
   | 'project'
   | 'marketplace'
   | 'job'
@@ -102,6 +103,7 @@ export const EMPTY_MAP_FILTERS: MapExploreFilters = {
 export const MAP_KIND_COLORS: Record<MapMarkerKind | 'mixed', string> = {
   professional: '#16a34a', // green — master / online-capable
   company: '#2563eb', // blue
+  manufacturer: '#0f766e', // teal — B2B manufacturer / brand
   project: '#ea580c', // orange — active project
   job: '#7c3aed', // purple — vacancy
   marketplace: '#92400e', // brown — shop / manufacturer listing
@@ -111,13 +113,14 @@ export const MAP_KIND_COLORS: Record<MapMarkerKind | 'mixed', string> = {
 export const MAP_KIND_GLYPH: Record<MapMarkerKind | 'mixed', string> = {
   professional: 'P',
   company: 'C',
+  manufacturer: 'M',
   project: 'J',
   job: 'V',
   marketplace: 'S',
   mixed: '+',
 }
 
-const CACHE_KEY = 'dimarket_map_markers_v5'
+const CACHE_KEY = 'dimarket_map_markers_v6'
 const CACHE_TTL_MS = 90_000
 
 const PROFILE_MAP_SELECT = `
@@ -335,6 +338,63 @@ function toProfileMarker(p: ProfileRow, kind: 'professional' | 'company'): Marke
   }
 }
 
+type ManufacturerMapRow = {
+  id: string
+  slug: string
+  company_name: string
+  description: string | null
+  logo_url: string | null
+  country: string | null
+  headquarters: string | null
+  categories: string[] | null
+  verification_status: string | null
+  profile:
+    | {
+        id: string
+        service_latitude: number | null
+        service_longitude: number | null
+        location: string | null
+        rating: number | null
+      }
+    | null
+}
+
+function toManufacturerMarker(row: ManufacturerMapRow): MarketplaceMapMarker | null {
+  const lat = row.profile?.service_latitude
+  const lng = row.profile?.service_longitude
+  if (lat == null || lng == null || !Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  const loc = row.profile?.location || row.headquarters || row.country
+  const parts = formatLocationParts(loc)
+  return {
+    id: `manufacturer-${row.id}`,
+    kind: 'manufacturer',
+    title: row.company_name,
+    subtitle: (row.categories || []).slice(0, 2).join(' · ') || 'Manufacturer',
+    description: truncate(row.description || ''),
+    city: parts.city,
+    country: parts.country || row.country || '',
+    rating: row.profile?.rating ?? null,
+    verified: row.verification_status === 'verified',
+    photoUrl: row.logo_url,
+    category: (row.categories || [])[0] || 'manufacturers',
+    budgetLabel: '',
+    status: 'published',
+    availability: 'available',
+    online: true,
+    lat,
+    lng,
+    path: `/commercial-agents/manufacturers/${row.slug}`,
+    location: loc,
+    service_latitude: lat,
+    service_longitude: lng,
+    service_radius_km: null,
+    work_subcategory_slugs: row.categories,
+    user_role: 'company',
+    listingType: null,
+    distanceKm: null,
+  }
+}
+
 function toListingMarker(
   l: ListingRow,
   kind: 'project' | 'marketplace' | 'job',
@@ -421,9 +481,24 @@ export async function fetchMarketplaceMapMarkers(
   const proLimit = Math.max(slice, Math.min(120, Math.ceil(limit * 0.4)))
   const companyLimit = Math.max(slice, Math.min(160, Math.ceil(limit * 0.5)))
 
-  const [prosRes, companiesRes, projectsRes, marketRes, moreListingsRes] = await Promise.all([
+  const [prosRes, companiesRes, manufacturersRes, projectsRes, marketRes, moreListingsRes] =
+    await Promise.all([
     fetchProfilesForMap('professional', proLimit),
     fetchProfilesForMap('company', companyLimit),
+    supabase
+      .from('manufacturer_profiles')
+      .select(
+        `
+        id, slug, company_name, description, logo_url, country, headquarters,
+        categories, verification_status,
+        profile:profiles!manufacturer_profiles_profile_id_fkey(
+          id, service_latitude, service_longitude, location, rating
+        )
+      `,
+      )
+      .eq('is_published', true)
+      .order('updated_at', { ascending: false })
+      .limit(Math.min(100, slice * 2)),
     excludeSuppressedFromQuery(
       supabase
         .from('listings')
@@ -465,6 +540,9 @@ export async function fetchMarketplaceMapMarkers(
   if (companiesRes.error) {
     console.warn('[marketplaceMap] companies query failed:', companiesRes.error.message)
   }
+  if (manufacturersRes.error) {
+    console.warn('[marketplaceMap] manufacturers query failed:', manufacturersRes.error.message)
+  }
 
   const push = (m: MarketplaceMapMarker | null) => {
     if (!m || seen.has(m.id)) return
@@ -476,7 +554,16 @@ export async function fetchMarketplaceMapMarkers(
     // service_radius_km may be absent until migration is applied on the project DB
     push(toProfileMarker({ ...p, service_radius_km: p.service_radius_km ?? null }, 'professional'))
   }
+  for (const row of (manufacturersRes.data as ManufacturerMapRow[] | null) ?? []) {
+    push(toManufacturerMarker(row))
+  }
+  const manufacturerProfileIds = new Set(
+    ((manufacturersRes.data as ManufacturerMapRow[] | null) ?? [])
+      .map((r) => r.profile?.id)
+      .filter(Boolean) as string[],
+  )
   for (const p of companiesRes.data) {
+    if (manufacturerProfileIds.has(p.id)) continue
     push(toProfileMarker({ ...p, service_radius_km: p.service_radius_km ?? null }, 'company'))
   }
   for (const l of filterSuppressedListings((projectsRes.data as ListingRow[] | null) ?? [])) {

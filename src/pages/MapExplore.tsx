@@ -107,6 +107,7 @@ export function MapExplore() {
   const legendItems: Array<{ kind: MapMarkerKind; label: string }> = [
     { kind: 'professional', label: t('mapExplore.legendPro') },
     { kind: 'company', label: t('mapExplore.legendCompany') },
+    { kind: 'manufacturer', label: t('mapExplore.legendManufacturer') },
     { kind: 'project', label: t('mapExplore.legendProject') },
     { kind: 'job', label: t('mapExplore.legendJob') },
     { kind: 'marketplace', label: t('mapExplore.legendShop') },
@@ -161,6 +162,7 @@ export function MapExplore() {
                 all: t('homePremium.mapAll'),
                 professional: t('homePremium.mapPros'),
                 company: t('homePremium.mapCompanies'),
+                manufacturer: t('mapExplore.kindManufacturers'),
                 project: t('homePremium.mapProjects'),
                 marketplace: t('mapExplore.kindMarketplace'),
                 job: t('mapExplore.kindJobs'),

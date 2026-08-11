@@ -62,6 +62,7 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
               all: t('homePremium.mapAll'),
               professional: t('homePremium.mapPros'),
               company: t('homePremium.mapCompanies'),
+              manufacturer: t('mapExplore.kindManufacturers'),
               project: t('homePremium.mapProjects'),
               marketplace: t('mapExplore.kindMarketplace'),
               job: t('mapExplore.kindJobs'),

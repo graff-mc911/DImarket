@@ -1,6 +1,7 @@
 import {
   Briefcase,
   Building2,
+  Factory,
   Globe2,
   ShoppingBag,
   UserRound,
@@ -17,6 +18,7 @@ type Labels = {
   all: string
   professional: string
   company: string
+  manufacturer: string
   project: string
   marketplace: string
   job: string
@@ -48,6 +50,12 @@ const KIND_META: Array<{
     icon: Building2,
     color: MAP_KIND_COLORS.company,
     labelKey: 'company',
+  },
+  {
+    id: 'manufacturer',
+    icon: Factory,
+    color: MAP_KIND_COLORS.manufacturer,
+    labelKey: 'manufacturer',
   },
   {
     id: 'project',
@@ -105,6 +113,7 @@ export function emptyMapKindCounts(): MapKindCounts {
     all: 0,
     professional: 0,
     company: 0,
+    manufacturer: 0,
     project: 0,
     marketplace: 0,
     job: 0,
