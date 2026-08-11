@@ -16,6 +16,7 @@ import {
   type RepresentationOpportunity,
 } from '../../lib/commercialAgents'
 import { labelForMatchCategory } from '../../lib/commercialAgents/categories'
+import { normalizeSpokenLanguageList } from '../../lib/languageDisplay'
 import { VerifiedB2BBadge } from '../../components/commercialAgents/VerifiedB2BBadge'
 import { MatchScorePanel } from '../../components/commercialAgents/MatchScorePanel'
 import { OpportunityCard } from '../../components/commercialAgents/OpportunityCard'
@@ -182,7 +183,7 @@ export function ManufacturerProfilePage({ slug }: { slug: string }) {
             </section>
 
             <InfoBlock title={t('commercialAgents.products')} items={item.products} />
-            <InfoBlock title={t('commercialAgents.languages')} items={item.languages} />
+            <InfoBlock title={t('commercialAgents.languages')} items={normalizeSpokenLanguageList(item.languages)} />
 
             {opps.length > 0 ? (
               <section className="mt-8">

@@ -1357,7 +1357,7 @@ export const arTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'طلبات عمل من العملاء في مدينتك وفئاتك',
   'landing.pro.benefit2': 'محفظة وتقييمات وشارة تحقق',
   'landing.pro.benefit3': 'دردشة مدمجة — اتفق مباشرة بدون وسطاء',
-  'landing.pro.benefit4': 'واجهة بـ DE و ES و EN و UK و PL و RU للشتات',
+  'landing.pro.benefit4': 'واجهة بـ DE و ES و EN و UA و PL و RU للشتات',
   'landing.pro.step1': 'أنشئ حساباً مجانياً واختر مدينتك',
   'landing.pro.step2': 'أكمل الملف: صورة ومهارات ومحفظة',
   'landing.pro.step3': 'رد على الطلبات واحصل على تقييمات',

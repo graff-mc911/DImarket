@@ -12,6 +12,7 @@ import type {
   MatchResult,
   RepresentationOpportunity,
 } from './types'
+import { normalizeSpokenLanguageCode } from '../languageDisplay'
 
 function clamp(n: number, min = 0, max = 100) {
   return Math.max(min, Math.min(max, n))
@@ -21,9 +22,25 @@ function norm(s: string | null | undefined) {
   return (s ?? '').trim().toLowerCase()
 }
 
+/** Language overlap treats UK/uk/ua as the same Ukrainian tag (UA). */
+function languageKey(s: string | null | undefined) {
+  const spoken = normalizeSpokenLanguageCode(s)
+  return spoken ? spoken.toLowerCase() : ''
+}
+
 function overlapScore(a: string[] | null | undefined, b: string[] | null | undefined): number {
   const left = new Set((a ?? []).map(norm).filter(Boolean))
   const right = new Set((b ?? []).map(norm).filter(Boolean))
+  if (left.size === 0 || right.size === 0) return 40
+  let hits = 0
+  for (const x of left) if (right.has(x)) hits += 1
+  const denom = Math.min(left.size, right.size)
+  return clamp(Math.round((hits / denom) * 100))
+}
+
+function languageOverlapScore(a: string[] | null | undefined, b: string[] | null | undefined): number {
+  const left = new Set((a ?? []).map(languageKey).filter(Boolean))
+  const right = new Set((b ?? []).map(languageKey).filter(Boolean))
   if (left.size === 0 || right.size === 0) return 40
   let hits = 0
   for (const x of left) if (right.has(x)) hits += 1
@@ -97,7 +114,7 @@ export function calculateAgentManufacturerMatch(
     country: countryScore(agent.country, manufacturer.country, manufacturer.countries_available),
     category: overlapScore(agent.categories, manufacturer.categories),
     industry: overlapScore(agent.industries, manufacturer.target_markets),
-    language: overlapScore(agent.languages, manufacturer.languages),
+    language: languageOverlapScore(agent.languages, manufacturer.languages),
     experience: experienceScore(agent.years_experience, manufacturer.minimum_experience_years),
     territory: overlapScore(agent.service_regions, manufacturer.countries_available),
     customerType: overlapScore(agent.client_types, manufacturer.target_markets),
@@ -148,7 +165,7 @@ export function calculateOpportunityAgentMatch(
       ? overlapScore(agent.categories, [opportunity.category])
       : overlapScore(agent.categories, []),
     industry: overlapScore(agent.industries, opportunity.target_customer_types),
-    language: overlapScore(agent.languages, opportunity.required_languages),
+    language: languageOverlapScore(agent.languages, opportunity.required_languages),
     experience: experienceScore(agent.years_experience, requiredYears),
     territory: overlapScore(agent.service_regions, [
       ...(opportunity.target_regions ?? []),

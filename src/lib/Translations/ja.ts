@@ -1357,7 +1357,7 @@ export const jaTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'あなたの都市とカテゴリのクライアントからの仕事依頼',
   'landing.pro.benefit2': 'ポートフォリオ、レビュー、認証バッジ',
   'landing.pro.benefit3': '内蔵チャット——仲介なしで直接合意',
-  'landing.pro.benefit4': 'DE、ES、EN、UK、PL、RU対応のインターフェース（ディアスポラ向け）',
+  'landing.pro.benefit4': 'DE、ES、EN、UA、PL、RU対応のインターフェース（ディアスポラ向け）',
   'landing.pro.step1': '無料アカウントを作成し、都市を選択',
   'landing.pro.step2': 'プロフィールを完成：写真、スキル、ポートフォリオ',
   'landing.pro.step3': '依頼に返答し、レビューを獲得',

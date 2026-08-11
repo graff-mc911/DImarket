@@ -1,9 +1,10 @@
 import { supabase } from '../supabase'
 import { createNotification } from '../notifications/notifications'
 import { slugifyCommercial } from './slug'
+import { normalizeSpokenLanguageCode, spokenLanguageFilterVariants } from '../languageDisplay'
 import type {
-  AgentInvitation,
   AgentProfile,
+  AgentInvitation,
   CommercialSearchFilters,
   ManufacturerProfile,
   RepresentationApplication,
@@ -14,6 +15,18 @@ import type {
 const MFR_SELECT = '*'
 const AGENT_SELECT = '*'
 const OPP_SELECT = '*, manufacturer:manufacturer_profiles(*)'
+
+function applyLanguageContains(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  q: any,
+  column: string,
+  language: string | null | undefined,
+) {
+  const variants = spokenLanguageFilterVariants(language)
+  if (!variants.length) return q
+  // PostgREST: match any legacy Ukrainian tag (UA/UK/uk/ua)
+  return q.or(variants.map((v) => `${column}.cs.{"${v}"}`).join(','))
+}
 
 function applyTextFilter<T extends { or?: (f: string) => T; ilike?: (c: string, v: string) => T }>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,7 +54,7 @@ export async function fetchManufacturers(
   q = applyTextFilter(q, filters.query, ['company_name', 'description', 'headquarters'])
   if (filters.country) q = q.eq('country', filters.country)
   if (filters.category) q = q.contains('categories', [filters.category])
-  if (filters.language) q = q.contains('languages', [filters.language])
+  if (filters.language) q = applyLanguageContains(q, 'languages', filters.language)
   if (filters.verifiedOnly) q = q.eq('verification_status', 'verified')
   if (filters.exclusive === 'exclusive') q = q.eq('exclusive_representation', true)
   if (filters.exclusive === 'non_exclusive') q = q.eq('non_exclusive_representation', true)
@@ -69,7 +82,7 @@ export async function fetchAgents(
   q = applyTextFilter(q, filters.query, ['full_name', 'company_name', 'description', 'city'])
   if (filters.country) q = q.eq('country', filters.country)
   if (filters.category) q = q.contains('categories', [filters.category])
-  if (filters.language) q = q.contains('languages', [filters.language])
+  if (filters.language) q = applyLanguageContains(q, 'languages', filters.language)
   if (filters.verifiedOnly) q = q.eq('verification_status', 'verified')
   if (filters.availableOnly) q = q.eq('available_for_new_brands', true)
   if (filters.minExperience != null) q = q.gte('years_experience', filters.minExperience)
@@ -96,7 +109,7 @@ export async function fetchOpportunities(
   q = applyTextFilter(q, filters.query, ['title', 'description'])
   if (filters.country) q = q.eq('target_country', filters.country)
   if (filters.category) q = q.eq('category', filters.category)
-  if (filters.language) q = q.contains('required_languages', [filters.language])
+  if (filters.language) q = applyLanguageContains(q, 'required_languages', filters.language)
   if (filters.exclusive === 'exclusive') q = q.eq('exclusive', true)
   if (filters.exclusive === 'non_exclusive') q = q.eq('exclusive', false)
   if (filters.remote === 'remote') q = q.eq('remote_possible', true)
@@ -177,6 +190,9 @@ export async function upsertManufacturerProfile(
     profile_id: profileId,
     slug: existing?.slug ?? slugifyCommercial(patch.company_name),
     updated_at: new Date().toISOString(),
+    ...(patch.languages
+      ? { languages: patch.languages.map(normalizeSpokenLanguageCode).filter(Boolean) }
+      : {}),
   }
   const { data, error } = await supabase
     .from('manufacturer_profiles')
@@ -197,6 +213,9 @@ export async function upsertAgentProfile(
     profile_id: profileId,
     slug: existing?.slug ?? slugifyCommercial(patch.full_name),
     updated_at: new Date().toISOString(),
+    ...(patch.languages
+      ? { languages: patch.languages.map(normalizeSpokenLanguageCode).filter(Boolean) }
+      : {}),
   }
   const { data, error } = await supabase
     .from('agent_profiles')
@@ -223,7 +242,9 @@ export async function createOpportunity(
       target_regions: input.target_regions ?? [],
       target_customer_types: input.target_customer_types ?? [],
       required_experience: input.required_experience ?? null,
-      required_languages: input.required_languages ?? [],
+      required_languages: (input.required_languages ?? [])
+        .map(normalizeSpokenLanguageCode)
+        .filter(Boolean),
       commission_type: input.commission_type ?? null,
       commission_range: input.commission_range ?? null,
       exclusive: input.exclusive ?? false,

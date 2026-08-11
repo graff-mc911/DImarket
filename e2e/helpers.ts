@@ -7,7 +7,7 @@ export function headerLogo(page: Page) {
   return page.locator('header').getByRole(LOGO.role, { name: LOGO.name }).first()
 }
 
-/** Заголовок hero на головній (UK або EN — premium home). */
+/** Заголовок hero на головній (UA або EN — premium home). */
 export const HOME_HERO = /Будуйте з перевіреними|Build with trusted professionals/i
 
 export async function expectAppShell(page: Page) {

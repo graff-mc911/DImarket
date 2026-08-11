@@ -97,7 +97,7 @@ export function CommercialAgentsFilters({
             className={inputClass}
             value={value.language}
             onChange={(e) => onChange({ ...value, language: e.target.value })}
-            placeholder="EN, ES, DE…"
+            placeholder="EN, ES, DE, UA…"
           />
         </label>
 

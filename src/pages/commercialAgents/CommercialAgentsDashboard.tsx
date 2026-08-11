@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import { applyPageSeo } from '../../lib/pageSeo'
+import { normalizeSpokenLanguageList } from '../../lib/languageDisplay'
 import {
   createOpportunity,
   fetchApplicationsForManufacturer,
@@ -187,7 +188,7 @@ export function CommercialAgentsDashboard() {
       city: agentForm.city || null,
       years_experience: agentForm.years_experience ? Number(agentForm.years_experience) : null,
       categories: splitCsv(agentForm.categories),
-      languages: splitCsv(agentForm.languages),
+      languages: normalizeSpokenLanguageList(splitCsv(agentForm.languages)),
       available_for_new_brands: agentForm.available_for_new_brands,
       is_published: true,
     })

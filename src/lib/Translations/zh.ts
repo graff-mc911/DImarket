@@ -1357,7 +1357,7 @@ export const zhTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': '来自您所在城市和类别客户的工作请求',
   'landing.pro.benefit2': '作品集、评价和认证徽章',
   'landing.pro.benefit3': '内置聊天——直接沟通，无中间商',
-  'landing.pro.benefit4': '界面支持 DE、ES、EN、UK、PL、RU，方便侨民',
+  'landing.pro.benefit4': '界面支持 DE、ES、EN、UA、PL、RU，方便侨民',
   'landing.pro.step1': '创建免费账户并选择城市',
   'landing.pro.step2': '完善资料：照片、技能、作品集',
   'landing.pro.step3': '回复请求并获得评价',

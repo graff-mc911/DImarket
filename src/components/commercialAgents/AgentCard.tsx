@@ -1,5 +1,6 @@
 import { MapPin } from 'lucide-react'
 import { navigateTo } from '../../lib/navigation'
+import { normalizeSpokenLanguageList } from '../../lib/languageDisplay'
 import type { AgentProfile } from '../../lib/commercialAgents/types'
 import { VerifiedB2BBadge } from './VerifiedB2BBadge'
 
@@ -63,7 +64,7 @@ export function AgentCard({
             {t('commercialAgents.availableForBrands')}
           </span>
         ) : null}
-        {item.languages.slice(0, 2).map((l) => (
+        {normalizeSpokenLanguageList(item.languages).slice(0, 2).map((l) => (
           <span
             key={l}
             className="rounded-full bg-[#f3f4f6] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--ink-700)]"

@@ -13,6 +13,7 @@ import {
   User,
 } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { normalizeSpokenLanguageList } from '../lib/languageDisplay'
 import { navigateTo } from '../lib/navigation'
 import { fetchMatchScoresForListing, TOP_MATCH_LIMIT } from '../lib/matching'
 import { MatchScoreBadge, VerificationBadge } from '../components/MatchScoreBadge'
@@ -752,7 +753,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                               {p.languages?.length ? (
                                 <span className="inline-flex items-center gap-1">
                                   <Languages className="h-3.5 w-3.5" />
-                                  {p.languages.slice(0, 3).join(', ')}
+                                  {normalizeSpokenLanguageList(p.languages).slice(0, 3).join(', ')}
                                 </span>
                               ) : null}
                             </div>

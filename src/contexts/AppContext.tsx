@@ -50,7 +50,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   })
   const [language, setLanguage] = useState<typeof LANGUAGES[number]>(() => {
     const saved = localStorage.getItem('dimarket_language')
-    return LANGUAGES.find((l) => l.code === saved) ?? LANGUAGES[0]
+    const code = saved === 'ua' || saved === 'UA' || saved === 'UK' ? 'uk' : saved
+    return LANGUAGES.find((l) => l.code === code) ?? LANGUAGES[0]
   })
   const [location, setLocationState] = useState<GeoSearchState>(() => initializeGlobalLocation())
   /** Bumps when a locale pack finishes loading so `t()` re-renders with real strings. */
@@ -288,9 +289,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const handleSetLanguage = (newLanguage: typeof LANGUAGES[number]) => {
-    setLanguage(newLanguage)
-    localStorage.setItem('dimarket_language', newLanguage.code)
-    void ensureLanguageLoaded(newLanguage.code).then(() => setI18nTick((n) => n + 1))
+    const raw = String(newLanguage.code)
+    const code = raw === 'ua' || raw === 'UA' || raw === 'UK' ? 'uk' : newLanguage.code
+    const resolved = LANGUAGES.find((l) => l.code === code) ?? newLanguage
+    setLanguage(resolved)
+    localStorage.setItem('dimarket_language', resolved.code)
+    void ensureLanguageLoaded(resolved.code).then(() => setI18nTick((n) => n + 1))
   }
 
   const setLocation = useCallback((next: GeoSearchState) => {

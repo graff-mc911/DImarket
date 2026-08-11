@@ -3,6 +3,7 @@ import { ExternalLink, Flag, Heart, MessageSquare, Search, Send } from 'lucide-r
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import { applyPageSeo } from '../../lib/pageSeo'
+import { normalizeSpokenLanguageList } from '../../lib/languageDisplay'
 import {
   calculateAgentManufacturerMatch,
   fetchAgentBySlug,
@@ -157,7 +158,7 @@ export function AgentProfilePage({ slug }: { slug: string }) {
                 />
                 <AgentFact label={t('commercialAgents.countriesTitle')} value={[item.city, item.country].filter(Boolean).join(', ')} />
                 <AgentFact label={t('commercialAgents.regions')} value={item.service_regions.join(', ')} />
-                <AgentFact label={t('commercialAgents.languages')} value={item.languages.join(', ')} />
+                <AgentFact label={t('commercialAgents.languages')} value={normalizeSpokenLanguageList(item.languages).join(', ')} />
                 <AgentFact
                   label={t('commercialAgents.experience')}
                   value={

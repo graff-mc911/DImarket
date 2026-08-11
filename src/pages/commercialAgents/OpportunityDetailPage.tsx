@@ -3,6 +3,7 @@ import { Flag, Heart } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import { applyPageSeo } from '../../lib/pageSeo'
+import { normalizeSpokenLanguageList } from '../../lib/languageDisplay'
 import {
   applyToOpportunity,
   calculateOpportunityAgentMatch,
@@ -127,7 +128,7 @@ export function OpportunityDetailPage({ id }: { id: string }) {
             {item.required_languages.length ? (
               <p className="mt-4 text-sm text-[var(--ink-700)]">
                 <span className="font-semibold">{t('commercialAgents.languages')}:</span>{' '}
-                {item.required_languages.join(', ')}
+                {normalizeSpokenLanguageList(item.required_languages).join(', ')}
               </p>
             ) : null}
             {item.minimum_requirements ? (

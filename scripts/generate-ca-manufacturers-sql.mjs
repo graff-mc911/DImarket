@@ -26,6 +26,26 @@ function esc(s) {
   return `'${String(s).replace(/'/g, "''")}'`
 }
 
+function normalizeSpokenLang(code) {
+  const raw = String(code ?? '').trim()
+  if (!raw) return ''
+  const lower = raw.toLowerCase()
+  if (lower === 'uk' || lower === 'ua') return 'UA'
+  return raw.toUpperCase()
+}
+
+function normalizeSpokenLangList(arr) {
+  const out = []
+  const seen = new Set()
+  for (const x of arr ?? []) {
+    const n = normalizeSpokenLang(x)
+    if (!n || seen.has(n)) continue
+    seen.add(n)
+    out.push(n)
+  }
+  return out
+}
+
 function textArr(arr) {
   if (!arr?.length) return `'{}'::text[]`
   return `ARRAY[${arr.map((x) => esc(x)).join(', ')}]::text[]`
@@ -106,7 +126,7 @@ for (const m of rows) {
     ${Number(m.lng)},
     ${esc(m.logo_url)},
     ${esc(m.logo_url)},
-    ${textArr(m.languages)},
+    ${textArr(normalizeSpokenLangList(m.languages))},
     'available',
     true,
     'gold'
@@ -150,7 +170,7 @@ for (const m of rows) {
     ${textArr(m.products)},
     ${textArr(m.countries_available)},
     ${textArr(m.countries_available)},
-    ${textArr(m.languages)},
+    ${textArr(normalizeSpokenLangList(m.languages))},
     true,
     true,
     false,
