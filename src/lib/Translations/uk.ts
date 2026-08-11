@@ -980,7 +980,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'marketing.admin.published': 'Опубліковано',
   'marketing.admin.pending': 'На перевірці',
   'marketing.admin.registrations': 'Атрибутовані реєстрації',
-  'marketing.admin.blogHint': 'Без Telegram пости публікуються як промо-банер на dimarket.app. Cron — щогодини.',
+  'marketing.admin.blogHint': 'Платформа «blog» пише лише короткі промо-банери в шапку сайту. Instagram/Facebook без API більше не падають у банери. Cron — щогодини, лише якщо агент запущений.',
   'advertising.slotMedia.title': 'Медіа для кожного банера',
   'advertising.slotMedia.desc': 'Завантажте зображення або GIF і налаштуйте анімацію окремо для кожного розміру (бокові L1–R4, центр, мобільні).',
   'advertising.slotMedia.size': 'Розмір слота',

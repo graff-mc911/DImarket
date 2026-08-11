@@ -978,7 +978,7 @@ export const enTranslations = {
   'marketing.admin.published': 'Published posts',
   'marketing.admin.pending': 'Pending review',
   'marketing.admin.registrations': 'Attributed registrations',
-  'marketing.admin.blogHint': 'Without Telegram, posts publish as promo banners on dimarket.app. Cron runs hourly.',
+  'marketing.admin.blogHint': 'The «blog» platform only posts short promo banners in the site header. Instagram/Facebook without API no longer fall back to banners. Cron is hourly only while the agent is running.',
   'advertising.slotMedia.title': 'Media per banner slot',
   'advertising.slotMedia.desc': 'Upload an image or GIF and set animation for each size separately (side L1–R4, center, mobile).',
   'advertising.slotMedia.size': 'Slot size',
