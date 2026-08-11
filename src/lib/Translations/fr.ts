@@ -1357,7 +1357,7 @@ export const frTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Demandes d\'emploi des clients de votre ville et catégories',
   'landing.pro.benefit2': 'Portfolio, avis et badge de vérification',
   'landing.pro.benefit3': 'Chat intégré : acceptez directement, sans intermédiaire',
-  'landing.pro.benefit4': 'Interface en DE, ES, EN, UK, PL, RU pour la diaspora',
+  'landing.pro.benefit4': 'Interface en DE, ES, EN, UA, PL, RU pour la diaspora',
   'landing.pro.step1': 'Créez un compte gratuit et sélectionnez votre ville',
   'landing.pro.step2': 'Profil complet : photo, compétences, portfolio',
   'landing.pro.step3': 'Répondre aux demandes et obtenir des avis',

@@ -1357,7 +1357,7 @@ export const etTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Töötaotlused klientidelt teie linnas ja kategooriates',
   'landing.pro.benefit2': 'Portfell, ülevaated ja kinnitusmärk',
   'landing.pro.benefit3': 'Sisseehitatud vestlus – nõustuge otse, ilma vahendajateta',
-  'landing.pro.benefit4': 'Liides DE, ES, EN, UK, PL, RU diasporaa jaoks',
+  'landing.pro.benefit4': 'Liides DE, ES, EN, UA, PL, RU diasporaa jaoks',
   'landing.pro.step1': 'Looge tasuta konto ja valige oma linn',
   'landing.pro.step2': 'Täielik profiil: foto, oskused, portfoolio',
   'landing.pro.step3': 'Vastake taotlustele ja hankige arvustusi',

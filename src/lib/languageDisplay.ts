@@ -7,10 +7,10 @@ import { LANGUAGES } from './types'
 
 export type AppLanguage = (typeof LANGUAGES)[number]
 
-/** ISO-style display code shown in the header (e.g. UK for Ukrainian, EN for English). */
+/** Display code in the header (Ukrainian → UA, not UK which reads as Britain). */
 const DISPLAY_CODES: Record<string, string> = {
   en: 'EN',
-  uk: 'UK',
+  uk: 'UA',
   ru: 'RU',
   pl: 'PL',
   de: 'DE',

@@ -1651,7 +1651,7 @@ export const enTranslations = {
   'landing.pro.benefit1': 'Job requests from clients in your city and categories',
   'landing.pro.benefit2': 'Portfolio, reviews, and verification badge',
   'landing.pro.benefit3': 'Built-in chat — agree directly, no middlemen',
-  'landing.pro.benefit4': 'Interface in DE, ES, EN, UK, PL, RU for diaspora',
+  'landing.pro.benefit4': 'Interface in DE, ES, EN, UA, PL, RU for diaspora',
   'landing.pro.step1': 'Create a free account and select your city',
   'landing.pro.step2': 'Complete profile: photo, skills, portfolio',
   'landing.pro.step3': 'Respond to requests and get reviews',

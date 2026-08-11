@@ -6,7 +6,7 @@ export interface LaunchMarket {
   countryName: string
   region: string
   city: string
-  /** Пріоритетні мови: локальна + EN + діаспора (UK/PL/RU) */
+  /** Пріоритетні мови: локальна + EN + діаспора (UA/PL/RU) */
   languages: LanguageCode[]
   isLaunchMarket: boolean
   seedTargets: {

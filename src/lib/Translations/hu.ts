@@ -1357,7 +1357,7 @@ export const huTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Munkakérések ügyfelektől a városában és kategóriáiban',
   'landing.pro.benefit2': 'Portfólió, vélemények és ellenőrző jelvény',
   'landing.pro.benefit3': 'Beépített chat — közvetlenül egyezzen meg, közvetítők nélkül',
-  'landing.pro.benefit4': 'Felület DE, ES, EN, UK, PL, RU nyelveken a diaszpórának',
+  'landing.pro.benefit4': 'Felület DE, ES, EN, UA, PL, RU nyelveken a diaszpórának',
   'landing.pro.step1': 'Hozzon létre ingyenes fiókot és válassza ki a városát',
   'landing.pro.step2': 'Töltse ki a profilt: fotó, készségek, portfólió',
   'landing.pro.step3': 'Válaszoljon a kérésekre és kapjon véleményeket',

@@ -1357,7 +1357,7 @@ export const slTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Povpraševanja po delu od strank v vašem mestu in kategorijah',
   'landing.pro.benefit2': 'Portfolio, ocene in značka preverjanja',
   'landing.pro.benefit3': 'Vgrajen klepet — dogovorite se neposredno, brez posrednikov',
-  'landing.pro.benefit4': 'Vmesnik v DE, ES, EN, UK, PL, RU za diasporo',
+  'landing.pro.benefit4': 'Vmesnik v DE, ES, EN, UA, PL, RU za diasporo',
   'landing.pro.step1': 'Ustvarite brezplačen račun in izberite mesto',
   'landing.pro.step2': 'Izpolnite profil: fotografija, spretnosti, portfolio',
   'landing.pro.step3': 'Odgovarjajte na povpraševanja in zbirajte ocene',

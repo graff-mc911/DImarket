@@ -1357,7 +1357,7 @@ export const bgTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Заявки от клиенти във вашия град и категории',
   'landing.pro.benefit2': 'Портфолио, отзиви и значка за проверка',
   'landing.pro.benefit3': 'Вграден чат — договаряйте се директно, без посредници',
-  'landing.pro.benefit4': 'Интерфейс на DE, ES, EN, UK, PL, RU за диаспората',
+  'landing.pro.benefit4': 'Интерфейс на DE, ES, EN, UA, PL, RU за диаспората',
   'landing.pro.step1': 'Създайте безплатен акаунт и изберете града си',
   'landing.pro.step2': 'Попълнете профила: снимка, умения, портфолио',
   'landing.pro.step3': 'Отговаряйте на заявки и получавайте отзиви',

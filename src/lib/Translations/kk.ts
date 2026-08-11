@@ -1357,7 +1357,7 @@ export const kkTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Сіздің қалаңыздағы және санаттарыңыздағы клиенттерден жұмыс сұраулары',
   'landing.pro.benefit2': 'Портфолио, шолулар және растау белгісі',
   'landing.pro.benefit3': 'Кірістірілген чат — тікелей келісіңіз, делдал жоқ',
-  'landing.pro.benefit4': 'Диаспораға арналған DE, ES, EN, UK, PL, RU тілдеріндегі интерфейс',
+  'landing.pro.benefit4': 'Диаспораға арналған DE, ES, EN, UA, PL, RU тілдеріндегі интерфейс',
   'landing.pro.step1': 'Тегін тіркелгі жасаңыз және қалаңызды таңдаңыз',
   'landing.pro.step2': 'Толық профиль: фотосурет, дағдылар, портфолио',
   'landing.pro.step3': 'Өтінімдерге жауап беріңіз және шолулар алыңыз',

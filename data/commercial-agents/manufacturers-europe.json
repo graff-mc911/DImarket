@@ -11,10 +11,30 @@
     "headquarters": "Iphofen, Germany",
     "lat": 49.7042,
     "lng": 10.2611,
-    "categories": ["construction", "renovation", "manufacturers"],
-    "products": ["Gypsum board", "Plaster", "Insulation"],
-    "countries_available": ["Germany", "Ukraine", "Poland", "Spain", "France", "Italy"],
-    "languages": ["DE", "EN", "UK", "PL"]
+    "categories": [
+      "construction",
+      "renovation",
+      "manufacturers"
+    ],
+    "products": [
+      "Gypsum board",
+      "Plaster",
+      "Insulation"
+    ],
+    "countries_available": [
+      "Germany",
+      "Ukraine",
+      "Poland",
+      "Spain",
+      "France",
+      "Italy"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "UA",
+      "PL"
+    ]
   },
   {
     "slug": "hilti",
@@ -28,10 +48,31 @@
     "headquarters": "Schaan, Liechtenstein",
     "lat": 47.1667,
     "lng": 9.5167,
-    "categories": ["construction", "manufacturers", "tools"],
-    "products": ["Fasteners", "Power tools", "Measuring systems"],
-    "countries_available": ["Germany", "Ukraine", "Poland", "Spain", "France", "Italy", "Romania"],
-    "languages": ["DE", "EN", "FR", "IT"]
+    "categories": [
+      "construction",
+      "manufacturers",
+      "tools"
+    ],
+    "products": [
+      "Fasteners",
+      "Power tools",
+      "Measuring systems"
+    ],
+    "countries_available": [
+      "Germany",
+      "Ukraine",
+      "Poland",
+      "Spain",
+      "France",
+      "Italy",
+      "Romania"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "FR",
+      "IT"
+    ]
   },
   {
     "slug": "geberit",
@@ -45,10 +86,30 @@
     "headquarters": "Rapperswil-Jona, Switzerland",
     "lat": 47.226,
     "lng": 8.818,
-    "categories": ["hvac", "renovation", "manufacturers"],
-    "products": ["Installation systems", "Flushing systems", "Bathroom ceramics"],
-    "countries_available": ["Switzerland", "Germany", "Poland", "Ukraine", "Spain", "Italy"],
-    "languages": ["DE", "EN", "FR", "IT"]
+    "categories": [
+      "hvac",
+      "renovation",
+      "manufacturers"
+    ],
+    "products": [
+      "Installation systems",
+      "Flushing systems",
+      "Bathroom ceramics"
+    ],
+    "countries_available": [
+      "Switzerland",
+      "Germany",
+      "Poland",
+      "Ukraine",
+      "Spain",
+      "Italy"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "FR",
+      "IT"
+    ]
   },
   {
     "slug": "velux",
@@ -62,10 +123,33 @@
     "headquarters": "Hørsholm, Denmark",
     "lat": 55.871,
     "lng": 12.501,
-    "categories": ["construction", "renovation", "manufacturers"],
-    "products": ["Roof windows", "Skylights", "Blinds"],
-    "countries_available": ["Denmark", "Germany", "Poland", "Ukraine", "Spain", "France", "UK"],
-    "languages": ["EN", "DE", "PL", "UK", "ES", "FR"]
+    "categories": [
+      "construction",
+      "renovation",
+      "manufacturers"
+    ],
+    "products": [
+      "Roof windows",
+      "Skylights",
+      "Blinds"
+    ],
+    "countries_available": [
+      "Denmark",
+      "Germany",
+      "Poland",
+      "Ukraine",
+      "Spain",
+      "France",
+      "UK"
+    ],
+    "languages": [
+      "EN",
+      "DE",
+      "PL",
+      "UA",
+      "ES",
+      "FR"
+    ]
   },
   {
     "slug": "uponor",
@@ -79,10 +163,30 @@
     "headquarters": "Helsinki, Finland",
     "lat": 60.1699,
     "lng": 24.9384,
-    "categories": ["hvac", "construction", "manufacturers"],
-    "products": ["Pipes", "Radiant heating", "Cooling systems"],
-    "countries_available": ["Finland", "Germany", "Poland", "Spain", "Sweden", "Ukraine"],
-    "languages": ["EN", "FI", "DE", "PL"]
+    "categories": [
+      "hvac",
+      "construction",
+      "manufacturers"
+    ],
+    "products": [
+      "Pipes",
+      "Radiant heating",
+      "Cooling systems"
+    ],
+    "countries_available": [
+      "Finland",
+      "Germany",
+      "Poland",
+      "Spain",
+      "Sweden",
+      "Ukraine"
+    ],
+    "languages": [
+      "EN",
+      "FI",
+      "DE",
+      "PL"
+    ]
   },
   {
     "slug": "gree",
@@ -96,10 +200,29 @@
     "headquarters": "Zhuhai, China (EU distribution)",
     "lat": 52.2297,
     "lng": 21.0122,
-    "categories": ["hvac", "manufacturers"],
-    "products": ["Air conditioners", "Heat pumps", "Multi-split systems"],
-    "countries_available": ["Poland", "Spain", "Germany", "Ukraine", "Italy", "Romania"],
-    "languages": ["EN", "ES", "PL", "DE"]
+    "categories": [
+      "hvac",
+      "manufacturers"
+    ],
+    "products": [
+      "Air conditioners",
+      "Heat pumps",
+      "Multi-split systems"
+    ],
+    "countries_available": [
+      "Poland",
+      "Spain",
+      "Germany",
+      "Ukraine",
+      "Italy",
+      "Romania"
+    ],
+    "languages": [
+      "EN",
+      "ES",
+      "PL",
+      "DE"
+    ]
   },
   {
     "slug": "dewalt",
@@ -113,10 +236,31 @@
     "headquarters": "Towson, USA (EU ops)",
     "lat": 50.1109,
     "lng": 8.6821,
-    "categories": ["construction", "manufacturers", "tools"],
-    "products": ["Cordless tools", "Drills", "Saws"],
-    "countries_available": ["Germany", "Poland", "Spain", "France", "UK", "Ukraine"],
-    "languages": ["EN", "DE", "ES", "FR", "PL"]
+    "categories": [
+      "construction",
+      "manufacturers",
+      "tools"
+    ],
+    "products": [
+      "Cordless tools",
+      "Drills",
+      "Saws"
+    ],
+    "countries_available": [
+      "Germany",
+      "Poland",
+      "Spain",
+      "France",
+      "UK",
+      "Ukraine"
+    ],
+    "languages": [
+      "EN",
+      "DE",
+      "ES",
+      "FR",
+      "PL"
+    ]
   },
   {
     "slug": "festool",
@@ -130,10 +274,30 @@
     "headquarters": "Wendlingen, Germany",
     "lat": 48.6747,
     "lng": 9.3772,
-    "categories": ["construction", "manufacturers", "tools"],
-    "products": ["Sanders", "Saws", "Dust extractors"],
-    "countries_available": ["Germany", "Austria", "Switzerland", "Poland", "Spain", "France"],
-    "languages": ["DE", "EN", "FR", "IT"]
+    "categories": [
+      "construction",
+      "manufacturers",
+      "tools"
+    ],
+    "products": [
+      "Sanders",
+      "Saws",
+      "Dust extractors"
+    ],
+    "countries_available": [
+      "Germany",
+      "Austria",
+      "Switzerland",
+      "Poland",
+      "Spain",
+      "France"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "FR",
+      "IT"
+    ]
   },
   {
     "slug": "philips-lighting",
@@ -147,10 +311,28 @@
     "headquarters": "Eindhoven, Netherlands",
     "lat": 51.4416,
     "lng": 5.4697,
-    "categories": ["manufacturers", "home-services"],
-    "products": ["LED lighting", "Connected lighting"],
-    "countries_available": ["Netherlands", "Germany", "Poland", "Spain", "Ukraine", "France"],
-    "languages": ["EN", "NL", "DE", "PL"]
+    "categories": [
+      "manufacturers",
+      "home-services"
+    ],
+    "products": [
+      "LED lighting",
+      "Connected lighting"
+    ],
+    "countries_available": [
+      "Netherlands",
+      "Germany",
+      "Poland",
+      "Spain",
+      "Ukraine",
+      "France"
+    ],
+    "languages": [
+      "EN",
+      "NL",
+      "DE",
+      "PL"
+    ]
   },
   {
     "slug": "rockwool",
@@ -164,10 +346,29 @@
     "headquarters": "Hedehusene, Denmark",
     "lat": 55.648,
     "lng": 12.211,
-    "categories": ["construction", "manufacturers"],
-    "products": ["Stone wool insulation", "Fire protection"],
-    "countries_available": ["Denmark", "Germany", "Poland", "Ukraine", "Spain", "UK"],
-    "languages": ["EN", "DE", "PL", "UK", "ES"]
+    "categories": [
+      "construction",
+      "manufacturers"
+    ],
+    "products": [
+      "Stone wool insulation",
+      "Fire protection"
+    ],
+    "countries_available": [
+      "Denmark",
+      "Germany",
+      "Poland",
+      "Ukraine",
+      "Spain",
+      "UK"
+    ],
+    "languages": [
+      "EN",
+      "DE",
+      "PL",
+      "UA",
+      "ES"
+    ]
   },
   {
     "slug": "sika",
@@ -181,10 +382,32 @@
     "headquarters": "Baar, Switzerland",
     "lat": 47.1954,
     "lng": 8.5294,
-    "categories": ["construction", "renovation", "manufacturers"],
-    "products": ["Sealants", "Adhesives", "Waterproofing"],
-    "countries_available": ["Switzerland", "Germany", "Poland", "Spain", "Ukraine", "France", "Italy"],
-    "languages": ["DE", "EN", "FR", "IT", "ES"]
+    "categories": [
+      "construction",
+      "renovation",
+      "manufacturers"
+    ],
+    "products": [
+      "Sealants",
+      "Adhesives",
+      "Waterproofing"
+    ],
+    "countries_available": [
+      "Switzerland",
+      "Germany",
+      "Poland",
+      "Spain",
+      "Ukraine",
+      "France",
+      "Italy"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "FR",
+      "IT",
+      "ES"
+    ]
   },
   {
     "slug": "wienerberger",
@@ -198,10 +421,31 @@
     "headquarters": "Vienna, Austria",
     "lat": 48.2082,
     "lng": 16.3738,
-    "categories": ["construction", "manufacturers"],
-    "products": ["Bricks", "Roof tiles", "Pavers"],
-    "countries_available": ["Austria", "Germany", "Poland", "Czechia", "Romania", "Hungary", "Ukraine"],
-    "languages": ["DE", "EN", "PL", "CS", "RO"]
+    "categories": [
+      "construction",
+      "manufacturers"
+    ],
+    "products": [
+      "Bricks",
+      "Roof tiles",
+      "Pavers"
+    ],
+    "countries_available": [
+      "Austria",
+      "Germany",
+      "Poland",
+      "Czechia",
+      "Romania",
+      "Hungary",
+      "Ukraine"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "PL",
+      "CS",
+      "RO"
+    ]
   },
   {
     "slug": "saint-gobain",
@@ -215,10 +459,32 @@
     "headquarters": "Courbevoie, France",
     "lat": 48.896,
     "lng": 2.256,
-    "categories": ["construction", "renovation", "manufacturers"],
-    "products": ["Glass", "Gypsum", "Insulation"],
-    "countries_available": ["France", "Germany", "Spain", "Poland", "Ukraine", "Italy", "Romania"],
-    "languages": ["FR", "EN", "DE", "ES", "PL"]
+    "categories": [
+      "construction",
+      "renovation",
+      "manufacturers"
+    ],
+    "products": [
+      "Glass",
+      "Gypsum",
+      "Insulation"
+    ],
+    "countries_available": [
+      "France",
+      "Germany",
+      "Spain",
+      "Poland",
+      "Ukraine",
+      "Italy",
+      "Romania"
+    ],
+    "languages": [
+      "FR",
+      "EN",
+      "DE",
+      "ES",
+      "PL"
+    ]
   },
   {
     "slug": "bosch-professional",
@@ -232,10 +498,31 @@
     "headquarters": "Leinfelden-Echterdingen, Germany",
     "lat": 48.6942,
     "lng": 9.1417,
-    "categories": ["construction", "manufacturers", "tools"],
-    "products": ["Power tools", "Measuring tools", "Accessories"],
-    "countries_available": ["Germany", "Poland", "Spain", "France", "Italy", "Ukraine"],
-    "languages": ["DE", "EN", "ES", "FR", "PL"]
+    "categories": [
+      "construction",
+      "manufacturers",
+      "tools"
+    ],
+    "products": [
+      "Power tools",
+      "Measuring tools",
+      "Accessories"
+    ],
+    "countries_available": [
+      "Germany",
+      "Poland",
+      "Spain",
+      "France",
+      "Italy",
+      "Ukraine"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "ES",
+      "FR",
+      "PL"
+    ]
   },
   {
     "slug": "wuerth",
@@ -249,10 +536,33 @@
     "headquarters": "Künzelsau, Germany",
     "lat": 49.2811,
     "lng": 9.6861,
-    "categories": ["construction", "manufacturers", "stores"],
-    "products": ["Fasteners", "Chemicals", "Tools"],
-    "countries_available": ["Germany", "Poland", "Spain", "France", "Italy", "Ukraine", "Romania"],
-    "languages": ["DE", "EN", "ES", "FR", "IT", "PL"]
+    "categories": [
+      "construction",
+      "manufacturers",
+      "stores"
+    ],
+    "products": [
+      "Fasteners",
+      "Chemicals",
+      "Tools"
+    ],
+    "countries_available": [
+      "Germany",
+      "Poland",
+      "Spain",
+      "France",
+      "Italy",
+      "Ukraine",
+      "Romania"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "ES",
+      "FR",
+      "IT",
+      "PL"
+    ]
   },
   {
     "slug": "grohe",
@@ -266,10 +576,33 @@
     "headquarters": "Düsseldorf, Germany",
     "lat": 51.2277,
     "lng": 6.7735,
-    "categories": ["renovation", "hvac", "manufacturers"],
-    "products": ["Mixers", "Showers", "Kitchen fittings"],
-    "countries_available": ["Germany", "Poland", "Spain", "Ukraine", "France", "Italy", "UK"],
-    "languages": ["DE", "EN", "ES", "FR", "PL", "UK"]
+    "categories": [
+      "renovation",
+      "hvac",
+      "manufacturers"
+    ],
+    "products": [
+      "Mixers",
+      "Showers",
+      "Kitchen fittings"
+    ],
+    "countries_available": [
+      "Germany",
+      "Poland",
+      "Spain",
+      "Ukraine",
+      "France",
+      "Italy",
+      "UK"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "ES",
+      "FR",
+      "PL",
+      "UA"
+    ]
   },
   {
     "slug": "hansgrohe",
@@ -283,10 +616,31 @@
     "headquarters": "Schiltach, Germany",
     "lat": 48.2897,
     "lng": 8.3428,
-    "categories": ["renovation", "manufacturers"],
-    "products": ["Showers", "Mixers", "Bathroom design"],
-    "countries_available": ["Germany", "Austria", "Switzerland", "Poland", "Spain", "France", "Ukraine"],
-    "languages": ["DE", "EN", "FR", "IT", "ES"]
+    "categories": [
+      "renovation",
+      "manufacturers"
+    ],
+    "products": [
+      "Showers",
+      "Mixers",
+      "Bathroom design"
+    ],
+    "countries_available": [
+      "Germany",
+      "Austria",
+      "Switzerland",
+      "Poland",
+      "Spain",
+      "France",
+      "Ukraine"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "FR",
+      "IT",
+      "ES"
+    ]
   },
   {
     "slug": "rehau",
@@ -300,10 +654,31 @@
     "headquarters": "Rehau, Germany",
     "lat": 50.2467,
     "lng": 12.0342,
-    "categories": ["construction", "hvac", "manufacturers"],
-    "products": ["Window profiles", "Pipes", "Underfloor heating"],
-    "countries_available": ["Germany", "Poland", "Ukraine", "Spain", "Czechia", "Romania"],
-    "languages": ["DE", "EN", "PL", "UK", "CS"]
+    "categories": [
+      "construction",
+      "hvac",
+      "manufacturers"
+    ],
+    "products": [
+      "Window profiles",
+      "Pipes",
+      "Underfloor heating"
+    ],
+    "countries_available": [
+      "Germany",
+      "Poland",
+      "Ukraine",
+      "Spain",
+      "Czechia",
+      "Romania"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "PL",
+      "UA",
+      "CS"
+    ]
   },
   {
     "slug": "kingspan",
@@ -317,10 +692,30 @@
     "headquarters": "Kingscourt, Ireland",
     "lat": 53.907,
     "lng": -6.804,
-    "categories": ["construction", "manufacturers"],
-    "products": ["Insulation panels", "Building envelope"],
-    "countries_available": ["Ireland", "UK", "Germany", "Poland", "Spain", "France", "Romania"],
-    "languages": ["EN", "DE", "ES", "FR", "PL"]
+    "categories": [
+      "construction",
+      "manufacturers"
+    ],
+    "products": [
+      "Insulation panels",
+      "Building envelope"
+    ],
+    "countries_available": [
+      "Ireland",
+      "UK",
+      "Germany",
+      "Poland",
+      "Spain",
+      "France",
+      "Romania"
+    ],
+    "languages": [
+      "EN",
+      "DE",
+      "ES",
+      "FR",
+      "PL"
+    ]
   },
   {
     "slug": "legrand",
@@ -334,9 +729,31 @@
     "headquarters": "Limoges, France",
     "lat": 45.8336,
     "lng": 1.2611,
-    "categories": ["manufacturers", "home-services"],
-    "products": ["Switches", "Distribution boards", "Cable management"],
-    "countries_available": ["France", "Spain", "Germany", "Poland", "Italy", "Ukraine", "Romania"],
-    "languages": ["FR", "EN", "ES", "DE", "IT", "PL"]
+    "categories": [
+      "manufacturers",
+      "home-services"
+    ],
+    "products": [
+      "Switches",
+      "Distribution boards",
+      "Cable management"
+    ],
+    "countries_available": [
+      "France",
+      "Spain",
+      "Germany",
+      "Poland",
+      "Italy",
+      "Ukraine",
+      "Romania"
+    ],
+    "languages": [
+      "FR",
+      "EN",
+      "ES",
+      "DE",
+      "IT",
+      "PL"
+    ]
   }
 ]

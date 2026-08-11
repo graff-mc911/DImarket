@@ -1653,7 +1653,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Запити від клієнтів у вашому місті та категоріях',
   'landing.pro.benefit2': 'Портфоліо, відгуки та бейдж верифікації',
   'landing.pro.benefit3': 'Вбудований чат — домовляйтесь без посередників',
-  'landing.pro.benefit4': 'Інтерфейс DE, ES, EN, UK, PL, RU для діаспори',
+  'landing.pro.benefit4': 'Інтерфейс DE, ES, EN, UA, PL, RU для діаспори',
   'landing.pro.step1': 'Створіть безкоштовний акаунт і вкажіть місто',
   'landing.pro.step2': 'Заповніть профіль: фото, навички, портфоліо',
   'landing.pro.step3': 'Відповідайте на запити та збирайте відгуки',

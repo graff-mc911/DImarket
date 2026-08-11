@@ -1405,7 +1405,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Заявки от клиентов в вашем городе',
   'landing.pro.benefit2': 'Портфолио, отзывы, верификация',
   'landing.pro.benefit3': 'Встроенный чат без посредников',
-  'landing.pro.benefit4': 'DE, ES, EN, UK, PL, RU для диаспоры',
+  'landing.pro.benefit4': 'DE, ES, EN, UA, PL, RU для диаспоры',
   'landing.pro.step1': 'Создайте аккаунт и укажите город',
   'landing.pro.step2': 'Заполните профиль',
   'landing.pro.step3': 'Отвечайте на заявки',

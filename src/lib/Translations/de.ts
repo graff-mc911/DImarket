@@ -1368,7 +1368,7 @@ export const deTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Anfragen aus Ihrer Stadt und Kategorien',
   'landing.pro.benefit2': 'Portfolio, Bewertungen, Verifizierung',
   'landing.pro.benefit3': 'Integrierter Chat ohne Vermittler',
-  'landing.pro.benefit4': 'DE, ES, EN, UK, PL, RU für Diaspora',
+  'landing.pro.benefit4': 'DE, ES, EN, UA, PL, RU für Diaspora',
   'landing.pro.step1': 'Konto erstellen und Stadt wählen',
   'landing.pro.step2': 'Profil vervollständigen',
   'landing.pro.step3': 'Auf Anfragen antworten',

@@ -1357,7 +1357,7 @@ export const trTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Şehrinizdeki ve kategorilerdeki müşterilerden gelen iş talepleri',
   'landing.pro.benefit2': 'Portföy, incelemeler ve doğrulama rozeti',
   'landing.pro.benefit3': 'Yerleşik sohbet — doğrudan anlaşın, aracı yok',
-  'landing.pro.benefit4': 'Diaspora için DE, ES, EN, UK, PL, RU\'da arayüz',
+  'landing.pro.benefit4': 'Diaspora için DE, ES, EN, UA, PL, RU\'da arayüz',
   'landing.pro.step1': 'Ücretsiz bir hesap oluşturun ve şehrinizi seçin',
   'landing.pro.step2': 'Profilin tamamı: fotoğraf, beceriler, portföy',
   'landing.pro.step3': 'İsteklere yanıt verin ve yorum alın',

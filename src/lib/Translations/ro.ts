@@ -1357,7 +1357,7 @@ export const roTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Cereri de locuri de muncă de la clienții din orașul și categoriile dvs',
   'landing.pro.benefit2': 'Portofoliu, recenzii și insigna de verificare',
   'landing.pro.benefit3': 'Chat încorporat - de acord direct, fără intermediari',
-  'landing.pro.benefit4': 'Interfață în DE, ES, EN, UK, PL, RU pentru diaspora',
+  'landing.pro.benefit4': 'Interfață în DE, ES, EN, UA, PL, RU pentru diaspora',
   'landing.pro.step1': 'Creează un cont gratuit și selectează orașul tău',
   'landing.pro.step2': 'Profil complet: fotografie, aptitudini, portofoliu',
   'landing.pro.step3': 'Răspundeți la solicitări și obțineți recenzii',

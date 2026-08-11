@@ -1357,7 +1357,7 @@ export const lvTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Darba pieprasījumi no klientiem jūsu pilsētā un kategorijās',
   'landing.pro.benefit2': 'Portfelis, atsauksmes un verifikācijas emblēma',
   'landing.pro.benefit3': 'Iebūvēta tērzēšana — piekrītiet tieši, bez starpniekiem',
-  'landing.pro.benefit4': 'Interfeiss DE, ES, EN, UK, PL, RU diasporai',
+  'landing.pro.benefit4': 'Interfeiss DE, ES, EN, UA, PL, RU diasporai',
   'landing.pro.step1': 'Izveidojiet bezmaksas kontu un izvēlieties savu pilsētu',
   'landing.pro.step2': 'Pilns profils: foto, prasmes, portfolio',
   'landing.pro.step3': 'Atbildiet uz pieprasījumiem un saņemiet atsauksmes',

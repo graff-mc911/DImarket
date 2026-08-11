@@ -6,7 +6,7 @@ Header (and synced surfaces) show the **interface language** as a circular flag 
 ## Files modified
 | File | Change |
 |------|--------|
-| `src/lib/languageDisplay.ts` | **New** — flag emoji + display codes (`uk`→`UK`, `en`→`EN`) |
+| `src/lib/languageDisplay.ts` | **New** — flag emoji + display codes (`uk`→`UA`, `en`→`EN`) |
 | `src/components/LanguageFlag.tsx` | **New** — circular Twemoji flag (default 24×24) |
 | `src/components/LanguageSelector.tsx` | **New** — accessible listbox (flag + native name + code) |
 | `src/components/Header.tsx` | Desktop + mobile language UI → `LanguageSelector` |

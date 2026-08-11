@@ -1368,7 +1368,7 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'landing.pro.benefit1': 'Zlecenia od klientów w Twoim mieście',
   'landing.pro.benefit2': 'Portfolio, opinie, weryfikacja',
   'landing.pro.benefit3': 'Czat wbudowany — bez pośredników',
-  'landing.pro.benefit4': 'DE, ES, EN, UK, PL, RU dla diaspory',
+  'landing.pro.benefit4': 'DE, ES, EN, UA, PL, RU dla diaspory',
   'landing.pro.step1': 'Załóż konto i wybierz miasto',
   'landing.pro.step2': 'Uzupełnij profil: zdjęcie, umiejętności',
   'landing.pro.step3': 'Odpowiadaj na zlecenia i zbieraj opinie',
