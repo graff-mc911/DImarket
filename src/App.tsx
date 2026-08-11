@@ -13,7 +13,7 @@ import { PageWithSideAds } from './components/PageWithSideAds'
 import { PageLoading } from './components/PageLoading'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { lazyWithRetry } from './lib/lazyWithRetry'
-import { bindPathListener, navigateTo } from './lib/navigation'
+import { bindPathListener, navigateTo, scrollToTop } from './lib/navigation'
 import { isSeoLocale } from './lib/seoRoutes'
 import {
   findServiceBySlug,
@@ -228,6 +228,12 @@ function App() {
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
+
+  // Instant top on every route change (hash targets handle their own scroll).
+  useLayoutEffect(() => {
+    if (window.location.hash) return
+    scrollToTop()
+  }, [path])
 
   const getPage = () => {
     const parts = path.split('/').filter(Boolean)

@@ -9,12 +9,14 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { applyAdSlotCssVars } from './lib/adSlotCssVars'
 import { ensureLanguageLoaded } from './lib/i18n'
 import { initMonitoring } from './lib/monitoring'
+import { disableBrowserScrollRestoration } from './lib/navigation'
 import './index.css'
 
 const rootElement = document.getElementById('root')
 
 if (typeof document !== 'undefined') {
   applyAdSlotCssVars()
+  disableBrowserScrollRestoration()
 }
 
 if (!rootElement) {

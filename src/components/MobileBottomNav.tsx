@@ -127,7 +127,11 @@ export function MobileBottomNav() {
 
   const go = (target: string) => {
     setMoreOpen(false)
-    if (target === path && !target.includes('#')) return
+    // Always navigateTo so same-route taps still jump to top (and clear hash).
+    if (target === '/' && path === '/' && hash) {
+      window.history.replaceState({}, '', '/')
+      setHash('')
+    }
     navigateTo(target)
   }
 
