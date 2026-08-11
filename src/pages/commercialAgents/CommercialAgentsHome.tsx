@@ -8,6 +8,7 @@ import {
   fetchAgents,
   fetchManufacturers,
   fetchOpportunities,
+  probeCommercialAgentsReady,
   type AgentProfile,
   type ManufacturerProfile,
   type RepresentationOpportunity,
@@ -27,6 +28,9 @@ export function CommercialAgentsHome() {
   const [agents, setAgents] = useState<AgentProfile[]>([])
   const [opportunities, setOpportunities] = useState<RepresentationOpportunity[]>([])
   const [loading, setLoading] = useState(true)
+  const [schemaState, setSchemaState] = useState<'ready' | 'missing_schema' | 'error' | 'loading'>(
+    'loading',
+  )
   const parentCategories = useMemo(
     () => dimarketParentCategoryOptions(language.code).slice(0, 16),
     [language.code],
@@ -44,6 +48,16 @@ export function CommercialAgentsHome() {
     let cancelled = false
     ;(async () => {
       setLoading(true)
+      const readiness = await probeCommercialAgentsReady()
+      if (cancelled) return
+      setSchemaState(readiness)
+      if (readiness === 'missing_schema') {
+        setManufacturers([])
+        setAgents([])
+        setOpportunities([])
+        setLoading(false)
+        return
+      }
       const filters = { ...EMPTY_COMMERCIAL_FILTERS }
       const [m, a, o] = await Promise.all([
         fetchManufacturers(filters, 6),
@@ -69,6 +83,17 @@ export function CommercialAgentsHome() {
 
   return (
     <div className="page-bg pb-24 lg:pb-12">
+      {schemaState === 'missing_schema' ? (
+        <div className="layout-page-gutter pt-4">
+          <div
+            className="rounded-2xl border border-[#f0c14b] bg-[#fff8e8] px-4 py-3 text-sm text-[#5c4030]"
+            role="status"
+          >
+            <p className="font-semibold">{t('commercialAgents.schemaMissingTitle')}</p>
+            <p className="mt-1 leading-6">{t('commercialAgents.schemaMissingBody')}</p>
+          </div>
+        </div>
+      ) : null}
       <section className="relative overflow-hidden border-b border-[var(--line-200)] bg-gradient-to-br from-[#1b2430] via-[#232f3e] to-[#3d2a1a]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,153,0,0.22),transparent_55%)]" />
         <div className="layout-page-gutter relative py-14 md:py-20">

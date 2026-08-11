@@ -2374,6 +2374,9 @@ export const enTranslations = {
   'commercialAgents.emptyResults': 'No results for these filters.',
   'commercialAgents.emptyApplications': 'No applications yet.',
   'commercialAgents.emptyInvitations': 'No invitations yet.',
+  'commercialAgents.schemaMissingTitle': 'Commercial Agents database is not connected yet',
+  'commercialAgents.schemaMissingBody':
+    'Apply the SQL migration in Supabase (file APPLY_COMMERCIAL_AGENTS_PROD.sql), then refresh. Until then catalogs stay empty.',
   'commercialAgents.opportunitiesTitle': 'Representation opportunities',
   'commercialAgents.opportunitiesSubtitle': 'Manufacturers looking for commercial agents',
   'commercialAgents.manufacturersTitle': 'Manufacturers seeking agents',

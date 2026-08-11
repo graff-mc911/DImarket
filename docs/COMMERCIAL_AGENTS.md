@@ -49,10 +49,15 @@ Migrations:
 
 - `supabase/migrations/20260810180000_commercial_agents.sql`
 - `supabase/migrations/20260811120000_commercial_agents_grants.sql`
+- **One-paste for Dashboard:** `supabase/migrations/APPLY_COMMERCIAL_AGENTS_PROD.sql`
 
-Tables: `manufacturer_profiles`, `agent_profiles`, `representation_opportunities`, `representation_applications`, `agent_invitations`, `commercial_entity_reports`, `commercial_analytics_events`
+### Fastest prod apply (if GitHub secret is empty)
 
-Also extends `saved_items.item_type`.
+1. Open [Supabase SQL Editor](https://supabase.com/dashboard/project/wjlfvajloxkevggwjgtk/sql/new)
+2. Paste contents of `APPLY_COMMERCIAL_AGENTS_PROD.sql` → **Run**
+3. Tell the agent / run: `npm run db:seed-commercial-agents` (needs `SUPABASE_SERVICE_ROLE_KEY`) and `npm run test:commercial-agents:prod`
+
+Or add GitHub Actions secret `SUPABASE_ACCESS_TOKEN` and re-run workflow **Apply Commercial Agents schema**.
 
 Apply on prod:
 

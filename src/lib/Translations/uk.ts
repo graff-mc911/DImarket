@@ -2372,6 +2372,9 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'commercialAgents.emptyResults': 'Немає результатів за цими фільтрами.',
   'commercialAgents.emptyApplications': 'Заявок ще немає.',
   'commercialAgents.emptyInvitations': 'Запрошень ще немає.',
+  'commercialAgents.schemaMissingTitle': 'База Commercial Agents ще не підключена',
+  'commercialAgents.schemaMissingBody':
+    'Застосуйте SQL-міграцію в Supabase (файл APPLY_COMMERCIAL_AGENTS_PROD.sql) і оновіть сторінку. До цього каталоги будуть порожні.',
   'commercialAgents.opportunitiesTitle': 'Можливості представництва',
   'commercialAgents.opportunitiesSubtitle': 'Виробники шукають комерційних агентів',
   'commercialAgents.manufacturersTitle': 'Виробники шукають агентів',

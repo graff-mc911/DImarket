@@ -501,3 +501,17 @@ export function openCommercialMessage(otherProfileId: string) {
   sessionStorage.setItem('conversation_with', otherProfileId)
   sessionStorage.removeItem('conversation_listing')
 }
+
+/** Detect whether CA tables exist on the linked Supabase project. */
+export async function probeCommercialAgentsReady(): Promise<
+  'ready' | 'missing_schema' | 'error'
+> {
+  const { error } = await supabase.from('manufacturer_profiles').select('id').limit(1)
+  if (!error) return 'ready'
+  const code = (error as { code?: string }).code || ''
+  const msg = error.message || ''
+  if (code === 'PGRST205' || /could not find the table/i.test(msg)) return 'missing_schema'
+  if (code === '42501' || /permission denied/i.test(msg)) return 'ready'
+  console.error('probeCommercialAgentsReady', error)
+  return 'error'
+}
