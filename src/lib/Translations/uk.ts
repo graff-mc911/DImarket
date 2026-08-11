@@ -617,7 +617,6 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'mapExplore.legendJob': 'Вакансія (фіолетова)',
   'mapExplore.legendShop': 'Магазин / маркетплейс (коричневий)',
   'mapExplore.kindManufacturers': 'Виробники',
-  'mapExplore.kindMarketplace': 'Маркетплейс',
   'homePremium.faqEyebrow': 'Допомога',
   'homePremium.faqTitle': 'Часті запитання',
   'homePremium.faqSubtitle': 'Короткі відповіді про найм, верифікацію, платежі та проєкти на DImarket.',
