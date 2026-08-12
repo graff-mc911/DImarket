@@ -13,6 +13,7 @@ import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { triggerRegistrationMarketing } from '../lib/marketing/agentApi'
+import { triggerScbProvisionForPro } from '../lib/scbLight'
 import {
   IP_COUNTRY_MAP,
   isRegistrationCountry,
@@ -231,6 +232,11 @@ export function Register() {
           userRole: marketingRole,
           languageCode: document.documentElement.lang?.slice(0, 2) || 'uk',
           countryCode: country.trim().slice(0, 2).toUpperCase() || 'UA',
+        })
+
+        triggerScbProvisionForPro(selectedRole, {
+          password,
+          fullName: displayName,
         })
 
         setSuccess(true)

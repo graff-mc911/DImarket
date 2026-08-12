@@ -31,6 +31,7 @@ import { OnboardingChecklist } from '../components/OnboardingChecklist'
 import { ReferralPanel } from '../components/ReferralPanel'
 import { TelegramLinkPanel } from '../components/TelegramLinkPanel'
 import { ConnectPayoutPanel } from '../components/ConnectPayoutPanel'
+import { ScbLightPanel } from '../components/ScbLightPanel'
 import { PROJECT_PAYMENTS_ENABLED } from '../lib/featureFlags'
 import { buildOnboardingState } from '../lib/onboardingProgress'
 import { syncProfessionalCategoriesFromWorkSlugs } from '../lib/syncProfessionalCategories'
@@ -586,6 +587,11 @@ export function Settings() {
                     userId={currentUserId}
                     role={userRole as 'professional' | 'company'}
                   />
+                )}
+
+              {(userRole === 'professional' || userRole === 'company') &&
+                currentUserId && (
+                  <ScbLightPanel userId={currentUserId} />
                 )}
 
               {PROJECT_PAYMENTS_ENABLED &&

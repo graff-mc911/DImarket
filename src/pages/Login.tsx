@@ -7,6 +7,7 @@ import { PasswordField } from '../components/PasswordField'
 import { LanguageSelector } from '../components/LanguageSelector'
 import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
 import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
+import { triggerScbProvisionForPro } from '../lib/scbLight'
 export function Login() {
   const { t } = useApp()
   const [email, setEmail] = useState('')
@@ -40,6 +41,11 @@ export function Login() {
       }
 
       const profile = await ensureUserProfile(data.user)
+
+      triggerScbProvisionForPro(profile?.user_role ?? getIntendedRole(profile, data.user), {
+        password,
+        fullName: profile?.full_name ?? undefined,
+      })
 
       const params = new URLSearchParams(window.location.search)
       const redirect = params.get('redirect')
