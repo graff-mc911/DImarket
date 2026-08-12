@@ -1430,6 +1430,13 @@ function NumField({
   value: number | null
   onChange: (n: number) => void
 }) {
+  // Keep a draft string while typing so a default 0 does not stick as a leading digit (e.g. "0120").
+  const [focused, setFocused] = useState(false)
+  const [draft, setDraft] = useState('')
+
+  const display =
+    focused ? draft : value == null || value === 0 ? '' : String(value)
+
   return (
     <label className="block">
       <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
@@ -1439,8 +1446,24 @@ function NumField({
         type="number"
         min={0}
         step="any"
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value === '' ? 0 : Number(e.target.value))}
+        inputMode="decimal"
+        placeholder="—"
+        value={display}
+        onFocus={() => {
+          setFocused(true)
+          setDraft(value == null || value === 0 ? '' : String(value))
+        }}
+        onBlur={() => setFocused(false)}
+        onChange={(e) => {
+          const raw = e.target.value
+          setDraft(raw)
+          if (raw === '') {
+            onChange(0)
+            return
+          }
+          const n = Number(raw)
+          if (!Number.isNaN(n)) onChange(n)
+        }}
         className={field}
       />
     </label>
