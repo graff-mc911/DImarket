@@ -21,7 +21,8 @@ SET
   updated_at = now()
 WHERE id = 'default';
 
--- Site-wide promo banner fallback when Telegram is not configured
+-- Owner-managed site header messages only (Dashboard → Глобальні оголошення).
+-- Marketing agent must NOT insert here — see STOP_MARKETING_JSON_BANNERS.sql.
 CREATE TABLE IF NOT EXISTS public.announcements (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   message text NOT NULL,

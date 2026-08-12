@@ -202,27 +202,12 @@ function formatPostBody(post: { body: string; hashtags?: string[] | null }): str
 }
 
 async function publishBlog(
-  admin: AdminClient,
-  body: string,
+  _admin: AdminClient,
+  _body: string,
 ): Promise<{ ok: boolean; id?: string; error?: string }> {
-  // Site header banners are for short human messages — never dump LLM JSON / social dumps.
-  const message = body.replace(/\s+/g, ' ').trim().slice(0, 280)
-  if (!isUsableMarketingText(message)) {
-    return { ok: false, error: 'invalid_banner_text' }
-  }
-  await admin.from('announcements').update({ is_active: false }).eq('type', 'promo')
-  const { data, error } = await admin
-    .from('announcements')
-    .insert({
-      message,
-      type: 'promo',
-      is_active: true,
-      starts_at: new Date().toISOString(),
-    })
-    .select('id')
-    .single()
-  if (error) return { ok: false, error: error.message }
-  return { ok: true, id: data?.id as string }
+  // Site header banners are owner-created only (Dashboard → Банери).
+  // Marketing agent must never write to announcements — it previously flooded the UI with raw LLM JSON.
+  return { ok: false, error: 'site_banners_manual_only' }
 }
 
 async function publishPostInternal(
@@ -497,12 +482,13 @@ New ${userRole} joined DiMarket in ${countryCode}. Write a short promo encouragi
         content_kind: 'social_post',
         body: boostParsed.body,
         hashtags: boostParsed.hashtags,
-        status: 'approved',
+        status: agentCfg?.auto_publish ? 'approved' : 'pending_review',
         llm_provider: boostGen?.provider ?? 'template',
         content_hash: contentHash(boostParsed.body + Date.now()),
       }).select('*').single()
-      if (boostPost) {
-        boostPostId = boostPost.id as string
+      boostPostId = boostPost?.id as string | null
+      // Do not publish to site banners — telegram only when auto_publish + credentials exist.
+      if (agentCfg?.auto_publish && boostPost) {
         await publishPostInternal(admin, boostPost as Record<string, unknown>)
       }
     }

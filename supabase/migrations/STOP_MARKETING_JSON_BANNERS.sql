@@ -1,7 +1,7 @@
 -- ============================================================
 -- Stop AI marketing agent from flooding site header banners
 -- Paste into Supabase SQL Editor → Run
--- Safe / idempotent
+-- Safe / idempotent — run this whenever JSON "Акція" junk reappears
 -- ============================================================
 
 -- 1) Stop autonomous agent (cron will no-op while is_running = false)
@@ -22,16 +22,24 @@ SET platforms = ARRAY['telegram']::text[]
 WHERE id = 'default'
   AND (platforms IS NULL OR cardinality(platforms) = 0);
 
--- 2) Delete junk JSON / markdown promo banners (and deactivate any leftover promo)
+-- 2) Delete ALL AI junk promo banners (marketing agent output)
 DELETE FROM public.announcements
 WHERE type = 'promo'
    OR message ILIKE '%```json%'
+   OR message ILIKE '%``` %'
    OR message ILIKE '%"post"%'
+   OR message ILIKE '%"content"%'
+   OR message ILIKE '%"introduction"%'
+   OR message ILIKE '%Unlocking the Power of Advertising%'
    OR message ILIKE '%Unlocking Opportunities%'
    OR message ILIKE '%Unlock Your Brand%'
+   OR message ILIKE '%Unlock Your Potential%'
    OR message ILIKE '%Découvrez DiMarket%'
-   OR message ILIKE '%Unlock Your Potential as a Master%'
-   OR message ILIKE '%Unlocking the Power of DiMarket%';
+   OR message ILIKE '%Unlocking the Power of DiMarket%'
+   OR message ILIKE '%Transformez vos projets%'
+   OR message ILIKE '%Zwiększ swoją widoczność%'
+   OR message ILIKE '%Entdecken Sie die Zukunft%'
+   OR message ILIKE '%¡Bienvenido a DiMarket!%';
 
 -- 3) Best-effort: unschedule pg_cron job if extension exists
 DO $$
@@ -45,10 +53,14 @@ EXCEPTION WHEN OTHERS THEN
   RAISE NOTICE 'pg_cron unschedule skipped: %', SQLERRM;
 END $$;
 
+-- 4) Redeploy edge function marketing-agent after merging fix PR (code change required)
+
 -- Verify
 SELECT id, is_running, auto_publish, platforms, updated_at
 FROM public.marketing_agent_config
 WHERE id = 'default';
 
-SELECT count(*) AS remaining_announcements
-FROM public.announcements;
+SELECT id, type, is_active, left(message, 80) AS preview, created_at
+FROM public.announcements
+ORDER BY created_at DESC
+LIMIT 10;

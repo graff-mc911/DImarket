@@ -980,6 +980,46 @@ function AnnouncementsManager() {
     }
   }
 
+  const isAiJunkAnnouncement = (ann: Announcement) => {
+    const m = ann.message
+    return (
+      ann.type === 'promo' &&
+      (m.includes('```json') ||
+        m.includes('"post"') ||
+        m.includes('"content"') ||
+        /^\s*\{/.test(m.trim()))
+    )
+  }
+
+  const aiJunkCount = announcements.filter(isAiJunkAnnouncement).length
+
+  const deleteAiJunkAnnouncements = async () => {
+    const junk = announcements.filter(isAiJunkAnnouncement)
+    if (junk.length === 0) return
+    if (
+      !confirm(
+        `Видалити ${junk.length} AI-банерів (JSON від marketing agent)? Також виконайте STOP_MARKETING_JSON_BANNERS.sql у Supabase, щоб вони не зʼявились знову.`,
+      )
+    ) {
+      return
+    }
+    setSaving(true)
+    setError('')
+    try {
+      for (const ann of junk) {
+        const { error: delError } = await supabase.from('announcements').delete().eq('id', ann.id)
+        if (delError) throw delError
+      }
+      setNotice(`Видалено ${junk.length} AI-банерів. Зупиніть marketing agent у Supabase (SQL у STOP_MARKETING_JSON_BANNERS.sql).`)
+      await loadAnnouncements()
+    } catch (e) {
+      console.error('Помилка масового видалення:', e)
+      setError('Не вдалося видалити AI-банери.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   // Кольори типів банерів
   const typeStyles: Record<Announcement['type'], { bg: string; color: string; label: string }> = {
     info:    { bg: 'rgba(59,130,246,0.12)',  color: '#1d4ed8', label: 'Інформація' },
@@ -997,10 +1037,27 @@ function AnnouncementsManager() {
             Глобальні оголошення
           </h2>
           <p className="text-sm text-[#6f665d] mt-1">
-            Банери які показуються всім користувачам у шапці сайту
+            Банери які показуються всім користувачам у шапці сайту. Створюйте вручну — marketing agent більше не пише сюди.
           </p>
         </div>
+        {aiJunkCount > 0 ? (
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() => void deleteAiJunkAnnouncements()}
+            className="ml-auto shrink-0 rounded-full border border-[rgba(239,68,68,0.35)] bg-[rgba(239,68,68,0.08)] px-4 py-2 text-xs font-semibold text-[#b91c1c] hover:bg-[rgba(239,68,68,0.14)] disabled:opacity-50"
+          >
+            Видалити AI-сміття ({aiJunkCount})
+          </button>
+        ) : null}
       </div>
+
+      {aiJunkCount > 0 ? (
+        <div className="mb-4 rounded-[18px] border border-[rgba(245,158,11,0.35)] bg-[rgba(255,251,235,0.92)] px-4 py-3 text-sm text-[#92400e]">
+          Знайдено {aiJunkCount} банерів від marketing agent (сирі JSON «Акція»). Видаліть їх і виконайте{' '}
+          <code className="text-xs">STOP_MARKETING_JSON_BANNERS.sql</code> у Supabase, інакше вони зʼявляться знову після cron о 09:00.
+        </div>
+      ) : null}
 
       {notice && (
         <div className="mb-4 rounded-[18px] border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
