@@ -24,6 +24,7 @@ import {
 import { supabase }    from '../lib/supabase'
 import { navigateTo }  from '../lib/navigation'
 import { useApp }      from '../contexts/AppContext'
+import { usePaidAds }  from '../contexts/PaidAdsContext'
 import { AdCampaign }  from '../lib/types'
 import type { TranslationKey } from '../lib/i18n'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
@@ -193,6 +194,7 @@ function campaignsDateOverlap(
 
 export function Advertising() {
   const { user, profile, t, authReady } = useApp()
+  const { refresh: refreshPublicAds } = usePaidAds()
   const [adGuideActive, setAdGuideActive] = useState(false)
   const [adGuideStepIndex, setAdGuideStepIndex] = useState(0)
   const draftHydratedRef = useRef(false)
@@ -915,6 +917,7 @@ export function Advertising() {
         })
         resetForm({ keepFeedback: true })
         await loadOwnCampaigns()
+        await refreshPublicAds()
         setSaving(false)
         return
       }
@@ -977,6 +980,7 @@ export function Advertising() {
         if (error) throw error
         setFeedback({ type: 'success', text: t('advertising.successSaved') })
         await loadOwnCampaigns()
+        await refreshPublicAds()
       } catch (err) {
         setFeedback({
           type: 'error',

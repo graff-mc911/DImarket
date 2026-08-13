@@ -65,6 +65,23 @@ export function PaidAdsProvider({ children }: { children: ReactNode }) {
     void load()
   }, [load])
 
+  // Invalidate in-memory ad list when the tab becomes visible again (after owner
+  // publish/delete in another tab, or returning from dashboard).
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void load()
+    }
+    const onFocus = () => {
+      void load()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('focus', onFocus)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [load])
+
   const getForSlots = useCallback(
     (slots: (AdPlacement | string)[], limit = 12) =>
       campaigns
