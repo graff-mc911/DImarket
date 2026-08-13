@@ -37,7 +37,7 @@ export function PwaInstallPrompt() {
       /* ignore */
     }
 
-    const on bip = (e: Event) => {
+    const onBeforeInstallPrompt = (e: Event) => {
       e.preventDefault()
       setDeferred(e as BeforeInstallPromptEvent)
       setVisible(true)
@@ -48,10 +48,10 @@ export function PwaInstallPrompt() {
       setDeferred(null)
     }
 
-    window.addEventListener('beforeinstallprompt', on bip)
+    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt)
     window.addEventListener('appinstalled', onInstalled)
     return () => {
-      window.removeEventListener('beforeinstallprompt', on bip)
+      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
       window.removeEventListener('appinstalled', onInstalled)
     }
   }, [])
