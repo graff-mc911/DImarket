@@ -31,6 +31,8 @@ Public category for jurisdiction-aware contracts, licenses, permits, and governm
 - Search tab `documents` in `advancedSearch.ts` / `Search.tsx`
 - AI intent `documents_procedures` in `problemGuideEngine.ts`
 
-## Spain MVP
+Catalog: Spain curated + generated packs for all countries in `countrySources` (DE, FR, PL, IT, PT, RO, NL, CZ, HU, BG, AT, SK, IE, SE, DK, FI, GR, BE, LU, LT, LV, EE, HR, SI, CY, MT, CH, NO, UK).
 
-Catalog seeds in `src/lib/documents/catalog.ts` (works without SQL). Apply `APPLY_DOCUMENTS_PROCEDURES_CATALOG.sql` when ready to store in Supabase.
+City overlays: Alicante (ES), Darmstadt (DE).
+
+Each national pack includes: business registration, contracts, licenses/permits, tax, residence, government, legal, banks, personal documents — pointers / under_review only.

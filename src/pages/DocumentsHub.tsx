@@ -3,6 +3,7 @@ import { ChevronRight, FileText, MapPin } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { appendLocationToPath, formatGlobalLocationLabel } from '../lib/globalLocation'
+import { documentDisplayDescription, documentDisplayTitle } from '../lib/documents/display'
 import { DOCUMENTS_SUBCATEGORY_ORDER } from '../lib/documents/catalog'
 import { documentSeoPath } from '../lib/documents/types'
 import { jurisdictionFromLocation } from '../lib/documents/location'
@@ -14,7 +15,7 @@ type Props = {
 }
 
 export function DocumentsHub({ subcategory = null }: Props) {
-  const { t, location } = useApp()
+  const { t, location, language } = useApp()
   const jurisdiction = useMemo(() => jurisdictionFromLocation(location), [location])
   const locationLabel =
     formatGlobalLocationLabel(location, t('serviya.loc.all-europe')) || t('docs.location.any')
@@ -89,7 +90,9 @@ export function DocumentsHub({ subcategory = null }: Props) {
 
         {docs.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-[#d2d2d7] px-4 py-8 text-center text-sm text-[#86868b]">
-            {t('docs.list.empty')}
+            {jurisdiction.countryCode
+              ? t('docs.list.emptyForCountry')
+              : t('docs.list.empty')}
           </p>
         ) : (
           <ul className="space-y-3">
@@ -103,11 +106,15 @@ export function DocumentsHub({ subcategory = null }: Props) {
                   <div className="flex items-start gap-3">
                     <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[#1d1d1f]" aria-hidden />
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-[#1d1d1f]">{t(doc.titleKey)}</p>
+                      <p className="font-semibold text-[#1d1d1f]">
+                        {documentDisplayTitle(doc, language.code, t)}
+                      </p>
                       <p className="mt-0.5 text-xs text-[#6e6e73]">
                         {doc.jurisdiction} · {t(`docs.status.${doc.status}`)}
                       </p>
-                      <p className="mt-1 text-sm text-[#6e6e73] line-clamp-2">{t(doc.descriptionKey)}</p>
+                      <p className="mt-1 text-sm text-[#6e6e73] line-clamp-2">
+                        {documentDisplayDescription(doc, language.code, t)}
+                      </p>
                     </div>
                     <ChevronRight className="h-4 w-4 shrink-0 text-[#86868b]" aria-hidden />
                   </div>

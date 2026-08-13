@@ -110,6 +110,11 @@ export type DocumentRecord = {
   monetizationTier: 'free' | 'premium_document' | 'professional_assistance' | 'legal_review' | 'business_setup'
   seoTitleKey: string
   seoDescriptionKey: string
+  /** Optional localized display (for generated EU packs) */
+  titleEn?: string
+  titleUk?: string
+  descriptionEn?: string
+  descriptionUk?: string
 }
 
 export function documentSeoPath(doc: Pick<DocumentRecord, 'countrySlug' | 'city' | 'slug'>): string {

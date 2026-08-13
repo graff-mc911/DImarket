@@ -31,13 +31,41 @@ const COUNTRY_SLUG_TO_NAME: Record<string, string> = {
   austria: 'Austria',
   netherlands: 'Netherlands',
   belgium: 'Belgium',
+  romania: 'Romania',
+  czechia: 'Czechia',
+  'czech-republic': 'Czechia',
+  hungary: 'Hungary',
+  bulgaria: 'Bulgaria',
+  slovakia: 'Slovakia',
+  ireland: 'Ireland',
+  sweden: 'Sweden',
+  denmark: 'Denmark',
+  finland: 'Finland',
+  greece: 'Greece',
+  luxembourg: 'Luxembourg',
+  lithuania: 'Lithuania',
+  latvia: 'Latvia',
+  estonia: 'Estonia',
+  croatia: 'Croatia',
+  slovenia: 'Slovenia',
+  cyprus: 'Cyprus',
+  malta: 'Malta',
+  switzerland: 'Switzerland',
+  norway: 'Norway',
   'united-kingdom': 'United Kingdom',
   uk: 'United Kingdom',
 }
 
-const COUNTRY_NAME_TO_SLUG: Record<string, string> = Object.fromEntries(
-  Object.entries(COUNTRY_SLUG_TO_NAME).map(([slug, name]) => [name.toLowerCase(), slug]),
-)
+const COUNTRY_NAME_TO_SLUG: Record<string, string> = {
+  ...Object.fromEntries(Object.entries(COUNTRY_SLUG_TO_NAME).map(([slug, name]) => [name.toLowerCase(), slug])),
+  deutschland: 'germany',
+  allemagne: 'germany',
+  німеччина: 'germany',
+  espagne: 'spain',
+  іспанія: 'spain',
+  pologne: 'poland',
+  польща: 'poland',
+}
 
 export function hasActiveLocation(geo: GeoSearchState): boolean {
   return Boolean(geo.country || geo.region || geo.province || geo.city || geo.fromGps)

@@ -125,6 +125,22 @@ export const STATIC_ROUTES = [
     schema: 'page',
   },
   {
+    path: '/documents/germany/business-registration',
+    title: 'Business registration Germany | DImarket',
+    description: 'Germany business setup checklist with official sources.',
+    changefreq: 'weekly',
+    priority: 0.75,
+    schema: 'page',
+  },
+  {
+    path: '/documents/germany/darmstadt/business-registration',
+    title: 'Business registration Darmstadt | DImarket',
+    description: 'Darmstadt / Hessen business setup pointers.',
+    changefreq: 'weekly',
+    priority: 0.7,
+    schema: 'page',
+  },
+  {
     path: '/documents/spain/residential-rental-contract',
     title: 'Residential rental contract Spain | DImarket',
     description: 'Spain residential lease form skeleton with official source link.',

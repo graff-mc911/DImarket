@@ -1,12 +1,11 @@
-/**
- * Spain-first MVP catalog for Documents & Procedures.
- *
- * RULE: Do NOT invent legal requirements, license rules, taxes, or contract clauses.
- * Entries with unverified legal content use status = under_review and
- * templateNeedsLegalReview = true. Official URLs only from known government portals.
- */
-
-import type { DocumentRecord, FormFieldDef } from './types'
+/** Public catalog: Spain detailed MVP + generated EU/EEA packs. */
+import { buildEuDocumentsCatalog } from './euPack'
+import {
+  repairContractFields,
+  rentalContractFields,
+  vehicleSaleFields,
+} from './forms'
+import type { DocumentRecord } from './types'
 
 const BOE = {
   name: 'BOE — Agencia Estatal Boletín Oficial del Estado',
@@ -44,45 +43,6 @@ const INCLUSION = {
   lastVerified: '2026-08-13',
 } as const
 
-const repairContractFields: FormFieldDef[] = [
-  { id: 'client_name', labelKey: 'docs.field.clientName', type: 'text', required: true, profileKey: 'full_name' },
-  { id: 'client_phone', labelKey: 'docs.field.clientPhone', type: 'phone', profileKey: 'phone' },
-  { id: 'client_email', labelKey: 'docs.field.clientEmail', type: 'email', profileKey: 'email' },
-  { id: 'contractor_name', labelKey: 'docs.field.contractorName', type: 'text', required: true, profileKey: 'company_name' },
-  { id: 'address', labelKey: 'docs.field.address', type: 'text', required: true, profileKey: 'location' },
-  { id: 'work_description', labelKey: 'docs.field.workDescription', type: 'textarea', required: true },
-  { id: 'materials', labelKey: 'docs.field.materials', type: 'textarea' },
-  { id: 'price', labelKey: 'docs.field.price', type: 'number', required: true },
-  { id: 'deadline', labelKey: 'docs.field.deadline', type: 'date' },
-  { id: 'payment_terms', labelKey: 'docs.field.paymentTerms', type: 'textarea' },
-  { id: 'warranty', labelKey: 'docs.field.warranty', type: 'textarea' },
-  { id: 'extra_works', labelKey: 'docs.field.extraWorks', type: 'textarea' },
-  { id: 'liability', labelKey: 'docs.field.liability', type: 'textarea' },
-  { id: 'signed_at', labelKey: 'docs.field.signedAt', type: 'date' },
-]
-
-const rentalContractFields: FormFieldDef[] = [
-  { id: 'landlord_name', labelKey: 'docs.field.landlordName', type: 'text', required: true },
-  { id: 'tenant_name', labelKey: 'docs.field.tenantName', type: 'text', required: true, profileKey: 'full_name' },
-  { id: 'property_address', labelKey: 'docs.field.propertyAddress', type: 'text', required: true },
-  { id: 'rent_amount', labelKey: 'docs.field.rentAmount', type: 'number', required: true },
-  { id: 'deposit', labelKey: 'docs.field.deposit', type: 'number' },
-  { id: 'start_date', labelKey: 'docs.field.startDate', type: 'date', required: true },
-  { id: 'end_date', labelKey: 'docs.field.endDate', type: 'date' },
-  { id: 'signed_at', labelKey: 'docs.field.signedAt', type: 'date' },
-]
-
-const vehicleSaleFields: FormFieldDef[] = [
-  { id: 'seller_name', labelKey: 'docs.field.sellerName', type: 'text', required: true },
-  { id: 'buyer_name', labelKey: 'docs.field.buyerName', type: 'text', required: true, profileKey: 'full_name' },
-  { id: 'vehicle_make', labelKey: 'docs.field.vehicleMake', type: 'text', required: true },
-  { id: 'vehicle_model', labelKey: 'docs.field.vehicleModel', type: 'text', required: true },
-  { id: 'vin', labelKey: 'docs.field.vin', type: 'text' },
-  { id: 'plate', labelKey: 'docs.field.plate', type: 'text' },
-  { id: 'price', labelKey: 'docs.field.price', type: 'number', required: true },
-  { id: 'signed_at', labelKey: 'docs.field.signedAt', type: 'date' },
-]
-
 function esDoc(
   partial: Omit<DocumentRecord, 'countryCode' | 'countrySlug' | 'originalLanguage' | 'availableLanguages' | 'monetizationTier'> & {
     monetizationTier?: DocumentRecord['monetizationTier']
@@ -92,14 +52,14 @@ function esDoc(
     countryCode: 'ES',
     countrySlug: 'spain',
     originalLanguage: 'es',
-    availableLanguages: ['es', 'en', 'uk'],
+    availableLanguages: ['es', 'uk', 'en'],
     monetizationTier: partial.monetizationTier ?? 'free',
     ...partial,
   }
 }
 
-/** Public catalog (Spain MVP). Expandable to DE/FR/… without changing UI. */
-export const DOCUMENTS_CATALOG: DocumentRecord[] = [
+/** Spain curated catalog (city overlays + richer seeds). */
+export const SPAIN_DOCUMENTS_CATALOG: DocumentRecord[] = [
   esDoc({
     id: 'es-residential-rental-contract',
     slug: 'residential-rental-contract',
@@ -824,6 +784,12 @@ export const DOCUMENTS_CATALOG: DocumentRecord[] = [
     seoTitleKey: 'docs.item.govProcedures.seoTitle',
     seoDescriptionKey: 'docs.item.govProcedures.seoDesc',
   }),
+]
+
+/** Full public catalog: Spain + DE/FR/PL/… EU/EEA packs from official portals. */
+export const DOCUMENTS_CATALOG: DocumentRecord[] = [
+  ...SPAIN_DOCUMENTS_CATALOG,
+  ...buildEuDocumentsCatalog(['ES']),
 ]
 
 export const DOCUMENTS_SUBCATEGORY_ORDER: Array<{

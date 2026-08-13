@@ -19,6 +19,7 @@ import {
   type DocumentRecord,
   type FormFieldDef,
 } from '../lib/documents'
+import { documentDisplayDescription, documentDisplayTitle } from '../lib/documents/display'
 import type { Profile } from '../lib/types'
 
 type Props = {
@@ -52,7 +53,7 @@ function profileValue(
 }
 
 export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
-  const { t, location, profile, user } = useApp()
+  const { t, location, profile, user, language } = useApp()
   const doc = useMemo(
     () => getDocumentByPathParts(countrySlug, cityOrSlug, slug),
     [countrySlug, cityOrSlug, slug],
@@ -99,7 +100,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
     }))
     openFilledDocumentPdf(
       {
-        title: t(doc.titleKey),
+        title: documentDisplayTitle(doc, language.code, t),
         jurisdiction: doc.jurisdiction,
         sourceName: doc.source.name,
         sourceUrl: doc.source.url,
@@ -111,7 +112,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
         disclaimerAccuracy: t('osm.disclaimer.accuracy'),
         disclaimerNotAdvice: t('osm.disclaimer.notAdvice'),
       },
-      filledDocumentFilename(t(doc.titleKey)),
+      filledDocumentFilename(documentDisplayTitle(doc, language.code, t)),
     )
   }
 
@@ -142,9 +143,11 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
             {t(`docs.type.${doc.documentType}`)} · {t(`docs.status.${doc.status}`)}
           </p>
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#1d1d1f]">
-            {t(doc.titleKey)}
+            {documentDisplayTitle(doc, language.code, t)}
           </h1>
-          <p className="mt-2 text-sm leading-6 text-[#6e6e73]">{t(doc.descriptionKey)}</p>
+          <p className="mt-2 text-sm leading-6 text-[#6e6e73]">
+            {documentDisplayDescription(doc, language.code, t)}
+          </p>
           <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-[#6e6e73]">
             <MapPin className="h-3.5 w-3.5" aria-hidden />
             {doc.jurisdiction}

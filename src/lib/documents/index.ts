@@ -26,6 +26,11 @@ export {
   searchDocumentsForQuery,
 } from './query'
 export {
+  documentDisplayTitle,
+  documentDisplayDescription,
+} from './display'
+export { buildEuDocumentsCatalog } from './euPack'
+export {
   buildFilledDocumentPdfHtml,
   openFilledDocumentPdf,
   filledDocumentFilename,
