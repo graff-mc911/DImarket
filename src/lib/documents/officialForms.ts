@@ -58,32 +58,201 @@ const deRental: OfficialFormPack = {
   ],
 }
 
-/** Germany — Kfz-Kaufvertrag (üblich) + Zulassungshinweis KBA */
+/** Germany — Privater Kfz-Kaufvertrag (Gebrauchtwagen), field layout per common Muster blank */
 const deVehicle: OfficialFormPack = {
-  modelName: 'Kfz-Kaufvertrag (Privat) + Hinweise Zulassung',
+  modelName: 'Kaufvertrag über ein Gebrauchtkraftfahrzeug von privat',
   language: 'de',
-  sourceName: 'Kraftfahrt-Bundesamt (KBA) / bund.de',
+  sourceName: 'Muster — Privater Kfz-Kaufvertrag (Feldstruktur)',
   sourceUrl: 'https://www.kba.de/',
   lastVerified: null,
   noticeLocal:
-    'Felder wie in gängigen deutschen Kfz-Kaufverträgen. Zulassung und Halterwechsel über örtliche Zulassungsstelle / KBA-Hinweise prüfen.',
-  noticeEn: 'Fields as in common German vehicle sale contracts. Complete registration via local Zulassungsstelle / KBA.',
+    'Feldstruktur wie im üblichen privaten Kfz-Kaufvertrag (Abschnitte I–VI). Kein amtliches Einheitsformular — vor Unterschrift mit Ihrem PDF-Muster vergleichen. Halterwechsel: örtliche Zulassungsstelle / KBA.',
+  noticeEn:
+    'Field layout matches the usual German private used-car purchase blank (sections I–VI). Not a federal form — compare with your PDF before signing. Registration: local Zulassungsstelle / KBA.',
   fields: [
-    f('verkaeufer', 'Verkäufer', 'text', { required: true, section: 'Parteien' }),
-    f('verkaeufer_anschrift', 'Anschrift Verkäufer', 'text', { section: 'Parteien' }),
-    f('kaeufer', 'Käufer', 'text', { required: true, profileKey: 'full_name', section: 'Parteien' }),
-    f('kaeufer_anschrift', 'Anschrift Käufer', 'text', { profileKey: 'location', section: 'Parteien' }),
-    f('hersteller', 'Hersteller / Marke', 'text', { required: true, section: 'Fahrzeug' }),
-    f('typ', 'Typ / Modell', 'text', { required: true, section: 'Fahrzeug' }),
-    f('fin', 'FIN / VIN', 'text', { required: true, section: 'Fahrzeug' }),
-    f('kennzeichen', 'Kennzeichen', 'text', { section: 'Fahrzeug' }),
-    f('erstzulassung', 'Erstzulassung', 'date', { section: 'Fahrzeug' }),
-    f('kilometerstand', 'Kilometerstand', 'number', { required: true, section: 'Fahrzeug' }),
-    f('brief_nr', 'Zulassungsbescheinigung Teil II (Nr.)', 'text', { section: 'Fahrzeug' }),
-    f('kaufpreis', 'Kaufpreis (€)', 'number', { required: true, section: 'Preis' }),
-    f('uebergabe_datum', 'Übergabedatum', 'date', { section: 'Übergabe' }),
-    f('maengel', 'Bekannte Mängel / Garantieausschluss', 'textarea', { section: 'Übergabe' }),
-    f('unterschrift_datum', 'Datum', 'date', { section: 'Unterschrift' }),
+    // Verkäufer
+    f('verk_name', 'Name, Vorname (Verkäufer)', 'text', {
+      required: true,
+      section: 'Verkäufer (privat)',
+    }),
+    f('verk_strasse', 'Straße, Nr. (Verkäufer)', 'text', { required: true, section: 'Verkäufer (privat)' }),
+    f('verk_plz_ort', 'PLZ / Wohnort (Verkäufer)', 'text', { required: true, section: 'Verkäufer (privat)' }),
+    f('verk_telefon', 'Telefon (Verkäufer)', 'phone', { section: 'Verkäufer (privat)' }),
+    f('verk_email', 'E-Mail (Verkäufer)', 'email', { section: 'Verkäufer (privat)' }),
+    f('verk_ausweis', 'Personalausweis- / Reisepass-Nr. (Verkäufer)', 'text', {
+      section: 'Verkäufer (privat)',
+    }),
+    f('verk_ausweis_behoerde', 'Ausstellungsbehörde (Verkäufer)', 'text', {
+      section: 'Verkäufer (privat)',
+    }),
+    // Käufer
+    f('kauf_name', 'Name, Vorname (Käufer)', 'text', {
+      required: true,
+      profileKey: 'full_name',
+      section: 'Käufer',
+    }),
+    f('kauf_strasse', 'Straße, Nr. (Käufer)', 'text', {
+      required: true,
+      profileKey: 'location',
+      section: 'Käufer',
+    }),
+    f('kauf_plz_ort', 'PLZ / Wohnort (Käufer)', 'text', { required: true, section: 'Käufer' }),
+    f('kauf_telefon', 'Telefon (Käufer)', 'phone', { profileKey: 'phone', section: 'Käufer' }),
+    f('kauf_email', 'E-Mail (Käufer)', 'email', { profileKey: 'email', section: 'Käufer' }),
+    f('kauf_ausweis', 'Personalausweis- / Reisepass-Nr. (Käufer)', 'text', { section: 'Käufer' }),
+    f('kauf_ausweis_behoerde', 'Ausstellungsbehörde (Käufer)', 'text', { section: 'Käufer' }),
+    // I. Fahrzeug
+    f('marke', 'Marke', 'text', { required: true, section: 'I. Fahrzeug' }),
+    f('modell', 'Modell', 'text', { required: true, section: 'I. Fahrzeug' }),
+    f('fahrzeugart', 'Fahrzeugart', 'text', { section: 'I. Fahrzeug', placeholder: 'z. B. PKW, Motorrad' }),
+    f('kw_ps', 'kW / PS', 'text', { section: 'I. Fahrzeug' }),
+    f('hubraum', 'Hubraum (cm³)', 'text', { section: 'I. Fahrzeug' }),
+    f('fin', 'Fahrzeugidentifikations-Nr. (FIN)', 'text', { required: true, section: 'I. Fahrzeug' }),
+    f('kennzeichen', 'Amtliches Kennzeichen', 'text', { section: 'I. Fahrzeug' }),
+    f('erstzulassung', 'Erstzulassung', 'date', { section: 'I. Fahrzeug' }),
+    f('co2', 'CO₂-Effizienzklasse', 'text', { section: 'I. Fahrzeug' }),
+    f('naechste_hu', 'Nächste Hauptuntersuchung', 'date', { section: 'I. Fahrzeug' }),
+    f('brief_nr', 'Fahrzeugbrief-Nr. / Zulassungsbescheinigung Teil II', 'text', {
+      section: 'I. Fahrzeug',
+    }),
+    f('zubehoer', 'Zusatzausstattung / Zubehör', 'textarea', {
+      section: 'I. Fahrzeug',
+      placeholder: 'z. B. Radio, Felgen, Navigationsgerät',
+    }),
+    f('gesamtpreis', 'Gesamtpreis (€)', 'number', { required: true, section: 'I. Fahrzeug' }),
+    // II. Gewährleistung — structure only, not full clause text
+    f('gewaehrleistung', 'Gewährleistung / Sachmängelhaftung', 'select', {
+      section: 'II. Gewährleistung',
+      required: true,
+      options: [
+        {
+          value: 'ausschluss_besichtigt',
+          labelKey: 'docs.field.custom',
+          label: 'Wie besichtigt — Ausschluss der Sachmängelhaftung (außer Ziffer III)',
+        },
+        {
+          value: 'mit_zusicherung',
+          labelKey: 'docs.field.custom',
+          label: 'Mit Zusicherungen nach Ziffer III',
+        },
+      ],
+    }),
+    // III. Zusicherungen
+    f('eigentum_allein', 'Alleiniges Eigentum des Verkäufers', 'select', {
+      section: 'III. Zusicherungen des Verkäufers',
+      options: [
+        { value: 'ja', labelKey: 'docs.field.custom', label: 'ja' },
+        { value: 'nein', labelKey: 'docs.field.custom', label: 'nein' },
+      ],
+    }),
+    f('gesamtfahrleistung', 'Gesamtfahrleistung (km)', 'number', {
+      required: true,
+      section: 'III. Zusicherungen des Verkäufers',
+    }),
+    f('motor', 'Motor', 'select', {
+      section: 'III. Zusicherungen des Verkäufers',
+      options: [
+        { value: 'original', labelKey: 'docs.field.custom', label: 'Originalmotor' },
+        { value: 'austausch', labelKey: 'docs.field.custom', label: 'Austauschmotor' },
+      ],
+    }),
+    f('austauschmotor_km', 'km-Leistung Austauschmotor (falls zutreffend)', 'number', {
+      section: 'III. Zusicherungen des Verkäufers',
+    }),
+    f('unfallschaeden', 'Unfallschäden', 'textarea', {
+      section: 'III. Zusicherungen des Verkäufers',
+      placeholder: 'keinen Unfallschaden / folgende Unfallschäden: …',
+    }),
+    f('sonstige_schaeden', 'Sonstige Beschädigungen', 'textarea', {
+      section: 'III. Zusicherungen des Verkäufers',
+      placeholder: 'keine sonstigen Beschädigungen / folgende: …',
+    }),
+    f('vorbesitzer', 'Anzahl Vorbesitzer (soweit bekannt)', 'text', {
+      section: 'III. Zusicherungen des Verkäufers',
+    }),
+    f('gewerblich', 'Gewerblich genutzt (Taxi, Miet-, Fahrschulwagen)', 'select', {
+      section: 'III. Zusicherungen des Verkäufers',
+      options: [
+        { value: 'ja', labelKey: 'docs.field.custom', label: 'ja' },
+        { value: 'nein', labelKey: 'docs.field.custom', label: 'nein' },
+      ],
+    }),
+    f('import', 'Importfahrzeug', 'select', {
+      section: 'III. Zusicherungen des Verkäufers',
+      options: [
+        { value: 'ja', labelKey: 'docs.field.custom', label: 'ja' },
+        { value: 'nein', labelKey: 'docs.field.custom', label: 'nein' },
+      ],
+    }),
+    // IV
+    f('sondervereinbarungen', 'Sondervereinbarungen / Erklärungen des Käufers', 'textarea', {
+      section: 'IV. Erklärungen des Käufers',
+    }),
+    // V
+    f('unterlagen_schein', 'Fahrzeugschein / Zulassungsbescheinigung Teil I', 'select', {
+      section: 'V. Kfz-Unterlagen und Bezahlung',
+      options: [
+        { value: 'erhalten', labelKey: 'docs.field.custom', label: 'erhalten' },
+        { value: 'nicht', labelKey: 'docs.field.custom', label: 'nicht erhalten' },
+      ],
+    }),
+    f('unterlagen_brief', 'Fahrzeugbrief / Zulassungsbescheinigung Teil II', 'select', {
+      section: 'V. Kfz-Unterlagen und Bezahlung',
+      options: [
+        { value: 'erhalten', labelKey: 'docs.field.custom', label: 'erhalten' },
+        { value: 'nicht', labelKey: 'docs.field.custom', label: 'nicht erhalten' },
+      ],
+    }),
+    f('unterlagen_stilllegung', 'Stilllegungsbescheinigung', 'select', {
+      section: 'V. Kfz-Unterlagen und Bezahlung',
+      options: [
+        { value: 'erhalten', labelKey: 'docs.field.custom', label: 'erhalten' },
+        { value: 'nicht', labelKey: 'docs.field.custom', label: 'nicht erhalten' },
+        { value: 'entfaellt', labelKey: 'docs.field.custom', label: 'entfällt' },
+      ],
+    }),
+    f('unterlagen_hu', 'Untersuchungsbericht (TÜV/DEKRA/ADAC)', 'select', {
+      section: 'V. Kfz-Unterlagen und Bezahlung',
+      options: [
+        { value: 'erhalten', labelKey: 'docs.field.custom', label: 'erhalten' },
+        { value: 'nicht', labelKey: 'docs.field.custom', label: 'nicht erhalten' },
+      ],
+    }),
+    f('unterlagen_schluessel', 'Fahrzeug mit Schlüssel(n)', 'select', {
+      section: 'V. Kfz-Unterlagen und Bezahlung',
+      options: [
+        { value: 'erhalten', labelKey: 'docs.field.custom', label: 'erhalten' },
+        { value: 'nicht', labelKey: 'docs.field.custom', label: 'nicht erhalten' },
+      ],
+    }),
+    f('unterlagen_sonstige', 'Sonstige/weitere Unterlagen', 'textarea', {
+      section: 'V. Kfz-Unterlagen und Bezahlung',
+    }),
+    f('anzahlung', 'Anzahlung (€)', 'number', { section: 'V. Kfz-Unterlagen und Bezahlung' }),
+    f('zahlungsvereinbarung', 'Zahlungsvereinbarung', 'textarea', {
+      section: 'V. Kfz-Unterlagen und Bezahlung',
+    }),
+    f('ummeldung_tage', 'Ummeldung spätestens innerhalb von … Tagen ab Übergabe', 'number', {
+      section: 'V. Kfz-Unterlagen und Bezahlung',
+      placeholder: 'z. B. 7',
+    }),
+    // VI
+    f('uebergabe_ort', 'Ort der Übergabe', 'text', { section: 'VI. Übergabebestätigung' }),
+    f('uebergabe_datum', 'Datum der Übergabe', 'date', {
+      required: true,
+      section: 'VI. Übergabebestätigung',
+    }),
+    f('uebergabe_uhrzeit', 'Uhrzeit der Übergabe', 'text', {
+      section: 'VI. Übergabebestätigung',
+      placeholder: 'z. B. 14:30',
+    }),
+    f('uebergabe_bestaetigt', 'Fahrzeug wurde übergeben', 'select', {
+      section: 'VI. Übergabebestätigung',
+      options: [
+        { value: 'ja', labelKey: 'docs.field.custom', label: 'ja' },
+        { value: 'nein', labelKey: 'docs.field.custom', label: 'nein' },
+      ],
+    }),
   ],
 }
 
