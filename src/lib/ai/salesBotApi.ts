@@ -127,7 +127,7 @@ export async function runSalesChatTurn(req: SalesChatRequest): Promise<SalesChat
         ...local,
         replyText: polished,
         quickReplies:
-          Array.isArray(data.quickReplies) && data.quickReplies.length
+          Array.isArray(data?.quickReplies) && data.quickReplies.length
             ? data.quickReplies.map(String)
             : local.quickReplies,
       }

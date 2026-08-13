@@ -11,7 +11,6 @@ import {
   ShieldCheck,
   Sparkles,
   Trash2,
-  XCircle,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
@@ -517,7 +516,7 @@ export function Dashboard() {
                 </div>
 
                 <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
-                  Вітаю, {profile.full_name || 'власнику сайту'}
+                  Вітаю, {profile?.full_name || 'власнику сайту'}
                 </h1>
 
                 <p className="mt-3 max-w-3xl text-sm leading-7 text-[#6f665d] md:text-base">
@@ -673,7 +672,7 @@ export function Dashboard() {
               </div>
 
               <OwnerAdManager
-                ownerId={profile.id}
+                ownerId={profile?.id ?? user?.id ?? ''}
                 campaigns={adCampaigns}
                 onRefresh={refreshOwnerAdCampaigns}
                 onNotice={setNotice}

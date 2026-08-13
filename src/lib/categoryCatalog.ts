@@ -202,11 +202,11 @@ export function labelFor(entry: LocalizedLabel, locale: string, slug?: string): 
   if (fromWorkMap?.[baseLocale as keyof typeof fromWorkMap]) {
     return fromWorkMap[baseLocale as keyof typeof fromWorkMap]
   }
-  if (fromServiya?.[normalized as keyof typeof fromServiya]) {
-    return fromServiya[normalized as keyof typeof fromServiya]
-  }
-  if (fromServiya?.[baseLocale as keyof typeof fromServiya]) {
-    return fromServiya[baseLocale as keyof typeof fromServiya]
+  if (fromServiya) {
+    const serviyaLocalized = fromServiya[normalized as keyof typeof fromServiya]
+    if (serviyaLocalized) return serviyaLocalized
+    const serviyaBase = fromServiya[baseLocale as keyof typeof fromServiya]
+    if (serviyaBase) return serviyaBase
   }
   if (entry[normalized]) return entry[normalized] as string
   if (entry[baseLocale]) return entry[baseLocale] as string

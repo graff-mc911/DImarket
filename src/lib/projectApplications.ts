@@ -179,7 +179,7 @@ export async function fetchApplicationsForListing(
     }
     return (retry.data ?? []) as ListingApplicationRow[]
   }
-  return (data ?? []) as ListingApplicationRow[]
+  return (data ?? []) as unknown as ListingApplicationRow[]
 }
 
 export function normalizeProResponseLabel(status: string | null | undefined): {

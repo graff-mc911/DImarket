@@ -44,8 +44,6 @@ interface SavedProfileItem {
   profile: Profile | null
 }
 
-type SavedItem = SavedListingItem | SavedProfileItem
-
 // Активний таб
 type ActiveTab = 'listings' | 'profiles'
 

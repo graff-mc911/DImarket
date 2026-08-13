@@ -157,7 +157,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
           .maybeSingle(),
       ])
 
-      const matchRows = (data as MatchRow[]) ?? []
+      const matchRows = (data as unknown as MatchRow[]) ?? []
       setRows(matchRows)
       setOffers(ranked)
       setApplications(apps)

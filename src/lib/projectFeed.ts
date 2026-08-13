@@ -166,7 +166,7 @@ export async function fetchProjectFeedPage(opts: {
     return { items: [], hasMore: false }
   }
 
-  let items = withDistance((data as ProjectFeedItem[]) ?? [], opts.origin).filter(
+  let items = withDistance((data as unknown as ProjectFeedItem[]) ?? [], opts.origin).filter(
     (item) => !opts.hiddenListingIds.has(item.id) && !isSuppressedListing(item),
   )
 
@@ -201,7 +201,7 @@ export async function fetchProjectById(
     .maybeSingle()
 
   if (error || !data || isSuppressedListing(data)) return null
-  return withDistance([data as ProjectFeedItem], origin)[0] ?? null
+  return withDistance([data as unknown as ProjectFeedItem], origin)[0] ?? null
 }
 
 export function getBrowserLocation(): Promise<GeoPoint | null> {

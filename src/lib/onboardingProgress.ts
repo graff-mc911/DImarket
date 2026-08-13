@@ -1,9 +1,10 @@
+import type { TranslationKey } from './i18n'
 import type { Profile } from './types'
 import type { RegistrationRole } from './profileSync'
 
 export interface OnboardingStep {
   id: string
-  labelKey: string
+  labelKey: TranslationKey
   done: boolean
 }
 

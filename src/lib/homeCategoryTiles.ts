@@ -33,7 +33,6 @@ import {
 import {
   categoryLabel,
   categoryPagePath,
-  type SiteCategorySlug,
 } from './siteCategories'
 
 export interface HomeCategoryTile {

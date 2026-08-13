@@ -54,7 +54,7 @@ export type RankedMatch = {
   reasons: string[]
   breakdown?: MatchScoreBreakdown
   distanceKm?: number | null
-  verificationLevel?: 'none' | 'bronze' | 'silver' | 'gold' | null
+  verificationLevel?: 'none' | 'bronze' | 'silver' | 'gold' | 'platinum' | null
   avatarUrl?: string | null
   completedJobs?: number
   availabilityStatus?: string
