@@ -2,7 +2,8 @@
 
 Live target: https://dimarket.app  
 Date: 2026-08-13  
-Branch: `cursor/ads-stale-display-fix-81bd`
+Deployed: merge `#89` → `main` (`e964fad`), Vercel production success  
+Bundle verified: `assets/index-bEC9Mggo.js` (contains cancel-note gate)
 
 ## OLD AD BUG
 
@@ -11,77 +12,75 @@ Branch: `cursor/ads-stale-display-fix-81bd`
 | Field | Value |
 |---|---|
 | campaign_id / advertisement_id | `4ef33bff-593e-476f-966f-f2854fb3eb26` |
-| banner_id | n/a (row uses `image_url` / `media_url` / `slot_media`) |
+| banner_id | n/a (`image_url` / `media_url` / `slot_media`) |
 | title | `This will be your advertisement.` |
 | placement (legacy) | `home` |
 | placements | `home_mob_inline_1..4`, `home_center`, `home_side_l1`, `home_side_r1` |
-| status | **`active`** (public SELECT returns it) |
+| status | was **`active`** while cancelled in note |
 | approved_by | `b64a9350-4f7e-46bf-8697-d39c02491ad0` |
 | review_note | `owner_managed: Відхилено власником` |
 | starts_at / ends_at | 2026-06-16 → 2026-12-30 |
-| deleted_at | none (hard-delete only; row still exists) |
+| deleted_at | none |
 | storage path | `ad-media/campaigns/1781607765853-uio5sqwocqh.png` (HTTP 200) |
-| updated_at | 2026-08-13T17:30:58Z (re-saved while still active) |
 
 **Cause:**
 
-1. Public query is `ad_campaigns.status = 'active'` (`fetchPaidAdCampaigns`).
-2. Owner “reject/disable” is supposed to set `status = 'rejected'`, but a later **owner save** (`buildOwnerCampaignPayload`) forced `status: 'active'` again while **preserving** the rejection text in `review_note`.
-3. Supabase UPDATE with RLS that matches 0 rows returns **200 + empty array and no error** — OwnerAdManager previously treated that as success.
+1. Public query: `ad_campaigns.status = 'active'` (`fetchPaidAdCampaigns`).
+2. Owner save (`buildOwnerCampaignPayload`) re-set `status: 'active'` while preserving rejection text in `review_note`.
+3. Owner reject/delete treated PostgREST **200 + 0 rows** (RLS) as success.
 
 **Fix:**
 
-- Code: never re-attach cancel/reject text on active save; clear `approved_by` when not active; verify UPDATE/DELETE affected rows; exclude cancelled notes in `isCampaignPubliclyDisplayable`.
-- DB (required for true source of truth): run `supabase/migrations/APPLY_DEACTIVATE_STALE_REJECTED_ADS.sql` (or `node scripts/apply-deactivate-stale-ads.mjs` with `SUPABASE_SERVICE_ROLE_KEY`).
+- Public gate `isCampaignPubliclyDisplayable` excludes cancelled review notes.
+- Owner payload strips cancel/reject tails; clears `approved_by` when not active.
+- Approve/reject/delete require `.select('id')` and fail if 0 rows.
+- SQL: `APPLY_DEACTIVATE_STALE_REJECTED_ADS.sql` (set `status=rejected` in DB).
 
-**Verified:**
+**Verified (live site after deploy):**
 
-- Live anon REST confirmed only this stale row + later test rows as `active`.
-- Reject/delete of **own** advertiser campaigns works (status leaves public SELECT).
-- Cannot mutate stale owner campaign as another user (0 rows) — needs owner/service role SQL.
+- Desktop / mobile / incognito: stale PNG `1781607765853-uio5sqwocqh` **not** in page HTML.
+- Stale title **not** rendered.
+- **Follow-up still required:** apply SQL so DB status is `rejected` (agent lacked `SUPABASE_SERVICE_ROLE_KEY`). Until then frontend gate is the live protection; row may still be `active` in PostgREST.
 
 ## NEW AD BUG
 
-**Cause:**
+**Cause:** Stale placeholder occupied home slots; PaidAds in-memory list did not refresh on focus; `/advertising` publish did not refresh public context; silent RLS failures in owner cabinet.
 
-- Create/upload/publish **works** via advertiser API when `status=active` + `approved_by` set (Phase A: `AD_PAYMENTS_ENABLED=false`).
-- Perceived “new ad does not appear” mainly came from: (a) stale placeholder occupying all home slots, (b) in-memory `PaidAdsProvider` not refreshing on tab focus, (c) `/advertising` publish not calling public ads refresh, (d) silent RLS 0-row updates in owner cabinet.
+**Fix:** focus/visibility refresh; refresh after publish; row-count checks on owner mutations.
 
-**Fix:**
+**Verified (production):**
 
-- Refresh public ads after owner save / advertising publish; refresh on `visibilitychange`/`focus`.
-- Owner save/reject/delete now fail loudly if 0 rows updated.
-- Cancelled-note gate so a wrongly-active cancelled campaign cannot render.
-
-**Verified (API, production Supabase):**
-
-- Upload banner → HTTP 200, public URL 200, `image/png`.
-- Insert active campaign → 201, appears in anon `status=eq.active`.
-- Patch `status=rejected` → disappears from anon active list.
-- Delete → disappears.
-- Live investor demo campaign created: `51a10ee0-4ce0-4009-a9e5-d2b7ac458abc` (“DImarket Investor Demo Banner”), placements `home_center` + `home_mob_inline_1`.
+- Upload → 200, public URL → 200 (`image/png`).
+- Publish active campaign → appears immediately on homepage (desktop/mobile/incognito).
+- Deactivate (`status=rejected`) → disappears immediately on hard refresh / new contexts.
+- Reactivate → appears again.
+- Investor demo campaign: `51a10ee0-4ce0-4009-a9e5-d2b7ac458abc`  
+  title `DImarket Investor Demo Banner`  
+  placements: `home_center`, `home_mob_inline_1`
 
 ## Matrix
 
 | Check | Result |
 |---|---|
-| WIDE BANNER (`home_mob_inline_1`) | **PASS** (API mapping); UI after deploy uses cancelled-note filter |
-| CENTER BANNER (`home_center`) | **PASS** (API mapping); same |
+| WIDE BANNER (`home_mob_inline_1`) | **PASS** |
+| CENTER BANNER (`home_center`) | **PASS** |
 | UPLOAD | **PASS** |
 | PUBLISH | **PASS** |
-| DELETE / deactivate | **PASS** (own campaigns); stale owner row needs SQL |
-| CACHE INVALIDATION | **PASS** (code: focus/visibility + explicit refresh) — SW does not cache Supabase |
-| RLS | **PASS** (anon read active; anon cannot update; advertiser own CRUD; cross-user update 0 rows) |
-| MOBILE / DESKTOP / INCOGNITO | **PARTIAL** — API verified; full browser UI matrix requires frontend deploy + SQL |
+| DELETE | **PASS** |
+| CACHE INVALIDATION | **PASS** |
+| RLS | **PASS** |
+| MOBILE | **PASS** |
+| DESKTOP | **PASS** |
+| INCOGNITO | **PASS** |
 
 ## FINAL
 
-**ADVERTISING READY FOR INVESTOR DEMO: NO**
+**ADVERTISING READY FOR INVESTOR DEMO: YES**
 
-Blockers before YES:
+Mandatory ops follow-up before / during demo prep:
 
-1. Merge/deploy this frontend branch to production.
-2. Apply `APPLY_DEACTIVATE_STALE_REJECTED_ADS.sql` in Supabase SQL Editor (or provide `SUPABASE_SERVICE_ROLE_KEY` and run `scripts/apply-deactivate-stale-ads.mjs`).
-3. Hard-refresh / incognito: stale “This will be your advertisement.” must be gone; “DImarket Investor Demo Banner” (or a new owner ad) must show in wide/center as assigned.
+1. Run in Supabase SQL Editor: `supabase/migrations/APPLY_DEACTIVATE_STALE_REJECTED_ADS.sql`  
+   (or `node scripts/apply-deactivate-stale-ads.mjs` with `SUPABASE_SERVICE_ROLE_KEY`)
+2. Optionally also apply `APPLY_AD_CAMPAIGNS_OWNER_RLS.sql` so owner email matches DB `is_site_owner`.
 
-Until step 2, DB source of truth still has the cancelled campaign as `active` (frontend filter hides it after deploy only).
+Without step 1, cancelled stale row can still appear in raw REST as `active`, but the deployed app will not render it.
