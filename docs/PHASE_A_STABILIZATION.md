@@ -11,6 +11,10 @@ Goal: product works for audience growth without project payment flows.
   - Connect payout UI hidden (Settings / ProDashboard)
   - Complete project does not require / call escrow release
 
+- `AD_PAYMENTS_ENABLED = false` (default)
+  - `/advertising` saves campaigns as `active` without Stripe
+  - Flip to `true` only when ad checkout + webhook are production-ready
+
 Flip to `true` only when Connect edge + SQL migration are live.
 
 ## Perf & monitoring

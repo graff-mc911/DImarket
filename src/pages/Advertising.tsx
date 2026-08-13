@@ -27,6 +27,7 @@ import { useApp }      from '../contexts/AppContext'
 import { AdCampaign }  from '../lib/types'
 import type { TranslationKey } from '../lib/i18n'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
+import { AD_PAYMENTS_ENABLED } from '../lib/featureFlags'
 import { AdGeoTargeting } from '../components/AdGeoTargeting'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
 import { AdPerSlotMediaEditor } from '../components/ads/AdPerSlotMediaEditor'
@@ -733,12 +734,12 @@ export function Advertising() {
     if (startsAt && endsAt && new Date(endsAt) < new Date(startsAt)) {
       setFeedback({ type: 'error', text: t('advertising.dates.error') }); return
     }
-    if (!ownerAccount && totalPrice < 1) {
+    // Payments deferred (Phase A) — only enforce price when Stripe ads are on
+    if (AD_PAYMENTS_ENABLED && !ownerAccount && totalPrice < 1) {
       setFeedback({ type: 'error', text: t('advertising.error.zeroPrice') })
       return
     }
 
-    // Keep a local draft while save/payment runs (in case Stripe redirect fails)
     writeAdCampaignDraft({
       userId: user.id,
       editingCampaignId,
@@ -763,6 +764,7 @@ export function Advertising() {
     setSaving(true); setFeedback(null)
 
     let insertedId: string | null = null
+    const publishWithoutPayment = !AD_PAYMENTS_ENABLED || ownerAccount
 
     try {
       await ensureAdvertiserProfile()
@@ -773,7 +775,7 @@ export function Advertising() {
         ? new Date(endsAt)
         : new Date(startDate.getTime() + durationWeeks * 7 * 24 * 60 * 60 * 1000)
 
-      const campaignStatus = ownerAccount ? 'active' : 'pending_payment'
+      const campaignStatus = publishWithoutPayment ? 'active' : 'pending_payment'
       const nowIso = now.toISOString()
       const mediaFields = buildFullCampaignMediaFields(
         ensureSlotMediaForSelection(selectedSlots, slotMedia),
@@ -799,14 +801,21 @@ export function Advertising() {
         starts_at:   startDate.toISOString(),
         ends_at:     endDate.toISOString(),
         updated_at:  nowIso,
-        // Quoted amount until Stripe confirms (shown in "My campaigns")
-        price_paid: ownerAccount ? 0 : totalPrice,
+        price_paid: publishWithoutPayment ? 0 : totalPrice,
         currency_paid: 'eur',
       }
 
       if (editingCampaignId) {
         const { data: updated, error } = await (supabase.from('ad_campaigns') as any)
-          .update(row)
+          .update({
+            ...row,
+            ...(publishWithoutPayment
+              ? {
+                  status: 'active',
+                  approved_at: nowIso,
+                }
+              : {}),
+          })
           .eq('id', editingCampaignId)
           .eq('advertiser_id', user.id)
           .select('id')
@@ -829,13 +838,15 @@ export function Advertising() {
           advertiser_id: user.id,
           ...row,
           status: campaignStatus,
-          ...(ownerAccount
+          ...(publishWithoutPayment
             ? {
                 approved_by: user.id,
                 approved_at: nowIso,
                 price_paid: 0,
                 currency_paid: 'eur',
-                review_note: ownerManagedReviewNote('from /advertising'),
+                review_note: ownerAccount
+                  ? ownerManagedReviewNote('from /advertising')
+                  : 'phase_a_no_payment_publish',
               }
             : {
                 review_note: `quoted_eur:${totalPrice}`,
@@ -848,8 +859,12 @@ export function Advertising() {
       if (!inserted?.id) throw new Error('Campaign insert returned no id')
       insertedId = inserted.id as string
 
-      if (ownerAccount) {
-        setFeedback({ type: 'success', text: t('advertising.successOwner') })
+      if (publishWithoutPayment) {
+        clearAdCampaignDraft()
+        setFeedback({
+          type: 'success',
+          text: t('advertising.successSaved'),
+        })
         resetForm({ keepFeedback: true })
         await loadOwnCampaigns()
         setSaving(false)
@@ -873,7 +888,7 @@ export function Advertising() {
     } catch (err) {
       console.error('Помилка:', err)
       await loadOwnCampaigns()
-      if (insertedId) {
+      if (insertedId && AD_PAYMENTS_ENABLED) {
         setFeedback({
           type: 'error',
           text: t('advertising.error.payAfterSave').replace(
@@ -896,7 +911,8 @@ export function Advertising() {
       setFeedback({ type: 'error', text: t('advertising.error.noAuth') })
       return
     }
-    if (ownerAccount) {
+    // Phase A: no Stripe — just activate pending campaigns
+    if (!AD_PAYMENTS_ENABLED || ownerAccount) {
       setSaving(true)
       try {
         const { error } = await (supabase.from('ad_campaigns') as any)
@@ -904,12 +920,14 @@ export function Advertising() {
             status: 'active',
             approved_by: user.id,
             approved_at: new Date().toISOString(),
+            price_paid: 0,
+            currency_paid: 'eur',
             updated_at: new Date().toISOString(),
           })
           .eq('id', campaign.id)
           .eq('advertiser_id', user.id)
         if (error) throw error
-        setFeedback({ type: 'success', text: t('advertising.successOwner') })
+        setFeedback({ type: 'success', text: t('advertising.successSaved') })
         await loadOwnCampaigns()
       } catch (err) {
         setFeedback({
@@ -1285,8 +1303,8 @@ export function Advertising() {
                         ? t('advertising.submitting')
                         : editingCampaignId
                           ? t('advertising.form.saveChanges')
-                          : ownerAccount
-                            ? t('advertising.submitOwner')
+                          : !AD_PAYMENTS_ENABLED || ownerAccount
+                            ? t('advertising.submitSave')
                             : t('advertising.submit') + ' — ' + totalPrice + '€'}
                     </button>
                   </div>
@@ -1486,7 +1504,9 @@ function CampaignCard({ campaign, formatter, t, onEdit, onPay, paying }: {
               onClick={onPay}
               className="inline-flex items-center gap-1.5 rounded-full bg-[#007185] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
             >
-              {t('advertising.myCampaigns.payNow')}
+              {AD_PAYMENTS_ENABLED
+                ? t('advertising.myCampaigns.payNow')
+                : t('advertising.myCampaigns.activate')}
             </button>
           ) : null}
           <button
