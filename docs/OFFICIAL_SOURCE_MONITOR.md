@@ -76,3 +76,16 @@ npm run test:official-sources
 ```
 
 Covers: hash equality, change detection, versioning, effective/future, overdue freshness, unavailable, diff, Spain priority.
+
+## Phase 2
+
+| Feature | Details |
+|---------|---------|
+| Telegram alerts | critical/high changes → `TELEGRAM_ADMIN_CHAT_ID` or `TELEGRAM_CHANNEL_ID` |
+| Publish / rollback | Admin actions via edge — audit log, no silent rewrite |
+| Effective switch | Cron auto-activates version when `effective_from` reached |
+| Public UI | `/legal-documents` + `/legal-documents/:key` |
+| EU config | DE, FR, PL official sources seeded |
+| SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE2.sql` |
+
+Published Spain entries are **pointers only** — link to BOE / Your Europe, not full legal text.
