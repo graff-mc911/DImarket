@@ -17,7 +17,7 @@ export function VerificationAdminPanel() {
 
   const load = async () => {
     setLoading(true)
-    setRows((await listPendingVerifications()) as PendingRow[])
+    setRows((await listPendingVerifications()) as unknown as PendingRow[])
     setLoading(false)
   }
 

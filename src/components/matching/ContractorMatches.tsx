@@ -33,7 +33,7 @@ export function ContractorMatches({ listingId }: Props) {
     void (async () => {
       setLoading(true)
       const data = await fetchMatchScoresForListing(listingId)
-      setRows((data as MatchRow[]) ?? [])
+      setRows((data as unknown as MatchRow[]) ?? [])
       setLoading(false)
     })()
   }, [listingId])

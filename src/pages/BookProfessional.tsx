@@ -33,7 +33,7 @@ export function BookProfessional({ profileId }: Props) {
   const [proName, setProName] = useState('Professional')
   const [cursor, setCursor] = useState(() => new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [hour, setHour] = useState<number>(10)
+  const [hour, setHour] = useState<(typeof BOOKING_HOURS)[number]>(10)
   const [notes, setNotes] = useState('')
   const [avail, setAvail] = useState<AvailabilityPayload>({ blocked: [], busy: [] })
   const [loading, setLoading] = useState(true)

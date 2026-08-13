@@ -169,7 +169,10 @@ async function fetchProfilesForMap(
 
   const seen = new Set<string>()
   const merged: ProfileRow[] = []
-  for (const row of [...((coordsRes.data as ProfileRow[]) ?? []), ...((textRes.data as ProfileRow[]) ?? [])]) {
+  for (const row of [
+    ...((coordsRes.data as unknown as ProfileRow[]) ?? []),
+    ...((textRes.data as unknown as ProfileRow[]) ?? []),
+  ]) {
     if (seen.has(row.id)) continue
     seen.add(row.id)
     merged.push(row)

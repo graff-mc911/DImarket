@@ -1516,7 +1516,7 @@ export function processSalesBotTurn(
   return getInitialTurn(ctx)
 }
 
-function vacancyConfirm(draft: JobRequestDraft, ctx: SalesBotContext): SalesBotTurnResult {
+function vacancyConfirm(draft: JobRequestDraft, _ctx: SalesBotContext): SalesBotTurnResult {
   return {
     replyKey: 'salesBot.vacancyConfirm',
     replyParams: {

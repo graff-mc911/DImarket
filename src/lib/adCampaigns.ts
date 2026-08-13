@@ -196,6 +196,10 @@ export function matchesViewerGeo(
 
   if (scope === 'region' || scope === 'regions') {
     if (!country && !city) return false
+    if (campaignRegions.size > 0) {
+      const locationBlob = `${city} ${country}`
+      if ([...campaignRegions].some((region) => locationBlob.includes(region))) return true
+    }
     if (country && campaignCountries.has(country)) return true
     if (city && campaignCities.has(city)) return true
     return false
@@ -524,7 +528,7 @@ export function getGeoTargetLabel(
   t: (key: TranslationKey) => string,
 ): string {
   const scope = campaign.geo_scope
-  if (scope === 'global' || scope === 'countries') {
+  if (scope === 'global') {
     return t('ads.geo.global')
   }
   if (scope === 'country' || scope === 'countries') {

@@ -188,7 +188,7 @@ export function campaignWithSlotMedia(
     image_url: fields.image_url,
     media_url: fields.media_url,
     media_type: fields.media_type,
-    media_style: fields.media_style,
+    media_style: fields.media_style as unknown as AdCampaign['media_style'],
   }
 }
 
