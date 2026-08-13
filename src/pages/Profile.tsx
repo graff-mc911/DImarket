@@ -318,14 +318,6 @@ export function Profile() {
             <div className="mt-5 flex flex-col gap-2 border-t border-[var(--glass-border)] pt-5 sm:flex-row sm:flex-wrap">
               <button
                 type="button"
-                onClick={() => navigateTo('/settings')}
-                className="btn-secondary inline-flex items-center justify-center gap-2 rounded-full"
-              >
-                <Edit3 className="h-4 w-4" />
-                {t('header.settings')}
-              </button>
-              <button
-                type="button"
                 disabled={accountBusy}
                 onClick={() => {
                   void (async () => {
@@ -341,10 +333,18 @@ export function Profile() {
                     }
                   })()
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(201,109,44,0.35)] bg-white px-5 py-2.5 text-sm font-semibold text-[#a44a3a] transition hover:bg-[rgba(255,237,232,0.6)] disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 py-3 text-sm font-bold text-white transition hover:bg-black disabled:opacity-60"
               >
                 <LogOut className="h-4 w-4" />
                 {t('header.signOut')}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigateTo('/settings')}
+                className="btn-secondary inline-flex items-center justify-center gap-2 rounded-full"
+              >
+                <Edit3 className="h-4 w-4" />
+                {t('header.settings')}
               </button>
               <button
                 type="button"

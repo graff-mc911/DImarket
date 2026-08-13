@@ -448,6 +448,16 @@
     background: rgba(244, 63, 94, 0.16);
   }
 
+  .mobile-nav-more__item--signout {
+    color: #fde68a;
+    font-weight: 700;
+  }
+
+  .mobile-nav-more__item--signout:hover,
+  .mobile-nav-more__item--signout:focus-visible {
+    background: rgba(250, 204, 21, 0.14);
+  }
+
   .page-bg {
     background-color: var(--bg-canvas);
   }

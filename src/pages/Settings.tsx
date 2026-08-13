@@ -542,11 +542,20 @@ export function Settings() {
                 </div>
 
                 <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
-                  {t('header.myProfile')}
+                  {t('header.settings')}
                 </h1>
                 <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6f665d] md:text-base">
                   {t('settings.description')}
                 </p>
+
+                <button
+                  type="button"
+                  onClick={() => void handleSignOut()}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-[#1d1d1f] bg-[#1d1d1f] px-6 py-3.5 text-base font-bold text-white shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition hover:bg-black sm:w-auto"
+                >
+                  <LogOut className="h-5 w-5" />
+                  {t('header.signOut')}
+                </button>
               </div>
 
               {feedback && (
@@ -1002,14 +1011,6 @@ export function Settings() {
                   </p>
 
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => void handleSignOut()}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[rgba(201,109,44,0.35)] bg-white px-6 py-3 font-semibold text-[#a44a3a] transition hover:bg-[rgba(255,237,232,0.55)] sm:w-auto"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      {t('header.signOut')}
-                    </button>
                     <button
                       type="button"
                       onClick={handleDeleteAccount}

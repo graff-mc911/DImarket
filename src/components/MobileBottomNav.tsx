@@ -251,6 +251,26 @@ export function MobileBottomNav() {
 
             <p className="mobile-nav-more__section">{t('nav.accountSection')}</p>
             <ul className="mobile-nav-more__list">
+              {user ? (
+                <li>
+                  <button
+                    type="button"
+                    className="mobile-nav-more__item mobile-nav-more__item--signout"
+                    onClick={() => {
+                      setMoreOpen(false)
+                      void (async () => {
+                        await signOut()
+                        navigateTo('/')
+                      })()
+                    }}
+                  >
+                    <span className="mobile-nav-more__icon" aria-hidden>
+                      <LogOut className="h-5 w-5" />
+                    </span>
+                    <span>{t('header.signOut')}</span>
+                  </button>
+                </li>
+              ) : null}
               {accountMore.map((item) => (
                 <li key={item.id}>
                   <button type="button" className="mobile-nav-more__item" onClick={() => go(item.path)}>
@@ -310,24 +330,6 @@ export function MobileBottomNav() {
 
             {user ? (
               <ul className="mobile-nav-more__list mobile-nav-more__list--account-actions">
-                <li>
-                  <button
-                    type="button"
-                    className="mobile-nav-more__item mobile-nav-more__item--danger"
-                    onClick={() => {
-                      setMoreOpen(false)
-                      void (async () => {
-                        await signOut()
-                        navigateTo('/')
-                      })()
-                    }}
-                  >
-                    <span className="mobile-nav-more__icon" aria-hidden>
-                      <LogOut className="h-5 w-5" />
-                    </span>
-                    <span>{t('header.signOut')}</span>
-                  </button>
-                </li>
                 <li>
                   <button
                     type="button"
