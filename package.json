@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "test": "npm run typecheck && node scripts/verify-registration-logic.mjs && npm run test:commercial-agents && npm run test:ai-intents && npm run test:smoke",
+    "test": "npm run typecheck && node scripts/verify-registration-logic.mjs && npm run test:commercial-agents && npm run test:ai-intents && npm run test:ad-persist && npm run test:smoke",
     "test:smoke": "node scripts/production-smoke.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
@@ -67,7 +67,8 @@
     "db:apply-admin-rating": "node scripts/apply-admin-local-rating-rpc.mjs",
     "deploy:admin-ai": "npx supabase functions deploy admin-ai-assistant send-notification --project-ref wjlfvajloxkevggwjgtk",
     "test:registration:live": "node scripts/test-registration-roles.mjs",
-    "test:ai-intents": "node scripts/verify-ai-intent-routing.mjs"
+    "test:ai-intents": "node scripts/verify-ai-intent-routing.mjs",
+    "test:ad-persist": "node scripts/verify-ad-form-persist.mjs"
   },
   "dependencies": {
     "@sentry/react": "^8.55.2",
