@@ -13,6 +13,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "test": "npm run typecheck && npm run test:registration && npm run test:commercial-agents && node scripts/production-smoke.mjs",
+    "test:smoke": "node scripts/production-smoke.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
