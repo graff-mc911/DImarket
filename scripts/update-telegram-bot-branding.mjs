@@ -105,7 +105,7 @@ console.log('setMyShortDescription:', shortDesc.ok ? 'OK' : shortDesc.descriptio
 
 const desc = await tgApi(token, 'setMyDescription', {
   description:
-    'DImarket — безкоштовний маркетплейс будівельних і ремонтних послуг.\n\nПодайте оголошення через бота: оберіть категорію, місто, опис — і майстри побачать ваш запит на https://dimarket.app',
+    'DImarket — безкоштовний маркетплейс будівельних і ремонтних послуг.\n\nПодайте оголошення через бота: оберіть категорію, місто, опис — і фахівці побачать ваш запит на https://dimarket.app',
 })
 console.log('setMyDescription:', desc.ok ? 'OK' : desc.description)
 

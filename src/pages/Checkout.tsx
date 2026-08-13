@@ -223,7 +223,7 @@ export function Checkout() {
   // Повідомлення залежно від типу оплати
   const getSuccessMessage = () => {
     switch (paymentType) {
-      case 'premium_profile':   return 'Ваш профіль тепер преміум — він показується вгорі каталогу майстрів!'
+      case 'premium_profile':   return 'Ваш профіль тепер преміум — він показується вгорі каталогу фахівців!'
       case 'featured_profile':  return 'Featured profile activated — you stand out in the catalog!'
       case 'verified_badge':    return 'Верифікований бейдж активовано — зелена галочка з\'явиться на вашому профілі!'
       case 'featured_listing':  return 'Оголошення виділено — воно показуватиметься першим у каталозі!'

@@ -61,10 +61,10 @@ export function parseLocalShortcut(input: string): string | null {
   if (t === '/help') {
     return `Команди (працюють без хмарного AI):
 /stats — статистика
-/boost Імʼя N — +N зірок майстру (напр. /boost Test 5)
+/boost Імʼя N — +N зірок фахівцю (напр. /boost Test 5)
 /verify Імʼя — верифікація
-«додай 5 зірок майстру Test» — те саме
-«топ 5 майстрів» — рейтинг
+«додай 5 зірок фахівцю Test» — те саме
+«топ 5 фахівців» — рейтинг
 /help — цей список`
   }
   return null

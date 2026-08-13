@@ -29,8 +29,8 @@ Floating AI panel on **`/dashboard`** for site owners only.
 
 Natural language (Ukrainian) examples:
 
-- `підніми рейтинг майстра ivan@test.com на 10 балів`
-- `покажи топ 5 майстрів`
+- `підніми рейтинг фахівця ivan@test.com на 10 балів`
+- `покажи топ 5 фахівців`
 - `створи рекламну кампанію для Hilti на 30 днів`
 - `відправ email користувачу ivan@test.com: Ваш профіль верифіковано`
 

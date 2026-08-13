@@ -1,7 +1,7 @@
 const OG: Record<string, { title: string; description: string }> = {
   uk: {
     title: 'DImarket — Маркетплейс для будівництва та ремонту',
-    description: 'Знайдіть майстрів, розмістіть запит і отримайте відповіді напряму. Безкоштовно для клієнтів.',
+    description: 'Знайдіть фахівців, розмістіть запит і отримайте відповіді напряму. Безкоштовно для клієнтів.',
   },
   en: {
     title: 'DImarket — Marketplace for Construction & Renovation',

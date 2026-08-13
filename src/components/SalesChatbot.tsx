@@ -121,7 +121,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
                 key={q}
                 type="button"
                 onClick={() => {
-                  if (/матч|matches|підібран|майстрів/i.test(q) && listingId) {
+                  if (/матч|matches|підібран|фахівців/i.test(q) && listingId) {
                     navigateTo(`/project/${listingId}/matches`)
                     return
                   }

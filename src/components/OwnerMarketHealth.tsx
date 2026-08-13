@@ -103,7 +103,7 @@ function MarketHealthCard({ row }: { row: MarketHealthRow }) {
       <div className="mt-3 space-y-2 text-sm">
         <MetricLine
           icon={HardHat}
-          label="Майстри"
+          label="Фахівці"
           value={professionals}
           target={targets.professionals}
         />

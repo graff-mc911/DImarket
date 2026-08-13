@@ -171,7 +171,7 @@ To complete the translation system:
 1. Open Buildster
 2. Look at the header - you'll see "Browse", "Find Professionals", "Pricing"
 3. Click the 🌐 icon and select "Українська"
-4. The header now shows "Огляд", "Знайти майстрів", "Ціни"
+4. The header now shows "Огляд", "Знайти фахівців", "Ціни"
 5. Select "Polski" - header changes to "Przeglądaj", "Znajdź fachowców", "Cennik"
 6. All translated sections update automatically!
 

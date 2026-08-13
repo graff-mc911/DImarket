@@ -1,5 +1,5 @@
 // ============================================================
-// ProfessionalDetail.tsx — Публічна сторінка профілю майстра
+// ProfessionalDetail.tsx — Публічна сторінка профілю фахівця
 //
 // Показує:
 // - Фото, ім'я, локацію, рейтинг, верифікацію
@@ -141,7 +141,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
   }
 
 
-  // Початок розмови з майстром
+  // Початок розмови з фахівцем
   const startConversation = () => {
     if (!user) { navigateTo('/login'); return }
     sessionStorage.setItem('conversation_with', profileId)
@@ -207,7 +207,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
             className="btn-ghost mb-6 rounded-full"
           >
             <ArrowLeft className="h-4 w-4" />
-            До каталогу майстрів
+            До каталогу фахівців
           </button>
           <div className="glass-panel p-8 text-center">
             <p className="muted-text">{error || 'Профіль недоступний.'}</p>
@@ -230,7 +230,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
         className="amazon-link mb-4 inline-flex items-center gap-1 text-sm"
       >
         <ArrowLeft className="h-4 w-4" />
-        До каталогу майстрів
+        До каталогу фахівців
       </button>
 
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-6">
@@ -241,7 +241,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
               <div className="aspect-square bg-[#f7fafa] sm:aspect-[4/3]">
                 <img
                   src={avatarPhoto}
-                  alt={profile.full_name || 'Майстер'}
+                  alt={profile.full_name || 'Фахівець'}
                   className="h-full w-full object-contain"
                 />
               </div>
@@ -253,7 +253,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           </div>
 
           <div className="mt-4 lg:hidden">
-            <h1 className="text-xl font-normal text-[var(--ink-900)]">{profile.full_name || 'Майстер'}</h1>
+            <h1 className="text-xl font-normal text-[var(--ink-900)]">{profile.full_name || 'Фахівець'}</h1>
             {profile.location && (
               <p className="mt-1 text-sm text-[var(--ink-600)]">{profile.location}</p>
             )}
@@ -262,7 +262,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           {/* Таби */}
           <div className="mt-4 flex gap-1 overflow-x-auto border-b border-[#e7e7e7]">
             {([
-              { key: 'about', label: 'Про майстра' },
+              { key: 'about', label: 'Про фахівця' },
               { key: 'portfolio', label: 'Портфоліо' },
               { key: 'reviews', label: 'Відгуки (' + (profile.total_reviews || 0) + ')' },
             ] as { key: ActiveTab; label: string }[]).map(tab => (
@@ -283,7 +283,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
 
           {activeTab === 'about' && (
             <div className="amazon-section-card mt-4">
-              <h2 className="text-lg font-bold text-[var(--ink-900)]">Про майстра</h2>
+              <h2 className="text-lg font-bold text-[var(--ink-900)]">Про фахівця</h2>
               {profile.bio ? (
                 <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-[var(--ink-700)]">
                   {profile.bio}
@@ -340,7 +340,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           {isPremium && (
             <div className="mb-3 flex items-center gap-1 rounded-sm bg-[#cc0c39] px-2 py-1 text-xs font-bold text-white">
               <Star className="h-3 w-3 fill-current" />
-              Преміум майстер
+              Преміум фахівець
             </div>
           )}
           {isFeatured && !isPremium && (
@@ -351,7 +351,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           )}
 
           <h1 className="hidden text-xl font-normal text-[var(--ink-900)] lg:block">
-            {profile.full_name || 'Майстер'}
+            {profile.full_name || 'Фахівець'}
           </h1>
 
           <div className="mt-2 flex items-center gap-2">
@@ -420,7 +420,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
               className="btn-secondary mt-2 w-full py-2.5 text-sm"
             >
               {isSaved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
-              {isSaved ? 'В збережених' : 'Зберегти майстра'}
+              {isSaved ? 'В збережених' : 'Зберегти фахівця'}
             </button>
           )}
 

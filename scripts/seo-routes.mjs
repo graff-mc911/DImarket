@@ -77,8 +77,8 @@ export const STATIC_ROUTES = [
   },
   {
     path: '/map',
-    title: 'Карта майстрів і проєктів Європи | DImarket',
-    description: 'Інтерактивна карта DImarket: майстри, компанії та активні проєкти по всій Європі.',
+    title: 'Карта фахівців і проєктів Європи | DImarket',
+    description: 'Інтерактивна карта DImarket: фахівці, компанії та активні проєкти по всій Європі.',
     changefreq: 'daily',
     priority: 0.85,
     schema: 'page',

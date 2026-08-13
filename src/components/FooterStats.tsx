@@ -141,7 +141,7 @@ export function FooterStats({ compact = false, standalone = false }: { compact?:
         .eq('is_professional', true)
 
       if (profCountError) {
-        console.error('Помилка підрахунку майстрів:', profCountError)
+        console.error('Помилка підрахунку фахівців:', profCountError)
       }
 
       if (error || !data) {

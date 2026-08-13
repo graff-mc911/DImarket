@@ -105,7 +105,7 @@ export async function executeAction(
       }))
       return {
         ok: true,
-        message: `✅ Топ ${rows.length} майстрів за рейтингом.`,
+        message: `✅ Топ ${rows.length} фахівців за рейтингом.`,
         table: rows,
       }
     }
@@ -278,7 +278,7 @@ export async function executeAction(
         })
         sent++
       }
-      return { ok: true, message: `✅ Розіслано ${sent} сповіщень майстрам.` }
+      return { ok: true, message: `✅ Розіслано ${sent} сповіщень фахівцям.` }
     }
 
     default:
@@ -320,11 +320,11 @@ export function parseNaturalLanguage(text: string): AdminAction | null {
   const lower = text.toLowerCase()
 
   const boost = lower.match(
-    /(?:підніми|підвищ|boost).*(?:рейтинг|rating).*(?:майстра|користувач[ау]?)?\s*([^\s]+@[^\s]+).*?(\d+)/,
+    /(?:підніми|підвищ|boost).*(?:рейтинг|rating).*(?:фахівця|користувач[ау]?)?\s*([^\s]+@[^\s]+).*?(\d+)/,
   )
   if (boost) return { type: 'boost_rating', email: boost[1], amount: Number(boost[2]) }
 
-  const top = lower.match(/(?:топ|top)\s*(\d+)?\s*(?:майстр|professional)/)
+  const top = lower.match(/(?:топ|top)\s*(\d+)?\s*(?:майстр|фахівц|professional)/)
   if (top) return { type: 'top_professionals', limit: Number(top[1] || 5) }
 
   const verify = lower.match(/(?:верифікуй|verify)\s+([^\s]+@[^\s]+)/)

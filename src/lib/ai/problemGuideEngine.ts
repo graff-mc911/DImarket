@@ -110,12 +110,12 @@ function detectIntent(text: string): GuideIntent | null {
     return 'documents_procedures'
   }
   if (/(реклам|банер|advert|маркетинг|просуван|ads?\b)/i.test(q)) return 'advertising'
-  if (/(вакан|шукаю (праців|мастер|майстр|співроб)|hiring|job offer|робота для майстра)/i.test(q)) {
+  if (/(вакан|шукаю (праців|мастер|майстр|фахівц|співроб)|hiring|job offer|робота для фахівця)/i.test(q)) {
     return 'vacancy'
   }
   if (/(здам|продам|куплю|оренда|продаж|sell|rent|buy\b|sale)/i.test(q)) return 'sell_rent'
   if (
-    /(профіль|зареєстр|стати майстр|компані|contractor|professional account|відкрити кабінет)/i.test(
+    /(профіль|зареєстр|стати (?:майстр|фахівц)|компані|contractor|professional account|відкрити кабінет)/i.test(
       q,
     )
   ) {
@@ -125,7 +125,7 @@ function detectIntent(text: string): GuideIntent | null {
   // Planned renovation / estimate handled separately in welcome — do not force job_service here.
   if (wantsCostEstimate(q) || isPlannedRenovation(q)) return 'job_service'
   if (
-    /(нема|немає|злама|протік|тече|не працю|погано|виклик|пофарб|прибра|електр|сантех|світл|розетк|щиток|запах|загоря|майстр|кондиц|кондец|охолод|help|fix|broken|leak)/i.test(
+    /(нема|немає|злама|протік|тече|не працю|погано|виклик|пофарб|прибра|електр|сантех|світл|розетк|щиток|запах|загоря|майстр|фахівц|кондиц|кондец|охолод|help|fix|broken|leak)/i.test(
       q,
     )
   ) {
@@ -400,7 +400,7 @@ function resolveTradeAfterSymptoms(
       categorySlug: 'handyman',
       reasonKey: 'salesBot.tradeHandyman',
       replyText: uk
-        ? 'Схоже на майстра з кондиціонерів (чистка / фреон / сервіс). Далі — ваше місто, щоб знайти когось поруч.'
+        ? 'Схоже на фахівця з кондиціонерів (чистка / фреон / сервіс). Далі — ваше місто, щоб знайти когось поруч.'
         : 'Looks like an AC technician job. Next — your location to find someone nearby.',
     }
   }
@@ -412,7 +412,7 @@ function resolveTradeAfterSymptoms(
         categorySlug: 'electrical',
         reasonKey: 'salesBot.tradeElectrician',
         replyText: uk
-          ? 'Це робота електрика. Далі визначу локацію і покажу майстрів поруч.'
+          ? 'Це робота електрика. Далі визначу локацію і покажу фахівців поруч.'
           : 'This needs an electrician. Next I’ll get your location and show nearby pros.',
       }
     }
@@ -422,7 +422,7 @@ function resolveTradeAfterSymptoms(
         categorySlug: 'handyman',
         reasonKey: 'salesBot.tradeHandyman',
         replyText: uk
-          ? 'Якщо темно лише локально — часто вистачить домашнього майстра. Далі — локація.'
+          ? 'Якщо темно лише локально — часто вистачить домашнього фахівця. Далі — локація.'
           : 'If it’s only one room, a handyman may be enough. Next — location.',
       }
     }
@@ -442,7 +442,7 @@ function resolveTradeAfterSymptoms(
       categorySlug: 'handyman',
       reasonKey: 'salesBot.tradeHandyman',
       replyText: uk
-        ? 'Потрібен сантехнік / майстер з опалення. Далі — ваше місто.'
+        ? 'Потрібен сантехнік / фахівець з опалення. Далі — ваше місто.'
         : 'You’ll need a plumber / heating tech. Next — your city.',
     }
   }
@@ -470,7 +470,7 @@ function resolveTradeAfterSymptoms(
     categorySlug: draft.categorySlug || 'handyman',
     reasonKey: 'salesBot.tradeHandyman',
     replyText: uk
-      ? 'Підберу майстра під цю задачу. Далі — ваше місто або «Гео».'
+      ? 'Підберу фахівця під цю задачу. Далі — ваше місто або «Гео».'
       : 'I’ll match a pro for this. Next — your city or “Geo”.',
   }
 }
@@ -496,7 +496,7 @@ function buildJobDescription(draft: JobRequestDraft): string {
     draft.tradeRole ? `Потрібен: ${draft.tradeRole}` : '',
   ].filter(Boolean)
   const text = parts.join('\n')
-  return text.length >= 15 ? text : `${text}\nПотрібна допомога майстра.`
+  return text.length >= 15 ? text : `${text}\nПотрібна допомога фахівця.`
 }
 
 export function getInitialTurn(ctx: SalesBotContext): SalesBotTurnResult {
@@ -516,7 +516,7 @@ export function getInitialTurn(ctx: SalesBotContext): SalesBotTurnResult {
     quickReplies: [
       'Немає світла',
       'Реклама',
-      'Стати майстром',
+      'Стати фахівцем',
       'Вакансія',
       'Продам / здам',
     ],
@@ -559,7 +559,7 @@ function afterTradeResolved(
   const geoAsk = askGeo(nextDraft)
   const tradeLine = (resolved.replyText || '').trim()
   const geoHintUk =
-    'Щоб показати майстрів поруч, потрібно визначити вашу геолокацію — зараз спробую «Гео», або напишіть місто.'
+    'Щоб показати фахівців поруч, потрібно визначити вашу геолокацію — зараз спробую «Гео», або напишіть місто.'
   const geoHintEn =
     'To show nearby pros I need your location — detecting GPS now, or type your city.'
   const geoHint =
@@ -616,7 +616,7 @@ function startAdvertising(draft: JobRequestDraft): SalesBotTurnResult {
     replyKey: 'salesBot.adAskGoal',
     step: 'ad_goal',
     draft: { ...draft, intent: 'advertising' },
-    quickReplies: ['Більше клієнтів', 'Банер на головній', 'Промо майстра'],
+    quickReplies: ['Більше клієнтів', 'Банер на головній', 'Промо фахівця'],
     canPublish: false,
   }
 }
@@ -784,7 +784,7 @@ function startPlannedRenovation(
     step: 'renovation_choice',
     draft: next,
     quickReplies: uk
-      ? ['Зробити кошторис', 'Знайти майстрів', 'Опублікувати заявку']
+      ? ['Зробити кошторис', 'Знайти фахівців', 'Опублікувати заявку']
       : ['Make cost estimate', 'Find pros', 'Publish job request'],
     canPublish: false,
   }
@@ -882,7 +882,7 @@ export function processSalesBotTurn(
           'Немає світла',
           'Кошторис ремонту',
           'Реклама',
-          'Стати майстром',
+          'Стати фахівцем',
           'Вакансія',
           'Продам / здам',
         ],
@@ -902,7 +902,7 @@ export function processSalesBotTurn(
     if (wantsCostEstimate(text) || /кошторис|estimate|бюджет|budget|калькулятор/i.test(text)) {
       return startCostEstimate(next.problemText || text, next, ctx)
     }
-    if (/майстр|про|find|знайти|підібр/i.test(text)) {
+    if (/майстр|фахівц|про|find|знайти|підібр/i.test(text)) {
       next.description = buildJobDescription(next)
       next.title = buildDraftTitle(next, ctx.categoryLabels[next.categorySlug || ''])
       return {
@@ -910,7 +910,7 @@ export function processSalesBotTurn(
         sessionFlags: { request_geo: '1' },
         replyText:
           !ctx.locale || ctx.locale.startsWith('uk') || ctx.locale.startsWith('ru')
-            ? 'Добре — знайдемо майстрів поруч. Потрібна локація (або «Гео»).'
+            ? 'Добре — знайдемо фахівців поруч. Потрібна локація (або «Гео»).'
             : 'OK — I’ll find nearby pros. Need your location (or tap “Гео”).',
       }
     }
@@ -961,7 +961,7 @@ export function processSalesBotTurn(
       )
       return askGeo(withCat)
     }
-    if (/майстер|handyman|домашн/i.test(text)) {
+    if (/фахівець|handyman|домашн/i.test(text)) {
       const withCat = applyCategory({ ...next, tradeRole: 'handyman' }, 'handyman', ctx)
       return askGeo(withCat)
     }
@@ -969,7 +969,7 @@ export function processSalesBotTurn(
       replyKey: 'salesBot.tradeConfirmAsk',
       step: 'trade_confirm',
       draft: next,
-      quickReplies: ['Електрик', 'Домашній майстер'],
+      quickReplies: ['Електрик', 'Домашній фахівець'],
       canPublish: false,
     }
   }
@@ -1464,7 +1464,7 @@ export function processSalesBotTurn(
         text
       return startCostEstimate(desc, next, ctx)
     }
-    if (/матч|matches|підібран|майстрів|дивитись матчі/i.test(text) && next.guideMeta?.listingId) {
+    if (/матч|matches|підібран|фахівців|дивитись матчі/i.test(text) && next.guideMeta?.listingId) {
       return {
         replyKey: 'salesBot.published',
         replyParams: { id: next.guideMeta.listingId, count: next.guideMeta.matchCount || '0' },

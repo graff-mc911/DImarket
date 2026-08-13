@@ -1,5 +1,5 @@
 /**
- * AdWizardChatbot — чат-майстер для розміщення реклами прямо у float-панелі.
+ * AdWizardChatbot — чат-фахівець для розміщення реклами прямо у float-панелі.
  * Містить: схему слотів, upload фото, live preview, вибір гео/тривалості, ціну, checkout.
  */
 import { useRef, useEffect, useState } from 'react'

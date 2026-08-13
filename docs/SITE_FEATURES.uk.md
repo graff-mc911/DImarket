@@ -8,22 +8,22 @@
 
 | Маршрут | Що робить |
 |---------|-----------|
-| `/` | Головна: герої, категорії, топ майстрів/компаній, карта, FAQ |
-| `/search` | Розширений пошук послуг, майстрів, оголошень |
-| `/map` | Інтерактивна карта майстрів, компаній і замовлень |
-| `/professionals` | Каталог майстрів із фільтрами |
+| `/` | Головна: герої, категорії, топ фахівців/компаній, карта, FAQ |
+| `/search` | Розширений пошук послуг, фахівців, оголошень |
+| `/map` | Інтерактивна карта фахівців, компаній і замовлень |
+| `/professionals` | Каталог фахівців із фільтрами |
 | `/companies` | Каталог компаній |
 | `/listings` | Стрічка оголошень / замовлень |
 | `/vacancies`, `/jobs` | Вакансії |
 | `/sell-rent`, `/buy-sell` | Купівля / продаж / оренда |
 | `/listing/:id` | Картка оголошення |
-| `/professional/:id` | Профіль майстра/компанії + портфоліо |
+| `/professional/:id` | Профіль фахівця/компанії + портфоліо |
 | `/category/:slug` | Лендінг категорії |
 | `/services/:slug` (+ geo SEO) | Результати послуги з геофільтром |
 | `/contact` | Контакти / юридичні теми |
 | `/advertising`, `/advertise` | Реклама на сайті |
 | `/pricing`, `/plans` | Тарифи підписок |
-| `/for-professionals` | Лендінг для майстрів |
+| `/for-professionals` | Лендінг для фахівців |
 | `/for-companies` | Лендінг для компаній |
 | `/for-advertisers` | Лендінг для рекламодавців |
 | `/login`, `/register`, `/auth/callback` | Вхід, реєстрація, OAuth callback |
@@ -36,7 +36,7 @@
 |---------|-----------|
 | `/dashboard` | Загальний кабінет |
 | `/customer`, `/my` | Кабінет замовника |
-| `/pro`, `/pro/dashboard` | Кабінет майстра |
+| `/pro`, `/pro/dashboard` | Кабінет фахівця |
 | `/pro/calendar`, `/calendar` | Календар записів / Google Calendar |
 | `/profile` | Редагування профілю |
 | `/settings` | Налаштування акаунта |
@@ -51,7 +51,7 @@
 | `/verification` | Верифікація профілю |
 | `/analytics` | Аналітика (для власників/про) |
 | `/create-ad` | Створення оголошення вручну |
-| `/book/:id` | Запис до майстра |
+| `/book/:id` | Запис до фахівця |
 
 ---
 
@@ -59,9 +59,9 @@
 
 | Маршрут | Що робить |
 |---------|-----------|
-| `/create-project`, `/project/new` | Майстер створення проєкту / замовлення |
+| `/create-project`, `/project/new` | Фахівець створення проєкту / замовлення |
 | `/projects`, `/leads` | Стрічка проєктів / лідів для про |
-| `/project/:id/matches` | Топ підібраних майстрів (скоринг, не LLM) |
+| `/project/:id/matches` | Топ підібраних фахівців (скоринг, не LLM) |
 | `/project/:id/offers` | Пропозиції по проєкту |
 | `/project/:id/manage` | Керування проєктом (PM-панель) |
 | `/leads/:id/quote` | Конструктор комерційної пропозиції + PDF/email |
@@ -74,7 +74,7 @@
 
 | Маршрут / місце | Що робить | LLM? |
 |-----------------|-----------|------|
-| `/assistant/job` | Problem-first гід: проблема → уточнення → гео → картки майстрів → заявка + notify; також реклама / профіль / вакансія / здам-продам | Локальний `problemGuideEngine` + OpenAI polish |
+| `/assistant/job` | Problem-first гід: проблема → уточнення → гео → картки фахівців → заявка + notify; також реклама / профіль / вакансія / здам-продам | Локальний `problemGuideEngine` + OpenAI polish |
 | `/assistant` | Панель AI-інструментів (бюджет, категорія, КП…) | Так, через `ai-assistant` (є офлайн-fallback) |
 | Віджет чату (плаваючий) | Швидкий доступ до ботів (matching, quote, fraud…) | Частково: translate/quote — OpenAI; matching/fraud/lead — правила |
 | `/admin/ai` | Адмін-асистент власника сайту | Claude (`ANTHROPIC_API_KEY`), інакше шорткати |
@@ -114,7 +114,7 @@
 | `send-quote-email` | Лист з КП | QuoteBuilder |
 | `send-notification` / `notify-dispatch` / `dispatch-web-push` | Доставка сповіщень | сервер / клієнт notify |
 | `delete-account` | Видалення акаунта | Settings |
-| `google-calendar-oauth` / `google-calendar-sync` | Календар майстра | Pro calendar |
+| `google-calendar-oauth` / `google-calendar-sync` | Календар фахівця | Pro calendar |
 | `professional-digest` | Дайджест для про | cron / admin |
 | `directory-avatar-backfill` | Службова міграція аватарів | ops |
 | `apply-auth-profile-migration` | Службова міграція профілів | ops |

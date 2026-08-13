@@ -3,7 +3,7 @@
 //
 // Користувач може зберігати:
 // - оголошення (listing)
-// - профілі майстрів/компаній (profile)
+// - профілі фахівців/компаній (profile)
 //
 // Дані зберігаються в таблиці saved_items у Supabase.
 // Якщо таблиця ще не створена — показуємо інструкцію.
@@ -247,7 +247,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                 {t('header.favorites')}
               </h1>
               <p className="muted-text mt-1 text-sm">
-                Оголошення та майстри які ви зберегли
+                Оголошення та фахівці які ви зберегли
               </p>
             </div>
 
@@ -282,7 +282,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                   : { background: 'var(--glass-bg)', color: 'var(--ink-700)', border: '1px solid var(--glass-border)' }}
               >
                 <User className="h-4 w-4" />
-                Майстри
+                Фахівці
                 {savedProfiles.length > 0 && (
                   <span className="rounded-full px-1.5 py-0.5 text-xs font-bold"
                     style={activeTab === 'profiles'
@@ -381,10 +381,10 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                   <div className="glass-card py-16 text-center">
                     <User className="mx-auto mb-4 h-14 w-14" style={{ color: 'var(--glass-border-strong)' }} />
                     <p className="font-semibold" style={{ color: 'var(--ink-700)' }}>
-                      Немає збережених майстрів
+                      Немає збережених фахівців
                     </p>
                     <p className="muted-text mt-2 text-sm">
-                      Зберігайте профілі майстрів щоб швидко знаходити їх тут
+                      Зберігайте профілі фахівців щоб швидко знаходити їх тут
                     </p>
                     <button
                       type="button"
@@ -392,7 +392,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                       className="btn-primary mt-5 rounded-full"
                     >
                       <Search className="h-4 w-4" />
-                      Знайти майстрів
+                      Знайти фахівців
                     </button>
                   </div>
                 ) : (
@@ -437,7 +437,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                                 <div className="min-w-0">
                                   <div className="flex items-center gap-2">
                                     <h3 className="truncate font-bold" style={{ color: 'var(--ink-900)' }}>
-                                      {profile.full_name || 'Майстер'}
+                                      {profile.full_name || 'Фахівець'}
                                     </h3>
                                     <VerificationBadge level={profile.verification_level} />
                                     {(!profile.verification_level || profile.verification_level === 'none') &&
@@ -467,7 +467,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                                     {profile.is_professional && (
                                       <span className="flex items-center gap-1">
                                         <Building2 className="h-3 w-3" />
-                                        Майстер
+                                        Фахівець
                                       </span>
                                     )}
                                   </div>
