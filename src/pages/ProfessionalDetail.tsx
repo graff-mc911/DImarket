@@ -94,6 +94,14 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
       if (qError) { setError(qError.message); return }
       if (!data)  { setError('Профіль не знайдено.'); return }
 
+      const { isProfileSoftRemoved } = await import('../lib/publicProfileVisibility')
+      // Soft-deleted / owner-hidden profiles are not publicly viewable.
+      if (isProfileSoftRemoved(data as never)) {
+        setError('Профіль не знайдено.')
+        setProfile(null)
+        return
+      }
+
       setProfile(data)
     } catch (e) {
       if (!cancelled) setError(e instanceof Error ? e.message : 'Помилка завантаження')

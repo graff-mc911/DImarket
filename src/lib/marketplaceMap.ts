@@ -151,25 +151,48 @@ async function fetchProfilesForMap(
       .eq('is_professional', true)
       .eq('user_role', role)
 
-  const [coordsRes, textRes] = await Promise.all([
-    base()
+  let coordsRes = await (base()
+    .not('service_latitude', 'is', null)
+    .not('service_longitude', 'is', null)
+    .order('rating', { ascending: false })
+    .limit(limit) as any)
+    .is('deleted_at', null)
+    .is('hidden_at', null)
+
+  let textRes = await (base()
+    .is('service_latitude', null)
+    .not('location', 'is', null)
+    .order('rating', { ascending: false })
+    .limit(limit) as any)
+    .is('deleted_at', null)
+    .is('hidden_at', null)
+
+  if (
+    (coordsRes.error && /deleted_at|hidden_at|42703/i.test(coordsRes.error.message || '')) ||
+    (textRes.error && /deleted_at|hidden_at|42703/i.test(textRes.error.message || ''))
+  ) {
+    coordsRes = await base()
       .not('service_latitude', 'is', null)
       .not('service_longitude', 'is', null)
       .order('rating', { ascending: false })
-      .limit(limit),
-    base()
+      .limit(limit)
+    textRes = await base()
       .is('service_latitude', null)
       .not('location', 'is', null)
       .order('rating', { ascending: false })
-      .limit(limit),
-  ])
+      .limit(limit)
+  }
 
   const error = coordsRes.error || textRes.error
   if (error) return { data: [], error: { message: error.message } }
 
+  const { filterPublicProfiles } = await import('./publicProfileVisibility')
   const seen = new Set<string>()
   const merged: ProfileRow[] = []
-  for (const row of [...((coordsRes.data as ProfileRow[]) ?? []), ...((textRes.data as ProfileRow[]) ?? [])]) {
+  for (const row of filterPublicProfiles([
+    ...((coordsRes.data as ProfileRow[]) ?? []),
+    ...((textRes.data as ProfileRow[]) ?? []),
+  ])) {
     if (seen.has(row.id)) continue
     seen.add(row.id)
     merged.push(row)
