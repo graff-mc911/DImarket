@@ -24,6 +24,7 @@ import {
   Search,
   Settings,
   ShoppingBag,
+  ShieldCheck,
   Trash2,
   User,
   X,
@@ -72,6 +73,7 @@ const MORE_ICONS: Record<string, ReactNode> = {
   'owner-dashboard': <BarChart3 className="h-5 w-5" aria-hidden />,
   'owner-ai': <Bot className="h-5 w-5" aria-hidden />,
   'owner-marketing': <Megaphone className="h-5 w-5" aria-hidden />,
+  'owner-official-sources': <ShieldCheck className="h-5 w-5" aria-hidden />,
 }
 
 /**

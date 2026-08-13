@@ -88,6 +88,9 @@ const AiAdmin = lazyWithRetry(() =>
 const MarketingAgentAdmin = lazyWithRetry(() =>
   import('./pages/MarketingAgentAdmin').then((m) => ({ default: m.MarketingAgentAdmin })),
 )
+const OfficialSourcesAdmin = lazyWithRetry(() =>
+  import('./pages/OfficialSourcesAdmin').then((m) => ({ default: m.OfficialSourcesAdmin })),
+)
 const Checkout = lazyWithRetry(() =>
   import('./pages/Checkout').then((m) => ({ default: m.Checkout })),
 )
@@ -368,6 +371,7 @@ function App() {
       case '/analytics':     return <Analytics />
       case '/admin/ai':        return <AiAdmin />
       case '/admin/marketing-agent': return <MarketingAgentAdmin />
+      case '/admin/official-sources': return <OfficialSourcesAdmin />
       case '/checkout':      return <Checkout />
       case '/boost':         return <BoostProfile />
       case '/pricing':

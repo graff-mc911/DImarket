@@ -223,6 +223,14 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     ownerOnly: true,
   },
   {
+    id: 'owner-official-sources',
+    path: '/admin/official-sources',
+    labelKey: 'header.officialSources',
+    surfaces: ['mobile-account'],
+    authAware: true,
+    ownerOnly: true,
+  },
+  {
     id: 'favorites',
     path: '/favorites',
     labelKey: 'nav.favorites',

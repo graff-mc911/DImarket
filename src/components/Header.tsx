@@ -464,6 +464,10 @@ export function Header() {
                             <Megaphone className="mr-2 inline h-4 w-4" />
                             {t('header.marketingAgent')}
                           </button>
+                          <button onClick={() => goTo('/admin/official-sources')} type="button" className={dropdownItemClass}>
+                            <Shield className="mr-2 inline h-4 w-4" />
+                            {t('header.officialSources')}
+                          </button>
                           <div className="my-1 border-t border-[#e7e7e7]" />
                         </>
                       )}
