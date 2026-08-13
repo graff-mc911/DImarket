@@ -102,13 +102,16 @@ Related QA manufacturers (preserve unless confirmed): `qa-pv-mfr-*`, `qa-final-m
 
 ## WHAT REMAINS
 
-1. Apply `APPLY_CA_OWNER_MODERATION.sql` in Supabase.
+1. Apply `APPLY_CA_OWNER_MODERATION.sql` in Supabase SQL Editor.
 2. Deploy edge: `npm run deploy:ca-admin-delete` (needs valid `SUPABASE_ACCESS_TOKEN`).
-3. Owner login → Dashboard → Verification Queue → Delete `QA Admin Delete Agent`.
-4. Confirm which QA rows to remove after review.
+3. Owner login → Dashboard → Verification Queue → Delete `QA Admin Delete Agent` (`f7263127-…`).
+4. Confirm which other QA rows to remove after review.
 
 ## FINAL STATUS
 
 **PARTIAL**
 
-Frontend moderation UI + safe delete API are implemented and ready to deploy. Production DB still needs the SQL (rejected status + owner RPC). Full owner→delete→queue/map/search gone loop completes after SQL apply + owner click on the kept test agent.
+Frontend is **live** on production (`#90` / `2e63b33` — `Dashboard-*.js` includes Delete/Reject/tabs).  
+DB still needs `APPLY_CA_OWNER_MODERATION.sql` for native `rejected` + owner RPC (soft-reject via unpublish works now).  
+
+**PASS** when owner completes Delete on the kept test agent and it disappears from search/map/queue.
