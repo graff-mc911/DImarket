@@ -191,16 +191,32 @@ async function probeBucket(bucket) {
   const publicUrl = `${storage}/object/public/${bucket}/${objectPath}`
   const pubRes = await fetch(publicUrl, { method: 'HEAD' })
 
-  const bucketMissing =
-    infoRes.status === 404 ||
-    /bucket not found/i.test(infoText) ||
-    /bucket not found/i.test(upText) ||
-    /not found/i.test(upText) && upRes.status === 404
+  // Anon often cannot GET /bucket/{id} (returns NoSuchBucket) even when the bucket
+  // works for list/upload. Prefer upload/list signals:
+  // - upload 2xx or RLS/AccessDenied → bucket exists
+  // - upload "Bucket not found" / NoSuchBucket → missing
+  const uploadSaysMissing = /bucket not found|NoSuchBucket/i.test(upText)
+  const listOk = listRes.status === 200
+  const uploadOk = upRes.status >= 200 && upRes.status < 300
+  const uploadRlsDenied =
+    upRes.status === 400 ||
+    upRes.status === 403 ||
+    /row-level security|AccessDenied|Unauthorized|JWT/i.test(upText)
+  const exists = uploadOk || (uploadRlsDenied && !uploadSaysMissing) || (listOk && !uploadSaysMissing)
+
+  // Best-effort cleanup of anon smoke upload (ignore failures)
+  if (uploadOk) {
+    await fetch(`${storage}/object/${bucket}/${objectPath}`, {
+      method: 'DELETE',
+      headers: { apikey: ANON, Authorization: `Bearer ${ANON}` },
+    }).catch(() => {})
+  }
 
   return {
     bucket,
     info_status: infoRes.status,
     info_preview: infoText.slice(0, 200),
+    info_note: 'GET /bucket/{id} often 404 for anon even when bucket exists',
     public: infoJson?.public ?? null,
     list_status: listRes.status,
     list_preview: listText.slice(0, 200),
@@ -208,7 +224,16 @@ async function probeBucket(bucket) {
     upload_preview: upText.slice(0, 200),
     public_head_status: pubRes.status,
     public_url: publicUrl,
-    exists: !bucketMissing,
+    exists,
+    evidence: uploadOk
+      ? 'upload_succeeded'
+      : uploadSaysMissing
+        ? 'upload_bucket_not_found'
+        : uploadRlsDenied
+          ? 'upload_rls_denied_implies_exists'
+          : listOk
+            ? 'list_ok'
+            : 'unknown',
   }
 }
 
@@ -237,7 +262,7 @@ async function sectionRest() {
     },
     {
       key: 'official_sources',
-      path: 'official_sources?select=id,title,verification_status&limit=5',
+      path: 'official_sources?select=id,source_name,source_key,verification_status,is_active&limit=5',
     },
     { key: 'notifications', path: 'notifications?select=id&limit=1' },
   ]
@@ -297,11 +322,17 @@ async function sectionStorage() {
   const knownOk = knownRes.ok
   const others = ['avatars', 'portfolio', 'portfolio-media', 'project-files', 'chat-media']
   const othersExist = others.filter((b) => probes[b]?.exists)
+  const othersMissing = others.filter((b) => !probes[b]?.exists)
 
   let status = 'PASS'
-  let message = `ad-media exists=${adOk}, known public=${knownOk}; other existing: ${othersExist.join(',') || 'none'}`
+  let message = `ad-media exists=${adOk} (evidence=${probes['ad-media']?.evidence}), known public=${knownOk}; existing others=[${othersExist.join(',')}]; missing=[${othersMissing.join(',')}]`
   if (!adOk || !knownOk) status = 'FAIL'
-  else if (othersExist.length === 0) status = 'PARTIAL'
+  else if (othersMissing.includes('project-files') || othersMissing.includes('chat-media')) {
+    // App code references these buckets; missing is a real gap but ad-media works
+    status = 'PARTIAL'
+  } else if (othersExist.length < others.length) {
+    status = 'PARTIAL'
+  }
 
   record('2_storage', status, { message, probes })
 }
