@@ -53,13 +53,15 @@ Each national pack includes: business registration, contracts, licenses/permits,
 
 | Country | Model examples |
 |---------|----------------|
-| DE / AT | Wohnraummietvertrag (BGB), GewA1-aligned Gewerbe, Kfz-Kaufvertrag / KBA |
-| FR / BE | Bail d’habitation, CERFA 13703*, guichet unique formalités |
-| ES | LAU arrendamiento, DGT transferencia, AEAT 036/037, SEPE |
-| PL | Umowa najmu (KC), CEIDG / gov.pl |
-| IT | Locazione, ACI/PRA, Registro Imprese |
-| PT | Arrendamento + Finanças, IMT, Empresa na Hora |
-| NL | Huurovereenkomst, KVK, RDW-style sale |
-| UK / IE | GOV.UK / RTB-aligned particulars |
+| DE / AT | Wohnraummietvertrag (BGB), GewA1-aligned Gewerbe, Kfz privat (I–VI) + **gewerblich/MwSt**, KBA check links |
+| FR / BE | Bail, CERFA 13703* (privé + pro/SIRET), HistoVec / Car-Pass |
+| ES | LAU, DGT particular + **empresas/CIF**, informe DGT |
+| PL | Umowa najmu, CEPiK + firma/VAT |
+| IT | Locazione, PRA/ACI + imprese |
+| PT | Arrendamento, IMT + empresa |
+| NL | Huur, RDW + zakelijk/btw |
+| UK / IE | GOV.UK / DVLA MOT check |
+
+Vehicle docs also attach `relatedPortals` (official history / register links). Filling prepares data — **official acceptance** often requires filing on the national portal (ANTS, DGT sede, Zulassungsstelle, etc.).
 
 We do **not** paste full copyrighted contract bodies — only field structure + link to the official portal. Templates stay under legal review.
