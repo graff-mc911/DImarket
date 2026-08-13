@@ -18,6 +18,8 @@ import {
 } from '../components/officialSources/DocumentFreshnessBadge'
 import {
   documentVerificationStatus,
+  enrichDocumentWithOsm,
+  honestDocumentStatus,
   filledDocumentFilename,
   getDocumentByPathParts,
   openFilledDocumentPdf,
@@ -60,15 +62,28 @@ function profileValue(
 
 export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
   const { t, location, profile, user, language } = useApp()
-  const doc = useMemo(
+  const baseDoc = useMemo(
     () => getDocumentByPathParts(countrySlug, cityOrSlug, slug),
     [countrySlug, cityOrSlug, slug],
   )
+  const [doc, setDoc] = useState<DocumentRecord | null>(baseDoc)
 
   const [filling, setFilling] = useState(false)
   const [values, setValues] = useState<Record<string, string>>({})
   const [stepIndex, setStepIndex] = useState(0)
   const [signOpen, setSignOpen] = useState(false)
+
+  useEffect(() => {
+    setDoc(baseDoc)
+    if (!baseDoc) return
+    let cancelled = false
+    void enrichDocumentWithOsm(baseDoc).then((enriched) => {
+      if (!cancelled) setDoc(enriched)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [baseDoc])
 
   useEffect(() => {
     if (!doc?.formFields) return
@@ -151,7 +166,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
 
         <header className="mb-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#86868b]">
-            {t(`docs.type.${doc.documentType}`)} · {t(`docs.status.${doc.status}`)}
+            {t(`docs.type.${doc.documentType}`)} · {t(`docs.status.${honestDocumentStatus(doc)}`)}
           </p>
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#1d1d1f]">
             {documentDisplayTitle(doc, language.code, t)}
@@ -186,6 +201,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
           <DocumentFreshnessBadge
             verificationStatus={documentVerificationStatus(doc)}
             lastVerifiedAt={doc.lastVerified}
+            nextVerificationAt={doc.osmNextVerificationAt}
             sourceName={doc.source.name}
             sourceUrl={doc.source.url}
             trustTier="national_government"

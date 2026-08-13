@@ -11,6 +11,7 @@
  */
 
 import type { DocumentRecord, FormFieldDef, OfficialFormPack } from './types'
+import { documentsOsmDocKey } from './osmKeys'
 import { isVehicleDocumentSlug, vehicleCheckPortalsFor } from './vehicleCheckPortals'
 
 function f(
@@ -1736,10 +1737,13 @@ export function withOfficialForm(doc: DocumentRecord): DocumentRecord {
       : {}
 
   if (!pack) {
-    return Object.keys(withPortals).length ? { ...doc, ...withPortals } : doc
+    return Object.keys(withPortals).length
+      ? { ...doc, osmDocKey: documentsOsmDocKey(doc.countryCode, doc.slug), ...withPortals }
+      : { ...doc, osmDocKey: documentsOsmDocKey(doc.countryCode, doc.slug) }
   }
   return {
     ...doc,
+    osmDocKey: documentsOsmDocKey(doc.countryCode, doc.slug),
     language: pack.language,
     formFields: pack.fields,
     officialForm: {
