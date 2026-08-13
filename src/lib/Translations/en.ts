@@ -94,6 +94,9 @@ export const enTranslations = {
   'osm.public.title': 'Official documents & procedures',
   'osm.public.subtitle': 'Verified pointers to official sources. DImarket does not silently rewrite legal text.',
   'osm.public.empty': 'No published documents yet.',
+  'osm.public.emptyHint':
+    'If you are the owner: apply APPLY_OFFICIAL_SOURCE_MONITOR*.sql in Supabase, then open /admin/official-sources.',
+  'osm.public.openAdmin': 'Official sources admin',
   'osm.public.notFound': 'Document not found or not published.',
   'osm.public.backToList': 'Back to list',
   'osm.public.downloadPdf': 'Save as PDF',
@@ -485,6 +488,7 @@ export const enTranslations = {
   'footer.forCompanies': 'For companies',
   'footer.privacy': 'Privacy',
   'footer.legal': 'Legal',
+  'footer.officialDocuments': 'Official documents',
   'footer.impressum': 'Impressum',
   'footer.terms': 'Terms',
   'footer.legalRight': 'Free construction-services platform with advertising-only monetization.',

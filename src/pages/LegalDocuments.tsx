@@ -111,7 +111,15 @@ export function LegalDocuments() {
         <ul className="space-y-3">
           {filtered.length === 0 ? (
             <li className="rounded-2xl border border-dashed border-[#d2d2d7] px-4 py-8 text-center text-sm text-[#86868b]">
-              {t('osm.public.empty')}
+              <p>{t('osm.public.empty')}</p>
+              <p className="mt-2 text-xs leading-5">{t('osm.public.emptyHint')}</p>
+              <button
+                type="button"
+                onClick={() => navigateTo('/admin/official-sources')}
+                className="mt-3 text-xs font-semibold text-[#007185] hover:underline"
+              >
+                {t('osm.public.openAdmin')}
+              </button>
             </li>
           ) : (
             filtered.map((doc) => (

@@ -340,6 +340,12 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     surfaces: ['footer-support'],
   },
   {
+    id: 'official-documents',
+    path: '/legal-documents',
+    labelKey: 'footer.officialDocuments',
+    surfaces: ['footer-support'],
+  },
+  {
     id: 'privacy',
     path: '/contact?topic=privacy',
     labelKey: 'footer.privacy',

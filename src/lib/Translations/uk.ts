@@ -96,6 +96,9 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'osm.public.title': 'Офіційні документи та процедури',
   'osm.public.subtitle': 'Перевірені посилання на офіційні джерела. DImarket не переписує юридичний текст мовчки.',
   'osm.public.empty': 'Ще немає опублікованих документів.',
+  'osm.public.emptyHint':
+    'Якщо ви власник: застосуйте SQL APPLY_OFFICIAL_SOURCE_MONITOR*.sql у Supabase і відкрийте /admin/official-sources.',
+  'osm.public.openAdmin': 'Панель офіційних джерел',
   'osm.public.notFound': 'Документ не знайдено або не опубліковано.',
   'osm.public.backToList': 'Назад до списку',
   'osm.public.downloadPdf': 'Зберегти PDF',
@@ -487,6 +490,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'footer.forCompanies': 'Для компаній',
   'footer.privacy': 'Конфіденційність',
   'footer.legal': 'Правове',
+  'footer.officialDocuments': 'Офіційні документи',
   'footer.impressum': 'Impressum',
   'footer.terms': 'Умови',
   'footer.legalRight': 'Безкоштовна платформа будівельних послуг із монетизацією лише через рекламу.',

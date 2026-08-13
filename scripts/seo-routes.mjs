@@ -114,6 +114,15 @@ export const STATIC_ROUTES = [
     schema: 'page',
   },
   {
+    path: '/legal-documents',
+    title: 'Official documents & procedures | DImarket',
+    description:
+      'Verified pointers to official government sources. DImarket does not silently rewrite legal text.',
+    changefreq: 'weekly',
+    priority: 0.7,
+    schema: 'page',
+  },
+  {
     path: '/for-professionals',
     title: 'Для фахівців | DImarket',
     description: 'Отримуйте заявки від клієнтів, розвивайте профіль і зростайте на DImarket.',
@@ -259,6 +268,7 @@ export function prerenderRoutes() {
     '/listings',
     '/pricing',
     '/contact',
+    '/legal-documents',
     '/for-professionals',
     '/for-companies',
     '/search',
