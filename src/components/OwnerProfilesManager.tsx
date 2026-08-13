@@ -14,6 +14,7 @@ import {
   OWNER_PROFILE_FETCH_LIMIT,
   fetchOwnerConsistencyCounts,
   fetchPublicListableProfileCount,
+  fetchPublicTopMastersCount,
   ownerHideProfile,
   ownerRestoreProfile,
   ownerSearchProfiles,
@@ -28,20 +29,21 @@ import {
 import { navigateTo } from '../lib/navigation'
 
 const FILTERS: { id: OwnerProfileFilter; label: string }[] = [
-  { id: 'public_listable', label: 'Як у клієнта' },
-  { id: 'all', label: 'Усі' },
+  { id: 'top_masters', label: 'Топ майстри' },
+  { id: 'qa', label: 'QA / тест' },
+  { id: 'public_listable', label: 'Усі публічні' },
+  { id: 'all', label: 'Усі в БД' },
   { id: 'professional', label: 'Майстри+компанії' },
   { id: 'company', label: 'Компанії' },
   { id: 'manufacturer', label: 'Виробники' },
   { id: 'commercial_agent', label: 'Агенти' },
-  { id: 'qa', label: 'QA / тест' },
   { id: 'hidden', label: 'Приховані' },
   { id: 'deleted', label: 'Видалені' },
 ]
 
 export function OwnerProfilesManager() {
   const [query, setQuery] = useState('')
-  const [filter, setFilter] = useState<OwnerProfileFilter>('public_listable')
+  const [filter, setFilter] = useState<OwnerProfileFilter>('top_masters')
   const [rows, setRows] = useState<OwnerProfileRow[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -49,31 +51,35 @@ export function OwnerProfilesManager() {
   const [busyId, setBusyId] = useState<string | null>(null)
   const [migrationHint, setMigrationHint] = useState(false)
   const [publicCount, setPublicCount] = useState<number | null>(null)
+  const [topMastersCount, setTopMastersCount] = useState<number | null>(null)
   const [counts, setCounts] = useState<OwnerConsistencyCounts | null>(null)
 
   const load = useCallback(async (q = query, f = filter) => {
     setLoading(true)
     setError('')
     try {
-      const [data, pub, consistency] = await Promise.all([
+      const [data, pub, top, consistency] = await Promise.all([
         ownerSearchProfiles({ query: q, filter: f, limit: OWNER_PROFILE_FETCH_LIMIT }),
         fetchPublicListableProfileCount().catch(() => null),
+        fetchPublicTopMastersCount().catch(() => null),
         fetchOwnerConsistencyCounts(),
       ])
       setRows(data)
       setPublicCount(pub)
+      setTopMastersCount(top)
       setCounts(consistency)
       setMigrationHint(false)
 
-      // Hard rule: Owner panel must not silently show fewer rows than the public set.
-      if (
-        (f === 'public_listable' || f === 'professional') &&
-        !q.trim() &&
-        pub != null &&
-        data.length < pub
-      ) {
+      const expected =
+        f === 'top_masters' && !q.trim()
+          ? top
+          : (f === 'public_listable' || f === 'professional') && !q.trim()
+            ? pub
+            : null
+
+      if (expected != null && data.length < expected) {
         setError(
-          `РОЗРИВ ДАНИХ: клієнт бачить ${pub} публічних профілів, Owner панель зараз показує лише ${data.length}. Застосуйте APPLY_OWNER_PROFILE_MODERATION.sql (ліміт RPC) і оновіть сторінку.`,
+          `РОЗРИВ ДАНИХ: публіка бачить ${expected}, Owner панель показує ${data.length}. Застосуйте APPLY_OWNER_PROFILE_MODERATION.sql і оновіть сторінку.`,
         )
       }
     } catch (e) {
@@ -89,7 +95,7 @@ export function OwnerProfilesManager() {
   }, [filter, query])
 
   useEffect(() => {
-    void load('', 'public_listable')
+    void load('', 'top_masters')
   }, [])
 
   const runAction = async (
@@ -112,11 +118,13 @@ export function OwnerProfilesManager() {
     }
   }
 
-  const consistent =
-    publicCount != null &&
-    (filter === 'public_listable' || filter === 'professional') &&
-    !query.trim() &&
-    rows.length >= publicCount
+  const syncTarget =
+    filter === 'top_masters' && !query.trim()
+      ? topMastersCount
+      : (filter === 'public_listable' || filter === 'professional') && !query.trim()
+        ? publicCount
+        : null
+  const consistent = syncTarget != null && rows.length >= syncTarget
 
   return (
     <div className="rounded-[22px] border border-[var(--glass-border)] bg-white/50 p-5">
@@ -124,16 +132,26 @@ export function OwnerProfilesManager() {
         <div>
           <h2 className="text-lg font-extrabold text-[#2f2a24]">Профілі DImarket</h2>
           <p className="mt-1 text-sm text-[#6f665d]">
-            Owner бачить ті самі production-записи, що й клієнт — плюс hidden/deleted для модерації.
+            Одна БД → публічний «Топ майстри» ↔ Owner (пошук QA → Hide / Delete / Edit).
           </p>
         </div>
       </div>
+
+      <pre className="mt-3 overflow-x-auto rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#f8f7f5] p-3 text-[11px] leading-5 text-[#4a453f]">
+{`SUPABASE profiles
+   ↓
+PUBLIC QUERY  (is_professional + user_role=professional)
+   ↓
+«ТОП МАЙСТРИ»  ←→  OWNER: фільтр «Топ майстри» / «QA»
+   ↓                      ↓
+КЛІЄНТ                   DELETE / HIDE / FEATURED / PRIORITY`}
+      </pre>
 
       <div
         className={`mt-4 rounded-xl border px-3 py-3 text-sm ${
           consistent
             ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
-            : publicCount != null && rows.length < (publicCount || 0)
+            : syncTarget != null && rows.length < syncTarget
               ? 'border-red-200 bg-red-50 text-red-800'
               : 'border-[rgba(148,163,184,0.35)] bg-white text-[#6f665d]'
         }`}
@@ -141,13 +159,14 @@ export function OwnerProfilesManager() {
         <div className="flex flex-wrap items-center gap-2 font-semibold">
           {consistent ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
           <span>
-            Клієнт (public is_professional): {publicCount ?? '—'} · Owner список: {rows.length}
+            Топ майстри (public): {topMastersCount ?? '—'} · Усі публічні: {publicCount ?? '—'} ·
+            Owner список: {rows.length}
             {counts ? ` · Усі в БД: ${counts.all_profiles}` : ''}
           </span>
         </div>
         <p className="mt-1 text-xs leading-5">
-          Правило: якщо клієнт бачить N публічних профілів — Owner Dashboard має бачити ≥ N. Немає
-          сценарію «клієнт 100 / Owner 70».
+          Синхрон: хто в «Топ майстри» — той є в Owner. QA Smoke professional шукається тут і
+          Hide/Delete прибирає його з публічної видачі.
         </p>
         {counts && (
           <p className="mt-1 text-xs">

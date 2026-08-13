@@ -28,6 +28,7 @@ export type OwnerProfileRow = {
 export type OwnerProfileFilter =
   | 'all'
   | 'public_listable'
+  | 'top_masters'
   | 'professional'
   | 'client'
   | 'company'
@@ -60,6 +61,14 @@ async function callRpc<T>(name: string, args: Record<string, unknown> = {}): Pro
 /** Owner must be able to load the full public universe — no silent 70/100 truncation. */
 export const OWNER_PROFILE_FETCH_LIMIT = 2000
 
+/**
+ * Same base set as homepage Top Masters:
+ * profiles.is_professional = true AND user_role = 'professional'
+ */
+export function isTopMastersProfile(row: Pick<OwnerProfileRow, 'is_professional' | 'user_role'>): boolean {
+  return row.is_professional === true && row.user_role === 'professional'
+}
+
 export async function ownerSearchProfiles(opts: {
   query?: string
   filter?: OwnerProfileFilter
@@ -67,6 +76,7 @@ export async function ownerSearchProfiles(opts: {
 }): Promise<OwnerProfileRow[]> {
   let query = opts.query ?? ''
   let filter: string = opts.filter ?? 'all'
+  const requestedFilter = opts.filter ?? 'all'
   const limit = opts.limit ?? OWNER_PROFILE_FETCH_LIMIT
 
   // Older prod RPC only supported: all|professional|client|premium|verified
@@ -75,8 +85,8 @@ export async function ownerSearchProfiles(opts: {
     if (filter === 'qa') {
       query = query.trim() ? query : 'QA'
       filter = 'all'
-    } else if (filter === 'public_listable') {
-      // Same set the client can list: is_professional=true (masters+companies)
+    } else if (filter === 'public_listable' || filter === 'top_masters') {
+      // Same set the client can list / Top Masters feed
       filter = 'professional'
     } else if (filter === 'company' || filter === 'manufacturer' || filter === 'commercial_agent') {
       query = query.trim() ? query : filter
@@ -91,16 +101,43 @@ export async function ownerSearchProfiles(opts: {
     p_filter: filter,
     p_limit: limit,
   })
-  if (Array.isArray(data)) return data as OwnerProfileRow[]
-  if (typeof data === 'string') {
+  let rows: OwnerProfileRow[] = []
+  if (Array.isArray(data)) rows = data as OwnerProfileRow[]
+  else if (typeof data === 'string') {
     try {
       const parsed = JSON.parse(data) as OwnerProfileRow[]
-      return Array.isArray(parsed) ? parsed : []
+      rows = Array.isArray(parsed) ? parsed : []
     } catch {
-      return []
+      rows = []
     }
   }
-  return []
+
+  // Exact sync with PUBLIC Top Masters query (not companies).
+  if (requestedFilter === 'top_masters') {
+    rows = rows.filter(isTopMastersProfile)
+  }
+
+  // QA tab: keep only QA-looking names even if RPC returned a broader set.
+  if (requestedFilter === 'qa') {
+    rows = rows.filter((r) => /^qa([\s_\-.]|$)/i.test((r.full_name || '').trim()) || /QA /i.test(r.full_name || ''))
+  }
+
+  return rows
+}
+
+/**
+ * Public count for homepage Top Masters base set
+ * (is_professional + user_role=professional).
+ */
+export async function fetchPublicTopMastersCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from('profiles')
+    .select('id', { count: 'exact', head: true })
+    .eq('is_professional', true)
+    .eq('user_role', 'professional')
+
+  if (error) throw error
+  return count ?? 0
 }
 
 /**
