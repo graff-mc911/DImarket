@@ -57,7 +57,7 @@ export function parseLocalAdminCommand(text: string): {
   }
 
   const boostPhrase = lower.match(
-    /(?:додай|додати|підніми|підвищ|надай|встанови)\s+(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?)(?:\s+(?:майстр[ауі]?|користувач[ауі]?))?\s+(.+)/i,
+    /(?:додай|додати|підніми|підвищ|надай|встанови)\s+(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?)(?:\s+(?:майстр[ауі]?|фахівц[яюі]?|користувач[ауі]?))?\s+(.+)/i,
   )
   if (boostPhrase) {
     return {
@@ -68,7 +68,7 @@ export function parseLocalAdminCommand(text: string): {
   }
 
   const starsFirst = lower.match(
-    /(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?).{0,40}?(?:майстр[ауі]?|користувач[ауі]?)\s+([a-zа-яіїєґ0-9_-]+)/i,
+    /(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?).{0,40}?(?:майстр[ауі]?|фахівц[яюі]?|користувач[ауі]?)\s+([a-zа-яіїєґ0-9_-]+)/i,
   )
   if (starsFirst) {
     return {
@@ -79,7 +79,7 @@ export function parseLocalAdminCommand(text: string): {
   }
 
   const nameFirst = lower.match(
-    /(?:майстр[ауі]?|користувач[ауі]?)\s+([a-zа-яіїєґ0-9_-]+).{0,40}?(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?)/i,
+    /(?:майстр[ауі]?|фахівц[яюі]?|користувач[ауі]?)\s+([a-zа-яіїєґ0-9_-]+).{0,40}?(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?)/i,
   )
   if (nameFirst) {
     return {
@@ -89,7 +89,7 @@ export function parseLocalAdminCommand(text: string): {
     }
   }
 
-  const onlyStars = lower.match(/^(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?)\s*(?:майстр[ауі]?\s+)?(.+)?$/i)
+  const onlyStars = lower.match(/^(\d+(?:[.,]\d+)?)\s*(?:зірок|зірки|зірку|зір|stars?)\s*(?:(?:майстр[ауі]?|фахівц[яюі]?)\s+)?(.+)?$/i)
   if (onlyStars && onlyStars[2]) {
     return {
       type: 'boost',
@@ -98,7 +98,7 @@ export function parseLocalAdminCommand(text: string): {
     }
   }
 
-  const top = lower.match(/(?:топ|top)\s*(\d+)?\s*(?:майстр|професіонал)/)
+  const top = lower.match(/(?:топ|top)\s*(\d+)?\s*(?:майстр|фахівц|професіонал)/)
   if (top) {
     return { type: 'top', limit: Number(top[1] || 5) }
   }

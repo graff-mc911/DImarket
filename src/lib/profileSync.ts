@@ -35,7 +35,7 @@ export function consumePendingRegistration(): PendingRegistration | null {
   }
 }
 
-/** Роль у profiles (CHECK у БД) + прапорець майстра. advertiser → client у БД, роль у metadata. */
+/** Роль у profiles (CHECK у БД) + прапорець фахівця. advertiser → client у БД, роль у metadata. */
 export function normalizeProfileRole(role: string | undefined | null): {
   user_role: UserRole
   is_professional: boolean

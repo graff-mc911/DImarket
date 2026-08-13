@@ -1521,7 +1521,7 @@ export const SERVIYA_CATEGORY_I18N: Record<string, ServiyaLabelMap> = {
   },
   'handyman': {
     en: 'Handyman',
-    uk: 'Майстер',
+    uk: 'Фахівець',
     ru: 'Мастер',
     pl: 'Złota rączka',
     de: 'Handwerker',
@@ -3509,7 +3509,7 @@ export const SERVIYA_CATEGORY_I18N: Record<string, ServiyaLabelMap> = {
   },
   'jobs-hiring': {
     en: 'Hiring Trades',
-    uk: 'Наймаємо майстрів',
+    uk: 'Наймаємо фахівців',
     ru: 'Нанимаем мастеров',
     pl: 'Zatrudnimy fachowców',
     de: 'Handwerker gesucht',

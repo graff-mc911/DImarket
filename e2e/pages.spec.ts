@@ -17,7 +17,7 @@ const PUBLIC_WITH_RAILS: Array<{
   { path: '/', heading: HOME_HERO },
   {
     path: '/professionals',
-    heading: /Будівельні майстри|Construction professionals ready/i,
+    heading: /Будівельні фахівці|Construction professionals ready/i,
   },
   {
     path: '/listings',

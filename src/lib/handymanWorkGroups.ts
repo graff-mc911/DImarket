@@ -6,7 +6,7 @@ export const HANDYMAN_WORK_GROUPS: SubcategoryGroupDef[] = [
   {
     slug: 'handyman',
     label: {
-      uk: 'Майстер на годину',
+      uk: 'Фахівець на годину',
       ru: 'Мастер на час',
       en: 'Handyman',
       es: 'Manitas',

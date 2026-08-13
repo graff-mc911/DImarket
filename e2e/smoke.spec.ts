@@ -12,7 +12,7 @@ test.describe('Smoke — публічні сторінки', () => {
     const routes = [
       {
         path: '/professionals',
-        heading: /Будівельні майстри|Construction professionals ready/i,
+        heading: /Будівельні фахівці|Construction professionals ready/i,
       },
       {
         path: '/listings',

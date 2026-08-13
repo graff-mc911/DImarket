@@ -243,7 +243,7 @@ try {
   const pagesToCheck = [
     { path: '/', name: 'Головна', slot: 'home_side_r1' },
     { path: '/listings', name: 'Оголошення', slot: 'listings_side_r1' },
-    { path: '/professionals', name: 'Майстри', slot: 'professionals_side_l1' },
+    { path: '/professionals', name: 'Фахівці', slot: 'professionals_side_l1' },
   ]
 
   for (const { path, name } of pagesToCheck) {

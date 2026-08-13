@@ -1046,7 +1046,7 @@ function AnnouncementsManager() {
                 required
                 value={message}
                 onChange={e => setMessage(e.target.value)}
-                placeholder="Наприклад: Нова функція! Тепер можна зберігати профілі майстрів."
+                placeholder="Наприклад: Нова функція! Тепер можна зберігати профілі фахівців."
                 className="input-glass w-full"
                 maxLength={300}
               />

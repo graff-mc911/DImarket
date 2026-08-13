@@ -6,10 +6,10 @@ test.describe('Навігація з шапки', () => {
     await gotoPath(page, '/')
   })
 
-  test('верхнє меню — майстри та оголошення', async ({ page, viewport }) => {
+  test('верхнє меню — фахівці та оголошення', async ({ page, viewport }) => {
     await clickHeaderNavButton(
       page,
-      /Знайти майстр|Find Professionals/i,
+      /Знайти фахівц|Find Professionals/i,
       viewport,
     )
     await expect(page).toHaveURL(/\/professionals$/)

@@ -1,5 +1,5 @@
 /**
- * Каталог категорій і підкатегорій для оголошень і профілів майстрів.
+ * Каталог категорій і підкатегорій для оголошень і профілів фахівців.
  */
 
 import { CONSTRUCTION_WORK_GROUPS } from './constructionWorkGroups'
@@ -112,7 +112,7 @@ export const SERVICE_CATEGORY_CATALOG: CategoryWithSubcategoriesDef[] = [
   {
     slug: 'handyman',
     label: {
-      uk: 'Майстер на годину',
+      uk: 'Фахівець на годину',
       ru: 'Мастер на час',
       en: 'Handyman',
       es: 'Manitas',
