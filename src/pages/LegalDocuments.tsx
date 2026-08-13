@@ -19,17 +19,18 @@ function staticAsPublished(lang: string): PublishedLegalDocument[] {
     region: null,
     jurisdiction: d.jurisdiction,
     primary_source_id: null,
-    verification_status: 'verified',
+    // Static fallback is NOT OSM-verified — never fake "verified" + today's date.
+    verification_status: 'needs_research',
     current_version_id: null,
-    next_verification_at: new Date().toISOString(),
-    last_verified_at: new Date().toISOString(),
+    next_verification_at: null,
+    last_verified_at: null,
     is_published: true,
     official_sources: {
       source_name: d.source_name,
       source_url: d.source_url,
       trust_tier: d.trust_tier,
       last_checked_at: null,
-      verification_status: 'verified',
+      verification_status: 'needs_research',
     },
   }))
 }

@@ -11,37 +11,37 @@ import type { DocumentRecord } from './types'
 const BOE = {
   name: 'BOE — Agencia Estatal Boletín Oficial del Estado',
   url: 'https://www.boe.es/',
-  lastVerified: '2026-08-13',
+  lastVerified: null,
 } as const
 
 const AEAT = {
   name: 'Agencia Tributaria (AEAT)',
   url: 'https://sede.agenciatributaria.gob.es/',
-  lastVerified: '2026-08-13',
+  lastVerified: null,
 } as const
 
 const YOUR_EUROPE = {
   name: 'Your Europe — Business',
   url: 'https://europa.eu/youreurope/business/',
-  lastVerified: '2026-08-13',
+  lastVerified: null,
 } as const
 
 const DGT = {
   name: 'Dirección General de Tráfico (DGT)',
   url: 'https://www.dgt.es/',
-  lastVerified: '2026-08-13',
+  lastVerified: null,
 } as const
 
 const SEPE = {
   name: 'SEPE — Servicio Público de Empleo Estatal',
   url: 'https://www.sepe.es/',
-  lastVerified: '2026-08-13',
+  lastVerified: null,
 } as const
 
 const INCLUSION = {
   name: 'Ministerio de Inclusión, Seguridad Social y Migraciones',
   url: 'https://www.inclusion.gob.es/',
-  lastVerified: '2026-08-13',
+  lastVerified: null,
 } as const
 
 function esDoc(

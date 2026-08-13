@@ -7,11 +7,10 @@
  * - We do NOT paste full copyrighted contract bodies.
  * - Labels are in the form’s official language.
  * - Always link sourceUrl to the official portal page for the blank/model.
+ * - lastVerified stays null until a human or OSM check confirms the URL.
  */
 
 import type { DocumentRecord, FormFieldDef, OfficialFormPack } from './types'
-
-const V = '2026-08-13'
 
 function f(
   id: string,
@@ -34,7 +33,7 @@ const deRental: OfficialFormPack = {
   language: 'de',
   sourceName: 'Gesetze im Internet — BGB Mietrecht + bund.de',
   sourceUrl: 'https://www.gesetze-im-internet.de/bgb/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Felder entsprechen üblichen Angaben in deutschen Wohnraummietverträgen (BGB). Kein amtliches Einheitsformular — vor Unterschrift prüfen und ggf. Rechtsberatung einholen.',
   noticeEn:
@@ -65,7 +64,7 @@ const deVehicle: OfficialFormPack = {
   language: 'de',
   sourceName: 'Kraftfahrt-Bundesamt (KBA) / bund.de',
   sourceUrl: 'https://www.kba.de/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Felder wie in gängigen deutschen Kfz-Kaufverträgen. Zulassung und Halterwechsel über örtliche Zulassungsstelle / KBA-Hinweise prüfen.',
   noticeEn: 'Fields as in common German vehicle sale contracts. Complete registration via local Zulassungsstelle / KBA.',
@@ -94,7 +93,7 @@ const deBusiness: OfficialFormPack = {
   language: 'de',
   sourceName: 'BMWK / bund.de — Gewerbeanmeldung',
   sourceUrl: 'https://www.bund.de/Content/DE/Leistung/A/gewerbeanmeldung.html',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Feldbezeichnungen analog zur Gewerbeanmeldung (GewA1). Das amtliche Formular beim zuständigen Gewerbeamt / Online-Dienst verwenden.',
   noticeEn: 'Field names aligned with German GewA1 trade registration. Use the official form at your Gewerbeamt.',
@@ -119,7 +118,7 @@ const deEmployment: OfficialFormPack = {
   language: 'de',
   sourceName: 'Gesetze im Internet — Nachweisgesetz',
   sourceUrl: 'https://www.gesetze-im-internet.de/nachwg_2022/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Mindestangaben nach Nachweisgesetz. Kein einheitliches Bundesformular — Muster prüfen und anpassen.',
   noticeEn: 'Minimum particulars under German Nachweisgesetz. Not a single federal blank.',
@@ -144,7 +143,7 @@ const deWorks: OfficialFormPack = {
   language: 'de',
   sourceName: 'Gesetze im Internet — BGB Werkvertrag',
   sourceUrl: 'https://www.gesetze-im-internet.de/bgb/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Struktur nach typischen deutschen Werkverträgen (BGB). Kein amtliches Einheitsblankett.',
   noticeEn: 'Structure of typical German works contracts (BGB). Not an official blank.',
@@ -169,7 +168,7 @@ const frRental: OfficialFormPack = {
   language: 'fr',
   sourceName: 'Service-Public — Bail d’habitation',
   sourceUrl: 'https://www.service-public.fr/particuliers/vosdroits/R2740',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Champs alignés sur le modèle type de bail d’habitation (service-public.fr). Téléchargez le modèle officiel et vérifiez avant signature.',
   noticeEn: 'Fields aligned with the French official residential lease model on service-public.fr.',
@@ -197,7 +196,7 @@ const frVehicle: OfficialFormPack = {
   language: 'fr',
   sourceName: 'Service-Public / ANTS — CERFA 13703',
   sourceUrl: 'https://www.service-public.fr/particuliers/vosdroits/R2032',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Champs du certificat de cession (CERFA 13703*). Utilisez le formulaire officiel ANTS / service-public pour la déclaration.',
   noticeEn: 'Fields from French CERFA 13703* vehicle transfer certificate. Use the official ANTS form.',
@@ -221,7 +220,7 @@ const frBusiness: OfficialFormPack = {
   language: 'fr',
   sourceName: 'Guichet unique des formalités des entreprises',
   sourceUrl: 'https://formalites.entreprises.gouv.fr/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Champs du parcours de formalités (guichet unique). Déposez le dossier sur formalites.entreprises.gouv.fr.',
   noticeEn: 'Fields for the French one-stop business formalities desk.',
@@ -243,7 +242,7 @@ const frEmployment: OfficialFormPack = {
   language: 'fr',
   sourceName: 'Service-Public — Contrat de travail',
   sourceUrl: 'https://www.service-public.fr/particuliers/vosdroits/N19871',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Mentions usuelles du contrat de travail en France. Vérifier sur service-public.fr.',
   noticeEn: 'Usual French employment contract particulars.',
   fields: [
@@ -265,7 +264,7 @@ const frWorks: OfficialFormPack = {
   language: 'fr',
   sourceName: 'Service-Public — Travaux',
   sourceUrl: 'https://www.service-public.fr/particuliers/vosdroits/N311',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Champs typiques devis/contrat de travaux. Vérifier obligations sur service-public.fr.',
   noticeEn: 'Typical French works quote/contract fields.',
   fields: [
@@ -288,7 +287,7 @@ const esRental: OfficialFormPack = {
   language: 'es',
   sourceName: 'BOE — Ley de Arrendamientos Urbanos',
   sourceUrl: 'https://www.boe.es/biblioteca_juridica/codigos/codigo.php?id=058_Codigo_de_Arrendamientos_Urbanos&tipo=C&modo=2',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Campos alineados con la estructura habitual de contratos de arrendamiento de vivienda (LAU). No sustituye un modelo notarial o el PDF oficial de su comunidad.',
   noticeEn: 'Fields aligned with Spanish LAU residential lease structure. Not a substitute for an official regional PDF.',
@@ -315,7 +314,7 @@ const esVehicle: OfficialFormPack = {
   language: 'es',
   sourceName: 'DGT — Transferencia de vehículos',
   sourceUrl: 'https://www.dgt.es/nuestros-servicios/tu-vehiculo/cambio-de-titularidad-de-un-vehiculo/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Campos del contrato privado de compraventa y datos necesarios para la transferencia en la DGT. Complete el trámite oficial en DGT.',
   noticeEn: 'Private sale fields plus data needed for DGT ownership transfer.',
@@ -341,7 +340,7 @@ const esBusiness: OfficialFormPack = {
   language: 'es',
   sourceName: 'AEAT — Censos de empresarios (modelo 036/037)',
   sourceUrl: 'https://sede.agenciatributaria.gob.es/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Campos orientativos del alta censal / inicio de actividad. Presente el modelo oficial 036/037 en la AEAT y el resto de trámites en el PAE / registro.',
   noticeEn: 'Indicative fields for Spanish tax census registration (models 036/037).',
@@ -363,7 +362,7 @@ const esEmployment: OfficialFormPack = {
   language: 'es',
   sourceName: 'SEPE — Contratos',
   sourceUrl: 'https://www.sepe.es/HomeSepe/empresas/Contratos.html',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Datos habituales del contrato de trabajo. Use los modelos oficiales del SEPE para el alta.',
   noticeEn: 'Usual Spanish employment contract data — use official SEPE models.',
   fields: [
@@ -384,7 +383,7 @@ const esWorks: OfficialFormPack = {
   language: 'es',
   sourceName: 'BOE / normativa de consumidores',
   sourceUrl: 'https://www.boe.es/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Estructura habitual de contrato de obra/reforma en España. Revisar con profesional antes de firmar.',
   noticeEn: 'Usual Spanish works/renovation contract structure.',
   fields: [
@@ -407,7 +406,7 @@ const plRental: OfficialFormPack = {
   language: 'pl',
   sourceName: 'gov.pl / ISAP — Kodeks cywilny',
   sourceUrl: 'https://www.gov.pl/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Pola zgodne z typową umową najmu w Polsce (Kodeks cywilny). Sprawdź wzór na gov.pl i skonsultuj przed podpisaniem.',
   noticeEn: 'Typical Polish residential lease fields (Civil Code).',
@@ -431,7 +430,7 @@ const plVehicle: OfficialFormPack = {
   language: 'pl',
   sourceName: 'gov.pl — Rejestracja pojazdów',
   sourceUrl: 'https://www.gov.pl/web/gov/zarejestruj-pojazd',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Pola typowej umowy kupna-sprzedaży + dane do rejestracji. Dopełnij formalności w urzędzie.',
   noticeEn: 'Typical Polish vehicle sale + registration fields.',
   fields: [
@@ -452,7 +451,7 @@ const plBusiness: OfficialFormPack = {
   language: 'pl',
   sourceName: 'CEIDG / biznes.gov.pl',
   sourceUrl: 'https://www.biznes.gov.pl/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Pola wniosku CEIDG. Wniosek złóż na biznes.gov.pl / CEIDG.',
   noticeEn: 'CEIDG business registration fields — file on biznes.gov.pl.',
   fields: [
@@ -473,7 +472,7 @@ const itRental: OfficialFormPack = {
   language: 'it',
   sourceName: 'Agenzia delle Entrate — Locazioni',
   sourceUrl: 'https://www.agenziaentrate.gov.it/portale/web/guest/schede/fabbricatiterreni/contratti-di-locazione',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Campi tipici del contratto di locazione abitativa. Registrare il contratto presso l’Agenzia delle Entrate secondo le istruzioni ufficiali.',
   noticeEn: 'Typical Italian residential lease fields — register with Agenzia delle Entrate.',
@@ -495,7 +494,7 @@ const itVehicle: OfficialFormPack = {
   language: 'it',
   sourceName: 'ACI / Motorizzazione',
   sourceUrl: 'https://www.aci.it/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Campi tipici dell’atto di vendita. Completare il passaggio presso ACI/PRA / Motorizzazione.',
   noticeEn: 'Typical Italian vehicle sale deed fields.',
   fields: [
@@ -515,7 +514,7 @@ const itBusiness: OfficialFormPack = {
   language: 'it',
   sourceName: 'impresa.italia.it / Registro Imprese',
   sourceUrl: 'https://www.registroimprese.it/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Campi del percorso di avvio impresa. Presentare la pratica sul portale ufficiale.',
   noticeEn: 'Italian business start fields — file on the official Registro Imprese portal.',
   fields: [
@@ -535,7 +534,7 @@ const itWorks: OfficialFormPack = {
   language: 'it',
   sourceName: 'Codice Civile / gov.it — consumatori',
   sourceUrl: 'https://www.gov.it/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Struttura tipica dei contratti d’appalto / ristrutturazione in Italia. Verificare obblighi e, se necessario, rivolgersi a un professionista.',
   noticeEn: 'Typical Italian works/renovation contract structure.',
@@ -559,7 +558,7 @@ const ptRental: OfficialFormPack = {
   language: 'pt',
   sourceName: 'Portal das Finanças / DRE',
   sourceUrl: 'https://www.portaldasfinancas.gov.pt/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Campos típicos do contrato de arrendamento em Portugal. Registe no Portal das Finanças conforme as regras oficiais.',
   noticeEn: 'Typical Portuguese residential lease fields — register on Portal das Finanças.',
   fields: [
@@ -579,7 +578,7 @@ const ptVehicle: OfficialFormPack = {
   language: 'pt',
   sourceName: 'IMT — Registo de propriedade',
   sourceUrl: 'https://www.imt-ip.pt/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Campos do contrato particular e dados para registo no IMT.',
   noticeEn: 'Portuguese vehicle sale + IMT registration fields.',
   fields: [
@@ -599,7 +598,7 @@ const ptBusiness: OfficialFormPack = {
   language: 'pt',
   sourceName: 'Empresa na Hora / gov.pt',
   sourceUrl: 'https://eportugal.gov.pt/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Campos do percurso Empresa na Hora / formalidades. Submeta no balcão oficial.',
   noticeEn: 'Portuguese Empresa na Hora / entrepreneur desk fields.',
   fields: [
@@ -620,7 +619,7 @@ const nlRental: OfficialFormPack = {
   language: 'nl',
   sourceName: 'Rijksoverheid — Huren',
   sourceUrl: 'https://www.rijksoverheid.nl/onderwerpen/huurwoning',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Velden zoals in gangbare Nederlandse huurovereenkomsten. Controleer op rijksoverheid.nl.',
   noticeEn: 'Common Dutch residential lease fields.',
   fields: [
@@ -641,7 +640,7 @@ const nlBusiness: OfficialFormPack = {
   language: 'nl',
   sourceName: 'KVK — Bedrijf starten',
   sourceUrl: 'https://www.kvk.nl/starten/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Velden voor KVK-inschrijving. Schrijf in via kvk.nl.',
   noticeEn: 'Dutch KVK registration fields.',
   fields: [
@@ -660,7 +659,7 @@ const nlVehicle: OfficialFormPack = {
   language: 'nl',
   sourceName: 'RDW — Voertuig overschrijven',
   sourceUrl: 'https://www.rdw.nl/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Velden koopovereenkomst + RDW-overschrijving.',
   noticeEn: 'Dutch vehicle sale + RDW transfer fields.',
   fields: [
@@ -869,7 +868,7 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
       modelName: 'Contrato de arras / señal',
       sourceName: 'BOE — Código Civil (arras)',
       sourceUrl: 'https://www.boe.es/biblioteca_juridica/codigos/codigo.php?id=42&modo=2&nota=0',
-      lastVerified: V,
+      lastVerified: null,
       noticeLocal:
         'Campos habituales de un contrato de arras. No sustituye asesoramiento ni la escritura posterior.',
       noticeEn: 'Usual Spanish deposit (arras) agreement fields.',
@@ -1037,7 +1036,7 @@ const enRental: OfficialFormPack = {
   language: 'en',
   sourceName: 'GOV.UK — Private renting / Your Europe',
   sourceUrl: 'https://www.gov.uk/private-renting',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal:
     'Fields follow common UK/IE private tenancy particulars. Use the official national model where published (e.g. GOV.UK / RTB Ireland).',
   noticeEn:
@@ -1059,7 +1058,7 @@ const enBusiness: OfficialFormPack = {
   language: 'en',
   sourceName: 'GOV.UK — Set up a business / Your Europe',
   sourceUrl: 'https://www.gov.uk/set-up-business',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Core registration fields. Complete the filing on the official national portal.',
   noticeEn: 'Core registration fields. Complete the filing on the official national portal.',
   fields: [
@@ -1078,7 +1077,7 @@ const enVehicle: OfficialFormPack = {
   language: 'en',
   sourceName: 'GOV.UK — Sold, transferred or got a vehicle',
   sourceUrl: 'https://www.gov.uk/sold-bought-vehicle',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Common private sale fields. Complete V5C / national transfer on the official portal.',
   noticeEn: 'Common private sale fields. Complete national transfer on the official portal.',
   fields: [
@@ -1098,7 +1097,7 @@ const enWorks: OfficialFormPack = {
   language: 'en',
   sourceName: 'Your Europe / national consumer portals',
   sourceUrl: 'https://europa.eu/youreurope/',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Core works-contract fields. Verify consumer rules on your national portal.',
   noticeEn: 'Core works-contract fields. Verify consumer rules on your national portal.',
   fields: [
@@ -1117,7 +1116,7 @@ const enEmployment: OfficialFormPack = {
   language: 'en',
   sourceName: 'GOV.UK — Employment contracts',
   sourceUrl: 'https://www.gov.uk/employment-contracts-and-conditions',
-  lastVerified: V,
+  lastVerified: null,
   noticeLocal: 'Particulars commonly required in writing. Use national guidance for mandatory terms.',
   noticeEn: 'Particulars commonly required in writing. Use national guidance for mandatory terms.',
   fields: [
