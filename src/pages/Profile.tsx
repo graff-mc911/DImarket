@@ -24,6 +24,8 @@ import { deleteCurrentAccount } from '../lib/deleteAccount'
 import { Profile as ProfileType } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 import { ReviewFeed } from '../components/reviews/ReviewFeed'
+import { ScbLightPanel } from '../components/ScbLightPanel'
+import { isSiteOwner } from '../lib/siteOwner'
 
 function normalizeWebsiteHref(url: string | null | undefined): string {
   const trimmed = (url ?? '').trim()
@@ -377,6 +379,14 @@ export function Profile() {
             ) : null}
           </div>
         </div>
+
+        {userId &&
+        (profile?.user_role === 'professional' ||
+          profile?.user_role === 'company' ||
+          profile?.is_professional ||
+          isSiteOwner(profile, contextUser?.email)) ? (
+          <ScbLightPanel userId={userId} />
+        ) : null}
 
         <div className="glass-card overflow-hidden">
           <div className="flex border-b border-[var(--glass-border)]">
