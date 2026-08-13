@@ -47,6 +47,9 @@ export function normalizeProfileRole(role: string | undefined | null): {
   if (r === 'professional' || r === 'company') {
     return { user_role: r as UserRole, is_professional: true }
   }
+  if (r === 'manufacturer' || r === 'commercial_agent') {
+    return { user_role: r as UserRole, is_professional: true }
+  }
   if (r === 'owner') {
     return { user_role: 'owner', is_professional: false }
   }

@@ -86,6 +86,8 @@ export function getPostLoginPath(
   if (isSiteOwner(profile, options?.email)) return '/dashboard'
   const role = options?.intendedRole ?? profile?.user_role
   if (role === 'advertiser') return '/advertising'
+  if (role === 'manufacturer') return '/commercial-agents/dashboard?role=manufacturer&tab=profile'
+  if (role === 'commercial_agent') return '/commercial-agents/dashboard?role=agent&tab=profile'
   if (role === 'client') return '/customer/dashboard'
   if (role === 'professional' || role === 'company') return '/pro/dashboard'
   return '/customer/dashboard'

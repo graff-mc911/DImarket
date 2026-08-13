@@ -22,12 +22,20 @@ export type Json =
 
 // ============================================================
 // РОЛІ КОРИСТУВАЧІВ
-// client      — замовник, шукає майстра або послугу
-// professional — майстер або фізична особа що надає послуги
-// company     — фірма або компанія що надає послуги
-// owner       — власник платформи DImarket
+// client            — замовник
+// professional      — майстер / фахівець
+// company           — компанія послуг
+// owner             — власник платформи
+// manufacturer      — виробник (CA module)
+// commercial_agent  — комерційний представник (CA module)
 // ============================================================
-export type UserRole = 'client' | 'professional' | 'company' | 'owner'
+export type UserRole =
+  | 'client'
+  | 'professional'
+  | 'company'
+  | 'owner'
+  | 'manufacturer'
+  | 'commercial_agent'
 
 // ============================================================
 // СХЕМА БАЗИ ДАНИХ

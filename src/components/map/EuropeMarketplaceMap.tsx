@@ -92,6 +92,7 @@ function ctaLabel(m: MarketplaceMapMarker, t: (k: string) => string): string {
   if (m.kind === 'job') return t('mapExplore.viewJob')
   if (m.kind === 'marketplace') return t('mapExplore.viewListing')
   if (m.kind === 'manufacturer') return t('mapExplore.viewManufacturer')
+  if (m.kind === 'agent') return t('mapExplore.viewAgent')
   return t('mapExplore.viewProfile')
 }
 

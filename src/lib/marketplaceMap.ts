@@ -46,6 +46,7 @@ export type MapMarkerKind =
   | 'professional'
   | 'company'
   | 'manufacturer'
+  | 'agent'
   | 'project'
   | 'marketplace'
   | 'job'
@@ -104,6 +105,7 @@ export const MAP_KIND_COLORS: Record<MapMarkerKind | 'mixed', string> = {
   professional: '#16a34a', // green — master / online-capable
   company: '#2563eb', // blue
   manufacturer: '#0f766e', // teal — B2B manufacturer / brand
+  agent: '#0891b2', // cyan — commercial agent
   project: '#ea580c', // orange — active project
   job: '#7c3aed', // purple — vacancy
   marketplace: '#92400e', // brown — shop / manufacturer listing
@@ -114,13 +116,14 @@ export const MAP_KIND_GLYPH: Record<MapMarkerKind | 'mixed', string> = {
   professional: 'P',
   company: 'C',
   manufacturer: 'M',
+  agent: 'A',
   project: 'J',
   job: 'V',
   marketplace: 'S',
   mixed: '+',
 }
 
-const CACHE_KEY = 'dimarket_map_markers_v6'
+const CACHE_KEY = 'dimarket_map_markers_v7'
 const CACHE_TTL_MS = 90_000
 
 const PROFILE_MAP_SELECT = `
@@ -360,10 +363,15 @@ type ManufacturerMapRow = {
 }
 
 function toManufacturerMarker(row: ManufacturerMapRow): MarketplaceMapMarker | null {
-  const lat = row.profile?.service_latitude
-  const lng = row.profile?.service_longitude
-  if (lat == null || lng == null || !Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  let lat = row.profile?.service_latitude
+  let lng = row.profile?.service_longitude
   const loc = row.profile?.location || row.headquarters || row.country
+  if (lat == null || lng == null || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+    const inferred = inferCoordsFromLocationText(loc)
+    if (!inferred) return null
+    lat = inferred.lat
+    lng = inferred.lon
+  }
   const parts = formatLocationParts(loc)
   return {
     id: `manufacturer-${row.id}`,
@@ -381,15 +389,75 @@ function toManufacturerMarker(row: ManufacturerMapRow): MarketplaceMapMarker | n
     status: 'published',
     availability: 'available',
     online: true,
-    lat,
-    lng,
+    lat: Number(lat),
+    lng: Number(lng),
     path: `/commercial-agents/manufacturers/${row.slug}`,
     location: loc,
-    service_latitude: lat,
-    service_longitude: lng,
+    service_latitude: Number(lat),
+    service_longitude: Number(lng),
     service_radius_km: null,
     work_subcategory_slugs: row.categories,
-    user_role: 'company',
+    user_role: 'manufacturer',
+    listingType: null,
+    distanceKm: null,
+  }
+}
+
+type AgentMapRow = {
+  id: string
+  slug: string
+  full_name: string
+  description: string | null
+  profile_photo_url: string | null
+  country: string | null
+  city: string | null
+  categories: string[] | null
+  verification_status: string | null
+  profile: {
+    id: string
+    service_latitude: number | null
+    service_longitude: number | null
+    location: string | null
+    rating: number | null
+  } | null
+}
+
+function toAgentMarker(row: AgentMapRow): MarketplaceMapMarker | null {
+  let lat = row.profile?.service_latitude
+  let lng = row.profile?.service_longitude
+  const loc = row.profile?.location || [row.city, row.country].filter(Boolean).join(', ')
+  if (lat == null || lng == null || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+    const inferred = inferCoordsFromLocationText(loc)
+    if (!inferred) return null
+    lat = inferred.lat
+    lng = inferred.lon
+  }
+  const parts = formatLocationParts(loc)
+  return {
+    id: `agent-${row.id}`,
+    kind: 'agent',
+    title: row.full_name,
+    subtitle: (row.categories || []).slice(0, 2).join(' · ') || 'Commercial agent',
+    description: truncate(row.description || ''),
+    city: row.city || parts.city,
+    country: row.country || parts.country,
+    rating: row.profile?.rating ?? null,
+    verified: row.verification_status === 'verified',
+    photoUrl: row.profile_photo_url,
+    category: (row.categories || [])[0] || 'agents',
+    budgetLabel: '',
+    status: 'published',
+    availability: 'available',
+    online: true,
+    lat: Number(lat),
+    lng: Number(lng),
+    path: `/commercial-agents/representatives/${row.slug}`,
+    location: loc,
+    service_latitude: Number(lat),
+    service_longitude: Number(lng),
+    service_radius_km: null,
+    work_subcategory_slugs: row.categories,
+    user_role: 'commercial_agent',
     listingType: null,
     distanceKm: null,
   }
@@ -481,7 +549,7 @@ export async function fetchMarketplaceMapMarkers(
   const proLimit = Math.max(slice, Math.min(120, Math.ceil(limit * 0.4)))
   const companyLimit = Math.max(slice, Math.min(160, Math.ceil(limit * 0.5)))
 
-  const [prosRes, companiesRes, manufacturersRes, projectsRes, marketRes, moreListingsRes] =
+  const [prosRes, companiesRes, manufacturersRes, agentsRes, projectsRes, marketRes, moreListingsRes] =
     await Promise.all([
     fetchProfilesForMap('professional', proLimit),
     fetchProfilesForMap('company', companyLimit),
@@ -492,6 +560,20 @@ export async function fetchMarketplaceMapMarkers(
         id, slug, company_name, description, logo_url, country, headquarters,
         categories, verification_status,
         profile:profiles!manufacturer_profiles_profile_id_fkey(
+          id, service_latitude, service_longitude, location, rating
+        )
+      `,
+      )
+      .eq('is_published', true)
+      .order('updated_at', { ascending: false })
+      .limit(Math.min(100, slice * 2)),
+    supabase
+      .from('agent_profiles')
+      .select(
+        `
+        id, slug, full_name, description, profile_photo_url, country, city,
+        categories, verification_status,
+        profile:profiles!agent_profiles_profile_id_fkey(
           id, service_latitude, service_longitude, location, rating
         )
       `,
@@ -543,6 +625,9 @@ export async function fetchMarketplaceMapMarkers(
   if (manufacturersRes.error) {
     console.warn('[marketplaceMap] manufacturers query failed:', manufacturersRes.error.message)
   }
+  if (agentsRes.error) {
+    console.warn('[marketplaceMap] agents query failed:', agentsRes.error.message)
+  }
 
   const push = (m: MarketplaceMapMarker | null) => {
     if (!m || seen.has(m.id)) return
@@ -556,6 +641,9 @@ export async function fetchMarketplaceMapMarkers(
   }
   for (const row of (manufacturersRes.data as ManufacturerMapRow[] | null) ?? []) {
     push(toManufacturerMarker(row))
+  }
+  for (const row of (agentsRes.data as AgentMapRow[] | null) ?? []) {
+    push(toAgentMarker(row))
   }
   const manufacturerProfileIds = new Set(
     ((manufacturersRes.data as ManufacturerMapRow[] | null) ?? [])

@@ -9,6 +9,9 @@ function normalizeProfileRole(role) {
   if (r === 'professional' || r === 'company') {
     return { user_role: r, is_professional: true }
   }
+  if (r === 'manufacturer' || r === 'commercial_agent') {
+    return { user_role: r, is_professional: true }
+  }
   if (r === 'owner') return { user_role: 'owner', is_professional: false }
   return { user_role: 'client', is_professional: false }
 }
@@ -25,8 +28,11 @@ function getPostLoginPath(profile, options) {
   if (profile?.is_site_owner) return '/dashboard'
   const role = options?.intendedRole ?? profile?.user_role
   if (role === 'advertiser') return '/advertising'
-  if (role === 'client') return '/listings'
-  return '/settings'
+  if (role === 'manufacturer') return '/commercial-agents/dashboard?role=manufacturer&tab=profile'
+  if (role === 'commercial_agent') return '/commercial-agents/dashboard?role=agent&tab=profile'
+  if (role === 'client') return '/customer/dashboard'
+  if (role === 'professional' || role === 'company') return '/pro/dashboard'
+  return '/customer/dashboard'
 }
 
 let failed = 0
@@ -45,19 +51,31 @@ const cases = [
     role: 'client',
     user_role: 'client',
     is_professional: false,
-    path: '/listings',
+    path: '/customer/dashboard',
   },
   {
     role: 'professional',
     user_role: 'professional',
     is_professional: true,
-    path: '/settings',
+    path: '/pro/dashboard',
   },
   {
     role: 'company',
     user_role: 'company',
     is_professional: true,
-    path: '/settings',
+    path: '/pro/dashboard',
+  },
+  {
+    role: 'manufacturer',
+    user_role: 'manufacturer',
+    is_professional: true,
+    path: '/commercial-agents/dashboard?role=manufacturer&tab=profile',
+  },
+  {
+    role: 'commercial_agent',
+    user_role: 'commercial_agent',
+    is_professional: true,
+    path: '/commercial-agents/dashboard?role=agent&tab=profile',
   },
   {
     role: 'advertiser',
@@ -68,34 +86,22 @@ const cases = [
 ]
 
 for (const c of cases) {
-  const norm = normalizeProfileRole(c.role)
-  assert(norm.user_role === c.user_role, `${c.role} → user_role ${c.user_role}`)
+  const n = normalizeProfileRole(c.role)
+  assert(n.user_role === c.user_role, `${c.role} → user_role ${c.user_role}`)
+  assert(n.is_professional === c.is_professional, `${c.role} → is_professional ${c.is_professional}`)
+  const intended = getIntendedRole({ user_role: n.user_role }, {
+    user_metadata: c.role === 'advertiser' ? { user_role: 'advertiser' } : {},
+  })
   assert(
-    norm.is_professional === c.is_professional,
-    `${c.role} → is_professional ${c.is_professional}`,
-  )
-
-  const profile = { user_role: norm.user_role, is_site_owner: false }
-  const metaUser =
-    c.role === 'advertiser'
-      ? { user_metadata: { user_role: 'advertiser', intended_role: 'advertiser' } }
-      : { user_metadata: { user_role: c.role } }
-
-  const intended = getIntendedRole(profile, metaUser)
-  assert(
-    intended === (c.role === 'advertiser' ? 'advertiser' : c.user_role),
+    c.role === 'advertiser' ? intended === 'advertiser' : intended === c.user_role,
     `${c.role} intended role`,
   )
-
-  const path = getPostLoginPath(profile, {
-    intendedRole: c.role === 'advertiser' ? 'advertiser' : profile.user_role,
-  })
+  const path = getPostLoginPath({ user_role: n.user_role }, { intendedRole: c.role === 'advertiser' ? 'advertiser' : n.user_role })
   assert(path === c.path, `${c.role} → redirect ${c.path}`)
 }
 
-if (failed > 0) {
-  console.error(`\n${failed} assertion(s) failed`)
+if (failed) {
+  console.error(`\n${failed} check(s) failed`)
   process.exit(1)
 }
-
 console.log('\nAll registration role logic checks passed.')

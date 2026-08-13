@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { Building2, ChevronDown, HardHat, Loader, Megaphone, Shield, User } from 'lucide-react'
+import { Building2, ChevronDown, Factory, HardHat, Handshake, Loader, Megaphone, Shield, User } from 'lucide-react'
 import { PasswordField } from '../components/PasswordField'
 import { Logo } from '../components/Logo'
 import { LanguageSelector } from '../components/LanguageSelector'
@@ -7,8 +7,13 @@ import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
 import {
   ensureUserProfile,
   normalizeProfileRole,
+  savePendingRegistration,
   type RegistrationRole,
 } from '../lib/profileSync'
+import {
+  bootstrapAgentAccount,
+  bootstrapManufacturerAccount,
+} from '../lib/commercialAgents'
 import { supabase }   from '../lib/supabase'
 import { useApp }     from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -40,6 +45,8 @@ export function Register() {
     { role: 'client', icon: <User className="h-6 w-6" />, title: t('register.roleClient'), description: t('register.roleClientDesc') },
     { role: 'professional', icon: <HardHat className="h-6 w-6" />, title: t('register.roleProfessional'), description: t('register.roleProfessionalDesc') },
     { role: 'company', icon: <Building2 className="h-6 w-6" />, title: t('register.roleCompany'), description: t('register.roleCompanyDesc') },
+    { role: 'manufacturer', icon: <Factory className="h-6 w-6" />, title: t('register.roleManufacturer'), description: t('register.roleManufacturerDesc') },
+    { role: 'commercial_agent', icon: <Handshake className="h-6 w-6" />, title: t('register.roleCommercialAgent'), description: t('register.roleCommercialAgentDesc') },
     { role: 'advertiser', icon: <Megaphone className="h-6 w-6" />, title: t('register.roleAdvertiser'), description: t('register.roleAdvertiserDesc') },
   ]
 
@@ -81,7 +88,9 @@ export function Register() {
       role === 'client' ||
       role === 'professional' ||
       role === 'company' ||
-      role === 'advertiser'
+      role === 'advertiser' ||
+      role === 'manufacturer' ||
+      role === 'commercial_agent'
     ) {
       setSelectedRole(role)
     }
@@ -141,13 +150,19 @@ export function Register() {
 
     const trimmedEmail = email.trim().toLowerCase()
     const displayName =
-      selectedRole === 'company' ? (companyName.trim() || fullName.trim()) : fullName.trim()
+      selectedRole === 'company' || selectedRole === 'manufacturer'
+        ? (companyName.trim() || fullName.trim())
+        : fullName.trim()
 
-    if (selectedRole === 'company' && !companyName.trim()) {
+    if ((selectedRole === 'company' || selectedRole === 'manufacturer') && !companyName.trim()) {
       setError(t('register.companyName'))
       return
     }
-    if (!fullName.trim() && selectedRole !== 'company') {
+    if (
+      !fullName.trim() &&
+      selectedRole !== 'company' &&
+      selectedRole !== 'manufacturer'
+    ) {
       setError(t('register.fullName'))
       return
     }
@@ -192,6 +207,14 @@ export function Register() {
 
       void upsertGeoCatalogEntry(country.trim(), regionVal, cityVal)
 
+      savePendingRegistration({
+        role: selectedRole,
+        full_name: displayName,
+        phone: phone.trim() || undefined,
+        location: locationStr,
+        company_name: companyName.trim() || undefined,
+      })
+
       if (authData.session) {
         const profile = await ensureUserProfile(authData.user, {
           role: selectedRole,
@@ -216,6 +239,24 @@ export function Register() {
             { onConflict: 'id' },
           )
           if (profileError) throw profileError
+        }
+
+        if (selectedRole === 'manufacturer') {
+          await bootstrapManufacturerAccount({
+            userId: authData.user.id,
+            companyName: companyName.trim() || displayName,
+            location: locationStr,
+            country: country.trim() || null,
+          })
+        }
+        if (selectedRole === 'commercial_agent') {
+          await bootstrapAgentAccount({
+            userId: authData.user.id,
+            fullName: displayName,
+            location: locationStr,
+            country: country.trim() || null,
+            city: cityVal || null,
+          })
         }
 
         if (
@@ -261,27 +302,34 @@ export function Register() {
   }
 
   const hintText = () => {
-    if (selectedRole === 'client')       return t('register.hintClient')
+    if (selectedRole === 'client') return t('register.hintClient')
     if (selectedRole === 'professional') return t('register.hintProfessional')
-    if (selectedRole === 'company')      return t('register.hintCompany')
-    if (selectedRole === 'advertiser')   return t('register.hintAdvertiser')
+    if (selectedRole === 'company') return t('register.hintCompany')
+    if (selectedRole === 'manufacturer') return t('register.hintManufacturer')
+    if (selectedRole === 'commercial_agent') return t('register.hintCommercialAgent')
+    if (selectedRole === 'advertiser') return t('register.hintAdvertiser')
     return ''
   }
   const hintIcon = () => {
-    if (selectedRole === 'client')       return '👤'
+    if (selectedRole === 'client') return '👤'
     if (selectedRole === 'professional') return '🔨'
-    if (selectedRole === 'company')      return '🏢'
-    if (selectedRole === 'advertiser')   return '📢'
+    if (selectedRole === 'company') return '🏢'
+    if (selectedRole === 'manufacturer') return '🏭'
+    if (selectedRole === 'commercial_agent') return '🤝'
+    if (selectedRole === 'advertiser') return '📢'
     return ''
   }
 
   const validateStep2 = () => {
     const trimmedEmail = email.trim().toLowerCase()
-    if (selectedRole === 'company' && !companyName.trim()) {
+    if (
+      (selectedRole === 'company' || selectedRole === 'manufacturer') &&
+      !companyName.trim()
+    ) {
       setError(t('register.companyName'))
       return false
     }
-    if (!fullName.trim() && selectedRole !== 'company') {
+    if (!fullName.trim() && selectedRole !== 'company' && selectedRole !== 'manufacturer') {
       setError(t('register.fullName'))
       return false
     }
@@ -402,7 +450,7 @@ export function Register() {
 
             {step === 2 && (
               <>
-                {selectedRole === 'company' && (
+                {(selectedRole === 'company' || selectedRole === 'manufacturer') && (
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
                       {t('register.companyName')} *
@@ -418,9 +466,17 @@ export function Register() {
                   </div>
                 )}
 
+                {(selectedRole === 'manufacturer' || selectedRole === 'commercial_agent' || selectedRole === 'advertiser') && (
+                  <div className="rounded-xl border border-[rgba(45,106,79,0.2)] bg-[rgba(45,106,79,0.08)] px-4 py-3 text-xs leading-5 text-[var(--brand-verified)]">
+                    {hintIcon()} {hintText()}
+                  </div>
+                )}
+
                 <div>
                   <label className="mb-2 block text-sm font-semibold text-[var(--ink-700)]">
-                    {selectedRole === 'company' ? t('register.representativeName') : t('register.fullName')} *
+                    {selectedRole === 'company' || selectedRole === 'manufacturer'
+                      ? t('register.representativeName')
+                      : t('register.fullName')} *
                   </label>
                   <input
                     type="text"

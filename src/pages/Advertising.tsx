@@ -28,6 +28,7 @@ import { AdCampaign }  from '../lib/types'
 import type { TranslationKey } from '../lib/i18n'
 import { createCheckoutSession, eurosToCents } from '../lib/stripe'
 import { AD_PAYMENTS_ENABLED } from '../lib/featureFlags'
+import { fetchMyAgent, fetchMyManufacturer } from '../lib/commercialAgents'
 import { AdGeoTargeting } from '../components/AdGeoTargeting'
 import { sanitizeSlotsForPurchase } from '../lib/adPlacementCatalog'
 import { AdPerSlotMediaEditor } from '../components/ads/AdPerSlotMediaEditor'
@@ -230,6 +231,9 @@ export function Advertising() {
   const [selectedRegions, setSelectedRegions]     = useState<string[]>([])
   const [selectedCities, setSelectedCities]       = useState<string[]>([])
   const [durationWeeks, setDurationWeeks]         = useState(1)
+  const [targetCategories, setTargetCategories]   = useState<string[]>([])
+  const [linkedManufacturerId, setLinkedManufacturerId] = useState<string | null>(null)
+  const [linkedAgentId, setLinkedAgentId] = useState<string | null>(null)
 
   // Медіа
   const [mediaType, setMediaType]   = useState<MediaType>('image')
@@ -303,6 +307,47 @@ export function Advertising() {
       /* ignore */
     }
   }, [])
+
+  // Link campaigns to manufacturer / commercial agent profiles when present
+  useEffect(() => {
+    if (!authReady || !user?.id) {
+      setLinkedManufacturerId(null)
+      setLinkedAgentId(null)
+      return
+    }
+    let cancelled = false
+    void (async () => {
+      const [mfr, agent] = await Promise.all([
+        fetchMyManufacturer(user.id),
+        fetchMyAgent(user.id),
+      ])
+      if (cancelled) return
+      setLinkedManufacturerId(mfr?.id ?? null)
+      setLinkedAgentId(agent?.id ?? null)
+      const params = new URLSearchParams(window.location.search)
+      const cats = params.get('categories')
+      if (cats) {
+        setTargetCategories(
+          cats
+            .split(',')
+            .map((c) => c.trim())
+            .filter(Boolean)
+            .slice(0, 8),
+        )
+      } else if (mfr?.categories?.length) {
+        setTargetCategories(mfr.categories.slice(0, 8))
+      } else if (agent?.categories?.length) {
+        setTargetCategories(agent.categories.slice(0, 8))
+      }
+      if (params.get('brand') && !title) {
+        setTitle(params.get('brand') || '')
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authReady, user?.id])
 
   // Restore local draft after auth is ready (survives navigating away from /advertising)
   useEffect(() => {
@@ -797,6 +842,9 @@ export function Advertising() {
         city_name:   targetCities[0] ?? null,
         country_code: null,
         region_name: selectedRegions.length > 0 ? selectedRegions.join(', ') : null,
+        manufacturer_profile_id: linkedManufacturerId,
+        agent_profile_id: linkedAgentId,
+        target_categories: targetCategories,
         ...mediaFields,
         starts_at:   startDate.toISOString(),
         ends_at:     endDate.toISOString(),
