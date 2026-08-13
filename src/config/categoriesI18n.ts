@@ -4,7 +4,7 @@ export type ServiyaLocale =
   | 'cs' | 'sk' | 'hu' | 'bg' | 'sr' | 'hr' | 'sl' | 'lt' | 'lv' | 'et'
   | 'tr' | 'kk' | 'ar' | 'zh' | 'ja'
 
-export type ServiyaLabelMap = Record<ServiyaLocale, string>
+export type ServiyaLabelMap = { en: string } & Partial<Record<ServiyaLocale, string>>
 
 export const SERVIYA_CATEGORY_I18N: Record<string, ServiyaLabelMap> = {
   '3d-visualization': {

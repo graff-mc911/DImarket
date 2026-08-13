@@ -2,6 +2,7 @@ import { ArrowRight, CheckCircle2, Circle } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import type { OnboardingState } from '../lib/onboardingProgress'
+import type { TranslationKey } from '../lib/i18n'
 
 interface OnboardingChecklistProps {
   state: OnboardingState
@@ -11,7 +12,7 @@ interface OnboardingChecklistProps {
 export function OnboardingChecklist({ state, role }: OnboardingChecklistProps) {
   const { t } = useApp()
 
-  const titleKey =
+  const titleKey: TranslationKey =
     role === 'company'
       ? 'onboarding.company.title'
       : role === 'advertiser'

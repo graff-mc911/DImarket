@@ -1,5 +1,6 @@
 import { ALL_TRACKED_MARKETS, type LaunchMarket } from './launchMarkets'
 import { CONSTRUCTION_WORK_GROUPS } from './constructionWorkGroups'
+import type { TranslationKey } from './i18n'
 
 export const SEO_LOCALES = ['de', 'es', 'en', 'uk', 'pl', 'ru'] as const
 export type SeoLocale = (typeof SEO_LOCALES)[number]
@@ -7,7 +8,7 @@ export type SeoLocale = (typeof SEO_LOCALES)[number]
 export interface SeoTradeRoute {
   groupSlug: string
   categorySlug: string
-  labelKey: string
+  labelKey: TranslationKey
 }
 
 const CITY_SLUG_TO_MARKET: Record<string, string> = {
@@ -107,14 +108,14 @@ export function launchSeoLinks(): Array<{
   locale: SeoLocale
   city: string
   trade: string
-  labelKey: string
+  labelKey: TranslationKey
 }> {
   const links: Array<{
     path: string
     locale: SeoLocale
     city: string
     trade: string
-    labelKey: string
+    labelKey: TranslationKey
   }> = []
   const launchCities = [
     { slug: 'darmstadt', marketId: 'de-darmstadt' },

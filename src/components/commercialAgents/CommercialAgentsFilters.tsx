@@ -5,6 +5,7 @@ import {
   dimarketParentCategoryOptions,
 } from '../../lib/commercialAgents/categories'
 import type { CommercialSearchFilters } from '../../lib/commercialAgents/types'
+import type { TranslationKey } from '../../lib/i18n'
 import { useApp } from '../../contexts/AppContext'
 
 const inputClass =
@@ -24,7 +25,7 @@ export function CommercialAgentsFilters({
   onApply: () => void
   open: boolean
   onOpenChange: (v: boolean) => void
-  t: (key: string) => string
+  t: (key: TranslationKey) => string
   mode?: 'all' | 'manufacturers' | 'agents' | 'opportunities'
 }) {
   const { language } = useApp()

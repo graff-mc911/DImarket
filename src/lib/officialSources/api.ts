@@ -70,7 +70,7 @@ export type LegalDocumentRow = {
   primary_source_id: string | null
   verification_status: VerificationStatus
   current_version_id: string | null
-  next_verification_at: string
+  next_verification_at: string | null
   last_verified_at: string | null
   is_published: boolean
   official_sources?: Pick<

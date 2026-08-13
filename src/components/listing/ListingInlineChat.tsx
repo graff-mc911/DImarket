@@ -177,7 +177,7 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
 
   const ensureActiveConversation = async () => {
     if (!user || !otherPartyId) return null
-    let convId = active?.id
+    let convId: string | null | undefined = active?.id
     if (!convId) {
       convId = await ensureConversation(otherPartyId, listingId)
       if (!convId) return null

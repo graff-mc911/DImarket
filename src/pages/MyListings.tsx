@@ -26,7 +26,7 @@ export function MyListings() {
   const { user, currency, t } = useApp()
   const [listings, setListings] = useState<MyListing[]>([])
   const [loading, setLoading] = useState(true)
-  const [statusFilter, setStatusFilter] = useState<string>('')
+  const [statusFilter, setStatusFilter] = useState<'' | 'active' | 'expired' | 'sold' | 'deleted'>('')
 
   useEffect(() => {
     if (user) {
@@ -100,7 +100,7 @@ export function MyListings() {
     return Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
   }
 
-  const statusFilters = [
+  const statusFilters: Array<{ value: '' | 'active' | 'expired' | 'sold' | 'deleted'; label: string }> = [
     { value: '', label: 'Всі' },
     { value: 'active', label: t('myListings.status.active') },
     { value: 'expired', label: t('myListings.status.expired') },

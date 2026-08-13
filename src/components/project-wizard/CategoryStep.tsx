@@ -1,9 +1,10 @@
 import { PROJECT_TRADES } from '../../lib/projectWizard'
+import type { TranslationKey } from '../../lib/i18n'
 
 type CategoryStepProps = {
   selectedId: string | null
   onSelect: (tradeId: string, subcategorySlug: string) => void
-  t: (key: string) => string
+  t: (key: TranslationKey) => string
   error?: string
 }
 

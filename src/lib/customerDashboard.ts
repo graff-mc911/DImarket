@@ -116,7 +116,7 @@ export async function fetchCustomerDashboardStats(
       .limit(50)
 
     if (data) {
-      quotes = data as CustomerQuoteRow[]
+      quotes = data as unknown as CustomerQuoteRow[]
     } else {
       // Fallback without FK aliases
       const { data: plain } = await supabase
