@@ -99,10 +99,23 @@ export function OwnerAdManager({
   const [mediaStyle, setMediaStyle] = useState<AdMediaStyle>(DEFAULT_AD_MEDIA_STYLE)
   const [bannerMediaType, setBannerMediaType] = useState<AdCampaignMediaState['mediaType']>('image')
   const [saving, setSaving] = useState(false)
+  const [formFeedback, setFormFeedback] = useState<{ type: 'error' | 'success'; text: string } | null>(
+    null,
+  )
   const [placementPreviewPage, setPlacementPreviewPage] = useState<PlacementEditorPageId>('home')
   const [slotMedia, setSlotMedia] = useState<SlotMediaMap>({})
   const [geoData, setGeoData] = useState<AdGeoCountry[]>([])
   const [geoLoading, setGeoLoading] = useState(true)
+
+  const reportError = (text: string) => {
+    setFormFeedback({ type: 'error', text })
+    onError(text)
+  }
+
+  const reportNotice = (text: string) => {
+    setFormFeedback({ type: 'success', text })
+    onNotice(text)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -155,6 +168,7 @@ export function OwnerAdManager({
     setPlacementPreviewPage('home')
     setSlotMedia({})
     applyMediaState(emptyCampaignMediaState())
+    setFormFeedback(null)
     setFormOpen(true)
   }
 
@@ -165,20 +179,22 @@ export function OwnerAdManager({
     setPlacementPreviewPage(previewEditorPageFromSlots(nextForm.selectedSlots))
     setSlotMedia(slotMediaMapFromCampaign(campaign))
     applyMediaState(mediaStateFromCampaign(campaign))
+    setFormFeedback(null)
     setFormOpen(true)
   }
 
-  const closeForm = () => {
+  const closeForm = (opts?: { keepFeedback?: boolean }) => {
     setFormOpen(false)
     setEditingId(null)
     setForm(EMPTY_FORM)
+    if (!opts?.keepFeedback) setFormFeedback(null)
     applyMediaState(emptyCampaignMediaState())
   }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.title.trim()) {
-      onError('Вкажіть назву реклами')
+      reportError('Вкажіть назву реклами')
       return
     }
     const mediaState: AdCampaignMediaState = {
@@ -188,15 +204,15 @@ export function OwnerAdManager({
       mediaType: bannerMediaType,
     }
     if (!selectedSlotsHaveMedia(slotMedia, form.selectedSlots, mediaState)) {
-      onError('Додайте зображення хоча б для одного банера або базове медіа')
+      reportError('Додайте зображення хоча б для одного банера або базове медіа')
       return
     }
     if (!form.linkUrl.trim()) {
-      onError('Вкажіть посилання')
+      reportError('Вкажіть посилання')
       return
     }
     if (form.selectedSlots.length === 0) {
-      onError('Оберіть хоча б один блок для показу')
+      reportError('Оберіть хоча б один блок для показу')
       return
     }
     if (
@@ -207,15 +223,16 @@ export function OwnerAdManager({
         form.selectedCities,
       )
     ) {
-      onError('Оберіть географію показу реклами')
+      reportError('Оберіть географію показу реклами')
       return
     }
     if (form.startsAt && form.endsAt && new Date(form.endsAt) < new Date(form.startsAt)) {
-      onError('Дата завершення не може бути раніше початку')
+      reportError('Дата завершення не може бути раніше початку')
       return
     }
 
     setSaving(true)
+    setFormFeedback(null)
     try {
       const targetCities = resolveTargetCities(
         form.geoScope,
@@ -235,22 +252,27 @@ export function OwnerAdManager({
       if (editingId) {
         const { error } = await (supabase.from('ad_campaigns') as any).update(payload).eq('id', editingId)
         if (error) throw error
-        onNotice('Рекламу оновлено.')
+        closeForm({ keepFeedback: true })
+        reportNotice('Рекламу оновлено.')
       } else {
-        const { error } = await (supabase.from('ad_campaigns') as any).insert({
-          ...payload,
-          impressions: 0,
-          clicks: 0,
-        })
+        const { data: inserted, error } = await (supabase.from('ad_campaigns') as any)
+          .insert({
+            ...payload,
+            impressions: 0,
+            clicks: 0,
+          })
+          .select('id')
+          .single()
         if (error) throw error
-        onNotice('Рекламу створено.')
+        if (!inserted?.id) throw new Error('Campaign insert returned no id')
+        closeForm({ keepFeedback: true })
+        reportNotice('Рекламу створено.')
       }
 
-      closeForm()
       await onRefresh()
       await refreshPublicAds()
     } catch (err) {
-      onError(formatSupabaseError(err, 'Не вдалося зберегти рекламу'))
+      reportError(formatSupabaseError(err, 'Не вдалося зберегти рекламу'))
     } finally {
       setSaving(false)
     }
@@ -267,11 +289,11 @@ export function OwnerAdManager({
         })
         .eq('id', campaignId)
       if (error) throw error
-      onNotice('Рекламу активовано.')
+      reportNotice('Рекламу активовано.')
       await onRefresh()
       await refreshPublicAds()
     } catch {
-      onError('Не вдалося активувати рекламу.')
+      reportError('Не вдалося активувати рекламу.')
     } finally {
       setCampaignActionId(null)
     }
@@ -290,11 +312,11 @@ export function OwnerAdManager({
         })
         .eq('id', campaignId)
       if (error) throw error
-      onNotice('Рекламу вимкнено.')
+      reportNotice('Рекламу вимкнено.')
       await onRefresh()
       await refreshPublicAds()
     } catch {
-      onError('Не вдалося вимкнути рекламу.')
+      reportError('Не вдалося вимкнути рекламу.')
     } finally {
       setCampaignActionId(null)
     }
@@ -306,12 +328,12 @@ export function OwnerAdManager({
     try {
       const { error } = await supabase.from('ad_campaigns').delete().eq('id', campaignId)
       if (error) throw error
-      onNotice('Рекламу видалено.')
+      reportNotice('Рекламу видалено.')
       if (editingId === campaignId) closeForm()
       await onRefresh()
       await refreshPublicAds()
     } catch {
-      onError('Не вдалося видалити рекламу.')
+      reportError('Не вдалося видалити рекламу.')
     } finally {
       setCampaignActionId(null)
     }
@@ -319,7 +341,7 @@ export function OwnerAdManager({
 
   const handleDeleteAllDemo = async () => {
     if (demoCampaigns.length === 0) {
-      onNotice('Демо-реклами не знайдено.')
+      reportNotice('Демо-реклами не знайдено.')
       return
     }
     if (
@@ -335,12 +357,12 @@ export function OwnerAdManager({
       const ids = demoCampaigns.map((c) => c.id)
       const { error } = await supabase.from('ad_campaigns').delete().in('id', ids)
       if (error) throw error
-      onNotice(`Видалено ${ids.length} демо-кампаній.`)
+      reportNotice(`Видалено ${ids.length} демо-кампаній.`)
       if (editingId && ids.includes(editingId)) closeForm()
       await onRefresh()
       await refreshPublicAds()
     } catch (err) {
-      onError(formatSupabaseError(err, 'Не вдалося видалити демо-рекламу'))
+      reportError(formatSupabaseError(err, 'Не вдалося видалити демо-рекламу'))
     } finally {
       setCampaignActionId(null)
     }
@@ -381,6 +403,18 @@ export function OwnerAdManager({
         </div>
       </div>
 
+      {formFeedback && !formOpen && (
+        <div
+          className={`mt-4 rounded-[18px] px-4 py-3 text-sm ${
+            formFeedback.type === 'error'
+              ? 'border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a]'
+              : 'border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] text-[#3d7a52]'
+          }`}
+        >
+          {formFeedback.text}
+        </div>
+      )}
+
       {formOpen && (
         <form
           onSubmit={handleSave}
@@ -392,12 +426,25 @@ export function OwnerAdManager({
             </h3>
             <button
               type="button"
-              onClick={closeForm}
+              onClick={() => closeForm()}
               className="rounded-full p-1 text-[#6f665d] hover:bg-black/5"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
+
+          {formFeedback && (
+            <div
+              className={`mt-4 rounded-[18px] px-4 py-3 text-sm ${
+                formFeedback.type === 'error'
+                  ? 'border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a]'
+                  : 'border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] text-[#3d7a52]'
+              }`}
+              role="alert"
+            >
+              {formFeedback.text}
+            </div>
+          )}
 
           <div className="mt-4">
             <p className="mb-2 text-xs font-bold uppercase tracking-wide text-[#9a8776]">
@@ -599,7 +646,7 @@ export function OwnerAdManager({
             <button type="submit" disabled={saving} className="btn-primary rounded-full">
               {saving ? 'Збереження…' : editingId ? 'Зберегти зміни' : 'Опублікувати рекламу'}
             </button>
-            <button type="button" onClick={closeForm} className="btn-secondary rounded-full">
+            <button type="button" onClick={() => closeForm()} className="btn-secondary rounded-full">
               Скасувати
             </button>
           </div>
