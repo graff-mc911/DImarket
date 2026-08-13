@@ -9,6 +9,7 @@ import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
 import { MobileBottomNav }     from './components/MobileBottomNav'
+import { PwaInstallPrompt }    from './components/PwaInstallPrompt'
 import { PageWithSideAds } from './components/PageWithSideAds'
 import { PageLoading } from './components/PageLoading'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -403,6 +404,9 @@ function App() {
           </ErrorBoundary>
           <ErrorBoundary name="MobileBottomNav">
             <MobileBottomNav />
+          </ErrorBoundary>
+          <ErrorBoundary name="PwaInstall">
+            <PwaInstallPrompt />
           </ErrorBoundary>
         </div>
       </PaidAdsProvider>
