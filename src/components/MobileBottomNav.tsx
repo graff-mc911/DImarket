@@ -40,6 +40,7 @@ import {
 } from '../lib/navMap'
 import { isSiteOwner } from '../lib/siteOwner'
 import { LanguageSelector } from './LanguageSelector'
+import { PwaInstallButton } from './PwaInstallButton'
 
 type MoreItem = {
   id: string
@@ -243,6 +244,7 @@ export function MobileBottomNav() {
             </div>
 
             <ul className="mobile-nav-more__list">
+              <PwaInstallButton variant="menu" />
               {primaryMore.map((item) => (
                 <li key={item.id}>
                   <button type="button" className="mobile-nav-more__item" onClick={() => go(item.path)}>

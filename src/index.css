@@ -458,6 +458,17 @@
     background: rgba(250, 204, 21, 0.14);
   }
 
+  .mobile-nav-more__item--install {
+    color: #fff;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .mobile-nav-more__item--install:hover,
+  .mobile-nav-more__item--install:focus-visible {
+    background: rgba(255, 255, 255, 0.16);
+  }
+
   .page-bg {
     background-color: var(--bg-canvas);
   }

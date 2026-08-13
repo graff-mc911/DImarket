@@ -32,6 +32,7 @@ import { ReferralPanel } from '../components/ReferralPanel'
 import { TelegramLinkPanel } from '../components/TelegramLinkPanel'
 import { ConnectPayoutPanel } from '../components/ConnectPayoutPanel'
 import { ScbLightPanel } from '../components/ScbLightPanel'
+import { PwaInstallButton } from '../components/PwaInstallButton'
 import { PROJECT_PAYMENTS_ENABLED } from '../lib/featureFlags'
 import { buildOnboardingState } from '../lib/onboardingProgress'
 import { syncProfessionalCategoriesFromWorkSlugs } from '../lib/syncProfessionalCategories'
@@ -548,6 +549,8 @@ export function Settings() {
                 <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6f665d] md:text-base">
                   {t('settings.description')}
                 </p>
+
+                <PwaInstallButton variant="settings" />
 
                 <button
                   type="button"

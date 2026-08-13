@@ -5,6 +5,7 @@
 
 import { Suspense, useEffect, useLayoutEffect, useState } from 'react'
 import { AppProvider }         from './contexts/AppContext'
+import { PwaInstallProvider }  from './contexts/PwaInstallContext'
 import { PaidAdsProvider }     from './contexts/PaidAdsContext'
 import { Header }              from './components/Header'
 import { Footer }              from './components/Footer'
@@ -382,6 +383,7 @@ function App() {
 
   return (
     <AppProvider>
+      <PwaInstallProvider>
       <PaidAdsProvider>
         <div className="app-shell min-h-screen flex flex-col">
           <ErrorBoundary name="Header">
@@ -410,6 +412,7 @@ function App() {
           </ErrorBoundary>
         </div>
       </PaidAdsProvider>
+      </PwaInstallProvider>
     </AppProvider>
   )
 }

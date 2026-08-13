@@ -49,6 +49,7 @@ import {
   navEntriesFor,
 } from '../lib/navMap'
 import { isSiteOwner as checkSiteOwner } from '../lib/siteOwner'
+import { PwaInstallButton } from './PwaInstallButton'
 
 interface NavItem {
   label: string
@@ -396,7 +397,9 @@ export function Header() {
               </form>
 
               {/* Amazon: мова, акаунт, замовлення, збережене */}
-              <div className="hidden items-center gap-0 sm:flex">
+              <div className="hidden items-center gap-2 sm:flex">
+
+                <PwaInstallButton variant="header" />
 
                 <div ref={languageRef} className="relative">
                   <LanguageSelector
@@ -576,6 +579,7 @@ export function Header() {
 
               {/* Мобільні кнопки — Amazon: акаунт + збережене + меню */}
               <div className="flex shrink-0 items-center gap-0.5 sm:hidden">
+                <PwaInstallButton variant="header-mobile" />
                 {user ? <NotificationCenter /> : null}
                 <button
                   type="button"

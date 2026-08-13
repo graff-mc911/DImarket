@@ -1,96 +1,54 @@
 import { useEffect, useState } from 'react'
 import { CheckCircle2, Download, ExternalLink, X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
-
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
-}
+import { usePwaInstall } from '../contexts/PwaInstallContext'
 
 const DISMISS_KEY = 'dimarket_pwa_install_dismissed'
 const DISMISS_INSTALLED_KEY = 'dimarket_pwa_installed_hint_dismissed'
 
-async function detectInstalledPwa(): Promise<boolean> {
-  if (typeof window === 'undefined') return false
-
-  const standalone =
-    window.matchMedia('(display-mode: standalone)').matches ||
-    Boolean((navigator as Navigator & { standalone?: boolean }).standalone)
-  if (standalone) return true
-
-  const nav = navigator as Navigator & {
-    getInstalledRelatedApps?: () => Promise<Array<{ platform?: string; url?: string }>>
-  }
-  if (typeof nav.getInstalledRelatedApps === 'function') {
-    try {
-      const apps = await nav.getInstalledRelatedApps()
-      if (apps?.length) return true
-    } catch {
-      /* ignore */
-    }
-  }
-  return false
-}
-
 /**
- * Desktop/mobile install CTA.
- * If Chrome already shows «Open in app», the PWA is installed — explain that.
+ * Optional bottom banner — primary one-click install lives in Header / Settings.
  */
 export function PwaInstallPrompt() {
   const { t } = useApp()
-  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null)
-  const [mode, setMode] = useState<'hidden' | 'install' | 'already'>('hidden')
+  const { canInstall, isInstalled, isStandalone, install } = usePwaInstall()
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    let cancelled = false
+    if (isStandalone) {
+      setVisible(false)
+      return
+    }
 
-    void (async () => {
-      const already = await detectInstalledPwa()
-      if (cancelled) return
-      if (already) {
-        try {
-          if (sessionStorage.getItem(DISMISS_INSTALLED_KEY) === '1') return
-        } catch {
-          /* ignore */
-        }
-        // Only hint when browsing in a normal tab (not inside the app window)
-        if (!window.matchMedia('(display-mode: standalone)').matches) {
-          setMode('already')
-        }
-        return
-      }
-
+    if (canInstall) {
       try {
         if (sessionStorage.getItem(DISMISS_KEY) === '1') return
       } catch {
         /* ignore */
       }
-    })()
-
-    const onBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault()
-      setDeferred(e as BeforeInstallPromptEvent)
-      setMode('install')
-    }
-    const onInstalled = () => {
-      setDeferred(null)
-      setMode('already')
+      setVisible(true)
+      return
     }
 
-    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt)
-    window.addEventListener('appinstalled', onInstalled)
-    return () => {
-      cancelled = true
-      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
-      window.removeEventListener('appinstalled', onInstalled)
+    if (isInstalled) {
+      try {
+        if (sessionStorage.getItem(DISMISS_INSTALLED_KEY) === '1') return
+      } catch {
+        /* ignore */
+      }
+      setVisible(true)
+      return
     }
-  }, [])
 
-  if (mode === 'hidden') return null
+    setVisible(false)
+  }, [canInstall, isInstalled, isStandalone])
+
+  if (!visible) return null
+
+  const mode = canInstall ? 'install' : 'already'
 
   const dismiss = () => {
-    setMode('hidden')
+    setVisible(false)
     try {
       sessionStorage.setItem(
         mode === 'already' ? DISMISS_INSTALLED_KEY : DISMISS_KEY,
@@ -101,20 +59,12 @@ export function PwaInstallPrompt() {
     }
   }
 
-  const install = async () => {
-    if (!deferred) return
-    try {
-      await deferred.prompt()
-      const choice = await deferred.userChoice
-      if (choice.outcome === 'accepted') {
-        setMode('already')
-      } else {
-        dismiss()
-      }
-    } catch {
+  const installNow = async () => {
+    const outcome = await install()
+    if (outcome === 'accepted') {
+      setVisible(false)
+    } else if (outcome === 'dismissed') {
       dismiss()
-    } finally {
-      setDeferred(null)
     }
   }
 
@@ -140,13 +90,13 @@ export function PwaInstallPrompt() {
             {mode === 'already' ? t('pwa.alreadyText') : t('pwa.installText')}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
-            {mode === 'install' && deferred ? (
+            {mode === 'install' ? (
               <button
                 type="button"
-                onClick={() => void install()}
+                onClick={() => void installNow()}
                 className="inline-flex items-center justify-center rounded-full bg-[#1d1d1f] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-black"
               >
-                {t('pwa.installButton')}
+                {t('pwa.saveAsApp')}
               </button>
             ) : null}
             {mode === 'already' ? (
