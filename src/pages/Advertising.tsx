@@ -11,7 +11,7 @@
 // Всі тексти локалізовані через t() — підтримує 25 мов.
 // ============================================================
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Building2,
   CalendarRange,
@@ -55,6 +55,13 @@ import {
 import { isSiteOwner } from '../lib/siteOwner'
 import { ownerManagedReviewNote } from '../lib/ownerAdCampaign'
 import { formatSupabaseError } from '../lib/supabaseErrors'
+import {
+  clearAdCampaignDraft,
+  draftHasMeaningfulContent,
+  readAdCampaignDraft,
+  writeAdCampaignDraft,
+  type AdCampaignFormDraft,
+} from '../lib/adCampaignDraft'
 import {
   expandLegacyPlacements,
   formatSlotLabel,
@@ -183,9 +190,12 @@ function campaignsDateOverlap(
 // ── Головний компонент ─────────────────────────────────────────────────────────
 
 export function Advertising() {
-  const { user, profile, t } = useApp()
+  const { user, profile, t, authReady } = useApp()
   const [adGuideActive, setAdGuideActive] = useState(false)
   const [adGuideStepIndex, setAdGuideStepIndex] = useState(0)
+  const draftHydratedRef = useRef(false)
+  const skipPersistRef = useRef(true)
+  const hadSlotPresetRef = useRef(false)
 
   // Поля форми
   const [title, setTitle]             = useState('')
@@ -200,6 +210,7 @@ export function Advertising() {
       const raw = sessionStorage.getItem('dimarket_ad_preset_slots')
       if (raw) {
         sessionStorage.removeItem('dimarket_ad_preset_slots')
+        hadSlotPresetRef.current = true
         return sanitizeSlotsForPurchase(JSON.parse(raw) as string[])
       }
     } catch { /* ignore */ }
@@ -291,6 +302,107 @@ export function Advertising() {
       /* ignore */
     }
   }, [])
+
+  // Restore local draft after auth is ready (survives navigating away from /advertising)
+  useEffect(() => {
+    if (!authReady || draftHydratedRef.current) return
+    draftHydratedRef.current = true
+
+    const draft = readAdCampaignDraft(user?.id ?? null)
+    if (!draft) {
+      skipPersistRef.current = false
+      return
+    }
+
+    skipPersistRef.current = true
+    setEditingCampaignId(draft.editingCampaignId)
+    setTitle(draft.title)
+    setDescription(draft.description)
+    setLinkUrl(draft.linkUrl)
+    setStartsAt(draft.startsAt)
+    setEndsAt(draft.endsAt)
+    if (!hadSlotPresetRef.current) {
+      setSelectedSlots(draft.selectedSlots)
+      setSlotMedia(draft.slotMedia)
+    } else {
+      setSlotMedia((prev) => ({ ...draft.slotMedia, ...prev }))
+    }
+    setGeoMode(draft.geoMode)
+    setSelectedCountries(draft.selectedCountries)
+    setSelectedRegions(draft.selectedRegions)
+    setSelectedCities(draft.selectedCities)
+    setDurationWeeks(draft.durationWeeks)
+    setMediaType(draft.mediaType)
+    setMediaUrl(draft.mediaUrl)
+    setSlideUrls(draft.slideUrls)
+    setMediaStyle(draft.mediaStyle)
+    setFeedback({ type: 'success', text: t('advertising.draft.restored') })
+    const tmr = window.setTimeout(() => {
+      skipPersistRef.current = false
+    }, 0)
+    return () => window.clearTimeout(tmr)
+  }, [authReady, user?.id, t])
+
+  // Autosave draft while editing
+  useEffect(() => {
+    if (!authReady || skipPersistRef.current || !draftHydratedRef.current) return
+
+    const draft: Omit<AdCampaignFormDraft, 'v' | 'savedAt'> = {
+      userId: user?.id ?? null,
+      editingCampaignId,
+      title,
+      description,
+      linkUrl,
+      startsAt,
+      endsAt,
+      selectedSlots,
+      geoMode,
+      selectedCountries,
+      selectedRegions,
+      selectedCities,
+      durationWeeks,
+      mediaType,
+      mediaUrl,
+      slideUrls,
+      mediaStyle,
+      slotMedia,
+    }
+
+    const tmr = window.setTimeout(() => {
+      const probe = { v: 1 as const, savedAt: '', ...draft }
+      if (draftHasMeaningfulContent(probe)) {
+        writeAdCampaignDraft(draft)
+      } else {
+        clearAdCampaignDraft()
+      }
+    }, 400)
+    return () => window.clearTimeout(tmr)
+  }, [
+    authReady,
+    user?.id,
+    editingCampaignId,
+    title,
+    description,
+    linkUrl,
+    startsAt,
+    endsAt,
+    selectedSlots,
+    geoMode,
+    selectedCountries,
+    selectedRegions,
+    selectedCities,
+    durationWeeks,
+    mediaType,
+    mediaUrl,
+    slideUrls,
+    mediaStyle,
+    slotMedia,
+  ])
+
+  useEffect(() => {
+    if (!feedback) return
+    document.getElementById('ad-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [feedback])
 
   useEffect(() => {
     if (!activeGuideStep) return
@@ -535,7 +647,9 @@ export function Advertising() {
     document.getElementById('ad-form')?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  const resetForm = () => {
+  const resetForm = (opts?: { keepFeedback?: boolean }) => {
+    skipPersistRef.current = true
+    clearAdCampaignDraft()
     setEditingCampaignId(null)
     setTitle(''); setDescription(''); setLinkUrl('')
     setSelectedSlots([centerSlotId('home')])
@@ -547,6 +661,34 @@ export function Advertising() {
     setSlideUrls([])
     setMediaStyle(DEFAULT_AD_MEDIA_STYLE)
     setStartsAt(''); setEndsAt('')
+    if (!opts?.keepFeedback) setFeedback(null)
+    window.setTimeout(() => {
+      skipPersistRef.current = false
+    }, 0)
+  }
+
+  const saveDraftNow = () => {
+    writeAdCampaignDraft({
+      userId: user?.id ?? null,
+      editingCampaignId,
+      title,
+      description,
+      linkUrl,
+      startsAt,
+      endsAt,
+      selectedSlots,
+      geoMode,
+      selectedCountries,
+      selectedRegions,
+      selectedCities,
+      durationWeeks,
+      mediaType,
+      mediaUrl,
+      slideUrls,
+      mediaStyle,
+      slotMedia,
+    })
+    setFeedback({ type: 'success', text: t('advertising.draft.saved') })
   }
 
   const ensureAdvertiserProfile = async () => {
@@ -587,6 +729,9 @@ export function Advertising() {
       setFeedback({ type: 'error', text: t('advertising.dates.error') }); return
     }
 
+    // Keep a local draft while save/payment runs (in case Stripe redirect fails)
+    saveDraftNow()
+
     setSaving(true); setFeedback(null)
 
     try {
@@ -626,60 +771,64 @@ export function Advertising() {
       }
 
       if (editingCampaignId) {
-        const { error } = await (supabase.from('ad_campaigns') as any)
+        const { data: updated, error } = await (supabase.from('ad_campaigns') as any)
           .update(row)
           .eq('id', editingCampaignId)
           .eq('advertiser_id', user.id)
+          .select('id')
+          .maybeSingle()
         if (error) throw error
+        if (!updated?.id) {
+          setFeedback({ type: 'error', text: t('advertising.error.updateNotFound') })
+          setSaving(false)
+          return
+        }
         setFeedback({ type: 'success', text: t('advertising.successUpdated') })
-        resetForm()
+        resetForm({ keepFeedback: true })
         await loadOwnCampaigns()
         setSaving(false)
         return
       }
 
-      const { error } = await (supabase.from('ad_campaigns') as any).insert({
-        advertiser_id: user.id,
-        ...row,
-        status: campaignStatus,
-        ...(ownerAccount
-          ? {
-              approved_by: user.id,
-              approved_at: nowIso,
-              price_paid: 0,
-              currency_paid: 'eur',
-              review_note: ownerManagedReviewNote('from /advertising'),
-            }
-          : {}),
-      })
+      const { data: inserted, error } = await (supabase.from('ad_campaigns') as any)
+        .insert({
+          advertiser_id: user.id,
+          ...row,
+          status: campaignStatus,
+          ...(ownerAccount
+            ? {
+                approved_by: user.id,
+                approved_at: nowIso,
+                price_paid: 0,
+                currency_paid: 'eur',
+                review_note: ownerManagedReviewNote('from /advertising'),
+              }
+            : {}),
+        })
+        .select('id')
+        .single()
 
       if (error) throw error
+      if (!inserted?.id) throw new Error('Campaign insert returned no id')
 
       if (ownerAccount) {
         setFeedback({ type: 'success', text: t('advertising.successOwner') })
-        resetForm()
+        resetForm({ keepFeedback: true })
         await loadOwnCampaigns()
         setSaving(false)
         return
       }
 
-      const { data: newCampaign } = await (supabase.from('ad_campaigns') as any)
-        .select('id')
-        .eq('advertiser_id', user.id)
-        .eq('status', 'pending_payment')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
-
       const stripeResult = await createCheckoutSession({
         payment_type: 'ad_campaign',
-        reference_id: newCampaign?.id || '',
+        reference_id: inserted.id,
         user_id:      user.id,
         amount:       eurosToCents(totalPrice),
         currency:     'eur',
         description:  'DImarket реклама: ' + title.trim(),
       })
 
+      clearAdCampaignDraft()
       window.location.href = stripeResult.url
 
     } catch (err) {
@@ -954,13 +1103,30 @@ export function Advertising() {
                   </div>
 
                   <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-                    {editingCampaignId && (
+                    <button
+                      type="button"
+                      data-testid="ad-campaign-save-draft"
+                      onClick={saveDraftNow}
+                      className="btn-secondary rounded-full"
+                    >
+                      {t('advertising.draft.saveBtn')}
+                    </button>
+                    {editingCampaignId ? (
                       <button
                         type="button"
-                        onClick={resetForm}
+                        onClick={() => resetForm()}
                         className="btn-secondary rounded-full"
                       >
                         {t('advertising.form.cancelEdit')}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        data-testid="ad-campaign-clear-draft"
+                        onClick={() => resetForm()}
+                        className="btn-secondary rounded-full"
+                      >
+                        {t('advertising.draft.clearBtn')}
                       </button>
                     )}
                     <button
