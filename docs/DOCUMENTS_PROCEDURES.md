@@ -26,6 +26,7 @@ Public category for jurisdiction-aware contracts, licenses, permits, and governm
 
 - `src/config/categories.ts` — category + subcategories (expandable Category UI)
 - `src/lib/documents/*` — types, Spain catalog, location scoring, PDF
+- `src/lib/documents/officialForms.ts` — country-local fillable blanks (labels in form language; official portal URLs)
 - `src/pages/DocumentsHub.tsx`, `DocumentDetailPage.tsx`
 - `supabase/migrations/20260813260000_documents_procedures_catalog.sql`
 - Search tab `documents` in `advancedSearch.ts` / `Search.tsx`
@@ -36,3 +37,20 @@ Catalog: Spain curated + generated packs for all countries in `countrySources` (
 City overlays: Alicante (ES), Darmstadt (DE).
 
 Each national pack includes: business registration, contracts, licenses/permits, tax, residence, government, legal, banks, personal documents — pointers / under_review only.
+
+### Fillable blanks (not English skeletons)
+
+`withOfficialForm()` overlays field schemas from `officialForms.ts` per country + slug:
+
+| Country | Model examples |
+|---------|----------------|
+| DE / AT | Wohnraummietvertrag (BGB), GewA1-aligned Gewerbe, Kfz-Kaufvertrag / KBA |
+| FR / BE | Bail d’habitation, CERFA 13703*, guichet unique formalités |
+| ES | LAU arrendamiento, DGT transferencia, AEAT 036/037, SEPE |
+| PL | Umowa najmu (KC), CEIDG / gov.pl |
+| IT | Locazione, ACI/PRA, Registro Imprese |
+| PT | Arrendamento + Finanças, IMT, Empresa na Hora |
+| NL | Huurovereenkomst, KVK, RDW-style sale |
+| UK / IE | GOV.UK / RTB-aligned particulars |
+
+We do **not** paste full copyrighted contract bodies — only field structure + link to the official portal. Templates stay under legal review.

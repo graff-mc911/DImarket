@@ -40,18 +40,34 @@ export type FormFieldType = 'text' | 'textarea' | 'date' | 'number' | 'email' | 
 
 export type FormFieldDef = {
   id: string
+  /** i18n fallback key */
   labelKey: string
+  /** Native-language label from official / model form (preferred in UI + PDF) */
+  label?: string
+  /** Section heading in form language */
+  section?: string
   type: FormFieldType
   required?: boolean
-  /** Autofill from signed-in DImarket profile */
   profileKey?:
     | 'full_name'
     | 'phone'
     | 'email'
     | 'location'
     | 'company_name'
-  options?: Array<{ value: string; labelKey: string }>
+  options?: Array<{ value: string; labelKey: string; label?: string }>
   placeholderKey?: string
+  placeholder?: string
+}
+
+export type OfficialFormPack = {
+  modelName: string
+  language: string
+  sourceName: string
+  sourceUrl: string
+  lastVerified: string
+  noticeLocal: string
+  noticeEn: string
+  fields: FormFieldDef[]
 }
 
 export type OfficialSourceRef = {
@@ -99,7 +115,13 @@ export type DocumentRecord = {
   source: OfficialSourceRef
   requirementsKeys: string[]
   formFields?: FormFieldDef[]
-  /** true = fillable skeleton only; body is not verified legal text */
+  /** Official / model form this fillable blank follows */
+  officialForm?: {
+    modelName: string
+    noticeLocal: string
+    noticeEn: string
+  }
+  /** true = needs human legal review before treating as binding */
   templateNeedsLegalReview: boolean
   licenseRequirement?: LicenseRequirementLevel
   issuerKey?: string

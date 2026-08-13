@@ -108,7 +108,9 @@ export const documentsEn = {
   'docs.templateNeedsReview': 'Template requires legal review — not a verified legal text.',
   'docs.requirements': 'Requirements / notes',
   'docs.form.title': 'Fill the form',
-  'docs.form.autofillHint': 'Fields from your DImarket profile are prefilled when available.',
+  'docs.form.autofillHint':
+    'Fields follow the official / model blank for this country (labels in the form language). Profile data is prefilled when available. Always download/compare with the official PDF before signing.',
+  'docs.field.custom': 'Field',
   'docs.esign.title': 'Electronic signature (coming soon)',
   'docs.esign.body':
     'This prepares a signature workflow. It is not a legally binding e-signature yet — a real provider will be connected later.',
@@ -272,10 +274,11 @@ export const documentsEn = {
   'docs.item.handover.desc': 'Skeleton under legal review.',
   'docs.item.handover.seoTitle': 'Handover act Spain | DImarket',
   'docs.item.handover.seoDesc': 'Spain handover act skeleton.',
-  'docs.item.vehiclePurchase.title': 'Vehicle purchase contract (Spain)',
-  'docs.item.vehiclePurchase.desc': 'Skeleton — verify transfer steps on DGT.',
-  'docs.item.vehiclePurchase.seoTitle': 'Vehicle purchase Spain | DImarket',
-  'docs.item.vehiclePurchase.seoDesc': 'Spain vehicle sale skeleton with DGT source.',
+  'docs.item.vehiclePurchase.title': 'Contrato de compraventa de vehículo (España)',
+  'docs.item.vehiclePurchase.desc':
+    'Campos del contrato privado y datos para transferencia DGT. Complete el trámite oficial en DGT.',
+  'docs.item.vehiclePurchase.seoTitle': 'Compraventa de vehículo España | DImarket',
+  'docs.item.vehiclePurchase.seoDesc': 'Formulario orientativo de compraventa con fuente DGT.',
   'docs.item.vehicleRental.title': 'Vehicle rental contract (Spain)',
   'docs.item.vehicleRental.desc': 'Skeleton under legal review.',
   'docs.item.vehicleRental.seoTitle': 'Vehicle rental Spain | DImarket',
@@ -460,7 +463,9 @@ export const documentsUk: Record<string, string> = {
   'docs.templateNeedsReview': 'Шаблон потребує юридичної перевірки — це не перевірений юридичний текст.',
   'docs.requirements': 'Вимоги / примітки',
   'docs.form.title': 'Заповнити форму',
-  'docs.form.autofillHint': 'Поля з вашого профілю DImarket підставляються автоматично, якщо доступні.',
+  'docs.form.autofillHint':
+    'Поля відповідають офіційному / модельним бланку цієї країни (підписи мовою бланка). Дані з профілю підставляються автоматично. Перед підписом порівняйте з офіційним PDF.',
+  'docs.field.custom': 'Поле',
   'docs.esign.title': 'Електронний підпис (скоро)',
   'docs.esign.body':
     'Це заготовка workflow підпису. Це ще не юридично чинний e-підпис — реальний провайдер буде підключений пізніше.',
@@ -625,9 +630,10 @@ export const documentsUk: Record<string, string> = {
   'docs.item.handover.seoTitle': 'Акт приймання Іспанія | DImarket',
   'docs.item.handover.seoDesc': 'Скелет акта приймання-передачі.',
   'docs.item.vehiclePurchase.title': 'Договір купівлі-продажу автомобіля (Іспанія)',
-  'docs.item.vehiclePurchase.desc': 'Скелет — перевірте кроки переоформлення на DGT.',
+  'docs.item.vehiclePurchase.desc':
+    'Поля приватного договору та дані для переоформлення в DGT. Оформлюйте офіційно на порталі DGT.',
   'docs.item.vehiclePurchase.seoTitle': 'Купівля авто Іспанія | DImarket',
-  'docs.item.vehiclePurchase.seoDesc': 'Скелет купівлі авто з джерелом DGT.',
+  'docs.item.vehiclePurchase.seoDesc': 'Орієнтовна форма купівлі авто з джерелом DGT.',
   'docs.item.vehicleRental.title': 'Договір оренди автомобіля (Іспанія)',
   'docs.item.vehicleRental.desc': 'Скелет на юридичній перевірці.',
   'docs.item.vehicleRental.seoTitle': 'Оренда авто Іспанія | DImarket',

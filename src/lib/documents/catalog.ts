@@ -5,6 +5,7 @@ import {
   rentalContractFields,
   vehicleSaleFields,
 } from './forms'
+import { withOfficialForm } from './officialForms'
 import type { DocumentRecord } from './types'
 
 const BOE = {
@@ -788,7 +789,7 @@ export const SPAIN_DOCUMENTS_CATALOG: DocumentRecord[] = [
 
 /** Full public catalog: Spain + DE/FR/PL/… EU/EEA packs from official portals. */
 export const DOCUMENTS_CATALOG: DocumentRecord[] = [
-  ...SPAIN_DOCUMENTS_CATALOG,
+  ...SPAIN_DOCUMENTS_CATALOG.map(withOfficialForm),
   ...buildEuDocumentsCatalog(['ES']),
 ]
 
