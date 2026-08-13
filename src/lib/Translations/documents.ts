@@ -108,7 +108,9 @@ export const documentsEn = {
   'docs.templateNeedsReview': 'Template requires legal review — not a verified legal text.',
   'docs.requirements': 'Requirements / notes',
   'docs.form.title': 'Fill the form',
-  'docs.form.autofillHint': 'Fields from your DImarket profile are prefilled when available.',
+  'docs.form.autofillHint':
+    'Fields follow the official / model blank for this country (labels in the form language). Profile data is prefilled when available. Always download/compare with the official PDF before signing.',
+  'docs.field.custom': 'Field',
   'docs.esign.title': 'Electronic signature (coming soon)',
   'docs.esign.body':
     'This prepares a signature workflow. It is not a legally binding e-signature yet — a real provider will be connected later.',
@@ -460,7 +462,9 @@ export const documentsUk: Record<string, string> = {
   'docs.templateNeedsReview': 'Шаблон потребує юридичної перевірки — це не перевірений юридичний текст.',
   'docs.requirements': 'Вимоги / примітки',
   'docs.form.title': 'Заповнити форму',
-  'docs.form.autofillHint': 'Поля з вашого профілю DImarket підставляються автоматично, якщо доступні.',
+  'docs.form.autofillHint':
+    'Поля відповідають офіційному / модельним бланку цієї країни (підписи мовою бланка). Дані з профілю підставляються автоматично. Перед підписом порівняйте з офіційним PDF.',
+  'docs.field.custom': 'Поле',
   'docs.esign.title': 'Електронний підпис (скоро)',
   'docs.esign.body':
     'Це заготовка workflow підпису. Це ще не юридично чинний e-підпис — реальний провайдер буде підключений пізніше.',

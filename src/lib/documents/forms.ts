@@ -1,6 +1,6 @@
 /**
- * Shared fillable form field schemas for Documents & Procedures.
- * Skeletons only — not verified legal clauses.
+ * Shared fillable form field schemas (i18n labelKey fallbacks).
+ * Prefer country-local packs in officialForms.ts (withOfficialForm) for real blanks.
  */
 
 import type { FormFieldDef } from './types'

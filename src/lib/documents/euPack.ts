@@ -12,6 +12,7 @@ import {
   vehicleSaleFields,
 } from './forms'
 import { countrySlugFromCode } from './location'
+import { withOfficialForm } from './officialForms'
 import type { DocumentRecord } from './types'
 
 const VERIFIED = '2026-08-13'
@@ -814,8 +815,8 @@ export function buildEuDocumentsCatalog(skipCodes: string[] = ['ES']): DocumentR
   const rows: DocumentRecord[] = []
   for (const cfg of Object.values(COUNTRY_SOURCES_BY_CODE)) {
     if (skip.has(cfg.countryCode.toUpperCase())) continue
-    rows.push(...packForCountry(cfg))
+    rows.push(...packForCountry(cfg).map(withOfficialForm))
   }
-  rows.push(...cityOverlays())
+  rows.push(...cityOverlays().map(withOfficialForm))
   return rows
 }

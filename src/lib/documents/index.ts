@@ -29,7 +29,8 @@ export {
   documentDisplayTitle,
   documentDisplayDescription,
 } from './display'
-export { buildEuDocumentsCatalog } from './euPack'
+export { getOfficialFormPack, withOfficialForm, fieldDisplayLabel } from './officialForms'
+export type { OfficialFormPack } from './types'
 export {
   buildFilledDocumentPdfHtml,
   openFilledDocumentPdf,

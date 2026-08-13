@@ -20,6 +20,7 @@ import {
   type FormFieldDef,
 } from '../lib/documents'
 import { documentDisplayDescription, documentDisplayTitle } from '../lib/documents/display'
+import { fieldDisplayLabel } from '../lib/documents/officialForms'
 import type { Profile } from '../lib/types'
 
 type Props = {
@@ -95,7 +96,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
   const onDownloadPdf = () => {
     if (!doc.formFields) return
     const fields = doc.formFields.map((f) => ({
-      label: t(f.labelKey),
+      label: fieldDisplayLabel(f, t),
       value: values[f.id] ?? '',
     }))
     openFilledDocumentPdf(
@@ -157,7 +158,17 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
 
         {doc.templateNeedsLegalReview ? (
           <div className="mb-4 rounded-xl border border-[#f5c26b] bg-[#fff8eb] px-4 py-3 text-sm text-[#1d1d1f]">
-            {t('docs.templateNeedsReview')}
+            {doc.officialForm ? (
+              <>
+                <p className="font-semibold">{doc.officialForm.modelName}</p>
+                <p className="mt-1 text-[#6e6e73]">{doc.officialForm.noticeLocal}</p>
+                {language.code === 'en' || language.code === 'uk' ? (
+                  <p className="mt-1 text-xs text-[#86868b]">{doc.officialForm.noticeEn}</p>
+                ) : null}
+              </>
+            ) : (
+              t('docs.templateNeedsReview')
+            )}
           </div>
         ) : null}
 
@@ -234,6 +245,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
             t={t}
             onPdf={onDownloadPdf}
             onSign={() => setSignOpen(true)}
+            modelName={doc.officialForm?.modelName}
           />
         ) : null}
 
@@ -371,6 +383,7 @@ function FillForm({
   t,
   onPdf,
   onSign,
+  modelName,
 }: {
   fields: FormFieldDef[]
   values: Record<string, string>
@@ -378,36 +391,53 @@ function FillForm({
   t: (key: string) => string
   onPdf: () => void
   onSign: () => void
+  modelName?: string
 }) {
   const [busy, setBusy] = useState(false)
+  let lastSection = ''
   return (
     <section className="mb-6 rounded-2xl border border-[#e8e8ed] bg-white p-4">
-      <h2 className="mb-3 text-base font-bold text-[#1d1d1f]">{t('docs.form.title')}</h2>
+      <h2 className="mb-1 text-base font-bold text-[#1d1d1f]">{t('docs.form.title')}</h2>
+      {modelName ? <p className="mb-2 text-xs font-semibold text-[#007185]">{modelName}</p> : null}
       <p className="mb-4 text-xs text-[#6e6e73]">{t('docs.form.autofillHint')}</p>
       <div className="space-y-3">
-        {fields.map((field) => (
-          <label key={field.id} className="block text-sm">
-            <span className="mb-1 block font-semibold text-[#1d1d1f]">
-              {t(field.labelKey)}
-              {field.required ? ' *' : ''}
-            </span>
-            {field.type === 'textarea' ? (
-              <textarea
-                value={values[field.id] ?? ''}
-                onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
-                rows={3}
-                className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
-              />
-            ) : (
-              <input
-                type={field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'}
-                value={values[field.id] ?? ''}
-                onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
-                className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
-              />
-            )}
-          </label>
-        ))}
+        {fields.map((field) => {
+          const section = field.section
+          const showSection = section && section !== lastSection
+          if (section) lastSection = section
+          return (
+            <div key={field.id}>
+              {showSection ? (
+                <p className="mb-2 mt-3 text-xs font-bold uppercase tracking-wide text-[#86868b]">
+                  {section}
+                </p>
+              ) : null}
+              <label className="block text-sm">
+                <span className="mb-1 block font-semibold text-[#1d1d1f]">
+                  {fieldDisplayLabel(field, t)}
+                  {field.required ? ' *' : ''}
+                </span>
+                {field.type === 'textarea' ? (
+                  <textarea
+                    value={values[field.id] ?? ''}
+                    onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
+                    rows={3}
+                    placeholder={field.placeholder}
+                    className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
+                  />
+                ) : (
+                  <input
+                    type={field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'}
+                    value={values[field.id] ?? ''}
+                    onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
+                    placeholder={field.placeholder}
+                    className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
+                  />
+                )}
+              </label>
+            </div>
+          )
+        })}
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <button
