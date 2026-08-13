@@ -146,7 +146,7 @@ async function invokeFn(name, body = {}, userJwt = null) {
   }
 }
 
-async function probeBucket(bucket) {
+async function probeBucket(bucket, { tryUpload = true, knownPublicPath = null } = {}) {
   const storage = `${SUPABASE_URL}/storage/v1`
   const infoRes = await fetch(`${storage}/bucket/${bucket}`, {
     headers: { apikey: ANON, Authorization: `Bearer ${ANON}` },
@@ -169,48 +169,104 @@ async function probeBucket(bucket) {
     body: JSON.stringify({ prefix: '', limit: 3 }),
   })
   const listText = await listRes.text()
-
-  // Tiny PNG (1x1) — upload probe; expect auth/RLS rejection or success, not "Bucket not found"
-  const png = Buffer.from(
-    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
-    'base64',
-  )
-  const objectPath = `smoke/${Date.now()}-probe.png`
-  const upRes = await fetch(`${storage}/object/${bucket}/${objectPath}`, {
-    method: 'POST',
-    headers: {
-      apikey: ANON,
-      Authorization: `Bearer ${ANON}`,
-      'Content-Type': 'image/png',
-      'x-upsert': 'true',
-    },
-    body: png,
-  })
-  const upText = await upRes.text()
-
-  const publicUrl = `${storage}/object/public/${bucket}/${objectPath}`
-  const pubRes = await fetch(publicUrl, { method: 'HEAD' })
-
-  // Anon often cannot GET /bucket/{id} (returns NoSuchBucket) even when the bucket
-  // works for list/upload. Prefer upload/list signals:
-  // - upload 2xx or RLS/AccessDenied → bucket exists
-  // - upload "Bucket not found" / NoSuchBucket → missing
-  const uploadSaysMissing = /bucket not found|NoSuchBucket/i.test(upText)
-  const listOk = listRes.status === 200
-  const uploadOk = upRes.status >= 200 && upRes.status < 300
-  const uploadRlsDenied =
-    upRes.status === 400 ||
-    upRes.status === 403 ||
-    /row-level security|AccessDenied|Unauthorized|JWT/i.test(upText)
-  const exists = uploadOk || (uploadRlsDenied && !uploadSaysMissing) || (listOk && !uploadSaysMissing)
-
-  // Best-effort cleanup of anon smoke upload (ignore failures)
-  if (uploadOk) {
-    await fetch(`${storage}/object/${bucket}/${objectPath}`, {
-      method: 'DELETE',
-      headers: { apikey: ANON, Authorization: `Bearer ${ANON}` },
-    }).catch(() => {})
+  let listJson = null
+  try {
+    listJson = listText ? JSON.parse(listText) : null
+  } catch {
+    listJson = null
   }
+  const listOk = listRes.status === 200 && Array.isArray(listJson)
+
+  let knownPublicOk = null
+  if (knownPublicPath) {
+    const kr = await fetch(`${storage}/object/public/${bucket}/${knownPublicPath}`, { method: 'HEAD' })
+    knownPublicOk = kr.ok
+  }
+
+  let upload_status = null
+  let upload_preview = null
+  let public_head_status = null
+  let public_url = null
+  let anon_upload_succeeded = false
+  let evidence = null
+
+  // Prefer non-mutating evidence when available (avoids leaving smoke objects in public buckets)
+  if (knownPublicOk) {
+    evidence = 'known_public_ok'
+  } else if (listOk && listJson.length > 0) {
+    evidence = 'list_nonempty'
+  }
+
+  if (tryUpload && !evidence) {
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    )
+    const objectPath = `smoke/${Date.now()}-probe.png`
+    const upRes = await fetch(`${storage}/object/${bucket}/${objectPath}`, {
+      method: 'POST',
+      headers: {
+        apikey: ANON,
+        Authorization: `Bearer ${ANON}`,
+        'Content-Type': 'image/png',
+        'x-upsert': 'true',
+      },
+      body: png,
+    })
+    const upText = await upRes.text()
+    upload_status = upRes.status
+    upload_preview = upText.slice(0, 200)
+    public_url = `${storage}/object/public/${bucket}/${objectPath}`
+    const pubRes = await fetch(public_url, { method: 'HEAD' })
+    public_head_status = pubRes.status
+
+    const uploadSaysMissing = /bucket not found|NoSuchBucket/i.test(upText)
+    const uploadOk = upRes.status >= 200 && upRes.status < 300
+    const uploadRlsDenied =
+      upRes.status === 400 ||
+      upRes.status === 403 ||
+      /row-level security|AccessDenied|Unauthorized|JWT/i.test(upText)
+    anon_upload_succeeded = uploadOk
+    if (uploadOk) evidence = 'upload_succeeded'
+    else if (uploadSaysMissing) evidence = 'upload_bucket_not_found'
+    else if (uploadRlsDenied) evidence = 'upload_rls_denied_implies_exists'
+  } else if (tryUpload && evidence) {
+    // Still probe write policy without relying on success for existence
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    )
+    const objectPath = `smoke-rls-check/${Date.now()}.png`
+    const upRes = await fetch(`${storage}/object/${bucket}/${objectPath}`, {
+      method: 'POST',
+      headers: {
+        apikey: ANON,
+        Authorization: `Bearer ${ANON}`,
+        'Content-Type': 'image/png',
+        'x-upsert': 'false',
+      },
+      body: png,
+    })
+    const upText = await upRes.text()
+    upload_status = upRes.status
+    upload_preview = upText.slice(0, 200)
+    anon_upload_succeeded = upRes.status >= 200 && upRes.status < 300
+    if (anon_upload_succeeded) {
+      // Attempt immediate cleanup; note leftover if denied
+      await fetch(`${storage}/object/${bucket}/${objectPath}`, {
+        method: 'DELETE',
+        headers: { apikey: ANON, Authorization: `Bearer ${ANON}` },
+      }).catch(() => {})
+      public_url = `${storage}/object/public/${bucket}/${objectPath}`
+    }
+  }
+
+  const exists =
+    evidence === 'known_public_ok' ||
+    evidence === 'list_nonempty' ||
+    evidence === 'upload_succeeded' ||
+    evidence === 'upload_rls_denied_implies_exists' ||
+    (listOk && evidence !== 'upload_bucket_not_found')
 
   return {
     bucket,
@@ -220,20 +276,16 @@ async function probeBucket(bucket) {
     public: infoJson?.public ?? null,
     list_status: listRes.status,
     list_preview: listText.slice(0, 200),
-    upload_status: upRes.status,
-    upload_preview: upText.slice(0, 200),
-    public_head_status: pubRes.status,
-    public_url: publicUrl,
-    exists,
-    evidence: uploadOk
-      ? 'upload_succeeded'
-      : uploadSaysMissing
-        ? 'upload_bucket_not_found'
-        : uploadRlsDenied
-          ? 'upload_rls_denied_implies_exists'
-          : listOk
-            ? 'list_ok'
-            : 'unknown',
+    upload_status,
+    upload_preview,
+    public_head_status,
+    public_url,
+    exists: Boolean(exists),
+    evidence,
+    anon_upload_succeeded,
+    security_note: anon_upload_succeeded
+      ? 'Anon JWT was able to upload — review storage RLS on this bucket'
+      : null,
   }
 }
 
@@ -302,15 +354,21 @@ async function sectionRest() {
 
 // ─── 2. Storage buckets ───────────────────────────────────────────────────────
 async function sectionStorage() {
-  const buckets = ['ad-media', 'avatars', 'portfolio', 'portfolio-media', 'project-files', 'chat-media']
-  const probes = {}
-  for (const b of buckets) {
-    probes[b] = await probeBucket(b)
+  const knownAvatar =
+    'campaigns/profiles/89ccac50-eded-47be-9426-ae6087bd16da/avatar.jpeg'
+  const probes = {
+    'ad-media': await probeBucket('ad-media', {
+      tryUpload: true,
+      knownPublicPath: knownAvatar,
+    }),
+    avatars: await probeBucket('avatars'),
+    portfolio: await probeBucket('portfolio'),
+    'portfolio-media': await probeBucket('portfolio-media'),
+    'project-files': await probeBucket('project-files'),
+    'chat-media': await probeBucket('chat-media'),
   }
 
-  // Known working public avatar path under ad-media
-  const knownPublic =
-    `${SUPABASE_URL}/storage/v1/object/public/ad-media/campaigns/profiles/89ccac50-eded-47be-9426-ae6087bd16da/avatar.jpeg`
+  const knownPublic = `${SUPABASE_URL}/storage/v1/object/public/ad-media/${knownAvatar}`
   const knownRes = await fetch(knownPublic, { method: 'HEAD' })
   probes.ad_media_known_public = {
     url: knownPublic,
@@ -323,18 +381,21 @@ async function sectionStorage() {
   const others = ['avatars', 'portfolio', 'portfolio-media', 'project-files', 'chat-media']
   const othersExist = others.filter((b) => probes[b]?.exists)
   const othersMissing = others.filter((b) => !probes[b]?.exists)
+  const anonWriteBuckets = Object.values(probes)
+    .filter((p) => p && p.anon_upload_succeeded)
+    .map((p) => p.bucket)
 
   let status = 'PASS'
   let message = `ad-media exists=${adOk} (evidence=${probes['ad-media']?.evidence}), known public=${knownOk}; existing others=[${othersExist.join(',')}]; missing=[${othersMissing.join(',')}]`
   if (!adOk || !knownOk) status = 'FAIL'
-  else if (othersMissing.includes('project-files') || othersMissing.includes('chat-media')) {
-    // App code references these buckets; missing is a real gap but ad-media works
-    status = 'PARTIAL'
-  } else if (othersExist.length < others.length) {
-    status = 'PARTIAL'
+  else if (othersMissing.length) status = 'PARTIAL'
+
+  if (anonWriteBuckets.length) {
+    message += `; SECURITY: anon upload succeeded on [${anonWriteBuckets.join(',')}]`
+    if (status === 'PASS') status = 'PARTIAL'
   }
 
-  record('2_storage', status, { message, probes })
+  record('2_storage', status, { message, probes, anon_write_buckets: anonWriteBuckets })
 }
 
 // ─── 3. Edge functions ────────────────────────────────────────────────────────
