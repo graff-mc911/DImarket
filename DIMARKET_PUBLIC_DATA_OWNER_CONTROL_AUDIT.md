@@ -141,7 +141,24 @@ Apply: `supabase/migrations/APPLY_OWNER_PROFILE_MODERATION.sql`
 
 ---
 
-## 8. FINAL (honest)
+## PUBLIC vs OWNER CONSISTENCY (hard rule)
+
+```
+Supabase DB  →  N records (public-listable)
+Client       →  must see ≤ N (after QA/hide gates)
+Owner        →  must see ≥ public N  (never 70 when client has 100)
+```
+
+Cause of the gap: Owner RPC `admin_search_profiles` was capped (80–200) while UI sometimes asked for 100 — silent truncation.
+
+Fix in this branch:
+- Owner fetch limit **2000**
+- Banner: `Клієнт: X · Owner: Y` with red alert if `Y < X`
+- Filter **«Як у клієнта»** = same `is_professional=true` universe
+- SQL `admin_profile_consistency_counts()` for exact DB totals
+
+Prod snapshot (anon, 2026-08-13): all profiles **196**, `is_professional` **171**, masters **40**, companies **127**.
+
 
 | Question | Answer |
 |----------|--------|

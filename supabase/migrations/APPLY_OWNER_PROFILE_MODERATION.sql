@@ -66,7 +66,7 @@ $$;
 CREATE OR REPLACE FUNCTION public.admin_search_profiles(
   p_query text DEFAULT '',
   p_filter text DEFAULT 'all',
-  p_limit int DEFAULT 80
+  p_limit int DEFAULT 500
 )
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -75,7 +75,7 @@ SET search_path = public
 AS $$
 DECLARE
   result jsonb;
-  lim int := LEAST(GREATEST(COALESCE(p_limit, 80), 1), 200);
+  lim int := LEAST(GREATEST(COALESCE(p_limit, 500), 1), 2000);
   q text := trim(COALESCE(p_query, ''));
 BEGIN
   PERFORM public.admin_assert_site_owner();
@@ -119,6 +119,7 @@ BEGIN
       AND (
         p_filter = 'all'
         OR (p_filter = 'professional' AND (p.is_professional = true OR p.user_role IN ('professional', 'company')))
+        OR (p_filter = 'public_listable' AND p.is_professional = true AND p.deleted_at IS NULL AND p.hidden_at IS NULL)
         OR (p_filter = 'client' AND coalesce(p.is_professional, false) = false AND coalesce(p.user_role, 'client') = 'client')
         OR (p_filter = 'company' AND p.user_role = 'company')
         OR (p_filter = 'manufacturer' AND p.user_role = 'manufacturer')
@@ -143,6 +144,58 @@ BEGIN
   RETURN result;
 END;
 $$;
+
+-- Exact counts: public-visible vs full owner universe (no artificial 70/100 gap)
+CREATE OR REPLACE FUNCTION public.admin_profile_consistency_counts()
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  out jsonb;
+BEGIN
+  PERFORM public.admin_assert_site_owner();
+  SELECT jsonb_build_object(
+    'all_profiles', (SELECT count(*) FROM profiles),
+    'public_listable', (
+      SELECT count(*) FROM profiles
+      WHERE is_professional = true
+        AND deleted_at IS NULL
+        AND hidden_at IS NULL
+    ),
+    'masters_role', (
+      SELECT count(*) FROM profiles
+      WHERE is_professional = true
+        AND user_role = 'professional'
+        AND deleted_at IS NULL
+        AND hidden_at IS NULL
+    ),
+    'companies_role', (
+      SELECT count(*) FROM profiles
+      WHERE is_professional = true
+        AND user_role = 'company'
+        AND deleted_at IS NULL
+        AND hidden_at IS NULL
+    ),
+    'hidden', (SELECT count(*) FROM profiles WHERE hidden_at IS NOT NULL AND deleted_at IS NULL),
+    'deleted', (SELECT count(*) FROM profiles WHERE deleted_at IS NOT NULL),
+    'qa_named', (
+      SELECT count(*) FROM profiles p
+      LEFT JOIN auth.users u ON u.id = p.id
+      WHERE p.full_name ILIKE 'QA %'
+         OR p.full_name ILIKE 'qa-%'
+         OR p.full_name ILIKE 'qa_%'
+         OR coalesce(u.email, '') ILIKE '%qa%'
+         OR coalesce(u.email, '') ILIKE '%dimarket-audit%'
+         OR coalesce(u.email, '') ILIKE '%dimarket-test%'
+    )
+  ) INTO out;
+  RETURN out;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.admin_profile_consistency_counts() TO authenticated;
 
 -- 4) Flags + ranking (does NOT change rating)
 CREATE OR REPLACE FUNCTION public.admin_update_profile_flags(

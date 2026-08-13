@@ -27,6 +27,7 @@ export type OwnerProfileRow = {
 
 export type OwnerProfileFilter =
   | 'all'
+  | 'public_listable'
   | 'professional'
   | 'client'
   | 'company'
@@ -38,13 +39,26 @@ export type OwnerProfileFilter =
   | 'deleted'
   | 'qa'
 
+export type OwnerConsistencyCounts = {
+  all_profiles: number
+  public_listable: number
+  masters_role: number
+  companies_role: number
+  hidden: number
+  deleted: number
+  qa_named: number
+}
+
 type RpcResult = { ok?: boolean; error?: string; action?: string; id?: string; ranking_priority?: number }
 
-async function callRpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
+async function callRpc<T>(name: string, args: Record<string, unknown> = {}): Promise<T> {
   const { data, error } = await supabase.rpc(name as never, args as never)
   if (error) throw error
   return data as T
 }
+
+/** Owner must be able to load the full public universe — no silent 70/100 truncation. */
+export const OWNER_PROFILE_FETCH_LIMIT = 2000
 
 export async function ownerSearchProfiles(opts: {
   query?: string
@@ -52,7 +66,8 @@ export async function ownerSearchProfiles(opts: {
   limit?: number
 }): Promise<OwnerProfileRow[]> {
   let query = opts.query ?? ''
-  let filter = opts.filter ?? 'all'
+  let filter: string = opts.filter ?? 'all'
+  const limit = opts.limit ?? OWNER_PROFILE_FETCH_LIMIT
 
   // Older prod RPC only supported: all|professional|client|premium|verified
   const legacyFilters = new Set(['all', 'professional', 'client', 'premium', 'verified'])
@@ -60,11 +75,13 @@ export async function ownerSearchProfiles(opts: {
     if (filter === 'qa') {
       query = query.trim() ? query : 'QA'
       filter = 'all'
+    } else if (filter === 'public_listable') {
+      // Same set the client can list: is_professional=true (masters+companies)
+      filter = 'professional'
     } else if (filter === 'company' || filter === 'manufacturer' || filter === 'commercial_agent') {
       query = query.trim() ? query : filter
       filter = 'all'
     } else if (filter === 'hidden' || filter === 'deleted') {
-      // Requires APPLY_OWNER_PROFILE_MODERATION.sql
       filter = 'all'
     }
   }
@@ -72,7 +89,7 @@ export async function ownerSearchProfiles(opts: {
   const data = await callRpc<OwnerProfileRow[] | unknown>('admin_search_profiles', {
     p_query: query,
     p_filter: filter,
-    p_limit: opts.limit ?? 80,
+    p_limit: limit,
   })
   if (Array.isArray(data)) return data as OwnerProfileRow[]
   if (typeof data === 'string') {
@@ -84,6 +101,32 @@ export async function ownerSearchProfiles(opts: {
     }
   }
   return []
+}
+
+/**
+ * Public count (same base set the catalog uses) vs owner RPC result size.
+ * Detects the "client 100 / owner 70" truncation bug.
+ */
+export async function fetchPublicListableProfileCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from('profiles')
+    .select('id', { count: 'exact', head: true })
+    .eq('is_professional', true)
+
+  if (error) throw error
+  return count ?? 0
+}
+
+export async function fetchOwnerConsistencyCounts(): Promise<OwnerConsistencyCounts | null> {
+  try {
+    const data = await callRpc<OwnerConsistencyCounts | unknown>('admin_profile_consistency_counts', {})
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      return data as OwnerConsistencyCounts
+    }
+    return null
+  } catch {
+    return null
+  }
 }
 
 async function withLegacyHideFallback(

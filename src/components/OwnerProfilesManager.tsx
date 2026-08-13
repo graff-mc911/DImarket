@@ -7,8 +7,13 @@ import {
   Star,
   Trash2,
   ExternalLink,
+  AlertTriangle,
+  CheckCircle2,
 } from 'lucide-react'
 import {
+  OWNER_PROFILE_FETCH_LIMIT,
+  fetchOwnerConsistencyCounts,
+  fetchPublicListableProfileCount,
   ownerHideProfile,
   ownerRestoreProfile,
   ownerSearchProfiles,
@@ -16,14 +21,16 @@ import {
   ownerSoftDeleteProfile,
   ownerUnhideProfile,
   ownerUpdateProfileFlags,
+  type OwnerConsistencyCounts,
   type OwnerProfileFilter,
   type OwnerProfileRow,
 } from '../lib/ownerProfiles'
 import { navigateTo } from '../lib/navigation'
 
 const FILTERS: { id: OwnerProfileFilter; label: string }[] = [
+  { id: 'public_listable', label: 'Як у клієнта' },
   { id: 'all', label: 'Усі' },
-  { id: 'professional', label: 'Майстри' },
+  { id: 'professional', label: 'Майстри+компанії' },
   { id: 'company', label: 'Компанії' },
   { id: 'manufacturer', label: 'Виробники' },
   { id: 'commercial_agent', label: 'Агенти' },
@@ -34,21 +41,41 @@ const FILTERS: { id: OwnerProfileFilter; label: string }[] = [
 
 export function OwnerProfilesManager() {
   const [query, setQuery] = useState('')
-  const [filter, setFilter] = useState<OwnerProfileFilter>('professional')
+  const [filter, setFilter] = useState<OwnerProfileFilter>('public_listable')
   const [rows, setRows] = useState<OwnerProfileRow[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busyId, setBusyId] = useState<string | null>(null)
   const [migrationHint, setMigrationHint] = useState(false)
+  const [publicCount, setPublicCount] = useState<number | null>(null)
+  const [counts, setCounts] = useState<OwnerConsistencyCounts | null>(null)
 
   const load = useCallback(async (q = query, f = filter) => {
     setLoading(true)
     setError('')
     try {
-      const data = await ownerSearchProfiles({ query: q, filter: f, limit: 100 })
+      const [data, pub, consistency] = await Promise.all([
+        ownerSearchProfiles({ query: q, filter: f, limit: OWNER_PROFILE_FETCH_LIMIT }),
+        fetchPublicListableProfileCount().catch(() => null),
+        fetchOwnerConsistencyCounts(),
+      ])
       setRows(data)
+      setPublicCount(pub)
+      setCounts(consistency)
       setMigrationHint(false)
+
+      // Hard rule: Owner panel must not silently show fewer rows than the public set.
+      if (
+        (f === 'public_listable' || f === 'professional') &&
+        !q.trim() &&
+        pub != null &&
+        data.length < pub
+      ) {
+        setError(
+          `РОЗРИВ ДАНИХ: клієнт бачить ${pub} публічних профілів, Owner панель зараз показує лише ${data.length}. Застосуйте APPLY_OWNER_PROFILE_MODERATION.sql (ліміт RPC) і оновіть сторінку.`,
+        )
+      }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e)
       setRows([])
@@ -62,10 +89,14 @@ export function OwnerProfilesManager() {
   }, [filter, query])
 
   useEffect(() => {
-    void load('', 'professional')
+    void load('', 'public_listable')
   }, [])
 
-  const runAction = async (id: string, action: () => Promise<{ ok?: boolean; error?: string }>, okMsg: string) => {
+  const runAction = async (
+    id: string,
+    action: () => Promise<{ ok?: boolean; error?: string }>,
+    okMsg: string,
+  ) => {
     setBusyId(id)
     setNotice('')
     setError('')
@@ -81,15 +112,49 @@ export function OwnerProfilesManager() {
     }
   }
 
+  const consistent =
+    publicCount != null &&
+    (filter === 'public_listable' || filter === 'professional') &&
+    !query.trim() &&
+    rows.length >= publicCount
+
   return (
     <div className="rounded-[22px] border border-[var(--glass-border)] bg-white/50 p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-extrabold text-[#2f2a24]">Профілі DImarket</h2>
           <p className="mt-1 text-sm text-[#6f665d]">
-            Пошук і модерація тих самих production-профілів, що бачить публіка (Top Masters, каталог, мапа).
+            Owner бачить ті самі production-записи, що й клієнт — плюс hidden/deleted для модерації.
           </p>
         </div>
+      </div>
+
+      <div
+        className={`mt-4 rounded-xl border px-3 py-3 text-sm ${
+          consistent
+            ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+            : publicCount != null && rows.length < (publicCount || 0)
+              ? 'border-red-200 bg-red-50 text-red-800'
+              : 'border-[rgba(148,163,184,0.35)] bg-white text-[#6f665d]'
+        }`}
+      >
+        <div className="flex flex-wrap items-center gap-2 font-semibold">
+          {consistent ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
+          <span>
+            Клієнт (public is_professional): {publicCount ?? '—'} · Owner список: {rows.length}
+            {counts ? ` · Усі в БД: ${counts.all_profiles}` : ''}
+          </span>
+        </div>
+        <p className="mt-1 text-xs leading-5">
+          Правило: якщо клієнт бачить N публічних профілів — Owner Dashboard має бачити ≥ N. Немає
+          сценарію «клієнт 100 / Owner 70».
+        </p>
+        {counts && (
+          <p className="mt-1 text-xs">
+            Майстри: {counts.masters_role} · Компанії: {counts.companies_role} · QA: {counts.qa_named}{' '}
+            · Hidden: {counts.hidden} · Deleted: {counts.deleted}
+          </p>
+        )}
       </div>
 
       <div className="mt-4 flex flex-col gap-3 md:flex-row">
@@ -137,8 +202,8 @@ export function OwnerProfilesManager() {
       {migrationHint && (
         <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
           Потрібно застосувати SQL:{' '}
-          <code className="font-mono">supabase/migrations/APPLY_OWNER_PROFILE_MODERATION.sql</code>
-          {' '}у Supabase SQL Editor (owner RPC + soft-delete/hide колонки).
+          <code className="font-mono">supabase/migrations/APPLY_OWNER_PROFILE_MODERATION.sql</code> у
+          Supabase SQL Editor (owner RPC + soft-delete/hide + ліміт до 2000).
         </div>
       )}
 
@@ -156,7 +221,9 @@ export function OwnerProfilesManager() {
       <div className="mt-4 space-y-3">
         {loading && <p className="text-sm text-[#6f665d]">Завантаження…</p>}
         {!loading && rows.length === 0 && (
-          <p className="text-sm text-[#6f665d]">Нічого не знайдено. Спробуйте фільтр «QA / тест» або інший запит.</p>
+          <p className="text-sm text-[#6f665d]">
+            Нічого не знайдено. Спробуйте фільтр «QA / тест» або інший запит.
+          </p>
         )}
         {rows.map((row) => {
           const hidden = Boolean(row.hidden_at || row.is_hidden)
@@ -260,7 +327,10 @@ export function OwnerProfilesManager() {
                     disabled={busy}
                     className="rounded-full border px-3 py-1 text-xs font-bold"
                     onClick={() => {
-                      const raw = window.prompt('Ranking priority (число, не рейтинг користувача)', String(row.ranking_priority ?? 0))
+                      const raw = window.prompt(
+                        'Ranking priority (число, не рейтинг користувача)',
+                        String(row.ranking_priority ?? 0),
+                      )
                       if (raw == null) return
                       const n = Number(raw)
                       if (!Number.isFinite(n)) {
