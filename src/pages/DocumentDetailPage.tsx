@@ -192,6 +192,32 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
           />
         </div>
 
+        {doc.relatedPortals?.length ? (
+          <section className="mb-6 rounded-2xl border-2 border-[#007185]/40 bg-[#f0fafb] p-4">
+            <h2 className="text-base font-bold text-[#1d1d1f]">{t('docs.vehicleCheck.title')}</h2>
+            <p className="mt-1 text-xs text-[#6e6e73]">{t('docs.vehicleCheck.hint')}</p>
+            <div className="mt-3 flex flex-col gap-2">
+              {doc.relatedPortals.map((p) => (
+                <a
+                  key={p.url}
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-start gap-2 rounded-xl bg-[#007185] px-4 py-3 text-sm font-semibold text-white hover:bg-[#005f6b]"
+                >
+                  <ExternalLink className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                  <span>
+                    {p.name}
+                    <span className="mt-0.5 block text-xs font-normal text-white/85">
+                      {language.code === 'uk' ? p.purposeUk : p.purposeEn}
+                    </span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="mb-6 space-y-2 rounded-2xl border border-[#e8e8ed] bg-white p-4 text-sm">
           <MetaRow label={t('docs.meta.country')} value={doc.countryCode} />
           {doc.region ? <MetaRow label={t('docs.meta.region')} value={doc.region} /> : null}
@@ -253,33 +279,6 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
           ) : null}
         </div>
 
-        {doc.relatedPortals?.length ? (
-          <section className="mb-6 rounded-2xl border border-[#e8e8ed] bg-white p-4">
-            <h2 className="mb-1 text-base font-bold text-[#1d1d1f]">{t('docs.vehicleCheck.title')}</h2>
-            <p className="mb-3 text-xs text-[#6e6e73]">{t('docs.vehicleCheck.hint')}</p>
-            <ul className="space-y-2">
-              {doc.relatedPortals.map((p) => (
-                <li key={p.url}>
-                  <a
-                    href={p.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-start gap-2 text-sm font-semibold text-[#007185]"
-                  >
-                    <ExternalLink className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-                    <span>
-                      {p.name}
-                      <span className="mt-0.5 block font-normal text-[#6e6e73]">
-                        {language.code === 'uk' ? p.purposeUk : p.purposeEn}
-                      </span>
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
-
         {filling && doc.formFields ? (
           <FillForm
             fields={doc.formFields}
@@ -289,6 +288,8 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
             onPdf={onDownloadPdf}
             onSign={() => setSignOpen(true)}
             modelName={doc.officialForm?.modelName}
+            checkPortals={doc.relatedPortals}
+            langCode={language.code}
           />
         ) : null}
 
@@ -430,6 +431,8 @@ function FillForm({
   onPdf,
   onSign,
   modelName,
+  checkPortals,
+  langCode,
 }: {
   fields: FormFieldDef[]
   values: Record<string, string>
@@ -438,6 +441,8 @@ function FillForm({
   onPdf: () => void
   onSign: () => void
   modelName?: string
+  checkPortals?: DocumentRecord['relatedPortals']
+  langCode?: string
 }) {
   const [busy, setBusy] = useState(false)
   let lastSection = ''
@@ -445,7 +450,28 @@ function FillForm({
     <section className="mb-6 rounded-2xl border border-[#e8e8ed] bg-white p-4">
       <h2 className="mb-1 text-base font-bold text-[#1d1d1f]">{t('docs.form.title')}</h2>
       {modelName ? <p className="mb-2 text-xs font-semibold text-[#007185]">{modelName}</p> : null}
-      <p className="mb-4 text-xs text-[#6e6e73]">{t('docs.form.autofillHint')}</p>
+      <p className="mb-3 text-xs text-[#6e6e73]">{t('docs.form.autofillHint')}</p>
+      {checkPortals?.length ? (
+        <div className="mb-4 rounded-xl border border-[#007185]/25 bg-[#f0fafb] p-3">
+          <p className="text-xs font-bold text-[#1d1d1f]">{t('docs.vehicleCheck.title')}</p>
+          <div className="mt-2 flex flex-col gap-1.5">
+            {checkPortals.map((p) => (
+              <a
+                key={p.url}
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-semibold text-[#007185] underline-offset-2 hover:underline"
+              >
+                {p.name}
+                <span className="ml-1 font-normal text-[#6e6e73]">
+                  — {langCode === 'uk' ? p.purposeUk : p.purposeEn}
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : null}
       <div className="space-y-3">
         {fields.map((field) => {
           const section = field.section

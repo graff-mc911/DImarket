@@ -115,6 +115,11 @@ export function DocumentsHub({ subcategory = null }: Props) {
                       <p className="mt-1 text-sm text-[#6e6e73] line-clamp-2">
                         {documentDisplayDescription(doc, language.code, t)}
                       </p>
+                      {doc.relatedPortals?.length ? (
+                        <p className="mt-2 text-xs font-semibold text-[#007185]">
+                          {t('docs.vehicleCheck.title')} → {doc.relatedPortals[0]?.name}
+                        </p>
+                      ) : null}
                     </div>
                     <ChevronRight className="h-4 w-4 shrink-0 text-[#86868b]" aria-hidden />
                   </div>
