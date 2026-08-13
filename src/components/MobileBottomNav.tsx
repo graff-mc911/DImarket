@@ -57,6 +57,7 @@ const MORE_ICONS: Record<string, ReactNode> = {
   companies: <Building2 className="h-5 w-5" aria-hidden />,
   manufacturers: <Factory className="h-5 w-5" aria-hidden />,
   'commercial-agents': <Handshake className="h-5 w-5" aria-hidden />,
+  'documents-procedures': <FileText className="h-5 w-5" aria-hidden />,
   'official-documents': <FileText className="h-5 w-5" aria-hidden />,
   'publish-request': <ClipboardList className="h-5 w-5" aria-hidden />,
   'cost-estimator': <Calculator className="h-5 w-5" aria-hidden />,

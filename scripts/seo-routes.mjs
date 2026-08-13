@@ -28,6 +28,7 @@ export const CATEGORY_SLUGS = [
   'architecture-design',
   'engineering',
   'legal-services',
+  'documents-procedures',
   'official-documents',
 ]
 
@@ -112,6 +113,39 @@ export const STATIC_ROUTES = [
     description: 'Зв’яжіться з командою DImarket — підтримка клієнтів, фахівців і партнерів.',
     changefreq: 'yearly',
     priority: 0.5,
+    schema: 'page',
+  },
+  {
+    path: '/documents',
+    title: 'Documents & Procedures | DImarket',
+    description:
+      'Contracts, licenses, permits, and government procedures by jurisdiction. Not silent AI legal rewrite.',
+    changefreq: 'weekly',
+    priority: 0.85,
+    schema: 'page',
+  },
+  {
+    path: '/documents/spain/residential-rental-contract',
+    title: 'Residential rental contract Spain | DImarket',
+    description: 'Spain residential lease form skeleton with official source link.',
+    changefreq: 'weekly',
+    priority: 0.75,
+    schema: 'page',
+  },
+  {
+    path: '/documents/spain/alicante/residential-rental-contract',
+    title: 'Residential rental Alicante | DImarket',
+    description: 'Alicante residential lease skeleton with BOE source.',
+    changefreq: 'weekly',
+    priority: 0.75,
+    schema: 'page',
+  },
+  {
+    path: '/documents/spain/business-registration',
+    title: 'Business registration Spain | DImarket',
+    description: 'Spain business setup checklist with official sources.',
+    changefreq: 'weekly',
+    priority: 0.75,
     schema: 'page',
   },
   {
@@ -270,6 +304,8 @@ export function prerenderRoutes() {
     '/pricing',
     '/contact',
     '/legal-documents',
+    '/documents',
+    '/documents/spain/residential-rental-contract',
     '/category/official-documents',
     '/for-professionals',
     '/for-companies',

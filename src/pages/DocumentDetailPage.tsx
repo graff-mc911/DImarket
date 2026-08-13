@@ -1,0 +1,436 @@
+import { useEffect, useMemo, useState } from 'react'
+import {
+  ArrowLeft,
+  Download,
+  ExternalLink,
+  FileSignature,
+  Loader2,
+  MapPin,
+  Send,
+  UserSearch,
+} from 'lucide-react'
+import { useApp } from '../contexts/AppContext'
+import { navigateTo } from '../lib/navigation'
+import { appendLocationToPath, formatGlobalLocationLabel } from '../lib/globalLocation'
+import {
+  filledDocumentFilename,
+  getDocumentByPathParts,
+  openFilledDocumentPdf,
+  type DocumentRecord,
+  type FormFieldDef,
+} from '../lib/documents'
+import type { Profile } from '../lib/types'
+
+type Props = {
+  countrySlug: string
+  cityOrSlug: string
+  slug?: string
+}
+
+function profileValue(
+  field: FormFieldDef,
+  profile: Profile | null,
+  userEmail: string | null | undefined,
+): string {
+  if (!field.profileKey) return ''
+  switch (field.profileKey) {
+    case 'full_name':
+      return profile?.full_name ?? ''
+    case 'phone':
+      return profile?.phone ?? ''
+    case 'email':
+      return userEmail ?? ''
+    case 'location':
+      return profile?.location ?? ''
+    case 'company_name':
+      return (profile as Profile & { company_name?: string | null })?.company_name
+        || profile?.full_name
+        || ''
+    default:
+      return ''
+  }
+}
+
+export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
+  const { t, location, profile, user } = useApp()
+  const doc = useMemo(
+    () => getDocumentByPathParts(countrySlug, cityOrSlug, slug),
+    [countrySlug, cityOrSlug, slug],
+  )
+
+  const [filling, setFilling] = useState(false)
+  const [values, setValues] = useState<Record<string, string>>({})
+  const [stepIndex, setStepIndex] = useState(0)
+  const [signOpen, setSignOpen] = useState(false)
+
+  useEffect(() => {
+    if (!doc?.formFields) return
+    const next: Record<string, string> = {}
+    for (const field of doc.formFields) {
+      next[field.id] = profileValue(field, profile, user?.email)
+    }
+    setValues(next)
+  }, [doc, profile, user?.email])
+
+  if (!doc) {
+    return (
+      <div className="layout-page-content py-16 text-center">
+        <p className="text-sm text-[#6e6e73]">{t('docs.notFound')}</p>
+        <button
+          type="button"
+          className="mt-4 text-sm font-semibold text-[#007185]"
+          onClick={() => navigateTo('/documents')}
+        >
+          {t('docs.backToHub')}
+        </button>
+      </div>
+    )
+  }
+
+  const locationLabel = formatGlobalLocationLabel(location, t('serviya.loc.all-europe'))
+  const steps = doc.procedureSteps ?? []
+  const isLicense = doc.documentType === 'license' || doc.documentType === 'permit'
+
+  const onDownloadPdf = () => {
+    if (!doc.formFields) return
+    const fields = doc.formFields.map((f) => ({
+      label: t(f.labelKey),
+      value: values[f.id] ?? '',
+    }))
+    openFilledDocumentPdf(
+      {
+        title: t(doc.titleKey),
+        jurisdiction: doc.jurisdiction,
+        sourceName: doc.source.name,
+        sourceUrl: doc.source.url,
+        version: doc.version,
+        lastVerified: doc.lastVerified ?? doc.source.lastVerified,
+        templateNeedsLegalReview: doc.templateNeedsLegalReview,
+        fields,
+        needsReviewLabel: t('docs.templateNeedsReview'),
+        disclaimerAccuracy: t('osm.disclaimer.accuracy'),
+        disclaimerNotAdvice: t('osm.disclaimer.notAdvice'),
+      },
+      filledDocumentFilename(t(doc.titleKey)),
+    )
+  }
+
+  const findSpecialist = (query: string, categorySlug?: string) => {
+    const params = new URLSearchParams()
+    params.set('q', query)
+    params.set('tab', 'professionals')
+    if (location.city) params.set('city', location.city)
+    if (location.country) params.set('country', location.country)
+    if (categorySlug) params.set('category', categorySlug)
+    navigateTo(`/search?${params.toString()}`)
+  }
+
+  return (
+    <div className="layout-page-content py-8 pb-24 lg:pb-8">
+      <div className="mx-auto max-w-3xl">
+        <button
+          type="button"
+          onClick={() => navigateTo(appendLocationToPath(`/documents/${doc.subcategory}`, location))}
+          className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-[#007185]"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden />
+          {t('docs.backToList')}
+        </button>
+
+        <header className="mb-6">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#86868b]">
+            {t(`docs.type.${doc.documentType}`)} · {t(`docs.status.${doc.status}`)}
+          </p>
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#1d1d1f]">
+            {t(doc.titleKey)}
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-[#6e6e73]">{t(doc.descriptionKey)}</p>
+          <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-[#6e6e73]">
+            <MapPin className="h-3.5 w-3.5" aria-hidden />
+            {doc.jurisdiction}
+            {locationLabel ? ` · ${t('docs.location.headerIs')} ${locationLabel}` : ''}
+          </p>
+        </header>
+
+        {doc.templateNeedsLegalReview ? (
+          <div className="mb-4 rounded-xl border border-[#f5c26b] bg-[#fff8eb] px-4 py-3 text-sm text-[#1d1d1f]">
+            {t('docs.templateNeedsReview')}
+          </div>
+        ) : null}
+
+        <section className="mb-6 space-y-2 rounded-2xl border border-[#e8e8ed] bg-white p-4 text-sm">
+          <MetaRow label={t('docs.meta.country')} value={doc.countryCode} />
+          {doc.region ? <MetaRow label={t('docs.meta.region')} value={doc.region} /> : null}
+          {doc.city ? <MetaRow label={t('docs.meta.city')} value={doc.city} /> : null}
+          <MetaRow label={t('docs.meta.version')} value={doc.version} />
+          <MetaRow
+            label={t('docs.meta.lastVerified')}
+            value={doc.lastVerified ?? t('docs.meta.notVerified')}
+          />
+          <MetaRow label={t('docs.meta.source')} value={doc.source.name} />
+          {isLicense && doc.licenseRequirement ? (
+            <MetaRow
+              label={t('docs.meta.licenseRequired')}
+              value={t(`docs.license.${doc.licenseRequirement}`)}
+            />
+          ) : null}
+          {doc.issuerKey ? <MetaRow label={t('docs.meta.issuer')} value={t(doc.issuerKey)} /> : null}
+          {doc.costKey ? <MetaRow label={t('docs.meta.cost')} value={t(doc.costKey)} /> : null}
+          {doc.durationKey ? (
+            <MetaRow label={t('docs.meta.duration')} value={t(doc.durationKey)} />
+          ) : null}
+        </section>
+
+        {doc.requirementsKeys.length > 0 ? (
+          <section className="mb-6">
+            <h2 className="mb-2 text-base font-bold text-[#1d1d1f]">{t('docs.requirements')}</h2>
+            <ul className="list-disc space-y-1 pl-5 text-sm text-[#6e6e73]">
+              {doc.requirementsKeys.map((key) => (
+                <li key={key}>{t(key)}</li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
+        {steps.length > 0 ? (
+          <ProcedurePanel
+            doc={doc}
+            stepIndex={stepIndex}
+            setStepIndex={setStepIndex}
+            t={t}
+          />
+        ) : null}
+
+        <div className="mb-6 flex flex-wrap gap-2">
+          <a
+            href={doc.source.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#1d1d1f] px-4 py-2.5 text-sm font-semibold text-white"
+          >
+            <ExternalLink className="h-4 w-4" aria-hidden />
+            {t('docs.openOfficial')}
+          </a>
+          {doc.formFields?.length ? (
+            <button
+              type="button"
+              onClick={() => setFilling((v) => !v)}
+              className="inline-flex items-center gap-2 rounded-xl border border-[#d2d2d7] bg-white px-4 py-2.5 text-sm font-semibold text-[#1d1d1f]"
+            >
+              <FileSignature className="h-4 w-4" aria-hidden />
+              {filling ? t('docs.hideForm') : t('docs.fillOnline')}
+            </button>
+          ) : null}
+        </div>
+
+        {filling && doc.formFields ? (
+          <FillForm
+            fields={doc.formFields}
+            values={values}
+            setValues={setValues}
+            t={t}
+            onPdf={onDownloadPdf}
+            onSign={() => setSignOpen(true)}
+          />
+        ) : null}
+
+        {signOpen ? (
+          <div className="mb-6 rounded-2xl border border-[#e8e8ed] bg-[#f5f5f7] p-4 text-sm text-[#1d1d1f]">
+            <p className="font-semibold">{t('docs.esign.title')}</p>
+            <p className="mt-1 text-[#6e6e73]">{t('docs.esign.body')}</p>
+            <button
+              type="button"
+              className="mt-3 text-sm font-semibold text-[#007185]"
+              onClick={() => setSignOpen(false)}
+            >
+              {t('common.close')}
+            </button>
+          </div>
+        ) : null}
+
+        {doc.specialists.length > 0 ? (
+          <section className="mb-6">
+            <h2 className="mb-2 text-base font-bold text-[#1d1d1f]">{t('docs.findSpecialist')}</h2>
+            <div className="flex flex-wrap gap-2">
+              {doc.specialists.map((s) => (
+                <button
+                  key={s.labelKey}
+                  type="button"
+                  onClick={() => findSpecialist(s.searchQuery, s.categorySlug)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-[#d2d2d7] bg-white px-3 py-2 text-sm font-semibold text-[#1d1d1f]"
+                >
+                  <UserSearch className="h-4 w-4" aria-hidden />
+                  {t(s.labelKey)}
+                </button>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <p className="text-xs leading-5 text-[#6e6e73]">{t('docs.disclaimer.short')}</p>
+      </div>
+    </div>
+  )
+}
+
+function MetaRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+      <span className="font-semibold text-[#1d1d1f]">{label}:</span>
+      <span className="text-[#6e6e73]">{value}</span>
+    </div>
+  )
+}
+
+function ProcedurePanel({
+  doc,
+  stepIndex,
+  setStepIndex,
+  t,
+}: {
+  doc: DocumentRecord
+  stepIndex: number
+  setStepIndex: (n: number) => void
+  t: (key: string) => string
+}) {
+  const steps = doc.procedureSteps ?? []
+  const step = steps[stepIndex]
+  if (!step) return null
+  return (
+    <section className="mb-6 rounded-2xl border border-[#e8e8ed] bg-white p-4">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-base font-bold text-[#1d1d1f]">{t('docs.procedure.title')}</h2>
+        <span className="text-xs font-semibold text-[#86868b]">
+          {t('docs.procedure.progress')
+            .replace('{current}', String(stepIndex + 1))
+            .replace('{total}', String(steps.length))}
+        </span>
+      </div>
+      <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-[#e8e8ed]">
+        <div
+          className="h-full rounded-full bg-[#007185]"
+          style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }}
+        />
+      </div>
+      <p className="font-semibold text-[#1d1d1f]">{t(step.titleKey)}</p>
+      <p className="mt-1 text-sm text-[#6e6e73]">{t(step.bodyKey)}</p>
+      {step.whatIsKey ? (
+        <p className="mt-2 text-sm">
+          <strong>{t('docs.procedure.whatIs')}</strong> {t(step.whatIsKey)}
+        </p>
+      ) : null}
+      {step.whatNeededKey ? (
+        <p className="mt-1 text-sm">
+          <strong>{t('docs.procedure.whatNeeded')}</strong> {t(step.whatNeededKey)}
+        </p>
+      ) : null}
+      {step.whereKey ? (
+        <p className="mt-1 text-sm">
+          <strong>{t('docs.procedure.where')}</strong> {t(step.whereKey)}
+        </p>
+      ) : null}
+      {step.source ? (
+        <a
+          href={step.source.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[#007185]"
+        >
+          {step.source.name} <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+        </a>
+      ) : null}
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          disabled={stepIndex === 0}
+          onClick={() => setStepIndex(Math.max(0, stepIndex - 1))}
+          className="rounded-lg border border-[#d2d2d7] px-3 py-1.5 text-sm font-semibold disabled:opacity-40"
+        >
+          {t('docs.procedure.prev')}
+        </button>
+        <button
+          type="button"
+          disabled={stepIndex >= steps.length - 1}
+          onClick={() => setStepIndex(Math.min(steps.length - 1, stepIndex + 1))}
+          className="rounded-lg bg-[#1d1d1f] px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
+        >
+          {t('docs.procedure.next')}
+        </button>
+      </div>
+    </section>
+  )
+}
+
+function FillForm({
+  fields,
+  values,
+  setValues,
+  t,
+  onPdf,
+  onSign,
+}: {
+  fields: FormFieldDef[]
+  values: Record<string, string>
+  setValues: (v: Record<string, string>) => void
+  t: (key: string) => string
+  onPdf: () => void
+  onSign: () => void
+}) {
+  const [busy, setBusy] = useState(false)
+  return (
+    <section className="mb-6 rounded-2xl border border-[#e8e8ed] bg-white p-4">
+      <h2 className="mb-3 text-base font-bold text-[#1d1d1f]">{t('docs.form.title')}</h2>
+      <p className="mb-4 text-xs text-[#6e6e73]">{t('docs.form.autofillHint')}</p>
+      <div className="space-y-3">
+        {fields.map((field) => (
+          <label key={field.id} className="block text-sm">
+            <span className="mb-1 block font-semibold text-[#1d1d1f]">
+              {t(field.labelKey)}
+              {field.required ? ' *' : ''}
+            </span>
+            {field.type === 'textarea' ? (
+              <textarea
+                value={values[field.id] ?? ''}
+                onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
+                rows={3}
+                className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
+              />
+            ) : (
+              <input
+                type={field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'}
+                value={values[field.id] ?? ''}
+                onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
+                className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
+              />
+            )}
+          </label>
+        ))}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            setBusy(true)
+            try {
+              onPdf()
+            } finally {
+              setBusy(false)
+            }
+          }}
+          className="inline-flex items-center gap-2 rounded-xl bg-[#007185] px-4 py-2.5 text-sm font-semibold text-white"
+        >
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+          {t('docs.downloadPdf')}
+        </button>
+        <button
+          type="button"
+          onClick={onSign}
+          className="inline-flex items-center gap-2 rounded-xl border border-[#d2d2d7] px-4 py-2.5 text-sm font-semibold text-[#1d1d1f]"
+        >
+          <Send className="h-4 w-4" aria-hidden />
+          {t('docs.sendForSignature')}
+        </button>
+      </div>
+    </section>
+  )
+}

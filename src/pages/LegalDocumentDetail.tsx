@@ -106,7 +106,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
         <p className="text-sm text-[#6e6e73]">{t('osm.public.notFound')}</p>
         <button
           type="button"
-          onClick={() => navigateTo('/category/official-documents')}
+          onClick={() => navigateTo('/documents')}
           className="mt-4 text-sm font-semibold text-[#007185] hover:underline"
         >
           {t('osm.public.backToList')}
@@ -143,7 +143,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
       <div className="mx-auto max-w-3xl">
         <button
           type="button"
-          onClick={() => navigateTo('/category/official-documents')}
+          onClick={() => navigateTo('/documents')}
           className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-[#007185] hover:underline"
         >
           <ArrowLeft className="h-4 w-4" />

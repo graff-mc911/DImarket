@@ -17,6 +17,7 @@ export type GuideIntent =
   | 'profile_company'
   | 'vacancy'
   | 'sell_rent'
+  | 'documents_procedures'
 
 export type TradeRole =
   | 'electrician'

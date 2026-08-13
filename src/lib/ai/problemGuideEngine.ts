@@ -101,6 +101,14 @@ function findCategory(
 
 function detectIntent(text: string): GuideIntent | null {
   const q = text.toLowerCase()
+  // Documents & procedures BEFORE marketplace sell/rent — rental apartment ≠ listing sell
+  if (
+    /(документ|договор|договір|ліценз|лиценз|дозв[іi]л|процедур|винайнят|орендувати\s+(квартир|житл)|rental\s+contract|lease\s+agreement|відкрити\s+б[іi]знес|start\s+(a\s+)?business|купити\s+авто|buy\s+(a\s+)?car|vehicle\s+purchase|працювати\s+електрик|electrician\s+license|nie\b|padr[oó]n|gestor[íi]a|aut[oó]nomo|\bsl\b.*alicante)/i.test(
+      q,
+    )
+  ) {
+    return 'documents_procedures'
+  }
   if (/(реклам|банер|advert|маркетинг|просуван|ads?\b)/i.test(q)) return 'advertising'
   if (/(вакан|шукаю (праців|мастер|майстр|співроб)|hiring|job offer|робота для майстра)/i.test(q)) {
     return 'vacancy'
@@ -655,6 +663,66 @@ function startSell(draft: JobRequestDraft): SalesBotTurnResult {
   }
 }
 
+function startDocuments(text: string, draft: JobRequestDraft, ctx: SalesBotContext): SalesBotTurnResult {
+  const uk = !ctx.locale || ctx.locale.startsWith('uk') || ctx.locale.startsWith('ru')
+  const q = text.toLowerCase()
+  let path = '/documents'
+  if (/(оренд|rental|lease|винайнят|квартир)/i.test(q)) {
+    path = '/documents/spain/alicante/residential-rental-contract'
+    if (!/alicante|алік|алик/i.test(q) && !/darmstadt|дармштадт/i.test(q)) {
+      path = '/documents/spain/residential-rental-contract'
+    }
+    if (/alicante|алік|алик/i.test(q)) path = '/documents/spain/alicante/residential-rental-contract'
+  } else if (/(авто|vehicle|car|машин)/i.test(q)) {
+    path = '/documents/spain/vehicle-purchase-contract'
+  } else if (/(електрик|electrician)/i.test(q)) {
+    path = /alicante|алік|алик/i.test(q)
+      ? '/documents/spain/alicante/electrician-license'
+      : '/documents/spain/electrician-license'
+  } else if (/(бізнес|business|aut[oó]nomo|\bsl\b)/i.test(q)) {
+    path = /alicante|алік|алик/i.test(q)
+      ? '/documents/spain/alicante/business-registration'
+      : '/documents/spain/business-registration'
+  } else if (/(ліценз|дозв|license|permit)/i.test(q)) {
+    path = '/documents/licenses-permits'
+  } else if (/(договір|contract|формуляр)/i.test(q)) {
+    path = '/documents/contracts-forms'
+  }
+
+  // Mention override city in reply only — do not change Header location here.
+  const cityHint = /darmstadt|дармштадт/i.test(q)
+    ? uk
+      ? ' Для цього запиту враховано Darmstadt (локацію в хедері не змінюю).'
+      : ' This request mentions Darmstadt (Header location unchanged).'
+    : /alicante|алік|алик/i.test(q)
+      ? uk
+        ? ' Контекст: Alicante.'
+        : ' Context: Alicante.'
+      : ctx.suggestedCity
+        ? uk
+          ? ` Контекст з хедера: ${ctx.suggestedCity}.`
+          : ` Header location: ${ctx.suggestedCity}.`
+        : ''
+
+  return {
+    replyKey: 'ai.intent.documents',
+    replyText: uk
+      ? `Можу відкрити «Документи та процедури» для вашої юрисдикції.${cityHint} Це не юридична консультація — перевіряйте офіційне джерело.`
+      : `I can open Documents & Procedures for your jurisdiction.${cityHint} This is not legal advice — verify the official source.`,
+    step: 'done',
+    draft: {
+      ...draft,
+      intent: 'documents_procedures',
+      problemText: text.trim(),
+    },
+    quickReplies: uk
+      ? ['Договір оренди', 'Ліцензії', 'Відкрити бізнес', 'Знайти юриста']
+      : ['Rental contract', 'Licenses', 'Start a business', 'Find a lawyer'],
+    canPublish: false,
+    navigateTo: path,
+  }
+}
+
 function startCostEstimate(text: string, draft: JobRequestDraft, ctx: SalesBotContext): SalesBotTurnResult {
   const uk = !ctx.locale || ctx.locale.startsWith('uk') || ctx.locale.startsWith('ru')
   const sourceText = (text || draft.problemText || draft.description || '').trim()
@@ -826,6 +894,7 @@ export function processSalesBotTurn(
     if (intent === 'profile_pro') return startProfile(next, false)
     if (intent === 'vacancy') return startVacancy(next)
     if (intent === 'sell_rent') return startSell(next)
+    if (intent === 'documents_procedures') return startDocuments(text, next, ctx)
     return startJobFromText(text, next, ctx)
   }
 

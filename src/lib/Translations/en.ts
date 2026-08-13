@@ -1,4 +1,6 @@
 // English UI translations — source of TranslationKey.
+import { documentsEn } from './documents'
+
 export const enTranslations = {
   'header.browse': 'Browse',
   'header.findProfessionals': 'Find Professionals',
@@ -2650,6 +2652,7 @@ export const enTranslations = {
   'commercialAgents.cat.chemicals': 'Chemicals',
   'commercialAgents.cat.packaging': 'Packaging',
   'commercialAgents.cat.other': 'Other',
+  ...documentsEn,
 } as const
 
 export type TranslationKey = keyof typeof enTranslations

@@ -53,8 +53,9 @@ export function homeCategoryPath(
     }
     return '/commercial-agents'
   }
-  if (category.slug === 'official-documents' || category.href === '/category/official-documents' || category.href === '/legal-documents') {
-    return '/category/official-documents'
+  if (category.slug === 'documents-procedures' || category.slug === 'official-documents' || category.href === '/documents' || category.href === '/category/official-documents' || category.href === '/legal-documents') {
+    if (subcategory?.slug) return `/documents/${subcategory.slug}`
+    return '/documents'
   }
   if (category.href) return category.href
   const slug = category.slug

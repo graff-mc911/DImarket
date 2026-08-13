@@ -24,7 +24,7 @@ import { marketplaceCategoryLabel, marketplaceServiceProsPath } from '../lib/mar
 import { navigateTo } from '../lib/navigation'
 import { pushRecentSearch } from '../lib/searchHistory'
 
-type ResultTab = 'all' | 'professionals' | 'categories' | 'services' | 'projects' | 'materials'
+type ResultTab = 'all' | 'professionals' | 'categories' | 'services' | 'projects' | 'materials' | 'documents'
 
 const EMPTY_RESULTS: AdvancedSearchResults = {
   professionals: [],
@@ -32,6 +32,7 @@ const EMPTY_RESULTS: AdvancedSearchResults = {
   services: [],
   projects: [],
   materials: [],
+  documents: [],
 }
 
 const POPULAR_FALLBACK = [
@@ -147,19 +148,22 @@ export function SearchPage() {
     services: results.services.length,
     projects: results.projects.length,
     materials: results.materials.length,
+    documents: results.documents.length,
   }
   const total =
     counts.professionals +
     counts.categories +
     counts.services +
     counts.projects +
-    counts.materials
+    counts.materials +
+    counts.documents
 
   const tabs: Array<{ id: ResultTab; label: string; count: number }> = [
     { id: 'all', label: t('advancedSearch.tabAll'), count: total },
     { id: 'professionals', label: t('advancedSearch.tabPros'), count: counts.professionals },
     { id: 'categories', label: t('advancedSearch.tabCategories'), count: counts.categories },
     { id: 'services', label: t('advancedSearch.tabServices'), count: counts.services },
+    { id: 'documents', label: t('advancedSearch.tabDocuments'), count: counts.documents },
     { id: 'projects', label: t('advancedSearch.tabProjects'), count: counts.projects },
     { id: 'materials', label: t('advancedSearch.tabMaterials'), count: counts.materials },
   ]
@@ -338,6 +342,28 @@ export function SearchPage() {
                       >
                         <span>{marketplaceCategoryLabel(s, language.code)}</span>
                         <em>{t('advancedSearch.viewProfessionals')}</em>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {show('documents') && counts.documents > 0 && (
+                <section className="adv-search__section">
+                  <h2>{t('advancedSearch.tabDocuments')}</h2>
+                  <div className="adv-search__service-list">
+                    {results.documents.map((d) => (
+                      <button
+                        key={d.id}
+                        type="button"
+                        className="adv-search__service-row"
+                        onClick={() => navigateTo(d.path)}
+                      >
+                        <span>
+                          {t(d.titleKey as Parameters<typeof t>[0])}
+                          <small className="block text-xs opacity-70">{d.jurisdiction}</small>
+                        </span>
+                        <em>{t('advancedSearch.type.document')}</em>
                       </button>
                     ))}
                   </div>

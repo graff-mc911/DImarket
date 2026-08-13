@@ -172,6 +172,10 @@ export function MainCategoriesSection({
   const sectionEyebrow = eyebrow ?? t('serviya.eyebrow')
 
   const handleSubcategoryClick = (category: ServiceCategory, subcategory: ServiceSubcategory) => {
+    if (category.slug === 'documents-procedures' || category.slug === 'official-documents') {
+      navigateTo(appendLocationToPath(`/documents/${subcategory.slug}`, location))
+      return
+    }
     navigateTo(appendLocationToPath(professionalPath(category, subcategory), location))
   }
 
@@ -184,13 +188,8 @@ export function MainCategoriesSection({
       navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'jobs', href: '/vacancies' }), location))
       return
     }
-    if (itemId === 'official-documents') {
-      navigateTo(
-        appendLocationToPath(
-          homeCategoryPath({ slug: 'official-documents', href: '/category/official-documents' }),
-          location,
-        ),
-      )
+    if (itemId === 'documents-procedures' || itemId === 'official-documents') {
+      navigateTo(appendLocationToPath('/documents', location))
       return
     }
     const resolved = findServiceBySlug(itemId)

@@ -1,4 +1,5 @@
 import type { TranslationKey } from './en'
+import { documentsUk } from './documents'
 
 // Complete uk UI translations — full TranslationKey coverage.
 export const ukTranslations: Partial<Record<TranslationKey, string>> = {
@@ -2648,4 +2649,5 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'commercialAgents.cat.chemicals': 'Хімія',
   'commercialAgents.cat.packaging': 'Упаковка',
   'commercialAgents.cat.other': 'Інше',
+  ...documentsUk,
 }

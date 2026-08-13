@@ -14,6 +14,12 @@ import {
 } from './serviceTaxonomy'
 import type { ListingWithImages, Profile } from './types'
 import { excludeSuppressedFromQuery, isSuppressedListing } from './suppressedListings'
+import {
+  documentSeoPath,
+  listDocuments,
+  countryCodeFromSlug,
+  type DocumentsJurisdiction,
+} from './documents'
 
 export type SearchEntityType =
   | 'professional'
@@ -21,6 +27,7 @@ export type SearchEntityType =
   | 'service'
   | 'project'
   | 'material'
+  | 'document'
 
 export type SearchSuggestion = {
   id: string
@@ -46,12 +53,23 @@ export type SearchFilters = {
   lng: number | null
 }
 
+export type DocumentSearchHit = {
+  id: string
+  titleKey: string
+  descriptionKey: string
+  path: string
+  jurisdiction: string
+  status: string
+  subcategory: string
+}
+
 export type AdvancedSearchResults = {
   professionals: Profile[]
   categories: MarketplaceCategory[]
   services: Array<MarketplaceCategory & { parentSlug?: string; href?: string }>
   projects: ListingWithImages[]
   materials: ListingWithImages[]
+  documents: DocumentSearchHit[]
 }
 
 export const EMPTY_SEARCH_FILTERS: SearchFilters = {
@@ -539,7 +557,39 @@ export async function runAdvancedSearch(
     services: services.slice(0, 40),
     projects: sortListings(projects).slice(0, 40),
     materials: sortListings(materials).slice(0, 40),
+    documents: searchDocumentsHits(q, filters),
   }
+}
+
+function searchDocumentsHits(q: string, filters: SearchFilters): DocumentSearchHit[] {
+  const jurisdiction: DocumentsJurisdiction = {
+    countryCode: filters.country ? countryCodeFromSlug(filters.country.toLowerCase()) : null,
+    countrySlug: filters.country ? filters.country.toLowerCase().replace(/\s+/g, '-') : null,
+    region: null,
+    province: null,
+    city: filters.city || null,
+    labelParts: [],
+  }
+  // If country looks like "Spain" not slug:
+  if (filters.country && !jurisdiction.countryCode) {
+    const slug = filters.country.trim().toLowerCase().replace(/\s+/g, '-')
+    jurisdiction.countrySlug = slug
+    jurisdiction.countryCode = countryCodeFromSlug(slug)
+  }
+  return listDocuments({
+    query: q || undefined,
+    jurisdiction: jurisdiction.countryCode || filters.city ? jurisdiction : null,
+  })
+    .slice(0, 20)
+    .map((d) => ({
+      id: d.id,
+      titleKey: d.titleKey,
+      descriptionKey: d.descriptionKey,
+      path: documentSeoPath(d),
+      jurisdiction: d.jurisdiction,
+      status: d.status,
+      subcategory: d.subcategory,
+    }))
 }
 
 export function parseSearchParams(search: string): {

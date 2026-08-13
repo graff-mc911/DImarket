@@ -23,6 +23,7 @@ import {
   SEO_SERVICE_ALIASES,
 } from './lib/serviceTaxonomy'
 import { parseGeoServicePath } from './lib/geoSearch'
+import { isDocumentsSubcategorySlug } from './lib/documents/subcategories'
 
 // Eager: first paint / shell
 import { Home } from './pages/Home'
@@ -96,6 +97,12 @@ const LegalDocuments = lazyWithRetry(() =>
 )
 const LegalDocumentDetail = lazyWithRetry(() =>
   import('./pages/LegalDocumentDetail').then((m) => ({ default: m.LegalDocumentDetail })),
+)
+const DocumentsHub = lazyWithRetry(() =>
+  import('./pages/DocumentsHub').then((m) => ({ default: m.DocumentsHub })),
+)
+const DocumentDetailPage = lazyWithRetry(() =>
+  import('./pages/DocumentDetailPage').then((m) => ({ default: m.DocumentDetailPage })),
 )
 const Checkout = lazyWithRetry(() =>
   import('./pages/Checkout').then((m) => ({ default: m.Checkout })),
@@ -253,9 +260,28 @@ function App() {
       return <LegalDocumentDetail docKey={parts[1]} />
     }
 
-    // Official Documents — public category for everyone
-    if (parts[0] === 'category' && parts[1] === 'official-documents') {
-      return <LegalDocuments />
+    // Documents & Procedures — public category (location-aware)
+    if (parts[0] === 'documents') {
+      if (!parts[1]) return <DocumentsHub />
+      if (isDocumentsSubcategorySlug(parts[1])) {
+        return <DocumentsHub subcategory={parts[1]} />
+      }
+      if (parts[1] && parts[2] && parts[3]) {
+        return (
+          <DocumentDetailPage countrySlug={parts[1]} cityOrSlug={parts[2]} slug={parts[3]} />
+        )
+      }
+      if (parts[1] && parts[2]) {
+        return <DocumentDetailPage countrySlug={parts[1]} cityOrSlug={parts[2]} />
+      }
+      return <DocumentsHub />
+    }
+
+    if (
+      parts[0] === 'category' &&
+      (parts[1] === 'official-documents' || parts[1] === 'documents-procedures')
+    ) {
+      return <DocumentsHub />
     }
 
     // Динамічні маршрути
@@ -388,6 +414,7 @@ function App() {
       case '/admin/marketing-agent': return <MarketingAgentAdmin />
       case '/admin/official-sources': return <OfficialSourcesAdmin />
       case '/legal-documents': return <LegalDocuments />
+      case '/documents': return <DocumentsHub />
       case '/checkout':      return <Checkout />
       case '/boost':         return <BoostProfile />
       case '/pricing':
