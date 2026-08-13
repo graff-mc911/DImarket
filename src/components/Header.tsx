@@ -480,6 +480,14 @@ export function Header() {
                         <Settings className="mr-2 inline h-4 w-4" />
                         {t('header.settings')}
                       </button>
+                      <button
+                        onClick={handleSignOut}
+                        type="button"
+                        className="flex w-full items-center gap-2 rounded-sm px-3 py-2.5 text-left text-sm font-semibold text-[#c7511f]"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>{t('header.signOut')}</span>
+                      </button>
                       {(profile?.user_role === 'professional' || profile?.user_role === 'company') && (
                         <button onClick={() => goTo('/verification')} type="button" className={dropdownItemClass}>
                           <Shield className="mr-2 inline h-4 w-4" />
@@ -538,19 +546,6 @@ export function Header() {
                           <span className="font-bold">{curr.symbol}</span> {curr.code}
                         </button>
                       ))}
-                      {isLoggedIn && (
-                        <>
-                          <div className="my-1 border-t border-[#e7e7e7]" />
-                          <button
-                            onClick={handleSignOut}
-                            type="button"
-                            className="flex w-full items-center gap-2 rounded-sm px-3 py-2.5 text-left text-sm font-semibold text-[#c7511f]"
-                          >
-                            <LogOut className="h-4 w-4" />
-                            <span>{t('header.signOut')}</span>
-                          </button>
-                        </>
-                      )}
                     </div>
                   )}
                 </div>

@@ -15,6 +15,7 @@ import {
   Handshake,
   Heart,
   Home,
+  LogOut,
   MapPin,
   Megaphone,
   Menu,
@@ -23,6 +24,7 @@ import {
   Search,
   Settings,
   ShoppingBag,
+  Trash2,
   User,
   X,
 } from 'lucide-react'
@@ -81,7 +83,7 @@ const MORE_ICONS: Record<string, ReactNode> = {
  * - Icon + label always fully visible (no overflow clipping)
  */
 export function MobileBottomNav() {
-  const { t, user, profile, currency, setCurrency } = useApp()
+  const { t, user, profile, currency, setCurrency, signOut } = useApp()
   const [path, setPath] = useState(window.location.pathname)
   const [hash, setHash] = useState(window.location.hash)
   const [moreOpen, setMoreOpen] = useState(false)
@@ -305,6 +307,41 @@ export function MobileBottomNav() {
                 </select>
               </div>
             </div>
+
+            {user ? (
+              <ul className="mobile-nav-more__list mobile-nav-more__list--account-actions">
+                <li>
+                  <button
+                    type="button"
+                    className="mobile-nav-more__item mobile-nav-more__item--danger"
+                    onClick={() => {
+                      setMoreOpen(false)
+                      void (async () => {
+                        await signOut()
+                        navigateTo('/')
+                      })()
+                    }}
+                  >
+                    <span className="mobile-nav-more__icon" aria-hidden>
+                      <LogOut className="h-5 w-5" />
+                    </span>
+                    <span>{t('header.signOut')}</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    className="mobile-nav-more__item mobile-nav-more__item--danger"
+                    onClick={() => go('/settings#danger')}
+                  >
+                    <span className="mobile-nav-more__icon" aria-hidden>
+                      <Trash2 className="h-5 w-5" />
+                    </span>
+                    <span>{t('settings.deleteAccountButton')}</span>
+                  </button>
+                </li>
+              </ul>
+            ) : null}
           </div>
         </div>
       ) : null}

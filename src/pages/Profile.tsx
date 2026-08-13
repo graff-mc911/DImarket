@@ -10,14 +10,17 @@ import {
   ExternalLink,
   Globe,
   Image as ImageIcon,
+  LogOut,
   MapPin,
   MessageCircle,
   Phone,
   Star,
+  Trash2,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
+import { deleteCurrentAccount } from '../lib/deleteAccount'
 import { Profile as ProfileType } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 import { ReviewFeed } from '../components/reviews/ReviewFeed'
@@ -30,7 +33,7 @@ function normalizeWebsiteHref(url: string | null | undefined): string {
 }
 
 export function Profile() {
-  const { user: contextUser, profile: contextProfile, t } = useApp()
+  const { user: contextUser, profile: contextProfile, t, signOut } = useApp()
 
   const [userId, setUserId] = useState<string | null>(contextUser?.id ?? null)
   const [profile, setProfile] = useState<ProfileType | null>(contextProfile)
@@ -39,6 +42,8 @@ export function Profile() {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'portfolio' | 'reviews'>('portfolio')
+  const [accountBusy, setAccountBusy] = useState(false)
+  const [accountError, setAccountError] = useState<string | null>(null)
 
   const loadProfileData = useCallback(async (uid: string) => {
     setLoading(true)
@@ -309,6 +314,67 @@ export function Profile() {
                 </div>
               </div>
             </div>
+
+            <div className="mt-5 flex flex-col gap-2 border-t border-[var(--glass-border)] pt-5 sm:flex-row sm:flex-wrap">
+              <button
+                type="button"
+                onClick={() => navigateTo('/settings')}
+                className="btn-secondary inline-flex items-center justify-center gap-2 rounded-full"
+              >
+                <Edit3 className="h-4 w-4" />
+                {t('header.settings')}
+              </button>
+              <button
+                type="button"
+                disabled={accountBusy}
+                onClick={() => {
+                  void (async () => {
+                    setAccountBusy(true)
+                    setAccountError(null)
+                    try {
+                      await signOut()
+                      navigateTo('/')
+                    } catch {
+                      setAccountError(t('common.error'))
+                    } finally {
+                      setAccountBusy(false)
+                    }
+                  })()
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(201,109,44,0.35)] bg-white px-5 py-2.5 text-sm font-semibold text-[#a44a3a] transition hover:bg-[rgba(255,237,232,0.6)] disabled:opacity-60"
+              >
+                <LogOut className="h-4 w-4" />
+                {t('header.signOut')}
+              </button>
+              <button
+                type="button"
+                disabled={accountBusy}
+                onClick={() => {
+                  const confirmed = window.confirm(t('settings.confirm.deleteAccount'))
+                  if (!confirmed) return
+                  void (async () => {
+                    setAccountBusy(true)
+                    setAccountError(null)
+                    try {
+                      await deleteCurrentAccount()
+                      navigateTo('/')
+                    } catch (err) {
+                      console.error(err)
+                      setAccountError(t('settings.error.deleteAccount'))
+                    } finally {
+                      setAccountBusy(false)
+                    }
+                  })()
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(185,63,63,0.35)] bg-[rgba(255,237,232,0.55)] px-5 py-2.5 text-sm font-semibold text-[#b14e37] transition hover:bg-[rgba(255,237,232,0.9)] disabled:opacity-60"
+              >
+                <Trash2 className="h-4 w-4" />
+                {t('settings.deleteAccountButton')}
+              </button>
+            </div>
+            {accountError ? (
+              <p className="mt-3 text-sm text-[#a44a3a]">{accountError}</p>
+            ) : null}
           </div>
         </div>
 
