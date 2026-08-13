@@ -11,6 +11,7 @@
  */
 
 import type { DocumentRecord, FormFieldDef, OfficialFormPack } from './types'
+import { isVehicleDocumentSlug, vehicleCheckPortalsFor } from './vehicleCheckPortals'
 
 function f(
   id: string,
@@ -256,6 +257,68 @@ const deVehicle: OfficialFormPack = {
   ],
 }
 
+/** Germany — commercial / B2B Kfz-Kaufvertrag (Firma + MwSt) */
+const deVehicleCommercial: OfficialFormPack = {
+  modelName: 'Kfz-Kaufvertrag (gewerblich / Unternehmer)',
+  language: 'de',
+  sourceName: 'Muster — gewerblicher Kfz-Kaufvertrag + Zulassung KBA',
+  sourceUrl: 'https://www.kba.de/',
+  lastVerified: null,
+  noticeLocal:
+    'Feldstruktur für den Verkauf zwischen Unternehmern / mit MwSt-Ausweis. Vor Unterschrift prüfen; Halterwechsel über Zulassungsstelle. Kein amtliches Einheitsformular.',
+  noticeEn:
+    'Commercial / B2B German vehicle sale field layout (company + VAT). Complete registration at Zulassungsstelle — not a single federal blank.',
+  fields: [
+    f('verk_firma', 'Firma Verkäufer', 'text', { required: true, profileKey: 'company_name', section: 'Verkäufer (gewerblich)' }),
+    f('verk_ustid', 'USt-IdNr. Verkäufer', 'text', { section: 'Verkäufer (gewerblich)' }),
+    f('verk_vertreter', 'Vertretungsberechtigte Person', 'text', { required: true, section: 'Verkäufer (gewerblich)' }),
+    f('verk_strasse', 'Straße, Nr.', 'text', { required: true, section: 'Verkäufer (gewerblich)' }),
+    f('verk_plz_ort', 'PLZ / Ort', 'text', { required: true, section: 'Verkäufer (gewerblich)' }),
+    f('verk_telefon', 'Telefon', 'phone', { section: 'Verkäufer (gewerblich)' }),
+    f('verk_email', 'E-Mail', 'email', { section: 'Verkäufer (gewerblich)' }),
+    f('kauf_firma', 'Firma Käufer', 'text', { required: true, section: 'Käufer (gewerblich)' }),
+    f('kauf_ustid', 'USt-IdNr. Käufer', 'text', { section: 'Käufer (gewerblich)' }),
+    f('kauf_vertreter', 'Vertretungsberechtigte Person', 'text', {
+      required: true,
+      profileKey: 'full_name',
+      section: 'Käufer (gewerblich)',
+    }),
+    f('kauf_strasse', 'Straße, Nr.', 'text', { required: true, profileKey: 'location', section: 'Käufer (gewerblich)' }),
+    f('kauf_plz_ort', 'PLZ / Ort', 'text', { required: true, section: 'Käufer (gewerblich)' }),
+    f('kauf_telefon', 'Telefon', 'phone', { profileKey: 'phone', section: 'Käufer (gewerblich)' }),
+    f('kauf_email', 'E-Mail', 'email', { profileKey: 'email', section: 'Käufer (gewerblich)' }),
+    f('marke', 'Marke', 'text', { required: true, section: 'I. Fahrzeug' }),
+    f('modell', 'Modell / Typ', 'text', { required: true, section: 'I. Fahrzeug' }),
+    f('fahrzeugart', 'Fahrzeugart', 'text', { section: 'I. Fahrzeug' }),
+    f('kw_ps', 'kW / PS', 'text', { section: 'I. Fahrzeug' }),
+    f('fin', 'FIN', 'text', { required: true, section: 'I. Fahrzeug' }),
+    f('kennzeichen', 'Amtliches Kennzeichen', 'text', { section: 'I. Fahrzeug' }),
+    f('erstzulassung', 'Erstzulassung', 'date', { section: 'I. Fahrzeug' }),
+    f('kilometerstand', 'Kilometerstand', 'number', { required: true, section: 'I. Fahrzeug' }),
+    f('brief_nr', 'Zulassungsbescheinigung Teil II (Nr.)', 'text', { section: 'I. Fahrzeug' }),
+    f('netto', 'Netto-Kaufpreis (€)', 'number', { required: true, section: 'II. Preis / MwSt' }),
+    f('mwst_satz', 'MwSt-Satz (%)', 'number', { section: 'II. Preis / MwSt', placeholder: '19' }),
+    f('mwst_betrag', 'MwSt-Betrag (€)', 'number', { section: 'II. Preis / MwSt' }),
+    f('brutto', 'Brutto-Kaufpreis (€)', 'number', { required: true, section: 'II. Preis / MwSt' }),
+    f('differenzbesteuerung', 'Differenzbesteuerung (§ 25a UStG)?', 'select', {
+      section: 'II. Preis / MwSt',
+      options: [
+        { value: 'nein', labelKey: 'docs.field.custom', label: 'nein — Regelbesteuerung' },
+        { value: 'ja', labelKey: 'docs.field.custom', label: 'ja — Differenzbesteuerung' },
+      ],
+    }),
+    f('rechnungsnr', 'Rechnungsnummer', 'text', { section: 'II. Preis / MwSt' }),
+    f('zahlungsart', 'Zahlungsart / Vereinbarung', 'textarea', { section: 'II. Preis / MwSt' }),
+    f('maengel', 'Mängel / Garantie / Gewährleistung', 'textarea', { section: 'III. Zustand' }),
+    f('uebergabe_ort', 'Übergabeort', 'text', { section: 'IV. Übergabe' }),
+    f('uebergabe_datum', 'Übergabedatum', 'date', { required: true, section: 'IV. Übergabe' }),
+    f('unterlagen', 'Übergebene Unterlagen', 'textarea', {
+      section: 'IV. Übergabe',
+      placeholder: 'ZB I / ZB II / Schlüssel / HU-Bericht …',
+    }),
+  ],
+}
+
 /** Germany — Gewerbeanmeldung (GewA1-aligned field names) */
 const deBusiness: OfficialFormPack = {
   modelName: 'Gewerbeanmeldung — Felder analog GewA1',
@@ -361,26 +424,71 @@ const frRental: OfficialFormPack = {
 }
 
 const frVehicle: OfficialFormPack = {
-  modelName: 'CERFA 13703* — Certificat de cession d’un véhicule',
+  modelName: 'CERFA 13703* — Certificat de cession d’un véhicule d’occasion',
   language: 'fr',
   sourceName: 'Service-Public / ANTS — CERFA 13703',
   sourceUrl: 'https://www.service-public.fr/particuliers/vosdroits/R2032',
   lastVerified: null,
   noticeLocal:
-    'Champs du certificat de cession (CERFA 13703*). Utilisez le formulaire officiel ANTS / service-public pour la déclaration.',
-  noticeEn: 'Fields from French CERFA 13703* vehicle transfer certificate. Use the official ANTS form.',
+    'Champs du certificat de cession officiel (CERFA 13703*). Déclarez la cession sur ANTS / service-public — le PDF/CERFA officiel fait foi.',
+  noticeEn:
+    'Fields of the official French used-vehicle transfer certificate (CERFA 13703*). File the transfer on ANTS — the official CERFA is authoritative.',
   fields: [
-    f('ancien_proprietaire', 'Ancien propriétaire', 'text', { required: true, section: 'Parties' }),
-    f('nouveau_proprietaire', 'Nouveau propriétaire', 'text', { required: true, profileKey: 'full_name', section: 'Parties' }),
+    f('ancien_nom', 'Ancien propriétaire — nom / prénom ou raison sociale', 'text', {
+      required: true,
+      section: 'Ancien propriétaire',
+    }),
+    f('ancien_adresse', 'Adresse', 'text', { required: true, section: 'Ancien propriétaire' }),
+    f('ancien_cp_ville', 'Code postal / commune', 'text', { section: 'Ancien propriétaire' }),
+    f('nouveau_nom', 'Nouveau propriétaire — nom / prénom ou raison sociale', 'text', {
+      required: true,
+      profileKey: 'full_name',
+      section: 'Nouveau propriétaire',
+    }),
+    f('nouveau_adresse', 'Adresse', 'text', { required: true, profileKey: 'location', section: 'Nouveau propriétaire' }),
+    f('nouveau_cp_ville', 'Code postal / commune', 'text', { section: 'Nouveau propriétaire' }),
     f('marque', 'Marque', 'text', { required: true, section: 'Véhicule' }),
     f('type', 'Type / variante / version', 'text', { section: 'Véhicule' }),
     f('vin', 'Numéro d’identification (VIN)', 'text', { required: true, section: 'Véhicule' }),
     f('immat', 'Numéro d’immatriculation', 'text', { required: true, section: 'Véhicule' }),
     f('date_1ere', 'Date de 1re immatriculation', 'date', { section: 'Véhicule' }),
-    f('kilometrage', 'Kilométrage', 'number', { section: 'Véhicule' }),
+    f('kilometrage', 'Kilométrage au compteur', 'number', { required: true, section: 'Véhicule' }),
     f('date_cession', 'Date de cession', 'date', { required: true, section: 'Cession' }),
     f('heure_cession', 'Heure de cession', 'text', { section: 'Cession' }),
-    f('prix', 'Prix de cession (€) — si applicable', 'number', { section: 'Cession' }),
+    f('prix', 'Prix de cession (€)', 'number', { section: 'Cession' }),
+  ],
+}
+
+const frVehicleCommercial: OfficialFormPack = {
+  ...frVehicle,
+  modelName: 'CERFA 13703* — Cession (professionnel / société)',
+  noticeLocal:
+    'Même CERFA 13703* pour cession pro. Indiquez SIRET / raison sociale. Déclaration obligatoire sur ANTS.',
+  noticeEn: 'Same CERFA 13703* for professional transfer — include SIRET / company name. File on ANTS.',
+  fields: [
+    f('ancien_raison', 'Ancien propriétaire — raison sociale', 'text', {
+      required: true,
+      profileKey: 'company_name',
+      section: 'Ancien propriétaire (pro)',
+    }),
+    f('ancien_siret', 'SIRET', 'text', { section: 'Ancien propriétaire (pro)' }),
+    f('ancien_adresse', 'Adresse', 'text', { required: true, section: 'Ancien propriétaire (pro)' }),
+    f('nouveau_raison', 'Nouveau propriétaire — raison sociale', 'text', {
+      required: true,
+      section: 'Nouveau propriétaire (pro)',
+    }),
+    f('nouveau_siret', 'SIRET', 'text', { section: 'Nouveau propriétaire (pro)' }),
+    f('nouveau_adresse', 'Adresse', 'text', { required: true, profileKey: 'location', section: 'Nouveau propriétaire (pro)' }),
+    f('marque', 'Marque', 'text', { required: true, section: 'Véhicule' }),
+    f('type', 'Type / variante / version', 'text', { section: 'Véhicule' }),
+    f('vin', 'VIN', 'text', { required: true, section: 'Véhicule' }),
+    f('immat', 'Immatriculation', 'text', { required: true, section: 'Véhicule' }),
+    f('kilometrage', 'Kilométrage', 'number', { required: true, section: 'Véhicule' }),
+    f('date_cession', 'Date de cession', 'date', { required: true, section: 'Cession' }),
+    f('heure_cession', 'Heure', 'text', { section: 'Cession' }),
+    f('prix_ht', 'Prix HT (€)', 'number', { section: 'Cession' }),
+    f('tva', 'TVA (€)', 'number', { section: 'Cession' }),
+    f('prix_ttc', 'Prix TTC (€)', 'number', { required: true, section: 'Cession' }),
   ],
 }
 
@@ -479,27 +587,74 @@ const esRental: OfficialFormPack = {
 }
 
 const esVehicle: OfficialFormPack = {
-  modelName: 'Contrato de compraventa de vehículo + transferencia DGT',
+  modelName: 'Contrato de compraventa de vehículo + datos para transferencia DGT',
   language: 'es',
   sourceName: 'DGT — Transferencia de vehículos',
-  sourceUrl: 'https://www.dgt.es/nuestros-servicios/tu-vehiculo/cambio-de-titularidad-de-un-vehiculo/',
+  sourceUrl: 'https://sede.dgt.gob.es/es/tramites-y-multas/tu-vehiculo/transferencias-de-vehiculos/',
   lastVerified: null,
   noticeLocal:
-    'Campos del contrato privado de compraventa y datos necesarios para la transferencia en la DGT. Complete el trámite oficial en DGT.',
-  noticeEn: 'Private sale fields plus data needed for DGT ownership transfer.',
+    'Campos del contrato privado y datos habituales del expediente DGT. El cambio de titularidad se formaliza en la sede DGT / gestoría — no sustituye el trámite oficial.',
+  noticeEn:
+    'Private sale + usual DGT transfer data. Complete ownership change on the official DGT portal / gestor.',
   fields: [
-    f('vendedor', 'Vendedor', 'text', { required: true, section: 'Partes' }),
-    f('vendedor_nif', 'NIF/NIE vendedor', 'text', { section: 'Partes' }),
-    f('comprador', 'Comprador', 'text', { required: true, profileKey: 'full_name', section: 'Partes' }),
-    f('comprador_nif', 'NIF/NIE comprador', 'text', { section: 'Partes' }),
+    f('vendedor', 'Vendedor — nombre / razón social', 'text', { required: true, section: 'Vendedor' }),
+    f('vendedor_nif', 'NIF/NIE/CIF vendedor', 'text', { required: true, section: 'Vendedor' }),
+    f('vendedor_domicilio', 'Domicilio vendedor', 'text', { section: 'Vendedor' }),
+    f('comprador', 'Comprador — nombre / razón social', 'text', {
+      required: true,
+      profileKey: 'full_name',
+      section: 'Comprador',
+    }),
+    f('comprador_nif', 'NIF/NIE/CIF comprador', 'text', { required: true, section: 'Comprador' }),
+    f('comprador_domicilio', 'Domicilio comprador', 'text', { profileKey: 'location', section: 'Comprador' }),
     f('marca', 'Marca', 'text', { required: true, section: 'Vehículo' }),
     f('modelo', 'Modelo', 'text', { required: true, section: 'Vehículo' }),
     f('matricula', 'Matrícula', 'text', { required: true, section: 'Vehículo' }),
     f('bastidor', 'Número de bastidor (VIN)', 'text', { required: true, section: 'Vehículo' }),
     f('fecha_matriculacion', 'Fecha de primera matriculación', 'date', { section: 'Vehículo' }),
-    f('kilometros', 'Kilómetros', 'number', { section: 'Vehículo' }),
-    f('precio', 'Precio (€)', 'number', { required: true, section: 'Precio' }),
-    f('fecha_entrega', 'Fecha de entrega', 'date', { section: 'Entrega' }),
+    f('kilometros', 'Kilómetros', 'number', { required: true, section: 'Vehículo' }),
+    f('itv', 'ITV vigente hasta', 'date', { section: 'Vehículo' }),
+    f('precio', 'Precio (€)', 'number', { required: true, section: 'Precio y entrega' }),
+    f('forma_pago', 'Forma de pago', 'textarea', { section: 'Precio y entrega' }),
+    f('fecha_entrega', 'Fecha de entrega', 'date', { required: true, section: 'Precio y entrega' }),
+    f('documentacion', 'Documentación entregada', 'textarea', {
+      section: 'Precio y entrega',
+      placeholder: 'Permiso de circulación, ficha técnica, ITV…',
+    }),
+    f('fecha_firma', 'Fecha de firma', 'date', { section: 'Firma' }),
+  ],
+}
+
+const esVehicleCommercial: OfficialFormPack = {
+  ...esVehicle,
+  modelName: 'Compraventa de vehículo entre empresas + transferencia DGT',
+  noticeLocal:
+    'Compraventa mercantil (CIF, factura/IVA). La transferencia se tramita en DGT. Revise obligaciones fiscales (IVA / IGIC).',
+  noticeEn: 'B2B Spanish vehicle sale (CIF, invoice/VAT) + DGT transfer data.',
+  fields: [
+    f('vendedor', 'Vendedor — razón social', 'text', {
+      required: true,
+      profileKey: 'company_name',
+      section: 'Vendedor (empresa)',
+    }),
+    f('vendedor_cif', 'CIF vendedor', 'text', { required: true, section: 'Vendedor (empresa)' }),
+    f('vendedor_domicilio', 'Domicilio fiscal', 'text', { section: 'Vendedor (empresa)' }),
+    f('comprador', 'Comprador — razón social', 'text', { required: true, section: 'Comprador (empresa)' }),
+    f('comprador_cif', 'CIF comprador', 'text', { required: true, section: 'Comprador (empresa)' }),
+    f('comprador_domicilio', 'Domicilio fiscal', 'text', {
+      profileKey: 'location',
+      section: 'Comprador (empresa)',
+    }),
+    f('marca', 'Marca', 'text', { required: true, section: 'Vehículo' }),
+    f('modelo', 'Modelo', 'text', { required: true, section: 'Vehículo' }),
+    f('matricula', 'Matrícula', 'text', { required: true, section: 'Vehículo' }),
+    f('bastidor', 'Bastidor (VIN)', 'text', { required: true, section: 'Vehículo' }),
+    f('kilometros', 'Kilómetros', 'number', { required: true, section: 'Vehículo' }),
+    f('base', 'Base imponible (€)', 'number', { required: true, section: 'Factura / IVA' }),
+    f('iva', 'IVA (€)', 'number', { section: 'Factura / IVA' }),
+    f('total', 'Total (€)', 'number', { required: true, section: 'Factura / IVA' }),
+    f('factura_n', 'Nº factura', 'text', { section: 'Factura / IVA' }),
+    f('fecha_entrega', 'Fecha de entrega', 'date', { required: true, section: 'Entrega' }),
     f('fecha_firma', 'Fecha de firma', 'date', { section: 'Firma' }),
   ],
 }
@@ -847,6 +1002,7 @@ type SlugKey =
   | 'residential-rental-contract'
   | 'commercial-rental-contract'
   | 'vehicle-purchase-contract'
+  | 'vehicle-purchase-commercial'
   | 'vehicle-rental-contract'
   | 'employment-contract'
   | 'renovation-contract'
@@ -865,6 +1021,7 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
     'residential-rental-contract': deRental,
     'commercial-rental-contract': { ...deRental, modelName: 'Gewerberaummietvertrag — Felder (BGB)' },
     'vehicle-purchase-contract': deVehicle,
+    'vehicle-purchase-commercial': deVehicleCommercial,
     'employment-contract': deEmployment,
     'renovation-contract': deWorks,
     'construction-contract': deWorks,
@@ -913,6 +1070,11 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
       sourceName: 'oesterreich.gv.at — Fahrzeug',
       sourceUrl: 'https://www.oesterreich.gv.at/',
     },
+    'vehicle-purchase-commercial': {
+      ...deVehicleCommercial,
+      sourceName: 'oesterreich.gv.at — Fahrzeug / Gewerbe',
+      sourceUrl: 'https://www.oesterreich.gv.at/',
+    },
     'business-registration': {
       ...deBusiness,
       modelName: 'Gewerbeanmeldung Österreich',
@@ -932,6 +1094,7 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
       sourceUrl: 'https://www.service-public.fr/professionnels-entreprises/vosdroits/N24268',
     },
     'vehicle-purchase-contract': frVehicle,
+    'vehicle-purchase-commercial': frVehicleCommercial,
     'employment-contract': frEmployment,
     'renovation-contract': frWorks,
     'construction-contract': frWorks,
@@ -948,8 +1111,16 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
     },
     'vehicle-purchase-contract': {
       ...frVehicle,
-      sourceName: 'DIV / Belgium.be',
-      sourceUrl: 'https://www.belgium.be/',
+      sourceName: 'DIV / Belgium.be / Car-Pass',
+      sourceUrl: 'https://www.car-pass.be/',
+      noticeLocal:
+        'Champs type cession + Car-Pass obligatoire en Belgique. Vérifier sur car-pass.be et mobility.belgium.be.',
+      noticeEn: 'Belgian transfer fields + mandatory Car-Pass — verify on car-pass.be.',
+    },
+    'vehicle-purchase-commercial': {
+      ...frVehicleCommercial,
+      sourceName: 'DIV / Belgium.be / Car-Pass',
+      sourceUrl: 'https://www.car-pass.be/',
     },
     'business-registration': {
       ...frBusiness,
@@ -968,6 +1139,7 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
       modelName: 'Contrato de arrendamiento de local de negocio',
     },
     'vehicle-purchase-contract': esVehicle,
+    'vehicle-purchase-commercial': esVehicleCommercial,
     'vehicle-rental-contract': {
       ...esVehicle,
       modelName: 'Contrato de alquiler de vehículo (particular / renting)',
@@ -1072,6 +1244,32 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
     'residential-rental-contract': plRental,
     'commercial-rental-contract': plRental,
     'vehicle-purchase-contract': plVehicle,
+    'vehicle-purchase-commercial': {
+      ...plVehicle,
+      modelName: 'Umowa kupna-sprzedaży pojazdu (firma / VAT) + CEPiK',
+      noticeLocal:
+        'Pola umowy firmowej + dane do rejestracji. Sprawdź historię na historia-pojazdu.gov.pl i dopełnij formalności w urzędzie.',
+      noticeEn: 'Polish B2B vehicle sale fields + CEPiK history check.',
+      fields: [
+        f('sprzedawca', 'Sprzedawca — firma', 'text', {
+          required: true,
+          profileKey: 'company_name',
+          section: 'Strony',
+        }),
+        f('nip_s', 'NIP sprzedawcy', 'text', { section: 'Strony' }),
+        f('nabywca', 'Nabywca — firma', 'text', { required: true, section: 'Strony' }),
+        f('nip_n', 'NIP nabywcy', 'text', { section: 'Strony' }),
+        f('marka', 'Marka', 'text', { required: true, section: 'Pojazd' }),
+        f('model', 'Model', 'text', { required: true, section: 'Pojazd' }),
+        f('vin', 'VIN', 'text', { required: true, section: 'Pojazd' }),
+        f('rejestracja', 'Nr rejestracyjny', 'text', { section: 'Pojazd' }),
+        f('przebieg', 'Przebieg (km)', 'number', { required: true, section: 'Pojazd' }),
+        f('netto', 'Cena netto (PLN)', 'number', { required: true, section: 'Cena / VAT' }),
+        f('vat', 'VAT (PLN)', 'number', { section: 'Cena / VAT' }),
+        f('brutto', 'Cena brutto (PLN)', 'number', { required: true, section: 'Cena / VAT' }),
+        f('data_umowy', 'Data umowy', 'date', { required: true, section: 'Podpis' }),
+      ],
+    },
     'business-registration': plBusiness,
     'employment-contract': {
       ...plRental,
@@ -1105,6 +1303,31 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
     'residential-rental-contract': itRental,
     'commercial-rental-contract': itRental,
     'vehicle-purchase-contract': itVehicle,
+    'vehicle-purchase-commercial': {
+      ...itVehicle,
+      modelName: 'Passaggio di proprietà — vendita tra imprese (PRA/ACI)',
+      noticeLocal:
+        'Campi per vendita tra imprese. Completare il passaggio al PRA/ACI e verificare su Portale dell’Automobilista.',
+      noticeEn: 'Italian B2B vehicle sale — complete PRA/ACI transfer.',
+      fields: [
+        f('venditore', 'Venditore — ragione sociale', 'text', {
+          required: true,
+          profileKey: 'company_name',
+          section: 'Parti',
+        }),
+        f('piva_v', 'P. IVA venditore', 'text', { section: 'Parti' }),
+        f('acquirente', 'Acquirente — ragione sociale', 'text', { required: true, section: 'Parti' }),
+        f('piva_a', 'P. IVA acquirente', 'text', { section: 'Parti' }),
+        f('marca', 'Marca', 'text', { required: true, section: 'Veicolo' }),
+        f('modello', 'Modello', 'text', { required: true, section: 'Veicolo' }),
+        f('telaio', 'Telaio', 'text', { required: true, section: 'Veicolo' }),
+        f('targa', 'Targa', 'text', { required: true, section: 'Veicolo' }),
+        f('prezzo_imponibile', 'Imponibile (€)', 'number', { required: true, section: 'Prezzo / IVA' }),
+        f('iva', 'IVA (€)', 'number', { section: 'Prezzo / IVA' }),
+        f('prezzo', 'Totale (€)', 'number', { required: true, section: 'Prezzo / IVA' }),
+        f('data', 'Data', 'date', { required: true, section: 'Firma' }),
+      ],
+    },
     'business-registration': itBusiness,
     'employment-contract': {
       ...itRental,
@@ -1128,6 +1351,30 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
     'residential-rental-contract': ptRental,
     'commercial-rental-contract': ptRental,
     'vehicle-purchase-contract': ptVehicle,
+    'vehicle-purchase-commercial': {
+      ...ptVehicle,
+      modelName: 'Compra e venda de veículo (empresa) + registo IMT',
+      noticeLocal: 'Campos B2B + registo IMT. Verifique no portal IMT antes de assinar.',
+      noticeEn: 'Portuguese B2B vehicle sale + IMT registration fields.',
+      fields: [
+        f('vendedor', 'Vendedor — firma', 'text', {
+          required: true,
+          profileKey: 'company_name',
+          section: 'Partes',
+        }),
+        f('nif_v', 'NIF vendedor', 'text', { section: 'Partes' }),
+        f('comprador', 'Comprador — firma', 'text', { required: true, section: 'Partes' }),
+        f('nif_c', 'NIF comprador', 'text', { section: 'Partes' }),
+        f('marca', 'Marca', 'text', { required: true, section: 'Veículo' }),
+        f('modelo', 'Modelo', 'text', { required: true, section: 'Veículo' }),
+        f('matricula', 'Matrícula', 'text', { required: true, section: 'Veículo' }),
+        f('quadro', 'Nº de quadro', 'text', { required: true, section: 'Veículo' }),
+        f('preco_s_iva', 'Preço s/ IVA (€)', 'number', { required: true, section: 'Preço' }),
+        f('iva', 'IVA (€)', 'number', { section: 'Preço' }),
+        f('preco', 'Preço c/ IVA (€)', 'number', { required: true, section: 'Preço' }),
+        f('data', 'Data', 'date', { required: true, section: 'Assinatura' }),
+      ],
+    },
     'business-registration': ptBusiness,
     'employment-contract': {
       ...ptRental,
@@ -1160,6 +1407,30 @@ const BY_COUNTRY: Record<string, Partial<Record<SlugKey, OfficialFormPack>>> = {
     'residential-rental-contract': nlRental,
     'commercial-rental-contract': nlRental,
     'vehicle-purchase-contract': nlVehicle,
+    'vehicle-purchase-commercial': {
+      ...nlVehicle,
+      modelName: 'Koopovereenkomst voertuig (zakelijk) + RDW',
+      noticeLocal: 'Zakelijke koopvelden. Controleer het voertuig via RDW OVI en rond overschrijving af.',
+      noticeEn: 'Dutch B2B vehicle sale fields — check via RDW OVI.',
+      fields: [
+        f('verkoper', 'Verkoper — bedrijfsnaam', 'text', {
+          required: true,
+          profileKey: 'company_name',
+          section: 'Partijen',
+        }),
+        f('kvk_v', 'KvK-nummer verkoper', 'text', { section: 'Partijen' }),
+        f('koper', 'Koper — bedrijfsnaam', 'text', { required: true, section: 'Partijen' }),
+        f('kvk_k', 'KvK-nummer koper', 'text', { section: 'Partijen' }),
+        f('merk', 'Merk', 'text', { required: true, section: 'Voertuig' }),
+        f('model', 'Model', 'text', { required: true, section: 'Voertuig' }),
+        f('vin', 'Chassisnummer', 'text', { required: true, section: 'Voertuig' }),
+        f('kenteken', 'Kenteken', 'text', { required: true, section: 'Voertuig' }),
+        f('prijs_ex', 'Prijs excl. btw (€)', 'number', { required: true, section: 'Prijs' }),
+        f('btw', 'Btw (€)', 'number', { section: 'Prijs' }),
+        f('prijs', 'Prijs incl. btw (€)', 'number', { required: true, section: 'Prijs' }),
+        f('datum', 'Datum', 'date', { required: true, section: 'Ondertekening' }),
+      ],
+    },
     'business-registration': nlBusiness,
     'employment-contract': {
       ...nlRental,
@@ -1197,6 +1468,17 @@ for (const code of Object.keys(BY_COUNTRY)) {
   if (bag['renovation-contract']) {
     bag['construction-contract'] ??= bag['renovation-contract']
     bag['services-agreement'] ??= bag['renovation-contract']
+  }
+  // Commercial vehicle falls back to EN commercial structure via getOfficialFormPack;
+  // if private exists but commercial missing, clone private with commercial title hint.
+  if (bag['vehicle-purchase-contract'] && !bag['vehicle-purchase-commercial']) {
+    const priv = bag['vehicle-purchase-contract']
+    bag['vehicle-purchase-commercial'] = {
+      ...priv,
+      modelName: `${priv.modelName} (commercial / B2B)`,
+      noticeEn: `${priv.noticeEn} Use company / VAT fields as required in ${code}.`,
+      noticeLocal: `${priv.noticeLocal} · ${code}: Firmen-/MwSt-Angaben ergänzen.`,
+    }
   }
 }
 
@@ -1303,6 +1585,33 @@ const EN_PACK: Partial<Record<SlugKey, OfficialFormPack>> = {
   'residential-rental-contract': enRental,
   'commercial-rental-contract': enRental,
   'vehicle-purchase-contract': enVehicle,
+  'vehicle-purchase-commercial': {
+    ...enVehicle,
+    modelName: 'Vehicle sale agreement (business / VAT) + DVLA / national transfer',
+    noticeLocal:
+      'B2B sale particulars. Complete V5C / national transfer and check MOT / DVLA (or national equivalent).',
+    noticeEn:
+      'B2B sale particulars. Complete V5C / national transfer and check MOT / DVLA (or national equivalent).',
+    fields: [
+      f('seller', 'Seller — company name', 'text', {
+        required: true,
+        profileKey: 'company_name',
+        section: 'Parties',
+      }),
+      f('seller_vat', 'Seller VAT / company number', 'text', { section: 'Parties' }),
+      f('buyer', 'Buyer — company name', 'text', { required: true, section: 'Parties' }),
+      f('buyer_vat', 'Buyer VAT / company number', 'text', { section: 'Parties' }),
+      f('make', 'Make', 'text', { required: true, section: 'Vehicle' }),
+      f('model', 'Model', 'text', { required: true, section: 'Vehicle' }),
+      f('vin', 'VIN', 'text', { required: true, section: 'Vehicle' }),
+      f('reg', 'Registration number', 'text', { required: true, section: 'Vehicle' }),
+      f('mileage', 'Mileage', 'number', { required: true, section: 'Vehicle' }),
+      f('net', 'Net price', 'number', { required: true, section: 'Price / VAT' }),
+      f('vat', 'VAT', 'number', { section: 'Price / VAT' }),
+      f('price', 'Gross price', 'number', { required: true, section: 'Price / VAT' }),
+      f('date', 'Date', 'date', { required: true, section: 'Signature' }),
+    ],
+  },
   'vehicle-rental-contract': {
     ...enVehicle,
     modelName: 'Vehicle hire / rental agreement — core fields',
@@ -1421,7 +1730,14 @@ export function fieldDisplayLabel(field: FormFieldDef, t: (key: string) => strin
 /** Attach official-model fields + source to a catalog document. */
 export function withOfficialForm(doc: DocumentRecord): DocumentRecord {
   const pack = getOfficialFormPack(doc.countryCode, doc.slug)
-  if (!pack) return doc
+  const withPortals =
+    isVehicleDocumentSlug(doc.slug)
+      ? { relatedPortals: vehicleCheckPortalsFor(doc.countryCode) }
+      : {}
+
+  if (!pack) {
+    return Object.keys(withPortals).length ? { ...doc, ...withPortals } : doc
+  }
   return {
     ...doc,
     language: pack.language,
@@ -1441,5 +1757,6 @@ export function withOfficialForm(doc: DocumentRecord): DocumentRecord {
     descriptionEn: pack.noticeEn,
     descriptionUk: pack.noticeLocal,
     templateNeedsLegalReview: true,
+    ...withPortals,
   }
 }
