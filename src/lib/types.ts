@@ -935,7 +935,7 @@ export interface Database {
           ends_at: string | null
 
           // Статус і модерація
-          status: 'draft' | 'pending_review' | 'active' | 'paused' | 'rejected' | 'expired' | 'deleted'
+          status: 'draft' | 'pending_review' | 'pending_payment' | 'active' | 'paused' | 'rejected' | 'expired' | 'deleted'
           review_note: string | null
           approved_by: string | null
           approved_at: string | null
@@ -972,7 +972,7 @@ export interface Database {
           cities?: string[] | null
           starts_at?: string | null
           ends_at?: string | null
-          status?: 'draft' | 'pending_review' | 'active' | 'paused' | 'rejected' | 'expired' | 'deleted'
+          status?: 'draft' | 'pending_review' | 'pending_payment' | 'active' | 'paused' | 'rejected' | 'expired' | 'deleted'
           review_note?: string | null
           approved_by?: string | null
           approved_at?: string | null
@@ -1004,7 +1004,7 @@ export interface Database {
           cities?: string[] | null
           starts_at?: string | null
           ends_at?: string | null
-          status?: 'draft' | 'pending_review' | 'active' | 'paused' | 'rejected' | 'expired' | 'deleted'
+          status?: 'draft' | 'pending_review' | 'pending_payment' | 'active' | 'paused' | 'rejected' | 'expired' | 'deleted'
           review_note?: string | null
           approved_by?: string | null
           approved_at?: string | null

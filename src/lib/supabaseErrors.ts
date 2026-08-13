@@ -21,6 +21,12 @@ export function formatSupabaseError(err: unknown, fallback: string): string {
   if (msg.includes('Requested function was not found') || msg.includes('NOT_FOUND')) {
     return 'Оплата Stripe тимчасово недоступна (edge function не розгорнута). Як власник — опублікуйте без оплати.'
   }
+  if (msg.includes('Invalid amount') || msg.includes('Missing required fields')) {
+    return 'Невірна сума або дані для Stripe. Перевірте географію/слоти або натисніть «Оплатити» ще раз.'
+  }
+  if (msg.includes('Failed to send a request to the Edge Function') || msg.includes('FunctionsFetchError')) {
+    return 'Немає звʼязку з сервером оплати. Перевірте інтернет і спробуйте знову.'
+  }
 
   return msg.length > 180 ? fallback + ' (' + msg.slice(0, 120) + '…)' : msg
 }

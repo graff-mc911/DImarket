@@ -639,7 +639,12 @@ export function Advertising() {
     setMediaType(media.mediaType)
     setGeoMode((data.geo_scope as GeoMode) || 'global')
     setSelectedCountries(data.countries ?? [])
-    setSelectedRegions(data.regions ?? [])
+    setSelectedRegions(
+      data.regions ??
+        (typeof campaign.region_name === 'string'
+          ? campaign.region_name.split(',').map((item) => item.trim()).filter(Boolean)
+          : []),
+    )
     setSelectedCities(data.cities ?? [])
     setStartsAt(toLocalInput(campaign.starts_at))
     setEndsAt(toLocalInput(campaign.ends_at))
@@ -728,11 +733,36 @@ export function Advertising() {
     if (startsAt && endsAt && new Date(endsAt) < new Date(startsAt)) {
       setFeedback({ type: 'error', text: t('advertising.dates.error') }); return
     }
+    if (!ownerAccount && totalPrice < 1) {
+      setFeedback({ type: 'error', text: t('advertising.error.zeroPrice') })
+      return
+    }
 
     // Keep a local draft while save/payment runs (in case Stripe redirect fails)
-    saveDraftNow()
+    writeAdCampaignDraft({
+      userId: user.id,
+      editingCampaignId,
+      title,
+      description,
+      linkUrl,
+      startsAt,
+      endsAt,
+      selectedSlots,
+      geoMode,
+      selectedCountries,
+      selectedRegions,
+      selectedCities,
+      durationWeeks,
+      mediaType,
+      mediaUrl,
+      slideUrls,
+      mediaStyle,
+      slotMedia,
+    })
 
     setSaving(true); setFeedback(null)
+
+    let insertedId: string | null = null
 
     try {
       await ensureAdvertiserProfile()
@@ -759,6 +789,7 @@ export function Advertising() {
         placements:  selectedSlots,
         geo_scope:   geoMode,
         countries:   selectedCountries,
+        regions:     selectedRegions,
         cities:      targetCities,
         country_name: selectedCountries[0] ?? null,
         city_name:   targetCities[0] ?? null,
@@ -768,6 +799,9 @@ export function Advertising() {
         starts_at:   startDate.toISOString(),
         ends_at:     endDate.toISOString(),
         updated_at:  nowIso,
+        // Quoted amount until Stripe confirms (shown in "My campaigns")
+        price_paid: ownerAccount ? 0 : totalPrice,
+        currency_paid: 'eur',
       }
 
       if (editingCampaignId) {
@@ -803,13 +837,16 @@ export function Advertising() {
                 currency_paid: 'eur',
                 review_note: ownerManagedReviewNote('from /advertising'),
               }
-            : {}),
+            : {
+                review_note: `quoted_eur:${totalPrice}`,
+              }),
         })
         .select('id')
         .single()
 
       if (error) throw error
       if (!inserted?.id) throw new Error('Campaign insert returned no id')
+      insertedId = inserted.id as string
 
       if (ownerAccount) {
         setFeedback({ type: 'success', text: t('advertising.successOwner') })
@@ -821,11 +858,13 @@ export function Advertising() {
 
       const stripeResult = await createCheckoutSession({
         payment_type: 'ad_campaign',
-        reference_id: inserted.id,
+        reference_id: insertedId,
         user_id:      user.id,
         amount:       eurosToCents(totalPrice),
         currency:     'eur',
         description:  'DImarket реклама: ' + title.trim(),
+        success_url:  window.location.origin + '/checkout?type=ad_campaign',
+        cancel_url:   window.location.origin + '/advertising',
       })
 
       clearAdCampaignDraft()
@@ -833,9 +872,115 @@ export function Advertising() {
 
     } catch (err) {
       console.error('Помилка:', err)
+      await loadOwnCampaigns()
+      if (insertedId) {
+        setFeedback({
+          type: 'error',
+          text: t('advertising.error.payAfterSave').replace(
+            '{detail}',
+            formatSupabaseError(err, t('advertising.error.save')),
+          ),
+        })
+      } else {
+        setFeedback({
+          type: 'error',
+          text: formatSupabaseError(err, t('advertising.error.save')),
+        })
+      }
+      setSaving(false)
+    }
+  }
+
+  const payPendingCampaign = async (campaign: AdCampaign) => {
+    if (!user) {
+      setFeedback({ type: 'error', text: t('advertising.error.noAuth') })
+      return
+    }
+    if (ownerAccount) {
+      setSaving(true)
+      try {
+        const { error } = await (supabase.from('ad_campaigns') as any)
+          .update({
+            status: 'active',
+            approved_by: user.id,
+            approved_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', campaign.id)
+          .eq('advertiser_id', user.id)
+        if (error) throw error
+        setFeedback({ type: 'success', text: t('advertising.successOwner') })
+        await loadOwnCampaigns()
+      } catch (err) {
+        setFeedback({
+          type: 'error',
+          text: formatSupabaseError(err, t('advertising.error.save')),
+        })
+      } finally {
+        setSaving(false)
+      }
+      return
+    }
+
+    const data = campaign as AdCampaign & {
+      placements?: string[]
+      geo_scope?: GeoMode
+      countries?: string[]
+      regions?: string[]
+      cities?: string[]
+      price_paid?: number | null
+      review_note?: string | null
+    }
+    const slots =
+      data.placements && data.placements.length > 0
+        ? data.placements
+        : [campaign.placement]
+    const scope = (data.geo_scope as GeoMode) || 'global'
+    const countries = data.countries ?? []
+    const regions = data.regions ?? []
+    const cities =
+      data.cities && data.cities.length > 0
+        ? data.cities
+        : resolveTargetCities(scope, geoData, countries, regions, [])
+    const units = billingCityUnits(scope, geoData, cities)
+    const startMs = campaign.starts_at ? new Date(campaign.starts_at).getTime() : Date.now()
+    const endMs = campaign.ends_at
+      ? new Date(campaign.ends_at).getTime()
+      : startMs + 7 * 24 * 60 * 60 * 1000
+    const weeks = Math.max(1, Math.ceil((endMs - startMs) / (7 * 24 * 60 * 60 * 1000)))
+    const quotedFromNote = Number(
+      String(data.review_note || '').match(/quoted_eur:(\d+(?:\.\d+)?)/)?.[1] || '',
+    )
+    const amountEur =
+      (typeof data.price_paid === 'number' && data.price_paid > 0
+        ? data.price_paid
+        : quotedFromNote > 0
+          ? quotedFromNote
+          : units * PRICE_PER_CITY_PER_WEEK * slots.length * weeks)
+
+    if (amountEur < 1) {
+      setFeedback({ type: 'error', text: t('advertising.error.zeroPrice') })
+      return
+    }
+
+    setSaving(true)
+    setFeedback(null)
+    try {
+      const stripeResult = await createCheckoutSession({
+        payment_type: 'ad_campaign',
+        reference_id: campaign.id,
+        user_id: user.id,
+        amount: eurosToCents(amountEur),
+        currency: 'eur',
+        description: 'DImarket реклама: ' + campaign.title,
+        success_url: window.location.origin + '/checkout?type=ad_campaign',
+        cancel_url: window.location.origin + '/advertising',
+      })
+      window.location.href = stripeResult.url
+    } catch (err) {
       setFeedback({
         type: 'error',
-        text: formatSupabaseError(err, t('advertising.error.save')),
+        text: formatSupabaseError(err, t('advertising.error.pay')),
       })
       setSaving(false)
     }
@@ -1227,7 +1372,9 @@ export function Advertising() {
                       campaign={campaign}
                       formatter={createdAtFormatter}
                       t={t}
+                      paying={saving}
                       onEdit={() => loadCampaignIntoForm(campaign)}
+                      onPay={() => void payPendingCampaign(campaign)}
                     />
                   ))}
                 </div>
@@ -1282,30 +1429,31 @@ export function Advertising() {
 
 // ── Підкомпоненти ──────────────────────────────────────────────────────────────
 
-function CampaignCard({ campaign, formatter, t, onEdit }: {
+function CampaignCard({ campaign, formatter, t, onEdit, onPay, paying }: {
   campaign:        AdCampaign
   formatter:       Intl.DateTimeFormat
   t:               (key: TranslationKey) => string
   onEdit:          () => void
+  onPay:           () => void
+  paying:          boolean
 }) {
   const data      = campaign as any
   const displayPlacements = (data.placements?.length ? data.placements : [campaign.placement]) as string[]
   const countries  = data.countries  ?? (campaign.country_name ? [campaign.country_name] : [])
   const fallbackRegions = typeof campaign.region_name === 'string'
-    ? campaign.region_name.split(',').map((item) => item.trim()).filter(Boolean)
+    ? campaign.region_name.split(',').map((item: string) => item.trim()).filter(Boolean)
     : []
   const fallbackCities = typeof campaign.city_name === 'string'
-    ? campaign.city_name.split(',').map((item) => item.trim()).filter(Boolean)
+    ? campaign.city_name.split(',').map((item: string) => item.trim()).filter(Boolean)
     : []
   const regions    = Array.isArray(data.regions) && data.regions.length > 0 ? data.regions : fallbackRegions
   const cities     = Array.isArray(data.cities) && data.cities.length > 0 ? data.cities : fallbackCities
   const amountValue =
-    typeof data.price_total === 'number'
-      ? data.price_total
-      : typeof data.price_paid === 'number'
-        ? data.price_paid
-        : null
+    typeof data.price_paid === 'number'
+      ? data.price_paid
+      : null
   const amountCurrency = String(data.currency ?? data.currency_paid ?? 'EUR').toUpperCase()
+  const needsPay = campaign.status === 'pending_payment'
 
   return (
     <div className="glass-card p-4">
@@ -1330,6 +1478,17 @@ function CampaignCard({ campaign, formatter, t, onEdit }: {
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2">
           <StatusBadge status={campaign.status} t={t} />
+          {needsPay ? (
+            <button
+              type="button"
+              data-testid="ad-campaign-pay"
+              disabled={paying}
+              onClick={onPay}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#007185] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
+            >
+              {t('advertising.myCampaigns.payNow')}
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={onEdit}

@@ -119,8 +119,23 @@ export function Checkout() {
         .limit(1)
         .maybeSingle()
 
-      // Webhook may already activate and record payment.
-      if (existingPayment?.id) return
+      // Webhook may already record payment — still force-activate ads stuck in pending_payment.
+      if (existingPayment?.id) {
+        if (paymentType === 'ad_campaign' && referenceId) {
+          const amountEur = parseFloat(metadata?.amount_total || '0') / 100
+          await supabase
+            .from('ad_campaigns')
+            .update({
+              status: 'active',
+              stripe_payment_id: sessionId,
+              price_paid: amountEur > 0 ? amountEur : null,
+              currency_paid: metadata?.currency || 'eur',
+            })
+            .eq('id', referenceId)
+            .eq('advertiser_id', user!.id)
+        }
+        return
+      }
     }
 
     const now         = new Date()
@@ -182,7 +197,7 @@ export function Checkout() {
         if (referenceId) {
           const amountEur =
             parseFloat(metadata?.amount_total || '0') / 100
-          await supabase
+          const { data: activated, error: activateError } = await supabase
             .from('ad_campaigns')
             .update({
               status:            'active',
@@ -192,6 +207,12 @@ export function Checkout() {
             })
             .eq('id', referenceId)
             .eq('advertiser_id', user!.id)
+            .select('id')
+            .maybeSingle()
+          if (activateError) throw activateError
+          if (!activated?.id) {
+            console.error('Checkout: ad_campaign activate matched 0 rows', referenceId)
+          }
         }
         break
 
@@ -208,7 +229,7 @@ export function Checkout() {
         : null
 
     // Записуємо платіж в таблицю payments
-    await supabase.from('payments').insert({
+    await (supabase.from('payments') as any).insert({
       user_id:             user!.id,
       payment_type:        paymentType,
       reference_id:        uuidRef,

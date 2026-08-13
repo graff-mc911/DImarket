@@ -56,8 +56,14 @@ Deno.serve(async (req: Request) => {
 
     const body = (await req.json()) as CheckoutBody
 
-    if (!body.payment_type || !body.user_id || !body.amount || !body.description) {
+    if (!body.payment_type || !body.user_id || !body.description) {
       return jsonResponse({ error: 'Missing required fields' }, 400)
+    }
+    if (typeof body.amount !== 'number' || !Number.isFinite(body.amount) || body.amount < 50) {
+      return jsonResponse(
+        { error: 'Invalid amount (minimum 0.50 in currency minor units)' },
+        400,
+      )
     }
 
     if (body.user_id !== user.id) {

@@ -244,7 +244,8 @@ export function billingCityUnits(
   targetCities: string[],
 ): number {
   if (geoMode === 'global') return Math.max(1, allCitiesFromCatalog(catalog).length)
-  return Math.max(targetCities.length, 0)
+  // Never bill 0€ for a valid geo selection (empty catalog expansion must not block Stripe).
+  return Math.max(1, targetCities.length)
 }
 
 export function isGeoSelectionValid(

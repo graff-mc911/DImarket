@@ -484,7 +484,7 @@ async function activateService(
     }
     case 'ad_campaign': {
       if (!referenceId) break
-      const { error } = await admin
+      const { data: activated, error } = await admin
         .from('ad_campaigns')
         .update({
           status: 'active',
@@ -494,7 +494,10 @@ async function activateService(
         })
         .eq('id', referenceId)
         .eq('advertiser_id', userId)
+        .select('id')
+        .maybeSingle()
       if (error) console.error('stripe-webhook: ad_campaign', error)
+      else if (!activated?.id) console.error('stripe-webhook: ad_campaign 0 rows', referenceId)
       break
     }
     default:
