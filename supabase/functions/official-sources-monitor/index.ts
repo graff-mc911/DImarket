@@ -2,7 +2,13 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
 
-type Action = 'cron_run' | 'status' | 'check_now' | 'review_change'
+type Action =
+  | 'cron_run'
+  | 'status'
+  | 'check_now'
+  | 'review_change'
+  | 'publish_version'
+  | 'rollback_version'
 
 type Body = {
   action?: Action
@@ -10,6 +16,8 @@ type Body = {
     changeId?: string
     decision?: 'approved' | 'rejected' | 'published'
     notes?: string
+    versionId?: string
+    documentId?: string
   }
 }
 
@@ -32,8 +40,7 @@ async function sha256Hex(text: string): Promise<string> {
 }
 
 async function hashNormalizedContent(raw: string): Promise<string> {
-  const normalized = normalizeSourceContent(raw)
-  return `sha256_${await sha256Hex(normalized)}`
+  return `sha256_${await sha256Hex(normalizeSourceContent(raw))}`
 }
 
 function excerptNormalized(raw: string, max = 400): string {
@@ -60,6 +67,25 @@ function severityForChange(
     return 'medium'
   }
   return 'low'
+}
+
+async function sendTelegramAlert(text: string): Promise<boolean> {
+  const token = Deno.env.get('TELEGRAM_BOT_TOKEN')
+  const chatId =
+    Deno.env.get('TELEGRAM_ADMIN_CHAT_ID') ??
+    Deno.env.get('TELEGRAM_CHANNEL_ID')
+  if (!token || !chatId) return false
+  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: text.slice(0, 4096),
+      disable_web_page_preview: true,
+    }),
+  })
+  const data = await res.json()
+  return Boolean(data.ok)
 }
 
 async function requireAdmin(req: Request) {
@@ -93,27 +119,25 @@ async function requireAdmin(req: Request) {
 }
 
 function requireCronOrAdmin(req: Request) {
-  const cronSecret = Deno.env.get('OFFICIAL_SOURCES_CRON_SECRET') ?? Deno.env.get('MARKETING_CRON_SECRET')
+  const cronSecret =
+    Deno.env.get('OFFICIAL_SOURCES_CRON_SECRET') ?? Deno.env.get('MARKETING_CRON_SECRET')
   const header = req.headers.get('x-cron-secret')
   if (cronSecret && header && header === cronSecret) {
     const admin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     )
-    return Promise.resolve({ ok: true as const, admin, userId: null as string | null, via: 'cron' as const })
+    return Promise.resolve({
+      ok: true as const,
+      admin,
+      userId: null as string | null,
+      via: 'cron' as const,
+    })
   }
-  return requireAdmin(req).then((r) =>
-    r.ok ? { ...r, via: 'admin' as const } : r,
-  )
+  return requireAdmin(req).then((r) => (r.ok ? { ...r, via: 'admin' as const } : r))
 }
 
-async function fetchSource(url: string): Promise<{
-  ok: boolean
-  status: number | null
-  body: string
-  error?: string
-  durationMs: number
-}> {
+async function fetchSource(url: string) {
   const started = Date.now()
   try {
     const res = await fetch(url, {
@@ -141,16 +165,116 @@ async function fetchSource(url: string): Promise<{
   }
 }
 
+async function notifyChangeIfNeeded(
+  admin: ReturnType<typeof createClient>,
+  changeId: string,
+  source: Record<string, unknown>,
+  severity: string,
+  summary: string,
+  affectedCount: number,
+) {
+  if (severity !== 'critical' && severity !== 'high') return
+
+  const { data: existing } = await admin
+    .from('source_changes')
+    .select('alert_sent_at')
+    .eq('id', changeId)
+    .maybeSingle()
+  if (existing?.alert_sent_at) return
+
+  const adminUrl = 'https://dimarket.app/admin/official-sources'
+  const text = [
+    '⚠️ DImarket — Official source changed',
+    '',
+    `Priority: ${severity.toUpperCase()}`,
+    `Source: ${source.source_name}`,
+    `Country: ${source.country_code}`,
+    `URL: ${source.source_url}`,
+    '',
+    summary,
+    '',
+    affectedCount > 0 ? `Affected documents: ${affectedCount}` : 'Affected documents: —',
+    '',
+    `Review: ${adminUrl}`,
+  ].join('\n')
+
+  const sent = await sendTelegramAlert(text)
+  if (sent) {
+    await admin
+      .from('source_changes')
+      .update({ alert_sent_at: new Date().toISOString() })
+      .eq('id', changeId)
+  }
+}
+
+async function activateEffectiveVersions(admin: ReturnType<typeof createClient>) {
+  const now = new Date().toISOString()
+  const { data: docs } = await admin
+    .from('legal_documents')
+    .select('id, current_version_id, doc_key')
+    .eq('is_published', true)
+
+  let switched = 0
+  for (const doc of docs ?? []) {
+    const { data: versions } = await admin
+      .from('document_versions')
+      .select('id, status, effective_from, effective_until, published_at, version_number')
+      .eq('document_id', doc.id)
+      .eq('status', 'published')
+
+    if (!versions?.length) continue
+
+    const t = Date.now()
+    const current = versions
+      .filter((v) => {
+        const from = v.effective_from ? new Date(v.effective_from).getTime() : 0
+        const until = v.effective_until ? new Date(v.effective_until).getTime() : null
+        if (v.effective_from && !Number.isNaN(from) && t < from) return false
+        if (until !== null && !Number.isNaN(until) && t > until) return false
+        return true
+      })
+      .sort((a, b) => {
+        const af = a.effective_from ? new Date(a.effective_from).getTime() : 0
+        const bf = b.effective_from ? new Date(b.effective_from).getTime() : 0
+        return bf - af
+      })[0]
+
+    if (!current || current.id === doc.current_version_id) continue
+
+    const others = versions.filter((v) => v.id !== current.id && v.status === 'published')
+    if (others.length) {
+      await admin
+        .from('document_versions')
+        .update({ status: 'superseded' })
+        .in(
+          'id',
+          others.map((v) => v.id),
+        )
+    }
+
+    await admin
+      .from('legal_documents')
+      .update({ current_version_id: current.id, updated_at: now })
+      .eq('id', doc.id)
+
+    await admin.from('document_audit_log').insert({
+      document_id: doc.id,
+      version_id: current.id,
+      action: 'effective_version_activated',
+      new_value: { version_number: current.version_number },
+      reason: 'Automatic switch after effective_from',
+    })
+    switched += 1
+  }
+  return switched
+}
+
 async function runChecks(
   admin: ReturnType<typeof createClient>,
   opts: { forceAll?: boolean } = {},
 ) {
   const now = new Date()
-  let query = admin
-    .from('official_sources')
-    .select('*')
-    .eq('is_active', true)
-
+  let query = admin.from('official_sources').select('*').eq('is_active', true)
   if (!opts.forceAll) {
     query = query.lte('next_verification_at', now.toISOString())
   }
@@ -161,7 +285,7 @@ async function runChecks(
   const results: Array<Record<string, unknown>> = []
 
   for (const source of sources ?? []) {
-    const fetched = await fetchSource(source.source_url)
+    const fetched = await fetchSource(source.source_url as string)
     const hash = fetched.body ? await hashNormalizedContent(fetched.body) : null
     const excerpt = fetched.body ? excerptNormalized(fetched.body) : null
     const oldHash = source.source_hash as string | null
@@ -173,7 +297,7 @@ async function runChecks(
       content_length: fetched.body?.length ?? 0,
       normalized_excerpt: excerpt,
       fetch_ok: fetched.ok,
-      error_message: fetched.error ?? null,
+      error_message: (fetched as { error?: string }).error ?? null,
       duration_ms: fetched.durationMs,
     })
 
@@ -184,11 +308,13 @@ async function runChecks(
     let content_status = source.content_status as string
     let last_changed_at = source.last_changed_at as string | null
     let changeCreated: string | null = null
+    let affectedCount = 0
 
     if (!fetched.ok || (fetched.status !== null && fetched.status >= 400)) {
       verification_status = fetched.status === 404 ? 'outdated' : 'unavailable'
       content_status = fetched.status === 404 ? 'not_found' : 'error'
 
+      const severity = severityForChange('unavailable', source.source_type as string)
       const { data: change } = await admin
         .from('source_changes')
         .insert({
@@ -196,15 +322,25 @@ async function runChecks(
           old_hash: oldHash,
           new_hash: hash,
           change_type: 'unavailable',
-          change_summary: `Source unreachable (HTTP ${fetched.status ?? 'n/a'}): ${fetched.error ?? 'fetch failed'}`,
-          old_excerpt: null,
+          change_summary: `Source unreachable (HTTP ${fetched.status ?? 'n/a'})`,
           new_excerpt: excerpt,
-          severity: severityForChange('unavailable', source.source_type),
+          severity,
           status: 'review_required',
         })
         .select('id')
         .maybeSingle()
       changeCreated = change?.id ?? null
+
+      if (changeCreated) {
+        await notifyChangeIfNeeded(
+          admin,
+          changeCreated,
+          source,
+          severity,
+          `Source unreachable (HTTP ${fetched.status ?? 'n/a'})`,
+          0,
+        )
+      }
 
       await admin
         .from('legal_documents')
@@ -223,7 +359,9 @@ async function runChecks(
         .select('id')
         .eq('primary_source_id', source.id)
       const affected = (docs ?? []).map((d: { id: string }) => d.id)
+      affectedCount = affected.length
 
+      const severity = severityForChange('content', source.source_type as string)
       const { data: change } = await admin
         .from('source_changes')
         .insert({
@@ -231,26 +369,37 @@ async function runChecks(
           old_hash: oldHash,
           new_hash: hash,
           change_type: 'content',
-          change_summary: 'Normalized content hash changed — review required before publishing legal updates.',
-          old_excerpt: null,
+          change_summary:
+            'Normalized content hash changed — review required before publishing legal updates.',
           new_excerpt: excerpt,
           affected_document_ids: affected,
-          severity: severityForChange('content', source.source_type),
+          severity,
           status: 'review_required',
         })
         .select('id')
         .maybeSingle()
       changeCreated = change?.id ?? null
 
+      if (changeCreated) {
+        await notifyChangeIfNeeded(
+          admin,
+          changeCreated,
+          source,
+          severity,
+          'Content hash changed at official source.',
+          affectedCount,
+        )
+      }
+
       if (affected.length) {
         await admin
           .from('legal_documents')
-          .update({
-            verification_status: 'needs_review',
-            updated_at: now.toISOString(),
-          })
+          .update({ verification_status: 'needs_review', updated_at: now.toISOString() })
           .in('id', affected)
       }
+    } else if (!oldHash && hash) {
+      verification_status = 'verified'
+      content_status = 'ok'
     } else {
       verification_status = 'verified'
       content_status = 'ok'
@@ -281,11 +430,146 @@ async function runChecks(
     })
   }
 
+  const effectiveSwitched = await activateEffectiveVersions(admin)
+
   return {
     checked: results.length,
     at: now.toISOString(),
+    effective_switched: effectiveSwitched,
     results,
   }
+}
+
+async function publishVersion(
+  admin: ReturnType<typeof createClient>,
+  userId: string,
+  versionId: string,
+) {
+  const now = new Date().toISOString()
+  const { data: version, error } = await admin
+    .from('document_versions')
+    .select('*, legal_documents(id, doc_key, current_version_id)')
+    .eq('id', versionId)
+    .maybeSingle()
+  if (error || !version) throw new Error('version_not_found')
+
+  const docId = version.document_id as string
+  const effectiveFrom = version.effective_from ?? now
+
+  const { data: siblings } = await admin
+    .from('document_versions')
+    .select('id, status')
+    .eq('document_id', docId)
+    .eq('status', 'published')
+
+  const toSupersede = (siblings ?? [])
+    .filter((v: { id: string }) => v.id !== versionId)
+    .map((v: { id: string }) => v.id)
+
+  if (toSupersede.length) {
+    await admin.from('document_versions').update({ status: 'superseded' }).in('id', toSupersede)
+  }
+
+  await admin
+    .from('document_versions')
+    .update({
+      status: 'published',
+      published_at: version.published_at ?? now,
+      effective_from: effectiveFrom,
+      verified_at: now,
+      verified_by: userId,
+    })
+    .eq('id', versionId)
+
+  await admin
+    .from('legal_documents')
+    .update({
+      current_version_id: versionId,
+      is_published: true,
+      verification_status: 'verified',
+      last_verified_at: now,
+      updated_at: now,
+    })
+    .eq('id', docId)
+
+  await admin.from('document_audit_log').insert({
+    document_id: docId,
+    version_id: versionId,
+    actor_id: userId,
+    action: 'version_published',
+    old_value: { superseded: toSupersede },
+    new_value: { version_number: version.version_number },
+    reason: 'Admin approved publish — no silent AI rewrite',
+  })
+
+  return { versionId, documentId: docId, superseded: toSupersede }
+}
+
+async function rollbackVersion(
+  admin: ReturnType<typeof createClient>,
+  userId: string,
+  versionId: string,
+) {
+  const now = new Date().toISOString()
+  const { data: target, error } = await admin
+    .from('document_versions')
+    .select('*')
+    .eq('id', versionId)
+    .maybeSingle()
+  if (error || !target) throw new Error('version_not_found')
+
+  const allowed = ['published', 'superseded', 'approved']
+  if (!allowed.includes(target.status as string)) {
+    throw new Error('rollback_not_allowed')
+  }
+
+  const docId = target.document_id as string
+  const { data: currentDoc } = await admin
+    .from('legal_documents')
+    .select('current_version_id')
+    .eq('id', docId)
+    .maybeSingle()
+
+  const { data: published } = await admin
+    .from('document_versions')
+    .select('id')
+    .eq('document_id', docId)
+    .eq('status', 'published')
+
+  const toSupersede = (published ?? [])
+    .filter((v: { id: string }) => v.id !== versionId)
+    .map((v: { id: string }) => v.id)
+
+  if (toSupersede.length) {
+    await admin.from('document_versions').update({ status: 'superseded' }).in('id', toSupersede)
+  }
+
+  await admin
+    .from('document_versions')
+    .update({ status: 'published', verified_at: now, verified_by: userId })
+    .eq('id', versionId)
+
+  await admin
+    .from('legal_documents')
+    .update({
+      current_version_id: versionId,
+      verification_status: 'verified',
+      last_verified_at: now,
+      updated_at: now,
+    })
+    .eq('id', docId)
+
+  await admin.from('document_audit_log').insert({
+    document_id: docId,
+    version_id: versionId,
+    actor_id: userId,
+    action: 'version_rollback',
+    old_value: { previous_current: currentDoc?.current_version_id },
+    new_value: { version_number: target.version_number },
+    reason: 'Admin rolled back to prior verified version',
+  })
+
+  return { versionId, documentId: docId, previousCurrent: currentDoc?.current_version_id }
 }
 
 Deno.serve(async (req) => {
@@ -311,6 +595,10 @@ Deno.serve(async (req) => {
       return jsonResponse({
         sources: sources ?? [],
         review_required: count ?? 0,
+        telegram_configured: Boolean(
+          Deno.env.get('TELEGRAM_BOT_TOKEN') &&
+            (Deno.env.get('TELEGRAM_ADMIN_CHAT_ID') ?? Deno.env.get('TELEGRAM_CHANNEL_ID')),
+        ),
       })
     }
 
@@ -339,20 +627,16 @@ Deno.serve(async (req) => {
           review_notes: body.payload?.notes ?? null,
         })
         .eq('id', changeId)
-        .select('*, official_sources(id)')
+        .select('*')
         .maybeSingle()
       if (error) return jsonResponse({ error: error.message }, 500)
 
-      // Approving a change does NOT auto-rewrite legal text — only clears review flags after human confirm.
       if (decision === 'approved' || decision === 'published') {
         const sourceId = change?.source_id
         if (sourceId) {
           await gate.admin
             .from('official_sources')
-            .update({
-              verification_status: 'verified',
-              updated_at: new Date().toISOString(),
-            })
+            .update({ verification_status: 'verified', updated_at: new Date().toISOString() })
             .eq('id', sourceId)
         }
         await gate.admin.from('document_audit_log').insert({
@@ -366,6 +650,24 @@ Deno.serve(async (req) => {
       }
 
       return jsonResponse({ ok: true, change })
+    }
+
+    if (action === 'publish_version') {
+      const gate = await requireAdmin(req)
+      if (!gate.ok) return jsonResponse({ error: gate.error }, gate.error === 'forbidden' ? 403 : 401)
+      const versionId = body.payload?.versionId
+      if (!versionId) return jsonResponse({ error: 'versionId required' }, 400)
+      const result = await publishVersion(gate.admin, gate.userId, versionId)
+      return jsonResponse({ ok: true, ...result })
+    }
+
+    if (action === 'rollback_version') {
+      const gate = await requireAdmin(req)
+      if (!gate.ok) return jsonResponse({ error: gate.error }, gate.error === 'forbidden' ? 403 : 401)
+      const versionId = body.payload?.versionId
+      if (!versionId) return jsonResponse({ error: 'versionId required' }, 400)
+      const result = await rollbackVersion(gate.admin, gate.userId, versionId)
+      return jsonResponse({ ok: true, ...result })
     }
 
     return jsonResponse({ error: 'unknown_action' }, 400)

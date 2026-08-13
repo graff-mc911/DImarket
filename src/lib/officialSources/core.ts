@@ -274,3 +274,17 @@ export function compareSourcePriority(
   const sb = ib === -1 ? 999 : ib
   return sa - sb
 }
+
+/** IDs of published versions that should become superseded when publishing another. */
+export function publishedVersionIdsToSupersede<T extends DocumentVersionLike>(
+  versions: T[],
+  publishingId: string,
+): string[] {
+  return versions.filter((v) => v.status === 'published' && v.id !== publishingId).map((v) => v.id)
+}
+
+/** Whether rollback target is eligible (was published or approved before). */
+export function canRollbackToVersion(version: DocumentVersionLike | null | undefined): boolean {
+  if (!version) return false
+  return version.status === 'published' || version.status === 'superseded' || version.status === 'approved'
+}

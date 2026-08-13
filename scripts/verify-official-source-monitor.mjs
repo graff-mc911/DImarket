@@ -250,6 +250,12 @@ assert.equal(diff.unchanged, 1)
 assert.ok(compareSourcePriority('official_gazette', 'municipal') < 0)
 assert.ok(compareSourcePriority('eu_official', 'official_gazette') > 0)
 assert.equal(SPAIN.officialGazetteUrl.includes('boe.es'), true)
+const DE = { officialGazetteUrl: 'https://www.gesetze-im-internet.de/' }
+const FR = { officialGazetteUrl: 'https://www.legifrance.gouv.fr/' }
+const PL = { officialGazetteUrl: 'https://isap.sejm.gov.pl/' }
+assert.ok(DE.officialGazetteUrl.includes('gesetze-im-internet'))
+assert.ok(FR.officialGazetteUrl.includes('legifrance'))
+assert.ok(PL.officialGazetteUrl.includes('isap.sejm'))
 
 // notification / review / publish / rollback semantics (state machine smoke)
 const statuses = ['detected', 'review_required', 'approved', 'rejected', 'published']

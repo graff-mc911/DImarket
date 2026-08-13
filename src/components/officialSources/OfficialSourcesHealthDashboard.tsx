@@ -3,9 +3,12 @@ import {
   AlertTriangle,
   CheckCircle2,
   ExternalLink,
+  History,
   Loader2,
   RefreshCw,
+  RotateCcw,
   ShieldCheck,
+  Upload,
   XCircle,
 } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
@@ -14,12 +17,15 @@ import {
   listLegalDocuments,
   listOfficialSources,
   listSourceChanges,
+  publishDocumentVersion,
+  rollbackDocumentVersion,
   updateSourceChangeStatus,
+  type DocumentVersionRow,
   type LegalDocumentRow,
   type OfficialSourceRow,
   type SourceChangeRow,
 } from '../../lib/officialSources/api'
-import { simpleLineDiff } from '../../lib/officialSources'
+import { canRollbackToVersion, simpleLineDiff } from '../../lib/officialSources'
 import { DocumentFreshnessBadge } from './DocumentFreshnessBadge'
 
 function statusDot(status: string) {
@@ -31,6 +37,94 @@ function statusDot(status: string) {
   return 'bg-[#86868b]'
 }
 
+function DocumentVersionsPanel({
+  doc,
+  onRefresh,
+}: {
+  doc: LegalDocumentRow
+  onRefresh: () => Promise<void>
+}) {
+  const { t } = useApp()
+  const [busy, setBusy] = useState<string | null>(null)
+  const versions = (doc.document_versions ?? []).slice().sort((a, b) => {
+    const ap = a.published_at ? new Date(a.published_at).getTime() : 0
+    const bp = b.published_at ? new Date(b.published_at).getTime() : 0
+    return bp - ap
+  })
+
+  const act = async (kind: 'publish' | 'rollback', versionId: string) => {
+    setBusy(versionId)
+    try {
+      if (kind === 'publish') await publishDocumentVersion(versionId)
+      else await rollbackDocumentVersion(versionId)
+      await onRefresh()
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  if (!versions.length) {
+    return (
+      <p className="mt-2 text-xs text-[#86868b]">{t('osm.admin.noVersions')}</p>
+    )
+  }
+
+  return (
+    <ul className="mt-3 space-y-2 border-t border-[#f0f0f2] pt-3">
+      {versions.map((v: DocumentVersionRow) => {
+        const isCurrent = doc.current_version_id === v.id
+        const canRollback = canRollbackToVersion(v) && !isCurrent
+        const canPublish = v.status === 'draft' || v.status === 'review_required' || v.status === 'approved'
+        return (
+          <li
+            key={v.id}
+            className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#fafafa] px-3 py-2 text-xs"
+          >
+            <div>
+              <span className="font-semibold text-[#1d1d1f]">v{v.version_number}</span>
+              <span className="ml-2 text-[#86868b]">{v.status}</span>
+              {isCurrent ? (
+                <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 font-semibold text-emerald-800">
+                  {t('osm.admin.currentVersion')}
+                </span>
+              ) : null}
+              {v.effective_from ? (
+                <p className="mt-0.5 text-[#86868b]">
+                  {t('osm.admin.effectiveFrom')}: {new Date(v.effective_from).toLocaleDateString()}
+                </p>
+              ) : null}
+            </div>
+            <div className="flex gap-1.5">
+              {canPublish ? (
+                <button
+                  type="button"
+                  disabled={busy === v.id}
+                  onClick={() => void act('publish', v.id)}
+                  className="inline-flex items-center gap-1 rounded-full bg-[#1d1d1f] px-2.5 py-1 font-semibold text-white disabled:opacity-50"
+                >
+                  {busy === v.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
+                  {t('osm.admin.publish')}
+                </button>
+              ) : null}
+              {canRollback ? (
+                <button
+                  type="button"
+                  disabled={busy === v.id}
+                  onClick={() => void act('rollback', v.id)}
+                  className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] px-2.5 py-1 font-semibold hover:bg-white disabled:opacity-50"
+                >
+                  {busy === v.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <RotateCcw className="h-3 w-3" />}
+                  {t('osm.admin.rollback')}
+                </button>
+              ) : null}
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
 export function OfficialSourcesHealthDashboard() {
   const { t, language } = useApp()
   const [loading, setLoading] = useState(true)
@@ -40,18 +134,23 @@ export function OfficialSourcesHealthDashboard() {
   const [changes, setChanges] = useState<SourceChangeRow[]>([])
   const [docs, setDocs] = useState<LegalDocumentRow[]>([])
   const [selectedChange, setSelectedChange] = useState<SourceChangeRow | null>(null)
+  const [telegramOk, setTelegramOk] = useState<boolean | null>(null)
 
   const load = useCallback(async () => {
     setError(null)
     try {
-      const [s, c, d] = await Promise.all([
+      const [s, c, d, status] = await Promise.all([
         listOfficialSources(),
         listSourceChanges(30),
-        listLegalDocuments(),
+        listLegalDocuments(true),
+        invokeOfficialSourcesMonitor('status').catch(() => null),
       ])
       setSources(s)
       setChanges(c)
       setDocs(d)
+      if (status && typeof status === 'object' && 'telegram_configured' in status) {
+        setTelegramOk(Boolean((status as { telegram_configured?: boolean }).telegram_configured))
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
     } finally {
@@ -119,6 +218,12 @@ export function OfficialSourcesHealthDashboard() {
           </p>
           <h1 className="mt-1 text-2xl font-bold text-[#1d1d1f]">{t('osm.admin.title')}</h1>
           <p className="mt-1 max-w-2xl text-sm text-[#6e6e73]">{t('osm.admin.subtitle')}</p>
+          {telegramOk === false ? (
+            <p className="mt-2 text-xs text-amber-800">{t('osm.admin.telegramMissing')}</p>
+          ) : null}
+          {telegramOk === true ? (
+            <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.telegramOk')}</p>
+          ) : null}
         </div>
         <button
           type="button"
@@ -199,7 +304,8 @@ export function OfficialSourcesHealthDashboard() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-[#86868b]">
+        <h2 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[#86868b]">
+          <History className="h-4 w-4" />
           {t('osm.admin.changes')}
         </h2>
         <ul className="space-y-2">
@@ -219,6 +325,7 @@ export function OfficialSourcesHealthDashboard() {
                   </p>
                   <p className="text-xs text-[#6e6e73]">
                     {fmt(c.detected_at)} · {c.change_type} · {c.severity} · {c.status}
+                    {c.alert_sent_at ? ` · ${t('osm.admin.alertSent')}` : ''}
                   </p>
                   <p className="mt-1 text-xs text-[#6e6e73]">{c.change_summary}</p>
                 </div>
@@ -298,7 +405,7 @@ export function OfficialSourcesHealthDashboard() {
             <article key={doc.id} className="rounded-2xl border border-[#e8e8ed] bg-white p-4">
               <div className="mb-2 flex items-start gap-2">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#1d1d1f]" />
-                <div>
+                <div className="min-w-0 flex-1">
                   <h3 className="font-semibold text-[#1d1d1f]">{doc.title}</h3>
                   <p className="text-xs text-[#6e6e73]">
                     {doc.country_code}
@@ -315,6 +422,7 @@ export function OfficialSourcesHealthDashboard() {
                 sourceUrl={doc.official_sources?.source_url}
                 trustTier={doc.official_sources?.trust_tier}
               />
+              <DocumentVersionsPanel doc={doc} onRefresh={load} />
             </article>
           ))}
         </div>
