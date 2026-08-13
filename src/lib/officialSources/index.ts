@@ -35,11 +35,21 @@ export {
   ITALY_COUNTRY_SOURCES,
   PORTUGAL_COUNTRY_SOURCES,
   ROMANIA_COUNTRY_SOURCES,
+  NETHERLANDS_COUNTRY_SOURCES,
+  CZECHIA_COUNTRY_SOURCES,
+  HUNGARY_COUNTRY_SOURCES,
+  BULGARIA_COUNTRY_SOURCES,
   COUNTRY_SOURCES_BY_CODE,
   getCountrySources,
   listCountrySources,
   type CountrySourcesConfig,
 } from './countrySources'
+
+export {
+  autoDraftVersionNumber,
+  buildAutoDraftMarkdown,
+  isAutoDraftVersion,
+} from './autoDraft'
 
 export {
   formatGeneratedDocumentFooter,

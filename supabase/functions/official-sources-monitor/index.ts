@@ -93,6 +93,68 @@ async function sendTelegramAlert(text: string): Promise<boolean> {
   return Boolean(data.ok)
 }
 
+async function sendEmailAlert(subject: string, text: string): Promise<boolean> {
+  const key = Deno.env.get('RESEND_API_KEY')
+  const to =
+    Deno.env.get('OSM_ALERT_EMAIL') ??
+    Deno.env.get('ADMIN_EMAIL')
+  if (!key || !to) return false
+  const from = Deno.env.get('RESEND_FROM_EMAIL') ?? 'DImarket <noreply@dimarket.app>'
+  const html = `<pre style="font-family:monospace;font-size:13px;white-space:pre-wrap">${text.replace(/</g, '&lt;')}</pre>`
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from, to: [to], subject, html }),
+  })
+  return res.ok
+}
+
+function autoDraftVersionNumber(at = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `auto-${at.getUTCFullYear()}${pad(at.getUTCMonth() + 1)}${pad(at.getUTCDate())}-${pad(at.getUTCHours())}${pad(at.getUTCMinutes())}`
+}
+
+function buildAutoDraftMarkdown(input: {
+  documentTitle: string
+  sourceName: string
+  sourceUrl: string
+  changeId: string
+  oldHash: string | null
+  newHash: string | null
+  oldExcerpt: string | null
+  newExcerpt: string | null
+}): string {
+  const oldSnap = input.oldExcerpt?.trim() || '_(no previous snapshot)_'
+  const newSnap = input.newExcerpt?.trim() || '_(empty snapshot)_'
+  return `# Auto-draft — ${input.documentTitle}
+
+> **NOT published.** Official source changed. Edit manually; publish only after legal review.
+
+## Official source
+- **${input.sourceName}**
+- ${input.sourceUrl}
+
+## Change
+- ID: \`${input.changeId}\`
+- Old hash: \`${input.oldHash ?? '—'}\`
+- New hash: \`${input.newHash ?? '—'}\`
+
+## Previous excerpt
+\`\`\`
+${oldSnap.slice(0, 800)}
+\`\`\`
+
+## New excerpt
+\`\`\`
+${newSnap.slice(0, 800)}
+\`\`\`
+
+## Next steps
+1. Verify changes at the official source.
+2. Edit this draft.
+3. Publish from admin after review.`
+}
+
 async function requireAdmin(req: Request) {
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) return { ok: false as const, error: 'unauthorized' }
@@ -182,10 +244,10 @@ async function notifyChangeIfNeeded(
 
   const { data: existing } = await admin
     .from('source_changes')
-    .select('alert_sent_at')
+    .select('alert_sent_at, email_alert_sent_at')
     .eq('id', changeId)
     .maybeSingle()
-  if (existing?.alert_sent_at) return
+  if (existing?.alert_sent_at && existing?.email_alert_sent_at) return
 
   const adminUrl = 'https://dimarket.app/admin/official-sources'
   const text = [
@@ -203,13 +265,86 @@ async function notifyChangeIfNeeded(
     `Review: ${adminUrl}`,
   ].join('\n')
 
-  const sent = await sendTelegramAlert(text)
-  if (sent) {
-    await admin
-      .from('source_changes')
-      .update({ alert_sent_at: new Date().toISOString() })
-      .eq('id', changeId)
+  const now = new Date().toISOString()
+  const telegramSent = existing?.alert_sent_at ? true : await sendTelegramAlert(text)
+  const emailSent = existing?.email_alert_sent_at
+    ? true
+    : await sendEmailAlert(
+        `[DImarket OSM] ${severity.toUpperCase()} — ${source.source_name}`,
+        text,
+      )
+
+  const patch: Record<string, string> = {}
+  if (telegramSent && !existing?.alert_sent_at) patch.alert_sent_at = now
+  if (emailSent && !existing?.email_alert_sent_at) patch.email_alert_sent_at = now
+  if (Object.keys(patch).length) {
+    await admin.from('source_changes').update(patch).eq('id', changeId)
   }
+}
+
+async function autoDraftForAffectedDocuments(
+  admin: ReturnType<typeof createClient>,
+  source: Record<string, unknown>,
+  changeId: string,
+  affectedDocIds: string[],
+  oldHash: string | null,
+  newHash: string | null,
+  oldExcerpt: string | null,
+  newExcerpt: string | null,
+): Promise<number> {
+  if (!affectedDocIds.length) return 0
+  const versionNumber = autoDraftVersionNumber()
+  let created = 0
+
+  for (const docId of affectedDocIds) {
+    const { data: dup } = await admin
+      .from('document_versions')
+      .select('id')
+      .eq('document_id', docId)
+      .ilike('change_summary', `%${changeId}%`)
+      .maybeSingle()
+    if (dup) continue
+
+    const { data: doc } = await admin
+      .from('legal_documents')
+      .select('id, title')
+      .eq('id', docId)
+      .maybeSingle()
+    if (!doc) continue
+
+    const body = buildAutoDraftMarkdown({
+      documentTitle: doc.title as string,
+      sourceName: String(source.source_name),
+      sourceUrl: String(source.source_url),
+      changeId,
+      oldHash,
+      newHash,
+      oldExcerpt,
+      newExcerpt,
+    })
+
+    const { error } = await admin.from('document_versions').insert({
+      document_id: docId,
+      version_number: `${versionNumber}-${created + 1}`,
+      title: doc.title,
+      body_markdown: body,
+      source_id: source.id,
+      source_url: source.source_url,
+      status: 'review_required',
+      change_summary: `Auto-draft from source change ${changeId} — NOT published`,
+    })
+    if (!error) {
+      created += 1
+      await admin.from('document_audit_log').insert({
+        document_id: docId,
+        source_id: source.id as string,
+        action: 'auto_draft_from_source_change',
+        new_value: { changeId, version_number: `${versionNumber}-${created}` },
+        reason: 'Hash changed at official source — draft only, no auto-publish',
+      })
+    }
+  }
+  return created
 }
 
 async function activateEffectiveVersions(admin: ReturnType<typeof createClient>) {
@@ -290,6 +425,14 @@ async function runChecks(
   const results: Array<Record<string, unknown>> = []
 
   for (const source of sources ?? []) {
+    const { data: prevCheckRows } = await admin
+      .from('source_checks')
+      .select('normalized_excerpt, content_hash')
+      .eq('source_id', source.id)
+      .order('checked_at', { ascending: false })
+      .limit(1)
+    const previousExcerpt = (prevCheckRows?.[0]?.normalized_excerpt as string | null) ?? null
+
     const fetched = await fetchSource(source.source_url as string)
     const hash = fetched.body ? await hashNormalizedContent(fetched.body) : null
     const excerpt = fetched.body ? excerptNormalized(fetched.body) : null
@@ -376,6 +519,7 @@ async function runChecks(
           change_type: 'content',
           change_summary:
             'Normalized content hash changed — review required before publishing legal updates.',
+          old_excerpt: previousExcerpt,
           new_excerpt: excerpt,
           affected_document_ids: affected,
           severity,
@@ -394,6 +538,19 @@ async function runChecks(
           'Content hash changed at official source.',
           affectedCount,
         )
+        const autoDrafts = await autoDraftForAffectedDocuments(
+          admin,
+          source,
+          changeCreated,
+          affected,
+          oldHash,
+          hash,
+          previousExcerpt,
+          excerpt,
+        )
+        if (autoDrafts > 0) {
+          results.push({ source_key: source.source_key, auto_drafts: autoDrafts })
+        }
       }
 
       if (affected.length) {
@@ -663,6 +820,10 @@ Deno.serve(async (req) => {
         telegram_configured: Boolean(
           Deno.env.get('TELEGRAM_BOT_TOKEN') &&
             (Deno.env.get('TELEGRAM_ADMIN_CHAT_ID') ?? Deno.env.get('TELEGRAM_CHANNEL_ID')),
+        ),
+        email_configured: Boolean(
+          Deno.env.get('RESEND_API_KEY') &&
+            (Deno.env.get('OSM_ALERT_EMAIL') ?? Deno.env.get('ADMIN_EMAIL')),
         ),
       })
     }

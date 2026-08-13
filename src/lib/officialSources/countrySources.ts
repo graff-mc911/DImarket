@@ -132,6 +132,66 @@ export const ROMANIA_COUNTRY_SOURCES: CountrySourcesConfig = {
   notes: 'Romania — legislatie.just.ro and gov.ro as official entry points.',
 }
 
+export const NETHERLANDS_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'NL',
+  countryName: 'Netherlands',
+  officialGazetteUrl: 'https://wetten.overheid.nl/',
+  governmentPortalUrl: 'https://www.rijksoverheid.nl/',
+  taxPortalUrl: 'https://www.belastingdienst.nl/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Netherlands — wetten.overheid.nl and rijksoverheid.nl as official entry points.',
+}
+
+export const CZECHIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'CZ',
+  countryName: 'Czechia',
+  officialGazetteUrl: 'https://www.e-sbirka.cz/',
+  governmentPortalUrl: 'https://www.gov.cz/',
+  taxPortalUrl: 'https://www.mfcr.cz/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Czechia — e-Sbírka and gov.cz as official monitor entry points.',
+}
+
+export const HUNGARY_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'HU',
+  countryName: 'Hungary',
+  officialGazetteUrl: 'https://njt.hu/',
+  governmentPortalUrl: 'https://www.kormany.hu/',
+  taxPortalUrl: 'https://nav.gov.hu/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Hungary — NJT and kormany.hu as official monitor entry points.',
+}
+
+export const BULGARIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'BG',
+  countryName: 'Bulgaria',
+  officialGazetteUrl: 'https://www.lex.bg/',
+  governmentPortalUrl: 'https://www.gov.bg/',
+  taxPortalUrl: 'https://nra.bg/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Bulgaria — lex.bg and gov.bg as official entry points.',
+}
+
 export const COUNTRY_SOURCES_BY_CODE: Record<string, CountrySourcesConfig> = {
   ES: SPAIN_COUNTRY_SOURCES,
   DE: GERMANY_COUNTRY_SOURCES,
@@ -140,6 +200,10 @@ export const COUNTRY_SOURCES_BY_CODE: Record<string, CountrySourcesConfig> = {
   IT: ITALY_COUNTRY_SOURCES,
   PT: PORTUGAL_COUNTRY_SOURCES,
   RO: ROMANIA_COUNTRY_SOURCES,
+  NL: NETHERLANDS_COUNTRY_SOURCES,
+  CZ: CZECHIA_COUNTRY_SOURCES,
+  HU: HUNGARY_COUNTRY_SOURCES,
+  BG: BULGARIA_COUNTRY_SOURCES,
 }
 
 export function getCountrySources(countryCode: string): CountrySourcesConfig | null {

@@ -26,8 +26,9 @@ import {
   type OfficialSourceRow,
   type SourceChangeRow,
 } from '../../lib/officialSources/api'
-import { canRollbackToVersion } from '../../lib/officialSources'
+import { canRollbackToVersion, isAutoDraftVersion } from '../../lib/officialSources'
 import { DocumentFreshnessBadge } from './DocumentFreshnessBadge'
+import { LegalMarkdownEditor } from './LegalMarkdownEditor'
 import { LineDiffView } from './LineDiffView'
 
 function statusDot(status: string) {
@@ -93,12 +94,11 @@ function CreateDraftVersionForm({
         placeholder={t('osm.admin.versionNumberPlaceholder')}
         className="w-full rounded-lg border border-[#d2d2d7] px-2 py-1.5 text-xs"
       />
-      <textarea
+      <LegalMarkdownEditor
         value={bodyMarkdown}
-        onChange={(e) => setBodyMarkdown(e.target.value)}
-        rows={6}
+        onChange={setBodyMarkdown}
+        rows={8}
         placeholder={t('osm.admin.draftBodyPlaceholder')}
-        className="w-full rounded-lg border border-[#d2d2d7] px-2 py-1.5 font-mono text-xs"
       />
       <div className="flex gap-2">
         <button
@@ -171,6 +171,11 @@ function DocumentVersionsPanel({
             <div>
               <span className="font-semibold text-[#1d1d1f]">v{v.version_number}</span>
               <span className="ml-2 text-[#86868b]">{v.status}</span>
+              {isAutoDraftVersion(v.version_number) ? (
+                <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-900">
+                  {t('osm.admin.autoDraftBadge')}
+                </span>
+              ) : null}
               {isCurrent ? (
                 <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 font-semibold text-emerald-800">
                   {t('osm.admin.currentVersion')}
@@ -225,6 +230,7 @@ export function OfficialSourcesHealthDashboard() {
   const [docs, setDocs] = useState<LegalDocumentRow[]>([])
   const [selectedChange, setSelectedChange] = useState<SourceChangeRow | null>(null)
   const [telegramOk, setTelegramOk] = useState<boolean | null>(null)
+  const [emailOk, setEmailOk] = useState<boolean | null>(null)
 
   const load = useCallback(async () => {
     setError(null)
@@ -239,7 +245,9 @@ export function OfficialSourcesHealthDashboard() {
       setChanges(c)
       setDocs(d)
       if (status && typeof status === 'object' && 'telegram_configured' in status) {
-        setTelegramOk(Boolean((status as { telegram_configured?: boolean }).telegram_configured))
+        const s = status as { telegram_configured?: boolean; email_configured?: boolean }
+        setTelegramOk(Boolean(s.telegram_configured))
+        setEmailOk(Boolean(s.email_configured))
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
@@ -309,6 +317,12 @@ export function OfficialSourcesHealthDashboard() {
           ) : null}
           {telegramOk === true ? (
             <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.telegramOk')}</p>
+          ) : null}
+          {emailOk === false ? (
+            <p className="mt-2 text-xs text-amber-800">{t('osm.admin.emailMissing')}</p>
+          ) : null}
+          {emailOk === true ? (
+            <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.emailOk')}</p>
           ) : null}
         </div>
         <button
@@ -412,6 +426,7 @@ export function OfficialSourcesHealthDashboard() {
                   <p className="text-xs text-[#6e6e73]">
                     {fmt(c.detected_at)} · {c.change_type} · {c.severity} · {c.status}
                     {c.alert_sent_at ? ` · ${t('osm.admin.alertSent')}` : ''}
+                    {c.email_alert_sent_at ? ` · ${t('osm.admin.emailAlertSent')}` : ''}
                   </p>
                   <p className="mt-1 text-xs text-[#6e6e73]">{c.change_summary}</p>
                 </div>

@@ -305,4 +305,43 @@ assert.ok(lineOps.some((o) => o.type === 'delete' && o.line === 'beta'))
 assert.ok(lineOps.some((o) => o.type === 'insert' && o.line === 'gamma'))
 assert.ok(lineOps.some((o) => o.type === 'equal' && o.line === 'alpha'))
 
+// auto-draft version helpers (mirrors src/lib/officialSources/autoDraft.ts)
+function autoDraftVersionNumber(at = new Date('2026-08-13T14:05:00Z')) {
+  const pad = (n) => String(n).padStart(2, '0')
+  return `auto-${at.getUTCFullYear()}${pad(at.getUTCMonth() + 1)}${pad(at.getUTCDate())}-${pad(at.getUTCHours())}${pad(at.getUTCMinutes())}`
+}
+function isAutoDraftVersion(versionNumber) {
+  return versionNumber.startsWith('auto-')
+}
+function buildAutoDraftMarkdown(input) {
+  const oldSnap = input.oldExcerpt?.trim() || '_(no previous snapshot)_'
+  const newSnap = input.newExcerpt?.trim() || '_(empty snapshot)_'
+  return `# Auto-draft — ${input.documentTitle}\n\n> **NOT published.**\n\n## Change reference\n- Change ID: \`${input.changeId}\`\n\n## Previous excerpt\n\`\`\`\n${oldSnap.slice(0, 800)}\n\`\`\`\n\n## New excerpt\n\`\`\`\n${newSnap.slice(0, 800)}\n\`\`\``
+}
+assert.equal(autoDraftVersionNumber(), 'auto-20260813-1405')
+assert.equal(isAutoDraftVersion('auto-20260813-1405'), true)
+assert.equal(isAutoDraftVersion('2026.09-draft'), false)
+const autoBody = buildAutoDraftMarkdown({
+  documentTitle: 'Test doc',
+  sourceName: 'BOE',
+  sourceUrl: 'https://www.boe.es/',
+  changeId: 'chg-1',
+  oldHash: 'a',
+  newHash: 'b',
+  oldExcerpt: 'old text',
+  newExcerpt: 'new text',
+})
+assert.ok(autoBody.includes('Auto-draft — Test doc'))
+assert.ok(autoBody.includes('chg-1'))
+assert.ok(autoBody.includes('NOT published'))
+
+const NL = { officialGazetteUrl: 'https://wetten.overheid.nl/' }
+const CZ = { officialGazetteUrl: 'https://www.e-sbirka.cz/' }
+const HU = { officialGazetteUrl: 'https://njt.hu/' }
+const BG = { officialGazetteUrl: 'https://www.lex.bg/' }
+assert.ok(NL.officialGazetteUrl.includes('wetten.overheid'))
+assert.ok(CZ.officialGazetteUrl.includes('e-sbirka'))
+assert.ok(HU.officialGazetteUrl.includes('njt.hu'))
+assert.ok(BG.officialGazetteUrl.includes('lex.bg'))
+
 console.log('ok official source monitor core checks passed')

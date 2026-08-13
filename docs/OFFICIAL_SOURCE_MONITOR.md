@@ -100,3 +100,17 @@ Published Spain entries are **pointers only** — link to BOE / Your Europe, not
 | PDF export | `/legal-documents/:key` → Save as PDF with version/source footer |
 | IT / PT / RO | Normattiva, DRE, Portal Legislativ + gov portals |
 | SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE3.sql` |
+
+## Phase 4
+
+| Feature | Details |
+|---------|---------|
+| Rich text editor | Admin markdown toolbar + preview for draft versions |
+| Auto-draft | On hash change → `review_required` draft with excerpts (never auto-publish) |
+| Email alerts | Resend (`RESEND_API_KEY`, `OSM_ALERT_EMAIL`) for critical/high alongside Telegram |
+| NL / CZ / HU / BG | wetten.overheid.nl, e-Sbírka, NJT, lex.bg + gov portals |
+| SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE4.sql` |
+
+Edge secrets for email: `RESEND_API_KEY`, `OSM_ALERT_EMAIL` (or `ADMIN_EMAIL`), optional `RESEND_FROM_EMAIL`.
+
+Auto-draft versions use prefix `auto-` — admin UI shows badge; publish only after manual review.
