@@ -5,9 +5,12 @@ import { applyPageSeo } from '../../lib/pageSeo'
 import { normalizeSpokenLanguageList } from '../../lib/languageDisplay'
 import {
   createOpportunity,
+  createManufacturerProduct,
+  deleteManufacturerProduct,
   fetchApplicationsForManufacturer,
   fetchInvitationsForAgent,
   fetchInvitationsForManufacturer,
+  fetchManufacturerProducts,
   fetchMyAgent,
   fetchMyApplicationsAsAgent,
   fetchMyManufacturer,
@@ -18,17 +21,27 @@ import {
   fetchOpportunities,
   updateApplicationStatus,
   updateInvitationStatus,
+  updateManufacturerProduct,
   upsertAgentProfile,
   upsertManufacturerProfile,
   EMPTY_COMMERCIAL_FILTERS,
   type AgentProfile,
+  type ManufacturerProduct,
   type ManufacturerProfile,
 } from '../../lib/commercialAgents'
 import { COMMERCIAL_FOCUS_COUNTRIES, dimarketParentCategoryOptions } from '../../lib/commercialAgents/categories'
 import { AgentCard } from '../../components/commercialAgents/AgentCard'
 import { OpportunityCard } from '../../components/commercialAgents/OpportunityCard'
 
-type Tab = 'overview' | 'profile' | 'opportunities' | 'applications' | 'invitations' | 'recommended'
+type Tab =
+  | 'overview'
+  | 'profile'
+  | 'products'
+  | 'advertising'
+  | 'opportunities'
+  | 'applications'
+  | 'invitations'
+  | 'recommended'
 
 const input =
   'w-full rounded-xl border border-[#d2d2d7] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1d1d1f]'
@@ -39,19 +52,33 @@ export function CommercialAgentsDashboard() {
   const tabHint = useMemo(() => new URLSearchParams(window.location.search).get('tab') as Tab | null, [])
   const [tab, setTab] = useState<Tab>(
     tabHint &&
-      ['overview', 'profile', 'opportunities', 'applications', 'invitations', 'recommended'].includes(tabHint)
+      [
+        'overview',
+        'profile',
+        'products',
+        'advertising',
+        'opportunities',
+        'applications',
+        'invitations',
+        'recommended',
+      ].includes(tabHint)
       ? tabHint
       : 'overview',
   )
   const parentCategories = useMemo(() => dimarketParentCategoryOptions(language.code), [language.code])
-  const [mode, setMode] = useState<'manufacturer' | 'agent'>(
-    roleHint === 'agent' ? 'agent' : 'manufacturer',
-  )
+  const [mode, setMode] = useState<'manufacturer' | 'agent'>(() => {
+    if (roleHint === 'agent') return 'agent'
+    if (roleHint === 'manufacturer') return 'manufacturer'
+    if (profile?.user_role === 'commercial_agent') return 'agent'
+    if (profile?.user_role === 'manufacturer') return 'manufacturer'
+    return 'manufacturer'
+  })
   const [mfr, setMfr] = useState<ManufacturerProfile | null>(null)
   const [agent, setAgent] = useState<AgentProfile | null>(null)
   const [apps, setApps] = useState<unknown[]>([])
   const [invites, setInvites] = useState<unknown[]>([])
   const [opps, setOpps] = useState<Awaited<ReturnType<typeof fetchOpportunitiesForManufacturer>>>([])
+  const [products, setProducts] = useState<ManufacturerProduct[]>([])
   const [recommended, setRecommended] = useState<ReactNode>(null)
   const [feedback, setFeedback] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -63,6 +90,12 @@ export function CommercialAgentsDashboard() {
     country: 'Spain',
     website: '',
     categories: '' as string,
+    products: '' as string,
+    languages: 'EN, ES',
+    logo_url: '',
+    catalog_url: '',
+    public_email: '',
+    public_phone: '',
     agent_required: true,
   })
   const [agentForm, setAgentForm] = useState({
@@ -74,6 +107,10 @@ export function CommercialAgentsDashboard() {
     years_experience: '',
     categories: '',
     languages: 'EN, ES',
+    brands: '',
+    website: '',
+    public_email: '',
+    public_phone: '',
     available_for_new_brands: true,
   })
   const [oppForm, setOppForm] = useState({
@@ -83,6 +120,13 @@ export function CommercialAgentsDashboard() {
     target_country: 'Spain',
     commission_range: '8–12%',
     exclusive: false,
+  })
+  const [productForm, setProductForm] = useState({
+    name: '',
+    brand: '',
+    category: 'construction',
+    description: '',
+    image_url: '',
   })
 
   useEffect(() => {
@@ -105,11 +149,18 @@ export function CommercialAgentsDashboard() {
         country: m.country || 'Spain',
         website: m.website || '',
         categories: (m.categories || []).join(', '),
+        products: (m.products || []).join(', '),
+        languages: (m.languages || []).join(', '),
+        logo_url: m.logo_url || '',
+        catalog_url: m.catalog_url || '',
+        public_email: m.public_email || '',
+        public_phone: m.public_phone || '',
         agent_required: m.agent_required,
       })
       setOpps(await fetchOpportunitiesForManufacturer(m.id))
       setApps(await fetchApplicationsForManufacturer(m.id))
       setInvites(await fetchInvitationsForManufacturer(m.id))
+      setProducts(await fetchManufacturerProducts(m.id))
       const pool = await fetchAgents({ ...EMPTY_COMMERCIAL_FILTERS, availableOnly: true }, 40)
       const rec = getRecommendedAgents(m, pool, 6)
       setRecommended(
@@ -119,6 +170,8 @@ export function CommercialAgentsDashboard() {
           ))}
         </div>,
       )
+    } else {
+      setProducts([])
     }
     if (a) {
       setAgentForm({
@@ -130,6 +183,10 @@ export function CommercialAgentsDashboard() {
         years_experience: a.years_experience != null ? String(a.years_experience) : '',
         categories: (a.categories || []).join(', '),
         languages: (a.languages || []).join(', '),
+        brands: (a.current_manufacturers || []).join(', '),
+        website: a.website || '',
+        public_email: a.public_email || '',
+        public_phone: a.public_phone || '',
         available_for_new_brands: a.available_for_new_brands,
       })
       setApps(await fetchMyApplicationsAsAgent(a.id))
@@ -169,6 +226,13 @@ export function CommercialAgentsDashboard() {
       country: mfrForm.country,
       website: mfrForm.website || null,
       categories: splitCsv(mfrForm.categories),
+      products: splitCsv(mfrForm.products),
+      languages: normalizeSpokenLanguageList(splitCsv(mfrForm.languages)),
+      logo_url: mfrForm.logo_url || null,
+      catalog_url: mfrForm.catalog_url || null,
+      public_email: mfrForm.public_email || null,
+      public_phone: mfrForm.public_phone || null,
+      show_public_contacts: Boolean(mfrForm.public_email || mfrForm.public_phone),
       agent_required: mfrForm.agent_required,
       is_published: true,
     })
@@ -189,11 +253,57 @@ export function CommercialAgentsDashboard() {
       years_experience: agentForm.years_experience ? Number(agentForm.years_experience) : null,
       categories: splitCsv(agentForm.categories),
       languages: normalizeSpokenLanguageList(splitCsv(agentForm.languages)),
+      current_manufacturers: splitCsv(agentForm.brands),
+      website: agentForm.website || null,
+      public_email: agentForm.public_email || null,
+      public_phone: agentForm.public_phone || null,
+      show_public_contacts: Boolean(agentForm.public_email || agentForm.public_phone),
       available_for_new_brands: agentForm.available_for_new_brands,
       is_published: true,
     })
     setBusy(false)
     setFeedback(error || t('commercialAgents.savedProfile'))
+    await reload()
+  }
+
+  const addProduct = async () => {
+    if (!mfr) {
+      setFeedback(t('commercialAgents.needManufacturerProfile'))
+      return
+    }
+    if (!productForm.name.trim()) {
+      setFeedback(t('commercialAgents.productName'))
+      return
+    }
+    setBusy(true)
+    const { error } = await createManufacturerProduct(mfr.id, {
+      name: productForm.name,
+      brand: productForm.brand || mfr.company_name,
+      category: productForm.category,
+      description: productForm.description,
+      image_urls: productForm.image_url ? [productForm.image_url] : [],
+      countries_available: mfr.countries_available?.length ? mfr.countries_available : [mfr.country || 'Spain'].filter(Boolean),
+      is_published: true,
+    })
+    setBusy(false)
+    setFeedback(error || t('commercialAgents.productSaved'))
+    setProductForm({ name: '', brand: '', category: 'construction', description: '', image_url: '' })
+    await reload()
+  }
+
+  const toggleProductPublish = async (p: ManufacturerProduct) => {
+    setBusy(true)
+    const { error } = await updateManufacturerProduct(p.id, { is_published: !p.is_published })
+    setBusy(false)
+    setFeedback(error || t('commercialAgents.productSaved'))
+    await reload()
+  }
+
+  const removeProduct = async (id: string) => {
+    setBusy(true)
+    const { error } = await deleteManufacturerProduct(id)
+    setBusy(false)
+    setFeedback(error || t('commercialAgents.productDeleted'))
     await reload()
   }
 
@@ -223,10 +333,12 @@ export function CommercialAgentsDashboard() {
     { id: 'profile', label: t('commercialAgents.myProfile') },
     ...(mode === 'manufacturer'
       ? [
+          { id: 'products' as Tab, label: t('commercialAgents.tabProducts') },
           { id: 'opportunities' as Tab, label: t('commercialAgents.myOpportunities') },
           { id: 'applications' as Tab, label: t('commercialAgents.applications') },
         ]
       : [{ id: 'applications' as Tab, label: t('commercialAgents.myApplications') }]),
+    { id: 'advertising' as Tab, label: t('commercialAgents.tabAdvertising') },
     { id: 'invitations', label: t('commercialAgents.invitations') },
     { id: 'recommended', label: t('commercialAgents.recommended') },
   ]
@@ -325,7 +437,13 @@ export function CommercialAgentsDashboard() {
                 </select>
               </label>
               <Field label={t('commercialAgents.website')} value={mfrForm.website} onChange={(v) => setMfrForm({ ...mfrForm, website: v })} />
+              <Field label="Logo URL" value={mfrForm.logo_url} onChange={(v) => setMfrForm({ ...mfrForm, logo_url: v })} />
+              <Field label="Catalog URL" value={mfrForm.catalog_url} onChange={(v) => setMfrForm({ ...mfrForm, catalog_url: v })} />
+              <Field label="Email" value={mfrForm.public_email} onChange={(v) => setMfrForm({ ...mfrForm, public_email: v })} />
+              <Field label="Phone" value={mfrForm.public_phone} onChange={(v) => setMfrForm({ ...mfrForm, public_phone: v })} />
               <Field label={t('commercialAgents.categoriesHint')} value={mfrForm.categories} onChange={(v) => setMfrForm({ ...mfrForm, categories: v })} />
+              <Field label="Product tags (comma)" value={mfrForm.products} onChange={(v) => setMfrForm({ ...mfrForm, products: v })} />
+              <Field label={t('commercialAgents.languages')} value={mfrForm.languages} onChange={(v) => setMfrForm({ ...mfrForm, languages: v })} />
               <label className="inline-flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={mfrForm.agent_required} onChange={(e) => setMfrForm({ ...mfrForm, agent_required: e.target.checked })} />
                 {t('commercialAgents.seekingAgents')}
@@ -357,7 +475,12 @@ export function CommercialAgentsDashboard() {
               </label>
               <Field label={t('commercialAgents.experience')} value={agentForm.years_experience} onChange={(v) => setAgentForm({ ...agentForm, years_experience: v })} />
               <Field label={t('commercialAgents.categoriesHint')} value={agentForm.categories} onChange={(v) => setAgentForm({ ...agentForm, categories: v })} />
+              <Field label={t('commercialAgents.brandsRepresented')} value={agentForm.brands} onChange={(v) => setAgentForm({ ...agentForm, brands: v })} />
+              <p className="text-xs text-[var(--ink-500)]">{t('commercialAgents.brandsHint')}</p>
               <Field label={t('commercialAgents.languages')} value={agentForm.languages} onChange={(v) => setAgentForm({ ...agentForm, languages: v })} />
+              <Field label={t('commercialAgents.website')} value={agentForm.website} onChange={(v) => setAgentForm({ ...agentForm, website: v })} />
+              <Field label="Email" value={agentForm.public_email} onChange={(v) => setAgentForm({ ...agentForm, public_email: v })} />
+              <Field label="Phone" value={agentForm.public_phone} onChange={(v) => setAgentForm({ ...agentForm, public_phone: v })} />
               <label className="inline-flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={agentForm.available_for_new_brands} onChange={(e) => setAgentForm({ ...agentForm, available_for_new_brands: e.target.checked })} />
                 {t('commercialAgents.availableForBrands')}
@@ -370,6 +493,82 @@ export function CommercialAgentsDashboard() {
                   {t('commercialAgents.viewPublic')}
                 </button>
               ) : null}
+            </div>
+          )}
+
+          {tab === 'products' && mode === 'manufacturer' && (
+            <div className="space-y-6">
+              <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white/95 p-5">
+                <h2 className="text-lg font-bold">{t('commercialAgents.addProduct')}</h2>
+                <p className="text-sm text-[var(--ink-600)]">{t('commercialAgents.productsHint')}</p>
+                <Field label={t('commercialAgents.productName')} value={productForm.name} onChange={(v) => setProductForm({ ...productForm, name: v })} />
+                <Field label={t('commercialAgents.productBrand')} value={productForm.brand} onChange={(v) => setProductForm({ ...productForm, brand: v })} />
+                <label className="block text-xs font-semibold uppercase text-[var(--ink-500)]">
+                  {t('commercialAgents.productCategory')}
+                  <select className={`${input} mt-1`} value={productForm.category} onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}>
+                    {parentCategories.map((opt) => (
+                      <option key={opt.slug} value={opt.slug}>{opt.label}</option>
+                    ))}
+                  </select>
+                </label>
+                <Field label={t('commercialAgents.description')} value={productForm.description} onChange={(v) => setProductForm({ ...productForm, description: v })} area />
+                <Field label="Image URL" value={productForm.image_url} onChange={(v) => setProductForm({ ...productForm, image_url: v })} />
+                <button type="button" disabled={busy} onClick={addProduct} className="btn-primary rounded-full px-5 py-2.5 text-sm">
+                  {t('commercialAgents.addProduct')}
+                </button>
+              </div>
+              <div className="space-y-3">
+                {products.length === 0 ? (
+                  <p className="text-sm text-[var(--ink-600)]">{t('commercialAgents.productsHint')}</p>
+                ) : (
+                  products.map((p) => (
+                    <div key={p.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--line-200)] bg-white/95 p-4">
+                      <div>
+                        <p className="font-bold text-[var(--ink-900)]">{p.name}</p>
+                        <p className="text-xs text-[var(--ink-600)]">
+                          {[p.brand, p.category, p.is_published ? 'published' : 'draft'].filter(Boolean).join(' · ')}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button type="button" className="btn-secondary rounded-full px-3 py-1.5 text-xs" disabled={busy} onClick={() => void toggleProductPublish(p)}>
+                          {p.is_published ? 'Unpublish' : 'Publish'}
+                        </button>
+                        <button type="button" className="rounded-full border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700" disabled={busy} onClick={() => void removeProduct(p.id)}>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {tab === 'advertising' && (
+            <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white/95 p-5">
+              <h2 className="text-lg font-bold">{t('commercialAgents.tabAdvertising')}</h2>
+              <p className="text-sm text-[var(--ink-600)]">{t('commercialAgents.adsLinkedHint')}</p>
+              <button
+                type="button"
+                className="btn-primary rounded-full px-5 py-2.5 text-sm"
+                onClick={() => {
+                  const cats =
+                    mode === 'manufacturer'
+                      ? (mfr?.categories || []).join(',')
+                      : (agent?.categories || []).join(',')
+                  const brand =
+                    mode === 'manufacturer'
+                      ? mfr?.company_name || ''
+                      : (agent?.current_manufacturers || [])[0] || agent?.full_name || ''
+                  const q = new URLSearchParams()
+                  if (cats) q.set('categories', cats)
+                  if (brand) q.set('brand', brand)
+                  q.set('from', mode === 'manufacturer' ? 'manufacturer' : 'agent')
+                  navigateTo(`/advertising?${q.toString()}`)
+                }}
+              >
+                {t('commercialAgents.openAdvertising')}
+              </button>
             </div>
           )}
 

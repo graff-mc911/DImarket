@@ -30,6 +30,8 @@ type MapResultsSidebarProps = {
 const KIND_ICON: Record<MapMarkerKind, typeof UserRound> = {
   professional: UserRound,
   company: Building2,
+  manufacturer: Building2,
+  agent: UserRound,
   project: Briefcase,
   job: Briefcase,
   marketplace: ShoppingBag,

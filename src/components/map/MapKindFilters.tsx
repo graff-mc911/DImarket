@@ -19,6 +19,7 @@ type Labels = {
   professional: string
   company: string
   manufacturer: string
+  agent: string
   project: string
   marketplace: string
   job: string
@@ -56,6 +57,12 @@ const KIND_META: Array<{
     icon: Factory,
     color: MAP_KIND_COLORS.manufacturer,
     labelKey: 'manufacturer',
+  },
+  {
+    id: 'agent',
+    icon: UserRound,
+    color: MAP_KIND_COLORS.agent,
+    labelKey: 'agent',
   },
   {
     id: 'project',
@@ -114,6 +121,7 @@ export function emptyMapKindCounts(): MapKindCounts {
     professional: 0,
     company: 0,
     manufacturer: 0,
+    agent: 0,
     project: 0,
     marketplace: 0,
     job: 0,

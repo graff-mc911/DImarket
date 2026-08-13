@@ -3,7 +3,15 @@ import { Loader } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
 import { getAuthErrorMessage, getPostLoginPath } from '../lib/authMessages'
-import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
+import {
+  consumePendingRegistration,
+  ensureUserProfile,
+  getIntendedRole,
+} from '../lib/profileSync'
+import {
+  bootstrapAgentAccount,
+  bootstrapManufacturerAccount,
+} from '../lib/commercialAgents'
 import { navigateTo } from '../lib/navigation'
 
 /**
@@ -42,11 +50,29 @@ export function AuthCallback() {
           throw new Error(t('auth.error.oauthNoSession'))
         }
 
-        const profile = await ensureUserProfile(after.session.user)
+        const pending = consumePendingRegistration()
+        const profile = await ensureUserProfile(after.session.user, pending ?? undefined)
         if (cancelled) return
 
+        const role = pending?.role || profile?.user_role
+        const location = pending?.location || profile?.location || null
+        if (role === 'manufacturer') {
+          await bootstrapManufacturerAccount({
+            userId: after.session.user.id,
+            companyName: pending?.company_name || profile?.full_name || 'Manufacturer',
+            location,
+          })
+        }
+        if (role === 'commercial_agent') {
+          await bootstrapAgentAccount({
+            userId: after.session.user.id,
+            fullName: pending?.full_name || profile?.full_name || 'Commercial Agent',
+            location,
+          })
+        }
+
         const path = getPostLoginPath(profile, {
-          intendedRole: getIntendedRole(profile, after.session.user),
+          intendedRole: role || getIntendedRole(profile, after.session.user),
           email: after.session.user.email,
         })
         window.history.replaceState({}, '', path)
