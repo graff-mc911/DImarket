@@ -19,14 +19,16 @@ import {
   listSourceChanges,
   publishDocumentVersion,
   rollbackDocumentVersion,
+  createDocumentDraftVersion,
   updateSourceChangeStatus,
   type DocumentVersionRow,
   type LegalDocumentRow,
   type OfficialSourceRow,
   type SourceChangeRow,
 } from '../../lib/officialSources/api'
-import { canRollbackToVersion, simpleLineDiff } from '../../lib/officialSources'
+import { canRollbackToVersion } from '../../lib/officialSources'
 import { DocumentFreshnessBadge } from './DocumentFreshnessBadge'
+import { LineDiffView } from './LineDiffView'
 
 function statusDot(status: string) {
   if (status === 'verified') return 'bg-emerald-500'
@@ -35,6 +37,88 @@ function statusDot(status: string) {
   }
   if (status === 'outdated' || status === 'unavailable') return 'bg-rose-500'
   return 'bg-[#86868b]'
+}
+
+function CreateDraftVersionForm({
+  doc,
+  onRefresh,
+}: {
+  doc: LegalDocumentRow
+  onRefresh: () => Promise<void>
+}) {
+  const { t } = useApp()
+  const [open, setOpen] = useState(false)
+  const [versionNumber, setVersionNumber] = useState('')
+  const [bodyMarkdown, setBodyMarkdown] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  const submit = async () => {
+    if (!versionNumber.trim() || !bodyMarkdown.trim()) return
+    setBusy(true)
+    try {
+      await createDocumentDraftVersion({
+        documentId: doc.id,
+        versionNumber: versionNumber.trim(),
+        bodyMarkdown: bodyMarkdown.trim(),
+        changeSummary: t('osm.admin.draftSummary'),
+      })
+      setOpen(false)
+      setVersionNumber('')
+      setBodyMarkdown('')
+      await onRefresh()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="mt-2 text-xs font-semibold text-[#007185] hover:underline"
+      >
+        {t('osm.admin.createDraft')}
+      </button>
+    )
+  }
+
+  return (
+    <div className="mt-3 space-y-2 rounded-xl border border-[#e8e8ed] bg-[#fafafa] p-3">
+      <p className="text-xs font-semibold text-[#1d1d1f]">{t('osm.admin.createDraftTitle')}</p>
+      <input
+        type="text"
+        value={versionNumber}
+        onChange={(e) => setVersionNumber(e.target.value)}
+        placeholder={t('osm.admin.versionNumberPlaceholder')}
+        className="w-full rounded-lg border border-[#d2d2d7] px-2 py-1.5 text-xs"
+      />
+      <textarea
+        value={bodyMarkdown}
+        onChange={(e) => setBodyMarkdown(e.target.value)}
+        rows={6}
+        placeholder={t('osm.admin.draftBodyPlaceholder')}
+        className="w-full rounded-lg border border-[#d2d2d7] px-2 py-1.5 font-mono text-xs"
+      />
+      <div className="flex gap-2">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void submit()}
+          className="rounded-full bg-[#1d1d1f] px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
+        >
+          {t('osm.admin.saveDraft')}
+        </button>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="rounded-full border border-[#d2d2d7] px-3 py-1 text-xs font-semibold"
+        >
+          {t('common.close')}
+        </button>
+      </div>
+    </div>
+  )
 }
 
 function DocumentVersionsPanel({
@@ -65,11 +149,15 @@ function DocumentVersionsPanel({
 
   if (!versions.length) {
     return (
-      <p className="mt-2 text-xs text-[#86868b]">{t('osm.admin.noVersions')}</p>
+      <>
+        <p className="mt-2 text-xs text-[#86868b]">{t('osm.admin.noVersions')}</p>
+        <CreateDraftVersionForm doc={doc} onRefresh={onRefresh} />
+      </>
     )
   }
 
   return (
+    <>
     <ul className="mt-3 space-y-2 border-t border-[#f0f0f2] pt-3">
       {versions.map((v: DocumentVersionRow) => {
         const isCurrent = doc.current_version_id === v.id
@@ -122,6 +210,8 @@ function DocumentVersionsPanel({
         )
       })}
     </ul>
+    <CreateDraftVersionForm doc={doc} onRefresh={onRefresh} />
+    </>
   )
 }
 
@@ -204,10 +294,6 @@ export function OfficialSourcesHealthDashboard() {
       </div>
     )
   }
-
-  const diff = selectedChange
-    ? simpleLineDiff(selectedChange.old_excerpt ?? '', selectedChange.new_excerpt ?? '')
-    : null
 
   return (
     <div className="space-y-6">
@@ -364,7 +450,7 @@ export function OfficialSourcesHealthDashboard() {
         </ul>
       </section>
 
-      {selectedChange && diff ? (
+      {selectedChange ? (
         <section className="rounded-2xl border border-[#e8e8ed] bg-white p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h3 className="font-bold text-[#1d1d1f]">{t('osm.admin.diffTitle')}</h3>
@@ -376,23 +462,11 @@ export function OfficialSourcesHealthDashboard() {
               {t('common.close')}
             </button>
           </div>
-          <p className="mb-2 text-xs text-[#6e6e73]">
-            {t('osm.admin.diffHint')} · +{diff.added.length} / −{diff.removed.length}
-          </p>
-          <div className="grid gap-3 md:grid-cols-2">
-            <div>
-              <p className="mb-1 text-xs font-bold uppercase text-rose-700">{t('osm.admin.removed')}</p>
-              <pre className="max-h-48 overflow-auto rounded-xl bg-rose-50 p-3 text-[11px] leading-4 text-rose-950 whitespace-pre-wrap">
-                {diff.removed.slice(0, 40).join('\n') || '—'}
-              </pre>
-            </div>
-            <div>
-              <p className="mb-1 text-xs font-bold uppercase text-emerald-700">{t('osm.admin.added')}</p>
-              <pre className="max-h-48 overflow-auto rounded-xl bg-emerald-50 p-3 text-[11px] leading-4 text-emerald-950 whitespace-pre-wrap">
-                {diff.added.slice(0, 40).join('\n') || '—'}
-              </pre>
-            </div>
-          </div>
+          <LineDiffView
+            oldText={selectedChange.old_excerpt ?? ''}
+            newText={selectedChange.new_excerpt ?? ''}
+            hint={t('osm.admin.diffHint')}
+          />
         </section>
       ) : null}
 

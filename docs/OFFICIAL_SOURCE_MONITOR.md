@@ -89,3 +89,14 @@ Covers: hash equality, change detection, versioning, effective/future, overdue f
 | SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE2.sql` |
 
 Published Spain entries are **pointers only** — link to BOE / Your Europe, not full legal text.
+
+## Phase 3
+
+| Feature | Details |
+|---------|---------|
+| Myers line diff | Admin side-by-side diff for source changes |
+| Draft templates | Admin creates draft version → review → publish |
+| Spain rental draft | `es-rental-agreement-template` seeded as `review_required` |
+| PDF export | `/legal-documents/:key` → Save as PDF with version/source footer |
+| IT / PT / RO | Normattiva, DRE, Portal Legislativ + gov portals |
+| SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE3.sql` |

@@ -92,6 +92,7 @@ type MonitorAction =
   | 'check_now'
   | 'publish_version'
   | 'rollback_version'
+  | 'create_draft_version'
 
 async function callMonitor(
   action: MonitorAction,
@@ -233,4 +234,14 @@ export async function publishDocumentVersion(versionId: string) {
 
 export async function rollbackDocumentVersion(versionId: string) {
   return callMonitor('rollback_version', { versionId })
+}
+
+export async function createDocumentDraftVersion(input: {
+  documentId: string
+  versionNumber: string
+  bodyMarkdown: string
+  effectiveFrom?: string | null
+  changeSummary?: string
+}) {
+  return callMonitor('create_draft_version', input)
 }

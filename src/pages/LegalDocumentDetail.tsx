@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeft, ExternalLink, Loader2 } from 'lucide-react'
+import { ArrowLeft, Download, ExternalLink, Loader2 } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { getPublishedLegalDocument, type PublishedLegalDocument } from '../lib/officialSources/api'
+import {
+  buildLegalDocumentPdfHtml,
+  openLegalDocumentPdfPrint,
+} from '../lib/officialSources/legalDocumentPdf'
 import { DocumentFreshnessBadge, LegalContentDisclaimer } from '../components/officialSources/DocumentFreshnessBadge'
 
 function renderMarkdown(md: string): string {
@@ -62,6 +66,25 @@ export function LegalDocumentDetail({ docKey }: Props) {
   const body = version?.body_markdown ?? ''
   const sourceUrl = version?.source_url ?? doc.official_sources?.source_url
 
+  const downloadPdf = () => {
+    if (!version?.body_markdown) return
+    const html = buildLegalDocumentPdfHtml({
+      title: doc.title,
+      bodyMarkdown: version.body_markdown,
+      meta: {
+        documentName: doc.title,
+        version: version.version_number,
+        jurisdiction: doc.jurisdiction ?? doc.country_code,
+        generatedAt: new Date(),
+        sourceName: doc.official_sources?.source_name,
+        sourceUrl: sourceUrl ?? undefined,
+        lastVerifiedAt: doc.last_verified_at ?? version.verified_at,
+      },
+      disclaimerLines: [t('osm.disclaimer.accuracy'), t('osm.disclaimer.notAdvice')],
+    })
+    openLegalDocumentPdfPrint(html)
+  }
+
   return (
     <div className="layout-page-content py-8 pb-24 lg:pb-8">
       <div className="mx-auto max-w-3xl">
@@ -117,6 +140,17 @@ export function LegalDocumentDetail({ docKey }: Props) {
             <ExternalLink className="h-4 w-4" />
             {t('osm.freshness.openSource')}
           </a>
+        ) : null}
+
+        {body ? (
+          <button
+            type="button"
+            onClick={downloadPdf}
+            className="mt-4 ml-0 inline-flex items-center gap-2 rounded-full border border-[#d2d2d7] px-4 py-2 text-sm font-semibold hover:bg-[#f5f5f7] sm:ml-3"
+          >
+            <Download className="h-4 w-4" />
+            {t('osm.public.downloadPdf')}
+          </button>
         ) : null}
 
         <div className="mt-6">

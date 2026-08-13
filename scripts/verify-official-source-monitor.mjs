@@ -264,4 +264,45 @@ assert.ok(statuses.includes('published'))
 const rollback = { from: 'published', to: 'superseded', restore: 'v1' }
 assert.equal(rollback.to, 'superseded')
 
+// Myers line diff
+function myersLineDiff(oldText, newText) {
+  const a = (oldText ?? '').split('\n')
+  const b = (newText ?? '').split('\n')
+  const n = a.length
+  const m = b.length
+  const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0))
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1])
+    }
+  }
+  const ops = []
+  let i = 0
+  let j = 0
+  while (i < n && j < m) {
+    if (a[i] === b[j]) {
+      ops.push({ type: 'equal', line: a[i] })
+      i++
+      j++
+    } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+      ops.push({ type: 'delete', line: a[i] })
+      i++
+    } else {
+      ops.push({ type: 'insert', line: b[j] })
+      j++
+    }
+  }
+  while (i < n) {
+    ops.push({ type: 'delete', line: a[i++] })
+  }
+  while (j < m) {
+    ops.push({ type: 'insert', line: b[j++] })
+  }
+  return ops
+}
+const lineOps = myersLineDiff('alpha\nbeta', 'alpha\ngamma')
+assert.ok(lineOps.some((o) => o.type === 'delete' && o.line === 'beta'))
+assert.ok(lineOps.some((o) => o.type === 'insert' && o.line === 'gamma'))
+assert.ok(lineOps.some((o) => o.type === 'equal' && o.line === 'alpha'))
+
 console.log('ok official source monitor core checks passed')

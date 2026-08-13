@@ -32,6 +32,9 @@ export {
   GERMANY_COUNTRY_SOURCES,
   FRANCE_COUNTRY_SOURCES,
   POLAND_COUNTRY_SOURCES,
+  ITALY_COUNTRY_SOURCES,
+  PORTUGAL_COUNTRY_SOURCES,
+  ROMANIA_COUNTRY_SOURCES,
   COUNTRY_SOURCES_BY_CODE,
   getCountrySources,
   listCountrySources,
@@ -43,3 +46,17 @@ export {
   generatedDocumentFooterHtml,
   type GeneratedDocumentMeta,
 } from './pdfMeta'
+
+export {
+  buildLegalDocumentPdfHtml,
+  openLegalDocumentPdfPrint,
+  legalDocumentPdfFilename,
+  type LegalDocumentPdfInput,
+} from './legalDocumentPdf'
+
+export {
+  myersLineDiff,
+  summarizeLineDiff,
+  lineDiffSides,
+  type LineDiffOp,
+} from './lineDiff'

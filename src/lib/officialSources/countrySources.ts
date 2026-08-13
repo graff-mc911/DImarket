@@ -87,11 +87,59 @@ export const POLAND_COUNTRY_SOURCES: CountrySourcesConfig = {
   notes: 'Poland — ISAP Sejm and gov.pl as official entry points.',
 }
 
+export const ITALY_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'IT',
+  countryName: 'Italy',
+  officialGazetteUrl: 'https://www.normattiva.it/',
+  governmentPortalUrl: 'https://www.gov.it/',
+  taxPortalUrl: 'https://www.agenziaentrate.gov.it/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Italy — Normattiva and gov.it as official monitor entry points.',
+}
+
+export const PORTUGAL_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'PT',
+  countryName: 'Portugal',
+  officialGazetteUrl: 'https://dre.pt/',
+  governmentPortalUrl: 'https://www.portugal.gov.pt/',
+  taxPortalUrl: 'https://www.portaldasfinancas.gov.pt/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Portugal — DRE and portugal.gov.pt as official entry points.',
+}
+
+export const ROMANIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'RO',
+  countryName: 'Romania',
+  officialGazetteUrl: 'https://legislatie.just.ro/',
+  governmentPortalUrl: 'https://gov.ro/',
+  taxPortalUrl: 'https://www.anaf.ro/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Romania — legislatie.just.ro and gov.ro as official entry points.',
+}
+
 export const COUNTRY_SOURCES_BY_CODE: Record<string, CountrySourcesConfig> = {
   ES: SPAIN_COUNTRY_SOURCES,
   DE: GERMANY_COUNTRY_SOURCES,
   FR: FRANCE_COUNTRY_SOURCES,
   PL: POLAND_COUNTRY_SOURCES,
+  IT: ITALY_COUNTRY_SOURCES,
+  PT: PORTUGAL_COUNTRY_SOURCES,
+  RO: ROMANIA_COUNTRY_SOURCES,
 }
 
 export function getCountrySources(countryCode: string): CountrySourcesConfig | null {

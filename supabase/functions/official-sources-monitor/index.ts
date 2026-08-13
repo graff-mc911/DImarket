@@ -9,6 +9,7 @@ type Action =
   | 'review_change'
   | 'publish_version'
   | 'rollback_version'
+  | 'create_draft_version'
 
 type Body = {
   action?: Action
@@ -18,6 +19,10 @@ type Body = {
     notes?: string
     versionId?: string
     documentId?: string
+    versionNumber?: string
+    bodyMarkdown?: string
+    effectiveFrom?: string | null
+    changeSummary?: string
   }
 }
 
@@ -572,6 +577,66 @@ async function rollbackVersion(
   return { versionId, documentId: docId, previousCurrent: currentDoc?.current_version_id }
 }
 
+async function createDraftVersion(
+  admin: ReturnType<typeof createClient>,
+  userId: string,
+  input: {
+    documentId: string
+    versionNumber: string
+    bodyMarkdown: string
+    effectiveFrom?: string | null
+    changeSummary?: string
+  },
+) {
+  const { data: doc, error: docErr } = await admin
+    .from('legal_documents')
+    .select('id, title, primary_source_id, official_sources:primary_source_id(source_url)')
+    .eq('id', input.documentId)
+    .maybeSingle()
+  if (docErr || !doc) throw new Error('document_not_found')
+
+  const sourceUrl =
+    (doc.official_sources as { source_url?: string } | null)?.source_url ?? null
+
+  const { data: version, error } = await admin
+    .from('document_versions')
+    .insert({
+      document_id: input.documentId,
+      version_number: input.versionNumber,
+      title: doc.title as string,
+      body_markdown: input.bodyMarkdown,
+      source_id: doc.primary_source_id,
+      source_url: sourceUrl,
+      effective_from: input.effectiveFrom ?? null,
+      status: 'review_required',
+      change_summary:
+        input.changeSummary ??
+        'Admin-created draft — requires review before publish. No silent AI rewrite.',
+    })
+    .select('id, version_number')
+    .maybeSingle()
+  if (error) throw error
+
+  await admin
+    .from('legal_documents')
+    .update({
+      verification_status: 'needs_review',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', input.documentId)
+
+  await admin.from('document_audit_log').insert({
+    document_id: input.documentId,
+    version_id: version?.id ?? null,
+    actor_id: userId,
+    action: 'draft_version_created',
+    new_value: { version_number: input.versionNumber },
+    reason: 'Curated draft awaiting admin review',
+  })
+
+  return { versionId: version?.id, versionNumber: version?.version_number }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -667,6 +732,25 @@ Deno.serve(async (req) => {
       const versionId = body.payload?.versionId
       if (!versionId) return jsonResponse({ error: 'versionId required' }, 400)
       const result = await rollbackVersion(gate.admin, gate.userId, versionId)
+      return jsonResponse({ ok: true, ...result })
+    }
+
+    if (action === 'create_draft_version') {
+      const gate = await requireAdmin(req)
+      if (!gate.ok) return jsonResponse({ error: gate.error }, gate.error === 'forbidden' ? 403 : 401)
+      const documentId = body.payload?.documentId
+      const versionNumber = body.payload?.versionNumber
+      const bodyMarkdown = body.payload?.bodyMarkdown
+      if (!documentId || !versionNumber || !bodyMarkdown) {
+        return jsonResponse({ error: 'documentId, versionNumber, bodyMarkdown required' }, 400)
+      }
+      const result = await createDraftVersion(gate.admin, gate.userId, {
+        documentId,
+        versionNumber,
+        bodyMarkdown,
+        effectiveFrom: body.payload?.effectiveFrom ?? null,
+        changeSummary: body.payload?.changeSummary,
+      })
       return jsonResponse({ ok: true, ...result })
     }
 
