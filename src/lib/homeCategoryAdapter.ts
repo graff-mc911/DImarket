@@ -53,6 +53,9 @@ export function homeCategoryPath(
     }
     return '/commercial-agents'
   }
+  if (category.slug === 'official-documents' || category.href === '/legal-documents') {
+    return '/legal-documents'
+  }
   if (category.href) return category.href
   const slug = category.slug
   if (slug === 'buy-sell' || subcategory?.slug?.startsWith('buy-sell')) return '/sell-rent'

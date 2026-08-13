@@ -316,4 +316,34 @@ export const serviceCategories: ServiceCategory[] = [
     sub('Legal Services', '🏛', 'Court Representation'),
     sub('Legal Services', '🧾', 'Tax Lawyer'),
   ]),
+  category(
+    'official-documents',
+    '📜',
+    'Official Documents',
+    'Verified pointers to official government sources. Not silent AI legal rewrite.',
+    [
+      sub(
+        'Official Documents',
+        '🇪🇺',
+        'Legislation entry points',
+        'official-documents-legislation',
+        'Official gazette and government legislation portals by country.',
+      ),
+      sub(
+        'Official Documents',
+        '🏠',
+        'Rental information hubs',
+        'official-documents-rental',
+        'Informational rental hubs linking to official sources only.',
+      ),
+      sub(
+        'Official Documents',
+        '✅',
+        'Freshness & verification',
+        'official-documents-freshness',
+        'How DImarket monitors official sources and versions.',
+      ),
+    ],
+    { href: '/legal-documents' },
+  ),
 ]

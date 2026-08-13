@@ -2471,6 +2471,8 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'portfolio.media.beforeAfter': 'До / Після',
 
   'nav.commercialAgents': 'Комерційні представники',
+  'nav.officialDocuments': 'Офіційні документи',
+  'header.officialDocuments': 'Офіційні документи',
   'nav.manufacturers': 'Виробники',
   'header.commercialAgents': 'Комерційні представники',
   'header.manufacturers': 'Виробники',

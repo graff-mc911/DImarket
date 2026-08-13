@@ -118,6 +118,17 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     surfaces: ['mobile-more', 'header-dept', 'footer-services', 'footer-professionals'],
   },
   {
+    id: 'official-documents',
+    path: '/legal-documents',
+    labelKey: 'nav.officialDocuments',
+    labelKeyBySurface: {
+      'header-dept': 'header.officialDocuments',
+      'footer-support': 'footer.officialDocuments',
+      'mobile-more': 'nav.officialDocuments',
+    },
+    surfaces: ['mobile-more', 'header-dept', 'footer-support'],
+  },
+  {
     id: 'jobs',
     path: '/vacancies',
     aliases: ['/jobs'],
@@ -337,12 +348,6 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     id: 'help',
     path: '/contact',
     labelKey: 'footer.helpCenter',
-    surfaces: ['footer-support'],
-  },
-  {
-    id: 'official-documents',
-    path: '/legal-documents',
-    labelKey: 'footer.officialDocuments',
     surfaces: ['footer-support'],
   },
   {

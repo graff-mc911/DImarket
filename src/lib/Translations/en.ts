@@ -2473,6 +2473,8 @@ export const enTranslations = {
 
   // —— Commercial Agents / Representatives ——
   'nav.commercialAgents': 'Commercial Agents',
+  'nav.officialDocuments': 'Official documents',
+  'header.officialDocuments': 'Official documents',
   'nav.manufacturers': 'Manufacturers',
   'header.commercialAgents': 'Commercial Agents',
   'header.manufacturers': 'Manufacturers',
