@@ -2,6 +2,7 @@ import { supabase } from '../supabase'
 import { createNotification } from '../notifications/notifications'
 import { slugifyCommercial } from './slug'
 import { normalizeSpokenLanguageCode, spokenLanguageFilterVariants } from '../languageDisplay'
+import type { Json } from '../types'
 import type {
   AgentProfile,
   AgentInvitation,
@@ -120,7 +121,7 @@ export async function fetchOpportunities(
     console.error('fetchOpportunities', error)
     return []
   }
-  return (data ?? []) as RepresentationOpportunity[]
+  return (data ?? []) as unknown as RepresentationOpportunity[]
 }
 
 export async function fetchManufacturerBySlug(slug: string): Promise<ManufacturerProfile | null> {
@@ -258,7 +259,7 @@ export async function createOpportunity(
     .select(OPP_SELECT)
     .single()
   if (error) return { row: null, error: error.message }
-  return { row: data as RepresentationOpportunity, error: null }
+  return { row: data as unknown as RepresentationOpportunity, error: null }
 }
 
 export async function applyToOpportunity(input: {
@@ -430,7 +431,7 @@ export async function fetchOpportunitiesForManufacturer(manufacturerId: string) 
     .select('*')
     .eq('manufacturer_id', manufacturerId)
     .order('updated_at', { ascending: false })
-  return (data ?? []) as RepresentationOpportunity[]
+  return (data ?? []) as unknown as RepresentationOpportunity[]
 }
 
 export async function toggleCommercialFavorite(
@@ -511,7 +512,7 @@ export async function trackCommercialEvent(
       actor_id: actorId,
       entity_type: entityType ?? null,
       entity_id: entityId ?? null,
-      meta,
+      meta: meta as Json,
     })
   } catch {
     /* non-blocking */

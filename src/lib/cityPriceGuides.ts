@@ -3,13 +3,15 @@
  * Для SEO-гайдів і блоку «типові ціни» на сторінках міст.
  */
 
+import type { TranslationKey } from './i18n'
+
 export interface CityTradePriceGuide {
   marketId: string
   groupSlug: string
   minEur: number
   maxEur: number
-  unitKey: string
-  noteKey: string
+  unitKey: TranslationKey
+  noteKey: TranslationKey
 }
 
 export const CITY_TRADE_PRICE_GUIDES: CityTradePriceGuide[] = [

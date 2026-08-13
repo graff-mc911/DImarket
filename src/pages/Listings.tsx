@@ -21,6 +21,7 @@ import {
   excludeSuppressedFromQuery,
   filterSuppressedListings,
 } from '../lib/suppressedListings'
+import type { TranslationKey } from '../lib/i18n'
 
 type ListingsProps = {
   fixedCategorySlug?: SiteCategorySlug
@@ -143,11 +144,11 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
   }
 
   const translateCategory = (category: Category) => {
-    const newKey   = 'category.name.' + category.slug
+    const newKey   = `category.name.${category.slug}` as TranslationKey
     const newValue = t(newKey)
     if (newValue !== newKey) return newValue
 
-    const legacyKey   = 'category.' + category.slug
+    const legacyKey   = `category.${category.slug}` as TranslationKey
     const legacyValue = t(legacyKey)
     if (legacyValue !== legacyKey) return legacyValue
 

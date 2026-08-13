@@ -78,7 +78,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
       if (qError) { setError(qError.message); return }
       if (!data || isSuppressedListing(data))  { setError('Оголошення не знайдено або знято з публікації.'); return }
 
-      setListing(data as ListingWithImages)
+      setListing(data as unknown as ListingWithImages)
 
       // Збільшуємо лічильник переглядів
       void supabase

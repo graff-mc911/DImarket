@@ -7,6 +7,7 @@ import {
 } from './forms'
 import { withOfficialForm } from './officialForms'
 import type { DocumentRecord } from './types'
+import type { TranslationKey } from '../i18n'
 
 const BOE = {
   name: 'BOE — Agencia Estatal Boletín Oficial del Estado',
@@ -820,8 +821,8 @@ export const DOCUMENTS_CATALOG: DocumentRecord[] = [
 export const DOCUMENTS_SUBCATEGORY_ORDER: Array<{
   slug: import('./types').DocumentsSubcategorySlug
   icon: string
-  titleKey: string
-  descriptionKey: string
+  titleKey: TranslationKey
+  descriptionKey: TranslationKey
 }> = [
   { slug: 'contracts-forms', icon: '📑', titleKey: 'docs.sub.contracts', descriptionKey: 'docs.sub.contracts.desc' },
   { slug: 'licenses-permits', icon: '🪪', titleKey: 'docs.sub.licenses', descriptionKey: 'docs.sub.licenses.desc' },

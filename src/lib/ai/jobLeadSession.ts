@@ -1,4 +1,5 @@
 import { supabase } from '../supabase'
+import type { Json } from '../types'
 import type { JobRequestDraft } from './jobRequestDraft'
 
 export type JobLeadSession = {
@@ -17,7 +18,7 @@ export async function createJobLeadSession(
 ): Promise<string | null> {
   const { data, error } = await supabase
     .from('ai_job_sessions')
-    .insert({ user_id: userId, locale, draft: {}, extracted: {} })
+    .insert({ user_id: userId, locale, draft: {} as Json, extracted: {} as Json })
     .select('id')
     .single()
   if (error) {
@@ -37,7 +38,7 @@ export async function appendJobLeadMessage(
     session_id: sessionId,
     role,
     content,
-    meta: meta ?? {},
+    meta: (meta ?? {}) as Json,
   })
 }
 
@@ -49,8 +50,8 @@ export async function updateJobLeadDraft(
   await supabase
     .from('ai_job_sessions')
     .update({
-      draft,
-      extracted: extracted ?? {},
+      draft: draft as unknown as Json,
+      extracted: (extracted ?? {}) as Json,
       updated_at: new Date().toISOString(),
     })
     .eq('id', sessionId)
@@ -69,7 +70,7 @@ export async function recordPublishedJob(
       session_id: sessionId,
       user_id: userId,
       listing_id: listingId,
-      draft,
+      draft: draft as unknown as Json,
       title,
       description,
       published_at: new Date().toISOString(),

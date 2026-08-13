@@ -371,9 +371,9 @@ export async function rankProfessionals(
       console.error('rankProfessionals:', primary.error || fallback.error)
       return []
     }
-    data = fallback.data as MatchCandidate[]
+    data = fallback.data as unknown as MatchCandidate[]
   } else {
-    data = primary.data as MatchCandidate[]
+    data = primary.data as unknown as MatchCandidate[]
   }
 
   let ranked = data

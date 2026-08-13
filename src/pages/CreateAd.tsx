@@ -6,6 +6,7 @@ import { useApp } from '../contexts/AppContext'
 import { Category, Listing } from '../lib/types'
 import { getCurrentLocation, searchLocations, LocationSuggestion } from '../lib/geocoding'
 import { navigateTo } from '../lib/navigation'
+import type { TranslationKey } from '../lib/i18n'
 import {
   CategorySubcategoryPicker,
   syncPickerWithCategoryId,
@@ -84,14 +85,14 @@ export function CreateAd() {
   }
 
   const getCategoryTranslation = (category: Category) => {
-    const newKey = `category.name.${category.slug}`
+    const newKey = `category.name.${category.slug}` as TranslationKey
     const newValue = t(newKey)
 
     if (newValue !== newKey) {
       return newValue
     }
 
-    const legacyKey = `category.${category.slug}`
+    const legacyKey = `category.${category.slug}` as TranslationKey
     const legacyValue = t(legacyKey)
 
     if (legacyValue !== legacyKey) {

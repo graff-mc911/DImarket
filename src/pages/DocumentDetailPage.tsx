@@ -12,6 +12,7 @@ import {
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { appendLocationToPath, formatGlobalLocationLabel } from '../lib/globalLocation'
+import type { TranslationKey } from '../lib/i18n'
 import {
   DocumentFreshnessBadge,
   LegalContentDisclaimer,
@@ -105,7 +106,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
       let value = raw
       if (f.type === 'select' && raw) {
         const opt = f.options?.find((o) => o.value === raw)
-        value = opt?.label || (opt ? t(opt.labelKey) : raw)
+        value = opt?.label || (opt ? t(opt.labelKey as TranslationKey) : raw)
       }
       return { label: fieldDisplayLabel(f, t), value }
     })
@@ -227,13 +228,13 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
           {isLicense && doc.licenseRequirement ? (
             <MetaRow
               label={t('docs.meta.licenseRequired')}
-              value={t(`docs.license.${doc.licenseRequirement}`)}
+              value={t(`docs.license.${doc.licenseRequirement}` as TranslationKey)}
             />
           ) : null}
-          {doc.issuerKey ? <MetaRow label={t('docs.meta.issuer')} value={t(doc.issuerKey)} /> : null}
-          {doc.costKey ? <MetaRow label={t('docs.meta.cost')} value={t(doc.costKey)} /> : null}
+          {doc.issuerKey ? <MetaRow label={t('docs.meta.issuer')} value={t(doc.issuerKey as TranslationKey)} /> : null}
+          {doc.costKey ? <MetaRow label={t('docs.meta.cost')} value={t(doc.costKey as TranslationKey)} /> : null}
           {doc.durationKey ? (
-            <MetaRow label={t('docs.meta.duration')} value={t(doc.durationKey)} />
+            <MetaRow label={t('docs.meta.duration')} value={t(doc.durationKey as TranslationKey)} />
           ) : null}
         </section>
 
@@ -242,7 +243,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
             <h2 className="mb-2 text-base font-bold text-[#1d1d1f]">{t('docs.requirements')}</h2>
             <ul className="list-disc space-y-1 pl-5 text-sm text-[#6e6e73]">
               {doc.requirementsKeys.map((key) => (
-                <li key={key}>{t(key)}</li>
+                <li key={key}>{t(key as TranslationKey)}</li>
               ))}
             </ul>
           </section>
@@ -319,7 +320,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
                   className="inline-flex items-center gap-2 rounded-xl border border-[#d2d2d7] bg-white px-3 py-2 text-sm font-semibold text-[#1d1d1f]"
                 >
                   <UserSearch className="h-4 w-4" aria-hidden />
-                  {t(s.labelKey)}
+                  {t(s.labelKey as TranslationKey)}
                 </button>
               ))}
             </div>
@@ -353,7 +354,7 @@ function ProcedurePanel({
   doc: DocumentRecord
   stepIndex: number
   setStepIndex: (n: number) => void
-  t: (key: string) => string
+  t: (key: TranslationKey) => string
 }) {
   const steps = doc.procedureSteps ?? []
   const step = steps[stepIndex]
@@ -374,21 +375,21 @@ function ProcedurePanel({
           style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }}
         />
       </div>
-      <p className="font-semibold text-[#1d1d1f]">{t(step.titleKey)}</p>
-      <p className="mt-1 text-sm text-[#6e6e73]">{t(step.bodyKey)}</p>
+      <p className="font-semibold text-[#1d1d1f]">{t(step.titleKey as TranslationKey)}</p>
+      <p className="mt-1 text-sm text-[#6e6e73]">{t(step.bodyKey as TranslationKey)}</p>
       {step.whatIsKey ? (
         <p className="mt-2 text-sm">
-          <strong>{t('docs.procedure.whatIs')}</strong> {t(step.whatIsKey)}
+          <strong>{t('docs.procedure.whatIs')}</strong> {t(step.whatIsKey as TranslationKey)}
         </p>
       ) : null}
       {step.whatNeededKey ? (
         <p className="mt-1 text-sm">
-          <strong>{t('docs.procedure.whatNeeded')}</strong> {t(step.whatNeededKey)}
+          <strong>{t('docs.procedure.whatNeeded')}</strong> {t(step.whatNeededKey as TranslationKey)}
         </p>
       ) : null}
       {step.whereKey ? (
         <p className="mt-1 text-sm">
-          <strong>{t('docs.procedure.where')}</strong> {t(step.whereKey)}
+          <strong>{t('docs.procedure.where')}</strong> {t(step.whereKey as TranslationKey)}
         </p>
       ) : null}
       {step.source ? (
@@ -437,7 +438,7 @@ function FillForm({
   fields: FormFieldDef[]
   values: Record<string, string>
   setValues: (v: Record<string, string>) => void
-  t: (key: string) => string
+  t: (key: TranslationKey) => string
   onPdf: () => void
   onSign: () => void
   modelName?: string
@@ -506,7 +507,7 @@ function FillForm({
                     <option value="">—</option>
                     {(field.options ?? []).map((opt) => (
                       <option key={opt.value} value={opt.value}>
-                        {opt.label || t(opt.labelKey)}
+                        {opt.label || t(opt.labelKey as TranslationKey)}
                       </option>
                     ))}
                   </select>

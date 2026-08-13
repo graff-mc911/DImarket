@@ -80,7 +80,7 @@ function dedupeGeoRows(rows: GeoRow[]): GeoRow[] {
   return out
 }
 
-export function mergeGeoCatalogs(...catalogs: AdGeoCountry[]): AdGeoCountry[] {
+export function mergeGeoCatalogs(...catalogs: AdGeoCountry[][]): AdGeoCountry[] {
   return groupGeoRows(
     catalogs.flatMap((catalog) =>
       catalog.flatMap((country) =>
@@ -125,7 +125,7 @@ async function loadGeoRowsFromTable(
   }
   const { data, error } = await query
   if (error || !data?.length) return []
-  return dedupeGeoRows(data as GeoRow[])
+  return dedupeGeoRows(data as unknown as GeoRow[])
 }
 
 async function loadAllGeoRows(): Promise<GeoRow[]> {

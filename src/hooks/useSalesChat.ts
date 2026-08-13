@@ -243,8 +243,8 @@ export function useSalesChat() {
   }, [categories.length, botContext, t])
 
   useEffect(() => {
-    setMessages((prev) => remapAssistantMessages(prev, t))
-  }, [language.code, t])
+    setMessages((prev) => remapAssistantMessages(prev, t, draft, botContext))
+  }, [language.code, t, draft, botContext])
 
   useEffect(() => {
     if (!messages.length) return
@@ -430,7 +430,7 @@ export function useSalesChat() {
           setListingId(result.listing.id)
           if ((turn.draft.listingType ?? 'service_request') === 'service_request') {
             const scores = await fetchMatchScoresForListing(result.listing.id, 5)
-            setTopMatches(scores as TopMatchRow[])
+            setTopMatches(scores as unknown as TopMatchRow[])
           }
 
           if (sessionIdRef.current) {

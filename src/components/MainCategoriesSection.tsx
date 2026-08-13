@@ -141,7 +141,7 @@ export function MainCategoriesSection({
         for (const sub of category.subcategories) {
           const resolved = findServiceBySlug(sub.slug)
           if (!resolved) continue
-          for (const profile of data as Array<{
+          for (const profile of data as unknown as Array<{
             id?: string
             user_role?: string
             bio?: string | null
