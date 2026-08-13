@@ -127,3 +127,16 @@ Auto-draft versions use prefix `auto-` — admin UI shows badge; publish only af
 | Email-only fallback | Alert status UI when only Resend is configured; notify logic skips unconfigured channels |
 | Public filter | `/legal-documents` country filter |
 | SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE5.sql` |
+
+## Phase 6
+
+| Feature | Details |
+|---------|---------|
+| LT / LV / EE / HR / SI | Official gazette + gov portals, published legislation pointers |
+| Rental drafts | DE, FR, IT, PL, NL `contract_template` skeletons (`review_required`, not published) |
+| Webhook alerts | `OSM_WEBHOOK_URL` (+ optional `OSM_WEBHOOK_SECRET`) on critical/high changes |
+| Weekly digest | Edge `weekly_digest` — pending review summary (email, or Telegram fallback) |
+| Cron | `.github/workflows/official-sources-weekly-digest.yml` (Mondays 07:00 UTC) |
+| SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE6.sql` |
+
+Webhook payload: `{ event, severity, change_id, source_name, country_code, source_url, summary, affected_documents, admin_url, detected_at }`.

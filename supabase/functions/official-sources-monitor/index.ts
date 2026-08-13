@@ -11,6 +11,7 @@ type Action =
   | 'rollback_version'
   | 'create_draft_version'
   | 'update_draft_version'
+  | 'weekly_digest'
 
 type Body = {
   action?: Action
@@ -124,12 +125,48 @@ function isEmailConfigured(): boolean {
   )
 }
 
+function isWebhookConfigured(): boolean {
+  return Boolean(Deno.env.get('OSM_WEBHOOK_URL'))
+}
+
 function alertsComplete(
-  existing: { alert_sent_at?: string | null; email_alert_sent_at?: string | null } | null | undefined,
+  existing: {
+    alert_sent_at?: string | null
+    email_alert_sent_at?: string | null
+    webhook_alert_sent_at?: string | null
+  } | null | undefined,
 ): boolean {
   const telegramDone = !isTelegramConfigured() || Boolean(existing?.alert_sent_at)
   const emailDone = !isEmailConfigured() || Boolean(existing?.email_alert_sent_at)
-  return telegramDone && emailDone
+  const webhookDone = !isWebhookConfigured() || Boolean(existing?.webhook_alert_sent_at)
+  return telegramDone && emailDone && webhookDone
+}
+
+async function sendWebhookAlert(payload: Record<string, unknown>): Promise<boolean> {
+  const url = Deno.env.get('OSM_WEBHOOK_URL')
+  if (!url) return false
+  const secret = Deno.env.get('OSM_WEBHOOK_SECRET')
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (secret) headers['X-OSM-Webhook-Secret'] = secret
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
+function isoWeekKey(d = new Date()): string {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
+  const day = date.getUTCDay() || 7
+  date.setUTCDate(date.getUTCDate() + 4 - day)
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1))
+  const week = Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+  return `${date.getUTCFullYear()}-W${String(week).padStart(2, '0')}`
 }
 
 function autoDraftVersionNumber(at = new Date()): string {
@@ -267,7 +304,7 @@ async function notifyChangeIfNeeded(
 
   const { data: existing } = await admin
     .from('source_changes')
-    .select('alert_sent_at, email_alert_sent_at')
+    .select('alert_sent_at, email_alert_sent_at, webhook_alert_sent_at')
     .eq('id', changeId)
     .maybeSingle()
   if (alertsComplete(existing)) return
@@ -302,10 +339,27 @@ async function notifyChangeIfNeeded(
           text,
         )
       : false
+  const webhookSent = existing?.webhook_alert_sent_at
+    ? true
+    : isWebhookConfigured()
+      ? await sendWebhookAlert({
+          event: 'official_source_change',
+          severity,
+          change_id: changeId,
+          source_name: source.source_name,
+          country_code: source.country_code,
+          source_url: source.source_url,
+          summary,
+          affected_documents: affectedCount,
+          admin_url: adminUrl,
+          detected_at: now,
+        })
+      : false
 
   const patch: Record<string, string> = {}
   if (telegramSent && !existing?.alert_sent_at) patch.alert_sent_at = now
   if (emailSent && !existing?.email_alert_sent_at) patch.email_alert_sent_at = now
+  if (webhookSent && !existing?.webhook_alert_sent_at) patch.webhook_alert_sent_at = now
   if (Object.keys(patch).length) {
     await admin.from('source_changes').update(patch).eq('id', changeId)
   }
@@ -872,6 +926,88 @@ async function updateDraftVersion(
   return { versionId: version.id, versionNumber: version.version_number }
 }
 
+async function runWeeklyDigest(admin: ReturnType<typeof createClient>) {
+  const weekKey = isoWeekKey()
+  const { data: prior } = await admin
+    .from('osm_weekly_digest_runs')
+    .select('id')
+    .eq('week_key', weekKey)
+    .maybeSingle()
+  if (prior) {
+    return { skipped: true, reason: 'already_sent', week_key: weekKey }
+  }
+
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const { data: pending } = await admin
+    .from('source_changes')
+    .select('id, severity, change_type, change_summary, detected_at, official_sources(source_name, country_code)')
+    .in('status', ['review_required', 'detected'])
+    .order('detected_at', { ascending: false })
+    .limit(50)
+
+  const { data: recent } = await admin
+    .from('source_changes')
+    .select('id')
+    .gte('detected_at', since)
+
+  const pendingCount = pending?.length ?? 0
+  const recentCount = recent?.length ?? 0
+
+  if (pendingCount === 0 && recentCount === 0) {
+    return { skipped: true, reason: 'nothing_to_report', week_key: weekKey }
+  }
+
+  const adminUrl = 'https://dimarket.app/admin/official-sources'
+  const lines = (pending ?? []).slice(0, 15).map((c: Record<string, unknown>) => {
+    const src = c.official_sources as { source_name?: string; country_code?: string } | null
+    return `- [${c.severity}] ${src?.source_name ?? 'source'} (${src?.country_code ?? '—'}) — ${c.change_type}`
+  })
+  const text = [
+    'DImarket OSM — Weekly digest',
+    '',
+    `Pending review: ${pendingCount}`,
+    `Changes last 7 days: ${recentCount}`,
+    '',
+    ...(lines.length ? ['Top pending:', ...lines, ''] : []),
+    `Review: ${adminUrl}`,
+  ].join('\n')
+
+  let channel = 'none'
+  let sent = false
+  if (isEmailConfigured()) {
+    sent = await sendEmailAlert(`[DImarket OSM] Weekly digest — ${pendingCount} pending`, text)
+    if (sent) channel = 'email'
+  } else if (isTelegramConfigured()) {
+    sent = await sendTelegramAlert(text)
+    if (sent) channel = 'telegram'
+  }
+
+  if (!sent) {
+    return { skipped: true, reason: 'no_alert_channel', week_key: weekKey, pending_count: pendingCount }
+  }
+
+  await admin.from('osm_weekly_digest_runs').insert({
+    week_key: weekKey,
+    pending_count: pendingCount,
+    recent_count: recentCount,
+    channel,
+  })
+
+  await admin.from('document_audit_log').insert({
+    action: 'weekly_digest_sent',
+    new_value: { week_key: weekKey, pending_count: pendingCount, recent_count: recentCount, channel },
+    reason: 'Weekly OSM admin digest',
+  })
+
+  return {
+    ok: true,
+    week_key: weekKey,
+    pending_count: pendingCount,
+    recent_count: recentCount,
+    channel,
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -897,7 +1033,15 @@ Deno.serve(async (req) => {
         review_required: count ?? 0,
         telegram_configured: isTelegramConfigured(),
         email_configured: isEmailConfigured(),
+        webhook_configured: isWebhookConfigured(),
       })
+    }
+
+    if (action === 'weekly_digest') {
+      const gate = await requireCronOrAdmin(req)
+      if (!gate.ok) return jsonResponse({ error: gate.error }, gate.error === 'forbidden' ? 403 : 401)
+      const report = await runWeeklyDigest(gate.admin)
+      return jsonResponse(report)
     }
 
     if (action === 'cron_run' || action === 'check_now') {

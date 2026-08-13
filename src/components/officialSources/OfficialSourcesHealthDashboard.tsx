@@ -29,6 +29,7 @@ import {
 } from '../../lib/officialSources/api'
 import { canRollbackToVersion, isAutoDraftVersion } from '../../lib/officialSources'
 import { buildOfficialPointerMarkdown } from '../../lib/officialSources/pointerTemplate'
+import { buildRentalTemplateMarkdown } from '../../lib/officialSources/rentalTemplate'
 import { DocumentFreshnessBadge } from './DocumentFreshnessBadge'
 import { LegalMarkdownEditor } from './LegalMarkdownEditor'
 import { LineDiffView } from './LineDiffView'
@@ -45,15 +46,18 @@ function statusDot(status: string) {
 function AlertChannelsStatus({
   telegramOk,
   emailOk,
+  webhookOk,
 }: {
   telegramOk: boolean | null
   emailOk: boolean | null
+  webhookOk: boolean | null
 }) {
   const { t } = useApp()
-  if (telegramOk === null && emailOk === null) return null
+  if (telegramOk === null && emailOk === null && webhookOk === null) return null
 
   const telegram = telegramOk === true
   const email = emailOk === true
+  const webhook = webhookOk === true
 
   if (telegram && email) {
     return <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.alertsBothOk')}</p>
@@ -64,7 +68,18 @@ function AlertChannelsStatus({
   if (telegram && !email) {
     return <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.alertsTelegramOnly')}</p>
   }
-  return <p className="mt-2 text-xs text-amber-800">{t('osm.admin.alertsMissing')}</p>
+  if (!telegram && !email && webhook) {
+    return <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.alertsWebhookOnly')}</p>
+  }
+  if (!telegram && !email && !webhook) {
+    return <p className="mt-2 text-xs text-amber-800">{t('osm.admin.alertsMissing')}</p>
+  }
+  return (
+    <p className="mt-2 text-xs text-emerald-700">
+      {t('osm.admin.alertsPartialOk')}
+      {webhook ? ` · ${t('osm.admin.webhookOk')}` : ''}
+    </p>
+  )
 }
 
 function CreateDraftVersionForm({
@@ -88,6 +103,17 @@ function CreateDraftVersionForm({
           jurisdiction: doc.jurisdiction,
         })
       : undefined
+
+  const rentalTemplate =
+    doc.doc_kind === 'contract_template'
+      ? buildRentalTemplateMarkdown({
+          countryName: doc.jurisdiction ?? doc.country_code,
+          landlordLabel: doc.country_code === 'ES' ? 'Landlord (arrendador)' : undefined,
+          tenantLabel: doc.country_code === 'ES' ? 'Tenant (arrendatario)' : undefined,
+        })
+      : undefined
+
+  const templateSnippet = rentalTemplate ?? pointerTemplate
 
   const submit = async () => {
     if (!versionNumber.trim() || !bodyMarkdown.trim()) return
@@ -135,7 +161,7 @@ function CreateDraftVersionForm({
         onChange={setBodyMarkdown}
         rows={8}
         placeholder={t('osm.admin.draftBodyPlaceholder')}
-        templateSnippet={pointerTemplate}
+        templateSnippet={templateSnippet}
       />
       <div className="flex gap-2">
         <button
@@ -342,6 +368,7 @@ export function OfficialSourcesHealthDashboard() {
   const [selectedChange, setSelectedChange] = useState<SourceChangeRow | null>(null)
   const [telegramOk, setTelegramOk] = useState<boolean | null>(null)
   const [emailOk, setEmailOk] = useState<boolean | null>(null)
+  const [webhookOk, setWebhookOk] = useState<boolean | null>(null)
 
   const load = useCallback(async () => {
     setError(null)
@@ -356,9 +383,14 @@ export function OfficialSourcesHealthDashboard() {
       setChanges(c)
       setDocs(d)
       if (status && typeof status === 'object' && 'telegram_configured' in status) {
-        const s = status as { telegram_configured?: boolean; email_configured?: boolean }
+        const s = status as {
+          telegram_configured?: boolean
+          email_configured?: boolean
+          webhook_configured?: boolean
+        }
         setTelegramOk(Boolean(s.telegram_configured))
         setEmailOk(Boolean(s.email_configured))
+        setWebhookOk(Boolean(s.webhook_configured))
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
@@ -423,7 +455,10 @@ export function OfficialSourcesHealthDashboard() {
           </p>
           <h1 className="mt-1 text-2xl font-bold text-[#1d1d1f]">{t('osm.admin.title')}</h1>
           <p className="mt-1 max-w-2xl text-sm text-[#6e6e73]">{t('osm.admin.subtitle')}</p>
-          <AlertChannelsStatus telegramOk={telegramOk} emailOk={emailOk} />
+          <AlertChannelsStatus telegramOk={telegramOk} emailOk={emailOk} webhookOk={webhookOk} />
+          {webhookOk === false ? (
+            <p className="mt-1 text-xs text-[#86868b]">{t('osm.admin.webhookMissing')}</p>
+          ) : null}
         </div>
         <button
           type="button"
@@ -527,6 +562,7 @@ export function OfficialSourcesHealthDashboard() {
                     {fmt(c.detected_at)} · {c.change_type} · {c.severity} · {c.status}
                     {c.alert_sent_at ? ` · ${t('osm.admin.alertSent')}` : ''}
                     {c.email_alert_sent_at ? ` · ${t('osm.admin.emailAlertSent')}` : ''}
+                    {c.webhook_alert_sent_at ? ` · ${t('osm.admin.webhookAlertSent')}` : ''}
                   </p>
                   <p className="mt-1 text-xs text-[#6e6e73]">{c.change_summary}</p>
                 </div>

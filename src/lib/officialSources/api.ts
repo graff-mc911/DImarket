@@ -38,6 +38,7 @@ export type SourceChangeRow = {
   status: string
   alert_sent_at?: string | null
   email_alert_sent_at?: string | null
+  webhook_alert_sent_at?: string | null
   official_sources?: Pick<OfficialSourceRow, 'source_name' | 'source_url' | 'country_code'> | null
 }
 
@@ -95,6 +96,7 @@ type MonitorAction =
   | 'rollback_version'
   | 'create_draft_version'
   | 'update_draft_version'
+  | 'weekly_digest'
 
 async function callMonitor(
   action: MonitorAction,
@@ -133,7 +135,7 @@ export async function listSourceChanges(limit = 40): Promise<SourceChangeRow[]> 
   const { data, error } = await db
     .from('source_changes')
     .select(
-      'id, source_id, detected_at, old_hash, new_hash, change_type, change_summary, old_excerpt, new_excerpt, severity, status, alert_sent_at, email_alert_sent_at, official_sources(source_name, source_url, country_code)',
+      'id, source_id, detected_at, old_hash, new_hash, change_type, change_summary, old_excerpt, new_excerpt, severity, status, alert_sent_at, email_alert_sent_at, webhook_alert_sent_at, official_sources(source_name, source_url, country_code)',
     )
     .order('detected_at', { ascending: false })
     .limit(limit)
@@ -226,7 +228,9 @@ export async function updateSourceChangeStatus(
   if (error) throw error
 }
 
-export async function invokeOfficialSourcesMonitor(action: 'cron_run' | 'status' | 'check_now') {
+export async function invokeOfficialSourcesMonitor(
+  action: 'cron_run' | 'status' | 'check_now' | 'weekly_digest',
+) {
   return callMonitor(action)
 }
 

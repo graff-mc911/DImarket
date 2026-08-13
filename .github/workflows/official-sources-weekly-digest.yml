@@ -1,0 +1,27 @@
+name: Official Sources Weekly Digest
+
+on:
+  schedule:
+    # Mondays 07:00 UTC — pending review summary
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invoke official-sources-monitor weekly_digest
+        env:
+          CRON_SECRET: ${{ secrets.OFFICIAL_SOURCES_CRON_SECRET }}
+          FALLBACK_SECRET: ${{ secrets.MARKETING_CRON_SECRET }}
+        run: |
+          SECRET="${CRON_SECRET:-$FALLBACK_SECRET}"
+          if [ -z "$SECRET" ]; then
+            echo "OFFICIAL_SOURCES_CRON_SECRET (or MARKETING_CRON_SECRET) not set — skip"
+            exit 0
+          fi
+          curl -sf -X POST \
+            "https://wjlfvajloxkevggwjgtk.supabase.co/functions/v1/official-sources-monitor" \
+            -H "Content-Type: application/json" \
+            -H "x-cron-secret: $SECRET" \
+            -d '{"action":"weekly_digest"}'

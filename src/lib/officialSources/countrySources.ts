@@ -327,6 +327,81 @@ export const LUXEMBOURG_COUNTRY_SOURCES: CountrySourcesConfig = {
   notes: 'Luxembourg — Legilux and guichet.public.lu as official entry points.',
 }
 
+export const LITHUANIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'LT',
+  countryName: 'Lithuania',
+  officialGazetteUrl: 'https://www.e-tar.lt/',
+  governmentPortalUrl: 'https://www.lrv.lt/',
+  taxPortalUrl: 'https://www.vmi.lt/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Lithuania — e-TAR and lrv.lt as official entry points.',
+}
+
+export const LATVIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'LV',
+  countryName: 'Latvia',
+  officialGazetteUrl: 'https://www.likumi.lv/',
+  governmentPortalUrl: 'https://www.mk.gov.lv/',
+  taxPortalUrl: 'https://www.vid.gov.lv/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Latvia — Likumi.lv and mk.gov.lv as official entry points.',
+}
+
+export const ESTONIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'EE',
+  countryName: 'Estonia',
+  officialGazetteUrl: 'https://www.riigiteataja.ee/',
+  governmentPortalUrl: 'https://www.valitsus.ee/',
+  taxPortalUrl: 'https://www.emta.ee/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Estonia — Riigi Teataja and valitsus.ee as official entry points.',
+}
+
+export const CROATIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'HR',
+  countryName: 'Croatia',
+  officialGazetteUrl: 'https://narodne-novine.nn.hr/',
+  governmentPortalUrl: 'https://gov.hr/',
+  taxPortalUrl: 'https://www.porezna-uprava.hr/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Croatia — Narodne novine and gov.hr as official entry points.',
+}
+
+export const SLOVENIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'SI',
+  countryName: 'Slovenia',
+  officialGazetteUrl: 'https://www.pisrs.si/',
+  governmentPortalUrl: 'https://www.gov.si/',
+  taxPortalUrl: 'https://www.fu.gov.si/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Slovenia — PISRS and gov.si as official entry points.',
+}
+
 export const COUNTRY_SOURCES_BY_CODE: Record<string, CountrySourcesConfig> = {
   ES: SPAIN_COUNTRY_SOURCES,
   DE: GERMANY_COUNTRY_SOURCES,
@@ -348,6 +423,11 @@ export const COUNTRY_SOURCES_BY_CODE: Record<string, CountrySourcesConfig> = {
   GR: GREECE_COUNTRY_SOURCES,
   BE: BELGIUM_COUNTRY_SOURCES,
   LU: LUXEMBOURG_COUNTRY_SOURCES,
+  LT: LITHUANIA_COUNTRY_SOURCES,
+  LV: LATVIA_COUNTRY_SOURCES,
+  EE: ESTONIA_COUNTRY_SOURCES,
+  HR: CROATIA_COUNTRY_SOURCES,
+  SI: SLOVENIA_COUNTRY_SOURCES,
 }
 
 export function getCountrySources(countryCode: string): CountrySourcesConfig | null {

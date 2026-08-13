@@ -360,10 +360,16 @@ assert.ok(pointer.includes('Spain'))
 assert.ok(pointer.includes('boe.es'))
 assert.ok(pointer.includes('NOT published') === false)
 
-function alertsComplete(existing, telegramConfigured, emailConfigured) {
+function alertsComplete(
+  existing,
+  telegramConfigured,
+  emailConfigured,
+  webhookConfigured = false,
+) {
   const telegramDone = !telegramConfigured || Boolean(existing?.alert_sent_at)
   const emailDone = !emailConfigured || Boolean(existing?.email_alert_sent_at)
-  return telegramDone && emailDone
+  const webhookDone = !webhookConfigured || Boolean(existing?.webhook_alert_sent_at)
+  return telegramDone && emailDone && webhookDone
 }
 assert.equal(alertsComplete({}, false, false), true)
 assert.equal(alertsComplete({}, false, true), false)
@@ -371,10 +377,24 @@ assert.equal(alertsComplete({}, true, false), false)
 assert.equal(alertsComplete({ alert_sent_at: 'x' }, true, false), true)
 assert.equal(alertsComplete({ email_alert_sent_at: 'x' }, false, true), true)
 assert.equal(alertsComplete({ alert_sent_at: 'x', email_alert_sent_at: 'y' }, true, true), true)
+assert.equal(alertsComplete({}, false, false, true), false)
+assert.equal(alertsComplete({ webhook_alert_sent_at: 'x' }, false, false, true), true)
 
 const AT = { officialGazetteUrl: 'https://www.ris.bka.gv.at/' }
 const SK = { officialGazetteUrl: 'https://www.slov-lex.sk/' }
 assert.ok(AT.officialGazetteUrl.includes('ris.bka'))
 assert.ok(SK.officialGazetteUrl.includes('slov-lex'))
+
+function buildRentalTemplateMarkdown(input) {
+  return `# Residential rental agreement — informational template (${input.countryName})\n\n> **Not legal advice.**\n\n## Parties`
+}
+const rental = buildRentalTemplateMarkdown({ countryName: 'Germany' })
+assert.ok(rental.includes('Germany'))
+assert.ok(rental.includes('Not legal advice'))
+
+const LT = { officialGazetteUrl: 'https://www.e-tar.lt/' }
+const EE = { officialGazetteUrl: 'https://www.riigiteataja.ee/' }
+assert.ok(LT.officialGazetteUrl.includes('e-tar'))
+assert.ok(EE.officialGazetteUrl.includes('riigiteataja'))
 
 console.log('ok official source monitor core checks passed')

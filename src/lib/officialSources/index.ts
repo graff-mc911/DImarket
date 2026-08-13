@@ -57,6 +57,11 @@ export {
 } from './pointerTemplate'
 
 export {
+  buildRentalTemplateMarkdown,
+  RENTAL_DRAFT_VERSION,
+} from './rentalTemplate'
+
+export {
   formatGeneratedDocumentFooter,
   generatedDocumentFooterHtml,
   type GeneratedDocumentMeta,
