@@ -94,6 +94,7 @@ type MonitorAction =
   | 'publish_version'
   | 'rollback_version'
   | 'create_draft_version'
+  | 'update_draft_version'
 
 async function callMonitor(
   action: MonitorAction,
@@ -142,7 +143,7 @@ export async function listSourceChanges(limit = 40): Promise<SourceChangeRow[]> 
 
 export async function listLegalDocuments(includeVersions = false): Promise<LegalDocumentRow[]> {
   const select = includeVersions
-    ? '*, official_sources(source_name, source_url, trust_tier, last_checked_at, verification_status), document_versions(id, version_number, title, status, effective_from, effective_until, published_at, verified_at, change_summary, source_url)'
+    ? '*, official_sources(source_name, source_url, trust_tier, last_checked_at, verification_status), document_versions(id, version_number, title, status, body_markdown, effective_from, effective_until, published_at, verified_at, change_summary, source_url)'
     : '*, official_sources(source_name, source_url, trust_tier, last_checked_at, verification_status)'
   const { data, error } = await db.from('legal_documents').select(select).order('country_code').order('title')
   if (error) throw error
@@ -245,4 +246,13 @@ export async function createDocumentDraftVersion(input: {
   changeSummary?: string
 }) {
   return callMonitor('create_draft_version', input)
+}
+
+export async function updateDocumentDraftVersion(input: {
+  versionId: string
+  bodyMarkdown: string
+  changeSummary?: string
+  effectiveFrom?: string | null
+}) {
+  return callMonitor('update_draft_version', input)
 }

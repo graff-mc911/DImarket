@@ -114,3 +114,16 @@ Published Spain entries are **pointers only** — link to BOE / Your Europe, not
 Edge secrets for email: `RESEND_API_KEY`, `OSM_ALERT_EMAIL` (or `ADMIN_EMAIL`), optional `RESEND_FROM_EMAIL`.
 
 Auto-draft versions use prefix `auto-` — admin UI shows badge; publish only after manual review.
+
+## Phase 5
+
+| Feature | Details |
+|---------|---------|
+| Pointer publish | All `*-legislation-entry` docs get published pointer version (`2026.08-pointer`) |
+| DE / FR / PL docs | Legislation entry documents seeded (sources existed since phase 2) |
+| AT / SK / IE / SE / DK / FI / GR / BE / LU | Official gazette + gov portals seeded and published |
+| Edit draft | Admin can edit `draft` / `review_required` / `approved` versions (edge `update_draft_version`) |
+| Template editor | Pointer template insert, blockquote, code, h3 in markdown toolbar |
+| Email-only fallback | Alert status UI when only Resend is configured; notify logic skips unconfigured channels |
+| Public filter | `/legal-documents` country filter |
+| SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE5.sql` |

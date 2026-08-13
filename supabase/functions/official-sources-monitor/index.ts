@@ -10,6 +10,7 @@ type Action =
   | 'publish_version'
   | 'rollback_version'
   | 'create_draft_version'
+  | 'update_draft_version'
 
 type Body = {
   action?: Action
@@ -107,6 +108,28 @@ async function sendEmailAlert(subject: string, text: string): Promise<boolean> {
     body: JSON.stringify({ from, to: [to], subject, html }),
   })
   return res.ok
+}
+
+function isTelegramConfigured(): boolean {
+  return Boolean(
+    Deno.env.get('TELEGRAM_BOT_TOKEN') &&
+      (Deno.env.get('TELEGRAM_ADMIN_CHAT_ID') ?? Deno.env.get('TELEGRAM_CHANNEL_ID')),
+  )
+}
+
+function isEmailConfigured(): boolean {
+  return Boolean(
+    Deno.env.get('RESEND_API_KEY') &&
+      (Deno.env.get('OSM_ALERT_EMAIL') ?? Deno.env.get('ADMIN_EMAIL')),
+  )
+}
+
+function alertsComplete(
+  existing: { alert_sent_at?: string | null; email_alert_sent_at?: string | null } | null | undefined,
+): boolean {
+  const telegramDone = !isTelegramConfigured() || Boolean(existing?.alert_sent_at)
+  const emailDone = !isEmailConfigured() || Boolean(existing?.email_alert_sent_at)
+  return telegramDone && emailDone
 }
 
 function autoDraftVersionNumber(at = new Date()): string {
@@ -247,7 +270,7 @@ async function notifyChangeIfNeeded(
     .select('alert_sent_at, email_alert_sent_at')
     .eq('id', changeId)
     .maybeSingle()
-  if (existing?.alert_sent_at && existing?.email_alert_sent_at) return
+  if (alertsComplete(existing)) return
 
   const adminUrl = 'https://dimarket.app/admin/official-sources'
   const text = [
@@ -266,13 +289,19 @@ async function notifyChangeIfNeeded(
   ].join('\n')
 
   const now = new Date().toISOString()
-  const telegramSent = existing?.alert_sent_at ? true : await sendTelegramAlert(text)
+  const telegramSent = existing?.alert_sent_at
+    ? true
+    : isTelegramConfigured()
+      ? await sendTelegramAlert(text)
+      : false
   const emailSent = existing?.email_alert_sent_at
     ? true
-    : await sendEmailAlert(
-        `[DImarket OSM] ${severity.toUpperCase()} — ${source.source_name}`,
-        text,
-      )
+    : isEmailConfigured()
+      ? await sendEmailAlert(
+          `[DImarket OSM] ${severity.toUpperCase()} — ${source.source_name}`,
+          text,
+        )
+      : false
 
   const patch: Record<string, string> = {}
   if (telegramSent && !existing?.alert_sent_at) patch.alert_sent_at = now
@@ -794,6 +823,55 @@ async function createDraftVersion(
   return { versionId: version?.id, versionNumber: version?.version_number }
 }
 
+async function updateDraftVersion(
+  admin: ReturnType<typeof createClient>,
+  userId: string,
+  input: {
+    versionId: string
+    bodyMarkdown: string
+    effectiveFrom?: string | null
+    changeSummary?: string
+  },
+) {
+  const { data: version, error: verErr } = await admin
+    .from('document_versions')
+    .select('id, document_id, version_number, status')
+    .eq('id', input.versionId)
+    .maybeSingle()
+  if (verErr || !version) throw new Error('version_not_found')
+
+  const editable = ['draft', 'review_required', 'approved']
+  if (!editable.includes(version.status as string)) {
+    throw new Error('draft_edit_not_allowed')
+  }
+
+  const patch: Record<string, unknown> = { body_markdown: input.bodyMarkdown }
+  if (input.changeSummary !== undefined) patch.change_summary = input.changeSummary
+  if (input.effectiveFrom !== undefined) patch.effective_from = input.effectiveFrom
+
+  const { error } = await admin.from('document_versions').update(patch).eq('id', input.versionId)
+  if (error) throw error
+
+  await admin
+    .from('legal_documents')
+    .update({
+      verification_status: 'needs_review',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', version.document_id as string)
+
+  await admin.from('document_audit_log').insert({
+    document_id: version.document_id as string,
+    version_id: version.id as string,
+    actor_id: userId,
+    action: 'draft_version_updated',
+    new_value: { version_number: version.version_number },
+    reason: 'Admin edited draft — review still required before publish',
+  })
+
+  return { versionId: version.id, versionNumber: version.version_number }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -817,14 +895,8 @@ Deno.serve(async (req) => {
       return jsonResponse({
         sources: sources ?? [],
         review_required: count ?? 0,
-        telegram_configured: Boolean(
-          Deno.env.get('TELEGRAM_BOT_TOKEN') &&
-            (Deno.env.get('TELEGRAM_ADMIN_CHAT_ID') ?? Deno.env.get('TELEGRAM_CHANNEL_ID')),
-        ),
-        email_configured: Boolean(
-          Deno.env.get('RESEND_API_KEY') &&
-            (Deno.env.get('OSM_ALERT_EMAIL') ?? Deno.env.get('ADMIN_EMAIL')),
-        ),
+        telegram_configured: isTelegramConfigured(),
+        email_configured: isEmailConfigured(),
       })
     }
 
@@ -908,6 +980,23 @@ Deno.serve(async (req) => {
       const result = await createDraftVersion(gate.admin, gate.userId, {
         documentId,
         versionNumber,
+        bodyMarkdown,
+        effectiveFrom: body.payload?.effectiveFrom ?? null,
+        changeSummary: body.payload?.changeSummary,
+      })
+      return jsonResponse({ ok: true, ...result })
+    }
+
+    if (action === 'update_draft_version') {
+      const gate = await requireAdmin(req)
+      if (!gate.ok) return jsonResponse({ error: gate.error }, gate.error === 'forbidden' ? 403 : 401)
+      const versionId = body.payload?.versionId
+      const bodyMarkdown = body.payload?.bodyMarkdown
+      if (!versionId || !bodyMarkdown) {
+        return jsonResponse({ error: 'versionId and bodyMarkdown required' }, 400)
+      }
+      const result = await updateDraftVersion(gate.admin, gate.userId, {
+        versionId,
         bodyMarkdown,
         effectiveFrom: body.payload?.effectiveFrom ?? null,
         changeSummary: body.payload?.changeSummary,

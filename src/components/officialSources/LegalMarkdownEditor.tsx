@@ -1,5 +1,16 @@
 import { useCallback, useRef, useState } from 'react'
-import { Bold, Eye, EyeOff, Heading2, Link2, List } from 'lucide-react'
+import {
+  Bold,
+  Code2,
+  Eye,
+  EyeOff,
+  FileText,
+  Heading2,
+  Heading3,
+  Link2,
+  List,
+  Quote,
+} from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 
 type Props = {
@@ -7,6 +18,7 @@ type Props = {
   onChange: (next: string) => void
   rows?: number
   placeholder?: string
+  templateSnippet?: string
 }
 
 function wrapSelection(
@@ -30,13 +42,19 @@ function insertLinePrefix(textarea: HTMLTextAreaElement, prefix: string) {
   const lineEnd = value.indexOf('\n', start)
   const end = lineEnd === -1 ? value.length : lineEnd
   const line = value.slice(lineStart, end)
-  const stripped = line.replace(/^#+\s*/, '').replace(/^-\s*/, '')
+  const stripped = line.replace(/^#+\s*/, '').replace(/^-\s*/, '').replace(/^>\s*/, '')
   const nextLine = `${prefix}${stripped}`
   const next = value.slice(0, lineStart) + nextLine + value.slice(end)
   return { next, cursor: lineStart + nextLine.length }
 }
 
-export function LegalMarkdownEditor({ value, onChange, rows = 10, placeholder }: Props) {
+export function LegalMarkdownEditor({
+  value,
+  onChange,
+  rows = 10,
+  placeholder,
+  templateSnippet,
+}: Props) {
   const { t } = useApp()
   const ref = useRef<HTMLTextAreaElement>(null)
   const [preview, setPreview] = useState(false)
@@ -61,6 +79,8 @@ export function LegalMarkdownEditor({ value, onChange, rows = 10, placeholder }:
     .replace(/^# (.+)$/gm, '<h1 class="text-lg font-bold mt-3 mb-1">$1</h1>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/^- (.+)$/gm, '<p class="ml-3">• $1</p>')
+    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[#d2d2d7] pl-2 text-[#6e6e73]">$1</blockquote>')
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-[#f5f5f7] px-1">$1</code>')
     .replace(/\n\n/g, '<br/><br/>')
 
   return (
@@ -86,11 +106,37 @@ export function LegalMarkdownEditor({ value, onChange, rows = 10, placeholder }:
         </button>
         <button
           type="button"
+          title={t('osm.editor.heading3')}
+          className="rounded p-1 hover:bg-[#f5f5f7]"
+          onClick={() => apply((el) => insertLinePrefix(el, '### '))}
+        >
+          <Heading3 className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
           title={t('osm.editor.list')}
           className="rounded p-1 hover:bg-[#f5f5f7]"
           onClick={() => apply((el) => insertLinePrefix(el, '- '))}
         >
           <List className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          title={t('osm.editor.quote')}
+          className="rounded p-1 hover:bg-[#f5f5f7]"
+          onClick={() => apply((el) => insertLinePrefix(el, '> '))}
+        >
+          <Quote className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          title={t('osm.editor.code')}
+          className="rounded p-1 hover:bg-[#f5f5f7]"
+          onClick={() =>
+            apply((el) => wrapSelection(el, '`', '`', t('osm.editor.codePlaceholder')))
+          }
+        >
+          <Code2 className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -102,6 +148,17 @@ export function LegalMarkdownEditor({ value, onChange, rows = 10, placeholder }:
         >
           <Link2 className="h-4 w-4" />
         </button>
+        {templateSnippet ? (
+          <button
+            type="button"
+            title={t('osm.editor.insertTemplate')}
+            className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold hover:bg-[#f5f5f7]"
+            onClick={() => onChange(templateSnippet)}
+          >
+            <FileText className="h-3.5 w-3.5" />
+            {t('osm.editor.insertTemplate')}
+          </button>
+        ) : null}
         <span className="mx-1 h-4 w-px bg-[#e8e8ed]" />
         <button
           type="button"
@@ -115,7 +172,9 @@ export function LegalMarkdownEditor({ value, onChange, rows = 10, placeholder }:
       {preview ? (
         <div
           className="min-h-[120px] px-3 py-2 text-xs leading-5 text-[#1d1d1f]"
-          dangerouslySetInnerHTML={{ __html: previewHtml || `<p class="text-[#86868b]">${placeholder ?? ''}</p>` }}
+          dangerouslySetInnerHTML={{
+            __html: previewHtml || `<p class="text-[#86868b]">${placeholder ?? ''}</p>`,
+          }}
         />
       ) : (
         <textarea

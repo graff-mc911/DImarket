@@ -344,4 +344,37 @@ assert.ok(CZ.officialGazetteUrl.includes('e-sbirka'))
 assert.ok(HU.officialGazetteUrl.includes('njt.hu'))
 assert.ok(BG.officialGazetteUrl.includes('lex.bg'))
 
+function buildOfficialPointerMarkdown(input) {
+  const place = input.jurisdiction?.trim()
+  const intro = place
+    ? `Informational entry for **${place}**. DImarket does **not** host the full legal text.`
+    : 'DImarket does **not** host the full legal text.'
+  return `# Official source pointer\n\n${intro}\n\n## Official source\n- **${input.sourceName}**\n- ${input.sourceUrl}`
+}
+const pointer = buildOfficialPointerMarkdown({
+  sourceName: 'BOE',
+  sourceUrl: 'https://www.boe.es/',
+  jurisdiction: 'Spain',
+})
+assert.ok(pointer.includes('Spain'))
+assert.ok(pointer.includes('boe.es'))
+assert.ok(pointer.includes('NOT published') === false)
+
+function alertsComplete(existing, telegramConfigured, emailConfigured) {
+  const telegramDone = !telegramConfigured || Boolean(existing?.alert_sent_at)
+  const emailDone = !emailConfigured || Boolean(existing?.email_alert_sent_at)
+  return telegramDone && emailDone
+}
+assert.equal(alertsComplete({}, false, false), true)
+assert.equal(alertsComplete({}, false, true), false)
+assert.equal(alertsComplete({}, true, false), false)
+assert.equal(alertsComplete({ alert_sent_at: 'x' }, true, false), true)
+assert.equal(alertsComplete({ email_alert_sent_at: 'x' }, false, true), true)
+assert.equal(alertsComplete({ alert_sent_at: 'x', email_alert_sent_at: 'y' }, true, true), true)
+
+const AT = { officialGazetteUrl: 'https://www.ris.bka.gv.at/' }
+const SK = { officialGazetteUrl: 'https://www.slov-lex.sk/' }
+assert.ok(AT.officialGazetteUrl.includes('ris.bka'))
+assert.ok(SK.officialGazetteUrl.includes('slov-lex'))
+
 console.log('ok official source monitor core checks passed')

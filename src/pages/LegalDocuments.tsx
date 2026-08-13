@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink, FileText, Loader2 } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -12,6 +12,7 @@ export function LegalDocuments() {
   const { t } = useApp()
   const [loading, setLoading] = useState(true)
   const [docs, setDocs] = useState<PublishedLegalDocument[]>([])
+  const [countryFilter, setCountryFilter] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -25,6 +26,16 @@ export function LegalDocuments() {
       }
     })()
   }, [])
+
+  const countries = useMemo(
+    () => [...new Set(docs.map((d) => d.country_code))].sort(),
+    [docs],
+  )
+
+  const filtered = useMemo(
+    () => (countryFilter ? docs.filter((d) => d.country_code === countryFilter) : docs),
+    [docs, countryFilter],
+  )
 
   if (loading) {
     return (
@@ -42,6 +53,23 @@ export function LegalDocuments() {
             {t('osm.public.title')}
           </h1>
           <p className="mt-2 text-sm leading-6 text-[#6e6e73]">{t('osm.public.subtitle')}</p>
+          {countries.length > 1 ? (
+            <label className="mt-4 inline-flex items-center gap-2 text-sm">
+              <span className="font-semibold text-[#1d1d1f]">{t('osm.public.filterCountry')}</span>
+              <select
+                value={countryFilter}
+                onChange={(e) => setCountryFilter(e.target.value)}
+                className="rounded-lg border border-[#d2d2d7] px-2 py-1 text-sm"
+              >
+                <option value="">{t('osm.public.filterAll')}</option>
+                {countries.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
         </header>
 
         {error ? (
@@ -51,12 +79,12 @@ export function LegalDocuments() {
         ) : null}
 
         <ul className="space-y-3">
-          {docs.length === 0 ? (
+          {filtered.length === 0 ? (
             <li className="rounded-2xl border border-dashed border-[#d2d2d7] px-4 py-8 text-center text-sm text-[#86868b]">
               {t('osm.public.empty')}
             </li>
           ) : (
-            docs.map((doc) => (
+            filtered.map((doc) => (
               <li key={doc.id}>
                 <button
                   type="button"

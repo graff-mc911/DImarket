@@ -20,6 +20,7 @@ import {
   publishDocumentVersion,
   rollbackDocumentVersion,
   createDocumentDraftVersion,
+  updateDocumentDraftVersion,
   updateSourceChangeStatus,
   type DocumentVersionRow,
   type LegalDocumentRow,
@@ -27,6 +28,7 @@ import {
   type SourceChangeRow,
 } from '../../lib/officialSources/api'
 import { canRollbackToVersion, isAutoDraftVersion } from '../../lib/officialSources'
+import { buildOfficialPointerMarkdown } from '../../lib/officialSources/pointerTemplate'
 import { DocumentFreshnessBadge } from './DocumentFreshnessBadge'
 import { LegalMarkdownEditor } from './LegalMarkdownEditor'
 import { LineDiffView } from './LineDiffView'
@@ -38,6 +40,31 @@ function statusDot(status: string) {
   }
   if (status === 'outdated' || status === 'unavailable') return 'bg-rose-500'
   return 'bg-[#86868b]'
+}
+
+function AlertChannelsStatus({
+  telegramOk,
+  emailOk,
+}: {
+  telegramOk: boolean | null
+  emailOk: boolean | null
+}) {
+  const { t } = useApp()
+  if (telegramOk === null && emailOk === null) return null
+
+  const telegram = telegramOk === true
+  const email = emailOk === true
+
+  if (telegram && email) {
+    return <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.alertsBothOk')}</p>
+  }
+  if (email && !telegram) {
+    return <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.alertsEmailOnly')}</p>
+  }
+  if (telegram && !email) {
+    return <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.alertsTelegramOnly')}</p>
+  }
+  return <p className="mt-2 text-xs text-amber-800">{t('osm.admin.alertsMissing')}</p>
 }
 
 function CreateDraftVersionForm({
@@ -52,6 +79,15 @@ function CreateDraftVersionForm({
   const [versionNumber, setVersionNumber] = useState('')
   const [bodyMarkdown, setBodyMarkdown] = useState('')
   const [busy, setBusy] = useState(false)
+
+  const pointerTemplate =
+    doc.official_sources?.source_name && doc.official_sources?.source_url
+      ? buildOfficialPointerMarkdown({
+          sourceName: doc.official_sources.source_name,
+          sourceUrl: doc.official_sources.source_url,
+          jurisdiction: doc.jurisdiction,
+        })
+      : undefined
 
   const submit = async () => {
     if (!versionNumber.trim() || !bodyMarkdown.trim()) return
@@ -99,6 +135,7 @@ function CreateDraftVersionForm({
         onChange={setBodyMarkdown}
         rows={8}
         placeholder={t('osm.admin.draftBodyPlaceholder')}
+        templateSnippet={pointerTemplate}
       />
       <div className="flex gap-2">
         <button
@@ -121,6 +158,60 @@ function CreateDraftVersionForm({
   )
 }
 
+function EditDraftVersionPanel({
+  version,
+  onRefresh,
+  onClose,
+}: {
+  version: DocumentVersionRow
+  onRefresh: () => Promise<void>
+  onClose: () => void
+}) {
+  const { t } = useApp()
+  const [bodyMarkdown, setBodyMarkdown] = useState(version.body_markdown ?? '')
+  const [busy, setBusy] = useState(false)
+
+  const save = async () => {
+    if (!bodyMarkdown.trim()) return
+    setBusy(true)
+    try {
+      await updateDocumentDraftVersion({
+        versionId: version.id,
+        bodyMarkdown: bodyMarkdown.trim(),
+        changeSummary: t('osm.admin.draftEditedSummary'),
+      })
+      await onRefresh()
+      onClose()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="mt-2 w-full space-y-2 rounded-xl border border-[#e8e8ed] bg-white p-3">
+      <p className="text-xs font-semibold text-[#1d1d1f]">{t('osm.admin.editDraftTitle')}</p>
+      <LegalMarkdownEditor value={bodyMarkdown} onChange={setBodyMarkdown} rows={10} />
+      <div className="flex gap-2">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void save()}
+          className="rounded-full bg-[#1d1d1f] px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
+        >
+          {t('osm.admin.saveDraftEdit')}
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-full border border-[#d2d2d7] px-3 py-1 text-xs font-semibold"
+        >
+          {t('common.close')}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function DocumentVersionsPanel({
   doc,
   onRefresh,
@@ -130,6 +221,7 @@ function DocumentVersionsPanel({
 }) {
   const { t } = useApp()
   const [busy, setBusy] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const versions = (doc.document_versions ?? []).slice().sort((a, b) => {
     const ap = a.published_at ? new Date(a.published_at).getTime() : 0
     const bp = b.published_at ? new Date(b.published_at).getTime() : 0
@@ -163,11 +255,13 @@ function DocumentVersionsPanel({
         const isCurrent = doc.current_version_id === v.id
         const canRollback = canRollbackToVersion(v) && !isCurrent
         const canPublish = v.status === 'draft' || v.status === 'review_required' || v.status === 'approved'
+        const canEdit = canPublish
         return (
           <li
             key={v.id}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#fafafa] px-3 py-2 text-xs"
+            className="flex flex-col gap-2 rounded-xl bg-[#fafafa] px-3 py-2 text-xs"
           >
+            <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="font-semibold text-[#1d1d1f]">v{v.version_number}</span>
               <span className="ml-2 text-[#86868b]">{v.status}</span>
@@ -188,6 +282,15 @@ function DocumentVersionsPanel({
               ) : null}
             </div>
             <div className="flex gap-1.5">
+              {canEdit ? (
+                <button
+                  type="button"
+                  onClick={() => setEditingId(editingId === v.id ? null : v.id)}
+                  className="rounded-full border border-[#d2d2d7] px-2.5 py-1 font-semibold hover:bg-white"
+                >
+                  {t('osm.admin.editDraft')}
+                </button>
+              ) : null}
               {canPublish ? (
                 <button
                   type="button"
@@ -211,6 +314,14 @@ function DocumentVersionsPanel({
                 </button>
               ) : null}
             </div>
+            </div>
+            {editingId === v.id ? (
+              <EditDraftVersionPanel
+                version={v}
+                onRefresh={onRefresh}
+                onClose={() => setEditingId(null)}
+              />
+            ) : null}
           </li>
         )
       })}
@@ -312,18 +423,7 @@ export function OfficialSourcesHealthDashboard() {
           </p>
           <h1 className="mt-1 text-2xl font-bold text-[#1d1d1f]">{t('osm.admin.title')}</h1>
           <p className="mt-1 max-w-2xl text-sm text-[#6e6e73]">{t('osm.admin.subtitle')}</p>
-          {telegramOk === false ? (
-            <p className="mt-2 text-xs text-amber-800">{t('osm.admin.telegramMissing')}</p>
-          ) : null}
-          {telegramOk === true ? (
-            <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.telegramOk')}</p>
-          ) : null}
-          {emailOk === false ? (
-            <p className="mt-2 text-xs text-amber-800">{t('osm.admin.emailMissing')}</p>
-          ) : null}
-          {emailOk === true ? (
-            <p className="mt-2 text-xs text-emerald-700">{t('osm.admin.emailOk')}</p>
-          ) : null}
+          <AlertChannelsStatus telegramOk={telegramOk} emailOk={emailOk} />
         </div>
         <button
           type="button"

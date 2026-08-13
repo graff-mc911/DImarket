@@ -192,6 +192,141 @@ export const BULGARIA_COUNTRY_SOURCES: CountrySourcesConfig = {
   notes: 'Bulgaria — lex.bg and gov.bg as official entry points.',
 }
 
+export const AUSTRIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'AT',
+  countryName: 'Austria',
+  officialGazetteUrl: 'https://www.ris.bka.gv.at/',
+  governmentPortalUrl: 'https://www.oesterreich.gv.at/',
+  taxPortalUrl: 'https://www.bmf.gv.at/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Austria — RIS and oesterreich.gv.at as official entry points.',
+}
+
+export const SLOVAKIA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'SK',
+  countryName: 'Slovakia',
+  officialGazetteUrl: 'https://www.slov-lex.sk/',
+  governmentPortalUrl: 'https://www.gov.sk/',
+  taxPortalUrl: 'https://www.financnasprava.sk/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Slovakia — Slov-Lex and gov.sk as official entry points.',
+}
+
+export const IRELAND_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'IE',
+  countryName: 'Ireland',
+  officialGazetteUrl: 'https://www.irishstatutebook.ie/',
+  governmentPortalUrl: 'https://www.gov.ie/',
+  taxPortalUrl: 'https://www.revenue.ie/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Ireland — Irish Statute Book and gov.ie as official entry points.',
+}
+
+export const SWEDEN_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'SE',
+  countryName: 'Sweden',
+  officialGazetteUrl: 'https://www.riksdagen.se/sv/dokument-lagar/',
+  governmentPortalUrl: 'https://www.government.se/',
+  taxPortalUrl: 'https://www.skatteverket.se/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Sweden — Riksdagen and government.se as official entry points.',
+}
+
+export const DENMARK_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'DK',
+  countryName: 'Denmark',
+  officialGazetteUrl: 'https://www.retsinformation.dk/',
+  governmentPortalUrl: 'https://www.borger.dk/',
+  taxPortalUrl: 'https://skat.dk/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Denmark — Retsinformation and borger.dk as official entry points.',
+}
+
+export const FINLAND_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'FI',
+  countryName: 'Finland',
+  officialGazetteUrl: 'https://www.finlex.fi/',
+  governmentPortalUrl: 'https://www.suomi.fi/',
+  taxPortalUrl: 'https://www.vero.fi/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Finland — Finlex and suomi.fi as official entry points.',
+}
+
+export const GREECE_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'GR',
+  countryName: 'Greece',
+  officialGazetteUrl: 'https://www.et.gr/',
+  governmentPortalUrl: 'https://www.gov.gr/',
+  taxPortalUrl: 'https://www.aade.gr/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Greece — ET and gov.gr as official entry points.',
+}
+
+export const BELGIUM_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'BE',
+  countryName: 'Belgium',
+  officialGazetteUrl: 'https://www.ejustice.just.fgov.be/',
+  governmentPortalUrl: 'https://www.belgium.be/',
+  taxPortalUrl: 'https://finance.belgium.be/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Belgium — ejustice and belgium.be as official entry points.',
+}
+
+export const LUXEMBOURG_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'LU',
+  countryName: 'Luxembourg',
+  officialGazetteUrl: 'https://legilux.public.lu/',
+  governmentPortalUrl: 'https://guichet.public.lu/',
+  taxPortalUrl: 'https://impotsdirects.public.lu/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Luxembourg — Legilux and guichet.public.lu as official entry points.',
+}
+
 export const COUNTRY_SOURCES_BY_CODE: Record<string, CountrySourcesConfig> = {
   ES: SPAIN_COUNTRY_SOURCES,
   DE: GERMANY_COUNTRY_SOURCES,
@@ -204,6 +339,15 @@ export const COUNTRY_SOURCES_BY_CODE: Record<string, CountrySourcesConfig> = {
   CZ: CZECHIA_COUNTRY_SOURCES,
   HU: HUNGARY_COUNTRY_SOURCES,
   BG: BULGARIA_COUNTRY_SOURCES,
+  AT: AUSTRIA_COUNTRY_SOURCES,
+  SK: SLOVAKIA_COUNTRY_SOURCES,
+  IE: IRELAND_COUNTRY_SOURCES,
+  SE: SWEDEN_COUNTRY_SOURCES,
+  DK: DENMARK_COUNTRY_SOURCES,
+  FI: FINLAND_COUNTRY_SOURCES,
+  GR: GREECE_COUNTRY_SOURCES,
+  BE: BELGIUM_COUNTRY_SOURCES,
+  LU: LUXEMBOURG_COUNTRY_SOURCES,
 }
 
 export function getCountrySources(countryCode: string): CountrySourcesConfig | null {

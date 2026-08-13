@@ -52,6 +52,11 @@ export {
 } from './autoDraft'
 
 export {
+  buildOfficialPointerMarkdown,
+  POINTER_VERSION_NUMBER,
+} from './pointerTemplate'
+
+export {
   formatGeneratedDocumentFooter,
   generatedDocumentFooterHtml,
   type GeneratedDocumentMeta,
