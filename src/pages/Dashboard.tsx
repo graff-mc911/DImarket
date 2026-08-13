@@ -87,9 +87,44 @@ export function Dashboard() {
     void loadOwnerDashboard()
   }, [user])
 
-  const loadOwnerDashboard = async () => {
-    setLoading(true)
-    setError('')
+  /** Без join на profiles: RLS дозволяє читати лише is_professional / own —
+   *  embed advertiser ламав завантаження кампаній у кабінеті власника. */
+  const fetchOwnerAdCampaigns = async (): Promise<AdCampaign[]> => {
+    const { data, error: adsError } = await supabase
+      .from('ad_campaigns')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100)
+
+    if (adsError) {
+      console.error('Помилка завантаження ad_campaigns:', adsError.message, adsError)
+      throw adsError
+    }
+    return (data as AdCampaign[] | null) || []
+  }
+
+  /** Soft refresh після create/edit — без full-page spinner, щоб форма не «зникала». */
+  const refreshOwnerAdCampaigns = async () => {
+    try {
+      const campaigns = await fetchOwnerAdCampaigns()
+      setAdCampaigns(campaigns)
+      setStats((prev) => ({
+        ...prev,
+        totalAds: campaigns.filter((c) => c.status !== 'deleted').length,
+        pendingAds: campaigns.filter((c) => c.status === 'pending_review').length,
+      }))
+    } catch (refreshError) {
+      console.error('Помилка оновлення реклами:', refreshError)
+      setError('Не вдалося оновити список реклами після збереження.')
+    }
+  }
+
+  const loadOwnerDashboard = async (opts?: { soft?: boolean }) => {
+    const soft = opts?.soft === true
+    if (!soft) {
+      setLoading(true)
+      setError('')
+    }
 
     try {
       const activeUser = user ?? (await supabase.auth.getUser()).data.user ?? null
@@ -141,7 +176,7 @@ export function Dashboard() {
         feedbackCountResult,
         messagesCountResult,
         recentListingsResult,
-        adCampaignsResult,
+        adCampaigns,
         feedbackInboxResult,
         internalInboxResult,
       ] = await Promise.all([
@@ -186,11 +221,7 @@ export function Dashboard() {
           .order('created_at', { ascending: false })
           .limit(8),
 
-        supabase
-          .from('ad_campaigns')
-          .select('*, advertiser:profiles!advertiser_id(full_name, bio, website)')
-          .order('created_at', { ascending: false })
-          .limit(100),
+        fetchOwnerAdCampaigns(),
 
         supabase
           .from('feedback_messages')
@@ -217,14 +248,14 @@ export function Dashboard() {
       })
 
       setRecentListings((recentListingsResult.data as RecentListing[] | null) || [])
-      setAdCampaigns((adCampaignsResult.data as AdCampaign[] | null) || [])
+      setAdCampaigns(adCampaigns)
       setFeedbackInbox((feedbackInboxResult.data as FeedbackMessage[] | null) || [])
       setInternalInbox((internalInboxResult.data as Message[] | null) || [])
     } catch (loadError) {
       console.error('Помилка завантаження owner-кабінету:', loadError)
       setError('Не вдалося завантажити особистий кабінет власника сайту.')
     } finally {
-      setLoading(false)
+      if (!soft) setLoading(false)
     }
   }
 
@@ -644,7 +675,7 @@ export function Dashboard() {
               <OwnerAdManager
                 ownerId={profile.id}
                 campaigns={adCampaigns}
-                onRefresh={loadOwnerDashboard}
+                onRefresh={refreshOwnerAdCampaigns}
                 onNotice={setNotice}
                 onError={setError}
                 campaignActionId={campaignActionId}
