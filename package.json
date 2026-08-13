@@ -48,6 +48,7 @@
     "deploy:phase1": "node scripts/apply-phase1-migration.mjs && node scripts/deploy-phase1-functions.mjs",
     "secrets:ai": "node scripts/set-ai-edge-secrets.mjs",
     "deploy:marketing-agent": "npx supabase functions deploy marketing-agent --project-ref wjlfvajloxkevggwjgtk",
+    "deploy:scb-provision": "npx supabase functions deploy provision-scb-account --project-ref wjlfvajloxkevggwjgtk",
     "db:apply-marketing-agent": "node scripts/apply-marketing-agent-migration.mjs",
     "marketing:setup": "node scripts/setup-marketing-full.mjs",
     "marketing:cron": "node scripts/marketing-cron-invoke.mjs",

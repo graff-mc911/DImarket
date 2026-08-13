@@ -28,6 +28,7 @@ import { AreaSparkline, BarChart, DonutProgress } from '../components/pro-dashbo
 import { MiniCalendar } from '../components/pro-dashboard/MiniCalendar'
 import { OwnerCabinetEntry } from '../components/OwnerCabinetEntry'
 import { ConnectPayoutPanel } from '../components/ConnectPayoutPanel'
+import { ScbLightPanel } from '../components/ScbLightPanel'
 import { PROJECT_PAYMENTS_ENABLED } from '../lib/featureFlags'
 
 function formatEuro(n: number): string {
@@ -297,6 +298,7 @@ export function ProDashboard() {
 
       <div className="mx-auto max-w-7xl px-4 py-6 md:px-6">
         <OwnerCabinetEntry variant="banner" className="mb-4" />
+        {user ? <ScbLightPanel userId={user.id} variant="banner" /> : null}
         {PROJECT_PAYMENTS_ENABLED ? (
           <ConnectPayoutPanel variant="banner" returnPath="/pro/dashboard?connect=return" />
         ) : null}
