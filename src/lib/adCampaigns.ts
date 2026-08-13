@@ -7,6 +7,7 @@ import {
   type SideIndex,
 } from './adPlacementSlots'
 import { isDemoAdCampaign } from './demoAdCampaigns'
+import { isOwnerCancelledReviewNote } from './adCampaignVisibility'
 import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './youtubeMedia'
 import type { AdCampaign } from './types'
 import { isGranularSlotId } from './adPlacementCatalog'
@@ -42,6 +43,18 @@ export function isPaidCampaign(campaign: AdCampaign): boolean {
   if (campaign.price_paid != null && Number(campaign.price_paid) > 0) return true
   if (campaign.approved_by) return true
   return false
+}
+
+/** Public display gate: paid/approved, in schedule, and not owner-cancelled. */
+export function isCampaignPubliclyDisplayable(
+  campaign: AdCampaign,
+  now = Date.now(),
+): boolean {
+  if (campaign.status !== 'active') return false
+  if (isOwnerCancelledReviewNote(campaign.review_note)) return false
+  if (!isPaidCampaign(campaign)) return false
+  if (!isCampaignInSchedule(campaign, now)) return false
+  return true
 }
 
 function normalizePlacementId(id: string): string {
@@ -563,7 +576,9 @@ export async function fetchPaidAdCampaigns(
     (c) => !isDemoAdCampaign(c),
   )
 
-  const visible = rows.filter((c) => isPaidCampaign(c) && isCampaignInSchedule(c))
+  // Defense in depth: never show owner-cancelled campaigns even if status was
+  // incorrectly left as `active` (production bug: review_note rejected, status active).
+  const visible = rows.filter((c) => isCampaignPubliclyDisplayable(c))
 
   const filtered =
     slots.length === 0

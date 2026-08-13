@@ -6,6 +6,10 @@ import {
 } from './adSlotMedia'
 import { slotToLegacyPlacement } from './adPlacementSlots'
 import type { GeoMode } from './adGeoCatalog'
+import {
+  isOwnerCancelledReviewNote,
+  stripOwnerCancelReviewTail,
+} from './adCampaignVisibility'
 
 export const OWNER_MANAGED_PREFIX = 'owner_managed'
 
@@ -22,6 +26,8 @@ export function ownerManagedReviewNote(extra?: string | null): string {
   const tail = extra?.trim()
   return tail ? `${OWNER_MANAGED_PREFIX}: ${tail}` : OWNER_MANAGED_PREFIX
 }
+
+export { isOwnerCancelledReviewNote, stripOwnerCancelReviewTail }
 
 export type OwnerAdFormValues = {
   title: string
@@ -153,9 +159,9 @@ export function buildOwnerCampaignPayload(
     starts_at: startDate.toISOString(),
     ends_at: endsAtIso,
     status,
-    review_note: ownerManagedReviewNote(
-      editing?.review_note?.replace(/^owner_managed:?\s*/i, '') || null,
-    ),
+    // Never re-attach "Відхилено/скасовано" text onto an active save — that left
+    // status=active + rejected note and kept the banner on the live site.
+    review_note: ownerManagedReviewNote(stripOwnerCancelReviewTail(editing?.review_note)),
     updated_at: now.toISOString(),
     ...(active
       ? {
@@ -164,7 +170,10 @@ export function buildOwnerCampaignPayload(
           price_paid: editing?.price_paid ?? 0,
           currency_paid: editing?.currency_paid ?? 'eur',
         }
-      : {}),
+      : {
+          approved_by: null,
+          approved_at: null,
+        }),
   }
 }
 

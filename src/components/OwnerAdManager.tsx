@@ -250,8 +250,16 @@ export function OwnerAdManager({
       )
 
       if (editingId) {
-        const { error } = await (supabase.from('ad_campaigns') as any).update(payload).eq('id', editingId)
+        const { data, error } = await (supabase.from('ad_campaigns') as any)
+          .update(payload)
+          .eq('id', editingId)
+          .select('id')
         if (error) throw error
+        if (!data?.length) {
+          throw new Error(
+            'Оновлення заблоковано RLS (0 рядків). Застосуйте APPLY_AD_CAMPAIGNS_OWNER_RLS.sql.',
+          )
+        }
         closeForm({ keepFeedback: true })
         reportNotice('Рекламу оновлено.')
       } else {
@@ -269,6 +277,10 @@ export function OwnerAdManager({
 
       await onRefresh()
       await refreshPublicAds()
+      // Extra refresh after a tick so homepage slots pick up the new row.
+      window.setTimeout(() => {
+        void refreshPublicAds()
+      }, 400)
     } catch (err) {
       reportError(formatSupabaseError(err, 'Не вдалося зберегти рекламу'))
     } finally {
@@ -279,14 +291,17 @@ export function OwnerAdManager({
   const handleApprove = async (campaignId: string) => {
     setCampaignActionId(campaignId)
     try {
-      const { error } = await (supabase.from('ad_campaigns') as any)
+      const { data, error } = await (supabase.from('ad_campaigns') as any)
         .update({
           status: 'active',
           approved_by: ownerId,
           approved_at: new Date().toISOString(),
+          review_note: ownerManagedReviewNote(null),
         })
         .eq('id', campaignId)
+        .select('id')
       if (error) throw error
+      if (!data?.length) throw new Error('update_blocked')
       reportNotice('Рекламу активовано.')
       await onRefresh()
       await refreshPublicAds()
@@ -301,20 +316,24 @@ export function OwnerAdManager({
     setCampaignActionId(campaignId)
     const campaign = ownerCampaigns.find((c) => c.id === campaignId)
     try {
-      const { error } = await (supabase.from('ad_campaigns') as any)
+      const { data, error } = await (supabase.from('ad_campaigns') as any)
         .update({
           status: 'rejected',
+          approved_by: null,
+          approved_at: null,
           review_note: isOwnerManagedCampaign(campaign ?? ({} as AdCampaign))
             ? ownerManagedReviewNote('скасовано власником')
             : 'Відхилено власником',
         })
         .eq('id', campaignId)
+        .select('id')
       if (error) throw error
+      if (!data?.length) throw new Error('update_blocked')
       reportNotice('Рекламу вимкнено.')
       await onRefresh()
       await refreshPublicAds()
     } catch {
-      reportError('Не вдалося вимкнути рекламу.')
+      reportError('Не вдалося вимкнути рекламу. Перевірте права власника в БД (is_site_owner).')
     } finally {
       setCampaignActionId(null)
     }
@@ -324,14 +343,19 @@ export function OwnerAdManager({
     if (!window.confirm('Видалити цю рекламу назавжди?')) return
     setCampaignActionId(campaignId)
     try {
-      const { error } = await supabase.from('ad_campaigns').delete().eq('id', campaignId)
+      const { data, error } = await supabase
+        .from('ad_campaigns')
+        .delete()
+        .eq('id', campaignId)
+        .select('id')
       if (error) throw error
+      if (!data?.length) throw new Error('delete_blocked')
       reportNotice('Рекламу видалено.')
       if (editingId === campaignId) closeForm()
       await onRefresh()
       await refreshPublicAds()
     } catch {
-      reportError('Не вдалося видалити рекламу.')
+      reportError('Не вдалося видалити рекламу. Перевірте права власника в БД (is_site_owner).')
     } finally {
       setCampaignActionId(null)
     }
