@@ -492,10 +492,120 @@ export async function reportCommercialEntity(input: {
 export async function setVerificationStatus(
   table: 'manufacturer_profiles' | 'agent_profiles',
   id: string,
-  status: 'unverified' | 'pending' | 'verified',
-): Promise<boolean> {
-  const { error } = await supabase.from(table).update({ verification_status: status }).eq('id', id)
-  return !error
+  status: 'unverified' | 'pending' | 'verified' | 'rejected',
+): Promise<{ ok: boolean; error?: string }> {
+  const payload: Record<string, unknown> = {
+    verification_status: status,
+    updated_at: new Date().toISOString(),
+  }
+  // Rejected profiles must leave public search / map immediately.
+  if (status === 'rejected') payload.is_published = false
+  if (status === 'verified') payload.is_published = true
+
+  const { data, error } = await supabase
+    .from(table)
+    .update(payload)
+    .eq('id', id)
+    .select('id')
+
+  if (error) {
+    // Production may not have 'rejected' in CHECK yet — soft-reject via unpublish.
+    if (status === 'rejected') {
+      const { data: soft, error: softErr } = await supabase
+        .from(table)
+        .update({
+          is_published: false,
+          verification_status: 'unverified',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select('id')
+      if (softErr) return { ok: false, error: softErr.message }
+      if (!soft?.length) return { ok: false, error: 'update_blocked' }
+      return { ok: true, error: 'soft_rejected_unpublish_only' }
+    }
+    return { ok: false, error: error.message }
+  }
+  if (!data?.length) return { ok: false, error: 'update_blocked' }
+  return { ok: true }
+}
+
+export type OwnerDeleteCommercialResult = {
+  ok: boolean
+  error?: string
+  profileId?: string | null
+  authDeleted?: boolean
+  raw?: unknown
+}
+
+/** Owner moderation delete: RPC cleanup + optional auth.users via edge function. */
+export async function ownerDeleteCommercialEntity(input: {
+  kind: 'agent' | 'manufacturer'
+  id: string
+  deleteAuth?: boolean
+  profileId?: string | null
+}): Promise<OwnerDeleteCommercialResult> {
+  const deleteAuth = input.deleteAuth !== false
+
+  const { data, error } = await supabase.rpc('owner_delete_commercial_entity', {
+    p_kind: input.kind,
+    p_id: input.id,
+    p_delete_auth: deleteAuth,
+  })
+
+  let profileId = input.profileId ?? null
+  if (!error && data && typeof data === 'object') {
+    const row = data as Record<string, unknown>
+    if (row.ok === false) {
+      return { ok: false, error: String(row.error || 'rpc_failed'), raw: data }
+    }
+    if (typeof row.profile_id === 'string') profileId = row.profile_id
+  }
+
+  // Fallback when RPC not yet applied: direct delete (owner RLS).
+  if (error) {
+    const table = input.kind === 'manufacturer' ? 'manufacturer_profiles' : 'agent_profiles'
+    const { data: deleted, error: delErr } = await supabase
+      .from(table)
+      .delete()
+      .eq('id', input.id)
+      .select('id, profile_id')
+    if (delErr) return { ok: false, error: delErr.message }
+    if (!deleted?.length) {
+      return {
+        ok: false,
+        error:
+          error.message ||
+          'delete_blocked — apply APPLY_CA_OWNER_MODERATION.sql and ensure is_site_owner',
+      }
+    }
+    profileId = (deleted[0] as { profile_id?: string }).profile_id ?? profileId
+  }
+
+  let authDeleted = false
+  if (deleteAuth && profileId) {
+    const { data: sessionData } = await supabase.auth.getSession()
+    const token = sessionData.session?.access_token
+    if (token) {
+      const { data: fnData, error: fnErr } = await supabase.functions.invoke(
+        'admin-delete-commercial-entity',
+        {
+          body: {
+            kind: input.kind,
+            id: input.id,
+            profileId,
+            deleteAuth: true,
+          },
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      )
+      if (!fnErr && fnData && typeof fnData === 'object' && (fnData as { authDeleted?: boolean }).authDeleted) {
+        authDeleted = true
+      }
+    }
+  }
+
+  return { ok: true, profileId, authDeleted, raw: data }
 }
 
 export async function trackCommercialEvent(

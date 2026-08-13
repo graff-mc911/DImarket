@@ -63,7 +63,9 @@
     "telegram:setup": "node scripts/setup-telegram-listings-bot.mjs",
     "db:apply-admin-ai": "node scripts/apply-admin-ai-migration.mjs",
     "db:apply-admin-rating": "node scripts/apply-admin-local-rating-rpc.mjs",
-    "deploy:admin-ai": "npx supabase functions deploy admin-ai-assistant send-notification --project-ref wjlfvajloxkevggwjgtk"
+    "deploy:admin-ai": "npx supabase functions deploy admin-ai-assistant send-notification --project-ref wjlfvajloxkevggwjgtk",
+    "deploy:ca-admin-delete": "npx supabase functions deploy admin-delete-commercial-entity --project-ref wjlfvajloxkevggwjgtk",
+    "db:apply-ca-owner-moderation": "echo 'Run supabase/migrations/APPLY_CA_OWNER_MODERATION.sql in Supabase SQL Editor'"
   },
   "dependencies": {
     "@sentry/react": "^8.55.2",
