@@ -92,9 +92,6 @@ const MarketingAgentAdmin = lazyWithRetry(() =>
 const OfficialSourcesAdmin = lazyWithRetry(() =>
   import('./pages/OfficialSourcesAdmin').then((m) => ({ default: m.OfficialSourcesAdmin })),
 )
-const LegalDocuments = lazyWithRetry(() =>
-  import('./pages/LegalDocuments').then((m) => ({ default: m.LegalDocuments })),
-)
 const LegalDocumentDetail = lazyWithRetry(() =>
   import('./pages/LegalDocumentDetail').then((m) => ({ default: m.LegalDocumentDetail })),
 )
@@ -256,7 +253,9 @@ function App() {
   const getPage = () => {
     const parts = path.split('/').filter(Boolean)
 
-    if (parts[0] === 'legal-documents' && parts[1]) {
+    if (parts[0] === 'legal-documents') {
+      // Public list unified under /documents; OSM detail pages keep their keys.
+      if (!parts[1]) return <DocumentsHub />
       return <LegalDocumentDetail docKey={parts[1]} />
     }
 
@@ -413,7 +412,7 @@ function App() {
       case '/admin/ai':        return <AiAdmin />
       case '/admin/marketing-agent': return <MarketingAgentAdmin />
       case '/admin/official-sources': return <OfficialSourcesAdmin />
-      case '/legal-documents': return <LegalDocuments />
+      case '/legal-documents':
       case '/documents': return <DocumentsHub />
       case '/checkout':      return <Checkout />
       case '/boost':         return <BoostProfile />

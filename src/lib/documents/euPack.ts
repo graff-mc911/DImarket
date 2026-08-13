@@ -1,6 +1,7 @@
 /**
  * Generate Documents & Procedures packs for EU / EEA countries.
  * Uses official portal URLs from countrySources — never invents legal clauses.
+ * lastVerified is null until OSM / human verification (do not seed fake dates).
  */
 
 import { COUNTRY_SOURCES_BY_CODE, type CountrySourcesConfig } from '../officialSources/countrySources'
@@ -15,7 +16,6 @@ import { countrySlugFromCode } from './location'
 import { withOfficialForm } from './officialForms'
 import type { DocumentRecord } from './types'
 
-const VERIFIED = '2026-08-13'
 
 const COUNTRY_NAME_UK: Record<string, string> = {
   ES: 'Іспанія',
@@ -51,7 +51,7 @@ const COUNTRY_NAME_UK: Record<string, string> = {
 }
 
 function src(name: string, url: string) {
-  return { name, url, lastVerified: VERIFIED }
+  return { name, url, lastVerified: null }
 }
 
 function packForCountry(cfg: CountrySourcesConfig): DocumentRecord[] {
@@ -103,7 +103,7 @@ function packForCountry(cfg: CountrySourcesConfig): DocumentRecord[] {
       status: 'active',
       version: '2026.08-pointer',
       effectiveDate: '2026-08-01',
-      lastVerified: VERIFIED,
+      lastVerified: null,
       source: business,
       requirementsKeys: ['docs.req.verifyOfficialSource'],
       templateNeedsLegalReview: false,
@@ -162,7 +162,7 @@ function packForCountry(cfg: CountrySourcesConfig): DocumentRecord[] {
       status: 'under_review',
       version: '2026.08-skeleton',
       effectiveDate: null,
-      lastVerified: VERIFIED,
+      lastVerified: null,
       source: gazette,
       requirementsKeys: ['docs.req.verifyOfficialSource', 'docs.req.legalReview'],
       formFields: rentalContractFields,
@@ -537,7 +537,7 @@ function packForCountry(cfg: CountrySourcesConfig): DocumentRecord[] {
       status: 'active',
       version: '2026.08-pointer',
       effectiveDate: null,
-      lastVerified: VERIFIED,
+      lastVerified: null,
       source: tax,
       requirementsKeys: ['docs.req.verifyOfficialSource'],
       templateNeedsLegalReview: false,
@@ -563,7 +563,7 @@ function packForCountry(cfg: CountrySourcesConfig): DocumentRecord[] {
       status: 'active',
       version: '2026.08-pointer',
       effectiveDate: null,
-      lastVerified: VERIFIED,
+      lastVerified: null,
       source: eu,
       requirementsKeys: ['docs.req.verifyOfficialSource'],
       templateNeedsLegalReview: false,
@@ -595,7 +595,7 @@ function packForCountry(cfg: CountrySourcesConfig): DocumentRecord[] {
       status: 'active',
       version: '2026.08-pointer',
       effectiveDate: null,
-      lastVerified: VERIFIED,
+      lastVerified: null,
       source: gazette,
       requirementsKeys: ['docs.req.verifyOfficialSource'],
       templateNeedsLegalReview: false,
@@ -621,7 +621,7 @@ function packForCountry(cfg: CountrySourcesConfig): DocumentRecord[] {
       status: 'active',
       version: '2026.08-pointer',
       effectiveDate: null,
-      lastVerified: VERIFIED,
+      lastVerified: null,
       source: gazette,
       requirementsKeys: ['docs.req.verifyOfficialSource'],
       templateNeedsLegalReview: false,
@@ -714,7 +714,7 @@ function cityOverlays(): DocumentRecord[] {
       status: 'under_review',
       version: '2026.08-pointer',
       effectiveDate: null,
-      lastVerified: VERIFIED,
+      lastVerified: null,
       source: business,
       requirementsKeys: ['docs.req.verifyOfficialSource', 'docs.req.regionalCheck'],
       templateNeedsLegalReview: false,
@@ -754,7 +754,7 @@ function cityOverlays(): DocumentRecord[] {
       status: 'under_review',
       version: '2026.08-skeleton',
       effectiveDate: null,
-      lastVerified: VERIFIED,
+      lastVerified: null,
       source: gazette,
       requirementsKeys: ['docs.req.verifyOfficialSource', 'docs.req.legalReview', 'docs.req.regionalCheck'],
       formFields: rentalContractFields,

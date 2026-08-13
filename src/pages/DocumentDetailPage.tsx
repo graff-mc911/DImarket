@@ -13,6 +13,11 @@ import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { appendLocationToPath, formatGlobalLocationLabel } from '../lib/globalLocation'
 import {
+  DocumentFreshnessBadge,
+  LegalContentDisclaimer,
+} from '../components/officialSources/DocumentFreshnessBadge'
+import {
+  documentVerificationStatus,
   filledDocumentFilename,
   getDocumentByPathParts,
   openFilledDocumentPdf,
@@ -172,15 +177,21 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
           </div>
         ) : null}
 
+        <div className="mb-4">
+          <DocumentFreshnessBadge
+            verificationStatus={documentVerificationStatus(doc)}
+            lastVerifiedAt={doc.lastVerified}
+            sourceName={doc.source.name}
+            sourceUrl={doc.source.url}
+            trustTier="national_government"
+          />
+        </div>
+
         <section className="mb-6 space-y-2 rounded-2xl border border-[#e8e8ed] bg-white p-4 text-sm">
           <MetaRow label={t('docs.meta.country')} value={doc.countryCode} />
           {doc.region ? <MetaRow label={t('docs.meta.region')} value={doc.region} /> : null}
           {doc.city ? <MetaRow label={t('docs.meta.city')} value={doc.city} /> : null}
           <MetaRow label={t('docs.meta.version')} value={doc.version} />
-          <MetaRow
-            label={t('docs.meta.lastVerified')}
-            value={doc.lastVerified ?? t('docs.meta.notVerified')}
-          />
           <MetaRow label={t('docs.meta.source')} value={doc.source.name} />
           {isLicense && doc.licenseRequirement ? (
             <MetaRow
@@ -282,7 +293,10 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
           </section>
         ) : null}
 
-        <p className="text-xs leading-5 text-[#6e6e73]">{t('docs.disclaimer.short')}</p>
+        <div className="mt-2 space-y-3">
+          <LegalContentDisclaimer />
+          <p className="text-xs leading-5 text-[#6e6e73]">{t('docs.disclaimer.short')}</p>
+        </div>
       </div>
     </div>
   )

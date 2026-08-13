@@ -6,9 +6,17 @@ Public category for jurisdiction-aware contracts, licenses, permits, and governm
 
 - Never invent legal requirements, licenses, taxes, or contract clauses.
 - Unverified templates stay `under_review` with “Template requires legal review”.
-- Always show official `source_url` + last verified.
+- Always show official `source_url`. **Do not show a fake “last verified” date** — `lastVerified` is null until OSM/human check.
 - Reuse AppContext location (Header) — no parallel geo system.
 - Extends OSM; does not replace `legal_documents` monitor.
+- **Public UX is `/documents` only.** `/legal-documents` redirects to the hub; `/legal-documents/:docKey` remains for OSM-tracked detail when published in DB.
+
+## Trust / freshness
+
+- Static `catalog.ts` / `euPack.ts` / `officialForms.ts` ship with `lastVerified: null`.
+- `DocumentDetailPage` uses `DocumentFreshnessBadge` via `documentVerificationStatus()` (`needs_review` / `needs_research` until real verification).
+- Do **not** bulk-seed `documents_catalog` with seed dates as `last_verified_at`.
+- Future: link rows via `legal_document_id` so OSM Phase 1–7 drives freshness.
 
 ## Routes
 
@@ -20,7 +28,8 @@ Public category for jurisdiction-aware contracts, licenses, permits, and governm
 | `/documents/:country/:city/:slug` | City-scoped document |
 | `/category/documents-procedures` | Alias → hub |
 | `/category/official-documents` | Alias → hub |
-| `/legal-documents` | OSM pointer list (legacy) |
+| `/legal-documents` | → Documents hub (unified public surface) |
+| `/legal-documents/:docKey` | OSM monitored legal document detail |
 
 ## Key files
 

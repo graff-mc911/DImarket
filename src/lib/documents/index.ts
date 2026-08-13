@@ -31,6 +31,7 @@ export {
 } from './display'
 export { getOfficialFormPack, withOfficialForm, fieldDisplayLabel } from './officialForms'
 export type { OfficialFormPack } from './types'
+export { documentVerificationStatus } from './trust'
 export {
   buildFilledDocumentPdfHtml,
   openFilledDocumentPdf,

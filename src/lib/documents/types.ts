@@ -64,7 +64,8 @@ export type OfficialFormPack = {
   language: string
   sourceName: string
   sourceUrl: string
-  lastVerified: string
+  /** Only set when a human or OSM actually verified the source — never a catalog seed date. */
+  lastVerified: string | null
   noticeLocal: string
   noticeEn: string
   fields: FormFieldDef[]
