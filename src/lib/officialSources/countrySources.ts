@@ -402,6 +402,81 @@ export const SLOVENIA_COUNTRY_SOURCES: CountrySourcesConfig = {
   notes: 'Slovenia — PISRS and gov.si as official entry points.',
 }
 
+export const CYPRUS_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'CY',
+  countryName: 'Cyprus',
+  officialGazetteUrl: 'https://www.mof.gov.cy/mof/gpo/gpo.nsf/index_en/index_en',
+  governmentPortalUrl: 'https://www.gov.cy/',
+  taxPortalUrl: 'https://www.mof.gov.cy/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Cyprus — GPO and gov.cy as official entry points.',
+}
+
+export const MALTA_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'MT',
+  countryName: 'Malta',
+  officialGazetteUrl: 'https://legislation.mt/',
+  governmentPortalUrl: 'https://www.gov.mt/',
+  taxPortalUrl: 'https://cfr.gov.mt/',
+  businessPortalUrl: EU_BUSINESS,
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Malta — legislation.mt and gov.mt as official entry points.',
+}
+
+export const SWITZERLAND_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'CH',
+  countryName: 'Switzerland',
+  officialGazetteUrl: 'https://www.fedlex.admin.ch/',
+  governmentPortalUrl: 'https://www.admin.ch/',
+  taxPortalUrl: 'https://www.estv.admin.ch/',
+  businessPortalUrl: 'https://www.admin.ch/',
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Switzerland — Fedlex and admin.ch as official entry points.',
+}
+
+export const NORWAY_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'NO',
+  countryName: 'Norway',
+  officialGazetteUrl: 'https://lovdata.no/',
+  governmentPortalUrl: 'https://www.regjeringen.no/',
+  taxPortalUrl: 'https://www.skatteetaten.no/',
+  businessPortalUrl: 'https://www.regjeringen.no/',
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'Norway — Lovdata and regjeringen.no as official entry points.',
+}
+
+export const UNITED_KINGDOM_COUNTRY_SOURCES: CountrySourcesConfig = {
+  countryCode: 'UK',
+  countryName: 'United Kingdom',
+  officialGazetteUrl: 'https://www.legislation.gov.uk/',
+  governmentPortalUrl: 'https://www.gov.uk/',
+  taxPortalUrl: 'https://www.gov.uk/government/organisations/hm-revenue-customs',
+  businessPortalUrl: 'https://www.gov.uk/browse/business',
+  regionalPortalUrl: '',
+  municipalPortalUrl: '',
+  licensingPortalUrl: '',
+  euPortalUrl: EU_PORTAL,
+  sourcePriority: ['official_gazette', 'national_government', 'ministry', 'eu_official'],
+  notes: 'United Kingdom — legislation.gov.uk and gov.uk as official entry points.',
+}
+
 export const COUNTRY_SOURCES_BY_CODE: Record<string, CountrySourcesConfig> = {
   ES: SPAIN_COUNTRY_SOURCES,
   DE: GERMANY_COUNTRY_SOURCES,
@@ -428,6 +503,11 @@ export const COUNTRY_SOURCES_BY_CODE: Record<string, CountrySourcesConfig> = {
   EE: ESTONIA_COUNTRY_SOURCES,
   HR: CROATIA_COUNTRY_SOURCES,
   SI: SLOVENIA_COUNTRY_SOURCES,
+  CY: CYPRUS_COUNTRY_SOURCES,
+  MT: MALTA_COUNTRY_SOURCES,
+  CH: SWITZERLAND_COUNTRY_SOURCES,
+  NO: NORWAY_COUNTRY_SOURCES,
+  UK: UNITED_KINGDOM_COUNTRY_SOURCES,
 }
 
 export function getCountrySources(countryCode: string): CountrySourcesConfig | null {

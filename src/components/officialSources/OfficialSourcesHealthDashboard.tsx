@@ -21,6 +21,7 @@ import {
   rollbackDocumentVersion,
   createDocumentDraftVersion,
   updateDocumentDraftVersion,
+  approveDocumentDraftVersion,
   updateSourceChangeStatus,
   type DocumentVersionRow,
   type LegalDocumentRow,
@@ -254,11 +255,12 @@ function DocumentVersionsPanel({
     return bp - ap
   })
 
-  const act = async (kind: 'publish' | 'rollback', versionId: string) => {
+  const act = async (kind: 'publish' | 'rollback' | 'approve', versionId: string) => {
     setBusy(versionId)
     try {
       if (kind === 'publish') await publishDocumentVersion(versionId)
-      else await rollbackDocumentVersion(versionId)
+      else if (kind === 'rollback') await rollbackDocumentVersion(versionId)
+      else await approveDocumentDraftVersion(versionId)
       await onRefresh()
     } finally {
       setBusy(null)
@@ -281,6 +283,7 @@ function DocumentVersionsPanel({
         const isCurrent = doc.current_version_id === v.id
         const canRollback = canRollbackToVersion(v) && !isCurrent
         const canPublish = v.status === 'draft' || v.status === 'review_required' || v.status === 'approved'
+        const canApprove = v.status === 'draft' || v.status === 'review_required'
         const canEdit = canPublish
         return (
           <li
@@ -315,6 +318,17 @@ function DocumentVersionsPanel({
                   className="rounded-full border border-[#d2d2d7] px-2.5 py-1 font-semibold hover:bg-white"
                 >
                   {t('osm.admin.editDraft')}
+                </button>
+              ) : null}
+              {canApprove ? (
+                <button
+                  type="button"
+                  disabled={busy === v.id}
+                  onClick={() => void act('approve', v.id)}
+                  className="inline-flex items-center gap-1 rounded-full border border-emerald-300 px-2.5 py-1 font-semibold text-emerald-800 hover:bg-emerald-50 disabled:opacity-50"
+                >
+                  {busy === v.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+                  {t('osm.admin.approveDraft')}
                 </button>
               ) : null}
               {canPublish ? (
@@ -365,6 +379,7 @@ export function OfficialSourcesHealthDashboard() {
   const [sources, setSources] = useState<OfficialSourceRow[]>([])
   const [changes, setChanges] = useState<SourceChangeRow[]>([])
   const [docs, setDocs] = useState<LegalDocumentRow[]>([])
+  const [docKindFilter, setDocKindFilter] = useState('')
   const [selectedChange, setSelectedChange] = useState<SourceChangeRow | null>(null)
   const [telegramOk, setTelegramOk] = useState<boolean | null>(null)
   const [emailOk, setEmailOk] = useState<boolean | null>(null)
@@ -406,6 +421,11 @@ export function OfficialSourcesHealthDashboard() {
   const reviewCount = useMemo(
     () => changes.filter((c) => c.status === 'review_required' || c.status === 'detected').length,
     [changes],
+  )
+
+  const filteredDocs = useMemo(
+    () => (docKindFilter ? docs.filter((d) => d.doc_kind === docKindFilter) : docs),
+    [docs, docKindFilter],
   )
 
   const runCheck = async () => {
@@ -622,11 +642,23 @@ export function OfficialSourcesHealthDashboard() {
       ) : null}
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-[#86868b]">
-          {t('osm.admin.documents')}
-        </h2>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-bold uppercase tracking-wide text-[#86868b]">
+            {t('osm.admin.documents')}
+          </h2>
+          <select
+            value={docKindFilter}
+            onChange={(e) => setDocKindFilter(e.target.value)}
+            className="rounded-lg border border-[#d2d2d7] px-2 py-1 text-xs"
+          >
+            <option value="">{t('osm.admin.filterAllKinds')}</option>
+            <option value="informational">{t('osm.admin.filterInformational')}</option>
+            <option value="contract_template">{t('osm.admin.filterTemplates')}</option>
+            <option value="government_procedure">{t('osm.admin.filterProcedures')}</option>
+          </select>
+        </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          {docs.map((doc) => (
+          {filteredDocs.map((doc) => (
             <article key={doc.id} className="rounded-2xl border border-[#e8e8ed] bg-white p-4">
               <div className="mb-2 flex items-start gap-2">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#1d1d1f]" />

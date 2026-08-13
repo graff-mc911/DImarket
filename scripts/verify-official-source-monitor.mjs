@@ -397,4 +397,25 @@ const EE = { officialGazetteUrl: 'https://www.riigiteataja.ee/' }
 assert.ok(LT.officialGazetteUrl.includes('e-tar'))
 assert.ok(EE.officialGazetteUrl.includes('riigiteataja'))
 
+const CY = { officialGazetteUrl: 'https://www.mof.gov.cy/mof/gpo/gpo.nsf/index_en/index_en' }
+const MT = { officialGazetteUrl: 'https://legislation.mt/' }
+const CH = { officialGazetteUrl: 'https://www.fedlex.admin.ch/' }
+const NO = { officialGazetteUrl: 'https://lovdata.no/' }
+const UK = { officialGazetteUrl: 'https://www.legislation.gov.uk/' }
+assert.ok(CY.officialGazetteUrl.includes('mof.gov.cy'))
+assert.ok(MT.officialGazetteUrl.includes('legislation.mt'))
+assert.ok(CH.officialGazetteUrl.includes('fedlex'))
+assert.ok(NO.officialGazetteUrl.includes('lovdata'))
+assert.ok(UK.officialGazetteUrl.includes('legislation.gov.uk'))
+
+function isSlackWebhookUrl(url) {
+  return /hooks\.slack\.com/i.test(url)
+}
+assert.equal(isSlackWebhookUrl('https://hooks.slack.com/services/T/B/X'), true)
+assert.equal(isSlackWebhookUrl('https://example.com/hook'), false)
+
+const approveAllowed = ['draft', 'review_required']
+assert.ok(approveAllowed.includes('review_required'))
+assert.equal(approveAllowed.includes('published'), false)
+
 console.log('ok official source monitor core checks passed')

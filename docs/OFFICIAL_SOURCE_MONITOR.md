@@ -140,3 +140,17 @@ Auto-draft versions use prefix `auto-` — admin UI shows badge; publish only af
 | SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE6.sql` |
 
 Webhook payload: `{ event, severity, change_id, source_name, country_code, source_url, summary, affected_documents, admin_url, detected_at }`.
+
+## Phase 7
+
+| Feature | Details |
+|---------|---------|
+| CY / MT / CH / NO / UK | Official gazette + gov portals, published legislation pointers |
+| Rental drafts | AT, PT, IE, BE, UK skeletons (`review_required`) |
+| Rental hubs | ES/DE/FR/UK published **hub pointers** (not contracts) |
+| Approve draft | Edge `approve_version` — approve before publish (separate steps) |
+| Slack webhook | `OSM_SLACK_WEBHOOK_URL` or Slack-style `hooks.slack.com` URL |
+| Filters | Admin doc-kind filter; public type filter |
+| SQL | `APPLY_OFFICIAL_SOURCE_MONITOR_PHASE7.sql` |
+
+Contract templates are **never** auto-published. Public rental hubs are informational pointers only.

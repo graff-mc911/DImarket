@@ -96,6 +96,7 @@ type MonitorAction =
   | 'rollback_version'
   | 'create_draft_version'
   | 'update_draft_version'
+  | 'approve_version'
   | 'weekly_digest'
 
 async function callMonitor(
@@ -259,4 +260,8 @@ export async function updateDocumentDraftVersion(input: {
   effectiveFrom?: string | null
 }) {
   return callMonitor('update_draft_version', input)
+}
+
+export async function approveDocumentDraftVersion(versionId: string) {
+  return callMonitor('approve_version', { versionId })
 }

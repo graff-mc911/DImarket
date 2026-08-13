@@ -13,6 +13,7 @@ export function LegalDocuments() {
   const [loading, setLoading] = useState(true)
   const [docs, setDocs] = useState<PublishedLegalDocument[]>([])
   const [countryFilter, setCountryFilter] = useState('')
+  const [kindFilter, setKindFilter] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -32,9 +33,17 @@ export function LegalDocuments() {
     [docs],
   )
 
-  const filtered = useMemo(
-    () => (countryFilter ? docs.filter((d) => d.country_code === countryFilter) : docs),
-    [docs, countryFilter],
+  const filtered = useMemo(() => {
+    return docs.filter((d) => {
+      if (countryFilter && d.country_code !== countryFilter) return false
+      if (kindFilter && d.doc_kind !== kindFilter) return false
+      return true
+    })
+  }, [docs, countryFilter, kindFilter])
+
+  const kinds = useMemo(
+    () => [...new Set(docs.map((d) => d.doc_kind))].sort(),
+    [docs],
   )
 
   if (loading) {
@@ -53,22 +62,43 @@ export function LegalDocuments() {
             {t('osm.public.title')}
           </h1>
           <p className="mt-2 text-sm leading-6 text-[#6e6e73]">{t('osm.public.subtitle')}</p>
-          {countries.length > 1 ? (
-            <label className="mt-4 inline-flex items-center gap-2 text-sm">
-              <span className="font-semibold text-[#1d1d1f]">{t('osm.public.filterCountry')}</span>
-              <select
-                value={countryFilter}
-                onChange={(e) => setCountryFilter(e.target.value)}
-                className="rounded-lg border border-[#d2d2d7] px-2 py-1 text-sm"
-              >
-                <option value="">{t('osm.public.filterAll')}</option>
-                {countries.map((code) => (
-                  <option key={code} value={code}>
-                    {code}
-                  </option>
-                ))}
-              </select>
-            </label>
+          {countries.length > 1 || kinds.length > 1 ? (
+            <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
+              {countries.length > 1 ? (
+                <label className="inline-flex items-center gap-2">
+                  <span className="font-semibold text-[#1d1d1f]">{t('osm.public.filterCountry')}</span>
+                  <select
+                    value={countryFilter}
+                    onChange={(e) => setCountryFilter(e.target.value)}
+                    className="rounded-lg border border-[#d2d2d7] px-2 py-1 text-sm"
+                  >
+                    <option value="">{t('osm.public.filterAll')}</option>
+                    {countries.map((code) => (
+                      <option key={code} value={code}>
+                        {code}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : null}
+              {kinds.length > 1 ? (
+                <label className="inline-flex items-center gap-2">
+                  <span className="font-semibold text-[#1d1d1f]">{t('osm.public.filterKind')}</span>
+                  <select
+                    value={kindFilter}
+                    onChange={(e) => setKindFilter(e.target.value)}
+                    className="rounded-lg border border-[#d2d2d7] px-2 py-1 text-sm"
+                  >
+                    <option value="">{t('osm.public.filterAllKinds')}</option>
+                    {kinds.map((kind) => (
+                      <option key={kind} value={kind}>
+                        {kind}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : null}
+            </div>
           ) : null}
         </header>
 

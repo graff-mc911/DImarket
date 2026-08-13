@@ -11,6 +11,7 @@ type Action =
   | 'rollback_version'
   | 'create_draft_version'
   | 'update_draft_version'
+  | 'approve_version'
   | 'weekly_digest'
 
 type Body = {
@@ -126,7 +127,7 @@ function isEmailConfigured(): boolean {
 }
 
 function isWebhookConfigured(): boolean {
-  return Boolean(Deno.env.get('OSM_WEBHOOK_URL'))
+  return Boolean(Deno.env.get('OSM_WEBHOOK_URL') || Deno.env.get('OSM_SLACK_WEBHOOK_URL'))
 }
 
 function alertsComplete(
@@ -142,22 +143,56 @@ function alertsComplete(
   return telegramDone && emailDone && webhookDone
 }
 
-async function sendWebhookAlert(payload: Record<string, unknown>): Promise<boolean> {
-  const url = Deno.env.get('OSM_WEBHOOK_URL')
-  if (!url) return false
-  const secret = Deno.env.get('OSM_WEBHOOK_SECRET')
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-  if (secret) headers['X-OSM-Webhook-Secret'] = secret
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(payload),
-    })
-    return res.ok
-  } catch {
-    return false
+function isSlackWebhookUrl(url: string): boolean {
+  return /hooks\.slack\.com/i.test(url)
+}
+
+async function postJson(url: string, body: unknown, extraHeaders?: Record<string, string>) {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(extraHeaders ?? {}),
   }
+  const res = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+  })
+  return res.ok
+}
+
+async function sendWebhookAlert(payload: Record<string, unknown>): Promise<boolean> {
+  const genericUrl = Deno.env.get('OSM_WEBHOOK_URL')
+  const slackUrl = Deno.env.get('OSM_SLACK_WEBHOOK_URL')
+  const secret = Deno.env.get('OSM_WEBHOOK_SECRET')
+  const secretHeaders = secret ? { 'X-OSM-Webhook-Secret': secret } : undefined
+
+  let ok = false
+
+  const targets: string[] = []
+  if (genericUrl) targets.push(genericUrl)
+  if (slackUrl && slackUrl !== genericUrl) targets.push(slackUrl)
+
+  for (const url of targets) {
+    try {
+      if (isSlackWebhookUrl(url) || url === slackUrl) {
+        const text = [
+          `*DImarket OSM* — ${String(payload.severity ?? '').toUpperCase()}`,
+          `Source: ${payload.source_name} (${payload.country_code})`,
+          `URL: ${payload.source_url}`,
+          String(payload.summary ?? ''),
+          `Review: ${payload.admin_url}`,
+        ].join('\n')
+        const sent = await postJson(url, { text })
+        ok = ok || sent
+      } else {
+        const sent = await postJson(url, payload, secretHeaders)
+        ok = ok || sent
+      }
+    } catch {
+      // continue other targets
+    }
+  }
+  return ok
 }
 
 function isoWeekKey(d = new Date()): string {
@@ -926,6 +961,47 @@ async function updateDraftVersion(
   return { versionId: version.id, versionNumber: version.version_number }
 }
 
+async function approveDraftVersion(
+  admin: ReturnType<typeof createClient>,
+  userId: string,
+  versionId: string,
+) {
+  const { data: version, error } = await admin
+    .from('document_versions')
+    .select('id, document_id, version_number, status')
+    .eq('id', versionId)
+    .maybeSingle()
+  if (error || !version) throw new Error('version_not_found')
+
+  if (!['draft', 'review_required'].includes(version.status as string)) {
+    throw new Error('approve_not_allowed')
+  }
+
+  await admin
+    .from('document_versions')
+    .update({ status: 'approved' })
+    .eq('id', versionId)
+
+  await admin
+    .from('legal_documents')
+    .update({
+      verification_status: 'needs_review',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', version.document_id as string)
+
+  await admin.from('document_audit_log').insert({
+    document_id: version.document_id as string,
+    version_id: version.id as string,
+    actor_id: userId,
+    action: 'draft_version_approved',
+    new_value: { version_number: version.version_number, status: 'approved' },
+    reason: 'Admin approved draft — publish is a separate explicit step',
+  })
+
+  return { versionId: version.id, versionNumber: version.version_number, status: 'approved' }
+}
+
 async function runWeeklyDigest(admin: ReturnType<typeof createClient>) {
   const weekKey = isoWeekKey()
   const { data: prior } = await admin
@@ -1145,6 +1221,15 @@ Deno.serve(async (req) => {
         effectiveFrom: body.payload?.effectiveFrom ?? null,
         changeSummary: body.payload?.changeSummary,
       })
+      return jsonResponse({ ok: true, ...result })
+    }
+
+    if (action === 'approve_version') {
+      const gate = await requireAdmin(req)
+      if (!gate.ok) return jsonResponse({ error: gate.error }, gate.error === 'forbidden' ? 403 : 401)
+      const versionId = body.payload?.versionId
+      if (!versionId) return jsonResponse({ error: 'versionId required' }, 400)
+      const result = await approveDraftVersion(gate.admin, gate.userId, versionId)
       return jsonResponse({ ok: true, ...result })
     }
 
