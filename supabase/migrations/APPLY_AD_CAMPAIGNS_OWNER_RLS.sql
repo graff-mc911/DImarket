@@ -21,7 +21,8 @@ $$;
 UPDATE public.profiles p
 SET
   is_site_owner = true,
-  user_role = 'owner'
+  user_role = COALESCE(NULLIF(p.user_role, ''), 'owner'),
+  updated_at = now()
 FROM auth.users u
 WHERE u.id = p.id
   AND lower(u.email) = lower('ivan.sovban@gmail.com');

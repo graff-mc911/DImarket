@@ -255,16 +255,14 @@ export function OwnerAdManager({
         closeForm({ keepFeedback: true })
         reportNotice('Рекламу оновлено.')
       } else {
-        const { data: inserted, error } = await (supabase.from('ad_campaigns') as any)
-          .insert({
-            ...payload,
-            impressions: 0,
-            clicks: 0,
-          })
-          .select('id')
-          .single()
+        // Insert without .select(): RETURNING can fail RLS even when the row was written
+        // (owner email bypass in UI ≠ is_site_owner() in DB until migration is applied).
+        const { error } = await (supabase.from('ad_campaigns') as any).insert({
+          ...payload,
+          impressions: 0,
+          clicks: 0,
+        })
         if (error) throw error
-        if (!inserted?.id) throw new Error('Campaign insert returned no id')
         closeForm({ keepFeedback: true })
         reportNotice('Рекламу створено.')
       }
