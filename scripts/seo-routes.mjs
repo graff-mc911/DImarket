@@ -28,6 +28,7 @@ export const CATEGORY_SLUGS = [
   'architecture-design',
   'engineering',
   'legal-services',
+  'official-documents',
 ]
 
 /** Launch SEO city/trade landings (mirrors src/lib/seoRoutes launch set) */
@@ -269,6 +270,7 @@ export function prerenderRoutes() {
     '/pricing',
     '/contact',
     '/legal-documents',
+    '/category/official-documents',
     '/for-professionals',
     '/for-companies',
     '/search',

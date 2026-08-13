@@ -7,22 +7,73 @@ import {
   buildLegalDocumentPdfHtml,
   openLegalDocumentPdfPrint,
 } from '../lib/officialSources/legalDocumentPdf'
+import { buildOfficialPointerMarkdown } from '../lib/officialSources/pointerTemplate'
+import { getStaticOfficialDocument } from '../lib/officialSources/staticCatalog'
 import { DocumentFreshnessBadge, LegalContentDisclaimer } from '../components/officialSources/DocumentFreshnessBadge'
 
 function renderMarkdown(md: string): string {
   return md
     .replace(/^# (.+)$/gm, '<h2 class="text-xl font-bold mt-4 mb-2">$1</h2>')
+    .replace(/^## (.+)$/gm, '<h3 class="text-lg font-bold mt-3 mb-2">$1</h3>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^- (.+)$/gm, '<p class="ml-3 text-sm leading-6">• $1</p>')
+    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[#d2d2d7] pl-3 text-sm text-[#6e6e73]">$1</blockquote>')
     .replace(/\n\n/g, '</p><p class="mt-3 text-sm leading-6 text-[#1d1d1f]">')
-    .replace(/^(.+)$/gm, (line) =>
-      line.startsWith('<h2') || line.startsWith('<p') ? line : line,
-    )
+}
+
+function staticDocAsPublished(docKey: string, lang: string): PublishedLegalDocument | null {
+  const s = getStaticOfficialDocument(docKey)
+  if (!s) return null
+  const title = lang === 'uk' ? s.titleUk : s.title
+  const body = buildOfficialPointerMarkdown({
+    sourceName: s.source_name,
+    sourceUrl: s.source_url,
+    jurisdiction: s.jurisdiction,
+  })
+  return {
+    id: `static-${s.doc_key}`,
+    doc_key: s.doc_key,
+    title,
+    doc_kind: s.doc_kind,
+    country_code: s.country_code,
+    region: null,
+    jurisdiction: s.jurisdiction,
+    primary_source_id: null,
+    verification_status: 'verified',
+    current_version_id: 'static-v1',
+    next_verification_at: new Date().toISOString(),
+    last_verified_at: new Date().toISOString(),
+    is_published: true,
+    official_sources: {
+      source_name: s.source_name,
+      source_url: s.source_url,
+      trust_tier: s.trust_tier,
+      last_checked_at: null,
+      verification_status: 'verified',
+    },
+    current_version: {
+      id: 'static-v1',
+      document_id: `static-${s.doc_key}`,
+      version_number: '2026.08-pointer',
+      title,
+      body_markdown: body,
+      body_html: null,
+      source_id: null,
+      source_url: s.source_url,
+      published_at: new Date().toISOString(),
+      effective_from: new Date().toISOString(),
+      effective_until: null,
+      verified_at: new Date().toISOString(),
+      status: 'published',
+      change_summary: 'Static official source pointer',
+    },
+  }
 }
 
 type Props = { docKey: string }
 
 export function LegalDocumentDetail({ docKey }: Props) {
-  const { t } = useApp()
+  const { t, language } = useApp()
   const [loading, setLoading] = useState(true)
   const [doc, setDoc] = useState<PublishedLegalDocument | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -30,14 +81,16 @@ export function LegalDocumentDetail({ docKey }: Props) {
   useEffect(() => {
     void (async () => {
       try {
-        setDoc(await getPublishedLegalDocument(docKey))
+        const remote = await getPublishedLegalDocument(docKey)
+        setDoc(remote ?? staticDocAsPublished(docKey, language.code))
       } catch (err) {
+        setDoc(staticDocAsPublished(docKey, language.code))
         setError(err instanceof Error ? err.message : String(err))
       } finally {
         setLoading(false)
       }
     })()
-  }, [docKey])
+  }, [docKey, language.code])
 
   if (loading) {
     return (
@@ -53,7 +106,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
         <p className="text-sm text-[#6e6e73]">{t('osm.public.notFound')}</p>
         <button
           type="button"
-          onClick={() => navigateTo('/legal-documents')}
+          onClick={() => navigateTo('/category/official-documents')}
           className="mt-4 text-sm font-semibold text-[#007185] hover:underline"
         >
           {t('osm.public.backToList')}
@@ -90,7 +143,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
       <div className="mx-auto max-w-3xl">
         <button
           type="button"
-          onClick={() => navigateTo('/legal-documents')}
+          onClick={() => navigateTo('/category/official-documents')}
           className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-[#007185] hover:underline"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -115,7 +168,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
           trustTier={doc.official_sources?.trust_tier}
         />
 
-        {error ? (
+        {error && !body ? (
           <p className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
             {error}
           </p>

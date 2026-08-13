@@ -253,6 +253,11 @@ function App() {
       return <LegalDocumentDetail docKey={parts[1]} />
     }
 
+    // Official Documents — public category for everyone
+    if (parts[0] === 'category' && parts[1] === 'official-documents') {
+      return <LegalDocuments />
+    }
+
     // Динамічні маршрути
     if (parts[0] === 'category' && parts[1]) return <CategoryPage slug={parts[1]} />
     if (parts[0] === 'services' && parts[1]) return <ServiceResults slug={parts[1]} />

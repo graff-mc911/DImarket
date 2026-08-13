@@ -119,14 +119,15 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     id: 'official-documents',
-    path: '/legal-documents',
+    path: '/category/official-documents',
+    aliases: ['/legal-documents'],
     labelKey: 'nav.officialDocuments',
     labelKeyBySurface: {
       'header-dept': 'header.officialDocuments',
       'footer-support': 'footer.officialDocuments',
       'mobile-more': 'nav.officialDocuments',
     },
-    surfaces: ['mobile-more', 'header-dept', 'footer-support'],
+    surfaces: ['mobile-more', 'header-dept', 'footer-support', 'footer-services'],
   },
   {
     id: 'jobs',

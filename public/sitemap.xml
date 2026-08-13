@@ -175,6 +175,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://dimarket.app/category/official-documents</loc>
+    <lastmod>2026-08-13T10:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://dimarket.app/legal-documents</loc>
+    <lastmod>2026-08-13T10:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://dimarket.app/de/darmstadt/elektriker</loc>
     <lastmod>2026-07-31T17:15:35.625Z</lastmod>
     <changefreq>weekly</changefreq>

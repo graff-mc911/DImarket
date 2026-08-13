@@ -80,3 +80,9 @@ export {
   lineDiffSides,
   type LineDiffOp,
 } from './lineDiff'
+
+export {
+  STATIC_OFFICIAL_DOCUMENTS,
+  getStaticOfficialDocument,
+  type StaticOfficialDoc,
+} from './staticCatalog'

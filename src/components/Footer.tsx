@@ -219,7 +219,7 @@ export function Footer() {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs text-[#8b939e]">
-            <button type="button" className="hover:text-white" onClick={() => go('/legal-documents')}>
+            <button type="button" className="hover:text-white" onClick={() => go('/category/official-documents')}>
               {t('footer.officialDocuments')}
             </button>
             <button type="button" className="hover:text-white" onClick={() => go('/contact?topic=legal')}>

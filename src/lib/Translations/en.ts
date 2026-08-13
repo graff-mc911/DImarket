@@ -91,8 +91,11 @@ export const enTranslations = {
   'osm.admin.alertSent': 'Telegram sent',
   'osm.admin.telegramOk': 'Telegram alerts configured for critical/high changes.',
   'osm.admin.telegramMissing': 'Telegram not configured — set TELEGRAM_BOT_TOKEN and TELEGRAM_ADMIN_CHAT_ID on the edge function.',
+  'osm.public.categoryEyebrow': 'Category',
   'osm.public.title': 'Official documents & procedures',
   'osm.public.subtitle': 'Verified pointers to official sources. DImarket does not silently rewrite legal text.',
+  'osm.public.staticCatalogNote':
+    'Showing the static official-source catalog. After OSM SQL is applied, freshness-verified versions appear here.',
   'osm.public.empty': 'No published documents yet.',
   'osm.public.emptyHint':
     'If you are the owner: apply APPLY_OFFICIAL_SOURCE_MONITOR*.sql in Supabase, then open /admin/official-sources.',

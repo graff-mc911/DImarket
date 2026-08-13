@@ -93,8 +93,11 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'osm.admin.alertSent': 'Telegram надіслано',
   'osm.admin.telegramOk': 'Telegram-алерти налаштовані для critical/high змін.',
   'osm.admin.telegramMissing': 'Telegram не налаштовано — додайте TELEGRAM_BOT_TOKEN і TELEGRAM_ADMIN_CHAT_ID на edge function.',
+  'osm.public.categoryEyebrow': 'Категорія',
   'osm.public.title': 'Офіційні документи та процедури',
   'osm.public.subtitle': 'Перевірені посилання на офіційні джерела. DImarket не переписує юридичний текст мовчки.',
+  'osm.public.staticCatalogNote':
+    'Показуємо статичний каталог офіційних джерел. Після застосування SQL-моніторингу з’являться версії з перевіркою свіжості.',
   'osm.public.empty': 'Ще немає опублікованих документів.',
   'osm.public.emptyHint':
     'Якщо ви власник: застосуйте SQL APPLY_OFFICIAL_SOURCE_MONITOR*.sql у Supabase і відкрийте /admin/official-sources.',

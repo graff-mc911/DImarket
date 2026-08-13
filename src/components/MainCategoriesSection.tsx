@@ -184,6 +184,15 @@ export function MainCategoriesSection({
       navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'jobs', href: '/vacancies' }), location))
       return
     }
+    if (itemId === 'official-documents') {
+      navigateTo(
+        appendLocationToPath(
+          homeCategoryPath({ slug: 'official-documents', href: '/category/official-documents' }),
+          location,
+        ),
+      )
+      return
+    }
     const resolved = findServiceBySlug(itemId)
     if (resolved) {
       navigateTo(appendLocationToPath(servicesPath(resolved.subcategory.slug), location))

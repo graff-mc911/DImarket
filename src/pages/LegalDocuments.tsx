@@ -6,27 +6,63 @@ import {
   listPublishedLegalDocuments,
   type PublishedLegalDocument,
 } from '../lib/officialSources/api'
+import { STATIC_OFFICIAL_DOCUMENTS } from '../lib/officialSources/staticCatalog'
 import { DocumentFreshnessBadge, LegalContentDisclaimer } from '../components/officialSources/DocumentFreshnessBadge'
 
+function staticAsPublished(lang: string): PublishedLegalDocument[] {
+  return STATIC_OFFICIAL_DOCUMENTS.map((d) => ({
+    id: `static-${d.doc_key}`,
+    doc_key: d.doc_key,
+    title: lang === 'uk' ? d.titleUk : d.title,
+    doc_kind: d.doc_kind,
+    country_code: d.country_code,
+    region: null,
+    jurisdiction: d.jurisdiction,
+    primary_source_id: null,
+    verification_status: 'verified',
+    current_version_id: null,
+    next_verification_at: new Date().toISOString(),
+    last_verified_at: new Date().toISOString(),
+    is_published: true,
+    official_sources: {
+      source_name: d.source_name,
+      source_url: d.source_url,
+      trust_tier: d.trust_tier,
+      last_checked_at: null,
+      verification_status: 'verified',
+    },
+  }))
+}
+
 export function LegalDocuments() {
-  const { t } = useApp()
+  const { t, language } = useApp()
   const [loading, setLoading] = useState(true)
   const [docs, setDocs] = useState<PublishedLegalDocument[]>([])
   const [countryFilter, setCountryFilter] = useState('')
   const [kindFilter, setKindFilter] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [fromStatic, setFromStatic] = useState(false)
 
   useEffect(() => {
     void (async () => {
       try {
-        setDocs(await listPublishedLegalDocuments())
+        const remote = await listPublishedLegalDocuments()
+        if (remote.length > 0) {
+          setDocs(remote)
+          setFromStatic(false)
+        } else {
+          setDocs(staticAsPublished(language.code))
+          setFromStatic(true)
+        }
       } catch (err) {
+        setDocs(staticAsPublished(language.code))
+        setFromStatic(true)
         setError(err instanceof Error ? err.message : String(err))
       } finally {
         setLoading(false)
       }
     })()
-  }, [])
+  }, [language.code])
 
   const countries = useMemo(
     () => [...new Set(docs.map((d) => d.country_code))].sort(),
@@ -58,10 +94,16 @@ export function LegalDocuments() {
     <div className="layout-page-content py-8 pb-24 lg:pb-8">
       <div className="mx-auto max-w-4xl">
         <header className="mb-6">
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#1d1d1f]">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#86868b]">
+            {t('osm.public.categoryEyebrow')}
+          </p>
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#1d1d1f]">
             {t('osm.public.title')}
           </h1>
           <p className="mt-2 text-sm leading-6 text-[#6e6e73]">{t('osm.public.subtitle')}</p>
+          {fromStatic ? (
+            <p className="mt-2 text-xs text-[#6e6e73]">{t('osm.public.staticCatalogNote')}</p>
+          ) : null}
           {countries.length > 1 || kinds.length > 1 ? (
             <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
               {countries.length > 1 ? (
@@ -102,7 +144,7 @@ export function LegalDocuments() {
           ) : null}
         </header>
 
-        {error ? (
+        {error && !fromStatic ? (
           <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
             {error}
           </p>
@@ -111,15 +153,7 @@ export function LegalDocuments() {
         <ul className="space-y-3">
           {filtered.length === 0 ? (
             <li className="rounded-2xl border border-dashed border-[#d2d2d7] px-4 py-8 text-center text-sm text-[#86868b]">
-              <p>{t('osm.public.empty')}</p>
-              <p className="mt-2 text-xs leading-5">{t('osm.public.emptyHint')}</p>
-              <button
-                type="button"
-                onClick={() => navigateTo('/admin/official-sources')}
-                className="mt-3 text-xs font-semibold text-[#007185] hover:underline"
-              >
-                {t('osm.public.openAdmin')}
-              </button>
+              {t('osm.public.empty')}
             </li>
           ) : (
             filtered.map((doc) => (
