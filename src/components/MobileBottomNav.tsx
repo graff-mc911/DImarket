@@ -31,6 +31,7 @@ import {
 import { useApp } from '../contexts/AppContext'
 import { CURRENCIES } from '../lib/types'
 import { navigateTo } from '../lib/navigation'
+import { SCB_LIGHT_URL } from '../lib/scbLight'
 import {
   labelKeyFor,
   navEntriesFor,
@@ -90,6 +91,11 @@ export function MobileBottomNav() {
   const sheetTitleId = useId()
   const closeBtnRef = useRef<HTMLButtonElement>(null)
   const owner = Boolean(user && isSiteOwner(profile, user.email))
+  const isPro =
+    profile?.user_role === 'professional' ||
+    profile?.user_role === 'company' ||
+    Boolean(profile?.is_professional) ||
+    owner
 
   useEffect(() => {
     const sync = () => {
@@ -268,6 +274,23 @@ export function MobileBottomNav() {
                       <LogOut className="h-5 w-5" />
                     </span>
                     <span>{t('header.signOut')}</span>
+                  </button>
+                </li>
+              ) : null}
+              {user && isPro ? (
+                <li>
+                  <button
+                    type="button"
+                    className="mobile-nav-more__item"
+                    onClick={() => {
+                      setMoreOpen(false)
+                      window.open(SCB_LIGHT_URL, '_blank', 'noopener,noreferrer')
+                    }}
+                  >
+                    <span className="mobile-nav-more__icon" aria-hidden>
+                      <Calculator className="h-5 w-5" />
+                    </span>
+                    <span>{t('scbLight.open')}</span>
                   </button>
                 </li>
               ) : null}

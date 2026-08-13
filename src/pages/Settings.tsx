@@ -589,7 +589,10 @@ export function Settings() {
                   />
                 )}
 
-              {(userRole === 'professional' || userRole === 'company') &&
+              {(userRole === 'professional' ||
+                userRole === 'company' ||
+                userRole === 'owner' ||
+                isProfessional) &&
                 currentUserId && (
                   <ScbLightPanel userId={currentUserId} />
                 )}
