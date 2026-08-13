@@ -61,6 +61,8 @@ import {
   clearAdCampaignDraft,
   draftHasMeaningfulContent,
   readAdCampaignDraft,
+  readAdvertisingComposeUrl,
+  syncAdvertisingComposeUrl,
   writeAdCampaignDraft,
   type AdCampaignFormDraft,
 } from '../lib/adCampaignDraft'
@@ -198,6 +200,8 @@ export function Advertising() {
   const draftHydratedRef = useRef(false)
   const skipPersistRef = useRef(true)
   const hadSlotPresetRef = useRef(false)
+  const pendingComposeScrollRef = useRef(false)
+  const [composerActive, setComposerActive] = useState(false)
 
   // Поля форми
   const [title, setTitle]             = useState('')
@@ -355,34 +359,46 @@ export function Advertising() {
     draftHydratedRef.current = true
 
     const draft = readAdCampaignDraft(user?.id ?? null)
-    if (!draft) {
+    const composeFromUrl = readAdvertisingComposeUrl()
+    if (!draft && !composeFromUrl) {
       skipPersistRef.current = false
       return
     }
 
     skipPersistRef.current = true
-    setEditingCampaignId(draft.editingCampaignId)
-    setTitle(draft.title)
-    setDescription(draft.description)
-    setLinkUrl(draft.linkUrl)
-    setStartsAt(draft.startsAt)
-    setEndsAt(draft.endsAt)
-    if (!hadSlotPresetRef.current) {
-      setSelectedSlots(draft.selectedSlots)
-      setSlotMedia(draft.slotMedia)
-    } else {
-      setSlotMedia((prev) => ({ ...draft.slotMedia, ...prev }))
+    if (draft) {
+      setEditingCampaignId(draft.editingCampaignId)
+      setTitle(draft.title)
+      setDescription(draft.description)
+      setLinkUrl(draft.linkUrl)
+      setStartsAt(draft.startsAt)
+      setEndsAt(draft.endsAt)
+      if (!hadSlotPresetRef.current) {
+        setSelectedSlots(draft.selectedSlots)
+        setSlotMedia(draft.slotMedia)
+      } else {
+        setSlotMedia((prev) => ({ ...draft.slotMedia, ...prev }))
+      }
+      setGeoMode(draft.geoMode)
+      setSelectedCountries(draft.selectedCountries)
+      setSelectedRegions(draft.selectedRegions)
+      setSelectedCities(draft.selectedCities)
+      setDurationWeeks(draft.durationWeeks)
+      setMediaType(draft.mediaType)
+      setMediaUrl(draft.mediaUrl)
+      setSlideUrls(draft.slideUrls)
+      setMediaStyle(draft.mediaStyle)
+      const active = draft.composerActive || composeFromUrl || draftHasMeaningfulContent(draft)
+      setComposerActive(active)
+      if (active) {
+        pendingComposeScrollRef.current = true
+        syncAdvertisingComposeUrl(true)
+        setFeedback({ type: 'success', text: t('advertising.draft.restored') })
+      }
+    } else if (composeFromUrl) {
+      setComposerActive(true)
+      pendingComposeScrollRef.current = true
     }
-    setGeoMode(draft.geoMode)
-    setSelectedCountries(draft.selectedCountries)
-    setSelectedRegions(draft.selectedRegions)
-    setSelectedCities(draft.selectedCities)
-    setDurationWeeks(draft.durationWeeks)
-    setMediaType(draft.mediaType)
-    setMediaUrl(draft.mediaUrl)
-    setSlideUrls(draft.slideUrls)
-    setMediaStyle(draft.mediaStyle)
-    setFeedback({ type: 'success', text: t('advertising.draft.restored') })
     const tmr = window.setTimeout(() => {
       skipPersistRef.current = false
     }, 0)
@@ -393,9 +409,12 @@ export function Advertising() {
   useEffect(() => {
     if (!authReady || skipPersistRef.current || !draftHydratedRef.current) return
 
+    syncAdvertisingComposeUrl(composerActive)
+
     const draft: Omit<AdCampaignFormDraft, 'v' | 'savedAt'> = {
       userId: user?.id ?? null,
       editingCampaignId,
+      composerActive,
       title,
       description,
       linkUrl,
@@ -427,6 +446,7 @@ export function Advertising() {
     authReady,
     user?.id,
     editingCampaignId,
+    composerActive,
     title,
     description,
     linkUrl,
@@ -446,9 +466,25 @@ export function Advertising() {
   ])
 
   useEffect(() => {
-    if (!feedback) return
+    if (!composerActive || !pendingComposeScrollRef.current) return
+    pendingComposeScrollRef.current = false
+    const el = document.getElementById('ad-form')
+    if (!el) return
+    const html = document.documentElement
+    const prev = html.style.scrollBehavior
+    html.style.scrollBehavior = 'auto'
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'auto', block: 'start' })
+      html.style.scrollBehavior = prev
+    })
+  }, [composerActive, title, mediaUrl])
+
+  useEffect(() => {
+    if (!feedback || !composerActive) return
+    // Only pin to the composer while it is the active workspace — avoids
+    // dragging a closed/idle page toward mid-document after remount.
     document.getElementById('ad-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }, [feedback])
+  }, [feedback, composerActive])
 
   useEffect(() => {
     if (!activeGuideStep) return
@@ -660,6 +696,13 @@ export function Advertising() {
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
   }
 
+  const openComposer = () => {
+    setComposerActive(true)
+    pendingComposeScrollRef.current = true
+    syncAdvertisingComposeUrl(true)
+    document.getElementById('ad-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const loadCampaignIntoForm = (campaign: AdCampaign) => {
     const data = campaign as AdCampaign & {
       placements?: string[]
@@ -668,6 +711,9 @@ export function Advertising() {
       cities?: string[]
       regions?: string[]
     }
+    setComposerActive(true)
+    pendingComposeScrollRef.current = true
+    syncAdvertisingComposeUrl(true)
     setEditingCampaignId(campaign.id)
     setTitle(campaign.title)
     setDescription(campaign.description || '')
@@ -701,6 +747,8 @@ export function Advertising() {
   const resetForm = (opts?: { keepFeedback?: boolean }) => {
     skipPersistRef.current = true
     clearAdCampaignDraft()
+    setComposerActive(false)
+    syncAdvertisingComposeUrl(false)
     setEditingCampaignId(null)
     setTitle(''); setDescription(''); setLinkUrl('')
     setSelectedSlots([centerSlotId('home')])
@@ -719,9 +767,11 @@ export function Advertising() {
   }
 
   const saveDraftNow = () => {
+    setComposerActive(true)
     writeAdCampaignDraft({
       userId: user?.id ?? null,
       editingCampaignId,
+      composerActive: true,
       title,
       description,
       linkUrl,
@@ -788,6 +838,7 @@ export function Advertising() {
     writeAdCampaignDraft({
       userId: user.id,
       editingCampaignId,
+      composerActive: true,
       title,
       description,
       linkUrl,
@@ -1079,7 +1130,7 @@ export function Advertising() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => document.getElementById('ad-form')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={openComposer}
                     type="button"
                     className="btn-primary rounded-full px-4 py-2 text-sm"
                   >
@@ -1139,7 +1190,7 @@ export function Advertising() {
           <div className="space-y-6">
 
             {/* ===== Форма нової кампанії ===== */}
-            <div id="ad-form" className="glass-card p-6">
+            <div id="ad-form" className="glass-card scroll-mt-24 p-6">
               <h2 className="text-2xl font-extrabold text-[#2f2a24]">
                 {editingCampaignId ? t('advertising.form.editTitle') : t('advertising.form.title')}
               </h2>

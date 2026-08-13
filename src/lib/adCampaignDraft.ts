@@ -16,6 +16,8 @@ export type AdCampaignFormDraft = {
   savedAt: string
   userId: string | null
   editingCampaignId: string | null
+  /** User explicitly opened / focused the create-edit composer */
+  composerActive: boolean
   title: string
   description: string
   linkUrl: string
@@ -83,7 +85,7 @@ export function readAdCampaignDraft(userId: string | null | undefined): AdCampai
       selectedSlots.length > 1 ||
       selectedSlots[0] !== centerSlotId('home')
 
-    if (!hasContent && !parsed.editingCampaignId) return null
+    if (!hasContent && !parsed.editingCampaignId && !parsed.composerActive) return null
 
     return {
       v: 1,
@@ -91,6 +93,7 @@ export function readAdCampaignDraft(userId: string | null | undefined): AdCampai
       userId: draftUser,
       editingCampaignId:
         typeof parsed.editingCampaignId === 'string' ? parsed.editingCampaignId : null,
+      composerActive: parsed.composerActive === true,
       title: typeof parsed.title === 'string' ? parsed.title : '',
       description: typeof parsed.description === 'string' ? parsed.description : '',
       linkUrl: typeof parsed.linkUrl === 'string' ? parsed.linkUrl : '',
@@ -140,7 +143,8 @@ export function clearAdCampaignDraft(): void {
 
 export function draftHasMeaningfulContent(draft: AdCampaignFormDraft): boolean {
   return Boolean(
-    draft.title.trim() ||
+    draft.composerActive ||
+      draft.title.trim() ||
       draft.description.trim() ||
       draft.linkUrl.trim() ||
       draft.mediaUrl.trim() ||
@@ -148,4 +152,21 @@ export function draftHasMeaningfulContent(draft: AdCampaignFormDraft): boolean {
       Object.keys(draft.slotMedia).length ||
       draft.editingCampaignId,
   )
+}
+
+/** Keep /advertising?compose=1 in sync with composer focus (no full navigation). */
+export function syncAdvertisingComposeUrl(active: boolean): void {
+  if (typeof window === 'undefined') return
+  const url = new URL(window.location.href)
+  if (!url.pathname.startsWith('/advertising')) return
+  if (active) url.searchParams.set('compose', '1')
+  else url.searchParams.delete('compose')
+  const next = `${url.pathname}${url.search}${url.hash}`
+  const current = `${window.location.pathname}${window.location.search}${window.location.hash}`
+  if (next !== current) window.history.replaceState(window.history.state, '', next)
+}
+
+export function readAdvertisingComposeUrl(): boolean {
+  if (typeof window === 'undefined') return false
+  return new URLSearchParams(window.location.search).get('compose') === '1'
 }

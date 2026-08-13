@@ -82,10 +82,12 @@ export function Dashboard() {
   const [messageActionId, setMessageActionId] = useState<string | null>(null)
 
   useEffect(() => {
-    // Перевіряємо користувача через контекст і, за потреби, напряму через Supabase,
-    // щоб не перекинути owner-профіль на /login під час першого монтування.
-    void loadOwnerDashboard()
-  }, [user])
+    // Only reload when the signed-in user id changes — not on TOKEN_REFRESHED
+    // (new user object identity), which was remounting OwnerAdManager and wiping
+    // the open “Нова реклама” form + dumping scroll toward the footer.
+    void loadOwnerDashboard({ soft: Boolean(profile) })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: user?.id only
+  }, [user?.id])
 
   /** Без join на profiles: RLS дозволяє читати лише is_professional / own —
    *  embed advertiser ламав завантаження кампаній у кабінеті власника. */
