@@ -16,7 +16,7 @@ export function adPageForPath(path: string): SideAdsPage {
   return 'default'
 }
 
-/** Amazon layout: без бокових рекламних рейок */
+/** Side ad rails fully removed from DImarket. */
 export function pathUsesSideAdRails(_path: string): boolean {
   return false
 }
@@ -24,26 +24,14 @@ export function pathUsesSideAdRails(_path: string): boolean {
 interface PageWithSideAdsProps {
   children: ReactNode
   className?: string
-  /** @deprecated Використовуйте inSideAdsGrid */
+  /** @deprecated ignored — side rails removed */
   showSideAds?: boolean
-  /** Центральна колонка в сітці layout-with-side-ads (бокові рейки зовні) */
+  /** @deprecated ignored — side rails removed */
   inSideAdsGrid?: boolean
 }
 
-/** Обгортка контенту; бокові рейки — у SideAdRailsLayout (App.tsx) */
-export function PageWithSideAds({
-  children,
-  className = '',
-  inSideAdsGrid = false,
-}: PageWithSideAdsProps) {
-  if (inSideAdsGrid) {
-    return (
-      <div className={`page-bg min-h-full pb-8 ${className}`}>
-        <div className="layout-page-content min-w-0">{children}</div>
-      </div>
-    )
-  }
-
+/** Page content wrapper (name kept for import stability; no side ad rails). */
+export function PageWithSideAds({ children, className = '' }: PageWithSideAdsProps) {
   return (
     <div className={`page-bg min-h-screen pb-8 ${className}`}>
       <div className="layout-page-gutter min-w-0">{children}</div>

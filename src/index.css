@@ -41,16 +41,11 @@
     --accent-500: #ff9900;
     --accent-soft: rgba(255, 153, 0, 0.1);
     --mint-soft: rgba(6, 125, 98, 0.1);
-    /* бокові реклами: 276 / 298 / 348px; gutter = відступ від краю екрана = між колонками */
-    --ad-side-rail-width: 17.25rem;
-    --layout-side-rail-inset: min(var(--ad-side-rail-width), 16.8vw);
-    --layout-side-rail-col: var(--layout-side-rail-inset);
-    --layout-page-pad-inline: calc(var(--layout-side-rail-col) + var(--layout-gutter));
+    /* Page gutters only — side banner rails removed */
+    --layout-page-pad-inline: var(--layout-gutter);
     --layout-content-max: 80rem;
     --layout-gutter: 1rem;
     --layout-screen-edge: max(var(--layout-gutter), env(safe-area-inset-left, 0px));
-    /* бокові рейки лише на широкому десктопі (планшети Android/iPad — одна колонка) */
-    --layout-side-ads-min: 80rem;
     /* відступ під фіксовану шапку (синхрон з Header spacer) */
     --header-offset: 8rem;
   }
@@ -92,13 +87,6 @@
   @media (min-width: 80rem) {
     :root {
       --layout-gutter: 1.5rem;
-      --ad-side-rail-width: 18.6rem;
-    }
-  }
-
-  @media (min-width: 96rem) {
-    :root {
-      --ad-side-rail-width: 21.75rem;
     }
   }
 
@@ -525,118 +513,7 @@
     outline-offset: -2px;
   }
 
-  /** Fixed side rails + scrollable main (header/footer лишаються з App) */
-  .app-page-with-fixed-rails {
-    position: relative;
-    width: 100%;
-  }
-
-  .app-page-main {
-    min-width: 0;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    overflow-x: clip;
-    padding-inline: max(var(--layout-gutter), env(safe-area-inset-left, 0px))
-      max(var(--layout-gutter), env(safe-area-inset-right, 0px));
-  }
-
-  @media (min-width: 80rem) {
-    .app-page-with-fixed-rails .app-page-main {
-      padding-inline: max(var(--layout-page-pad-inline), env(safe-area-inset-left, 0px))
-        max(var(--layout-page-pad-inline), env(safe-area-inset-right, 0px));
-    }
-  }
-
-  .ad-side-rail--viewport-fixed {
-    display: none;
-  }
-
-  @media (min-width: 80rem) {
-    .ad-side-rail--viewport-fixed {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
-      position: fixed;
-      z-index: 25;
-      top: var(--header-offset);
-      bottom: 0;
-      pointer-events: auto;
-      --layout-rail-w: min(var(--ad-side-rail-width), 16.8vw);
-      /* Як у .app-page-main + .layout-page-content (без подвійного gutter) */
-      --layout-pad-left: max(var(--layout-page-pad-inline), env(safe-area-inset-left, 0px));
-      --layout-pad-right: max(var(--layout-page-pad-inline), env(safe-area-inset-right, 0px));
-      --layout-inner-w: calc(100vw - var(--layout-pad-left) - var(--layout-pad-right));
-      --layout-content-block-w: min(var(--layout-content-max), var(--layout-inner-w));
-      --layout-content-left: calc(
-        var(--layout-pad-left) +
-          max(0px, (var(--layout-inner-w) - var(--layout-content-block-w)) / 2)
-      );
-      --layout-content-right: calc(var(--layout-content-left) + var(--layout-content-block-w));
-    }
-
-    /* Центр бічної зони: край viewport ↔ лівий край контенту */
-    .ad-side-rail--viewport-fixed.ad-side-rail--left {
-      left: calc((var(--layout-content-left) - var(--layout-rail-w)) / 2);
-      right: auto;
-    }
-
-    .ad-side-rail--viewport-fixed.ad-side-rail--right {
-      right: calc((100vw - var(--layout-content-right) - var(--layout-rail-w)) / 2);
-      left: auto;
-    }
-  }
-
-  /** Контент + бокові реклами: однаковий відступ gutter до краю екрана і між колонками */
-  .layout-with-side-ads {
-    display: grid;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    padding-inline: max(var(--layout-gutter), env(safe-area-inset-left, 0px))
-      max(var(--layout-gutter), env(safe-area-inset-right, 0px));
-    column-gap: var(--layout-gutter);
-    grid-template-columns: minmax(0, 1fr);
-    align-items: stretch;
-  }
-
-  @media (min-width: 80rem) {
-    .layout-with-side-ads {
-      grid-template-columns:
-        minmax(0, min(var(--ad-side-rail-width), 14.4vw))
-        minmax(0, 1fr)
-        minmax(0, min(var(--ad-side-rail-width), 14.4vw));
-    }
-  }
-
-  .layout-with-side-ads__main {
-    min-width: 0;
-    width: 100%;
-    max-width: 100%;
-    grid-column: 1;
-    overflow-x: clip;
-  }
-
-  @media (min-width: 80rem) {
-    .layout-with-side-ads > .ad-side-rail:first-of-type {
-      grid-column: 1;
-    }
-
-    .layout-with-side-ads__main {
-      grid-column: 2;
-    }
-
-    .layout-with-side-ads > .ad-side-rail:last-of-type {
-      grid-column: 3;
-    }
-
-    /* Немає бокових рейок (рекламу видалили) — контент на всю ширину */
-    /* Не колапсимо сітку у 1 колонку, щоб сторінки не «стрибали»
-       при появі/зникненні бокової реклами. */
-  }
-
-  /** Єдина центральна колонка на всіх сторінках з боковими рейками */
+  /** Єдина центральна колонка контенту (без бокових рекламних рейок) */
   .layout-page-content {
     box-sizing: border-box;
     min-width: 0;
@@ -655,63 +532,6 @@
     overflow-x: clip;
   }
 
-  .ad-side-rail {
-    display: none;
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
-    max-width: 100%;
-  }
-
-  @media (min-width: 80rem) {
-    .ad-side-rail {
-      display: flex;
-      flex-direction: column;
-      align-self: stretch;
-      min-height: 100%;
-    }
-
-    .layout-with-side-ads > .ad-side-rail--empty {
-      display: block;
-      visibility: hidden;
-      pointer-events: none;
-      min-width: 0;
-    }
-
-    /* Після .ad-side-rail { width:100% } — інакше fixed-рейки на body розтягуються на весь екран */
-    .ad-side-rail.ad-side-rail--viewport-fixed {
-      width: var(--layout-rail-w, min(var(--ad-side-rail-width), 16.8vw));
-      max-width: var(--layout-rail-w, min(var(--ad-side-rail-width), 16.8vw));
-      flex-shrink: 0;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .ad-side-rail--viewport-fixed .ad-side-rail__sticky {
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-  }
-
-  /** Бокові банери: sticky в колонці сітки — при скролі до футера піднімаються разом із контентом */
-  .ad-side-rail__sticky {
-    position: sticky;
-    z-index: 20;
-    top: var(--header-offset);
-    width: 100%;
-    max-height: calc(100dvh - var(--header-offset));
-    align-self: start;
-  }
-
-  @media (min-width: 80rem) {
-    .layout-with-side-ads > .ad-side-rail--left .ad-side-rail__sticky,
-    .layout-with-side-ads > .ad-side-rail--right .ad-side-rail__sticky {
-      width: 100%;
-    }
-  }
-
   @media (hover: hover) and (pointer: fine) {
     .card-hover-lift {
       transition: transform 0.3s ease;
@@ -720,96 +540,6 @@
     .card-hover-lift:hover {
       transform: translateY(-0.25rem);
     }
-  }
-
-  .ad-side-rail__sticky--viewport {
-    height: calc(100dvh - var(--header-offset));
-    box-sizing: border-box;
-  }
-
-  @media (min-width: 80rem) {
-    .ad-side-rail__sticky--viewport {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  .ad-side-rail__sticky--fit {
-    height: fit-content;
-  }
-
-  /** Боковий стек: 4 рівні ряди на доступну висоту екрана (без скролу) */
-  .ad-side-rail__sticky--stack {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: calc(100dvh - var(--header-offset));
-    max-height: calc(100dvh - var(--header-offset));
-    margin-block: 0;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .ad-side-stack-grid {
-    box-sizing: border-box;
-    flex: 1 1 auto;
-    min-height: 0;
-    height: 100%;
-    width: 100%;
-    display: grid;
-    grid-template-rows: repeat(4, minmax(0, 1fr));
-    gap: clamp(0.25rem, 0.6vh, 0.5rem);
-    padding: clamp(0.25rem, 0.6vh, 0.5rem);
-  }
-
-  .ad-side-stack-cell {
-    height: 100%;
-    min-height: 0;
-    max-height: 100%;
-    overflow: hidden;
-  }
-
-  .ad-slot-side__media {
-    width: 100%;
-    height: var(--ad-side-image-h, 8.5625rem);
-    max-height: var(--ad-side-image-h, 8.5625rem);
-    min-height: 0;
-    flex-shrink: 0;
-  }
-
-  /** Боковий стек: зображення займає решту висоти ряду, текст — окремий ряд сітки */
-  .ad-slot-side__media.ad-slot-side__media--stack-flex {
-    height: 100%;
-    max-height: 100%;
-    flex-shrink: 1;
-  }
-
-  .ad-side-stack-card__text {
-    min-height: 1.3125rem;
-  }
-
-  .ad-side-stack-desc {
-    margin-top: 0.0625rem;
-    max-height: 1.15em;
-    overflow: hidden;
-  }
-
-  .ad-side-rail--viewport-fixed .ad-side-rail__sticky--fit {
-    max-height: calc(100dvh - var(--header-offset));
-    overflow: hidden;
-  }
-
-  .ad-side-rail--viewport-fixed .ad-side-rail__sticky--stack,
-  .ad-side-rail--viewport-fixed .ad-side-rail__sticky--fit {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .ad-side-rail--viewport-fixed .ad-side-rail__sticky--stack::-webkit-scrollbar,
-  .ad-side-rail--viewport-fixed .ad-side-rail__sticky--fit::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
   }
 
   .ad-slot-center {

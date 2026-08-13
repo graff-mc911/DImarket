@@ -19,9 +19,9 @@ const BANNER_B = resolve(root, 'public/ads/brands/dewalt.png')
 const BANNER_C = resolve(root, 'public/ads/brands/festool.png')
 
 const SLOTS = [
-  { pageId: 'home', slotId: 'home_side_r1', file: BANNER_A },
-  { pageId: 'listings', slotId: 'listings_side_r1', file: BANNER_B },
-  { pageId: 'professionals', slotId: 'professionals_side_l1', file: BANNER_C },
+  { pageId: 'home', slotId: 'home_center', file: BANNER_A },
+  { pageId: 'listings', slotId: 'listings_mob_inline_1', file: BANNER_B },
+  { pageId: 'professionals', slotId: 'professionals_mob_inline_1', file: BANNER_C },
 ]
 
 function loadEnv() {
@@ -241,9 +241,9 @@ try {
   }
 
   const pagesToCheck = [
-    { path: '/', name: 'Головна', slot: 'home_side_r1' },
-    { path: '/listings', name: 'Оголошення', slot: 'listings_side_r1' },
-    { path: '/professionals', name: 'Майстри', slot: 'professionals_side_l1' },
+    { path: '/', name: 'Головна', slot: 'home_center' },
+    { path: '/listings', name: 'Оголошення', slot: 'listings_mob_inline_1' },
+    { path: '/professionals', name: 'Майстри', slot: 'professionals_mob_inline_1' },
   ]
 
   for (const { path, name } of pagesToCheck) {
@@ -251,12 +251,18 @@ try {
     await page.goto(`${baseURL}${path}`, { waitUntil: 'domcontentloaded', timeout: 60_000 })
     await page.waitForTimeout(3500)
     const state = await page.evaluate(() => {
-      const imgs = Array.from(document.querySelectorAll('.ad-side-rail img, .ad-overlay-card img'))
+      const imgs = Array.from(
+        document.querySelectorAll(
+          '[data-ad-slot] img, .ad-overlay-card img, .ad-slot-center img, .ad-slot-mobile-inline img',
+        ),
+      )
       return {
         count: imgs.length,
         srcs: imgs.map((i) => i.src).filter(Boolean),
+        sideRails: document.querySelectorAll('.ad-side-rail').length,
       }
     })
+    if (state.sideRails > 0) fail(`${name}: side rails still present (${state.sideRails})`)
     const markerHit = uploadedMarkers.some((m) => state.srcs.some((s) => s.includes(m.replace('.png', '')) || s.includes('campaigns/')))
     if (state.count > 0) {
       pass(`${name}: ${state.count} банер(ів) на сторінці`)

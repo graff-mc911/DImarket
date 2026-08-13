@@ -8,8 +8,6 @@ import {
 } from './adPlacementSlots'
 
 export type SlotZone =
-  | 'side_left'
-  | 'side_right'
   | 'center'
   | 'mob_leaderboard'
   | 'mob_inline'
@@ -106,21 +104,27 @@ export function slotGroupsForPurchasePicker(): {
   })
 }
 
-/** Слоти, які не в каталозі (старі покупки) — лишаємо в кампанії, але не продаємо */
+/** Слоти, які не в каталозі (старі покупки / retired side) — не продаємо */
 export function sanitizeSlotsForPurchase(selected: string[]): string[] {
   const allowed = new Set(getImplementedSlotIds())
-  const valid = selected.filter((id) => allowed.has(id))
+  const valid = selected.filter(
+    (id) =>
+      allowed.has(id) &&
+      !id.includes('_side_') &&
+      id !== 'side_left' &&
+      id !== 'side_right' &&
+      id !== 'sidebar',
+  )
   return valid.length > 0 ? valid : [centerSlotId('home')]
 }
 
 export function isGranularSlotId(id: string): boolean {
-  return id.includes('_side_') || id.includes('_center') || id.includes('_mob_')
+  return id.includes('_center') || id.includes('_mob_')
 }
 
-export function sideSlotIdsForPage(page: AdPageKey): string[] {
-  return AD_PLACEMENT_CATALOG.filter((s) => s.page === page && (s.zone === 'side_left' || s.zone === 'side_right')).map(
-    (s) => s.id,
-  )
+/** @deprecated Side banner slots are retired — always empty. */
+export function sideSlotIdsForPage(_page: AdPageKey): string[] {
+  return []
 }
 
 export function mobileSlotIdsForPage(page: AdPageKey): string[] {

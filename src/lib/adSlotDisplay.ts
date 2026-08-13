@@ -21,7 +21,8 @@ export function containerSpecForOverlayVariant(
     case 'stack':
     case 'legacy':
     case 'legacy-compact':
-      return AD_SLOT_CONTAINER_SPECS.side_left
+      // Side rails retired — fall back to center sizing if any leftover UI asks.
+      return AD_SLOT_CONTAINER_SPECS.center
     case 'center':
       return AD_SLOT_CONTAINER_SPECS.center
     case 'leaderboard':
@@ -150,9 +151,9 @@ export function adSlotImageStyle(
   }
 }
 
-/** Масштаб бокового слота на wireframe (колонка вужча за реальні 248px) */
-export function wireframeSlotHeightPx(containerH: number, columnWidthPx = 72): number {
-  const scale = columnWidthPx / AD_SLOT_CONTAINER_SPECS.side_left.containerW
+/** Масштаб слота на wireframe */
+export function wireframeSlotHeightPx(containerH: number, columnWidthPx = 200): number {
+  const scale = columnWidthPx / AD_SLOT_CONTAINER_SPECS.center.containerW
   return Math.max(32, Math.round(containerH * scale))
 }
 
@@ -163,7 +164,7 @@ export function wireframeMobileInlineHeightPx(containerH: number, columnWidthPx 
 
 /** Широкі банери — пропорції як на сайті (не фіксована висота в px) */
 export function wireframeWideAspectClass(
-  zone: 'center' | 'mob_leaderboard' | 'mob_inline' | 'side_left' | 'side_right',
+  zone: 'center' | 'mob_leaderboard' | 'mob_inline',
 ): string {
   if (zone === 'center') return 'aspect-[720/248] min-h-[72px] w-full'
   if (zone === 'mob_leaderboard') return 'aspect-[4/1] min-h-[48px] w-full'

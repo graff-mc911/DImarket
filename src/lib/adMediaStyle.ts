@@ -60,21 +60,18 @@ export const AD_SLIDESHOW_TRANSITIONS: AdSlideshowTransition[] = [
 ]
 
 export const LAYOUT_DEFAULT_TRANSITION: Record<AdBannerLayoutKey, AdSlideshowTransition> = {
-  side: 'slide-left',
   center: 'fade',
   leaderboard: 'crossfade',
   mobile: 'fade',
 }
 
 export const COLLAGE_MAX_BY_LAYOUT: Record<AdBannerLayoutKey, number> = {
-  side: 2,
   center: 3,
   leaderboard: 4,
   mobile: 2,
 }
 
 export const TRANSITIONS_FOR_LAYOUT: Record<AdBannerLayoutKey, AdSlideshowTransition[]> = {
-  side: ['slide-left', 'slide-right', 'slide-up', 'fade', 'crossfade', 'zoom-fade', 'instant'],
   center: ['fade', 'crossfade', 'slide-left', 'slide-right', 'zoom-fade', 'instant'],
   leaderboard: ['fade', 'crossfade', 'slide-left', 'slide-right', 'instant'],
   mobile: ['fade', 'crossfade', 'slide-left', 'slide-right', 'instant'],
@@ -137,7 +134,7 @@ function parseLayoutPrefs(entry: Record<string, unknown>): AdLayoutPrefs | undef
 function parseByLayout(raw: unknown): AdMediaStyle['byLayout'] {
   if (!raw || typeof raw !== 'object') return undefined
   const o = raw as Record<string, unknown>
-  const keys: AdBannerLayoutKey[] = ['side', 'center', 'leaderboard', 'mobile']
+  const keys: AdBannerLayoutKey[] = ['center', 'leaderboard', 'mobile']
   const out: Partial<Record<AdBannerLayoutKey, AdLayoutPrefs>> = {}
   for (const key of keys) {
     const entry = o[key]
@@ -145,6 +142,11 @@ function parseByLayout(raw: unknown): AdMediaStyle['byLayout'] {
       const prefs = parseLayoutPrefs(entry as Record<string, unknown>)
       if (prefs) out[key] = prefs
     }
+  }
+  // Migrate retired side layout prefs into center if center is empty.
+  if (!out.center && o.side && typeof o.side === 'object') {
+    const prefs = parseLayoutPrefs(o.side as Record<string, unknown>)
+    if (prefs) out.center = prefs
   }
   return Object.keys(out).length > 0 ? out : undefined
 }
@@ -236,7 +238,8 @@ export function resolveLayoutFrame(
 export function defaultObjectFitForLayout(
   layout: AdBannerLayoutKey,
 ): 'cover' | 'contain' {
-  return layout === 'side' ? 'cover' : 'contain'
+  void layout
+  return 'contain'
 }
 
 export function layoutFrameImageStyle(frame: AdLayoutFrame): CSSProperties {

@@ -5,14 +5,7 @@ import {
   AD_LEADERBOARD_DISPLAY_H_PX,
   AD_MOBILE_INLINE_IMAGE_PX,
   AD_MOBILE_INLINE_MIN_PX,
-  AD_SIDE_RAIL_WIDTH_PX,
-  AD_SIDE_STACK_GAP_PX,
-  AD_SIDE_STACK_ROWS,
 } from './adSlotLayout'
-
-/** Орієнтир для розрахунку висоти бокового ряду (xl, viewport ~900px). */
-const SIDE_REF_VIEWPORT_H = 900
-const SIDE_REF_HEADER_PX = 168
 
 export type AdSlotContainerSpec = {
   zone: SlotZone
@@ -26,33 +19,7 @@ export type AdSlotContainerSpec = {
   aspect: string
 }
 
-/** Висота одного бокового ряду (4 слоти в sticky-колонці). */
-export function adSideStackRowHeightPx(_railWidthPx = AD_SIDE_RAIL_WIDTH_PX.xl): number {
-  const stickyH = SIDE_REF_VIEWPORT_H - SIDE_REF_HEADER_PX
-  const inner =
-    stickyH - 16 - AD_SIDE_STACK_GAP_PX * (AD_SIDE_STACK_ROWS - 1)
-  return Math.round(inner / AD_SIDE_STACK_ROWS)
-}
-
-const sideRowH = adSideStackRowHeightPx()
-const sideRailW = AD_SIDE_RAIL_WIDTH_PX.xl
-/** ~28px під заголовок + один рядок опису */
-const sideImageH = Math.max(88, sideRowH - 28)
-
-const SIDE_SPEC: AdSlotContainerSpec = {
-  zone: 'side_left',
-  containerW: sideRailW,
-  containerH: sideRowH,
-  imageW: sideRailW,
-  imageH: sideImageH,
-  uploadW: 500,
-  uploadH: 700,
-  aspect: '5∶7',
-}
-
 export const AD_SLOT_CONTAINER_SPECS: Record<SlotZone, AdSlotContainerSpec> = {
-  side_left: { ...SIDE_SPEC, zone: 'side_left' },
-  side_right: { ...SIDE_SPEC, zone: 'side_right' },
   center: {
     zone: 'center',
     containerW: 720,
@@ -91,8 +58,8 @@ export function containerSpecForZone(zone: SlotZone): AdSlotContainerSpec {
 
 export function containerSpecForSlotId(slotId: string, zone?: SlotZone): AdSlotContainerSpec | null {
   if (zone) return containerSpecForZone(zone)
-  if (slotId.includes('_side_l')) return AD_SLOT_CONTAINER_SPECS.side_left
-  if (slotId.includes('_side_r')) return AD_SLOT_CONTAINER_SPECS.side_right
+  // Side slots retired — no container for them.
+  if (slotId.includes('_side_')) return null
   if (slotId.includes('_center')) return AD_SLOT_CONTAINER_SPECS.center
   if (slotId.includes('_mob_inline_1') || slotId.endsWith('_mob_inline_1'))
     return AD_SLOT_CONTAINER_SPECS.mob_leaderboard
@@ -108,13 +75,9 @@ export function formatSlotContainerShort(spec: AdSlotContainerSpec): string {
 
 /**
  * Розмір на схемі «Де показувати рекламу» — синхронізовано з applyAdSlotCssVars / index.css.
- * Ширина 100% — слот займає всю колонку контенту; бокові — орієнтир при viewport ~900px.
  */
 export function wireframeSlotSizeShort(spec: AdSlotContainerSpec): string {
   switch (spec.zone) {
-    case 'side_left':
-    case 'side_right':
-      return `${spec.containerW}×~${spec.containerH}`
     case 'center':
       return `${spec.containerW}×${spec.imageH}`
     case 'mob_leaderboard':
@@ -126,16 +89,12 @@ export function wireframeSlotSizeShort(spec: AdSlotContainerSpec): string {
   }
 }
 
-/** Розмір файлу для макета — зона зображення (те, що реально показується). */
 export function wireframeSlotFileSizeShort(spec: AdSlotContainerSpec): string {
   return `${spec.imageW}×${spec.imageH}`
 }
 
 /** Додатковий рядок: зона фото (px), якщо менша за контейнер. */
 export function wireframeSlotImageHeightPx(spec: AdSlotContainerSpec): number | null {
-  if (spec.zone === 'side_left' || spec.zone === 'side_right') {
-    return spec.imageH < spec.containerH ? spec.imageH : null
-  }
   if (spec.zone === 'mob_inline' && spec.imageH < spec.containerH) {
     return spec.imageH
   }
@@ -164,4 +123,16 @@ export function formatSlotContainerTooltip(
     uh: spec.uploadH,
     aspect: spec.aspect,
   })
+}
+
+export function wireframeSlotSizeTitle(spec: AdSlotContainerSpec): string {
+  return `Container ${spec.containerW}×${spec.containerH} · upload ${spec.uploadW}×${spec.uploadH} (${spec.aspect})`
+}
+
+/** Чи є в контейнері «лист» (зображення менш за контейнер по висоті). */
+export function slotHasImageLetterbox(spec: AdSlotContainerSpec): boolean {
+  if (spec.zone === 'mob_inline' && spec.imageH < spec.containerH) {
+    return true
+  }
+  return false
 }
