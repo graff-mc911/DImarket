@@ -100,21 +100,39 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     setLoading(true)
 
     try {
-      const { data } = await supabase
-        .from('profiles')
-        .select(`
+      const select = `
           *,
           professional_categories(
             category_id,
             category:categories(*)
           )
-        `)
+        `
+      let q = supabase
+        .from('profiles')
+        .select(select)
         .eq('is_professional', true)
         .eq('user_role', isCompanyCatalog ? 'company' : 'professional')
         .order('rating', { ascending: false })
         .order('total_reviews', { ascending: false })
 
-      setProfessionals((data as ProfessionalWithCategories[] | null) ?? [])
+      let { data, error } = await (q as any).is('deleted_at', null).is('hidden_at', null)
+      if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
+        ;({ data } = await supabase
+          .from('profiles')
+          .select(select)
+          .eq('is_professional', true)
+          .eq('user_role', isCompanyCatalog ? 'company' : 'professional')
+          .order('rating', { ascending: false })
+          .order('total_reviews', { ascending: false }))
+      }
+
+      const { filterPublicProfiles, sortProfilesForPublicDiscovery } = await import(
+        '../lib/publicProfileVisibility'
+      )
+      const rows = sortProfilesForPublicDiscovery(
+        filterPublicProfiles((data as ProfessionalWithCategories[] | null) ?? []),
+      )
+      setProfessionals(rows)
     } finally {
       setLoading(false)
     }

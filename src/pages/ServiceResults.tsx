@@ -167,24 +167,37 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
   const loadProfiles = async () => {
     setLoading(true)
     try {
-      const { data } = await supabase
-        .from('profiles')
-        .select(
-          `
+      const select = `
           *,
           professional_categories(
             category_id,
             category:categories(*)
           )
-        `,
-        )
+        `
+      let { data, error } = await (supabase
+        .from('profiles')
+        .select(select)
         .eq('is_professional', true)
         .in('user_role', ['professional', 'company'])
         .order('rating', { ascending: false })
         .order('total_reviews', { ascending: false })
-        .limit(500)
+        .limit(500) as any)
+        .is('deleted_at', null)
+        .is('hidden_at', null)
 
-      setProfiles((data as DirectoryExpert[] | null) ?? [])
+      if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
+        ;({ data } = await supabase
+          .from('profiles')
+          .select(select)
+          .eq('is_professional', true)
+          .in('user_role', ['professional', 'company'])
+          .order('rating', { ascending: false })
+          .order('total_reviews', { ascending: false })
+          .limit(500))
+      }
+
+      const { filterPublicProfiles } = await import('../lib/publicProfileVisibility')
+      setProfiles(filterPublicProfiles((data as DirectoryExpert[] | null) ?? []))
     } finally {
       setLoading(false)
     }
