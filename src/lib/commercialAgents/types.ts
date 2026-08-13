@@ -1,6 +1,6 @@
 /** Commercial Agents — shared types (client-side; mirrors SQL). */
 
-export type VerificationStatus = 'unverified' | 'pending' | 'verified'
+export type VerificationStatus = 'unverified' | 'pending' | 'verified' | 'rejected'
 
 export type OpportunityStatus = 'draft' | 'published' | 'paused' | 'closed'
 
