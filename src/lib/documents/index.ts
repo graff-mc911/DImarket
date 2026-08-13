@@ -32,6 +32,8 @@ export {
 export { getOfficialFormPack, withOfficialForm, fieldDisplayLabel } from './officialForms'
 export type { OfficialFormPack } from './types'
 export { documentVerificationStatus } from './trust'
+export { vehicleCheckPortalsFor, isVehicleDocumentSlug } from './vehicleCheckPortals'
+export type { VehicleCheckPortal } from './vehicleCheckPortals'
 export {
   buildFilledDocumentPdfHtml,
   openFilledDocumentPdf,

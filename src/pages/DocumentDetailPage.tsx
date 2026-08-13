@@ -253,6 +253,33 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
           ) : null}
         </div>
 
+        {doc.relatedPortals?.length ? (
+          <section className="mb-6 rounded-2xl border border-[#e8e8ed] bg-white p-4">
+            <h2 className="mb-1 text-base font-bold text-[#1d1d1f]">{t('docs.vehicleCheck.title')}</h2>
+            <p className="mb-3 text-xs text-[#6e6e73]">{t('docs.vehicleCheck.hint')}</p>
+            <ul className="space-y-2">
+              {doc.relatedPortals.map((p) => (
+                <li key={p.url}>
+                  <a
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-start gap-2 text-sm font-semibold text-[#007185]"
+                  >
+                    <ExternalLink className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                    <span>
+                      {p.name}
+                      <span className="mt-0.5 block font-normal text-[#6e6e73]">
+                        {language.code === 'uk' ? p.purposeUk : p.purposeEn}
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         {filling && doc.formFields ? (
           <FillForm
             fields={doc.formFields}

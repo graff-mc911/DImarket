@@ -122,6 +122,13 @@ export type DocumentRecord = {
     noticeLocal: string
     noticeEn: string
   }
+  /** Official portals to verify the vehicle (history / register / transfer) */
+  relatedPortals?: Array<{
+    name: string
+    url: string
+    purposeEn: string
+    purposeUk: string
+  }>
   /** true = needs human legal review before treating as binding */
   templateNeedsLegalReview: boolean
   licenseRequirement?: LicenseRequirementLevel
