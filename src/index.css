@@ -433,6 +433,31 @@
     padding: 0.55rem 0.65rem;
   }
 
+  .mobile-nav-more__list--account-actions {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .mobile-nav-more__item--danger {
+    color: #fda4af;
+  }
+
+  .mobile-nav-more__item--danger:hover,
+  .mobile-nav-more__item--danger:focus-visible {
+    background: rgba(244, 63, 94, 0.16);
+  }
+
+  .mobile-nav-more__item--signout {
+    color: #fde68a;
+    font-weight: 700;
+  }
+
+  .mobile-nav-more__item--signout:hover,
+  .mobile-nav-more__item--signout:focus-visible {
+    background: rgba(250, 204, 21, 0.14);
+  }
+
   .page-bg {
     background-color: var(--bg-canvas);
   }

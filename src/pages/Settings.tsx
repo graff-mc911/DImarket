@@ -5,6 +5,7 @@ import {
   Globe,
   Image,
   Lock,
+  LogOut,
   MapPin,
   Phone,
   Save,
@@ -17,6 +18,7 @@ import { PortfolioManager } from '../components/portfolio/PortfolioManager'
 import { useApp } from '../contexts/AppContext'
 import { getAuthErrorMessage, getChangePasswordMessage } from '../lib/authMessages'
 import { changeUserPassword, userHasEmailPassword } from '../lib/changePassword'
+import { deleteCurrentAccount } from '../lib/deleteAccount'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
 import { CURRENCIES, LANGUAGES } from '../lib/types'
@@ -62,7 +64,7 @@ type LanguageOption = (typeof LANGUAGES)[number]
 type CurrencyOption = (typeof CURRENCIES)[number]
 
 export function Settings() {
-  const { user, language, currency, setLanguage, setCurrency, t } = useApp()
+  const { user, language, currency, setLanguage, setCurrency, t, signOut } = useApp()
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(user?.id ?? null)
 
@@ -111,6 +113,17 @@ export function Settings() {
       /* ignore */
     }
   }, [user])
+
+  useEffect(() => {
+    if (loading) return
+    if (window.location.hash !== '#danger') return
+    const el = document.getElementById('danger')
+    if (el) {
+      window.setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 80)
+    }
+  }, [loading])
 
   useEffect(() => {
     setPreferredLanguage(language.code)
@@ -453,30 +466,7 @@ export function Settings() {
     setFeedback(null)
 
     try {
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession()
-
-      if (sessionError) {
-        throw sessionError
-      }
-
-      if (!session?.access_token) {
-        throw new Error('No active session')
-      }
-
-      const { error } = await supabase.functions.invoke('delete-account', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      })
-
-      if (error) {
-        throw error
-      }
-
-      await supabase.auth.signOut({ scope: 'local' })
+      await deleteCurrentAccount()
       setCurrentUserId(null)
       resetProfileForm()
       navigateTo('/')
@@ -487,6 +477,11 @@ export function Settings() {
         text: t('settings.error.deleteAccount'),
       })
     }
+  }
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigateTo('/')
   }
 
   const onboardingState = useMemo(() => {
@@ -547,11 +542,20 @@ export function Settings() {
                 </div>
 
                 <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
-                  {t('header.myProfile')}
+                  {t('header.settings')}
                 </h1>
                 <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6f665d] md:text-base">
                   {t('settings.description')}
                 </p>
+
+                <button
+                  type="button"
+                  onClick={() => void handleSignOut()}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-[#1d1d1f] bg-[#1d1d1f] px-6 py-3.5 text-base font-bold text-white shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition hover:bg-black sm:w-auto"
+                >
+                  <LogOut className="h-5 w-5" />
+                  {t('header.signOut')}
+                </button>
               </div>
 
               {feedback && (
@@ -991,7 +995,10 @@ export function Settings() {
                   </div>
                 )}
 
-                <section className="glass-card border border-[rgba(221,138,120,0.28)] p-5 md:p-6">
+                <section
+                  id="danger"
+                  className="scroll-mt-24 glass-card border border-[rgba(221,138,120,0.28)] p-5 md:p-6"
+                >
                   <div className="flex items-center gap-3">
                     <Trash2 className="h-6 w-6 text-[#b14e37]" />
                     <h2 className="text-xl font-extrabold text-[#2f2a24]">
@@ -1003,14 +1010,17 @@ export function Settings() {
                     {t('settings.dangerText')}
                   </p>
 
-                  <button
-                    type="button"
-                    onClick={handleDeleteAccount}
-                    disabled={!currentUserId}
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[linear-gradient(135deg,rgba(185,63,63,0.95),rgba(153,27,27,0.95))] px-6 py-3 font-semibold text-white shadow-[0_18px_35px_rgba(153,27,27,0.22)] transition hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-                  >
-                    {t('settings.deleteAccountButton')}
-                  </button>
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                    <button
+                      type="button"
+                      onClick={handleDeleteAccount}
+                      disabled={!currentUserId}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,rgba(185,63,63,0.95),rgba(153,27,27,0.95))] px-6 py-3 font-semibold text-white shadow-[0_18px_35px_rgba(153,27,27,0.22)] transition hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      {t('settings.deleteAccountButton')}
+                    </button>
+                  </div>
                 </section>
               </div>
             </section>
