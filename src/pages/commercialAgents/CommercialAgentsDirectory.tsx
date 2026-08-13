@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import { applyPageSeo } from '../../lib/pageSeo'
+import type { TranslationKey } from '../../lib/i18n'
 import {
   EMPTY_COMMERCIAL_FILTERS,
   fetchAgents,
@@ -150,7 +151,7 @@ export function CommercialAgentsDirectory({
   )
 }
 
-function Empty({ t }: { t: (k: string) => string }) {
+function Empty({ t }: { t: (k: TranslationKey) => string }) {
   return (
     <p className="rounded-2xl border border-dashed border-[var(--line-200)] bg-white/70 p-8 text-sm text-[var(--ink-600)]">
       {t('commercialAgents.emptyResults')}

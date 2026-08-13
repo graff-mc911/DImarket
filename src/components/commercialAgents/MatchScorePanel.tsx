@@ -1,4 +1,5 @@
 import type { MatchResult } from '../../lib/commercialAgents/types'
+import type { TranslationKey } from '../../lib/i18n'
 
 export function MatchScorePanel({
   match,
@@ -6,10 +7,10 @@ export function MatchScorePanel({
   compact = false,
 }: {
   match: MatchResult
-  t: (key: string) => string
+  t: (key: TranslationKey) => string
   compact?: boolean
 }) {
-  const labelKey =
+  const labelKey: TranslationKey =
     match.label === 'excellent'
       ? 'commercialAgents.matchExcellent'
       : match.label === 'good'

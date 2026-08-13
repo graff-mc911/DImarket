@@ -3,6 +3,8 @@
  * One source of truth for stage → path / label across chat, dashboards, listing.
  */
 
+import type { TranslationKey } from './i18n'
+
 export type PipelineStage =
   | 'intake'
   | 'matched'
@@ -15,12 +17,12 @@ export type PipelineStage =
 export type PipelineNextAction = {
   stage: PipelineStage
   /** i18n key under pipeline.* */
-  labelKey: string
+  labelKey: TranslationKey
   /** English fallback */
   labelEn: string
   path: string
   /** Short chip label for stage */
-  stageLabelKey: string
+  stageLabelKey: TranslationKey
   stageLabelEn: string
 }
 

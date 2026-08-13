@@ -12,6 +12,7 @@ import {
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import { supabase } from '../../lib/supabase'
+import type { TranslationKey } from '../../lib/i18n'
 import {
   fetchNotifications,
   markAllNotificationsRead,
@@ -22,7 +23,7 @@ import {
   type AppNotification,
 } from '../../lib/notifications/notifications'
 
-const FILTERS: { id: string; labelKey: string }[] = [
+const FILTERS: { id: string; labelKey: TranslationKey }[] = [
   { id: 'all', labelKey: 'notifications.filter.all' },
   { id: 'project', labelKey: 'notifications.filter.project' },
   { id: 'message', labelKey: 'notifications.filter.message' },
@@ -45,16 +46,16 @@ function TypeIcon({ type }: { type: string }) {
   return <Bell className={cls} />
 }
 
-function typeLabel(type: string, t: (key: never) => string) {
+function typeLabel(type: string, t: (key: TranslationKey) => string) {
   if (type === 'quote' || type === 'lead' || type === 'listing' || type === 'match' || type === 'project') {
-    return t('notifications.type.project' as never)
+    return t('notifications.type.project')
   }
-  if (type === 'message') return t('notifications.type.message' as never)
-  if (type === 'review') return t('notifications.type.review' as never)
-  if (type === 'payment') return t('notifications.type.payment' as never)
-  if (type === 'verification') return t('notifications.type.verification' as never)
-  if (type === 'booking') return t('notifications.type.booking' as never)
-  return t('notifications.type.update' as never)
+  if (type === 'message') return t('notifications.type.message')
+  if (type === 'review') return t('notifications.type.review')
+  if (type === 'payment') return t('notifications.type.payment')
+  if (type === 'verification') return t('notifications.type.verification')
+  if (type === 'booking') return t('notifications.type.booking')
+  return t('notifications.type.update')
 }
 
 type Props = {
