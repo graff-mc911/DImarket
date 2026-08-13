@@ -100,10 +100,15 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
 
   const onDownloadPdf = () => {
     if (!doc.formFields) return
-    const fields = doc.formFields.map((f) => ({
-      label: fieldDisplayLabel(f, t),
-      value: values[f.id] ?? '',
-    }))
+    const fields = doc.formFields.map((f) => {
+      const raw = values[f.id] ?? ''
+      let value = raw
+      if (f.type === 'select' && raw) {
+        const opt = f.options?.find((o) => o.value === raw)
+        value = opt?.label || (opt ? t(opt.labelKey) : raw)
+      }
+      return { label: fieldDisplayLabel(f, t), value }
+    })
     openFilledDocumentPdf(
       {
         title: documentDisplayTitle(doc, language.code, t),
@@ -439,9 +444,32 @@ function FillForm({
                     placeholder={field.placeholder}
                     className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
                   />
+                ) : field.type === 'select' ? (
+                  <select
+                    value={values[field.id] ?? ''}
+                    onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
+                    className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
+                  >
+                    <option value="">—</option>
+                    {(field.options ?? []).map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label || t(opt.labelKey)}
+                      </option>
+                    ))}
+                  </select>
                 ) : (
                   <input
-                    type={field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'}
+                    type={
+                      field.type === 'number'
+                        ? 'number'
+                        : field.type === 'date'
+                          ? 'date'
+                          : field.type === 'email'
+                            ? 'email'
+                            : field.type === 'phone'
+                              ? 'tel'
+                              : 'text'
+                    }
                     value={values[field.id] ?? ''}
                     onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
                     placeholder={field.placeholder}
