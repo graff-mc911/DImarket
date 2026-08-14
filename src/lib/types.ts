@@ -193,6 +193,12 @@ export interface Database {
 
           created_at: string
           updated_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          hidden_at: string | null
+          hidden_by: string | null
+          /** Owner/manual catalog priority — independent from user rating */
+          ranking_priority: number
         }
         Insert: {
           id: string
@@ -246,6 +252,11 @@ export interface Database {
           service_radius_km?: number | null
           created_at?: string
           updated_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          hidden_at?: string | null
+          hidden_by?: string | null
+          ranking_priority?: number
         }
         Update: {
           id?: string
@@ -299,6 +310,11 @@ export interface Database {
           service_radius_km?: number | null
           created_at?: string
           updated_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          hidden_at?: string | null
+          hidden_by?: string | null
+          ranking_priority?: number
         }
         Relationships: []
       }

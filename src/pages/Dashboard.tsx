@@ -22,6 +22,7 @@ import { AdCampaign, Announcement, FeedbackMessage, Message, Profile } from '../
 import { isSiteOwner } from '../lib/siteOwner'
 import { OwnerAdManager } from '../components/OwnerAdManager'
 import { OwnerMarketHealth } from '../components/OwnerMarketHealth'
+import { OwnerProfilesManager } from '../components/OwnerProfilesManager'
 
 interface OwnerStats {
   totalVisits: number
@@ -537,6 +538,10 @@ export function Dashboard() {
                   {notice}
                 </div>
               )}
+
+              <div className="mb-8">
+                <OwnerProfilesManager />
+              </div>
 
               <div className="mb-8 rounded-[22px] border border-[var(--glass-border)] bg-white/50 p-5">
                 <h2 className="text-lg font-extrabold text-[#2f2a24]">Верифікація підрядників</h2>
