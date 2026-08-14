@@ -1,5 +1,8 @@
 /** Типи банера для окремого кадрування в редакторі */
-export type AdBannerLayoutKey = 'side' | 'center' | 'leaderboard' | 'mobile'
+export type AdBannerLayoutKey = 'center' | 'leaderboard' | 'mobile'
+
+/** Legacy keys kept only for reading old media_style JSON / overlay variants. */
+export type AdBannerLayoutKeyLegacy = AdBannerLayoutKey | 'side'
 
 export type AdOverlayVariantKey =
   | 'stack'
@@ -11,19 +14,19 @@ export type AdOverlayVariantKey =
   | 'mobile-inline'
 
 export const AD_BANNER_LAYOUT_KEYS: AdBannerLayoutKey[] = [
-  'side',
   'center',
   'leaderboard',
   'mobile',
 ]
 
 export const AD_BANNER_LAYOUT_META: Record<
-  AdBannerLayoutKey,
+  AdBannerLayoutKeyLegacy,
   { aspectClass: string; overlayVariant: AdOverlayVariantKey }
 > = {
   side: {
-    aspectClass: 'aspect-[5/7] min-h-[8rem] max-h-[11rem] w-full max-w-[10rem] mx-auto',
-    overlayVariant: 'stack',
+    // Retired — map preview to center proportions if old prefs are opened.
+    aspectClass: 'aspect-[2.4/1] min-h-[7.5rem] max-h-[10rem]',
+    overlayVariant: 'center',
   },
   center: {
     aspectClass: 'aspect-[2.4/1] min-h-[7.5rem] max-h-[10rem]',
@@ -44,7 +47,7 @@ export function layoutKeyFromOverlayVariant(variant: AdOverlayVariantKey): AdBan
     case 'stack':
     case 'legacy':
     case 'legacy-compact':
-      return 'side'
+      return 'center'
     case 'leaderboard':
       return 'leaderboard'
     case 'mobile-sticky':

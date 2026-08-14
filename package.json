@@ -13,6 +13,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "test": "node scripts/verify-slot-matching.mjs && node scripts/verify-ad-slot-matching.mjs && node scripts/verify-ad-cancel-gate.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",

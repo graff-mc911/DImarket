@@ -74,8 +74,6 @@ function collectSlideUrls(
 
 function previewMaxWidthClass(layout: AdBannerLayoutKey): string {
   switch (layout) {
-    case 'side':
-      return 'mx-auto w-full max-w-[298px]'
     case 'center':
       return 'mx-auto w-full max-w-[720px]'
     case 'leaderboard':

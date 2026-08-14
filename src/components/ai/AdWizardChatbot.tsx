@@ -111,7 +111,7 @@ export function AdWizardChatbot({ compact = false, className = '' }: Props) {
                       src={msg.previewImageUrl}
                       alt="preview"
                       mediaType="image"
-                      layoutKey="side"
+                      layoutKey="center"
                       className="h-full w-full"
                     />
                   </div>

@@ -1,10 +1,8 @@
 import { supabase } from './supabase'
 import {
   centerSlotId,
-  pageKeyFromSideAdsPage,
-  sideSlotId,
+  isSideSlotId,
   type AdPageKey,
-  type SideIndex,
 } from './adPlacementSlots'
 import { isDemoAdCampaign } from './demoAdCampaigns'
 import { isOwnerCancelledReviewNote } from './adCampaignVisibility'
@@ -65,8 +63,9 @@ function normalizePlacementId(id: string): string {
 
 export function getCampaignPlacements(campaign: AdCampaign): string[] {
   const fromArray = (campaign.placements || []).filter(Boolean).map(normalizePlacementId) as string[]
-  if (fromArray.length > 0) return fromArray
-  return [normalizePlacementId(campaign.placement)]
+  const raw = fromArray.length > 0 ? fromArray : [normalizePlacementId(campaign.placement)]
+  // Side / left / right banner slots are retired — never treat them as active placements.
+  return raw.filter((id) => !isSideSlotId(id) && id !== 'sidebar' && id !== 'side_left' && id !== 'side_right')
 }
 
 export function campaignUsesGranularPlacements(campaign: AdCampaign): boolean {
@@ -74,11 +73,10 @@ export function campaignUsesGranularPlacements(campaign: AdCampaign): boolean {
 }
 
 const SLOT_FALLBACKS: Partial<Record<AdPlacement, AdPlacement[]>> = {
-  sidebar: ['sidebar', 'footer', 'home', 'listings'],
-  mobile_sticky: ['mobile_sticky', 'home', 'listings', 'sidebar', 'footer'],
-  home: ['home', 'sidebar', 'listings', 'mobile_sticky', 'footer'],
-  listings: ['listings', 'home', 'sidebar', 'mobile_sticky', 'footer'],
-  footer: ['footer', 'sidebar', 'home', 'listings'],
+  mobile_sticky: ['mobile_sticky', 'home', 'listings', 'footer'],
+  home: ['home', 'listings', 'mobile_sticky', 'footer'],
+  listings: ['listings', 'home', 'mobile_sticky', 'footer'],
+  footer: ['footer', 'home', 'listings'],
 }
 
 /** Кампанія призначена саме для цього слота (exact ID або легасі-тег, без «чужих» зон). */
@@ -315,93 +313,6 @@ export function isAnimatedCampaign(campaign: AdCampaign): boolean {
   return getCampaignMediaType(campaign) === 'gif'
 }
 
-function fillSideStack(
-  all: AdCampaignWithAdvertiser[],
-  side: 'left' | 'right',
-  count: number,
-  pageKey: AdPageKey,
-): (AdCampaignWithAdvertiser | null)[] {
-  const out: (AdCampaignWithAdvertiser | null)[] = Array.from({ length: count }, () => null)
-  const legacyPool = all.filter((c) => !campaignUsesGranularPlacements(c))
-
-  for (let i = 0; i < count; i++) {
-    const slotId = sideSlotId(pageKey, side, (i + 1) as SideIndex)
-
-    /** Куплений слот — exact match + креатив саме для цього ряду */
-    const exactOwner = all.find(
-      (c) => getCampaignPlacements(c).includes(slotId) && campaignRendersInSlot(c, slotId),
-    )
-    if (exactOwner) {
-      out[i] = exactOwner
-      continue
-    }
-
-    /** Легасі placement (sidebar, home…) — старі кампанії без гранульованих ID */
-    const legacyPick = pickCampaignForSlot(legacyPool, slotId)
-    out[i] = legacyPick && campaignRendersInSlot(legacyPick, slotId) ? legacyPick : null
-  }
-
-  return out
-}
-
-/** Ліва + права колонки з одним пулом (без дублювання кампаній між сторонами). */
-export function pickSideStacksForPage(
-  all: AdCampaignWithAdvertiser[],
-  count: number,
-  page?: 'home' | 'listings' | 'professionals' | 'default',
-): {
-  left: (AdCampaignWithAdvertiser | null)[]
-  right: (AdCampaignWithAdvertiser | null)[]
-} {
-  if (all.length === 0 || count <= 0) {
-    return { left: [], right: [] }
-  }
-
-  const pageKey = pageKeyFromSideAdsPage(page)
-  const right = fillSideStack(all, 'right', count, pageKey)
-  const left = fillSideStack(all, 'left', count, pageKey)
-
-  return { left, right }
-}
-
-function mergeSideStackRows(
-  primary: (AdCampaignWithAdvertiser | null)[],
-  fallback: (AdCampaignWithAdvertiser | null)[],
-): (AdCampaignWithAdvertiser | null)[] {
-  return primary.map((row, index) => row ?? fallback[index] ?? null)
-}
-
-/** Слоти поточної сторінки + fallback на home, щоб банери не зникали при переході */
-export function pickSideStacksForPageWithFallback(
-  all: AdCampaignWithAdvertiser[],
-  count: number,
-  page?: 'home' | 'listings' | 'professionals' | 'default',
-): {
-  left: (AdCampaignWithAdvertiser | null)[]
-  right: (AdCampaignWithAdvertiser | null)[]
-} {
-  const current = pickSideStacksForPage(all, count, page)
-  const pageKey = pageKeyFromSideAdsPage(page)
-  if (pageKey === 'home') return current
-
-  const home = pickSideStacksForPage(all, count, 'home')
-  return {
-    left: mergeSideStackRows(current.left, home.left),
-    right: mergeSideStackRows(current.right, home.right),
-  }
-}
-
-/** Бокова колонка: слот 1–4 зверху вниз; null — порожній ряд (фіксована сітка) */
-export function pickCampaignsForSideStack(
-  all: AdCampaignWithAdvertiser[],
-  position: 'left' | 'right',
-  count: number,
-  page?: 'home' | 'listings' | 'professionals' | 'default',
-): (AdCampaignWithAdvertiser | null)[] {
-  const stacks = pickSideStacksForPage(all, count, page)
-  return position === 'left' ? stacks.left : stacks.right
-}
-
 /** Один центральний блок — анімована реклама Baumit (або інший GIF/відео бренд) */
 export function pickCenterHeroCampaign(
   all: AdCampaignWithAdvertiser[],
@@ -466,8 +377,8 @@ export function pickMobileCampaign(
     return pickCampaignByPlacement(legacyOnly, 'footer', 0) || pickCampaignByPlacement(legacyOnly, 'home', 1)
   }
   return (
-    pickCampaignByPlacement(legacyOnly, 'sidebar', inlineIndex - 1) ||
-    pickCampaignByPlacement(legacyOnly, 'listings', inlineIndex)
+    pickCampaignByPlacement(legacyOnly, 'listings', inlineIndex) ||
+    pickCampaignByPlacement(legacyOnly, 'home', inlineIndex)
   )
 }
 
@@ -578,7 +489,10 @@ export async function fetchPaidAdCampaigns(
 
   // Defense in depth: never show owner-cancelled campaigns even if status was
   // incorrectly left as `active` (production bug: review_note rejected, status active).
-  const visible = rows.filter((c) => isCampaignPubliclyDisplayable(c))
+  // Also drop campaigns that only had retired side-slot placements.
+  const visible = rows.filter(
+    (c) => isCampaignPubliclyDisplayable(c) && getCampaignPlacements(c).length > 0,
+  )
 
   const filtered =
     slots.length === 0

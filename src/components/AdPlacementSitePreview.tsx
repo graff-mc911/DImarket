@@ -668,15 +668,6 @@ export function AdPlacementSitePreview({
       >
         <p className="font-bold text-[#2f2a24]">{t('advertising.catalog.sizesLegendTitle')}</p>
         <ul className="mt-1.5 list-inside list-disc space-y-1">
-          <li>
-            {interpolateTranslation(t('advertising.catalog.sizesLegendSide'), {
-              cw: AD_SLOT_CONTAINER_SPECS.side_left.containerW,
-              ch: AD_SLOT_CONTAINER_SPECS.side_left.containerH,
-              uw: AD_SLOT_CONTAINER_SPECS.side_left.uploadW,
-              uh: AD_SLOT_CONTAINER_SPECS.side_left.uploadH,
-              aspect: AD_SLOT_CONTAINER_SPECS.side_left.aspect,
-            })}
-          </li>
           {wireframe.adPageKey === 'home' && wireframe.desktop.center && (
             <li>
               {interpolateTranslation(t('advertising.catalog.sizesLegendCenter'), {

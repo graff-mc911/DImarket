@@ -74,10 +74,11 @@ export function parseSlotMediaMap(raw: unknown): SlotMediaMap {
 }
 
 export function layoutKeyFromSlotId(slotId: string): AdBannerLayoutKey {
-  if (slotId.includes('_side_')) return 'side'
   if (slotId.includes('_center')) return 'center'
   if (slotId.includes('_mob_inline_1') || slotId.endsWith('_mob_inline_1')) return 'leaderboard'
   if (slotId.includes('_mob_')) return 'mobile'
+  // Retired side slots — treat as center for any leftover media tooling.
+  if (slotId.includes('_side_')) return 'center'
   return 'center'
 }
 
@@ -257,11 +258,9 @@ export function sortSlotsForEditor(slots: string[]): string[] {
     }
     const zone = def?.zone ?? 'mob_inline'
     const zoneIdx: Record<string, number> = {
-      side_left: 0,
-      side_right: 1,
-      center: 2,
-      mob_leaderboard: 3,
-      mob_inline: 4,
+      center: 0,
+      mob_leaderboard: 1,
+      mob_inline: 2,
     }
     const row = def?.row ?? 0
     return (pageIdx[page] ?? 9) * 1000 + (zoneIdx[zone] ?? 9) * 10 + row
@@ -279,7 +278,7 @@ export function formatSlotEditorTitle(
 export function overlayVariantForSlot(slotId: string) {
   const layout = layoutKeyFromSlotId(slotId)
   const variants = {
-    side: 'stack',
+    side: 'center',
     center: 'center',
     leaderboard: 'leaderboard',
     mobile: 'mobile-inline',

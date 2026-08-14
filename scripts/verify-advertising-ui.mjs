@@ -116,23 +116,20 @@ try {
 
   const bannerState = await page.evaluate(() => {
     const rails = document.querySelectorAll('.ad-side-rail')
-    const imgs = Array.from(document.querySelectorAll('.ad-side-rail img, [data-ad-slot] img, .ad-overlay-card img'))
-    const placeholders = Array.from(document.querySelectorAll('.ad-side-rail')).filter((r) => {
-      const t = r.textContent || ''
-      return /рекламне місце|ad space|placeholder/i.test(t)
-    })
-    const links = Array.from(document.querySelectorAll('.ad-side-rail a[href]')).map((a) => a.getAttribute('href'))
+    const imgs = Array.from(
+      document.querySelectorAll(
+        '[data-ad-slot] img, .ad-overlay-card img, .ad-slot-center img, .ad-slot-mobile-inline img',
+      ),
+    )
     return {
       railCount: rails.length,
       imgCount: imgs.length,
-      imgSrcs: imgs.slice(0, 6).map((i) => (i).src || (i).getAttribute('src')),
-      placeholderRails: placeholders.length,
-      adLinks: links.slice(0, 4),
+      imgSrcs: imgs.slice(0, 6).map((i) => i.src || i.getAttribute('src')),
     }
   })
 
-  if (bannerState.railCount >= 2) pass(`Головна: ${bannerState.railCount} бокових рейок (резерв)`)
-  else fail(`Головна: лише ${bannerState.railCount} рейок`)
+  if (bannerState.railCount === 0) pass('Головна: бокові рейки відсутні (side ads removed)')
+  else fail(`Головна: неочікувані side rails: ${bannerState.railCount}`)
 
   if (api.campaigns.length > 0) {
     if (bannerState.imgCount > 0) {
@@ -141,10 +138,10 @@ try {
       if (hasRealUrl) pass('Банери мають URL медіа (не лише placeholder)')
       else fail('Банери без реальних URL зображень')
     } else {
-      fail('Є active кампанії в API, але на головній немає img у рейках')
+      fail('Є active кампанії в API, але на головній немає img у center/mobile слотах')
     }
   } else if (bannerState.imgCount === 0) {
-    pass('Без active кампаній — порожні рейки (очікувано)')
+    pass('Без active кампаній — немає банерів (очікувано)')
   }
 
   if (bannerState.placeholderRails > 0) {

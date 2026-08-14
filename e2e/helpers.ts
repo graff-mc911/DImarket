@@ -81,52 +81,27 @@ export function mainContent(page: Page) {
   return page.locator('main').first()
 }
 
-/** Сторінки з боковими рейками — grid у main; без рейок — layout-page-gutter. */
+/** Side ad rails removed — all pages use layout-page-gutter. */
 export async function expectMainLayout(
   page: Page,
-  mode: 'side-rails' | 'gutter-only',
+  mode: 'side-rails' | 'gutter-only' = 'gutter-only',
 ) {
   const main = mainContent(page)
-  if (mode === 'side-rails') {
-    await expect(main.locator('.layout-with-side-ads')).toBeVisible()
-  } else {
-    await expect(main.locator('.layout-page-gutter')).toBeVisible()
-  }
+  // `side-rails` kept for call-site compatibility; both modes assert gutter-only layout.
+  void mode
+  await expect(main.locator('.layout-page-gutter')).toBeVisible()
+  await expect(main.locator('.ad-side-rail')).toHaveCount(0)
+  await expect(main.locator('.layout-with-side-ads')).toHaveCount(0)
 }
 
-/** На широкому десктопі (≥1280px) — 3 колонки, контент у центральній (2). */
+/** Side rails removed — content uses full-width gutter layout. */
 export async function expectMainInCenterGridColumn(page: Page) {
-  const grid = page.locator('main .layout-with-side-ads').first()
-  await expect(grid).toBeVisible()
-  await expect
-    .poll(async () =>
-      grid.evaluate((el) => {
-        const main = el.querySelector('.layout-with-side-ads__main')
-        if (!main) return null
-        const cols = getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length
-        const mainCol = getComputedStyle(main).gridColumnStart
-        const rails = el.querySelectorAll('.ad-side-rail').length
-        return { cols, mainCol, rails }
-      }),
-    )
-    .toEqual({ cols: 3, mainCol: '2', rails: 2 })
+  await expectMainLayout(page, 'gutter-only')
 }
 
-/** Планшет / телефон: одна колонка, бокові рейки приховані. */
+/** Tablet / phone: no side rails. */
 export async function expectTabletSingleColumnLayout(page: Page) {
-  const state = await page.locator('main .layout-with-side-ads').evaluate((grid) => {
-    const main = grid.querySelector('.layout-with-side-ads__main')
-    if (!main) return null
-    const cols = getComputedStyle(grid).gridTemplateColumns
-    const mainCol = getComputedStyle(main).gridColumnStart
-    const rail = grid.querySelector('.ad-side-rail') as HTMLElement | null
-    const railDisplay = rail ? getComputedStyle(rail).display : 'none'
-    return { cols, mainCol, railDisplay }
-  })
-  expect(state).not.toBeNull()
-  expect(state!.mainCol).toBe('1')
-  expect(state!.cols.trim().split(/\s+/).length).toBe(1)
-  expect(state!.railDisplay).toBe('none')
+  await expectMainLayout(page, 'gutter-only')
 }
 
 export async function fetchSampleEntityIds(request: import('@playwright/test').APIRequestContext) {

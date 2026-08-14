@@ -79,10 +79,10 @@ test.describe('Усі сторінки — wide desktop (≥1280px)', () => {
   })
 
   for (const route of PUBLIC_WITH_RAILS) {
-    test(`${route.path} — контент, shell, бокові рейки`, async ({ page }) => {
+    test(`${route.path} — контент, shell, без бокових рейок`, async ({ page }) => {
       await gotoPath(page, route.path)
       await expect(page.getByRole('heading', { level: 1 }).first()).toHaveText(route.heading)
-      await expectMainLayout(page, 'side-rails')
+      await expectMainLayout(page, 'gutter-only')
       await expectMainInCenterGridColumn(page)
       await expectNoHorizontalOverflow(page)
       await expect(page.getByText(/^Рекламне місце$|^Ad Space$/i)).toHaveCount(0)
@@ -189,7 +189,7 @@ test.describe('Динамічні сторінки', () => {
 
     if (listingId) {
       await gotoPath(page, `/listing/${listingId}`)
-      await expectMainLayout(page, 'side-rails')
+      await expectMainLayout(page, 'gutter-only')
       await expectMainInCenterGridColumn(page)
       await expectNoHorizontalOverflow(page)
       await expect(page.locator('h1, h2').first()).toBeVisible()
@@ -197,7 +197,7 @@ test.describe('Динамічні сторінки', () => {
 
     if (profileId) {
       await gotoPath(page, `/professional/${profileId}`)
-      await expectMainLayout(page, 'side-rails')
+      await expectMainLayout(page, 'gutter-only')
       await expectMainInCenterGridColumn(page)
       await expectNoHorizontalOverflow(page)
       await expect(page.locator('h1, h2').first()).toBeVisible()

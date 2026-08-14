@@ -48,26 +48,26 @@ const variantStyles: Record<
     textInner?: string
   }
 > = {
+  // Retired side-rail variants — render as center if any leftover call sites remain.
   stack: {
-    shell: 'grid h-full w-full min-h-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden',
-    image: 'ad-slot-side__media ad-slot-side__media--stack-flex w-full min-h-0 overflow-hidden',
-    text: 'ad-side-stack-card__text shrink-0 px-1.5 py-0.5',
-    textInner: 'space-y-0 leading-[1.15]',
-    brand: 'text-[8px] leading-none',
-    title: 'text-[9px] line-clamp-1 leading-[1.1]',
-    meta: 'ad-side-stack-desc text-[9px] line-clamp-1 leading-[1.15]',
-  },
-  legacy: {
-    shell: adSlotTailwind.sideLegacy,
-    image: 'h-[7rem] w-full shrink-0',
-    text: 'px-2 py-1',
+    shell: `${adSlotTailwind.center} ad-slot-center`,
+    image: 'ad-slot-center__media w-full min-h-0 shrink-0 overflow-hidden',
+    text: 'px-2.5 py-1',
     brand: 'text-[10px]',
     title: 'text-sm line-clamp-2 leading-tight',
-    meta: 'text-[10px] line-clamp-1 leading-tight',
+    meta: 'text-xs line-clamp-2 leading-tight',
+  },
+  legacy: {
+    shell: `${adSlotTailwind.center} ad-slot-center`,
+    image: 'ad-slot-center__media w-full min-h-0 shrink-0 overflow-hidden',
+    text: 'px-2.5 py-1',
+    brand: 'text-[10px]',
+    title: 'text-sm line-clamp-2 leading-tight',
+    meta: 'text-xs line-clamp-1 leading-tight',
   },
   'legacy-compact': {
-    shell: adSlotTailwind.sideLegacyCompact,
-    image: 'h-[3.75rem] w-full shrink-0',
+    shell: `${adSlotTailwind.center} ad-slot-center`,
+    image: 'ad-slot-center__media w-full min-h-0 shrink-0 overflow-hidden',
     text: 'px-2 py-1',
     brand: 'text-[9px]',
     title: 'text-xs line-clamp-2 leading-tight',
