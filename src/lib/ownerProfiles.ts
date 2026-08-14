@@ -29,6 +29,7 @@ export type OwnerProfileFilter =
   | 'all'
   | 'public_listable'
   | 'top_masters'
+  | 'top_companies'
   | 'professional'
   | 'client'
   | 'company'
@@ -69,60 +70,110 @@ export function isTopMastersProfile(row: Pick<OwnerProfileRow, 'is_professional'
   return row.is_professional === true && row.user_role === 'professional'
 }
 
+/** Same base set as homepage «Топ компанії». */
+export function isTopCompaniesProfile(row: Pick<OwnerProfileRow, 'is_professional' | 'user_role'>): boolean {
+  return row.is_professional === true && row.user_role === 'company'
+}
+
+function parseOwnerSearchRows(data: unknown): OwnerProfileRow[] {
+  if (Array.isArray(data)) return data as OwnerProfileRow[]
+  if (typeof data === 'string') {
+    try {
+      const parsed = JSON.parse(data) as OwnerProfileRow[]
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  }
+  return []
+}
+
+/** Map modern filters → legacy RPC when APPLY_OWNER_PROFILE_MODERATION.sql is not applied yet. */
+function legacyRpcArgs(
+  requestedFilter: OwnerProfileFilter,
+  query: string,
+): { p_query: string; p_filter: string } {
+  const q = query.trim()
+  switch (requestedFilter) {
+    case 'qa':
+      return { p_query: q || 'QA', p_filter: 'all' }
+    case 'public_listable':
+    case 'top_masters':
+      return { p_query: q, p_filter: 'professional' }
+    case 'top_companies':
+    case 'company':
+      return { p_query: q, p_filter: 'all' }
+    case 'manufacturer':
+    case 'commercial_agent':
+      return { p_query: q || requestedFilter, p_filter: 'all' }
+    case 'hidden':
+    case 'deleted':
+      return { p_query: q, p_filter: 'all' }
+    default:
+      return { p_query: q, p_filter: requestedFilter }
+  }
+}
+
+function postFilterRows(rows: OwnerProfileRow[], requestedFilter: OwnerProfileFilter): OwnerProfileRow[] {
+  switch (requestedFilter) {
+    case 'top_masters':
+      return rows.filter(isTopMastersProfile)
+    case 'top_companies':
+      return rows.filter(isTopCompaniesProfile)
+    case 'company':
+      return rows.filter((r) => r.user_role === 'company')
+    case 'manufacturer':
+      return rows.filter((r) => r.user_role === 'manufacturer')
+    case 'commercial_agent':
+      return rows.filter((r) => r.user_role === 'commercial_agent')
+    case 'qa':
+      return rows.filter(
+        (r) =>
+          /^qa([\s_\-.]|$)/i.test((r.full_name || '').trim()) ||
+          /QA /i.test(r.full_name || '') ||
+          /qa|dimarket-audit|dimarket-test/i.test(r.email || ''),
+      )
+    case 'hidden':
+      return rows.filter((r) => Boolean(r.hidden_at || r.is_hidden) && !r.deleted_at && !r.is_deleted)
+    case 'deleted':
+      return rows.filter((r) => Boolean(r.deleted_at || r.is_deleted))
+    default:
+      return rows
+  }
+}
+
 export async function ownerSearchProfiles(opts: {
   query?: string
   filter?: OwnerProfileFilter
   limit?: number
 }): Promise<OwnerProfileRow[]> {
-  let query = opts.query ?? ''
-  let filter: string = opts.filter ?? 'all'
   const requestedFilter = opts.filter ?? 'all'
   const limit = opts.limit ?? OWNER_PROFILE_FETCH_LIMIT
+  const query = opts.query ?? ''
 
-  // Older prod RPC only supported: all|professional|client|premium|verified
-  const legacyFilters = new Set(['all', 'professional', 'client', 'premium', 'verified'])
-  if (!legacyFilters.has(filter)) {
-    if (filter === 'qa') {
-      query = query.trim() ? query : 'QA'
-      filter = 'all'
-    } else if (filter === 'public_listable' || filter === 'top_masters') {
-      // Same set the client can list / Top Masters feed
-      filter = 'professional'
-    } else if (filter === 'company' || filter === 'manufacturer' || filter === 'commercial_agent') {
-      query = query.trim() ? query : filter
-      filter = 'all'
-    } else if (filter === 'hidden' || filter === 'deleted') {
-      filter = 'all'
-    }
-  }
-
-  const data = await callRpc<OwnerProfileRow[] | unknown>('admin_search_profiles', {
-    p_query: query,
-    p_filter: filter,
-    p_limit: limit,
-  })
   let rows: OwnerProfileRow[] = []
-  if (Array.isArray(data)) rows = data as OwnerProfileRow[]
-  else if (typeof data === 'string') {
-    try {
-      const parsed = JSON.parse(data) as OwnerProfileRow[]
-      rows = Array.isArray(parsed) ? parsed : []
-    } catch {
-      rows = []
+  try {
+    const data = await callRpc<OwnerProfileRow[] | unknown>('admin_search_profiles', {
+      p_query: query.trim(),
+      p_filter: requestedFilter,
+      p_limit: limit,
+    })
+    rows = parseOwnerSearchRows(data)
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    if (!/admin_search_profiles|function|schema cache|does not exist|PGRST202/i.test(msg)) {
+      throw e
     }
+    const legacy = legacyRpcArgs(requestedFilter, query)
+    const data = await callRpc<OwnerProfileRow[] | unknown>('admin_search_profiles', {
+      p_query: legacy.p_query,
+      p_filter: legacy.p_filter,
+      p_limit: limit,
+    })
+    rows = parseOwnerSearchRows(data)
   }
 
-  // Exact sync with PUBLIC Top Masters query (not companies).
-  if (requestedFilter === 'top_masters') {
-    rows = rows.filter(isTopMastersProfile)
-  }
-
-  // QA tab: keep only QA-looking names even if RPC returned a broader set.
-  if (requestedFilter === 'qa') {
-    rows = rows.filter((r) => /^qa([\s_\-.]|$)/i.test((r.full_name || '').trim()) || /QA /i.test(r.full_name || ''))
-  }
-
-  return rows
+  return postFilterRows(rows, requestedFilter)
 }
 
 /**
@@ -135,6 +186,18 @@ export async function fetchPublicTopMastersCount(): Promise<number> {
     .select('id', { count: 'exact', head: true })
     .eq('is_professional', true)
     .eq('user_role', 'professional')
+
+  if (error) throw error
+  return count ?? 0
+}
+
+/** Public count for homepage «Топ компанії» (is_professional + user_role=company). */
+export async function fetchPublicTopCompaniesCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from('profiles')
+    .select('id', { count: 'exact', head: true })
+    .eq('is_professional', true)
+    .eq('user_role', 'company')
 
   if (error) throw error
   return count ?? 0

@@ -14,6 +14,7 @@ import {
   OWNER_PROFILE_FETCH_LIMIT,
   fetchOwnerConsistencyCounts,
   fetchPublicListableProfileCount,
+  fetchPublicTopCompaniesCount,
   fetchPublicTopMastersCount,
   ownerHideProfile,
   ownerRestoreProfile,
@@ -30,6 +31,7 @@ import { navigateTo } from '../lib/navigation'
 
 const FILTERS: { id: OwnerProfileFilter; label: string }[] = [
   { id: 'top_masters', label: 'Топ майстри' },
+  { id: 'top_companies', label: 'Топ компанії' },
   { id: 'qa', label: 'QA / тест' },
   { id: 'public_listable', label: 'Усі публічні' },
   { id: 'all', label: 'Усі в БД' },
@@ -52,27 +54,32 @@ export function OwnerProfilesManager() {
   const [migrationHint, setMigrationHint] = useState(false)
   const [publicCount, setPublicCount] = useState<number | null>(null)
   const [topMastersCount, setTopMastersCount] = useState<number | null>(null)
+  const [topCompaniesCount, setTopCompaniesCount] = useState<number | null>(null)
   const [counts, setCounts] = useState<OwnerConsistencyCounts | null>(null)
 
   const load = useCallback(async (q = query, f = filter) => {
     setLoading(true)
     setError('')
     try {
-      const [data, pub, top, consistency] = await Promise.all([
+      const [data, pub, top, topCo, consistency] = await Promise.all([
         ownerSearchProfiles({ query: q, filter: f, limit: OWNER_PROFILE_FETCH_LIMIT }),
         fetchPublicListableProfileCount().catch(() => null),
         fetchPublicTopMastersCount().catch(() => null),
+        fetchPublicTopCompaniesCount().catch(() => null),
         fetchOwnerConsistencyCounts(),
       ])
       setRows(data)
       setPublicCount(pub)
       setTopMastersCount(top)
+      setTopCompaniesCount(topCo)
       setCounts(consistency)
       setMigrationHint(false)
 
       const expected =
         f === 'top_masters' && !q.trim()
           ? top
+          : f === 'top_companies' && !q.trim()
+            ? topCo
           : (f === 'public_listable' || f === 'professional') && !q.trim()
             ? pub
             : null
@@ -121,6 +128,8 @@ export function OwnerProfilesManager() {
   const syncTarget =
     filter === 'top_masters' && !query.trim()
       ? topMastersCount
+      : filter === 'top_companies' && !query.trim()
+        ? topCompaniesCount
       : (filter === 'public_listable' || filter === 'professional') && !query.trim()
         ? publicCount
         : null
@@ -132,7 +141,7 @@ export function OwnerProfilesManager() {
         <div>
           <h2 className="text-lg font-extrabold text-[#2f2a24]">Профілі DImarket</h2>
           <p className="mt-1 text-sm text-[#6f665d]">
-            Одна БД → публічний «Топ майстри» ↔ Owner (пошук QA → Hide / Delete / Edit).
+            Одна БД → публічні «Топ майстри» / «Топ компанії» ↔ Owner (пошук QA → Hide / Delete).
           </p>
         </div>
       </div>
@@ -140,11 +149,11 @@ export function OwnerProfilesManager() {
       <pre className="mt-3 overflow-x-auto rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#f8f7f5] p-3 text-[11px] leading-5 text-[#4a453f]">
 {`SUPABASE profiles
    ↓
-PUBLIC QUERY  (is_professional + user_role=professional)
+PUBLIC: is_professional + user_role=professional | company
    ↓
-«ТОП МАЙСТРИ»  ←→  OWNER: фільтр «Топ майстри» / «QA»
-   ↓                      ↓
-КЛІЄНТ                   DELETE / HIDE / FEATURED / PRIORITY`}
+«ТОП МАЙСТРИ» / «ТОП КОМПАНІЇ»  ←→  OWNER: відповідний фільтр / «QA»
+   ↓                                      ↓
+КЛІЄНТ                                   DELETE / HIDE / FEATURED`}
       </pre>
 
       <div
@@ -159,14 +168,14 @@ PUBLIC QUERY  (is_professional + user_role=professional)
         <div className="flex flex-wrap items-center gap-2 font-semibold">
           {consistent ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
           <span>
-            Топ майстри (public): {topMastersCount ?? '—'} · Усі публічні: {publicCount ?? '—'} ·
-            Owner список: {rows.length}
+            Топ майстри: {topMastersCount ?? '—'} · Топ компанії: {topCompaniesCount ?? '—'} ·
+            Усі публічні: {publicCount ?? '—'} · Owner список: {rows.length}
             {counts ? ` · Усі в БД: ${counts.all_profiles}` : ''}
           </span>
         </div>
         <p className="mt-1 text-xs leading-5">
-          Синхрон: хто в «Топ майстри» — той є в Owner. QA Smoke professional шукається тут і
-          Hide/Delete прибирає його з публічної видачі.
+          Синхрон: хто на головній у «Топ компанії» — той у фільтрі «Топ компанії» тут. QA → Hide/Delete
+          прибирає з публічної видачі.
         </p>
         {counts && (
           <p className="mt-1 text-xs">

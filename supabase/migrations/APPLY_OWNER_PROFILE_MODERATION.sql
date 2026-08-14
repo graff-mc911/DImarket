@@ -121,6 +121,7 @@ BEGIN
         OR (p_filter = 'professional' AND (p.is_professional = true OR p.user_role IN ('professional', 'company')))
         OR (p_filter = 'public_listable' AND p.is_professional = true AND p.deleted_at IS NULL AND p.hidden_at IS NULL)
         OR (p_filter = 'top_masters' AND p.is_professional = true AND p.user_role = 'professional' AND p.deleted_at IS NULL AND p.hidden_at IS NULL)
+        OR (p_filter = 'top_companies' AND p.is_professional = true AND p.user_role = 'company' AND p.deleted_at IS NULL AND p.hidden_at IS NULL)
         OR (p_filter = 'client' AND coalesce(p.is_professional, false) = false AND coalesce(p.user_role, 'client') = 'client')
         OR (p_filter = 'company' AND p.user_role = 'company')
         OR (p_filter = 'manufacturer' AND p.user_role = 'manufacturer')
