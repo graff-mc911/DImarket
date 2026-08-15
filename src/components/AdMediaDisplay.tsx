@@ -12,7 +12,6 @@ import {
   slideshowLayerClass,
   type AdMediaStyle,
 } from '../lib/adMediaStyle'
-import { AD_MEDIA_FALLBACK } from '../lib/adCampaigns'
 
 type AdMediaDisplayProps = {
   src: string
@@ -32,14 +31,14 @@ function resolveImageStyle(
   if (layoutKey) return layoutDefaultImageStyle(layoutKey)
   return {
     width: '100%',
-    height: '100%',
+    height: 'auto',
     display: 'block',
     objectFit: 'contain',
     objectPosition: 'center',
   }
 }
 
-/** Зображення на 100% зони слота — без blur-фону; ручне кадрування лише якщо задано в media_style. */
+/** Зображення в слоті — без stretch; висота від реального aspect-ratio контейнера / asset. */
 function AdMediaImageFill({
   src,
   alt,
@@ -54,17 +53,39 @@ function AdMediaImageFill({
   frameStyle?: CSSProperties | null
 }) {
   const imgStyle = resolveImageStyle(layoutKey, frameStyle ?? null)
+  const naturalHeight =
+    !frameStyle &&
+    (!layoutKey || layoutKey === 'center' || layoutKey === 'leaderboard' || layoutKey === 'mobile')
 
   return (
-    <div className={`relative h-full w-full overflow-hidden bg-[#1a1816] ${className}`}>
+    <div
+      className={`relative w-full overflow-hidden bg-transparent ${
+        naturalHeight ? 'h-auto' : 'h-full'
+      } ${className}`}
+    >
       <img
         src={src}
         alt={alt}
-        style={imgStyle}
-        className="h-full w-full max-h-full max-w-full"
+        style={
+          naturalHeight
+            ? {
+                width: '100%',
+                height: 'auto',
+                display: 'block',
+                objectFit: 'contain',
+                objectPosition: 'center',
+              }
+            : imgStyle
+        }
+        className={
+          naturalHeight
+            ? 'block h-auto w-full max-w-full'
+            : 'h-full w-full max-h-full max-w-full'
+        }
         loading="lazy"
         onError={(e) => {
-          e.currentTarget.src = AD_MEDIA_FALLBACK
+          // Never swap in a hardcoded stock photo as a fake ad.
+          e.currentTarget.style.visibility = 'hidden'
         }}
       />
     </div>
@@ -133,12 +154,8 @@ export function AdMediaDisplay({
 
   if (slides.length === 0) {
     return (
-      <div className={`relative overflow-hidden bg-[#1a1816] ${className}`}>
-        <img
-          src={AD_MEDIA_FALLBACK}
-          alt={alt}
-          className="block h-full w-full object-contain"
-        />
+      <div className={`relative overflow-hidden bg-transparent ${className}`}>
+        <div className="flex min-h-[4.5rem] w-full items-center justify-center" aria-hidden />
       </div>
     )
   }

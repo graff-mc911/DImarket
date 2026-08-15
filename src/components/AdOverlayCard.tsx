@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react'
+import { type CSSProperties } from 'react'
 import { Megaphone } from 'lucide-react'
 import {
   getGeoTargetLabel,
@@ -107,33 +107,6 @@ const variantStyles: Record<
   },
 }
 
-function useImageAspectRatio(src: string, enabled: boolean): number | null {
-  const [ratio, setRatio] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (!enabled || !src) {
-      setRatio(null)
-      return
-    }
-    const img = new Image()
-    img.onload = () => {
-      if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-        setRatio(img.naturalWidth / img.naturalHeight)
-      } else {
-        setRatio(null)
-      }
-    }
-    img.onerror = () => setRatio(null)
-    img.src = src
-    return () => {
-      img.onload = null
-      img.onerror = null
-    }
-  }, [src, enabled])
-
-  return ratio
-}
-
 function AdCampaignMedia({
   campaign,
   imageClass,
@@ -155,25 +128,21 @@ function AdCampaignMedia({
     campaign as AdCampaignWithAdvertiser & { slot_media?: unknown; media_style?: unknown },
     slotId,
   )
-  const measuredSource =
-    slotState.slideUrls[0] ||
-    slotState.mediaUrl ||
-    (slotId ? '' : getPublicBannerImageUrl(resolved))
   const shouldAdaptRatio =
-    variant === 'mobile-inline' &&
+    (variant === 'mobile-inline' ||
+      variant === 'center' ||
+      variant === 'leaderboard') &&
     (slotState.mediaType === 'image' || slotState.mediaType === 'gif')
-  const adaptiveRatio = useImageAspectRatio(measuredSource, shouldAdaptRatio)
-  const adaptiveImageStyle: CSSProperties | undefined =
-    shouldAdaptRatio && adaptiveRatio
-      ? {
-          ...(imageStyle ?? {}),
-          width: '100%',
-          height: 'auto',
-          aspectRatio: `${adaptiveRatio}`,
-          minHeight: 0,
-          maxHeight: 'none',
-        }
-      : imageStyle
+  // Width fluid; height comes from the real asset (no fixed 248px slot crop/stretch).
+  const adaptiveImageStyle: CSSProperties | undefined = shouldAdaptRatio
+    ? {
+        ...(imageStyle ?? {}),
+        width: '100%',
+        height: 'auto',
+        minHeight: 0,
+        maxHeight: 'none',
+      }
+    : imageStyle
   const imageSrc =
     slotState.slideUrls[0] ||
     slotState.mediaUrl ||
@@ -208,7 +177,7 @@ function AdCampaignMedia({
         mediaType={mediaType}
         style={mediaStyle}
         layoutKey={layoutKey}
-        className="h-full w-full"
+        className={shouldAdaptRatio ? 'h-auto w-full' : 'h-full w-full'}
         animateSlides
       />
     </div>

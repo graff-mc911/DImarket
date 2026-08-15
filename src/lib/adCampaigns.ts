@@ -267,8 +267,8 @@ export function getCampaignPosterUrl(
       const pick = slotMediaEntryUrl(map[slotId])
       if (pick) return pick
       if (granularKeys.length > 0) {
-        if (!campaignOwnsSlot(campaign, slotId)) return AD_MEDIA_FALLBACK
-        return campaign.image_url?.trim() || AD_MEDIA_FALLBACK
+        if (!campaignOwnsSlot(campaign, slotId)) return ''
+        return campaign.image_url?.trim() || ''
       }
     } else {
       for (const val of Object.values(map)) {
@@ -285,7 +285,8 @@ export function getCampaignPosterUrl(
   if (mediaUrl && !mediaUrl.includes('youtube') && !/\.(mp4|webm)(\?|$)/i.test(mediaUrl)) {
     return mediaUrl
   }
-  return AD_MEDIA_FALLBACK
+  // No hardcoded stock-photo fallback — missing media must not render a fake ad.
+  return ''
 }
 
 /** У банерах на сайті — лише статичне зображення (без автовідео) */

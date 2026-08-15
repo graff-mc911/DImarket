@@ -819,16 +819,17 @@
   }
 
   .ad-slot-center__media {
-    height: var(--ad-center-image-h, 15.5rem);
-    max-height: var(--ad-center-image-h, 15.5rem);
-    min-height: var(--ad-center-image-h, 15.5rem);
+    width: 100%;
+    height: auto;
+    max-height: none;
+    min-height: 0;
   }
 
   .ad-slot-leaderboard__media {
     width: 100%;
-    height: var(--ad-leaderboard-slot-h, 15.5rem);
-    max-height: var(--ad-leaderboard-slot-h, 15.5rem);
-    min-height: var(--ad-leaderboard-slot-h, 15.5rem);
+    height: auto;
+    max-height: none;
+    min-height: 0;
   }
 
   .ad-slot-mobile-inline__media {

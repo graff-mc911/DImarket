@@ -64,9 +64,9 @@ export function adSlotShellStyle(
       boxSizing: 'border-box',
       width: '100%',
       maxWidth: '100%',
-      height: spec.containerH,
-      maxHeight: spec.containerH,
-      minHeight: spec.containerH,
+      height: 'auto',
+      minHeight: 0,
+      maxHeight: 'none',
     }
   }
 
@@ -87,6 +87,7 @@ export function adSlotShellStyle(
       maxWidth: spec.containerW,
       minHeight: 0,
       height: 'auto',
+      maxHeight: 'none',
       marginInline: 'auto',
     }
   }
@@ -115,12 +116,13 @@ export function adSlotImageStyle(
     }
   }
 
-  if (variant === 'leaderboard') {
+  if (variant === 'leaderboard' || variant === 'center') {
+    // Height follows the real asset ratio (set via aspect-ratio on the media wrapper).
     return {
       width: '100%',
-      height: spec.imageH,
-      maxHeight: spec.imageH,
-      minHeight: spec.imageH,
+      height: 'auto',
+      maxHeight: 'none',
+      minHeight: 0,
       flexShrink: 0,
       overflow: 'hidden',
     }
@@ -128,17 +130,6 @@ export function adSlotImageStyle(
 
   if (variant === 'mobile-inline' || variant === 'mobile-sticky') {
     return undefined
-  }
-
-  if (variant === 'center') {
-    return {
-      width: '100%',
-      height: spec.imageH,
-      maxHeight: spec.imageH,
-      minHeight: spec.imageH,
-      flexShrink: 0,
-      overflow: 'hidden',
-    }
   }
 
   return {
