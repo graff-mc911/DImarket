@@ -370,17 +370,6 @@ GRANT EXECUTE ON FUNCTION public.admin_unhide_profile(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_soft_delete_profile(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_restore_profile(uuid) TO authenticated;
 
--- 6) One-shot: hide known QA public professionals (does NOT delete auth users)
--- Owner can restore individually after review.
-UPDATE public.profiles
-SET
-  hidden_at = COALESCE(hidden_at, now()),
-  hidden_by = COALESCE(hidden_by, auth.uid()),
-  updated_at = now()
-WHERE deleted_at IS NULL
-  AND (
-    full_name ILIKE 'QA %'
-    OR full_name ILIKE 'qa-%'
-    OR full_name ILIKE 'qa_%'
-    OR full_name ILIKE 'side-ads-e2e-%'
-  );
+-- QA hide UPDATE intentionally REMOVED from this file.
+-- Use APPLY_OWNER_PROFILE_MODERATION_SCHEMA_ONLY.sql for schema/RPC only.
+-- Run QA hide only after explicit owner approval (separate script).

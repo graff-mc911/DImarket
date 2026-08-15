@@ -1,3 +1,8 @@
+-- APPLY_OWNER_PROFILE_MODERATION_SCHEMA_ONLY.sql
+-- MANUAL: Supabase Dashboard → SQL Editor → New query → Paste ALL → RUN
+-- SCHEMA + RPC ONLY. Idempotent. No QA hide. No data cleanup. No TRUNCATE. No DROP TABLE.
+-- Does not remove auth users or profile rows.
+--
 -- OWNER PROFILE MODERATION: soft-delete / hide / ranking / search
 -- Apply in Supabase SQL Editor (service role). Idempotent.
 
@@ -124,8 +129,8 @@ BEGIN
         OR (p_filter = 'top_companies' AND p.is_professional = true AND p.user_role = 'company' AND p.deleted_at IS NULL AND p.hidden_at IS NULL)
         OR (p_filter = 'client' AND coalesce(p.is_professional, false) = false AND coalesce(p.user_role, 'client') = 'client')
         OR (p_filter = 'company' AND p.user_role = 'company')
-        OR (p_filter = 'manufacturer' AND p.user_role = 'manufacturer')
-        OR (p_filter = 'commercial_agent' AND p.user_role = 'commercial_agent')
+        OR (p_filter IN ('manufacturer', 'manufacturers') AND p.user_role = 'manufacturer')
+        OR (p_filter IN ('commercial_agent', 'agents', 'agent') AND p.user_role = 'commercial_agent')
         OR (p_filter = 'premium' AND p.is_premium = true)
         OR (p_filter = 'verified' AND p.is_verified = true)
         OR (p_filter = 'hidden' AND p.hidden_at IS NOT NULL AND p.deleted_at IS NULL)
@@ -369,3 +374,28 @@ GRANT EXECUTE ON FUNCTION public.admin_hide_profile(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_unhide_profile(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_soft_delete_profile(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_restore_profile(uuid) TO authenticated;
+
+-- MUST see Success + all has_* = 1. If any = 0, SQL did not apply (wrong project or error above).
+SELECT
+  CASE WHEN EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'deleted_at'
+  ) THEN 1 ELSE 0 END AS has_deleted_at,
+  CASE WHEN EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'hidden_at'
+  ) THEN 1 ELSE 0 END AS has_hidden_at,
+  CASE WHEN EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'ranking_priority'
+  ) THEN 1 ELSE 0 END AS has_ranking_priority,
+  CASE WHEN EXISTS (
+    SELECT 1 FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public' AND p.proname = 'admin_hide_profile'
+  ) THEN 1 ELSE 0 END AS has_admin_hide_profile,
+  CASE WHEN EXISTS (
+    SELECT 1 FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public' AND p.proname = 'admin_search_profiles'
+  ) THEN 1 ELSE 0 END AS has_admin_search_profiles;
