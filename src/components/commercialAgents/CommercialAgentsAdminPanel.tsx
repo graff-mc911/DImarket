@@ -215,16 +215,16 @@ export function CommercialAgentsAdminPanel() {
 
   return (
     <section className="rounded-2xl border border-[var(--line-200)] bg-white/95 p-5">
-      <h2 className="text-lg font-bold text-[var(--ink-900)]">Commercial Agents — verification queue</h2>
+      <h2 className="text-lg font-bold text-[var(--ink-900)]">Комерційні агенти</h2>
       <p className="mt-1 text-sm text-[var(--ink-600)]">
-        Owner moderation: view, verify, reject, or delete manufacturer / representative profiles.
+        Заявки виробників і представників: перегляд, підтвердження, відхилення або видалення.
       </p>
 
       <div className="mt-3 flex flex-wrap gap-2">
         {([
-          ['pending', 'Pending'],
-          ['verified', 'Approved'],
-          ['rejected', 'Rejected'],
+          ['pending', 'Очікують'],
+          ['verified', 'Схвалені'],
+          ['rejected', 'Відхилені'],
         ] as const).map(([key, label]) => (
           <button
             key={key}
