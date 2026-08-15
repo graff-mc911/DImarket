@@ -249,7 +249,7 @@ export function CommercialAgentsAdminPanel() {
       ) : (
         <div className="mt-4 space-y-3">
           {rows.length === 0 ? (
-            <p className="text-sm text-[var(--ink-600)]">No {filterLabel.toLowerCase()} B2B profiles.</p>
+            <p className="text-sm text-[var(--ink-600)]">Немає профілів зі статусом «{filterLabel}».</p>
           ) : (
             rows.map((row) => (
               <div
@@ -313,9 +313,9 @@ export function CommercialAgentsAdminPanel() {
             ))
           )}
 
-          <h3 className="pt-2 text-sm font-bold text-[var(--ink-800)]">Open reports</h3>
+          <h3 className="pt-2 text-sm font-bold text-[var(--ink-800)]">Скарги</h3>
           {reports.length === 0 ? (
-            <p className="text-sm text-[var(--ink-600)]">No open reports.</p>
+            <p className="text-sm text-[var(--ink-600)]">Немає відкритих скарг.</p>
           ) : (
             reports.map((r) => (
               <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border px-3 py-2.5">
