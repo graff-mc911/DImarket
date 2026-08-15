@@ -84,9 +84,13 @@ export function OwnerProfilesManager() {
             ? pub
             : null
 
-      if (expected != null && data.length < expected) {
+      if (expected != null && data.length === 0 && expected > 0) {
         setError(
-          `РОЗРИВ ДАНИХ: публіка бачить ${expected}, Owner панель показує ${data.length}. Застосуйте APPLY_OWNER_PROFILE_MODERATION.sql і оновіть сторінку.`,
+          `Список порожній, хоча публіка бачить ${expected}. Оновіть сторінку (Ctrl+Shift+R). Якщо знову 0 — SQL міграція не на тому Supabase-проєкті (wjlfvajloxkevggwjgtk): запустіть APPLY_OWNER_PROFILE_MODERATION_SCHEMA_ONLY.sql → RUN → VERIFY.`,
+        )
+      } else if (expected != null && data.length > 0 && data.length < expected) {
+        setNotice(
+          `Показано ${data.length} з ~${expected} (часткове завантаження до застосування SCHEMA_ONLY SQL). Hide/Delete потребують міграції.`,
         )
       }
     } catch (e) {
@@ -229,9 +233,9 @@ PUBLIC: is_professional + user_role=professional | company
 
       {migrationHint && (
         <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-          Потрібно застосувати SQL:{' '}
-          <code className="font-mono">supabase/migrations/APPLY_OWNER_PROFILE_MODERATION.sql</code> у
-          Supabase SQL Editor (owner RPC + soft-delete/hide + ліміт до 2000).
+          Для Hide/Delete/Featured застосуйте{' '}
+          <code className="font-mono">APPLY_OWNER_PROFILE_MODERATION_SCHEMA_ONLY.sql</code> у проєкті{' '}
+          <code className="font-mono">wjlfvajloxkevggwjgtk</code> → після RUN усі has_* у кінці мають бути 1.
         </div>
       )}
 

@@ -88,6 +88,22 @@ function parseOwnerSearchRows(data: unknown): OwnerProfileRow[] {
   return []
 }
 
+/**
+ * Filters that old prod `admin_search_profiles` (pre-moderation SQL) does not understand.
+ * Unknown filters match zero rows and return `[]` successfully — that caused Owner list = 0.
+ */
+const LEGACY_UNKNOWN_FILTERS = new Set<OwnerProfileFilter>([
+  'top_masters',
+  'top_companies',
+  'public_listable',
+  'qa',
+  'company',
+  'manufacturer',
+  'commercial_agent',
+  'hidden',
+  'deleted',
+])
+
 /** Map modern filters → legacy RPC when APPLY_OWNER_PROFILE_MODERATION.sql is not applied yet. */
 function legacyRpcArgs(
   requestedFilter: OwnerProfileFilter,
@@ -120,6 +136,8 @@ function postFilterRows(rows: OwnerProfileRow[], requestedFilter: OwnerProfileFi
       return rows.filter(isTopMastersProfile)
     case 'top_companies':
       return rows.filter(isTopCompaniesProfile)
+    case 'public_listable':
+      return rows.filter((r) => r.is_professional === true)
     case 'company':
       return rows.filter((r) => r.user_role === 'company')
     case 'manufacturer':
@@ -142,6 +160,112 @@ function postFilterRows(rows: OwnerProfileRow[], requestedFilter: OwnerProfileFi
   }
 }
 
+const OWNER_PROFILE_SELECT =
+  'id, full_name, phone, location, user_role, is_professional, is_verified, verification_level, is_premium, is_featured, is_site_owner, rating, total_reviews, completed_jobs, created_at, updated_at'
+
+/**
+ * Direct `profiles` SELECT — works even when moderation SQL / modern RPC filters are missing.
+ * Public RLS already allows reading the same rows the homepage shows.
+ */
+async function ownerSearchProfilesViaTable(opts: {
+  query: string
+  filter: OwnerProfileFilter
+  limit: number
+}): Promise<OwnerProfileRow[]> {
+  const q = opts.query.trim()
+  let req = supabase
+    .from('profiles')
+    .select(OWNER_PROFILE_SELECT)
+    .order('created_at', { ascending: false })
+    .limit(opts.limit)
+
+  switch (opts.filter) {
+    case 'top_masters':
+      req = req.eq('is_professional', true).eq('user_role', 'professional')
+      break
+    case 'top_companies':
+      req = req.eq('is_professional', true).eq('user_role', 'company')
+      break
+    case 'public_listable':
+    case 'professional':
+      req = req.eq('is_professional', true)
+      break
+    case 'company':
+      req = req.eq('user_role', 'company')
+      break
+    case 'manufacturer':
+      req = req.eq('user_role', 'manufacturer')
+      break
+    case 'commercial_agent':
+      req = req.eq('user_role', 'commercial_agent')
+      break
+    case 'client':
+      req = req.eq('is_professional', false)
+      break
+    case 'premium':
+      req = req.eq('is_premium', true)
+      break
+    case 'verified':
+      req = req.eq('is_verified', true)
+      break
+    case 'hidden':
+    case 'deleted':
+      // Columns may not exist until SCHEMA_ONLY SQL is applied — return [] quietly.
+      return []
+    default:
+      break
+  }
+
+  if (q) {
+    const safe = q.replace(/[%(),]/g, ' ').trim()
+    if (safe) {
+      const parts = [
+        `full_name.ilike.%${safe}%`,
+        `phone.ilike.%${safe}%`,
+        `user_role.ilike.%${safe}%`,
+      ]
+      if (/^[0-9a-f-]{8,36}$/i.test(safe)) {
+        parts.push(`id.eq.${safe}`)
+      }
+      req = req.or(parts.join(','))
+    }
+  }
+
+  const { data, error } = await req
+  if (error) {
+    // Soft-fail search or-filter quirks: retry without text search.
+    if (q) {
+      const retry = await supabase
+        .from('profiles')
+        .select(OWNER_PROFILE_SELECT)
+        .order('created_at', { ascending: false })
+        .limit(opts.limit)
+      const { data: data2, error: error2 } = await retry
+      if (error2) throw error2
+      const needle = q.toLowerCase()
+      return ((data2 || []) as OwnerProfileRow[]).filter((r) => {
+        const hay = `${r.full_name || ''} ${r.phone || ''} ${r.user_role || ''} ${r.id}`.toLowerCase()
+        return hay.includes(needle)
+      })
+    }
+    throw error
+  }
+  return (data || []) as OwnerProfileRow[]
+}
+
+async function rpcSearchProfiles(
+  p_query: string,
+  p_filter: string,
+  p_limit: number,
+): Promise<OwnerProfileRow[]> {
+  const data = await callRpc<OwnerProfileRow[] | unknown>('admin_search_profiles', {
+    p_query,
+    p_filter,
+    p_limit,
+  })
+  return parseOwnerSearchRows(data)
+}
+
 export async function ownerSearchProfiles(opts: {
   query?: string
   filter?: OwnerProfileFilter
@@ -150,27 +274,48 @@ export async function ownerSearchProfiles(opts: {
   const requestedFilter = opts.filter ?? 'all'
   const limit = opts.limit ?? OWNER_PROFILE_FETCH_LIMIT
   const query = opts.query ?? ''
+  const q = query.trim()
 
   let rows: OwnerProfileRow[] = []
+  let rpcFailed = false
+
   try {
-    const data = await callRpc<OwnerProfileRow[] | unknown>('admin_search_profiles', {
-      p_query: query.trim(),
-      p_filter: requestedFilter,
-      p_limit: limit,
-    })
-    rows = parseOwnerSearchRows(data)
+    rows = await rpcSearchProfiles(q, requestedFilter, limit)
   } catch (e) {
+    rpcFailed = true
     const msg = e instanceof Error ? e.message : String(e)
-    if (!/admin_search_profiles|function|schema cache|does not exist|PGRST202/i.test(msg)) {
+    // Missing RPC / wrong signature → try legacy remapped filter.
+    // unauthorized/forbidden → still fall through to table (homepage-visible rows).
+    if (!/admin_search_profiles|function|schema cache|does not exist|PGRST202|unauthorized|forbidden/i.test(msg)) {
       throw e
     }
-    const legacy = legacyRpcArgs(requestedFilter, query)
-    const data = await callRpc<OwnerProfileRow[] | unknown>('admin_search_profiles', {
-      p_query: legacy.p_query,
-      p_filter: legacy.p_filter,
-      p_limit: limit,
-    })
-    rows = parseOwnerSearchRows(data)
+  }
+
+  // Old RPC: unknown filter → successful empty array (not an error). Remap + retry.
+  if (
+    rows.length === 0 &&
+    !rpcFailed &&
+    LEGACY_UNKNOWN_FILTERS.has(requestedFilter)
+  ) {
+    try {
+      const legacy = legacyRpcArgs(requestedFilter, query)
+      rows = await rpcSearchProfiles(legacy.p_query, legacy.p_filter, limit)
+    } catch {
+      /* table fallback below */
+    }
+  }
+
+  // After remap failure / auth assert / empty modern filter: read profiles directly.
+  if (rows.length === 0) {
+    try {
+      rows = await ownerSearchProfilesViaTable({
+        query: q,
+        filter: requestedFilter,
+        limit,
+      })
+    } catch {
+      /* keep rows as-is */
+    }
   }
 
   return postFilterRows(rows, requestedFilter)
