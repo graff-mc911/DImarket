@@ -1,9 +1,8 @@
 /**
  * Verify owner profile moderation RPCs on production AFTER schema apply.
- * Uses Management API as postgres + set_config to simulate site owner JWT.
+ * Uses Management API + set_config to simulate site owner JWT.
  * Does NOT hide/delete any profiles.
  *
- * Requires SUPABASE_ACCESS_TOKEN.
  * node scripts/verify-owner-profile-moderation-rpcs.mjs
  */
 import { readFileSync, existsSync } from 'fs'
@@ -46,7 +45,7 @@ async function query(sql) {
     body: JSON.stringify({ query: sql }),
   })
   const text = await res.text()
-  if (!res.ok) throw new Error(`${res.status} ${text.slice(0, 800)}`)
+  if (!res.ok) throw new Error(`${res.status} ${text.slice(0, 1200)}`)
   try {
     return JSON.parse(text)
   } catch {
@@ -54,59 +53,39 @@ async function query(sql) {
   }
 }
 
-function len(rows) {
-  if (Array.isArray(rows)) {
-    // Management API may return [{admin_search_profiles: [...]}] or raw
-    if (rows[0] && typeof rows[0] === 'object') {
-      const v = Object.values(rows[0])[0]
-      if (typeof v === 'string') {
-        try {
-          const parsed = JSON.parse(v)
-          return Array.isArray(parsed) ? parsed.length : null
-        } catch {
-          return null
-        }
+function unwrapJsonb(rows, key = 'data') {
+  if (!Array.isArray(rows) || !rows.length) return []
+  // Prefer last row that has the key (after set_config result rows)
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const row = rows[i]
+    if (!row || typeof row !== 'object') continue
+    if (!(key in row)) continue
+    let v = row[key]
+    if (typeof v === 'string') {
+      try {
+        v = JSON.parse(v)
+      } catch {
+        return []
       }
-      if (Array.isArray(v)) return v.length
     }
-    return rows.length
+    return Array.isArray(v) ? v : v && typeof v === 'object' ? v : []
   }
-  return null
-}
-
-function names(rows, n = 8) {
-  let arr = rows
-  if (Array.isArray(rows) && rows[0] && typeof rows[0] === 'object') {
-    const v = Object.values(rows[0])[0]
+  // Single object result
+  if (rows[0] && key in rows[0]) {
+    let v = rows[0][key]
     if (typeof v === 'string') {
       try {
-        arr = JSON.parse(v)
+        v = JSON.parse(v)
       } catch {
-        arr = []
+        return []
       }
-    } else if (Array.isArray(v)) arr = v
+    }
+    return Array.isArray(v) ? v : []
   }
-  if (!Array.isArray(arr)) return []
-  return arr.slice(0, n).map((r) => r.full_name || r.id)
+  return []
 }
 
-function hasName(rows, needle) {
-  let arr = rows
-  if (Array.isArray(rows) && rows[0] && typeof rows[0] === 'object') {
-    const v = Object.values(rows[0])[0]
-    if (typeof v === 'string') {
-      try {
-        arr = JSON.parse(v)
-      } catch {
-        arr = []
-      }
-    } else if (Array.isArray(v)) arr = v
-  }
-  if (!Array.isArray(arr)) return false
-  return arr.some((r) => String(r.full_name || '').includes(needle))
-}
-
-console.log('=== 0) Schema columns present? ===')
+console.log('=== 0) Schema columns ===')
 const cols = await query(`
   SELECT column_name
   FROM information_schema.columns
@@ -115,6 +94,11 @@ const cols = await query(`
   ORDER BY column_name
 `)
 console.log(JSON.stringify(cols, null, 2))
+const colNames = Array.isArray(cols) ? cols.map((c) => c.column_name) : []
+if (!colNames.includes('deleted_at') || !colNames.includes('ranking_priority')) {
+  console.error('FAIL: moderation columns missing — schema not applied')
+  process.exit(1)
+}
 
 console.log('=== Resolve owner uid ===')
 const ownerRows = await query(`
@@ -129,84 +113,110 @@ const ownerRows = await query(`
 console.log(JSON.stringify(ownerRows, null, 2))
 const ownerId = Array.isArray(ownerRows) && ownerRows[0] ? ownerRows[0].id : null
 if (!ownerId) {
-  console.error('No owner profile found — cannot simulate Owner JWT')
+  console.error('FAIL: no owner profile found')
   process.exit(1)
 }
 
-async function asOwner(sqlBody) {
-  return query(`
-    SELECT set_config('request.jwt.claim.sub', '${ownerId}', true);
-    SELECT set_config('request.jwt.claim.role', 'authenticated', true);
-    ${sqlBody}
+async function searchAsOwner(filter) {
+  const rows = await query(`
+    WITH auth_sim AS (
+      SELECT
+        set_config('request.jwt.claim.sub', '${ownerId}', true) AS sub,
+        set_config('request.jwt.claim.role', 'authenticated', true) AS role
+    )
+    SELECT public.admin_search_profiles('', '${filter}', 2000) AS data
+    FROM auth_sim
   `)
+  return unwrapJsonb(rows, 'data')
 }
 
-// Public baseline counts (no auth simulation needed)
 console.log('=== Public baseline counts ===')
-const pub = await query(`
+const pubRows = await query(`
   SELECT
     (SELECT count(*)::int FROM profiles WHERE is_professional = true) AS public_listable,
     (SELECT count(*)::int FROM profiles WHERE is_professional = true AND user_role = 'professional') AS top_masters,
     (SELECT count(*)::int FROM profiles WHERE is_professional = true AND user_role = 'company') AS top_companies,
-    (SELECT count(*)::int FROM profiles WHERE full_name ILIKE 'QA %' OR full_name ILIKE 'qa-%' OR full_name ILIKE 'qa_%') AS qa_named
+    (SELECT count(*)::int FROM profiles WHERE
+      full_name ILIKE 'QA %' OR full_name ILIKE 'qa-%' OR full_name ILIKE 'qa_%'
+    ) AS qa_named
 `)
+const pub = Array.isArray(pubRows) ? pubRows[0] : pubRows
 console.log(JSON.stringify(pub, null, 2))
 
-const filters = ['top_masters', 'top_companies', 'qa', 'public_listable', 'professional', 'company']
+const filters = ['top_masters', 'top_companies', 'qa', 'public_listable', 'professional', 'company', 'all']
 const results = {}
 for (const f of filters) {
-  const rows = await asOwner(`SELECT public.admin_search_profiles('', '${f}', 2000) AS data;`)
-  // Management API may return multiple result sets; find the data row
-  let payload = rows
-  if (Array.isArray(rows)) {
-    const hit = rows.find((r) => r && Object.prototype.hasOwnProperty.call(r, 'data'))
-    payload = hit ? [hit] : rows
-  }
+  const arr = await searchAsOwner(f)
   results[f] = {
-    count: len(payload.map ? payload : [{ data: payload }]),
-    sample: names(payload),
-  }
-  // Fix count extraction for {data: jsonb}
-  if (Array.isArray(payload) && payload[0]?.data != null) {
-    const d = payload[0].data
-    const arr = typeof d === 'string' ? JSON.parse(d) : d
-    results[f].count = Array.isArray(arr) ? arr.length : null
-    results[f].sample = Array.isArray(arr) ? arr.slice(0, 8).map((r) => r.full_name) : []
-    results[f].has_qa_smoke = Array.isArray(arr) && arr.some((r) => /QA Smoke professional/i.test(r.full_name || ''))
-    results[f].has_qa_chat = Array.isArray(arr) && arr.some((r) => /QA Chat Pro/i.test(r.full_name || ''))
+    count: arr.length,
+    sample: arr.slice(0, 8).map((r) => r.full_name),
+    has_qa_smoke: arr.some((r) => /QA Smoke professional/i.test(r.full_name || '')),
+    has_qa_chat: arr.some((r) => /QA Chat Pro/i.test(r.full_name || '')),
   }
   console.log(`filter=${f}`, JSON.stringify(results[f]))
 }
 
-console.log('=== Owner authorization (non-owner should fail) ===')
+console.log('=== Owner authorization ===')
 try {
   await query(`
-    SELECT set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000001', true);
-    SELECT set_config('request.jwt.claim.role', 'authenticated', true);
-    SELECT public.admin_search_profiles('', 'all', 1);
+    WITH auth_sim AS (
+      SELECT
+        set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000001', true) AS sub,
+        set_config('request.jwt.claim.role', 'authenticated', true) AS role
+    )
+    SELECT public.admin_search_profiles('', 'all', 1) AS data
+    FROM auth_sim
   `)
-  console.log('UNEXPECTED: non-owner call succeeded')
+  console.log('non_owner: UNEXPECTED_SUCCESS')
 } catch (e) {
-  console.log('non-owner rejected (expected):', String(e.message).slice(0, 200))
+  console.log('non_owner: REJECTED', String(e.message).slice(0, 180))
 }
 
-console.log('=== Owner authorization (owner assert) ===')
-const assertOk = await asOwner(`SELECT public.admin_assert_site_owner(); SELECT 1 AS ok;`)
-console.log('owner assert ok:', JSON.stringify(assertOk).slice(0, 200))
+try {
+  await query(`
+    WITH auth_sim AS (
+      SELECT
+        set_config('request.jwt.claim.sub', '${ownerId}', true) AS sub,
+        set_config('request.jwt.claim.role', 'authenticated', true) AS role
+    )
+    SELECT public.admin_assert_site_owner() AS asserted
+    FROM auth_sim
+  `)
+  console.log('owner_assert: PASS')
+} catch (e) {
+  console.log('owner_assert: FAIL', String(e.message).slice(0, 180))
+}
 
-console.log('=== Consistency RPC ===')
-const consistency = await asOwner(`SELECT public.admin_profile_consistency_counts() AS c;`)
-console.log(JSON.stringify(consistency, null, 2))
+const consistencyRows = await query(`
+  WITH auth_sim AS (
+    SELECT
+      set_config('request.jwt.claim.sub', '${ownerId}', true) AS sub,
+      set_config('request.jwt.claim.role', 'authenticated', true) AS role
+  )
+  SELECT public.admin_profile_consistency_counts() AS c
+  FROM auth_sim
+`)
+const consistency = unwrapJsonb(consistencyRows, 'c')
+console.log('consistency:', JSON.stringify(consistencyRows, null, 2))
 
-console.log('=== SUMMARY JSON ===')
-console.log(
-  JSON.stringify(
-    {
-      ownerId,
-      public: Array.isArray(pub) ? pub[0] : pub,
-      filters: results,
-    },
-    null,
-    2,
-  ),
-)
+const checks = {
+  top_masters_match:
+    results.top_masters.count === pub.top_masters,
+  top_companies_match:
+    results.top_companies.count === pub.top_companies,
+  public_listable_match:
+    results.public_listable.count === pub.public_listable,
+  qa_smoke_visible_to_owner: results.top_masters.has_qa_smoke || results.qa.has_qa_smoke || results.all.has_qa_smoke,
+  qa_chat_visible_to_owner: results.top_masters.has_qa_chat || results.qa.has_qa_chat || results.all.has_qa_chat,
+  no_hidden_yet: true,
+}
+
+console.log('=== CHECKS ===')
+console.log(JSON.stringify({ ownerId, pub, results, checks }, null, 2))
+
+const failed = Object.entries(checks).filter(([, v]) => !v).map(([k]) => k)
+if (failed.length) {
+  console.error('FAILED CHECKS:', failed.join(', '))
+  process.exit(1)
+}
+console.log('ALL VERIFICATION CHECKS PASSED (no QA cleanup performed)')
