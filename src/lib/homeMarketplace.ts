@@ -54,12 +54,21 @@ export type HomeMarketplaceData = {
 }
 
 const DEFAULT_METRICS: HomeMetrics = {
-  professionals: 52000,
-  reviews: 1800000,
-  countries: 27,
-  projects: 950000,
+  professionals: 0,
+  reviews: 0,
+  countries: 0,
+  projects: 0,
   appStoreUrl: '',
   playStoreUrl: '',
+}
+
+/** Seeded marketing numbers historically stored in homepage_metrics — never show as live truth. */
+function looksLikePlaceholderMetric(n: number, kind: 'professionals' | 'reviews' | 'countries' | 'projects'): boolean {
+  if (kind === 'professionals' && n >= 10000) return true
+  if (kind === 'reviews' && n >= 100000) return true
+  if (kind === 'projects' && n >= 100000) return true
+  if (kind === 'countries' && n === 27) return true
+  return false
 }
 
 function numFromMetric(row: unknown, fallback: number): number {
@@ -74,43 +83,8 @@ function textFromMetric(row: unknown): string {
   return typeof t === 'string' ? t.trim() : ''
 }
 
-export async function fetchHomepageMetrics(): Promise<HomeMetrics> {
-  const { data: rpcData, error: rpcError } = await supabase.rpc(
-    'get_homepage_metrics' as never,
-  )
-
-  if (!rpcError && rpcData && typeof rpcData === 'object') {
-    const map = rpcData as Record<string, unknown>
-    return {
-      professionals: numFromMetric(map.professionals, DEFAULT_METRICS.professionals),
-      reviews: numFromMetric(map.reviews, DEFAULT_METRICS.reviews),
-      countries: numFromMetric(map.countries, DEFAULT_METRICS.countries),
-      projects: numFromMetric(map.projects, DEFAULT_METRICS.projects),
-      appStoreUrl: textFromMetric(map.app_store_url),
-      playStoreUrl: textFromMetric(map.play_store_url),
-    }
-  }
-
-  const { data: rows } = await supabase.from('homepage_metrics' as never).select('*')
-  if (Array.isArray(rows) && rows.length > 0) {
-    const map: Record<string, unknown> = {}
-    for (const row of rows) {
-      if (row && typeof row === 'object' && 'key' in row) {
-        map[String((row as { key: string }).key)] = row
-      }
-    }
-    return {
-      professionals: numFromMetric(map.professionals, DEFAULT_METRICS.professionals),
-      reviews: numFromMetric(map.reviews, DEFAULT_METRICS.reviews),
-      countries: numFromMetric(map.countries, DEFAULT_METRICS.countries),
-      projects: numFromMetric(map.projects, DEFAULT_METRICS.projects),
-      appStoreUrl: textFromMetric(map.app_store_url),
-      playStoreUrl: textFromMetric(map.play_store_url),
-    }
-  }
-
-  // Live fallbacks
-  const metrics = { ...DEFAULT_METRICS }
+async function fetchLiveMarketplaceMetrics(): Promise<Partial<HomeMetrics>> {
+  const out: Partial<HomeMetrics> = {}
   try {
     const { data: publicStats } = await supabase.rpc('get_public_footer_stats' as never)
     if (publicStats && typeof publicStats === 'object') {
@@ -118,22 +92,73 @@ export async function fetchHomepageMetrics(): Promise<HomeMetrics> {
       const pros = Number(row.total_professionals ?? 0)
       const countries = Number(row.countries_count ?? 0)
       const projects = Number(row.total_listings_created ?? 0)
-      if (pros > 0) metrics.professionals = Math.max(pros, metrics.professionals)
-      if (countries > 0) metrics.countries = Math.max(countries, metrics.countries)
-      if (projects > 0) metrics.projects = Math.max(projects, metrics.projects)
+      if (pros > 0) out.professionals = pros
+      if (countries > 0) out.countries = countries
+      if (projects > 0) out.projects = projects
     }
-
+  } catch {
+    /* ignore */
+  }
+  try {
+    const { count: proCount } = await supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_professional', true)
+    if (proCount && proCount > 0) {
+      out.professionals = Math.max(out.professionals ?? 0, proCount)
+    }
+  } catch {
+    /* ignore */
+  }
+  try {
     const { count } = await supabase
       .from('reviews')
       .select('*', { count: 'exact', head: true })
       .eq('is_approved', true)
       .or('is_hidden.is.null,is_hidden.eq.false')
-
-    if (count && count > 0) {
-      metrics.reviews = Math.max(count, metrics.reviews)
-    }
+    if (count && count > 0) out.reviews = count
   } catch {
-    // keep defaults
+    /* ignore */
+  }
+  return out
+}
+
+export async function fetchHomepageMetrics(): Promise<HomeMetrics> {
+  const live = await fetchLiveMarketplaceMetrics()
+  const metrics: HomeMetrics = {
+    professionals: live.professionals ?? 0,
+    reviews: live.reviews ?? 0,
+    countries: live.countries ?? 0,
+    projects: live.projects ?? 0,
+    appStoreUrl: '',
+    playStoreUrl: '',
+  }
+
+  const { data: rpcData, error: rpcError } = await supabase.rpc(
+    'get_homepage_metrics' as never,
+  )
+
+  if (!rpcError && rpcData && typeof rpcData === 'object') {
+    const map = rpcData as Record<string, unknown>
+    const seededPros = numFromMetric(map.professionals, 0)
+    const seededReviews = numFromMetric(map.reviews, 0)
+    const seededCountries = numFromMetric(map.countries, 0)
+    const seededProjects = numFromMetric(map.projects, 0)
+    // Prefer live counts; only use seeded if live missing AND seed is not a known placeholder inflate.
+    if (!metrics.professionals && seededPros && !looksLikePlaceholderMetric(seededPros, 'professionals')) {
+      metrics.professionals = seededPros
+    }
+    if (!metrics.reviews && seededReviews && !looksLikePlaceholderMetric(seededReviews, 'reviews')) {
+      metrics.reviews = seededReviews
+    }
+    if (!metrics.countries && seededCountries && !looksLikePlaceholderMetric(seededCountries, 'countries')) {
+      metrics.countries = seededCountries
+    }
+    if (!metrics.projects && seededProjects && !looksLikePlaceholderMetric(seededProjects, 'projects')) {
+      metrics.projects = seededProjects
+    }
+    metrics.appStoreUrl = textFromMetric(map.app_store_url)
+    metrics.playStoreUrl = textFromMetric(map.play_store_url)
   }
 
   return metrics

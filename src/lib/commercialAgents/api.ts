@@ -2,6 +2,7 @@ import { supabase } from '../supabase'
 import { createNotification } from '../notifications/notifications'
 import { slugifyCommercial } from './slug'
 import { normalizeSpokenLanguageCode, spokenLanguageFilterVariants } from '../languageDisplay'
+import { isLikelyQaOrTestName } from '../publicProfileVisibility'
 import type {
   AgentProfile,
   AgentInvitation,
@@ -65,7 +66,9 @@ export async function fetchManufacturers(
     console.error('fetchManufacturers', error)
     return []
   }
-  return (data ?? []) as ManufacturerProfile[]
+  return ((data ?? []) as ManufacturerProfile[]).filter(
+    (row) => !isLikelyQaOrTestName(row.company_name),
+  )
 }
 
 export async function fetchAgents(
@@ -92,7 +95,9 @@ export async function fetchAgents(
     console.error('fetchAgents', error)
     return []
   }
-  return (data ?? []) as AgentProfile[]
+  return ((data ?? []) as AgentProfile[]).filter(
+    (row) => !isLikelyQaOrTestName(row.full_name) && !isLikelyQaOrTestName(row.company_name),
+  )
 }
 
 export async function fetchOpportunities(
@@ -133,7 +138,9 @@ export async function fetchManufacturerBySlug(slug: string): Promise<Manufacture
     console.error('fetchManufacturerBySlug', error)
     return null
   }
-  return data as ManufacturerProfile | null
+  const row = data as ManufacturerProfile | null
+  if (!row || !row.is_published || isLikelyQaOrTestName(row.company_name)) return null
+  return row
 }
 
 export async function fetchAgentBySlug(slug: string): Promise<AgentProfile | null> {
@@ -146,7 +153,16 @@ export async function fetchAgentBySlug(slug: string): Promise<AgentProfile | nul
     console.error('fetchAgentBySlug', error)
     return null
   }
-  return data as AgentProfile | null
+  const row = data as AgentProfile | null
+  if (
+    !row ||
+    !row.is_published ||
+    isLikelyQaOrTestName(row.full_name) ||
+    isLikelyQaOrTestName(row.company_name)
+  ) {
+    return null
+  }
+  return row
 }
 
 export async function fetchOpportunityById(id: string): Promise<RepresentationOpportunity | null> {

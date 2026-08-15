@@ -7,11 +7,16 @@ import assert from 'assert'
 function isLikelyQaOrTestProfile(profile) {
   const name = (profile.full_name || '').trim()
   const email = (profile.email || '').trim().toLowerCase()
-  if (email.includes('dimarket-audit') || email.includes('dimarket-test')) return true
+  if (email.includes('dimarket-audit') || email.includes('dimarket-test') || email.includes('@dimarket-audit.')) {
+    return true
+  }
+  if (/@(example\.com|test\.invalid|mailinator\.com)$/i.test(email)) return true
   if (!name) return false
+  if (/^(test|tester|demo|demo user|test user)$/i.test(name)) return true
   if (/^qa([\s_\-.]|$)/i.test(name)) return true
   if (/^side-ads-e2e-/i.test(name)) return true
-  if (/\bqa[\s_\-]*(smoke|chat|master|e2e|admin|client|company|mfr|mfg|pv|advertiser|final|stranger|audit)\b/i.test(name)) {
+  if (/^investor\s+(ad|demo)/i.test(name)) return true
+  if (/\bqa[\s_\-]*(smoke|chat|master|e2e|admin|client|company|mfr|mfg|pv|advertiser|final|stranger|audit|self)\b/i.test(name)) {
     return true
   }
   return false
@@ -38,6 +43,8 @@ function sortProfilesForPublicDiscovery(rows) {
 
 assert.equal(isProfilePubliclyListable({ full_name: 'QA Smoke professional', is_professional: true }), false)
 assert.equal(isProfilePubliclyListable({ full_name: 'QA Chat Pro', is_professional: true }), false)
+assert.equal(isProfilePubliclyListable({ full_name: 'Test', is_professional: true }), false)
+assert.equal(isProfilePubliclyListable({ full_name: 'Investor Ad Test', is_professional: true }), false)
 assert.equal(isProfilePubliclyListable({ full_name: 'Майстер-Львів', is_professional: true }), true)
 assert.equal(
   isProfilePubliclyListable({ full_name: 'Real Pro', is_professional: true, hidden_at: '2026-01-01' }),

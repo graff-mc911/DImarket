@@ -8,6 +8,7 @@ import { haversineKm, type GeoPoint } from '../projectFeed'
 import type { VerificationLevel } from '../types'
 import type { MatchScoreBreakdown, RankedMatch } from '../bots/types'
 import { fetchProPerformanceMap, performanceMatchBoost } from '../proPerformance'
+import { filterPublicProfiles } from '../publicProfileVisibility'
 
 export const TOP_MATCH_LIMIT = 10
 
@@ -376,7 +377,7 @@ export async function rankProfessionals(
     data = primary.data as MatchCandidate[]
   }
 
-  let ranked = data
+  let ranked = filterPublicProfiles(data)
     .map((p) => scoreMatchCandidate(p, criteria))
     .sort((a, b) => b.score - a.score || b.rating - a.rating)
 

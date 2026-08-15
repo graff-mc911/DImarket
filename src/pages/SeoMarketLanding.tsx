@@ -6,6 +6,7 @@ import { LANGUAGES } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { excludeSuppressedFromQuery, filterSuppressedListings } from '../lib/suppressedListings'
+import { filterPublicProfiles } from '../lib/publicProfileVisibility'
 import { supabase } from '../lib/supabase'
 import { locationMatchesMarket } from '../lib/launchMarkets'
 import type { ListingWithImages, Profile } from '../lib/types'
@@ -73,7 +74,7 @@ export function SeoMarketLanding({ parts }: SeoMarketLandingProps) {
         ),
       ])
 
-      const allPros = (prosResult.data as Profile[] | null) ?? []
+      const allPros = filterPublicProfiles((prosResult.data as Profile[] | null) ?? [])
       const allJobs = filterSuppressedListings((jobsResult.data as ListingWithImages[] | null) ?? [])
 
       setProfessionals(

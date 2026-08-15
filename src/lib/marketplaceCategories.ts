@@ -5,6 +5,7 @@ import { CATEGORY_LABEL_I18N } from './categoryLabelI18n'
 import { getTranslation, type LanguageCode, type TranslationKey } from './i18n'
 import { findServiceBySlug, servicesPath } from './serviceTaxonomy'
 import { matchesWorkPrefix } from './categoryMatching'
+import { filterPublicProfiles } from './publicProfileVisibility'
 
 export type MarketplaceCategory = Category & {
   cover_image_url?: string | null
@@ -254,7 +255,7 @@ export async function fetchMarketplaceCategoryPage(
     if (payload.ok && payload.category) {
       category = payload.category
       services = payload.services ?? []
-      professionals = payload.professionals ?? []
+      professionals = filterPublicProfiles(payload.professionals ?? [])
       projects = (payload.projects as ListingWithImages[]) ?? []
     }
   }
@@ -279,7 +280,7 @@ export async function fetchMarketplaceCategoryPage(
       .order('created_at', { ascending: false })
       .limit(48)
 
-    professionals = ((pros as Profile[] | null) ?? [])
+    professionals = filterPublicProfiles((pros as Profile[] | null) ?? [])
       .filter((p) => {
         const works = p.work_subcategory_slugs ?? []
         return (

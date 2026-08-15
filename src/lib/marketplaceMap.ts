@@ -17,6 +17,7 @@ import {
   excludeSuppressedFromQuery,
   filterSuppressedListings,
 } from './suppressedListings'
+import { isLikelyQaOrTestName } from './publicProfileVisibility'
 import { formatDistanceKm, haversineKm } from './projectFeed'
 
 /** Default Leaflet view — Europe overview (sole constant for map init). */
@@ -663,9 +664,11 @@ export async function fetchMarketplaceMapMarkers(
     push(toProfileMarker({ ...p, service_radius_km: p.service_radius_km ?? null }, 'professional'))
   }
   for (const row of (manufacturersRes.data as ManufacturerMapRow[] | null) ?? []) {
+    if (isLikelyQaOrTestName(row.company_name)) continue
     push(toManufacturerMarker(row))
   }
   for (const row of (agentsRes.data as AgentMapRow[] | null) ?? []) {
+    if (isLikelyQaOrTestName(row.full_name)) continue
     push(toAgentMarker(row))
   }
   const manufacturerProfileIds = new Set(

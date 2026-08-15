@@ -14,6 +14,7 @@ import {
 } from './serviceTaxonomy'
 import type { ListingWithImages, Profile } from './types'
 import { excludeSuppressedFromQuery, isSuppressedListing } from './suppressedListings'
+import { filterPublicProfiles } from './publicProfileVisibility'
 import {
   documentSeoPath,
   listDocuments,
@@ -180,11 +181,13 @@ export async function fetchSearchSuggestions(
     })
   }
 
-  const pros = (prosRes.data as Array<
-    Pick<Profile, 'id' | 'full_name' | 'location' | 'bio' | 'work_subcategory_slugs'> & {
-      professional_categories?: { category?: { name?: string | null; slug?: string | null } | null }[]
-    }
-  > | null) ?? []
+  const pros = filterPublicProfiles(
+    (prosRes.data as Array<
+      Pick<Profile, 'id' | 'full_name' | 'location' | 'bio' | 'work_subcategory_slugs' | 'is_professional' | 'user_role'> & {
+        professional_categories?: { category?: { name?: string | null; slug?: string | null } | null }[]
+      }
+    > | null) ?? [],
+  )
 
   const matchedPros = resolved.length
     ? pros.filter((p) => resolved.some((r) => matchesServiceProfile(p, r.matcher)))
@@ -415,7 +418,7 @@ export async function runAdvancedSearch(
     )
   }
 
-  let professionals = (prosRes.data as Profile[] | null) ?? []
+  let professionals = filterPublicProfiles((prosRes.data as Profile[] | null) ?? [])
   let projects = ((projectsRes.data as ListingWithImages[] | null) ?? []).filter(
     (row) => !isSuppressedListing(row),
   )

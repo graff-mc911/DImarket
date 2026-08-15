@@ -27,10 +27,10 @@ import {
 } from '../lib/homeMarketplace'
 
 const EMPTY_METRICS: HomeMetrics = {
-  professionals: 52000,
-  reviews: 1800000,
-  countries: 27,
-  projects: 950000,
+  professionals: 0,
+  reviews: 0,
+  countries: 0,
+  projects: 0,
   appStoreUrl: '',
   playStoreUrl: '',
 }

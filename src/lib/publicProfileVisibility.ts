@@ -21,12 +21,20 @@ export function isLikelyQaOrTestProfile(profile: PublicProfileGate): boolean {
   if (/@(example\.com|test\.invalid|mailinator\.com)$/i.test(email)) return true
 
   if (!name) return false
+  // Exact placeholder names left by smoke/register tests
+  if (/^(test|tester|demo|demo user|test user)$/i.test(name)) return true
   if (/^qa([\s_\-.]|$)/i.test(name)) return true
   if (/^side-ads-e2e-/i.test(name)) return true
-  if (/\bqa[\s_\-]*(smoke|chat|master|e2e|admin|client|company|mfr|mfg|pv|advertiser|final|stranger|audit)\b/i.test(name)) {
+  if (/^investor\s+(ad|demo)/i.test(name)) return true
+  if (/\bqa[\s_\-]*(smoke|chat|master|e2e|admin|client|company|mfr|mfg|pv|advertiser|final|stranger|audit|self)\b/i.test(name)) {
     return true
   }
   return false
+}
+
+/** CA manufacturer / agent directory rows share the same QA naming patterns. */
+export function isLikelyQaOrTestName(name: string | null | undefined): boolean {
+  return isLikelyQaOrTestProfile({ full_name: name })
 }
 
 /** Soft-deleted or owner-hidden profiles are not publicly listable. */

@@ -5,6 +5,7 @@ import { supabase } from './supabase'
 import type { FullCostEstimate } from './costEstimatorTypes'
 import type { EstimatorLocation } from './costEstimatorTypes'
 import { haversineKm } from './projectFeed'
+import { filterPublicProfiles } from './publicProfileVisibility'
 
 export type EstimatorMatchProfile = {
   id: string
@@ -79,7 +80,9 @@ export async function fetchEstimatorMatches(
       ? { lat: location.latitude, lon: location.longitude }
       : null
 
-  const scored: EstimatorMatchProfile[] = ((profiles as Array<Omit<EstimatorMatchProfile, 'distanceKm' | 'kind'>> | null) ?? [])
+  const scored: EstimatorMatchProfile[] = filterPublicProfiles(
+    (profiles as Array<Omit<EstimatorMatchProfile, 'distanceKm' | 'kind'> & { is_professional?: boolean }> | null) ?? [],
+  )
     .map((p) => {
       const subs = p.work_subcategory_slugs || []
       const tradeHit =
