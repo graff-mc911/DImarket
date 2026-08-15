@@ -84,10 +84,10 @@ export function OwnerProfilesManager() {
             ? pub
             : null
 
-      if (expected != null && data.length < expected) {
-        setError(
-          `РОЗРИВ ДАНИХ: публіка бачить ${expected}, Owner панель показує ${data.length}. Застосуйте APPLY_OWNER_PROFILE_MODERATION.sql і оновіть сторінку.`,
-        )
+      if (expected != null && data.length === 0 && expected > 0) {
+        setError(`Список порожній, хоча на сайті видно ${expected}. Оновіть сторінку (Ctrl+Shift+R).`)
+      } else if (expected != null && data.length > 0 && data.length < expected) {
+        setNotice(`Показано ${data.length} з ~${expected}.`)
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e)
@@ -139,22 +139,12 @@ export function OwnerProfilesManager() {
     <div className="rounded-[22px] border border-[var(--glass-border)] bg-white/50 p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-extrabold text-[#2f2a24]">Профілі DImarket</h2>
+          <h2 className="text-lg font-extrabold text-[#2f2a24]">Профілі</h2>
           <p className="mt-1 text-sm text-[#6f665d]">
-            Одна БД → публічні «Топ майстри» / «Топ компанії» ↔ Owner (пошук QA → Hide / Delete).
+            Пошук, приховування та видалення профілів з публічної видачі.
           </p>
         </div>
       </div>
-
-      <pre className="mt-3 overflow-x-auto rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#f8f7f5] p-3 text-[11px] leading-5 text-[#4a453f]">
-{`SUPABASE profiles
-   ↓
-PUBLIC: is_professional + user_role=professional | company
-   ↓
-«ТОП МАЙСТРИ» / «ТОП КОМПАНІЇ»  ←→  OWNER: відповідний фільтр / «QA»
-   ↓                                      ↓
-КЛІЄНТ                                   DELETE / HIDE / FEATURED`}
-      </pre>
 
       <div
         className={`mt-4 rounded-xl border px-3 py-3 text-sm ${
@@ -168,21 +158,11 @@ PUBLIC: is_professional + user_role=professional | company
         <div className="flex flex-wrap items-center gap-2 font-semibold">
           {consistent ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
           <span>
-            Топ майстри: {topMastersCount ?? '—'} · Топ компанії: {topCompaniesCount ?? '—'} ·
-            Усі публічні: {publicCount ?? '—'} · Owner список: {rows.length}
-            {counts ? ` · Усі в БД: ${counts.all_profiles}` : ''}
+            Майстри: {topMastersCount ?? counts?.masters_role ?? '—'} · Компанії:{' '}
+            {topCompaniesCount ?? counts?.companies_role ?? '—'} · У списку: {rows.length}
+            {counts ? ` · QA: ${counts.qa_named} · Hidden: ${counts.hidden} · Deleted: ${counts.deleted}` : ''}
           </span>
         </div>
-        <p className="mt-1 text-xs leading-5">
-          Синхрон: хто на головній у «Топ компанії» — той у фільтрі «Топ компанії» тут. QA → Hide/Delete
-          прибирає з публічної видачі.
-        </p>
-        {counts && (
-          <p className="mt-1 text-xs">
-            Майстри: {counts.masters_role} · Компанії: {counts.companies_role} · QA: {counts.qa_named}{' '}
-            · Hidden: {counts.hidden} · Deleted: {counts.deleted}
-          </p>
-        )}
       </div>
 
       <div className="mt-4 flex flex-col gap-3 md:flex-row">
@@ -229,9 +209,7 @@ PUBLIC: is_professional + user_role=professional | company
 
       {migrationHint && (
         <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-          Потрібно застосувати SQL:{' '}
-          <code className="font-mono">supabase/migrations/APPLY_OWNER_PROFILE_MODERATION.sql</code> у
-          Supabase SQL Editor (owner RPC + soft-delete/hide + ліміт до 2000).
+          Немає доступу до модерації профілів. Оновіть сторінку або перевірте, що ви залогінені як owner.
         </div>
       )}
 
