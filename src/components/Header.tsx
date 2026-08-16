@@ -355,12 +355,12 @@ export function Header() {
       })()}
 
       {/* ===== Основна шапка (фіксована) ===== */}
-      <header className="site-header-shell w-full">
+      <header className="site-header-shell w-full min-w-0">
         <div
-          className="w-full"
+          className="w-full min-w-0"
         >
-          <div className="shrink-0 px-[max(var(--layout-gutter),env(safe-area-inset-left,0px))] py-2 md:px-[max(1.25rem,var(--layout-gutter))] md:py-2.5">
-            <div className="flex items-center justify-between gap-2 sm:gap-3">
+            <div className="min-w-0 px-[max(var(--layout-gutter),env(safe-area-inset-left,0px))] py-2 md:px-[max(1.25rem,var(--layout-gutter))] md:py-2.5">
+            <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
 
               {/* Логотип */}
               <button onClick={() => goTo('/')} type="button" className="shrink-0 text-left">
@@ -615,9 +615,12 @@ export function Header() {
               </div>
             </div>
 
-            {/* Amazon subnav */}
-            <div className="site-header-subnav mt-1 hidden sm:block">
-              <div className="amazon-dept-scroll px-3 py-1 md:px-4">
+            {/* Amazon subnav — only this row may scroll horizontally */}
+            <div className="site-header-subnav mt-1 hidden min-w-0 sm:block">
+              <nav
+                className="amazon-dept-scroll px-3 py-1 md:px-4"
+                aria-label={t('header.categories')}
+              >
                 <div
                   ref={categoriesRef}
                   className="categories-mega-anchor relative shrink-0"
@@ -675,7 +678,7 @@ export function Header() {
                 <button type="button" onClick={goToHowItWorks} className="amazon-dept-link">
                   {t('footer.howItWorks')}
                 </button>
-              </div>
+              </nav>
             </div>
 
             <CategoriesMegaMenu

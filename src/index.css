@@ -202,9 +202,11 @@
     min-width: 0;
   }
 
-  @media (max-width: 1279px) {
+  @media (max-width: 1023px) {
     .app-shell {
-      /* Match mobile-bottom-nav content (4.5rem) + device safe area */
+      /* Match mobile-bottom-nav content (4.5rem) + device safe area.
+         Desktop chrome starts at Tailwind `lg` (1024px) — same as the
+         location selector. Do not reserve this space on desktop. */
       padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
     }
   }
@@ -1976,6 +1978,8 @@
   .site-header-subnav {
     background: var(--header-nav-bg);
     color: #ffffff;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .site-header-shell .header-link {
@@ -2061,15 +2065,27 @@
 
   .amazon-dept-scroll {
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 0.25rem;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
   }
 
   .amazon-dept-scroll::-webkit-scrollbar {
-    display: none;
+    height: 6px;
+  }
+
+  .amazon-dept-scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.35);
   }
 
   .amazon-dept-link {
@@ -2835,6 +2851,15 @@
     .select-glass {
       min-height: 3rem;
     }
+  }
+}
+
+/* Desktop chrome (Tailwind `lg` = 1024px): never paint the mobile tab bar.
+   Viewport-only — no user-agent / browser-brand conditions. */
+@media (min-width: 1024px) {
+  .mobile-bottom-nav,
+  .mobile-nav-more {
+    display: none;
   }
 }
 

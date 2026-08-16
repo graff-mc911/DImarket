@@ -88,6 +88,7 @@ const MORE_ICONS: Record<string, ReactNode> = {
  * - Content row height is independent of safe-area
  * - safe-area is padding on the outer nav only (never eats content height)
  * - Icon + label always fully visible (no overflow clipping)
+ * - Hidden from Tailwind `lg` (1024px) up — desktop uses the header dept nav
  */
 export function MobileBottomNav() {
   const { t, user, profile, currency, setCurrency, signOut } = useApp()
@@ -181,7 +182,7 @@ export function MobileBottomNav() {
   return (
     <>
       <nav
-        className="mobile-bottom-nav xl:hidden"
+        className="mobile-bottom-nav lg:hidden"
         aria-label={t('nav.mobileNavigation')}
       >
         <div className="mobile-bottom-nav__bar">
@@ -221,7 +222,7 @@ export function MobileBottomNav() {
       </nav>
 
       {moreOpen ? (
-        <div className="mobile-nav-more xl:hidden" role="presentation">
+        <div className="mobile-nav-more lg:hidden" role="presentation">
           <button
             type="button"
             className="mobile-nav-more__backdrop"
