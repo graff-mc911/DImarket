@@ -65,7 +65,7 @@ test.describe('Desktop header chrome (lg+)', () => {
       await page.setViewportSize(vp)
       await gotoPath(page, '/')
 
-      await expect(bottomNav(page)).toBeHidden()
+      await expect(bottomNav(page)).toHaveCount(0)
       await expect(page.locator('.mobile-nav-more')).toHaveCount(0)
 
       await expect(page.locator('header').getByRole('img', { name: /DImarket logo/i })).toBeVisible()

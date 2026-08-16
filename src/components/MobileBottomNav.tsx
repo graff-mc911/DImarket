@@ -79,6 +79,25 @@ const MORE_ICONS: Record<string, ReactNode> = {
   'owner-official-sources': <ShieldCheck className="h-5 w-5" aria-hidden />,
 }
 
+/** Tailwind `lg` — desktop chrome (header dept nav), not browser brand. */
+const DESKTOP_LAYOUT_MQ = '(min-width: 1024px)'
+
+function useDesktopLayout() {
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(DESKTOP_LAYOUT_MQ).matches,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia(DESKTOP_LAYOUT_MQ)
+    const sync = () => setIsDesktop(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
+  return isDesktop
+}
+
 /**
  * Single mobile navigation SSoT (bottom bar + More sheet).
  * Routes/labels come from lib/navMap.ts — do not hardcode paths here.
@@ -88,10 +107,11 @@ const MORE_ICONS: Record<string, ReactNode> = {
  * - Content row height is independent of safe-area
  * - safe-area is padding on the outer nav only (never eats content height)
  * - Icon + label always fully visible (no overflow clipping)
- * - Hidden from Tailwind `lg` (1024px) up — desktop uses the header dept nav
+ * - Not rendered from Tailwind `lg` (1024px) up — desktop uses the header dept nav
  */
 export function MobileBottomNav() {
   const { t, user, profile, currency, setCurrency, signOut } = useApp()
+  const isDesktopLayout = useDesktopLayout()
   const [path, setPath] = useState(window.location.pathname)
   const [hash, setHash] = useState(window.location.hash)
   const [moreOpen, setMoreOpen] = useState(false)
@@ -118,7 +138,11 @@ export function MobileBottomNav() {
   }, [])
 
   useEffect(() => {
-    if (!moreOpen) return
+    if (isDesktopLayout) setMoreOpen(false)
+  }, [isDesktopLayout])
+
+  useEffect(() => {
+    if (!moreOpen || isDesktopLayout) return
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setMoreOpen(false)
     }
@@ -130,7 +154,7 @@ export function MobileBottomNav() {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = prev
     }
-  }, [moreOpen])
+  }, [moreOpen, isDesktopLayout])
 
   const isActive = (target: string) => {
     if (target === '/') return path === '/' && hash !== '#choose-category'
@@ -178,6 +202,9 @@ export function MobileBottomNav() {
   const regularAccount = accountEntries.filter((e) => !e.ownerOnly)
   const accountMore = regularAccount.map((e) => toMoreItem(e, 'mobile-account'))
   const ownerMore = ownerAccount.map((e) => toMoreItem(e, 'mobile-account'))
+
+  // Viewport breakpoint only — a desktop Edge/Opera/Chrome/Firefox window is desktop.
+  if (isDesktopLayout) return null
 
   return (
     <>

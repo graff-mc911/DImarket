@@ -1973,6 +1973,9 @@
     background: var(--header-bg);
     border-bottom: none;
     color: #ffffff;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .site-header-subnav {

@@ -210,13 +210,6 @@ export function Header() {
     setCategoriesOpen(false)
   }
 
-  const closeDropdowns = () => {
-    setLanguageOpen(false)
-    setCurrencyOpen(false)
-    setAccountOpen(false)
-    setCategoriesOpen(false)
-  }
-
   const goTo = (path: string) => {
     closeAllMenus()
     navigateTo(path)
