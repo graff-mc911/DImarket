@@ -46,6 +46,9 @@ assert.equal(isProfilePubliclyListable({ full_name: 'QA Chat Pro', is_profession
 assert.equal(isProfilePubliclyListable({ full_name: 'Test', is_professional: true }), false)
 assert.equal(isProfilePubliclyListable({ full_name: 'Investor Ad Test', is_professional: true }), false)
 assert.equal(isProfilePubliclyListable({ full_name: 'Майстер-Львів', is_professional: true }), true)
+// Map select used to omit is_professional; the gate must not treat that as listable.
+assert.equal(isProfilePubliclyListable({ full_name: 'Madrid Company' }), false)
+assert.equal(isProfilePubliclyListable({ full_name: 'Madrid Company', is_professional: true }), true)
 assert.equal(
   isProfilePubliclyListable({ full_name: 'Real Pro', is_professional: true, hidden_at: '2026-01-01' }),
   false,

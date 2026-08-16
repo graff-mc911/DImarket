@@ -124,13 +124,13 @@ export const MAP_KIND_GLYPH: Record<MapMarkerKind | 'mixed', string> = {
   mixed: '+',
 }
 
-const CACHE_KEY = 'dimarket_map_markers_v8'
+const CACHE_KEY = 'dimarket_map_markers_v9'
 const CACHE_TTL_MS = 90_000
 
 const PROFILE_MAP_SELECT = `
   id, full_name, bio, location, service_latitude, service_longitude,
   rating, is_verified, verification_level, profile_photo, avatar_url, user_role,
-  work_subcategory_slugs, availability_status,
+  work_subcategory_slugs, availability_status, is_professional,
   professional_categories(category:categories(name, slug))
 `
 
@@ -200,7 +200,10 @@ async function fetchAllBusinessProfiles(
   const { filterPublicProfiles } = await import('./publicProfileVisibility')
   const seen = new Set<string>()
   const merged: ProfileRow[] = []
-  for (const row of filterPublicProfiles(result.data)) {
+  // Query already eq(is_professional, true). Stamp the field so the public gate
+  // cannot drop every row when the column is omitted from a cached/partial select.
+  const stamped = result.data.map((row) => ({ ...row, is_professional: true }))
+  for (const row of filterPublicProfiles(stamped)) {
     if (seen.has(row.id)) continue
     seen.add(row.id)
     merged.push(row)
@@ -259,6 +262,7 @@ type ProfileRow = {
   profile_photo: string | null
   avatar_url: string | null
   user_role: string | null
+  is_professional?: boolean | null
   work_subcategory_slugs: string[] | null
   availability_status: string | null
   professional_categories?: {
