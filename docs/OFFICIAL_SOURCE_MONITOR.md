@@ -61,13 +61,17 @@ Trust labels come from `trust_tier` / source type (EU, gazette, national, region
 ```bash
 # 1. Apply SQL in Supabase SQL editor (or):
 npm run db:apply-official-sources
+# Then paste APPLY_DOCUMENTS_OSM_BRIDGE.sql (Documents ↔ OSM link)
 
-# 2. Deploy function
+# 2. Deploy function (required — prod returns 404 until deployed)
 npm run deploy:official-sources
 
-# 3. Optional cron secret (GitHub Actions)
-# OFFICIAL_SOURCES_CRON_SECRET or fallback MARKETING_CRON_SECRET
+# 3. Cron secret (GitHub Actions + Edge secrets)
+# OFFICIAL_SOURCES_CRON_SECRET (preferred) or MARKETING_CRON_SECRET fallback
+# Without this, workflows exit 0 without calling the edge ("skip")
 ```
+
+**Audit note (2026-08-13):** `POST …/functions/v1/official-sources-monitor` returned `404 NOT_FOUND` from production; GitHub Actions workflow run count for daily cron was **0**. Code + YAML exist; live deploy/secrets are operator steps.
 
 ## Tests
 

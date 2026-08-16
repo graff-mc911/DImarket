@@ -145,6 +145,13 @@ export type DocumentRecord = {
   titleUk?: string
   descriptionEn?: string
   descriptionUk?: string
+  /** OSM bridge: legal_documents.doc_key */
+  osmDocKey?: string
+  /** OSM bridge: legal_documents.id when linked */
+  legalDocumentId?: string
+  /** Live OSM verification_status when enriched from DB */
+  osmVerificationStatus?: string
+  osmNextVerificationAt?: string | null
 }
 
 export function documentSeoPath(doc: Pick<DocumentRecord, 'countrySlug' | 'city' | 'slug'>): string {

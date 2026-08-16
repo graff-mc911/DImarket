@@ -31,9 +31,11 @@ export {
 } from './display'
 export { getOfficialFormPack, withOfficialForm, fieldDisplayLabel } from './officialForms'
 export type { OfficialFormPack } from './types'
-export { documentVerificationStatus } from './trust'
+export { documentVerificationStatus, honestDocumentStatus } from './trust'
 export { vehicleCheckPortalsFor, isVehicleDocumentSlug } from './vehicleCheckPortals'
 export type { VehicleCheckPortal } from './vehicleCheckPortals'
+export { documentsOsmDocKey, documentsOsmSourceKey } from './osmKeys'
+export { enrichDocumentWithOsm, fetchOsmFreshnessByDocKey } from './osmEnrich'
 export {
   buildFilledDocumentPdfHtml,
   openFilledDocumentPdf,

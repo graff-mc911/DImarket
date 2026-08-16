@@ -36,11 +36,13 @@ export function buildFilledDocumentPdfHtml(input: FilledDocumentPdfInput): strin
     : ''
 
   const meta = {
+    documentName: input.title,
     version: input.version,
     jurisdiction: input.jurisdiction,
+    generatedAt: new Date(),
     sourceName: input.sourceName,
     sourceUrl: input.sourceUrl,
-    lastVerified: input.lastVerified,
+    lastVerifiedAt: input.lastVerified,
   }
 
   return `<!DOCTYPE html>

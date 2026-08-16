@@ -615,6 +615,22 @@ async function runChecks(
           updated_at: now.toISOString(),
         })
         .eq('primary_source_id', source.id)
+
+      const { data: brokenDocs } = await admin
+        .from('legal_documents')
+        .select('id')
+        .eq('primary_source_id', source.id)
+      const brokenIds = (brokenDocs ?? []).map((d: { id: string }) => d.id)
+      if (brokenIds.length) {
+        await admin
+          .from('documents_catalog')
+          .update({
+            status: verification_status === 'outdated' ? 'outdated' : 'under_review',
+            last_verified_at: null,
+            updated_at: now.toISOString(),
+          })
+          .in('legal_document_id', brokenIds)
+      }
     } else if (oldHash && hash && oldHash !== hash) {
       verification_status = 'changed'
       content_status = 'ok'
@@ -676,6 +692,16 @@ async function runChecks(
           .from('legal_documents')
           .update({ verification_status: 'needs_review', updated_at: now.toISOString() })
           .in('id', affected)
+
+        // Keep Documents & Procedures catalog in sync when linked via legal_document_id
+        await admin
+          .from('documents_catalog')
+          .update({
+            status: 'under_review',
+            last_verified_at: null,
+            updated_at: now.toISOString(),
+          })
+          .in('legal_document_id', affected)
       }
     } else if (!oldHash && hash) {
       verification_status = 'verified'

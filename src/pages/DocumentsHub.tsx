@@ -6,6 +6,7 @@ import { appendLocationToPath, formatGlobalLocationLabel } from '../lib/globalLo
 import { documentDisplayDescription, documentDisplayTitle } from '../lib/documents/display'
 import { DOCUMENTS_SUBCATEGORY_ORDER } from '../lib/documents/catalog'
 import { documentSeoPath } from '../lib/documents/types'
+import { honestDocumentStatus } from '../lib/documents'
 import { jurisdictionFromLocation } from '../lib/documents/location'
 import { listDocuments } from '../lib/documents/query'
 import type { DocumentsSubcategorySlug } from '../lib/documents/types'
@@ -110,7 +111,7 @@ export function DocumentsHub({ subcategory = null }: Props) {
                         {documentDisplayTitle(doc, language.code, t)}
                       </p>
                       <p className="mt-0.5 text-xs text-[#6e6e73]">
-                        {doc.jurisdiction} · {t(`docs.status.${doc.status}`)}
+                        {doc.jurisdiction} · {t(`docs.status.${honestDocumentStatus(doc)}`)}
                       </p>
                       <p className="mt-1 text-sm text-[#6e6e73] line-clamp-2">
                         {documentDisplayDescription(doc, language.code, t)}

@@ -16,7 +16,10 @@ Public category for jurisdiction-aware contracts, licenses, permits, and governm
 - Static `catalog.ts` / `euPack.ts` / `officialForms.ts` ship with `lastVerified: null`.
 - `DocumentDetailPage` uses `DocumentFreshnessBadge` via `documentVerificationStatus()` (`needs_review` / `needs_research` until real verification).
 - Do **not** bulk-seed `documents_catalog` with seed dates as `last_verified_at`.
-- Future: link rows via `legal_document_id` so OSM Phase 1–7 drives freshness.
+- Bridge: `documentsOsmDocKey` + `enrichDocumentWithOsm()` overlay live OSM status when `legal_documents.doc_key = docs-{cc}-{slug}` exists.
+- SQL: `APPLY_DOCUMENTS_OSM_BRIDGE.sql` / `20260813280000_documents_osm_bridge.sql` seeds vehicle form portals, links `legal_document_id`, and adds trigger syncing catalog status from OSM.
+- Edge `official-sources-monitor` also updates `documents_catalog` when linked legal docs go needs_review/outdated.
+- **Production requires:** edge function deployed + bridge SQL applied + `OFFICIAL_SOURCES_CRON_SECRET` (cron currently shows 0 runs until secrets/deploy are live).
 
 ## Routes
 
