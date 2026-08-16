@@ -62,6 +62,10 @@ const PUBLIC_GUTTER_ONLY: Array<{
     path: '/boost',
     heading: /Отримуйте більше клієнтів|Get more clients/i,
   },
+  {
+    path: '/categories',
+    heading: /Категорії|Categories/i,
+  },
 ]
 
 const AUTH_REDIRECT_PATHS = [

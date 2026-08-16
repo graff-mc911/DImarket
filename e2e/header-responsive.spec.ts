@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
-import { expectNoHorizontalOverflow, gotoPath } from './helpers'
+import { expectAppShell, expectNoHorizontalOverflow, gotoPath } from './helpers'
 
 const DESKTOP = [
   { width: 1640, height: 900 },
@@ -116,6 +116,36 @@ test.describe('Desktop header chrome (lg+)', () => {
       await expectNoHorizontalOverflow(page)
     })
   }
+})
+
+test.describe('Categories is a page with site chrome', () => {
+  test('desktop header Categories opens /categories with header and footer', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await gotoPath(page, '/')
+
+    await deptNav(page).getByRole('button', { name: /Categories|Категорії/i }).click()
+    await expect(page).toHaveURL(/\/categories$/)
+    await expectAppShell(page)
+    await expect(page.getByRole('heading', { level: 1, name: /Categories|Категорії/i })).toBeVisible()
+    await expect(page.locator('.mega-menu--page')).toBeVisible()
+    await expect(page.locator('.mega-menu__close')).toHaveCount(0)
+    await expect(page.locator('.mega-menu__backdrop')).toHaveCount(0)
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await expect(page.locator('.mega-menu__chip').first()).toBeVisible()
+  })
+
+  test('mobile Categories tab opens /categories with header and footer', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await gotoPath(page, '/')
+
+    await bottomNav(page).getByRole('button', { name: /Categories|Категор/i }).click()
+    await expect(page).toHaveURL(/\/categories$/)
+    await expectAppShell(page)
+    await expect(page.getByRole('heading', { level: 1, name: /Categories|Категорії/i })).toBeVisible()
+    await expect(page.locator('.mega-menu--page')).toBeVisible()
+    await expect(page.locator('.mega-menu__close')).toHaveCount(0)
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+  })
 })
 
 test.describe('Mobile bottom nav regression', () => {

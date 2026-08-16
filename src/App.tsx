@@ -187,6 +187,9 @@ const SearchPage = lazyWithRetry(() =>
 const MapExplore = lazyWithRetry(() =>
   import('./pages/MapExplore').then((m) => ({ default: m.MapExplore })),
 )
+const Categories = lazyWithRetry(() =>
+  import('./pages/Categories').then((m) => ({ default: m.Categories })),
+)
 const ServiceResults = lazyWithRetry(() =>
   import('./pages/ServiceResults').then((m) => ({ default: m.ServiceResults })),
 )
@@ -367,6 +370,7 @@ function App() {
       case '/':              return <Home />
       case '/search':        return <SearchPage />
       case '/map':           return <MapExplore />
+      case '/categories':    return <Categories />
       case '/professionals': return <Professionals />
       case '/companies':     return <Companies />
       case '/listings':      return <Listings />

@@ -40,7 +40,6 @@ import { LanguageSelector } from './LanguageSelector'
 import { Logo }        from './Logo'
 import { EmojiText } from './EmojiText'
 import { NotificationCenter } from './notifications/NotificationCenter'
-import { CategoriesMegaMenu } from './CategoriesMegaMenu'
 import {
   headerDeptAfterEntries,
   headerDeptBeforeEntries,
@@ -75,7 +74,6 @@ export function Header() {
   const [, setCurrencyOpen] = useState(false)
   const [languageOpen, setLanguageOpen]   = useState(false)
   const [accountOpen, setAccountOpen]     = useState(false)
-  const [categoriesOpen, setCategoriesOpen] = useState(false)
 
   // Глобальний банер від власника
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
@@ -86,7 +84,6 @@ export function Header() {
   const languageRef = useRef<HTMLDivElement | null>(null)
   const currencyRef = useRef<HTMLDivElement | null>(null)
   const accountRef  = useRef<HTMLDivElement | null>(null)
-  const categoriesRef = useRef<HTMLDivElement | null>(null)
   const fixedHeaderRef = useRef<HTMLDivElement | null>(null)
   const [headerSpacerPx, setHeaderSpacerPx] = useState(128)
 
@@ -123,9 +120,6 @@ export function Header() {
       if (languageRef.current && !languageRef.current.contains(target)) setLanguageOpen(false)
       if (currencyRef.current && !currencyRef.current.contains(target)) setCurrencyOpen(false)
       if (accountRef.current  && !accountRef.current.contains(target))  setAccountOpen(false)
-      if (categoriesRef.current && !categoriesRef.current.contains(target)) {
-        // Full-screen mega closes via backdrop / Escape — don't auto-close on outside click of button only
-      }
     }
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeAllMenus()
@@ -206,7 +200,6 @@ export function Header() {
     setLanguageOpen(false)
     setCurrencyOpen(false)
     setAccountOpen(false)
-    setCategoriesOpen(false)
   }
 
   const goTo = (path: string) => {
@@ -428,7 +421,6 @@ export function Header() {
                       if (next) {
                         setCurrencyOpen(false)
                         setAccountOpen(false)
-                        setCategoriesOpen(false)
                       }
                     }}
                   />
@@ -441,7 +433,6 @@ export function Header() {
                         setAccountOpen(o => !o)
                         setLanguageOpen(false)
                         setCurrencyOpen(false)
-                        setCategoriesOpen(false)
                       } else {
                         goTo('/login')
                       }
@@ -640,25 +631,14 @@ export function Header() {
                 aria-label={t('header.categories')}
               >
                 <div className="amazon-dept-row">
-                  <div
-                    ref={categoriesRef}
-                    className="categories-mega-anchor relative shrink-0"
+                  <button
+                    onClick={() => goTo('/categories')}
+                    type="button"
+                    aria-current={isActiveRoute('/categories') ? 'page' : undefined}
+                    className={`${navTextClass(isActiveRoute('/categories'))} font-bold`}
                   >
-                    <button
-                      onClick={() => {
-                        setCategoriesOpen((o) => !o)
-                        setLanguageOpen(false)
-                        setCurrencyOpen(false)
-                        setAccountOpen(false)
-                      }}
-                      type="button"
-                      aria-expanded={categoriesOpen}
-                      aria-haspopup="dialog"
-                      className="amazon-dept-link font-bold"
-                    >
-                      {t('header.categories')}
-                    </button>
-                  </div>
+                    {t('header.categories')}
+                  </button>
                   {deptRow1.map((item) => (
                     <button
                       key={item.key}
@@ -686,16 +666,6 @@ export function Header() {
                 ) : null}
               </nav>
             </div>
-
-            <CategoriesMegaMenu
-              open={categoriesOpen}
-              variant="fullscreen"
-              onClose={() => setCategoriesOpen(false)}
-              onNavigate={(path) => {
-                closeAllMenus()
-                navigateTo(path)
-              }}
-            />
 
             {/* AI assistant (mobile) */}
             <form

@@ -27,8 +27,8 @@ interface CategoriesMegaMenuProps {
   open: boolean
   onClose: () => void
   onNavigate: (path: string) => void
-  /** Full-screen panel (desktop) or slide-in drawer (mobile) */
-  variant?: 'fullscreen' | 'drawer'
+  /** Full-screen overlay, slide-in drawer, or in-page browser (header/footer stay visible). */
+  variant?: 'fullscreen' | 'drawer' | 'page'
 }
 
 export function CategoriesMegaMenu({
@@ -151,8 +151,10 @@ export function CategoriesMegaMenu({
     onClose()
   }
 
+  const isPage = variant === 'page'
+
   useEffect(() => {
-    if (!open) return
+    if (!open || isPage) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
     }
@@ -163,7 +165,7 @@ export function CategoriesMegaMenu({
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = prev
     }
-  }, [open, onClose])
+  }, [open, onClose, isPage])
 
   const [isMobile, setIsMobile] = useState(false)
 
@@ -175,23 +177,33 @@ export function CategoriesMegaMenu({
     return () => mq.removeEventListener('change', sync)
   }, [])
 
-  const isDrawer = variant === 'drawer' || isMobile
+  const isOverlayDrawer = !isPage && (variant === 'drawer' || isMobile)
+  const isTwoStepMobile = isPage ? isMobile : isOverlayDrawer
+  const variantClass = isPage
+    ? 'mega-menu--page'
+    : isOverlayDrawer
+      ? 'mega-menu--drawer'
+      : 'mega-menu--fullscreen'
+  const TitleTag = isPage ? 'h1' : 'h2'
+  const HeaderTag = isPage ? 'div' : 'header'
 
   if (!open) return null
 
   return (
     <div
-      className={`mega-menu ${isDrawer ? 'mega-menu--drawer' : 'mega-menu--fullscreen'} is-open`}
-      role="dialog"
-      aria-modal="true"
+      className={`mega-menu ${variantClass} is-open`}
+      role={isPage ? 'region' : 'dialog'}
+      aria-modal={isPage ? undefined : 'true'}
       aria-label={t('marketplace.categories')}
     >
-      <button type="button" className="mega-menu__backdrop" aria-label={t('mega.close')} onClick={onClose} />
+      {isPage ? null : (
+        <button type="button" className="mega-menu__backdrop" aria-label={t('mega.close')} onClick={onClose} />
+      )}
 
       <div className="mega-menu__panel">
-        <header className="mega-menu__header">
+        <HeaderTag className="mega-menu__header">
           <div className="mega-menu__header-left">
-            {isDrawer && mobileStep === 'services' && active ? (
+            {isTwoStepMobile && mobileStep === 'services' && active ? (
               <button
                 type="button"
                 className="mega-menu__back"
@@ -201,7 +213,7 @@ export function CategoriesMegaMenu({
                 {marketplaceCategoryLabel(active, language.code)}
               </button>
             ) : (
-              <h2 className="mega-menu__title">{t('header.categories')}</h2>
+              <TitleTag className="mega-menu__title">{t('header.categories')}</TitleTag>
             )}
           </div>
 
@@ -213,14 +225,16 @@ export function CategoriesMegaMenu({
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t('mega.searchPlaceholder')}
               aria-label={t('mega.searchPlaceholder')}
-              autoFocus={!isDrawer}
+              autoFocus={!isPage && !isTwoStepMobile}
             />
           </label>
 
-          <button type="button" className="mega-menu__close" onClick={onClose} aria-label={t('mega.close')}>
-            <X className="h-5 w-5" />
-          </button>
-        </header>
+          {isPage ? null : (
+            <button type="button" className="mega-menu__close" onClick={onClose} aria-label={t('mega.close')}>
+              <X className="h-5 w-5" />
+            </button>
+          )}
+        </HeaderTag>
 
         <div className="mega-menu__chips">
           <div className="mega-menu__chip-row">
@@ -303,7 +317,7 @@ export function CategoriesMegaMenu({
         <div className="mega-menu__body">
           <aside
             className={`mega-menu__left ${
-              isDrawer && mobileStep === 'services' ? 'is-hidden-mobile' : ''
+              isTwoStepMobile && mobileStep === 'services' ? 'is-hidden-mobile' : ''
             }`}
           >
             <p className="mega-menu__col-label">{t('marketplace.mainCategories')}</p>
@@ -319,12 +333,12 @@ export function CategoriesMegaMenu({
                       type="button"
                       className={`mega-menu__main ${isActive ? 'is-active' : ''}`}
                       onMouseEnter={() => {
-                        if (!isDrawer) setActiveId(cat.id)
+                        if (!isTwoStepMobile) setActiveId(cat.id)
                       }}
                       onFocus={() => setActiveId(cat.id)}
                       onClick={() => {
                         setActiveId(cat.id)
-                        if (isDrawer) setMobileStep('services')
+                        if (isTwoStepMobile) setMobileStep('services')
                         else go(marketplaceCategoryPath(cat.slug), cat)
                       }}
                     >
@@ -349,7 +363,7 @@ export function CategoriesMegaMenu({
 
           <div
             className={`mega-menu__right ${
-              isDrawer && mobileStep === 'mains' ? 'is-hidden-mobile' : ''
+              isTwoStepMobile && mobileStep === 'mains' ? 'is-hidden-mobile' : ''
             }`}
           >
             {active ? (

@@ -149,7 +149,7 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://dimarket.app/' },
-            { '@type': 'ListItem', position: 2, name: catTitle, item: 'https://dimarket.app/#choose-category' },
+            { '@type': 'ListItem', position: 2, name: catTitle, item: 'https://dimarket.app/categories' },
             { '@type': 'ListItem', position: 3, name: subTitle, item: `https://dimarket.app${canonical}` },
           ],
         },
@@ -296,7 +296,7 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
         <div className="amazon-section-card p-10 text-center">
           <h1 className="text-lg font-bold text-[var(--ink-900)]">{t('services.notFoundTitle')}</h1>
           <p className="mx-auto mt-3 max-w-xl text-sm text-[var(--ink-600)]">{t('services.notFoundText')}</p>
-          <button type="button" className="btn-primary mt-6 text-sm" onClick={() => navigateTo('/#choose-category')}>
+          <button type="button" className="btn-primary mt-6 text-sm" onClick={() => navigateTo('/categories')}>
             {t('services.backToCategories')}
           </button>
         </div>
@@ -412,7 +412,7 @@ function ServiceResultsView({
         className="mb-4"
         items={[
           { label: t('services.crumbHome'), href: '/' },
-          { label: catTitle, href: '/#choose-category' },
+          { label: catTitle, href: '/categories' },
           { label: subTitle },
         ]}
       />

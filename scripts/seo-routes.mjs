@@ -98,6 +98,15 @@ export const STATIC_ROUTES = [
     schema: 'page',
   },
   {
+    path: '/categories',
+    title: 'Категорії послуг | DImarket',
+    description:
+      'Каталог категорій DImarket: маркетплейс, популярні послуги та основні розділи будівництва й ремонту.',
+    changefreq: 'weekly',
+    priority: 0.8,
+    schema: 'page',
+  },
+  {
     path: '/pricing',
     title: 'Тарифи та плани | DImarket',
     description: 'Тарифи DImarket для фахівців, компаній та рекламодавців.',
@@ -323,6 +332,7 @@ export function prerenderRoutes() {
     '/for-professionals',
     '/for-companies',
     '/search',
+    '/categories',
     '/category/construction',
     '/category/specialists',
     '/category/renovation',

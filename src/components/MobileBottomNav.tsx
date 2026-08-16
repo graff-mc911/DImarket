@@ -157,7 +157,7 @@ export function MobileBottomNav() {
   }, [moreOpen, isDesktopLayout])
 
   const isActive = (target: string) => {
-    if (target === '/') return path === '/' && hash !== '#choose-category'
+    if (target === '/') return path === '/'
     if (target === '/listings' || target === '/search') {
       return path === '/listings' || path === '/search' || path.startsWith('/listings/')
     }
@@ -172,19 +172,6 @@ export function MobileBottomNav() {
       setHash('')
     }
     navigateTo(target)
-  }
-
-  const goCategories = () => {
-    setMoreOpen(false)
-    if (path === '/') {
-      document.getElementById('choose-category')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      if (window.location.hash !== '#choose-category') {
-        window.history.replaceState({}, '', '/#choose-category')
-        setHash('#choose-category')
-      }
-      return
-    }
-    navigateTo('/#choose-category')
   }
 
   const toMoreItem = (entry: NavEntry, surface: 'mobile-more' | 'mobile-account'): MoreItem => ({
@@ -226,10 +213,10 @@ export function MobileBottomNav() {
             onClick={() => go('/listings')}
           />
           <NavItem
-            active={path === '/' && hash === '#choose-category' && !moreOpen}
+            active={isActive('/categories') && !moreOpen}
             icon={<Grid3X3 className="mobile-bottom-nav__icon" aria-hidden />}
             label={t('nav.categories')}
-            onClick={goCategories}
+            onClick={() => go('/categories')}
           />
           <NavItem
             active={isActive('/map') && !moreOpen}

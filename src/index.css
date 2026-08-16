@@ -6097,6 +6097,44 @@ select.select-glass.geo-filter-select::-ms-expand {
   animation: mega-slide-right 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* In-page categories browser — site header/footer stay visible */
+.mega-menu--page {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  display: block;
+}
+
+.mega-menu--page .mega-menu__panel {
+  max-height: none;
+  min-height: 0;
+  height: auto;
+  box-shadow: none;
+  animation: none;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.mega-menu--page .mega-menu__header {
+  grid-template-columns: 1fr minmax(0, 28rem);
+}
+
+.mega-menu--page .mega-menu__body {
+  flex: none;
+  overflow: visible;
+  min-height: 28rem;
+}
+
+.mega-menu--page .mega-menu__left,
+.mega-menu--page .mega-menu__right {
+  overflow: visible;
+}
+
+.mega-menu--page .mega-menu__chip-list {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
 .mega-menu__header {
   display: grid;
   grid-template-columns: 1fr minmax(0, 28rem) auto;
@@ -6110,6 +6148,9 @@ select.select-glass.geo-filter-select::-ms-expand {
 @media (max-width: 767px) {
   .mega-menu__header {
     grid-template-columns: 1fr auto;
+  }
+  .mega-menu--page .mega-menu__header {
+    grid-template-columns: 1fr;
   }
   .mega-menu__search {
     grid-column: 1 / -1;

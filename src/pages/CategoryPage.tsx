@@ -131,7 +131,7 @@ export function CategoryPage({ slug }: CategoryPageProps) {
         <button
           type="button"
           className="mt-6 font-semibold text-[#c96d2c]"
-          onClick={() => navigateTo('/#choose-category')}
+          onClick={() => navigateTo('/categories')}
         >
           {t('marketplace.backToCategories')}
         </button>

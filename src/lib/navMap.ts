@@ -57,7 +57,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     id: 'categories',
-    path: '/#choose-category',
+    path: '/categories',
     labelKey: 'nav.categories',
     surfaces: ['mobile-bar'],
   },
@@ -464,6 +464,7 @@ const EXTRA_RESERVED_SEGMENTS = [
   'admin',
   'estimate',
   'commercial-agents',
+  'categories',
 ] as const
 
 export function navEntriesFor(surface: NavSurface): NavEntry[] {
