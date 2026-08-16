@@ -30,6 +30,16 @@ export type ServiceCategory = {
   href?: string
 }
 
+/** Public category-grid / promo slugs that must not appear as empty “0 masters · 0 companies” cards. */
+export const DOCUMENTS_PROCEDURES_PUBLIC_SLUGS = new Set([
+  'documents-procedures',
+  'official-documents',
+])
+
+export function isDocumentsProceduresPublicCategory(slug: string | null | undefined): boolean {
+  return Boolean(slug && DOCUMENTS_PROCEDURES_PUBLIC_SLUGS.has(slug))
+}
+
 export const categoriesUiText = {
   eyebrow: { en: 'Service categories' },
   title: { en: 'Find the right service faster' },

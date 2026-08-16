@@ -3,7 +3,11 @@
  * Reuses DImarket serviceCategories — no parallel B2B taxonomy.
  */
 
-import { serviceCategories, type ServiceCategory } from '../../config/categories'
+import {
+  isDocumentsProceduresPublicCategory,
+  serviceCategories,
+  type ServiceCategory,
+} from '../../config/categories'
 import { dimarketLabel } from '../../config/categoriesI18n'
 
 /** Parent + subcategory slugs from the existing DImarket catalog. */
@@ -12,6 +16,7 @@ export function dimarketMatchCategorySlugs(): string[] {
   for (const cat of serviceCategories) {
     // Skip the CA tile itself if present — it is a module entry, not a match facet
     if (cat.slug === 'commercial-agents') continue
+    if (isDocumentsProceduresPublicCategory(cat.slug)) continue
     slugs.push(cat.slug)
     for (const sub of cat.subcategories) slugs.push(sub.slug)
   }
@@ -30,6 +35,7 @@ export function dimarketMatchCategoryOptions(languageCode = 'en'): MatchCategory
   const out: MatchCategoryOption[] = []
   for (const cat of serviceCategories) {
     if (cat.slug === 'commercial-agents') continue
+    if (isDocumentsProceduresPublicCategory(cat.slug)) continue
     out.push({
       slug: cat.slug,
       label: dimarketLabel(cat.slug, languageCode, cat.title[languageCode] ?? cat.title.en),

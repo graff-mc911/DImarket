@@ -28,8 +28,6 @@ export const CATEGORY_SLUGS = [
   'architecture-design',
   'engineering',
   'legal-services',
-  'documents-procedures',
-  'official-documents',
 ]
 
 /** Launch SEO city/trade landings (mirrors src/lib/seoRoutes launch set) */

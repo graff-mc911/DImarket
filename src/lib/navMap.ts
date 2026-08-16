@@ -127,7 +127,9 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
       'footer-support': 'footer.documentsProcedures',
       'mobile-more': 'nav.documentsProcedures',
     },
-    surfaces: ['mobile-more', 'header-dept', 'footer-support', 'footer-services'],
+    // Not promoted in public chrome (empty 0 masters/companies card removed).
+    // /documents routes and catalog remain available for deep links / future use.
+    surfaces: [],
   },
   {
     id: 'jobs',

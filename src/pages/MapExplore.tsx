@@ -19,7 +19,7 @@ import {
   type MapExploreFilters,
   type MapMarkerKind,
 } from '../lib/marketplaceMap'
-import { serviceCategories } from '../config/categories'
+import { isDocumentsProceduresPublicCategory, serviceCategories } from '../config/categories'
 import { dimarketLabel } from '../config/categoriesI18n'
 import { navigateTo } from '../lib/navigation'
 
@@ -219,7 +219,9 @@ export function MapExplore() {
                 }
               >
                 <option value="">{t('mapExplore.anyCategory')}</option>
-                {serviceCategories.map((c) => (
+                {serviceCategories
+                  .filter((c) => !isDocumentsProceduresPublicCategory(c.slug))
+                  .map((c) => (
                   <option key={c.slug} value={c.slug}>
                     {dimarketLabel(c.slug, lang, c.title.en)}
                   </option>

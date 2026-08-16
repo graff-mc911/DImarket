@@ -5,6 +5,7 @@ import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import {
   categoryLocationOptions,
+  isDocumentsProceduresPublicCategory,
   popularCategorySearches,
   serviceCategories,
   type LocalizedText,
@@ -112,11 +113,15 @@ export function MainCategoriesSection({
     : 'all-europe'
 
   const filtered = useMemo(() => {
-    // Intentionally no .slice() / MAX_CATEGORIES — render every serviceCategories entry
+    // Intentionally no .slice() / MAX_CATEGORIES — render every public serviceCategories entry
     // (including buy-sell and jobs). Search only filters; it never caps the list.
+    // Documents & Procedures hub stays at /documents — do not promote as an empty category card.
+    const publicCategories = serviceCategories.filter(
+      (category) => !isDocumentsProceduresPublicCategory(category.slug),
+    )
     const q = query.trim().toLowerCase()
-    if (!q) return serviceCategories
-    return serviceCategories.filter((category) =>
+    if (!q) return publicCategories
+    return publicCategories.filter((category) =>
       categorySearchText(category, lang).includes(q),
     )
   }, [query, lang])
