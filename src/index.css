@@ -6130,11 +6130,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   overflow: visible;
 }
 
-.mega-menu--page .mega-menu__chip-list {
-  flex-wrap: wrap;
-  overflow: visible;
-}
-
 .mega-menu__header {
   display: grid;
   grid-template-columns: 1fr minmax(0, 28rem) auto;
@@ -6202,69 +6197,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 999px;
   background: #f6f2ed;
   color: #2f2a24;
-}
-
-.mega-menu__chips {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.85rem max(var(--layout-gutter), 1rem) 0.35rem;
-  background: #fff;
-  border-bottom: 1px solid rgba(176, 126, 85, 0.1);
-}
-
-.mega-menu__chip-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.68rem;
-  font-weight: 750;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #b07e55;
-  margin-bottom: 0.4rem;
-}
-
-.mega-menu__chip-list {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.45rem;
-  overflow-x: auto;
-  padding-bottom: 0.35rem;
-  -webkit-overflow-scrolling: touch;
-}
-
-.mega-menu__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex-shrink: 0;
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
-  background: #f6f2ed;
-  border: 1px solid rgba(176, 126, 85, 0.14);
-  font-size: 0.8rem;
-  font-weight: 650;
-  color: #2f2a24;
-  transition: transform 160ms ease, border-color 160ms ease;
-}
-
-.mega-menu__chip span {
-  display: inline-flex;
-  width: 1.4rem;
-  height: 1.4rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-}
-
-.mega-menu__chip:hover {
-  transform: translateY(-1px);
-  border-color: rgba(255, 153, 0, 0.4);
-}
-
-.mega-menu__chip--service {
-  background: #fff4e8;
 }
 
 .mega-menu__body {

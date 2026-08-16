@@ -1,8 +1,6 @@
 import {
   ChevronLeft,
   ChevronRight,
-  Clock3,
-  Flame,
   Search,
   X,
 } from 'lucide-react'
@@ -18,7 +16,6 @@ import {
   type MarketplaceCategory,
 } from '../lib/marketplaceCategories'
 import {
-  getRecentCategories,
   pushRecentCategory,
   type RecentCategoryView,
 } from '../lib/recentCategories'
@@ -43,7 +40,6 @@ export function CategoriesMegaMenu({
   const [servicesByParent, setServicesByParent] = useState<Record<string, MarketplaceCategory[]>>({})
   const [loadingServices, setLoadingServices] = useState(false)
   const [query, setQuery] = useState('')
-  const [recent, setRecent] = useState<RecentCategoryView[]>([])
   const [mobileStep, setMobileStep] = useState<'mains' | 'services'>('mains')
 
   useEffect(() => {
@@ -52,7 +48,6 @@ export function CategoriesMegaMenu({
       setMobileStep('mains')
       return
     }
-    setRecent(getRecentCategories())
     let cancelled = false
     ;(async () => {
       const rows = await fetchMainMarketplaceCategories()
@@ -90,20 +85,6 @@ export function CategoriesMegaMenu({
     }
   }, [open, active, servicesByParent])
 
-  // Prefetch a few mains for popular chips
-  useEffect(() => {
-    if (!open || mains.length === 0) return
-    const targets = mains.slice(0, 4)
-    targets.forEach((cat) => {
-      if (servicesByParent[cat.id]) return
-      void fetchCategoryServices(cat.id).then((services) => {
-        setServicesByParent((prev) =>
-          prev[cat.id] ? prev : { ...prev, [cat.id]: services },
-        )
-      })
-    })
-  }, [open, mains, servicesByParent])
-
   const q = query.trim().toLowerCase()
 
   const filteredMains = useMemo(() => {
@@ -122,18 +103,6 @@ export function CategoriesMegaMenu({
       marketplaceCategoryLabel(s, language.code).toLowerCase().includes(q),
     )
   }, [activeServices, q, language.code])
-
-  const popularServices = useMemo(() => {
-    const picks: { service: MarketplaceCategory; parentSlug: string }[] = []
-    for (const main of mains.slice(0, 6)) {
-      const list = servicesByParent[main.id] ?? []
-      for (const service of list.slice(0, 2)) {
-        picks.push({ service, parentSlug: main.slug })
-        if (picks.length >= 8) return picks
-      }
-    }
-    return picks
-  }, [mains, servicesByParent])
 
   const go = (path: string, category?: MarketplaceCategory | RecentCategoryView) => {
     if (category && 'slug' in category) {
@@ -235,84 +204,6 @@ export function CategoriesMegaMenu({
             </button>
           )}
         </HeaderTag>
-
-        <div className="mega-menu__chips">
-          <div className="mega-menu__chip-row">
-            <p className="mega-menu__chip-label">
-              <Flame className="h-3.5 w-3.5" aria-hidden />
-              {t('mega.marketplaceLinks')}
-            </p>
-            <div className="mega-menu__chip-list">
-              <button
-                type="button"
-                className="mega-menu__chip"
-                onClick={() => go('/sell-rent')}
-              >
-                <span aria-hidden>🛒</span>
-                {t('category.name.sell-rent')}
-              </button>
-              <button
-                type="button"
-                className="mega-menu__chip"
-                onClick={() => go('/vacancies')}
-              >
-                <span aria-hidden>💼</span>
-                {t('category.name.vacancies')}
-              </button>
-            </div>
-          </div>
-
-          {recent.length > 0 && (
-            <div className="mega-menu__chip-row">
-              <p className="mega-menu__chip-label">
-                <Clock3 className="h-3.5 w-3.5" aria-hidden />
-                {t('mega.recentlyViewed')}
-              </p>
-              <div className="mega-menu__chip-list">
-                {recent.map((item) => {
-                  const Icon = resolveCategoryIcon(item.icon_key)
-                  const colors = resolveCategoryIconColor(item.slug)
-                  return (
-                    <button
-                      key={item.slug}
-                      type="button"
-                      className="mega-menu__chip"
-                      onClick={() => go(marketplaceCategoryPath(item.slug), item)}
-                    >
-                      <span style={{ background: colors.bg, color: colors.fg }}>
-                        <Icon className="h-3.5 w-3.5" />
-                      </span>
-                      {item.name}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {popularServices.length > 0 && (
-            <div className="mega-menu__chip-row">
-              <p className="mega-menu__chip-label">
-                <Flame className="h-3.5 w-3.5" aria-hidden />
-                {t('mega.popularServices')}
-              </p>
-              <div className="mega-menu__chip-list">
-                {popularServices.map(({ service, parentSlug }) => (
-                  <button
-                    key={service.id}
-                    type="button"
-                    className="mega-menu__chip mega-menu__chip--service"
-                    onClick={() =>
-                      go(marketplaceServiceProsPath(service.slug, parentSlug))
-                    }
-                  >
-                    {marketplaceCategoryLabel(service, language.code)}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
 
         <div className="mega-menu__body">
           <aside
