@@ -320,7 +320,6 @@ export function prerenderRoutes() {
     '/legal-documents',
     '/documents',
     '/documents/spain/residential-rental-contract',
-    '/category/official-documents',
     '/for-professionals',
     '/for-companies',
     '/search',
