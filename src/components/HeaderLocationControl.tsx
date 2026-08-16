@@ -100,7 +100,7 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
         <span className="amazon-header-block__top">{t('header.deliverTo')}</span>
         <span className="amazon-header-block__bottom flex items-center gap-0.5">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
-          <span className="max-w-[9.5rem] overflow-x-hidden text-ellipsis whitespace-nowrap leading-normal">
+          <span className="max-w-[9.5rem] overflow-x-clip text-ellipsis whitespace-nowrap py-px leading-[1.5]">
             {label}
           </span>
         </span>

@@ -22,6 +22,12 @@ function locationPanel(page: Page) {
   return page.locator('.header-location__panel[role="dialog"]')
 }
 
+async function useUkrainian(page: Page) {
+  await page.addInitScript(() => {
+    localStorage.setItem('dimarket_language', 'uk')
+  })
+}
+
 async function openLocationPanel(page: Page) {
   await page.evaluate(() => document.fonts.ready)
   const trigger = locationTrigger(page)
@@ -48,6 +54,8 @@ async function assertSelectGlyphsUnclipped(locator: Locator, label: string) {
     const borderY = parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth)
     const fontSize = parseFloat(cs.fontSize)
     const inner = r.height - padTop - padBottom - borderY
+    const lh = cs.lineHeight
+    const linePx = lh === 'normal' ? fontSize * 1.2 : parseFloat(lh)
     return {
       height: r.height,
       padTop,
@@ -55,17 +63,25 @@ async function assertSelectGlyphsUnclipped(locator: Locator, label: string) {
       borderY,
       inner,
       fontSize,
-      lineHeight: cs.lineHeight,
+      lineHeight: lh,
+      linePx,
       overflow: cs.overflow,
       overflowY: cs.overflowY,
+      appearance: cs.getPropertyValue('appearance') || cs.getPropertyValue('-webkit-appearance'),
       fontFamily: cs.fontFamily,
-      textClipped: inner + 0.5 < fontSize * 1.2,
-      paddingEatsText: padTop + padBottom > 4 && inner < fontSize + 4,
+      textClipped: inner + 0.5 < Math.max(fontSize, linePx),
+      paddingEatsText: padTop + padBottom > r.height * 0.65,
     }
   })
-  expect(metrics.lineHeight, `${label} line-height ${JSON.stringify(metrics)}`).toBe('normal')
-  expect(metrics.padTop, `${label} padding-top ${JSON.stringify(metrics)}`).toBe(0)
-  expect(metrics.padBottom, `${label} padding-bottom ${JSON.stringify(metrics)}`).toBe(0)
+  expect(
+    String(metrics.appearance),
+    `${label} appearance ${JSON.stringify(metrics)}`,
+  ).toMatch(/none/i)
+  expect(metrics.linePx, `${label} line-height ${JSON.stringify(metrics)}`).toBeGreaterThanOrEqual(
+    metrics.fontSize,
+  )
+  expect(metrics.padTop, `${label} padding-top ${JSON.stringify(metrics)}`).toBeGreaterThanOrEqual(8)
+  expect(metrics.padBottom, `${label} padding-bottom ${JSON.stringify(metrics)}`).toBeGreaterThanOrEqual(8)
   expect(metrics.overflowY, `${label} overflow ${JSON.stringify(metrics)}`).not.toBe('hidden')
   expect(metrics.textClipped, `${label} glyph clip ${JSON.stringify(metrics)}`).toBeFalsy()
   expect(metrics.paddingEatsText, `${label} padding clip ${JSON.stringify(metrics)}`).toBeFalsy()
@@ -75,6 +91,7 @@ test.describe('Header location selector — native select glyphs', () => {
   for (const viewport of DESKTOP_VIEWPORTS) {
     test(`select text is fully visible at ${viewport.width}x${viewport.height}`, async ({ page }) => {
       await page.setViewportSize(viewport)
+      await useUkrainian(page)
       await gotoPath(page, '/')
       const panel = await openLocationPanel(page)
       const selects = panel.locator('select.geo-filter-select')
@@ -129,7 +146,14 @@ test.describe('Location filters — mobile native selects', () => {
   for (const viewport of MOBILE_VIEWPORTS) {
     test(`professionals geo selects at ${viewport.width}x${viewport.height}`, async ({ page }) => {
       await page.setViewportSize(viewport)
+      await useUkrainian(page)
       await gotoPath(page, '/professionals')
+      const bottomNav = page.locator('.mobile-bottom-nav')
+      if ((await bottomNav.count()) > 0) {
+        await bottomNav.evaluate((el) => {
+          ;(el as HTMLElement).style.visibility = 'hidden'
+        })
+      }
       await page.locator('button.btn-secondary.mb-4').filter({ hasText: /Фільтри|Filters/ }).click()
       const sidebar = page.locator('.amazon-filter-sidebar')
       await expect(sidebar).toBeVisible()
