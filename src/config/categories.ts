@@ -1,3 +1,5 @@
+import { coverImageForCategory } from '../lib/categoryCoverImages'
+
 export type LocalizedText = Record<string, string> & {
   en: string
 }
@@ -79,8 +81,7 @@ export const categoryLocationOptions = [
 
 const text = (en: string): LocalizedText => ({ en })
 
-const image = (slug: string) =>
-  `https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=900&q=72&ixid=dimarket-${slug}`
+const image = (slug: string) => coverImageForCategory(slug)
 
 const seo = (title: string, parent: string): CategorySeoMeta => ({
   title: text(`${title} professionals | ${parent} | DImarket`),

@@ -4225,11 +4225,17 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: flex-end;
   justify-content: flex-start;
   padding: 1.15rem 1.35rem 1.3rem;
-  background-size: cover;
-  background-position: center;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.55s ease;
+}
+
+.home-hero-carousel__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .home-hero-carousel__slide.is-active {

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Briefcase, Star, Users, Wrench } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { resolveCategoryIcon } from '../../lib/categoryIcons'
+import { coverImageForCategory } from '../../lib/categoryCoverImages'
 import {
   marketplaceCategoryDescription,
   marketplaceCategoryLabel,
@@ -19,7 +20,7 @@ export function CategoryHero({ category, servicesCount, reviewsCount }: Category
   const Icon = resolveCategoryIcon(category.icon_key)
   const title = marketplaceCategoryLabel(category, language.code)
   const description = marketplaceCategoryDescription(category, language.code)
-  const cover = category.cover_image_url?.trim() || null
+  const cover = coverImageForCategory(category.slug, category.cover_image_url)
 
   return (
     <header className="cat-hero">

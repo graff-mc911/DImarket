@@ -87,7 +87,7 @@ export function Home() {
 
   return (
     <div className="home-premium">
-      <HomeHero metrics={metrics} />
+      <HomeHero categories={data?.categories ?? []} />
       <HomeTrustBar metrics={metrics} />
 
       <div className="layout-page-gutter home-premium__ads">
