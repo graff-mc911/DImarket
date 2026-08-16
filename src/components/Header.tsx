@@ -611,7 +611,7 @@ export function Header() {
             {/* Amazon subnav — wrap onto a second line; do not scroll the page */}
             <div className="site-header-subnav mt-1 hidden min-w-0 sm:block">
               <nav
-                className="amazon-dept-scroll px-3 py-1 md:px-4"
+                className="amazon-dept-scroll px-3 py-1.5 md:px-4"
                 aria-label={t('header.categories')}
               >
                 <div
