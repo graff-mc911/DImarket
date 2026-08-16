@@ -24,7 +24,6 @@ import {
   LogOut,
   Megaphone,
   MapPin,
-  Menu,
   MessageSquare,
   Settings,
   Shield,
@@ -655,10 +654,9 @@ export function Header() {
                       type="button"
                       aria-expanded={categoriesOpen}
                       aria-haspopup="dialog"
-                      className="amazon-dept-link flex items-center gap-1 font-bold"
+                      className="amazon-dept-link font-bold"
                     >
-                      <Menu className="h-4 w-4" />
-                      <span>{t('header.categories')}</span>
+                      {t('header.categories')}
                     </button>
                   </div>
                   {deptRow1.map((item) => (
