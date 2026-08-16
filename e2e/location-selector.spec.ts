@@ -122,11 +122,10 @@ test.describe('Location filters — mobile sidebar', () => {
 
   test('professionals geo filters keep controls readable', async ({ page }) => {
     await gotoPath(page, '/professionals')
-    const toggle = page.getByRole('button', { name: /Фільтри|Filters/i }).first()
-    if (await toggle.isVisible()) {
-      await toggle.click()
-    }
-    const country = page.locator('select.geo-filter-select').first()
+    await page.locator('button.btn-secondary.mb-4').filter({ hasText: /Фільтри|Filters/ }).click()
+    const sidebar = page.locator('.amazon-filter-sidebar')
+    await expect(sidebar).toBeVisible()
+    const country = sidebar.locator('select.geo-filter-select').first()
     await expect(country).toBeVisible()
     await assertUnclippedInViewport(country, 'mobile country select')
     await expect(page.getByText(/Радіус пошуку|Search radius/i).first()).toBeVisible()

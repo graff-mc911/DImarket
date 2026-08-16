@@ -2977,14 +2977,14 @@
 .geo-filter-option {
   display: block;
   width: 100%;
-  min-height: 2rem;
+  min-height: 2.5rem;
   box-sizing: border-box;
   border: 0;
   background: transparent;
-  padding: 0.4rem 0.7rem;
+  padding: 0.5rem 0.7rem;
   color: var(--ink-900);
   font-size: 0.875rem;
-  line-height: 1.4;
+  line-height: 1.45;
   text-align: left;
   cursor: pointer;
   overflow: visible;
