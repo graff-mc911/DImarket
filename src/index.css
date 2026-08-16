@@ -2872,6 +2872,166 @@
 }
 
 /* ============================================================
+   Header location panel — viewport-safe, no glyph clipping
+   Root cause: .select-glass py-3 + h-9 left 12px for 14px type,
+   and the native <select> picker was clipped inside the fixed header.
+   ============================================================ */
+
+.header-location {
+  position: relative;
+  z-index: 90;
+  overflow: visible;
+}
+
+.header-location__panel {
+  position: fixed;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: auto;
+  max-height: calc(100dvh - var(--header-offset, 7.5rem) - 0.75rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--adv-line, #e8e2d9);
+  border-radius: 0.75rem;
+  background: #ffffff;
+  padding: 0.75rem;
+  color: var(--ink-900);
+  box-shadow: 0 8px 24px rgba(15, 17, 17, 0.18);
+}
+
+.header-location__panel-title {
+  flex-shrink: 0;
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--adv-muted, #6b645c);
+}
+
+.geo-filters--panel {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.geo-filters--panel .geo-filter-field {
+  flex-shrink: 0;
+}
+
+.geo-filters--panel .amazon-filter-group label {
+  overflow: visible;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.select-glass.geo-filter-select,
+.geo-filter-select {
+  display: block;
+  width: 100%;
+  height: 2.5rem;
+  min-height: 2.5rem;
+  box-sizing: border-box;
+  padding: 0 0.75rem;
+  overflow: visible;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--ink-900);
+}
+
+.geo-filter-select--trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.geo-filter-select--trigger span {
+  min-width: 0;
+  overflow: hidden;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.geo-filter-listbox {
+  max-height: min(11.5rem, 28vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--glass-border, #d5d9d9);
+  border-radius: 0.375rem;
+  background: #ffffff;
+  padding: 0.2rem 0;
+}
+
+.geo-filter-listbox--country {
+  max-height: min(12.5rem, 32vh);
+}
+
+.geo-filter-option {
+  display: block;
+  width: 100%;
+  min-height: 2rem;
+  box-sizing: border-box;
+  border: 0;
+  background: transparent;
+  padding: 0.4rem 0.7rem;
+  color: var(--ink-900);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  overflow: visible;
+  white-space: normal;
+}
+
+.geo-filter-option.is-selected {
+  background: #edfdff;
+  font-weight: 700;
+}
+
+.geo-filter-option:hover,
+.geo-filter-option:focus-visible {
+  background: #f7fafa;
+}
+
+.geo-filter-option:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.btn-secondary.geo-filter-gps {
+  min-height: 2.5rem;
+  height: auto;
+  padding: 0.5rem 0.75rem;
+  overflow: visible;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.geo-filter-clear {
+  display: inline-block;
+  overflow: visible;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+@media (max-width: 640px) {
+  .select-glass.geo-filter-select,
+  .geo-filter-select,
+  .btn-secondary.geo-filter-gps {
+    min-height: 3rem;
+    height: auto;
+  }
+}
+
+/* ============================================================
    Marketplace categories — Choose Category + mega menu + page
    ============================================================ */
 

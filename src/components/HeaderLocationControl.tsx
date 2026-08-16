@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { MapPin } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { GeoSearchFilters } from './GeoSearchFilters'
@@ -14,11 +15,40 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
   const { t, location, setLocation } = useApp()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const [panelBox, setPanelBox] = useState({ top: 0, left: 0, width: 352 })
+
+  useLayoutEffect(() => {
+    if (!open) return
+
+    const sync = () => {
+      const trigger = buttonRef.current?.getBoundingClientRect()
+      if (!trigger) return
+      const width = Math.min(352, Math.max(280, window.innerWidth - 32))
+      let left = trigger.left
+      if (left + width > window.innerWidth - 16) {
+        left = Math.max(16, window.innerWidth - 16 - width)
+      }
+      if (left < 16) left = 16
+      setPanelBox({ top: trigger.bottom + 8, left, width })
+    }
+
+    sync()
+    window.addEventListener('resize', sync)
+    window.addEventListener('scroll', sync, true)
+    return () => {
+      window.removeEventListener('resize', sync)
+      window.removeEventListener('scroll', sync, true)
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) return
     const onDoc = (e: MouseEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
+      const target = e.target as Node
+      if (rootRef.current?.contains(target) || panelRef.current?.contains(target)) return
+      setOpen(false)
     }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
@@ -36,9 +66,31 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
     t('dimarket.loc.all-europe'),
   )
 
+  const panel =
+    open && typeof document !== 'undefined'
+      ? createPortal(
+          <div
+            ref={panelRef}
+            className="header-location__panel"
+            role="dialog"
+            aria-label={t('header.deliverTo')}
+            style={{ top: panelBox.top, left: panelBox.left, width: panelBox.width }}
+          >
+            <p className="header-location__panel-title">
+              {hasActiveLocation(location)
+                ? formatGlobalLocationLabel(location)
+                : t('dimarket.loc.all-europe')}
+            </p>
+            <GeoSearchFilters variant="panel" value={location} onChange={setLocation} />
+          </div>,
+          document.body,
+        )
+      : null
+
   return (
     <div ref={rootRef} className={`header-location relative ${className}`}>
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="amazon-header-block hidden shrink-0 lg:flex"
@@ -51,21 +103,7 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
           <span className="max-w-[9.5rem] truncate">{label}</span>
         </span>
       </button>
-
-      {open ? (
-        <div
-          className="header-location__panel absolute left-0 top-full z-50 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-[var(--adv-line,#e8e2d9)] bg-white p-3 shadow-lg"
-          role="dialog"
-          aria-label={t('header.deliverTo')}
-        >
-          <p className="mb-2 text-xs font-semibold text-[var(--adv-muted,#6b645c)]">
-            {hasActiveLocation(location)
-              ? formatGlobalLocationLabel(location)
-              : t('dimarket.loc.all-europe')}
-          </p>
-          <GeoSearchFilters value={location} onChange={setLocation} />
-        </div>
-      ) : null}
+      {panel}
     </div>
   )
 }
