@@ -269,9 +269,35 @@ export function Header() {
       active ? 'header-link--active' : '',
     ].join(' ')
 
-
-
-
+  const deptTail = [
+    ...headerDeptBeforeEntries().map((entry) => ({
+      key: entry.id,
+      label: t(labelKeyFor(entry, 'header-dept-extra')),
+      onClick: () => goTo(entry.path),
+      className: 'amazon-dept-link',
+    })),
+    ...navItems.map((item) => ({
+      key: item.path,
+      label: item.label,
+      onClick: () => goTo(item.path),
+      className: navTextClass(isActiveRoute(item.path), true),
+    })),
+    ...headerDeptAfterEntries().map((entry) => ({
+      key: entry.id,
+      label: t(labelKeyFor(entry, 'header-dept-extra')),
+      onClick: () => goTo(entry.path),
+      className: 'amazon-dept-link',
+    })),
+    {
+      key: 'how-it-works',
+      label: t('footer.howItWorks'),
+      onClick: goToHowItWorks,
+      className: 'amazon-dept-link',
+    },
+  ]
+  const row1TailCount = Math.max(0, Math.ceil((deptTail.length + 1) / 2) - 1)
+  const deptRow1 = deptTail.slice(0, row1TailCount)
+  const deptRow2 = deptTail.slice(row1TailCount)
 
   const showAnnouncement = announcements.length > 0
 
@@ -608,69 +634,58 @@ export function Header() {
               </div>
             </div>
 
-            {/* Amazon subnav — wrap onto a second line; do not scroll the page */}
+            {/* Two balanced, centered department rows — no horizontal scrollbar */}
             <div className="site-header-subnav mt-1 hidden min-w-0 sm:block">
               <nav
                 className="amazon-dept-scroll px-3 py-1.5 md:px-4"
                 aria-label={t('header.categories')}
               >
-                <div
-                  ref={categoriesRef}
-                  className="categories-mega-anchor relative shrink-0"
-                >
-                  <button
-                    onClick={() => {
-                      setCategoriesOpen((o) => !o)
-                      setLanguageOpen(false)
-                      setCurrencyOpen(false)
-                      setAccountOpen(false)
-                    }}
-                    type="button"
-                    aria-expanded={categoriesOpen}
-                    aria-haspopup="dialog"
-                    className="amazon-dept-link flex items-center gap-1 font-bold"
+                <div className="amazon-dept-row">
+                  <div
+                    ref={categoriesRef}
+                    className="categories-mega-anchor relative shrink-0"
                   >
-                    <Menu className="h-4 w-4" />
-                    <span>{t('header.categories')}</span>
-                  </button>
+                    <button
+                      onClick={() => {
+                        setCategoriesOpen((o) => !o)
+                        setLanguageOpen(false)
+                        setCurrencyOpen(false)
+                        setAccountOpen(false)
+                      }}
+                      type="button"
+                      aria-expanded={categoriesOpen}
+                      aria-haspopup="dialog"
+                      className="amazon-dept-link flex items-center gap-1 font-bold"
+                    >
+                      <Menu className="h-4 w-4" />
+                      <span>{t('header.categories')}</span>
+                    </button>
+                  </div>
+                  {deptRow1.map((item) => (
+                    <button
+                      key={item.key}
+                      type="button"
+                      onClick={item.onClick}
+                      className={item.className}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
                 </div>
-
-                {headerDeptBeforeEntries().map((entry) => (
-                  <button
-                    key={entry.id}
-                    type="button"
-                    onClick={() => goTo(entry.path)}
-                    className="amazon-dept-link"
-                  >
-                    {t(labelKeyFor(entry, 'header-dept-extra'))}
-                  </button>
-                ))}
-
-                {navItems.map((item) => (
-                  <button
-                    key={item.path}
-                    type="button"
-                    onClick={() => goTo(item.path)}
-                    className={navTextClass(isActiveRoute(item.path), true)}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-
-                {headerDeptAfterEntries().map((entry) => (
-                  <button
-                    key={entry.id}
-                    type="button"
-                    onClick={() => goTo(entry.path)}
-                    className="amazon-dept-link"
-                  >
-                    {t(labelKeyFor(entry, 'header-dept-extra'))}
-                  </button>
-                ))}
-
-                <button type="button" onClick={goToHowItWorks} className="amazon-dept-link">
-                  {t('footer.howItWorks')}
-                </button>
+                {deptRow2.length > 0 ? (
+                  <div className="amazon-dept-row">
+                    {deptRow2.map((item) => (
+                      <button
+                        key={item.key}
+                        type="button"
+                        onClick={item.onClick}
+                        className={item.className}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
               </nav>
             </div>
 

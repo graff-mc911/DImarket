@@ -77,18 +77,37 @@ test.describe('Desktop header chrome (lg+)', () => {
       await expect(deptNav(page)).toBeVisible()
       const deptStyle = await deptNav(page).evaluate((el) => {
         const s = getComputedStyle(el)
+        const rows = [...el.querySelectorAll('.amazon-dept-row')]
         const buttons = [...el.querySelectorAll('button')]
-        const rowTops = new Set(buttons.map((b) => Math.round(b.getBoundingClientRect().top / 4) * 4))
+        const visualRows = new Set(buttons.map((b) => Math.round(b.getBoundingClientRect().top / 4) * 4))
+        const counts = rows.map((row) => row.querySelectorAll('button').length)
+        const lastRow = rows.at(-1)
+        let lastRowCentered = true
+        if (lastRow) {
+          const lastButtons = [...lastRow.querySelectorAll('button')]
+          if (lastButtons.length) {
+            const first = lastButtons[0].getBoundingClientRect()
+            const last = lastButtons[lastButtons.length - 1].getBoundingClientRect()
+            const mid = (first.left + last.right) / 2
+            lastRowCentered = Math.abs(mid - window.innerWidth / 2) < window.innerWidth * 0.22
+          }
+        }
         return {
-          flexWrap: s.flexWrap,
+          flexDirection: s.flexDirection,
           overflowX: s.overflowX,
-          rows: rowTops.size,
+          visualRows: visualRows.size,
+          counts,
+          lastRowCentered,
+          justify: rows[0] ? getComputedStyle(rows[0]).justifyContent : '',
         }
       })
-      expect(deptStyle.flexWrap).toBe('wrap')
+      expect(deptStyle.flexDirection).toBe('column')
       expect(deptStyle.overflowX).toBe('visible')
-      expect(deptStyle.rows).toBeGreaterThanOrEqual(1)
-      expect(deptStyle.rows).toBeLessThanOrEqual(3)
+      expect(deptStyle.justify).toBe('center')
+      expect(deptStyle.visualRows).toBeGreaterThanOrEqual(2)
+      expect(deptStyle.visualRows).toBeLessThanOrEqual(4)
+      expect(Math.abs((deptStyle.counts[0] ?? 0) - (deptStyle.counts[1] ?? 0))).toBeLessThanOrEqual(1)
+      expect(deptStyle.lastRowCentered, `second row not centered ${JSON.stringify(deptStyle)}`).toBe(true)
 
       for (const name of DEPT_ITEMS) {
         await assertDeptItemReachable(page, name)
