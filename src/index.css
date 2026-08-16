@@ -57,13 +57,14 @@
 
   @media (min-width: 1024px) {
     :root {
-      --header-offset: 10rem;
+      /* Two-line department nav when items wrap */
+      --header-offset: 12rem;
     }
   }
 
   @media (min-width: 1280px) {
     :root {
-      --header-offset: 10.5rem;
+      --header-offset: 12.5rem;
     }
   }
 
@@ -73,13 +74,13 @@
 
   @media (min-width: 1024px) {
     html[data-announcement='true'] {
-      --header-offset: 12rem;
+      --header-offset: 14rem;
     }
   }
 
   @media (min-width: 1280px) {
     html[data-announcement='true'] {
-      --header-offset: 12.5rem;
+      --header-offset: 14.5rem;
     }
   }
 
@@ -2068,32 +2069,15 @@
 
   .amazon-dept-scroll {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.25rem;
+    column-gap: 0.15rem;
+    row-gap: 0.15rem;
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    overscroll-behavior-x: contain;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.65) rgba(0, 0, 0, 0.28);
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .amazon-dept-scroll::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  .amazon-dept-scroll::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.28);
-  }
-
-  .amazon-dept-scroll::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.65);
+    overflow: visible;
   }
 
   .amazon-dept-link {

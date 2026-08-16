@@ -46,15 +46,16 @@ function deptNav(page: Page) {
 
 async function assertDeptItemReachable(page: Page, name: RegExp) {
   const item = deptNav(page).getByRole('button', { name }).first()
-  await item.scrollIntoViewIfNeeded()
   await expect(item).toBeVisible()
   const box = await item.boundingBox()
   expect(box, String(name)).toBeTruthy()
   const vw = page.viewportSize()?.width ?? 0
+  const vh = page.viewportSize()?.height ?? 0
   expect(box!.width, String(name)).toBeGreaterThan(8)
-  // Item may sit in the overflow strip; after scroll it must intersect the viewport.
   expect(box!.x + box!.width, `${String(name)} still off-screen`).toBeGreaterThan(0)
   expect(box!.x, `${String(name)} still off-screen`).toBeLessThan(vw)
+  expect(box!.y, `${String(name)} below viewport`).toBeLessThan(vh)
+  expect(box!.y + box!.height, `${String(name)} above viewport`).toBeGreaterThan(0)
 }
 
 test.describe('Desktop header chrome (lg+)', () => {
@@ -74,6 +75,21 @@ test.describe('Desktop header chrome (lg+)', () => {
       await expect(page.getByRole('button', { name: /Sign in|Увійти|Hello|Вітаємо/i }).first()).toBeVisible()
 
       await expect(deptNav(page)).toBeVisible()
+      const deptStyle = await deptNav(page).evaluate((el) => {
+        const s = getComputedStyle(el)
+        const buttons = [...el.querySelectorAll('button')]
+        const rowTops = new Set(buttons.map((b) => Math.round(b.getBoundingClientRect().top / 4) * 4))
+        return {
+          flexWrap: s.flexWrap,
+          overflowX: s.overflowX,
+          rows: rowTops.size,
+        }
+      })
+      expect(deptStyle.flexWrap).toBe('wrap')
+      expect(deptStyle.overflowX).toBe('visible')
+      expect(deptStyle.rows).toBeGreaterThanOrEqual(1)
+      expect(deptStyle.rows).toBeLessThanOrEqual(3)
+
       for (const name of DEPT_ITEMS) {
         await assertDeptItemReachable(page, name)
       }

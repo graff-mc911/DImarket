@@ -608,7 +608,7 @@ export function Header() {
               </div>
             </div>
 
-            {/* Amazon subnav — only this row may scroll horizontally */}
+            {/* Amazon subnav — wrap onto a second line; do not scroll the page */}
             <div className="site-header-subnav mt-1 hidden min-w-0 sm:block">
               <nav
                 className="amazon-dept-scroll px-3 py-1 md:px-4"
