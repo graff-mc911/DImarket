@@ -120,28 +120,65 @@ async function generateWithLlm(
   return null
 }
 
+function isUsableMarketingText(text: string): boolean {
+  const t = text.trim()
+  if (t.length < 12 || t.length > 2000) return false
+  if (/```|^\s*\{[\s\S]*"post"\s*:/i.test(t)) return false
+  if (/^\s*\{/.test(t) && /"title"\s*:|"content"\s*:|"body"\s*:/.test(t)) return false
+  return true
+}
+
 function parseContentJson(raw: string, fallbackRole: string): {
   body: string
   hashtags: string[]
   title?: string
   imagePrompt?: string
 } {
+  const fallback = {
+    body: `${ROLE_HOOKS[fallbackRole] ?? ROLE_HOOKS.client} — https://dimarket.app/`,
+    hashtags: ['DiMarket', fallbackRole] as string[],
+  }
   try {
-    const m = raw.match(/\{[\s\S]*\}/)
+    const stripped = raw.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim()
+    const m = stripped.match(/\{[\s\S]*\}/)
     if (m) {
-      const j = JSON.parse(m[0])
-      return {
-        body: String(j.body ?? raw),
-        hashtags: Array.isArray(j.hashtags) ? j.hashtags.map(String) : [],
-        title: j.title ? String(j.title) : undefined,
-        imagePrompt: j.imagePrompt ? String(j.imagePrompt) : undefined,
+      const j = JSON.parse(m[0]) as Record<string, unknown>
+      const nested = (j.post && typeof j.post === 'object'
+        ? (j.post as Record<string, unknown>)
+        : j.content && typeof j.content === 'object'
+          ? (j.content as Record<string, unknown>)
+          : j)
+      const bodyCandidate = String(
+        nested.body ??
+          nested.description ??
+          nested.paragraph ??
+          nested.headline ??
+          j.body ??
+          j.description ??
+          j.title ??
+          '',
+      ).trim()
+      const hashtagsRaw = nested.hashtags ?? j.hashtags
+      const hashtags = Array.isArray(hashtagsRaw) ? hashtagsRaw.map(String) : fallback.hashtags
+      const title = nested.title ? String(nested.title) : j.title ? String(j.title) : undefined
+      const imagePrompt = nested.imagePrompt
+        ? String(nested.imagePrompt)
+        : j.imagePrompt
+          ? String(j.imagePrompt)
+          : undefined
+      if (isUsableMarketingText(bodyCandidate)) {
+        return { body: bodyCandidate, hashtags, title, imagePrompt }
       }
+      if (title && isUsableMarketingText(title)) {
+        return { body: title, hashtags, title, imagePrompt }
+      }
+      return fallback
     }
   } catch { /* template */ }
-  return {
-    body: `${ROLE_HOOKS[fallbackRole] ?? ROLE_HOOKS.client} — https://dimarket.app/`,
-    hashtags: ['DiMarket', fallbackRole],
+  if (isUsableMarketingText(raw)) {
+    return { body: raw.trim(), hashtags: fallback.hashtags }
   }
+  return fallback
 }
 
 async function publishTelegram(body: string): Promise<{ ok: boolean; id?: string }> {
@@ -165,23 +202,12 @@ function formatPostBody(post: { body: string; hashtags?: string[] | null }): str
 }
 
 async function publishBlog(
-  admin: AdminClient,
-  body: string,
-): Promise<{ ok: boolean; id?: string }> {
-  const message = body.slice(0, 280)
-  await admin.from('announcements').update({ is_active: false }).eq('type', 'promo')
-  const { data, error } = await admin
-    .from('announcements')
-    .insert({
-      message,
-      type: 'promo',
-      is_active: true,
-      starts_at: new Date().toISOString(),
-    })
-    .select('id')
-    .single()
-  if (error) return { ok: false }
-  return { ok: true, id: data?.id as string }
+  _admin: AdminClient,
+  _body: string,
+): Promise<{ ok: boolean; id?: string; error?: string }> {
+  // Site header banners are owner-created only (Dashboard → Банери).
+  // Marketing agent must never write to announcements — it previously flooded the UI with raw LLM JSON.
+  return { ok: false, error: 'site_banners_manual_only' }
 }
 
 async function publishPostInternal(
@@ -196,16 +222,23 @@ async function publishPostInternal(
   })
   let success = false
   let externalId: string | undefined
+  let publishError: string | null = null
 
   if (platform === 'telegram') {
     const r = await publishTelegram(fullBody)
     success = r.ok
     externalId = r.id
-  }
-  if (!success) {
-    const blog = await publishBlog(admin, fullBody)
+    if (!success) publishError = 'telegram_unavailable'
+  } else if (platform === 'blog') {
+    // Only the explicit "blog" channel may touch site announcements — never as a fallback
+    // for Instagram/Facebook/etc when those APIs are missing.
+    const blog = await publishBlog(admin, String(post.body))
     success = blog.ok
     externalId = blog.id
+    if (!success) publishError = blog.error ?? 'blog_publish_failed'
+  } else {
+    // Social platforms without credentials must not spam the site header.
+    publishError = `platform_not_configured:${platform}`
   }
 
   await admin
@@ -214,14 +247,14 @@ async function publishPostInternal(
       status: success ? 'published' : 'failed',
       published_at: success ? new Date().toISOString() : null,
       external_id: externalId ?? null,
-      publish_error: success ? null : 'publish_failed',
+      publish_error: success ? null : publishError ?? 'publish_failed',
     })
     .eq('id', postId)
 
   await admin.from('marketing_analytics').insert({
     post_id: postId,
     event_type: 'publish',
-    payload: { platform, success, externalId },
+    payload: { platform, success, externalId, publishError },
   })
 
   return { success, externalId }
@@ -235,7 +268,7 @@ async function runCycleInternal(admin: AdminClient): Promise<{ created: number; 
     countryCode: string
     languageCode: string
   }[]
-  const platforms = (config.platforms?.length ? config.platforms : ['blog', 'telegram']) as string[]
+  const platforms = (config.platforms?.length ? config.platforms : ['telegram']) as string[]
   const roles = ['client', 'master', 'company', 'advertiser']
   const { data: existing } = await admin.from('marketing_posts').select('content_hash').limit(500)
   const hashes = new Set((existing ?? []).map((r) => r.content_hash).filter(Boolean))
@@ -443,18 +476,19 @@ New ${userRole} joined DiMarket in ${countryCode}. Write a short promo encouragi
       const boostParsed = parseContentJson(boostGen?.text ?? '', userRole)
       const { data: boostPost } = await admin.from('marketing_posts').insert({
         role_target: userRole,
-        platform: 'blog',
+        platform: 'telegram',
         country_code: countryCode,
         language_code: languageCode,
         content_kind: 'social_post',
         body: boostParsed.body,
         hashtags: boostParsed.hashtags,
-        status: 'approved',
+        status: agentCfg?.auto_publish ? 'approved' : 'pending_review',
         llm_provider: boostGen?.provider ?? 'template',
         content_hash: contentHash(boostParsed.body + Date.now()),
       }).select('*').single()
-      if (boostPost) {
-        boostPostId = boostPost.id as string
+      boostPostId = boostPost?.id as string | null
+      // Do not publish to site banners — telegram only when auto_publish + credentials exist.
+      if (agentCfg?.auto_publish && boostPost) {
         await publishPostInternal(admin, boostPost as Record<string, unknown>)
       }
     }

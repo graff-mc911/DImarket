@@ -1,9 +1,11 @@
 -- Enable marketing agent with defaults + optional pg_cron (Supabase hosted)
 
+-- Defaults: agent OFF until owner starts it in /marketing-agent.
+-- Do NOT include "blog" — previously every failed social publish dumped LLM JSON into site announcements.
 UPDATE public.marketing_agent_config
 SET
-  is_running = true,
-  auto_publish = true,
+  is_running = false,
+  auto_publish = false,
   frequency = 'daily',
   daily_budget_usd = 50,
   ab_testing_enabled = true,
@@ -15,11 +17,12 @@ SET
     {"countryCode":"FR","languageCode":"fr","label":"France"},
     {"countryCode":"ES","languageCode":"es","label":"Spain"}
   ]'::jsonb,
-  platforms = ARRAY['blog', 'telegram', 'facebook', 'instagram', 'linkedin', 'email']::text[],
+  platforms = ARRAY['telegram']::text[],
   updated_at = now()
 WHERE id = 'default';
 
--- Site-wide promo banner fallback when Telegram is not configured
+-- Owner-managed site header messages only (Dashboard → Глобальні оголошення).
+-- Marketing agent must NOT insert here — see STOP_MARKETING_JSON_BANNERS.sql.
 CREATE TABLE IF NOT EXISTS public.announcements (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   message text NOT NULL,
