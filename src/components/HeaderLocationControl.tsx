@@ -81,7 +81,7 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
                 ? formatGlobalLocationLabel(location)
                 : t('dimarket.loc.all-europe')}
             </p>
-            <GeoSearchFilters variant="panel" value={location} onChange={setLocation} />
+            <GeoSearchFilters value={location} onChange={setLocation} />
           </div>,
           document.body,
         )
@@ -99,8 +99,10 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
       >
         <span className="amazon-header-block__top">{t('header.deliverTo')}</span>
         <span className="amazon-header-block__bottom flex items-center gap-0.5">
-          <MapPin className="h-3.5 w-3.5" />
-          <span className="max-w-[9.5rem] truncate">{label}</span>
+          <MapPin className="h-3.5 w-3.5 shrink-0" />
+          <span className="max-w-[9.5rem] overflow-x-hidden text-ellipsis whitespace-nowrap leading-normal">
+            {label}
+          </span>
         </span>
       </button>
       {panel}

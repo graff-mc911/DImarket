@@ -8,6 +8,12 @@ const DESKTOP_VIEWPORTS = [
   { width: 1024, height: 768 },
 ] as const
 
+const MOBILE_VIEWPORTS = [
+  { width: 390, height: 844 },
+  { width: 375, height: 812 },
+  { width: 360, height: 800 },
+] as const
+
 function locationTrigger(page: Page) {
   return page.locator('.header-location button[aria-haspopup="dialog"]')
 }
@@ -17,119 +23,134 @@ function locationPanel(page: Page) {
 }
 
 async function openLocationPanel(page: Page) {
+  await page.evaluate(() => document.fonts.ready)
   const trigger = locationTrigger(page)
   await expect(trigger).toBeVisible()
-  if ((await trigger.getAttribute('aria-expanded')) !== 'true') {
+  const panel = locationPanel(page)
+  if (!(await panel.isVisible())) {
     await trigger.click()
   }
-  const panel = locationPanel(page)
   await expect(panel).toBeVisible()
-  await expect(panel.getByRole('option', { name: /Усі країни|All countries/i })).toBeVisible({
-    timeout: 15_000,
-  })
+  const country = panel.locator('select.geo-filter-select').first()
+  await expect(country).toBeVisible()
+  await expect(country).toBeEnabled({ timeout: 15_000 })
+  await expect(country.locator('option', { hasText: /^Germany$/ })).toHaveCount(1, { timeout: 15_000 })
   return panel
 }
 
-async function assertUnclippedInViewport(locator: Locator, label: string) {
+async function assertSelectGlyphsUnclipped(locator: Locator, label: string) {
   await expect(locator, label).toBeVisible()
   const metrics = await locator.evaluate((el) => {
     const r = el.getBoundingClientRect()
     const cs = getComputedStyle(el)
-    const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)
-    const inner = r.height - padY
+    const padTop = parseFloat(cs.paddingTop)
+    const padBottom = parseFloat(cs.paddingBottom)
+    const borderY = parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth)
     const fontSize = parseFloat(cs.fontSize)
+    const inner = r.height - padTop - padBottom - borderY
     return {
-      top: r.top,
-      bottom: r.bottom,
-      left: r.left,
-      right: r.right,
+      height: r.height,
+      padTop,
+      padBottom,
+      borderY,
       inner,
       fontSize,
-      overflow: `${cs.overflowX}/${cs.overflowY}`,
-      inViewport:
-        r.top >= -1 &&
-        r.bottom <= window.innerHeight + 1 &&
-        r.left >= -1 &&
-        r.right <= window.innerWidth + 1,
-      textClipped: inner + 0.5 < fontSize,
+      lineHeight: cs.lineHeight,
+      overflow: cs.overflow,
+      overflowY: cs.overflowY,
+      fontFamily: cs.fontFamily,
+      textClipped: inner + 0.5 < fontSize * 1.2,
+      paddingEatsText: padTop + padBottom > 4 && inner < fontSize + 4,
     }
   })
-  expect(metrics.inViewport, `${label} off-viewport ${JSON.stringify(metrics)}`).toBeTruthy()
+  expect(metrics.lineHeight, `${label} line-height ${JSON.stringify(metrics)}`).toBe('normal')
+  expect(metrics.padTop, `${label} padding-top ${JSON.stringify(metrics)}`).toBe(0)
+  expect(metrics.padBottom, `${label} padding-bottom ${JSON.stringify(metrics)}`).toBe(0)
+  expect(metrics.overflowY, `${label} overflow ${JSON.stringify(metrics)}`).not.toBe('hidden')
   expect(metrics.textClipped, `${label} glyph clip ${JSON.stringify(metrics)}`).toBeFalsy()
+  expect(metrics.paddingEatsText, `${label} padding clip ${JSON.stringify(metrics)}`).toBeFalsy()
 }
 
-test.describe('Header location selector — desktop overflow', () => {
+test.describe('Header location selector — native select glyphs', () => {
   for (const viewport of DESKTOP_VIEWPORTS) {
-    test(`panel is fully usable at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+    test(`select text is fully visible at ${viewport.width}x${viewport.height}`, async ({ page }) => {
       await page.setViewportSize(viewport)
       await gotoPath(page, '/')
       const panel = await openLocationPanel(page)
+      const selects = panel.locator('select.geo-filter-select')
+      await expect(selects).toHaveCount(4)
 
-      const countryList = panel.locator('.geo-filter-listbox--country')
-      await expect(countryList).toBeVisible()
+      await selects.nth(0).selectOption('Germany')
+      await expect(selects.nth(0)).toHaveValue('Germany')
+      await expect(selects.nth(1)).toBeEnabled()
 
-      const venezuela = panel.getByRole('option', { name: /^Venezuela$/i })
-      await venezuela.scrollIntoViewIfNeeded()
-      await expect(venezuela).toBeVisible()
+      await assertSelectGlyphsUnclipped(selects.nth(0), 'country')
+      await assertSelectGlyphsUnclipped(selects.nth(1), 'region')
+      await assertSelectGlyphsUnclipped(selects.nth(2), 'city')
+      await assertSelectGlyphsUnclipped(selects.nth(3), 'radius')
+
+      const header = page.locator('.header-location .amazon-header-block')
+      const shotDir = `test-results/visual-location/${viewport.width}x${viewport.height}`
+      await panel.screenshot({ path: `${shotDir}/panel.png` })
+      await selects.nth(0).screenshot({ path: `${shotDir}/country.png` })
+      await selects.nth(1).screenshot({ path: `${shotDir}/region.png` })
+      await selects.nth(2).screenshot({ path: `${shotDir}/city.png` })
+      await selects.nth(3).screenshot({ path: `${shotDir}/radius.png` })
+      await header.screenshot({ path: `${shotDir}/header-trigger.png` })
+
+      const longCountry = selects.nth(0).locator('option', { hasText: /^United Kingdom$/ })
+      if ((await longCountry.count()) > 0) {
+        await selects.nth(0).selectOption('United Kingdom')
+        await assertSelectGlyphsUnclipped(selects.nth(0), 'long country')
+        await selects.nth(0).screenshot({ path: `${shotDir}/country-long.png` })
+        await selects.nth(0).selectOption('Germany')
+      }
 
       const regionLabel = panel.locator('label', { hasText: /Регіон|Region/ })
       const cityLabel = panel.locator('label', { hasText: /Місто|City/ })
       const radiusLabel = panel.locator('label', { hasText: /Радіус|Search radius/ })
-      const gps = panel.getByRole('button', { name: /Моя поточна локація|Use my current location/i })
+      await expect(regionLabel).toBeVisible()
+      await expect(cityLabel).toBeVisible()
+      await expect(radiusLabel).toBeVisible()
+      await expect(panel.getByRole('button', { name: /Моя поточна локація|Use my current location/i })).toBeVisible()
 
-      await regionLabel.scrollIntoViewIfNeeded()
-      await assertUnclippedInViewport(regionLabel, 'region label')
-      await cityLabel.scrollIntoViewIfNeeded()
-      await assertUnclippedInViewport(cityLabel, 'city label')
-      await radiusLabel.scrollIntoViewIfNeeded()
-      await assertUnclippedInViewport(radiusLabel, 'radius label')
-      await gps.scrollIntoViewIfNeeded()
-      await assertUnclippedInViewport(gps, 'gps button')
-
-      await panel.getByRole('option', { name: /^Germany$/i }).click()
-      const regionTrigger = panel.locator('button.geo-filter-select--trigger').first()
-      await regionTrigger.click()
-      await expect(panel.getByRole('option', { name: /Baden-Württemberg|Bavaria|Berlin/i }).first()).toBeVisible({
-        timeout: 10_000,
-      })
-
-      const clear = panel.getByRole('button', { name: /Очистити геофільтри|Clear location filters/i })
-      await clear.scrollIntoViewIfNeeded()
-      await assertUnclippedInViewport(clear, 'clear geo filters')
-
-      const panelBox = await panel.evaluate((el) => {
-        const r = el.getBoundingClientRect()
+      const headerMetrics = await header.evaluate((el) => {
         const cs = getComputedStyle(el)
-        return {
-          height: r.height,
-          maxHeight: cs.maxHeight,
-          overflowY: cs.overflowY,
-          zIndex: cs.zIndex,
-          clipped: r.bottom > window.innerHeight + 1,
-        }
+        return { lineHeight: cs.lineHeight, fontSize: parseFloat(cs.fontSize), overflow: cs.overflow }
       })
-      expect(panelBox.clipped, JSON.stringify(panelBox)).toBeFalsy()
-      expect(Number(panelBox.zIndex)).toBeGreaterThanOrEqual(90)
-      expect(panelBox.overflowY).toMatch(/auto|scroll/)
+      expect(parseFloat(headerMetrics.lineHeight)).toBeGreaterThan(parseFloat(String(headerMetrics.fontSize)) * 1.15)
 
       await expectNoHorizontalOverflow(page)
     })
   }
 })
 
-test.describe('Location filters — mobile sidebar', () => {
-  test.use({ viewport: { width: 390, height: 844 } })
-
-  test('professionals geo filters keep controls readable', async ({ page }) => {
-    await gotoPath(page, '/professionals')
-    await page.locator('button.btn-secondary.mb-4').filter({ hasText: /Фільтри|Filters/ }).click()
-    const sidebar = page.locator('.amazon-filter-sidebar')
-    await expect(sidebar).toBeVisible()
-    const country = sidebar.locator('select.geo-filter-select').first()
-    await expect(country).toBeVisible()
-    await assertUnclippedInViewport(country, 'mobile country select')
-    await expect(page.getByText(/Радіус пошуку|Search radius/i).first()).toBeVisible()
-    await expect(page.getByRole('button', { name: /Моя поточна локація|Use my current location/i })).toBeVisible()
-    await expectNoHorizontalOverflow(page)
-  })
+test.describe('Location filters — mobile native selects', () => {
+  for (const viewport of MOBILE_VIEWPORTS) {
+    test(`professionals geo selects at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+      await page.setViewportSize(viewport)
+      await gotoPath(page, '/professionals')
+      await page.locator('button.btn-secondary.mb-4').filter({ hasText: /Фільтри|Filters/ }).click()
+      const sidebar = page.locator('.amazon-filter-sidebar')
+      await expect(sidebar).toBeVisible()
+      const country = sidebar.locator('select.geo-filter-select').first()
+      await expect(country).toBeVisible()
+      await assertSelectGlyphsUnclipped(country, 'mobile country')
+      const mobileSelects = sidebar.locator('select.geo-filter-select')
+      const mobileCount = await mobileSelects.count()
+      expect(mobileCount).toBeGreaterThanOrEqual(4)
+      for (let i = 0; i < Math.min(mobileCount, 4); i++) {
+        await assertSelectGlyphsUnclipped(mobileSelects.nth(i), `mobile select ${i}`)
+      }
+      await country.screenshot({
+        path: `test-results/visual-location/mobile-${viewport.width}x${viewport.height}-country.png`,
+      })
+      await sidebar.locator('select.geo-filter-select').nth(3).screenshot({
+        path: `test-results/visual-location/mobile-${viewport.width}x${viewport.height}-radius.png`,
+      })
+      await expect(page.getByText(/Радіус пошуку|Search radius/i).first()).toBeVisible()
+      await expect(page.getByRole('button', { name: /Моя поточна локація|Use my current location/i })).toBeVisible()
+      await expectNoHorizontalOverflow(page)
+    })
+  }
 })
