@@ -11,7 +11,7 @@ import type { GeoSearchState } from '../lib/geoSearch'
 import type { MapBounds } from '../components/map/EuropeMarketplaceMap'
 
 export type UseMarketplaceMapMarkersOptions = {
-  /** Max markers to fetch (Home 80, Estimator 120, MapExplore 400). */
+  /** Caps listing markers only. Public businesses load independently (see marketplaceMap). */
   limit: number
   geo: GeoSearchState
   filters?: Partial<MapExploreFilters>

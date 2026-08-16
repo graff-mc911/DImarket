@@ -38,15 +38,22 @@ interface EuropeMarketplaceMapProps {
 }
 
 function clusterCellForZoom(zoom: number): number {
-  if (zoom >= 14) return 0.01
-  if (zoom >= 12) return 0.03
-  if (zoom >= 10) return 0.08
+  // City zoom and closer: one pin per entity (overlapping pins, like a directory map).
+  if (zoom >= 11) return 0
   if (zoom >= 8) return 0.2
   if (zoom >= 6) return 0.45
   return 0.9
 }
 
 function clusterPoints(points: MarketplaceMapMarker[], cell: number): Cluster[] {
+  if (cell <= 0) {
+    return points.map((p) => ({
+      id: p.id,
+      lat: p.lat,
+      lng: p.lng,
+      points: [p],
+    }))
+  }
   const buckets = new Map<string, MarketplaceMapMarker[]>()
   for (const p of points) {
     const key = `${Math.round(p.lat / cell)}_${Math.round(p.lng / cell)}`

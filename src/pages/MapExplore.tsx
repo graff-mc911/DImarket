@@ -108,6 +108,7 @@ export function MapExplore() {
     { kind: 'professional', label: t('mapExplore.legendPro') },
     { kind: 'company', label: t('mapExplore.legendCompany') },
     { kind: 'manufacturer', label: t('mapExplore.legendManufacturer') },
+    { kind: 'agent', label: t('mapExplore.kindAgents') },
     { kind: 'project', label: t('mapExplore.legendProject') },
     { kind: 'job', label: t('mapExplore.legendJob') },
     { kind: 'marketplace', label: t('mapExplore.legendShop') },

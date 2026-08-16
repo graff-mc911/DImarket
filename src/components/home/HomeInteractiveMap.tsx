@@ -32,7 +32,7 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
   )
 
   const { markers, visible, loading } = useMarketplaceMapMarkers({
-    limit: 80,
+    limit: 400,
     geo: location,
     filters,
   })

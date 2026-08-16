@@ -72,6 +72,24 @@ const CITY_CENTERS: Record<string, GeoPoint> = {
   'spain|palma': { lat: 39.5696, lon: 2.6502 },
   'spain|getafe': { lat: 40.3057, lon: -3.7328 },
   'spain|pinto': { lat: 40.2412, lon: -3.699 },
+  'spain|badalona': { lat: 41.4502, lon: 2.2474 },
+  'spain|viladecans': { lat: 41.314, lon: 2.0143 },
+  'spain|algeciras': { lat: 36.1408, lon: -5.4565 },
+  'spain|motril': { lat: 36.745, lon: -3.5206 },
+  'spain|don benito': { lat: 38.956, lon: -5.8616 },
+  'spain|seseña': { lat: 40.1047, lon: -3.6978 },
+  'spain|sesena': { lat: 40.1047, lon: -3.6978 },
+  'spain|alakante': { lat: 38.3452, lon: -0.481 },
+  'spain|arroyomolinos': { lat: 40.2694, lon: -3.9194 },
+  'spain|esplugues de llobregat': { lat: 41.3773, lon: 2.0889 },
+  'spain|hospitalet de llobregat': { lat: 41.3598, lon: 2.1003 },
+  "spain|l'hospitalet de llobregat": { lat: 41.3598, lon: 2.1003 },
+  'spain|peligros': { lat: 37.231, lon: -3.6294 },
+  'spain|ciudad real': { lat: 38.9848, lon: -3.9274 },
+  'spain|sant boi de llobregat': { lat: 41.3436, lon: 2.0436 },
+  'spain|san fernando de henares': { lat: 40.4253, lon: -3.5325 },
+  'spain|san martín de valdeiglesias': { lat: 40.3619, lon: -4.3981 },
+  'spain|san martin de valdeiglesias': { lat: 40.3619, lon: -4.3981 },
   'germany|darmstadt': { lat: 49.8728, lon: 8.6512 },
   'germany|frankfurt': { lat: 50.1109, lon: 8.6821 },
   'germany|hamburg': { lat: 53.5511, lon: 9.9937 },
@@ -113,6 +131,8 @@ const CITY_CENTERS: Record<string, GeoPoint> = {
   'austria|vienna': { lat: 48.2082, lon: 16.3738 },
   'austria|wien': { lat: 48.2082, lon: 16.3738 },
   'netherlands|amsterdam': { lat: 52.3676, lon: 4.9041 },
+  'netherlands|eindhoven': { lat: 51.4416, lon: 5.4697 },
+  'finland|helsinki': { lat: 60.1699, lon: 24.9384 },
   'portugal|lisbon': { lat: 38.7223, lon: -9.1393 },
   'portugal|lisboa': { lat: 38.7223, lon: -9.1393 },
   'czech republic|prague': { lat: 50.0755, lon: 14.4378 },
@@ -152,6 +172,35 @@ const CITY_ONLY_CENTERS: Record<string, GeoPoint> = {
   barcelona: { lat: 41.3874, lon: 2.1686 },
   valencia: { lat: 39.4699, lon: -0.3763 },
   alicante: { lat: 38.3452, lon: -0.481 },
+  alakante: { lat: 38.3452, lon: -0.481 },
+  getafe: { lat: 40.3057, lon: -3.7328 },
+  pinto: { lat: 40.2412, lon: -3.699 },
+  torrent: { lat: 39.437, lon: -0.4656 },
+  torrevieja: { lat: 37.9787, lon: -0.6822 },
+  palma: { lat: 39.5696, lon: 2.6502 },
+  murcia: { lat: 37.9922, lon: -1.1307 },
+  granada: { lat: 37.1773, lon: -3.5986 },
+  bilbao: { lat: 43.263, lon: -2.935 },
+  badalona: { lat: 41.4502, lon: 2.2474 },
+  viladecans: { lat: 41.314, lon: 2.0143 },
+  algeciras: { lat: 36.1408, lon: -5.4565 },
+  motril: { lat: 36.745, lon: -3.5206 },
+  'don benito': { lat: 38.956, lon: -5.8616 },
+  'seseña': { lat: 40.1047, lon: -3.6978 },
+  sesena: { lat: 40.1047, lon: -3.6978 },
+  arroyomolinos: { lat: 40.2694, lon: -3.9194 },
+  'esplugues de llobregat': { lat: 41.3773, lon: 2.0889 },
+  'hospitalet de llobregat': { lat: 41.3598, lon: 2.1003 },
+  "l'hospitalet de llobregat": { lat: 41.3598, lon: 2.1003 },
+  peligros: { lat: 37.231, lon: -3.6294 },
+  'ciudad real': { lat: 38.9848, lon: -3.9274 },
+  'sant boi de llobregat': { lat: 41.3436, lon: 2.0436 },
+  'san fernando de henares': { lat: 40.4253, lon: -3.5325 },
+  'san martín de valdeiglesias': { lat: 40.3619, lon: -4.3981 },
+  'san martin de valdeiglesias': { lat: 40.3619, lon: -4.3981 },
+  zaragoza: { lat: 41.6488, lon: -0.8891 },
+  malaga: { lat: 36.7213, lon: -4.4214 },
+  málaga: { lat: 36.7213, lon: -4.4214 },
   sevilla: { lat: 37.3891, lon: -5.9845 },
   seville: { lat: 37.3891, lon: -5.9845 },
   paris: { lat: 48.8566, lon: 2.3522 },
@@ -173,6 +222,7 @@ const CITY_ONLY_CENTERS: Record<string, GeoPoint> = {
   praha: { lat: 50.0755, lon: 14.4378 },
   lisbon: { lat: 38.7223, lon: -9.1393 },
   lisboa: { lat: 38.7223, lon: -9.1393 },
+  eindhoven: { lat: 51.4416, lon: 5.4697 },
   bratislava: { lat: 48.1486, lon: 17.1077 },
   'košice': { lat: 48.7164, lon: 21.2611 },
   kosice: { lat: 48.7164, lon: 21.2611 },
@@ -240,6 +290,36 @@ const CITY_ONLY_CENTERS: Record<string, GeoPoint> = {
   прага: { lat: 50.0755, lon: 14.4378 },
 }
 
+/** Last-resort pin when only a country is known (directory map, not a precise address). */
+const COUNTRY_INFER_CENTERS: Record<string, GeoPoint> = {
+  spain: { lat: 40.4, lon: -3.7 },
+  іспанія: { lat: 40.4, lon: -3.7 },
+  germany: { lat: 51.1, lon: 10.4 },
+  deutschland: { lat: 51.1, lon: 10.4 },
+  німеччина: { lat: 51.1, lon: 10.4 },
+  france: { lat: 46.6, lon: 2.2 },
+  франція: { lat: 46.6, lon: 2.2 },
+  italy: { lat: 42.5, lon: 12.5 },
+  italia: { lat: 42.5, lon: 12.5 },
+  poland: { lat: 52.1, lon: 19.4 },
+  польща: { lat: 52.1, lon: 19.4 },
+  portugal: { lat: 39.4, lon: -8.2 },
+  ukraine: { lat: 48.4, lon: 31.2 },
+  україна: { lat: 48.4, lon: 31.2 },
+  netherlands: { lat: 52.1, lon: 5.3 },
+  belgium: { lat: 50.5, lon: 4.5 },
+  austria: { lat: 47.6, lon: 14.1 },
+  switzerland: { lat: 46.8, lon: 8.2 },
+  liechtenstein: { lat: 47.166, lon: 9.509 },
+  denmark: { lat: 56.0, lon: 10.0 },
+  finland: { lat: 64.0, lon: 26.0 },
+  ireland: { lat: 53.4, lon: -8.0 },
+  sweden: { lat: 62.0, lon: 15.0 },
+  china: { lat: 35.0, lon: 103.0 },
+  'united states': { lat: 39.8, lon: -98.5 },
+  usa: { lat: 39.8, lon: -98.5 },
+}
+
 const cityCenterCache = new Map<string, GeoPoint | null>()
 
 function cityKey(country: string, city: string): string {
@@ -273,6 +353,8 @@ export function inferCoordsFromLocationText(
     const fromPair =
       knownCityCenter(parts[1], parts[0]) ?? knownCityCenter(parts[0], parts[1])
     if (fromPair) return fromPair
+    const fromCountry = knownCityCenter(parts[parts.length - 1], parts[0])
+    if (fromCountry) return fromCountry
   }
 
   const cities = Object.keys(CITY_ONLY_CENTERS).sort((a, b) => b.length - a.length)
@@ -283,6 +365,11 @@ export function inferCoordsFromLocationText(
   for (const [key, coords] of Object.entries(CITY_CENTERS)) {
     const cityPart = key.split('|')[1]
     if (cityPart && lower.includes(cityPart)) return coords
+  }
+
+  const countries = Object.entries(COUNTRY_INFER_CENTERS).sort((a, b) => b[0].length - a[0].length)
+  for (const [name, coords] of countries) {
+    if (lower.includes(name)) return coords
   }
 
   return null
