@@ -1,7 +1,6 @@
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useApp } from '../contexts/AppContext'
-import { fetchHomepageMetrics, type HomeMetrics } from '../lib/homeMarketplace'
 import {
   languageDisplayCode,
   languageOptionLabel,
@@ -11,7 +10,6 @@ import { navigateTo } from '../lib/navigation'
 import { labelKeyFor, navEntriesFor, type NavEntry } from '../lib/navMap'
 import { LANGUAGES } from '../lib/types'
 import { FooterStats } from './FooterStats'
-import { HomeDownloadApp } from './home/HomeDownloadApp'
 import { LanguageFlag } from './LanguageFlag'
 
 const FOOTER_COLUMNS: Array<{
@@ -54,18 +52,6 @@ function pickEntries(surface: (typeof FOOTER_COLUMNS)[number]['surface'], ids: s
 export function Footer() {
   const { t, user, language, setLanguage } = useApp()
   const currentYear = new Date().getFullYear()
-  const [metrics, setMetrics] = useState<HomeMetrics | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      const data = await fetchHomepageMetrics()
-      if (!cancelled) setMetrics(data)
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [])
 
   const linkClass =
     'text-sm text-[#c9cdd3] transition hover:text-white hover:underline'
@@ -109,20 +95,6 @@ export function Footer() {
           </button>
         </div>
       )}
-
-      <div className="premium-footer__download layout-page-gutter">
-        <div className="home-download__inner-row layout-page-content py-1">
-          <div className="mb-3 text-center md:mb-0 md:text-left">
-            <p className="text-sm font-bold text-white">{t('homePremium.appTitle')}</p>
-            <p className="mt-1 text-xs text-[#aeb4bc]">{t('homePremium.appSubtitle')}</p>
-          </div>
-          <HomeDownloadApp
-            compact
-            appStoreUrl={metrics?.appStoreUrl}
-            playStoreUrl={metrics?.playStoreUrl}
-          />
-        </div>
-      </div>
 
       <div className="layout-page-gutter py-8">
         <div className="layout-page-content">
@@ -231,7 +203,6 @@ export function Footer() {
             <button type="button" className="hover:text-white" onClick={() => go('/contact?topic=gdpr')}>
               {t('footer.gdpr')}
             </button>
-            <span className="text-[#5c6570]">App Store · Google Play</span>
           </div>
         </div>
       </div>

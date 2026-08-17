@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   HomeCategoriesPreview,
   HomeCustomerReviews,
-  HomeDownloadApp,
   HomeFaq,
   HomeFeaturedCompanies,
   HomeHero,
@@ -113,10 +112,6 @@ export function Home() {
       <HomeFeaturedCompanies />
       <HomeInteractiveMap loading={loading} />
       <HomeFaq />
-      <HomeDownloadApp
-        appStoreUrl={metrics.appStoreUrl}
-        playStoreUrl={metrics.playStoreUrl}
-      />
     </div>
   )
 }
