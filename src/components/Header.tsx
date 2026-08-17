@@ -625,9 +625,9 @@ export function Header() {
             </div>
 
             {/* Two balanced, centered department rows — no horizontal scrollbar */}
-            <div className="site-header-subnav mt-1 hidden min-w-0 sm:block">
+            <div className="site-header-subnav hidden min-w-0 sm:block">
               <nav
-                className="amazon-dept-scroll px-3 py-1.5 md:px-4"
+                className="amazon-dept-scroll px-3 md:px-4"
                 aria-label={t('header.categories')}
               >
                 <div className="amazon-dept-row">
