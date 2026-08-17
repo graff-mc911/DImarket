@@ -134,7 +134,13 @@
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    background-color: var(--bg-canvas);
+    /* Same as header — iOS 26 scroll-edge glass samples the document top.
+       Light canvas lives on main, not here. */
+    background-color: #232f3e;
+  }
+
+  html.pwa-standalone {
+    color-scheme: dark;
   }
 
   html.pwa-standalone,
@@ -200,7 +206,8 @@
 
 @layer components {
   .app-shell {
-    background-color: var(--bg-canvas);
+    /* Dark under the fixed header so iOS 26 edge-glass is navy, not white. */
+    background-color: #232f3e;
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -208,6 +215,8 @@
 
   .app-shell > main {
     min-width: 0;
+    background-color: var(--bg-canvas);
+    color-scheme: light;
   }
 
   @media (max-width: 1023px) {
@@ -1983,8 +1992,11 @@
     top: 0;
     z-index: 50;
     width: 100%;
-    background: #232f3e;
+    background-color: #232f3e;
+    color-scheme: dark;
     padding-top: env(safe-area-inset-top, 0px);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   .site-header-shell {
@@ -7303,10 +7315,18 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 /* Unlayered — iOS 26 status-bar tint + PWA overlay must not lose to @layer. */
 html,
-body {
+body,
+#root {
   background-color: #232f3e;
 }
 
 .site-header-fixed {
+  background-color: #232f3e;
+  color-scheme: dark;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.site-header-spacer {
   background-color: #232f3e;
 }

@@ -699,7 +699,11 @@ export function Header() {
       </header>
       </div>
 
-      <div style={{ height: headerSpacerPx }} className="shrink-0" aria-hidden />
+      <div
+        style={{ height: headerSpacerPx, backgroundColor: '#232f3e' }}
+        className="site-header-spacer shrink-0"
+        aria-hidden
+      />
     </>
   )
 }
