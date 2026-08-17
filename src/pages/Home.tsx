@@ -2,7 +2,7 @@
 // Home.tsx — Premium European construction marketplace homepage
 // ============================================================
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   HomeCategoriesPreview,
   HomeCustomerReviews,
@@ -25,6 +25,7 @@ import {
   type HomeMarketplaceData,
   type HomeMetrics,
 } from '../lib/homeMarketplace'
+import { matchProfileGeo } from '../lib/geoSearch'
 
 const EMPTY_METRICS: HomeMetrics = {
   professionals: 0,
@@ -36,7 +37,7 @@ const EMPTY_METRICS: HomeMetrics = {
 }
 
 export function Home() {
-  const { t } = useApp()
+  const { t, location } = useApp()
   const [data, setData] = useState<HomeMarketplaceData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -84,6 +85,14 @@ export function Home() {
   }, [loading])
 
   const metrics = data?.metrics ?? EMPTY_METRICS
+  const professionals = useMemo(() => {
+    const rows = (data?.professionals ?? []).filter((p) => matchProfileGeo(p, location).matches)
+    return rows.slice(0, 12)
+  }, [data?.professionals, location])
+  const companies = useMemo(() => {
+    const rows = (data?.companies ?? []).filter((p) => matchProfileGeo(p, location).matches)
+    return rows.slice(0, 12)
+  }, [data?.companies, location])
 
   return (
     <div className="home-premium">
@@ -97,8 +106,8 @@ export function Home() {
 
       <HomeCategoriesPreview categories={data?.categories ?? []} loading={loading} />
       <HomePopularProjects projects={data?.projects ?? []} loading={loading} />
-      <HomeTopProfessionals professionals={data?.professionals ?? []} loading={loading} />
-      <HomeTopCompanies companies={data?.companies ?? []} loading={loading} />
+      <HomeTopProfessionals professionals={professionals} loading={loading} />
+      <HomeTopCompanies companies={companies} loading={loading} />
       <HomeWhyDimarket />
       <HomeCustomerReviews reviews={data?.reviews ?? []} />
       <HomeFeaturedCompanies />

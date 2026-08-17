@@ -420,6 +420,14 @@ function includesLoose(haystack: string, needle: string): boolean {
   return haystack.toLowerCase().includes(needle.toLowerCase())
 }
 
+function countryMatches(location: string | null | undefined, country: string): boolean {
+  if (!country) return true
+  const loc = (location ?? '').trim()
+  if (!loc) return true
+  const parsed = parseRegistrationLocation(loc)
+  return includesLoose(loc, country) || Boolean(parsed?.country && includesLoose(parsed.country, country))
+}
+
 function adminMatch(location: string | null | undefined, geo: GeoSearchState): boolean {
   if (!geo.country && !geo.region && !geo.province && !geo.city) return true
   const loc = location ?? ''
@@ -506,7 +514,12 @@ export function matchProfileGeo(profile: LocatableProfile, geo: GeoSearchState):
 
   if (km != null) {
     if (distanceKm != null) {
-      return { matches: distanceKm <= km, distanceKm }
+      const inRadius = distanceKm <= km
+      if (!inRadius) return { matches: false, distanceKm }
+      if (geo.country && !countryMatches(profile.location, geo.country)) {
+        return { matches: false, distanceKm }
+      }
+      return { matches: true, distanceKm }
     }
     // No coordinates → administrative fallback (city/province/region/country)
     return { matches: adminMatch(profile.location, geo), distanceKm: null }

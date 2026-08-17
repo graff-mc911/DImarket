@@ -789,8 +789,8 @@ export function filterMapMarkers(
     const geoHit = matchProfileGeo(
       {
         location: m.location,
-        service_latitude: m.service_latitude,
-        service_longitude: m.service_longitude,
+        service_latitude: m.service_latitude ?? m.lat,
+        service_longitude: m.service_longitude ?? m.lng,
         // Directory map shows where they are registered, not whether they travel to you.
         service_radius_km: null,
       },

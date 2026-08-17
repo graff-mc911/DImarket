@@ -192,7 +192,7 @@ export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfession
     .eq('is_professional', true)
     .eq('user_role', 'professional')
     .order('rating', { ascending: false })
-    .limit(Math.max(limit * 4, 48))
+    .limit(Math.max(limit * 8, 96))
 
   // Soft-delete / hide columns (APPLY_OWNER_PROFILE_MODERATION.sql)
   let { data, error } = await (query as any).is('deleted_at', null).is('hidden_at', null)
@@ -203,11 +203,11 @@ export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfession
       .eq('is_professional', true)
       .eq('user_role', 'professional')
       .order('rating', { ascending: false })
-      .limit(Math.max(limit * 4, 48)))
+      .limit(Math.max(limit * 8, 96)))
   }
 
   const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [])
-  return sortProfilesForPublicDiscovery(rows).slice(0, limit)
+  return sortProfilesForPublicDiscovery(rows)
 }
 
 export async function fetchHomeCompanies(limit = 12): Promise<HomeProfessional[]> {
@@ -225,7 +225,7 @@ export async function fetchHomeCompanies(limit = 12): Promise<HomeProfessional[]
     .eq('is_professional', true)
     .eq('user_role', 'company')
     .order('rating', { ascending: false })
-    .limit(Math.max(limit * 4, 48))
+    .limit(Math.max(limit * 8, 96))
 
   let { data, error } = await (query as any).is('deleted_at', null).is('hidden_at', null)
   if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
@@ -235,11 +235,11 @@ export async function fetchHomeCompanies(limit = 12): Promise<HomeProfessional[]
       .eq('is_professional', true)
       .eq('user_role', 'company')
       .order('rating', { ascending: false })
-      .limit(Math.max(limit * 4, 48)))
+      .limit(Math.max(limit * 8, 96)))
   }
 
   const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [])
-  return sortProfilesForPublicDiscovery(rows).slice(0, limit)
+  return sortProfilesForPublicDiscovery(rows)
 }
 
 export async function fetchHomeReviews(limit = 8): Promise<HomeReview[]> {

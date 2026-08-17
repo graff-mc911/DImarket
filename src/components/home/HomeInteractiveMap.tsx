@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import { useMarketplaceMapMarkers } from '../../hooks/useMarketplaceMapMarkers'
-import type { MapMarkerKind } from '../../lib/marketplaceMap'
+import { EMPTY_MAP_FILTERS, filterMapMarkers, type MapMarkerKind } from '../../lib/marketplaceMap'
 import { navigateTo } from '../../lib/navigation'
 import { EuropeMarketplaceMap } from '../map/EuropeMarketplaceMap'
 import {
@@ -34,11 +34,13 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
   const { markers, visible, loading } = useMarketplaceMapMarkers({
     limit: 400,
     geo: location,
-    geoFilter: false,
     filters,
   })
 
-  const counts = useMemo(() => countMapKinds(markers), [markers])
+  const counts = useMemo(
+    () => countMapKinds(filterMapMarkers(markers, location, EMPTY_MAP_FILTERS)),
+    [markers, location],
+  )
   const busy = loading || Boolean(parentLoading)
 
   return (
@@ -81,7 +83,7 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
         markers={visible}
         geo={location}
         loading={busy}
-        followLocation={false}
+        followLocation
         scrollWheelZoom={false}
         className="home-map--embedded"
       />

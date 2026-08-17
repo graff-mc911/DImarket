@@ -7,7 +7,7 @@ import {
   type MapExploreFilters,
   type MarketplaceMapMarker,
 } from '../lib/marketplaceMap'
-import { EMPTY_GEO_SEARCH, type GeoSearchState } from '../lib/geoSearch'
+import type { GeoSearchState } from '../lib/geoSearch'
 import type { MapBounds } from '../components/map/EuropeMarketplaceMap'
 
 export type UseMarketplaceMapMarkersOptions = {
@@ -15,11 +15,6 @@ export type UseMarketplaceMapMarkersOptions = {
   limit: number
   geo: GeoSearchState
   filters?: Partial<MapExploreFilters>
-  /**
-   * When false, city/GPS/radius does not hide pins. Directory maps show every
-   * public business; geo still attaches distances and can pan the camera.
-   */
-  geoFilter?: boolean
   /** When true, attach distanceKm from geo origin. */
   withDistances?: boolean
   /** Optional viewport bounds filter. */
@@ -36,7 +31,6 @@ export function useMarketplaceMapMarkers({
   limit,
   geo,
   filters,
-  geoFilter = true,
   withDistances = false,
   bounds = null,
   viewportFilter = false,
@@ -73,12 +67,12 @@ export function useMarketplaceMapMarkers({
   const visible = useMemo(() => {
     const filtered = filterMapMarkers(
       markers,
-      geoFilter ? geo : EMPTY_GEO_SEARCH,
+      geo,
       activeFilters,
       viewportFilter ? bounds : null,
     )
     return withDistances ? attachDistances(filtered, origin) : filtered
-  }, [markers, geo, geoFilter, activeFilters, bounds, viewportFilter, withDistances, origin])
+  }, [markers, geo, activeFilters, bounds, viewportFilter, withDistances, origin])
 
   return { markers, visible, loading, setMarkers }
 }
