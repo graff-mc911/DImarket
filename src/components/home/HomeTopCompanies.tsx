@@ -1,9 +1,9 @@
-import { Building2, ChevronLeft, ChevronRight, Globe, Languages, MapPin, Phone, ShieldCheck, Star } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Globe, Languages, MapPin, Phone, ShieldCheck, Star } from 'lucide-react'
 import { useRef } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import type { HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
-import { resolveDirectoryAvatarUrl } from '../../lib/directoryAvatars'
+import { resolveCompanyAvatarUrl } from '../../lib/directoryAvatars'
 import { navigateTo } from '../../lib/navigation'
 
 function normalizeWebsiteHref(raw: string | null | undefined): string | null {
@@ -71,11 +71,7 @@ export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) 
         <div ref={railRef} className="home-rail home-rail--pros" role="list">
           {companies.map((company) => {
             const name = formatProfessionalCardTitle(company, t('professional.defaultName'))
-            const avatar = resolveDirectoryAvatarUrl(
-              company.id,
-              company.profile_photo,
-              company.avatar_url,
-            )
+            const avatar = resolveCompanyAvatarUrl(company)
             const langs = (company.languages ?? []).slice(0, 3)
             const location = (company.location || '').trim()
             const phone = (company.phone ?? '').trim()
@@ -90,13 +86,7 @@ export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) 
                   onClick={() => navigateTo(`/professional/${company.id}`)}
                 >
                   <div className="home-pro-card__avatar">
-                    {avatar ? (
-                      <img src={avatar} alt="" loading="lazy" />
-                    ) : (
-                      <span className="inline-flex items-center justify-center">
-                        <Building2 className="h-6 w-6" aria-hidden />
-                      </span>
-                    )}
+                    <img src={avatar} alt="" loading="lazy" />
                   </div>
                   <div className="home-pro-card__info">
                     <div className="home-pro-card__name-row">

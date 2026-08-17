@@ -28,7 +28,8 @@ import {
 } from 'lucide-react'
 import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
-import { resolveDirectoryAvatarUrl } from '../lib/directoryAvatars'
+import { resolveCompanyAvatarUrl, resolveDirectoryAvatarUrl } from '../lib/directoryAvatars'
+import { isCompanyProfile } from '../lib/professionalDisplay'
 import { navigateTo }  from '../lib/navigation'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { VerificationBadge } from '../components/MatchScoreBadge'
@@ -189,7 +190,9 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
     ? profile.full_name.trim().split(/\s+/).slice(0, 2).map(p => p[0]?.toUpperCase() || '').join('')
     : 'DI'
   const avatarPhoto = profile
-    ? resolveDirectoryAvatarUrl(profile.id, profile.profile_photo, profile.avatar_url)
+    ? isCompanyProfile(profile)
+      ? resolveCompanyAvatarUrl(profile)
+      : resolveDirectoryAvatarUrl(profile.id, profile.profile_photo, profile.avatar_url)
     : null
 
   // --- Завантаження ---
