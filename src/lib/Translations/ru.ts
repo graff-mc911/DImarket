@@ -365,6 +365,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Проверенных мастеров',
   'homePremium.trustCountries': 'Стран',
   'homePremium.trustProjects': 'Завершённых проектов',
+  'homePremium.trustOnline': 'Сейчас онлайн',
   'homePremium.carouselPrev': 'Предыдущие отзывы',
   'homePremium.carouselNext': 'Следующие отзывы',
   'homePremium.companiesEyebrow': 'Партнёры',

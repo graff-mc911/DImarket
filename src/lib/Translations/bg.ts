@@ -352,6 +352,7 @@ export const bgTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Проверени професионалисти',
   'homePremium.trustCountries': 'Държави',
   'homePremium.trustProjects': 'Завършени проекти',
+  'homePremium.trustOnline': 'Онлайн сега',
   'homePremium.carouselPrev': 'Предишни отзиви',
   'homePremium.carouselNext': 'Следващи отзиви',
   'homePremium.companiesEyebrow': 'Партньори',

@@ -352,6 +352,7 @@ export const skTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Overení profesionáli',
   'homePremium.trustCountries': 'Krajiny',
   'homePremium.trustProjects': 'Dokončené projekty',
+  'homePremium.trustOnline': 'Online teraz',
   'homePremium.carouselPrev': 'Predchádzajúce recenzie',
   'homePremium.carouselNext': 'Ďalšie recenzie',
   'homePremium.companiesEyebrow': 'Partneri',

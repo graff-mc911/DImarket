@@ -352,6 +352,7 @@ export const zhTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': '已认证专业人士',
   'homePremium.trustCountries': '国家',
   'homePremium.trustProjects': '已完成项目',
+  'homePremium.trustOnline': '当前在线',
   'homePremium.carouselPrev': '上一条评价',
   'homePremium.carouselNext': '下一条评价',
   'homePremium.companiesEyebrow': '合作伙伴',

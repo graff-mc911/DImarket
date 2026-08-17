@@ -352,6 +352,7 @@ export const csTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Ověření profesionálové',
   'homePremium.trustCountries': 'Země',
   'homePremium.trustProjects': 'Dokončené projekty',
+  'homePremium.trustOnline': 'Online nyní',
   'homePremium.carouselPrev': 'Předchozí recenze',
   'homePremium.carouselNext': 'Další recenze',
   'homePremium.companiesEyebrow': 'Partneři',

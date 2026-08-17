@@ -352,6 +352,7 @@ export const roTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Profesionisti verificati',
   'homePremium.trustCountries': 'Țări',
   'homePremium.trustProjects': 'Proiecte finalizate',
+  'homePremium.trustOnline': 'Online acum',
   'homePremium.carouselPrev': 'Recenzii anterioare',
   'homePremium.carouselNext': 'Următoarele recenzii',
   'homePremium.companiesEyebrow': 'Parteneri',

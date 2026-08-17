@@ -1,5 +1,6 @@
-import { Briefcase, Globe2, ShieldCheck, Star } from 'lucide-react'
+import { Briefcase, Globe2, Radio, ShieldCheck, Star } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
+import { useOnlineVisitors } from '../../hooks/useOnlineVisitors'
 import type { HomeMetrics } from '../../lib/homeMarketplace'
 import { AnimatedStat } from './AnimatedStat'
 
@@ -9,6 +10,7 @@ interface HomeTrustBarProps {
 
 export function HomeTrustBar({ metrics }: HomeTrustBarProps) {
   const { t } = useApp()
+  const onlineNow = useOnlineVisitors()
 
   const items = [
     ...(metrics.reviews > 0
@@ -39,6 +41,12 @@ export function HomeTrustBar({ metrics }: HomeTrustBarProps) {
       icon: Briefcase,
       value: metrics.projects,
       label: t('homePremium.trustProjects'),
+    },
+    {
+      id: 'online' as const,
+      icon: Radio,
+      value: onlineNow,
+      label: t('homePremium.trustOnline'),
     },
   ]
 

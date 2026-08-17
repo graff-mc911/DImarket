@@ -352,6 +352,7 @@ export const lvTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Pārbaudīti profesionāļi',
   'homePremium.trustCountries': 'valstis',
   'homePremium.trustProjects': 'Pabeigtie projekti',
+  'homePremium.trustOnline': 'Tiešsaistē tagad',
   'homePremium.carouselPrev': 'Iepriekšējās atsauksmes',
   'homePremium.carouselNext': 'Nākamās atsauksmes',
   'homePremium.companiesEyebrow': 'Partneri',

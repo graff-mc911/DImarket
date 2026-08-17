@@ -352,6 +352,7 @@ export const etTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Kontrollitud spetsialistid',
   'homePremium.trustCountries': 'Riigid',
   'homePremium.trustProjects': 'Lõpetatud projektid',
+  'homePremium.trustOnline': 'Praegu võrgus',
   'homePremium.carouselPrev': 'Varasemad arvustused',
   'homePremium.carouselNext': 'Järgmised arvustused',
   'homePremium.companiesEyebrow': 'Partnerid',

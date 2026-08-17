@@ -352,6 +352,7 @@ export const huTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Ellenőrzött szakemberek',
   'homePremium.trustCountries': 'Országok',
   'homePremium.trustProjects': 'Befejezett projektek',
+  'homePremium.trustOnline': 'Most online',
   'homePremium.carouselPrev': 'Előző vélemények',
   'homePremium.carouselNext': 'Következő vélemények',
   'homePremium.companiesEyebrow': 'Partnerek',

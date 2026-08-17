@@ -363,6 +363,7 @@ export const plTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Zweryfikowani fachowcy',
   'homePremium.trustCountries': 'Kraje',
   'homePremium.trustProjects': 'Ukończone projekty',
+  'homePremium.trustOnline': 'Teraz online',
   'homePremium.carouselPrev': 'Poprzednie opinie',
   'homePremium.carouselNext': 'Następne opinie',
   'homePremium.companiesEyebrow': 'Partnerzy',

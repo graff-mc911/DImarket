@@ -699,6 +699,7 @@ export const enTranslations = {
   'homePremium.trustPros': 'Verified Professionals',
   'homePremium.trustCountries': 'Countries',
   'homePremium.trustProjects': 'Completed Projects',
+  'homePremium.trustOnline': 'Online now',
   'homePremium.carouselPrev': 'Previous reviews',
   'homePremium.carouselNext': 'Next reviews',
   'homePremium.companiesEyebrow': 'Partners',

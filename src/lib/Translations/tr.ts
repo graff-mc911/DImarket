@@ -352,6 +352,7 @@ export const trTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Doğrulanmış Profesyoneller',
   'homePremium.trustCountries': 'Ülkeler',
   'homePremium.trustProjects': 'Tamamlanan Projeler',
+  'homePremium.trustOnline': 'Şu anda çevrimiçi',
   'homePremium.carouselPrev': 'Önceki incelemeler',
   'homePremium.carouselNext': 'Sonraki incelemeler',
   'homePremium.companiesEyebrow': 'Ortaklar',

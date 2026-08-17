@@ -352,6 +352,7 @@ export const jaTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': '認証済みプロ',
   'homePremium.trustCountries': '国',
   'homePremium.trustProjects': '完了プロジェクト',
+  'homePremium.trustOnline': '現在オンライン',
   'homePremium.carouselPrev': '前のレビュー',
   'homePremium.carouselNext': '次のレビュー',
   'homePremium.companiesEyebrow': 'パートナー',

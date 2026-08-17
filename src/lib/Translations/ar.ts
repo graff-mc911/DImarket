@@ -352,6 +352,7 @@ export const arTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'محترفون موثّقون',
   'homePremium.trustCountries': 'الدول',
   'homePremium.trustProjects': 'مشاريع مكتملة',
+  'homePremium.trustOnline': 'متصل الآن',
   'homePremium.carouselPrev': 'التقييمات السابقة',
   'homePremium.carouselNext': 'التقييمات التالية',
   'homePremium.companiesEyebrow': 'الشركاء',

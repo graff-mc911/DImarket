@@ -364,6 +364,7 @@ export const esTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Profesionales verificados',
   'homePremium.trustCountries': 'Países',
   'homePremium.trustProjects': 'Proyectos completados',
+  'homePremium.trustOnline': 'En línea ahora',
   'homePremium.carouselPrev': 'Reseñas anteriores',
   'homePremium.carouselNext': 'Reseñas siguientes',
   'homePremium.companiesEyebrow': 'Socios',

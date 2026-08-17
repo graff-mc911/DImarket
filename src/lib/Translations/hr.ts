@@ -352,6 +352,7 @@ export const hrTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Verificirani majstori',
   'homePremium.trustCountries': 'Zemlje',
   'homePremium.trustProjects': 'Dovršeni projekti',
+  'homePremium.trustOnline': 'Online sada',
   'homePremium.carouselPrev': 'Prethodne recenzije',
   'homePremium.carouselNext': 'Sljedeće recenzije',
   'homePremium.companiesEyebrow': 'Partneri',

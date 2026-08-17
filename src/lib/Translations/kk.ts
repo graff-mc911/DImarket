@@ -352,6 +352,7 @@ export const kkTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Тексерілген кәсіпқойлар',
   'homePremium.trustCountries': 'Елдер',
   'homePremium.trustProjects': 'Аяқталған жобалар',
+  'homePremium.trustOnline': 'Қазір онлайн',
   'homePremium.carouselPrev': 'Алдыңғы шолулар',
   'homePremium.carouselNext': 'Келесі шолулар',
   'homePremium.companiesEyebrow': 'Серіктестер',

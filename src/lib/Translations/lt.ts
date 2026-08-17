@@ -352,6 +352,7 @@ export const ltTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Patvirtinti specialistai',
   'homePremium.trustCountries': 'Šalys',
   'homePremium.trustProjects': 'Užbaigti projektai',
+  'homePremium.trustOnline': 'Dabar internete',
   'homePremium.carouselPrev': 'Ankstesni atsiliepimai',
   'homePremium.carouselNext': 'Kiti atsiliepimai',
   'homePremium.companiesEyebrow': 'Partneriai',

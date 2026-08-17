@@ -352,6 +352,7 @@ export const slTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Preverjeni mojstri',
   'homePremium.trustCountries': 'Države',
   'homePremium.trustProjects': 'Zaključeni projekti',
+  'homePremium.trustOnline': 'Trenutno online',
   'homePremium.carouselPrev': 'Prejšnje ocene',
   'homePremium.carouselNext': 'Naslednje ocene',
   'homePremium.companiesEyebrow': 'Partnerji',

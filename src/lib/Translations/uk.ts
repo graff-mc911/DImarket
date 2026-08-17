@@ -700,6 +700,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'homePremium.trustPros': 'Верифікованих майстрів',
   'homePremium.trustCountries': 'Країн',
   'homePremium.trustProjects': 'Завершених проєктів',
+  'homePremium.trustOnline': 'Онлайн зараз',
   'homePremium.carouselPrev': 'Попередні відгуки',
   'homePremium.carouselNext': 'Наступні відгуки',
   'homePremium.companiesEyebrow': 'Партнери',
