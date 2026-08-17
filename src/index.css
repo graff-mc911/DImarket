@@ -5253,14 +5253,12 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .home-company-logo {
-  display: flex;
-  flex-direction: column;
+  display: block;
   min-height: 0;
   overflow: hidden;
   border-radius: 18px;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  text-align: center;
   text-decoration: none;
   color: inherit;
   transition: transform 180ms ease, box-shadow 180ms ease;
@@ -5282,14 +5280,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   aspect-ratio: 16 / 9;
   object-fit: cover;
   background: #1a2330;
-}
-
-.home-company-logo__name {
-  padding: 0.55rem 0.6rem 0.7rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #2f2a24;
-  line-height: 1.25;
 }
 
 /* Interactive map */

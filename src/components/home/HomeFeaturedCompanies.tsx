@@ -69,13 +69,12 @@ export function HomeFeaturedCompanies() {
               <img
                 className="home-company-logo__media"
                 src={c.image}
-                alt=""
+                alt={c.name}
                 width={1024}
                 height={576}
                 loading="lazy"
                 decoding="async"
               />
-              <span className="home-company-logo__name">{c.name}</span>
             </a>
           </li>
         ))}

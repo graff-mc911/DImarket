@@ -74,6 +74,7 @@ test.describe('Smoke — публічні сторінки', () => {
     for (const card of await cards.all()) {
       await expect(card.locator('img.home-company-logo__media')).toBeVisible()
       await expect(card).toHaveAttribute('target', '_blank')
+      await expect(card.locator('.home-company-logo__name')).toHaveCount(0)
     }
   })
 
