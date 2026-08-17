@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react'
 import { EstimatorShell } from '../components/cost-estimator/EstimatorShell'
+import { EstimatorIntake, matchProjectType } from '../components/cost-estimator/EstimatorIntake'
 import { EstimatorResultsMap } from '../components/cost-estimator/EstimatorResultsMap'
 import { EstimatorProcurementPanel } from '../components/cost-estimator/EstimatorProcurementPanel'
 import { LocationStep } from '../components/project-wizard/LocationStep'
@@ -69,6 +70,7 @@ import {
 import { PROJECT_TRADES } from '../lib/projectWizard'
 import { submitProjectWizard } from '../lib/submitProjectWizard'
 import { readEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
+import { applyPageSeo } from '../lib/pageSeo'
 import { navigateTo } from '../lib/navigation'
 import type { Profile } from '../lib/types'
 
@@ -122,6 +124,7 @@ export function CostEstimator() {
   const [outcomeConsent, setOutcomeConsent] = useState(false)
   const [outcomeSaved, setOutcomeSaved] = useState(false)
   const [publishingTender, setPublishingTender] = useState(false)
+  const [typeQuery, setTypeQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const cameraRef = useRef<HTMLInputElement>(null)
 
@@ -150,6 +153,16 @@ export function CostEstimator() {
   useEffect(() => {
     void listCostEstimates(user?.id ?? null).then((rows) => setHistoryCount(rows.length))
   }, [user?.id, savedId])
+
+  useEffect(
+    () =>
+      applyPageSeo({
+        title: t('costEstimator.seoTitle'),
+        description: t('costEstimator.seoDescription'),
+        canonicalPath: '/cost-estimator',
+      }),
+    [t],
+  )
 
   // Prefill from AI sales chat (“повний ремонт + кошторис”)
   useEffect(() => {
@@ -275,12 +288,12 @@ export function CostEstimator() {
   }
 
   const validateStep = (step: EstimatorStep): string | null => {
-    if (step === 1 && !state.projectTypeId) return 'Please choose a project type'
+    if (step === 1 && !state.projectTypeId) return t('costEstimator.chooseTypeError')
     if (step === 2 && state.description.trim().length < 15)
-      return 'Please write at least 15 characters'
+      return t('costEstimator.describeError')
     if (step === 5) {
       const area = Number(state.measurements.areaSqm)
-      if (!(area > 0)) return 'Enter area in m²'
+      if (!(area > 0)) return t('costEstimator.areaError')
     }
     return null
   }
@@ -570,6 +583,39 @@ export function CostEstimator() {
     return translated === item.labelKey ? item.labelEn : translated
   }
 
+  const pickType = (id: EstimatorProjectTypeId, advance: boolean) => {
+    setTypeQuery(typeLabel(id))
+    setError(null)
+    if (advance) {
+      setState((prev) => ({ ...prev, projectTypeId: id, step: 2 }))
+      return
+    }
+    patch({ projectTypeId: id })
+  }
+
+  const submitIntake = () => {
+    const fromQuery = matchProjectType(typeQuery, typeLabel)
+    const matched = fromQuery || state.projectTypeId
+    if (matched) {
+      setTypeQuery(typeLabel(matched))
+      setError(null)
+      setState((prev) => ({ ...prev, projectTypeId: matched, step: 2 }))
+      return
+    }
+    const q = typeQuery.trim()
+    if (q.length >= 3) {
+      setError(null)
+      setState((prev) => ({
+        ...prev,
+        projectTypeId: 'other',
+        description: prev.description || q,
+        step: 2,
+      }))
+      return
+    }
+    setError(t('costEstimator.chooseTypeError'))
+  }
+
   if (busy && state.step === 5) {
     return (
       <EstimatorShell
@@ -579,10 +625,10 @@ export function CostEstimator() {
         busy
       >
         <div className="mx-auto max-w-md py-8 text-center">
-          <Sparkles className="mx-auto h-10 w-10 animate-pulse text-[#1d1d1f]" />
-          <div className="mt-6 h-2 overflow-hidden rounded-full bg-[#e8e8ed]">
+          <Sparkles className="mx-auto h-10 w-10 animate-pulse text-[#ff9900]" />
+          <div className="mt-6 h-2 overflow-hidden rounded-full bg-[#e8e0d6]">
             <div
-              className="h-full rounded-full bg-[#1d1d1f] transition-all duration-300"
+              className="h-full rounded-full bg-[#ff9900] transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -1071,19 +1117,20 @@ export function CostEstimator() {
 
   return (
     <EstimatorShell
+      variant={state.step === 1 ? 'intake' : 'wizard'}
       step={state.step}
-      title={meta.title}
-      subtitle={meta.sub}
+      title={state.step === 1 ? undefined : meta.title}
+      subtitle={state.step === 1 ? undefined : meta.sub}
       onBack={state.step > 1 ? goBack : undefined}
-      onNext={() => void goNext()}
-      nextLabel={state.step === 5 ? 'Run AI estimate' : 'Continue'}
+      onNext={state.step === 1 ? undefined : () => void goNext()}
+      nextLabel={state.step === 5 ? t('costEstimator.runEstimate') : t('common.continue')}
       nextDisabled={busy}
       busy={busy}
       error={error}
       footerExtra={
         <button
           type="button"
-          className="rounded-full px-3 py-2 text-[12px] font-medium text-[#86868b] hover:bg-[#f5f5f7]"
+          className="rounded-full px-3 py-2 text-[12px] font-medium text-[#6f665d] hover:bg-[#f6f4f1]"
           onClick={() => navigateTo('/cost-estimator/history')}
         >
           {t('costEstimator.history')}
@@ -1091,27 +1138,17 @@ export function CostEstimator() {
       }
     >
       {state.step === 1 && (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-          {ESTIMATOR_PROJECT_TYPES.map((pt) => {
-            const Icon = pt.icon
-            const active = state.projectTypeId === pt.id
-            return (
-              <button
-                key={pt.id}
-                type="button"
-                onClick={() => patch({ projectTypeId: pt.id })}
-                className={`flex flex-col items-start gap-2 rounded-[18px] border px-3 py-3 text-left transition ${
-                  active
-                    ? 'border-[#1d1d1f] bg-[#1d1d1f] text-white'
-                    : 'border-[#e8e8ed] bg-[#fafafa] text-[#1d1d1f] hover:border-[#d2d2d7]'
-                }`}
-              >
-                <Icon className="h-5 w-5" />
-                <span className="text-[12px] font-semibold leading-tight">{typeLabel(pt.id)}</span>
-              </button>
-            )
-          })}
-        </div>
+        <EstimatorIntake
+          query={typeQuery}
+          selectedId={state.projectTypeId}
+          typeLabel={typeLabel}
+          onQueryChange={(value) => {
+            setTypeQuery(value)
+            setError(null)
+          }}
+          onPick={pickType}
+          onSubmit={submitIntake}
+        />
       )}
 
       {state.step === 2 && (
