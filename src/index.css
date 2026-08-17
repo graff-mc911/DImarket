@@ -4115,8 +4115,8 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-hero {
   position: relative;
   overflow: hidden;
-  /* ~30% shorter than previous hero block */
-  padding: 2.25rem 0 1.65rem;
+  /* Top −20% vs previous 2.25rem; bottom unchanged */
+  padding: 1.8rem 0 1.65rem;
   color: #fff;
 }
 
