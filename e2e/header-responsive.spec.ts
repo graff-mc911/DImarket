@@ -160,6 +160,10 @@ test.describe('Mobile bottom nav regression', () => {
       await expect(bottomNav(page)).toBeVisible()
       await expect(page.locator('.site-header-fixed')).toBeVisible()
       await expect(page.locator('header input[type="search"]')).toBeVisible()
+      await expect(page.locator('meta[name="apple-mobile-web-app-status-bar-style"]')).toHaveAttribute(
+        'content',
+        'black',
+      )
       const headerPad = await page.locator('.site-header-fixed').evaluate((el) => {
         const s = getComputedStyle(el)
         return { position: s.position, paddingTop: s.paddingTop, bg: s.backgroundColor }

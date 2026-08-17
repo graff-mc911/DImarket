@@ -17,16 +17,20 @@
     <!-- Android / PWA -->
     <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png?v=8" />
     <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png?v=8" />
-    <link rel="manifest" href="/manifest.webmanifest?v=11" />
+    <link rel="manifest" href="/manifest.webmanifest?v=12" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- iOS 26 ignores theme-color and tints PWA chrome from body background. -->
     <meta name="theme-color" content="#232f3e" />
+    <meta name="theme-color" content="#232f3e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#232f3e" media="(prefers-color-scheme: dark)" />
     <meta name="msapplication-TileColor" content="#232f3e" />
     <meta name="msapplication-TileImage" content="/mstile-150x150.png?v=8" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Opaque. black-translucent + light body = white frost over the header. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-title" content="DImarket" />
     <meta name="application-name" content="DImarket" />
 
@@ -59,6 +63,18 @@
     <link rel="canonical" href="https://dimarket.app/" />
     <meta name="author" content="DImarket" />
     <meta name="robots" content="index, follow" />
+    <style>
+      /* First paint + iOS 26 PWA: status-bar tint comes from body, not theme-color. */
+      html, body { background-color: #232f3e; }
+    </style>
+    <script>
+      (function () {
+        var standalone =
+          (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+          (window.navigator && window.navigator.standalone)
+        if (standalone) document.documentElement.classList.add('pwa-standalone')
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

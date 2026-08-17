@@ -109,15 +109,9 @@
     text-size-adjust: 100%;
     width: 100%;
     max-width: 100%;
-    background-color: var(--bg-canvas);
-  }
-
-  /* Installed PWA: fill the iOS/Android status-bar gap with the header color
-     so overscroll does not flash the page canvas through a translucent bar. */
-  @media (display-mode: standalone), (display-mode: fullscreen) {
-    html {
-      background-color: var(--header-bg);
-    }
+    /* Header color — iOS 26 PWA samples html/body for status-bar tint.
+       Page canvas lives on #root so the light UI is unchanged. */
+    background-color: #232f3e;
   }
 
   body {
@@ -126,7 +120,7 @@
     min-height: 100dvh;
     width: 100%;
     max-width: 100%;
-    background-color: var(--bg-canvas) !important;
+    background-color: #232f3e !important;
     color: var(--ink-900);
     font-family: var(--font-sans);
     letter-spacing: -0.01em;
@@ -141,6 +135,11 @@
     max-width: 100%;
     min-width: 0;
     background-color: var(--bg-canvas);
+  }
+
+  html.pwa-standalone,
+  html.pwa-standalone body {
+    overscroll-behavior-y: none;
   }
 
   * {
@@ -1984,10 +1983,7 @@
     top: 0;
     z-index: 50;
     width: 100%;
-    /* Opaque fill under the system status bar. PWA uses
-       apple-mobile-web-app-status-bar-style=black-translucent + viewport-fit=cover;
-       without this padding the logo/search sit inside the clock/battery strip. */
-    background: var(--header-bg);
+    background: #232f3e;
     padding-top: env(safe-area-inset-top, 0px);
   }
 
@@ -7303,4 +7299,14 @@ select.select-glass.geo-filter-select::-ms-expand {
   .directory-expert__price-dots {
     display: none;
   }
+}
+
+/* Unlayered — iOS 26 status-bar tint + PWA overlay must not lose to @layer. */
+html,
+body {
+  background-color: #232f3e;
+}
+
+.site-header-fixed {
+  background-color: #232f3e;
 }
