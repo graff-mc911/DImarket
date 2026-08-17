@@ -1,12 +1,42 @@
 import { useApp } from '../../contexts/AppContext'
 
 const FEATURED_COMPANIES = [
-  { id: 'knauf', name: 'Knauf', mark: 'K' },
-  { id: 'bosch', name: 'Bosch Professional', mark: 'B' },
-  { id: 'hilti', name: 'Hilti', mark: 'H' },
-  { id: 'velux', name: 'VELUX', mark: 'V' },
-  { id: 'geberit', name: 'Geberit', mark: 'G' },
-  { id: 'wurth', name: 'Würth', mark: 'W' },
+  {
+    id: 'knauf',
+    name: 'Knauf',
+    image: '/ads/brands/knauf.png',
+    website: 'https://www.knauf.com',
+  },
+  {
+    id: 'bosch',
+    name: 'Bosch Professional',
+    image: '/ads/brands/bosch.png',
+    website: 'https://www.bosch-professional.com',
+  },
+  {
+    id: 'hilti',
+    name: 'Hilti',
+    image: '/ads/brands/hilti.png',
+    website: 'https://www.hilti.com',
+  },
+  {
+    id: 'velux',
+    name: 'VELUX',
+    image: '/ads/brands/velux.png',
+    website: 'https://www.velux.com',
+  },
+  {
+    id: 'geberit',
+    name: 'Geberit',
+    image: '/ads/brands/geberit.png',
+    website: 'https://www.geberit.com',
+  },
+  {
+    id: 'wurth',
+    name: 'Würth',
+    image: '/ads/brands/wurth.png',
+    website: 'https://www.wuerth.com',
+  },
 ] as const
 
 export function HomeFeaturedCompanies() {
@@ -29,11 +59,24 @@ export function HomeFeaturedCompanies() {
 
       <ul className="home-companies-grid">
         {FEATURED_COMPANIES.map((c) => (
-          <li key={c.id} className="home-company-logo">
-            <span className="home-company-logo__mark" aria-hidden>
-              {c.mark}
-            </span>
-            <span className="home-company-logo__name">{c.name}</span>
+          <li key={c.id}>
+            <a
+              className="home-company-logo"
+              href={c.website}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                className="home-company-logo__media"
+                src={c.image}
+                alt=""
+                width={1024}
+                height={576}
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="home-company-logo__name">{c.name}</span>
+            </a>
           </li>
         ))}
       </ul>
