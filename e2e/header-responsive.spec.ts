@@ -158,6 +158,14 @@ test.describe('Mobile bottom nav regression', () => {
       await page.setViewportSize(vp)
       await gotoPath(page, '/')
       await expect(bottomNav(page)).toBeVisible()
+      await expect(page.locator('.site-header-fixed')).toBeVisible()
+      await expect(page.locator('header input[type="search"]')).toBeVisible()
+      const headerPad = await page.locator('.site-header-fixed').evaluate((el) => {
+        const s = getComputedStyle(el)
+        return { position: s.position, paddingTop: s.paddingTop, bg: s.backgroundColor }
+      })
+      expect(headerPad.position).toBe('fixed')
+      expect(headerPad.bg.replace(/\s/g, '')).toMatch(/rgb\(35,47,62\)|#232f3e/i)
       await expect(bottomNav(page).getByRole('button', { name: /Home|Головна/i })).toBeVisible()
       await expect(bottomNav(page).getByRole('button', { name: /Search|Пошук/i })).toBeVisible()
       await expect(bottomNav(page).getByRole('button', { name: /Categories|Категор/i })).toBeVisible()

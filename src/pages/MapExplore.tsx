@@ -21,6 +21,7 @@ import {
 } from '../lib/marketplaceMap'
 import { isDocumentsProceduresPublicCategory, serviceCategories } from '../config/categories'
 import { dimarketLabel } from '../config/categoriesI18n'
+import { EMPTY_GEO_SEARCH } from '../lib/geoSearch'
 import { navigateTo } from '../lib/navigation'
 
 type ViewMode = 'map' | 'list' | 'split'
@@ -67,6 +68,7 @@ export function MapExplore() {
   const { markers, visible, loading } = useMarketplaceMapMarkers({
     limit: 400,
     geo: location,
+    geoFilter: false,
     filters: activePartial,
     withDistances: true,
     bounds,
@@ -80,14 +82,14 @@ export function MapExplore() {
 
   const counts = useMemo(() => {
     const base = attachDistances(
-      filterMapMarkers(markers, location, {
+      filterMapMarkers(markers, EMPTY_GEO_SEARCH, {
         ...EMPTY_MAP_FILTERS,
         serviceQuery,
       }),
       origin,
     )
     return countMapKinds(base)
-  }, [markers, location, serviceQuery, origin])
+  }, [markers, serviceQuery, origin])
 
   const expandRadius = () => {
     patchLocation({ radius: nextWiderRadius(location.radius) })

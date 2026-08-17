@@ -356,13 +356,15 @@ export function EuropeMarketplaceMap({
 
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !followLocation) return
-    const focus = mapFocusFromGeo(geo)
-    if (focus && hasActiveLocation(geo)) {
-      map.setView(focus.center, focus.zoom, { animate: true })
-      return
+    if (!map) return
+    if (followLocation) {
+      const focus = mapFocusFromGeo(geo)
+      if (focus && hasActiveLocation(geo)) {
+        map.setView(focus.center, focus.zoom, { animate: true })
+        return
+      }
     }
-    if (markers.length > 0 && !hasActiveLocation(geo)) {
+    if (markers.length > 0) {
       const bounds = L.latLngBounds(markers.map((p) => [p.lat, p.lng] as [number, number]))
       map.fitBounds(bounds.pad(0.18), { maxZoom: 7, animate: true })
     }

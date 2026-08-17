@@ -331,7 +331,7 @@ export function Header() {
 
   return (
     <>
-      <div ref={fixedHeaderRef} className="fixed inset-x-0 top-0 z-50 w-full">
+      <div ref={fixedHeaderRef} className="site-header-fixed">
       {/* ===== Глобальний банер від власника ===== */}
       {showAnnouncement && (() => {
         const first = announcements[0]

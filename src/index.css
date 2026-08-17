@@ -112,6 +112,14 @@
     background-color: var(--bg-canvas);
   }
 
+  /* Installed PWA: fill the iOS/Android status-bar gap with the header color
+     so overscroll does not flash the page canvas through a translucent bar. */
+  @media (display-mode: standalone), (display-mode: fullscreen) {
+    html {
+      background-color: var(--header-bg);
+    }
+  }
+
   body {
     margin: 0;
     min-height: 100vh;
@@ -1968,6 +1976,19 @@
   .input-hero:focus {
     border-color: #e77600;
     box-shadow: 0 0 0 3px rgba(231, 118, 0, 0.2);
+  }
+
+  .site-header-fixed {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 50;
+    width: 100%;
+    /* Opaque fill under the system status bar. PWA uses
+       apple-mobile-web-app-status-bar-style=black-translucent + viewport-fit=cover;
+       without this padding the logo/search sit inside the clock/battery strip. */
+    background: var(--header-bg);
+    padding-top: env(safe-area-inset-top, 0px);
   }
 
   .site-header-shell {
@@ -5389,9 +5410,9 @@ select.select-glass.geo-filter-select::-ms-expand {
 @media (max-width: 640px) {
   .home-map__canvas,
   .dimarket-map__canvas {
-    height: 58vh;
-    height: 58dvh;
-    min-height: 280px;
+    height: 62vh;
+    height: 62dvh;
+    min-height: 320px;
   }
 
   .map-explore-fullscreen .dimarket-map__canvas,

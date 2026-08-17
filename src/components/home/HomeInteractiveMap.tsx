@@ -34,6 +34,7 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
   const { markers, visible, loading } = useMarketplaceMapMarkers({
     limit: 400,
     geo: location,
+    geoFilter: false,
     filters,
   })
 
@@ -80,7 +81,7 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
         markers={visible}
         geo={location}
         loading={busy}
-        followLocation
+        followLocation={false}
         scrollWheelZoom={false}
         className="home-map--embedded"
       />
