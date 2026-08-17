@@ -11,32 +11,36 @@ export function HomeTrustBar({ metrics }: HomeTrustBarProps) {
   const { t } = useApp()
 
   const items = [
+    ...(metrics.reviews > 0
+      ? [
+          {
+            id: 'reviews' as const,
+            icon: Star,
+            value: metrics.reviews,
+            label: t('homePremium.trustReviews'),
+            prefix: '★★★★★ ',
+          },
+        ]
+      : []),
     {
-      id: 'reviews',
-      icon: Star,
-      value: metrics.reviews,
-      label: t('homePremium.trustReviews'),
-      prefix: '★★★★★ ',
-    },
-    {
-      id: 'pros',
+      id: 'pros' as const,
       icon: ShieldCheck,
       value: metrics.professionals,
       label: t('homePremium.trustPros'),
     },
     {
-      id: 'countries',
+      id: 'countries' as const,
       icon: Globe2,
       value: metrics.countries,
       label: t('homePremium.trustCountries'),
     },
     {
-      id: 'projects',
+      id: 'projects' as const,
       icon: Briefcase,
       value: metrics.projects,
       label: t('homePremium.trustProjects'),
     },
-  ] as const
+  ]
 
   return (
     <section className="home-trust layout-page-gutter" aria-label={t('homePremium.trustLabel')}>

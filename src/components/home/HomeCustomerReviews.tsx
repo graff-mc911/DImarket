@@ -47,18 +47,20 @@ function ReviewCard({ review, locale }: { review: DisplayHomeReview; locale: str
           <div>
             <p className="home-review-card__name">
               {review.reviewer_name}{' '}
-              <span className="home-review-card__flag" title={review.country_name}>
-                {countryFlag(review.country_code)}
-              </span>
+              {review.country_code ? (
+                <span className="home-review-card__flag" title={review.country_name}>
+                  {countryFlag(review.country_code)}
+                </span>
+              ) : null}
             </p>
             {review.is_verified_customer ? (
               <p className="home-review-card__badge">
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
                 {t('homePremium.verifiedCustomer')}
               </p>
-            ) : (
+            ) : review.country_name ? (
               <p className="home-review-card__meta-line">{review.country_name}</p>
-            )}
+            ) : null}
           </div>
         </div>
         <div className="home-review-card__stars" aria-label={`${review.rating} / 5`}>
@@ -78,7 +80,11 @@ function ReviewCard({ review, locale }: { review: DisplayHomeReview; locale: str
       <p className="home-review-card__text">{review.comment}</p>
 
       <div className="home-review-card__meta">
-        <span className="home-review-card__category">{review.category}</span>
+        {review.category ? (
+          <span className="home-review-card__category">{review.category}</span>
+        ) : (
+          <span />
+        )}
         <time dateTime={review.created_at}>
           {formatCompletedDate(review.created_at, locale)}
         </time>
@@ -114,6 +120,8 @@ export function HomeCustomerReviews({ reviews }: HomeCustomerReviewsProps) {
     }, 6500)
     return () => window.clearInterval(timer)
   }, [cards.length])
+
+  if (cards.length === 0) return null
 
   return (
     <section className="home-section home-section--tight layout-page-gutter" aria-labelledby="home-reviews-title">

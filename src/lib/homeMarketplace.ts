@@ -141,16 +141,13 @@ export async function fetchHomepageMetrics(): Promise<HomeMetrics> {
   if (!rpcError && rpcData && typeof rpcData === 'object') {
     const map = rpcData as Record<string, unknown>
     const seededPros = numFromMetric(map.professionals, 0)
-    const seededReviews = numFromMetric(map.reviews, 0)
     const seededCountries = numFromMetric(map.countries, 0)
     const seededProjects = numFromMetric(map.projects, 0)
     // Prefer live counts; only use seeded if live missing AND seed is not a known placeholder inflate.
     if (!metrics.professionals && seededPros && !looksLikePlaceholderMetric(seededPros, 'professionals')) {
       metrics.professionals = seededPros
     }
-    if (!metrics.reviews && seededReviews && !looksLikePlaceholderMetric(seededReviews, 'reviews')) {
-      metrics.reviews = seededReviews
-    }
+    // Never use seeded/marketing review counts — only live approved rows.
     if (!metrics.countries && seededCountries && !looksLikePlaceholderMetric(seededCountries, 'countries')) {
       metrics.countries = seededCountries
     }
