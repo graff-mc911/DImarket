@@ -61,6 +61,22 @@ test.describe('Smoke — публічні сторінки', () => {
     await expect(carousel.locator('.home-hero-carousel__slide.is-active img')).toBeVisible()
   })
 
+  test('рекомендовані компанії показують банер і ведуть на офіційний сайт', async ({ page }) => {
+    await gotoPath(page, '/')
+    const cards = page.locator('a.home-company-logo')
+    await expect(cards).toHaveCount(6)
+    await expect(cards.nth(0)).toHaveAttribute('href', 'https://www.knauf.com')
+    await expect(cards.nth(1)).toHaveAttribute('href', 'https://www.bosch-professional.com')
+    await expect(cards.nth(2)).toHaveAttribute('href', 'https://www.hilti.com')
+    await expect(cards.nth(3)).toHaveAttribute('href', 'https://www.velux.com')
+    await expect(cards.nth(4)).toHaveAttribute('href', 'https://www.geberit.com')
+    await expect(cards.nth(5)).toHaveAttribute('href', 'https://www.wuerth.com')
+    for (const card of await cards.all()) {
+      await expect(card.locator('img.home-company-logo__media')).toBeVisible()
+      await expect(card).toHaveAttribute('target', '_blank')
+    }
+  })
+
   test('клік по логотипу повертає на головну', async ({ page }) => {
     await gotoPath(page, '/contact')
     await clickHeaderLogo(page)
