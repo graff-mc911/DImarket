@@ -183,12 +183,15 @@ export function EuropeMarketplaceMap({
 
   useEffect(() => {
     if (!mapEl.current || mapRef.current) return
-    const map = L.map(mapEl.current, {
+    const el = mapEl.current
+    const map = L.map(el, {
       center: DEFAULT_EUROPE_VIEW.center,
       zoom: DEFAULT_EUROPE_VIEW.zoom,
       scrollWheelZoom,
       touchZoom: true,
+      bounceAtZoomLimits: false,
       dragging: true,
+      tapTolerance: 25,
       attributionControl: true,
     })
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -209,17 +212,34 @@ export function EuropeMarketplaceMap({
       })
     }
 
+    const invalidate = () => {
+      map.invalidateSize({ animate: false })
+    }
+
     map.on('zoomend', () => {
       zoomRef.current = map.getZoom()
       emitBounds()
     })
     map.on('moveend', emitBounds)
-    window.setTimeout(() => {
-      map.invalidateSize()
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => invalidate()) : null
+    ro?.observe(el)
+    window.addEventListener('orientationchange', invalidate)
+    window.visualViewport?.addEventListener('resize', invalidate)
+    const t1 = window.setTimeout(invalidate, 80)
+    const t2 = window.setTimeout(invalidate, 400)
+    const t3 = window.setTimeout(() => {
+      invalidate()
       emitBounds()
-    }, 80)
+    }, 900)
 
     return () => {
+      window.clearTimeout(t1)
+      window.clearTimeout(t2)
+      window.clearTimeout(t3)
+      ro?.disconnect()
+      window.removeEventListener('orientationchange', invalidate)
+      window.visualViewport?.removeEventListener('resize', invalidate)
       map.off('zoomend')
       map.off('moveend')
       map.remove()
@@ -370,7 +390,12 @@ export function EuropeMarketplaceMap({
       {!loading && markers.length === 0 ? (
         <p className="home-map__status">{t('mapExplore.empty')}</p>
       ) : null}
-      <div ref={mapEl} className="home-map__canvas dimarket-map__canvas" role="presentation" />
+      <div
+        ref={mapEl}
+        className="home-map__canvas dimarket-map__canvas"
+        role="region"
+        aria-label={t('mapExplore.title')}
+      />
     </div>
   )
 }

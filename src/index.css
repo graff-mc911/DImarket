@@ -5264,10 +5264,18 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-map {
   position: relative;
   border-radius: 22px;
-  overflow: hidden;
+  /* Visible — overflow clip/hidden on this box (or ancestors) breaks Leaflet
+     tiles and one-finger pan on iOS/Android WebKit. Radius lives on the canvas. */
+  overflow: visible;
   border: 1px solid rgba(176, 126, 85, 0.14);
   background: #fff;
   box-shadow: 0 12px 28px rgba(47, 42, 36, 0.06);
+}
+
+.layout-page-gutter:has(.dimarket-map),
+.home-section:has(.dimarket-map),
+.page-bg:has(.dimarket-map) {
+  overflow-x: visible;
 }
 
 .home-map__canvas {
@@ -5279,6 +5287,12 @@ select.select-glass.geo-filter-select::-ms-expand {
 .dimarket-map__canvas {
   height: min(72vh, 640px);
   min-height: 360px;
+  width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .dimarket-map-popup {
@@ -5373,9 +5387,18 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 @media (max-width: 640px) {
+  .home-map__canvas,
   .dimarket-map__canvas {
-    height: min(58vh, 480px);
+    height: 58vh;
+    height: 58dvh;
     min-height: 280px;
+  }
+
+  .map-explore-fullscreen .dimarket-map__canvas,
+  .map-explore-fullscreen.home-map .home-map__canvas {
+    height: 70vh;
+    height: 70dvh;
+    min-height: min(70dvh, 720px);
   }
 }
 
