@@ -3,6 +3,7 @@ import { Loader2, MapPin, Upload, X } from 'lucide-react'
 import { runMatchingForListing, listingCityFromLocation } from '../lib/matching/persistMatches'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
+import { tStored } from '../lib/i18n'
 import { Category, Listing } from '../lib/types'
 import { getCurrentLocation, searchLocations, LocationSuggestion } from '../lib/geocoding'
 import { navigateTo } from '../lib/navigation'
@@ -85,14 +86,14 @@ export function CreateAd() {
 
   const getCategoryTranslation = (category: Category) => {
     const newKey = `category.name.${category.slug}`
-    const newValue = t(newKey)
+    const newValue = tStored(t, newKey)
 
     if (newValue !== newKey) {
       return newValue
     }
 
     const legacyKey = `category.${category.slug}`
-    const legacyValue = t(legacyKey)
+    const legacyValue = tStored(t, legacyKey)
 
     if (legacyValue !== legacyKey) {
       return legacyValue

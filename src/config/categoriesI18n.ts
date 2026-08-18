@@ -4,7 +4,7 @@ export type DimarketLocale =
   | 'cs' | 'sk' | 'hu' | 'bg' | 'sr' | 'hr' | 'sl' | 'lt' | 'lv' | 'et'
   | 'tr' | 'kk' | 'ar' | 'zh' | 'ja'
 
-export type DimarketLabelMap = Record<DimarketLocale, string>
+export type DimarketLabelMap = Partial<Record<DimarketLocale, string>> & { en: string }
 
 export const DIMARKET_CATEGORY_I18N: Record<string, DimarketLabelMap> = {
   '3d-visualization': {

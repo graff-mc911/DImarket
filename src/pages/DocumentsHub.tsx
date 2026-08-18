@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { ChevronRight, FileText, MapPin } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { tStored } from '../lib/i18n'
 import { navigateTo } from '../lib/navigation'
 import { appendLocationToPath, formatGlobalLocationLabel } from '../lib/globalLocation'
 import { documentDisplayDescription, documentDisplayTitle } from '../lib/documents/display'
@@ -37,10 +38,10 @@ export function DocumentsHub({ subcategory = null }: Props) {
             {t('docs.categoryEyebrow')}
           </p>
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#1d1d1f]">
-            {subMeta ? t(subMeta.titleKey) : t('docs.hub.title')}
+            {subMeta ? tStored(t, subMeta.titleKey) : t('docs.hub.title')}
           </h1>
           <p className="mt-2 text-sm leading-6 text-[#6e6e73]">
-            {subMeta ? t(subMeta.descriptionKey) : t('docs.hub.subtitle')}
+            {subMeta ? tStored(t, subMeta.descriptionKey) : t('docs.hub.subtitle')}
           </p>
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#f5f5f7] px-3 py-1.5 text-xs text-[#1d1d1f]">
             <MapPin className="h-3.5 w-3.5 text-[#86868b]" aria-hidden />
@@ -66,8 +67,8 @@ export function DocumentsHub({ subcategory = null }: Props) {
                     {sub.icon}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-semibold text-[#1d1d1f]">{t(sub.titleKey)}</span>
-                    <span className="block text-xs text-[#6e6e73]">{t(sub.descriptionKey)}</span>
+                    <span className="block font-semibold text-[#1d1d1f]">{tStored(t, sub.titleKey)}</span>
+                    <span className="block text-xs text-[#6e6e73]">{tStored(t, sub.descriptionKey)}</span>
                   </span>
                   <ChevronRight className="h-4 w-4 shrink-0 text-[#86868b]" aria-hidden />
                 </button>

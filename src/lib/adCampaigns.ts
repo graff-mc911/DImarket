@@ -197,7 +197,6 @@ export function matchesViewerGeo(
         ? [campaign.country_name]
         : [],
   )
-  const campaignRegions = normalizeGeoTokens(splitCommaGeoValues(campaign.region_name))
   const campaignCities = normalizeGeoTokens(
     campaign.cities?.length ? campaign.cities : splitCommaGeoValues(campaign.city_name),
   )
@@ -541,7 +540,7 @@ export function getGeoTargetLabel(
   if (scope === 'global' || scope === 'countries') {
     return t('ads.geo.global')
   }
-  if (scope === 'country' || scope === 'countries') {
+  if (scope === 'country') {
     return campaign.country_name || t('ads.geo.countryFallback')
   }
   if (scope === 'region' || scope === 'regions') {

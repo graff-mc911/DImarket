@@ -177,15 +177,15 @@ export function ListingInlineChat({ listingId, authorId }: Props) {
 
   const ensureActiveConversation = async () => {
     if (!user || !otherPartyId) return null
-    let convId = active?.id
+    let convId: string | null | undefined = active?.id
     if (!convId) {
-      convId = await ensureConversation(otherPartyId, listingId)
+      convId = await ensureConversation(otherPartyId, listingId ?? null)
       if (!convId) return null
       await loadThreads()
       const refreshed = await fetchListingConversations(user.id, listingId)
       const found = refreshed.find((c) => c.id === convId) ?? {
         id: convId,
-        listing_id: listingId,
+        listing_id: listingId ?? null,
         listing_title: null,
         other_user_id: otherPartyId,
         other_user_name: isOwner ? 'User' : t('listing.chatOwner'),

@@ -22,7 +22,7 @@ function staticAsPublished(lang: string): PublishedLegalDocument[] {
     // Static fallback is NOT OSM-verified — never fake "verified" + today's date.
     verification_status: 'needs_research',
     current_version_id: null,
-    next_verification_at: null,
+    next_verification_at: '',
     last_verified_at: null,
     is_published: true,
     official_sources: {

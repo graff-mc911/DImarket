@@ -26,7 +26,7 @@ type ConfirmState = {
   row: Row
 } | null
 
-const FILTER_STATUSES: Record<QueueFilter, string[]> = {
+const FILTER_STATUSES: Record<QueueFilter, Array<'unverified' | 'pending' | 'verified' | 'rejected'>> = {
   pending: ['pending', 'unverified'],
   verified: ['verified'],
   rejected: ['rejected'],

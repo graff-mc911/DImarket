@@ -24,8 +24,7 @@ jobs:
         run: npm ci
       - name: Production build (app)
         run: npm run build:app
-      - name: Typecheck (non-blocking until Supabase types are synced)
-        continue-on-error: true
+      - name: Typecheck
         run: npm run typecheck
       - name: Registration role logic smoke
         run: node scripts/verify-registration-logic.mjs

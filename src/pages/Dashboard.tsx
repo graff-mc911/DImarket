@@ -11,7 +11,6 @@ import {
   ShieldCheck,
   Sparkles,
   Trash2,
-  XCircle,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useApp } from '../contexts/AppContext'
@@ -439,7 +438,7 @@ export function Dashboard() {
     )
   }
 
-  if (!isSiteOwner(profile, user?.email)) {
+  if (!profile || !isSiteOwner(profile, user?.email)) {
     return (
       <div className="py-10">
         <div className="mx-auto max-w-3xl">

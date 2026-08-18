@@ -8,6 +8,12 @@ import {
 } from '../chunkLoadError'
 
 export type { TranslationKey }
+export type TranslateFn = (key: TranslationKey) => string
+
+/** Adapter when a stored catalog key is typed as string. */
+export function tStored(t: TranslateFn, key: string): string {
+  return t(key as TranslationKey)
+}
 
 /** All UI locale codes (must match LANGUAGES in types.ts). */
 export const LANGUAGE_CODES = [

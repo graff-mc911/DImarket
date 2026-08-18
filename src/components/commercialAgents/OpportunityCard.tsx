@@ -1,5 +1,6 @@
 import { MapPin } from 'lucide-react'
 import { navigateTo } from '../../lib/navigation'
+import type { TranslateFn } from '../../lib/i18n'
 import type { RepresentationOpportunity } from '../../lib/commercialAgents/types'
 
 export function OpportunityCard({
@@ -8,7 +9,7 @@ export function OpportunityCard({
   matchScore,
 }: {
   item: RepresentationOpportunity
-  t: (key: string) => string
+  t: TranslateFn
   matchScore?: number
 }) {
   const mfr = item.manufacturer

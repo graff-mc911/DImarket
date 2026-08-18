@@ -1,5 +1,6 @@
 import { ArrowRight, CheckCircle2, Circle } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { tStored } from '../lib/i18n'
 import { navigateTo } from '../lib/navigation'
 import type { OnboardingState } from '../lib/onboardingProgress'
 
@@ -57,7 +58,7 @@ export function OnboardingChecklist({ state, role }: OnboardingChecklistProps) {
               <Circle className="h-4 w-4 shrink-0 text-[var(--ink-400)]" />
             )}
             <span className={step.done ? 'text-[var(--ink-600)]' : 'font-medium text-[var(--ink-800)]'}>
-              {t(step.labelKey)}
+              {tStored(t, step.labelKey)}
             </span>
           </li>
         ))}

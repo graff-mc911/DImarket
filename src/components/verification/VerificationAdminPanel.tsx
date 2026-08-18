@@ -7,7 +7,7 @@ type PendingRow = {
   profile_id: string
   business_name: string | null
   submitted_at: string | null
-  profile?: { full_name: string | null; email: string | null; location: string | null }
+  profile?: { full_name: string | null; email?: string | null; location: string | null }
 }
 
 export function VerificationAdminPanel() {

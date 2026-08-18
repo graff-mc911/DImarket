@@ -16,6 +16,7 @@ import {
   type BookingRow,
 } from '../lib/bookings'
 
+type BookingHour = (typeof BOOKING_HOURS)[number]
 type Props = { profileId: string }
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -33,7 +34,7 @@ export function BookProfessional({ profileId }: Props) {
   const [proName, setProName] = useState('Professional')
   const [cursor, setCursor] = useState(() => new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [hour, setHour] = useState<number>(10)
+  const [hour, setHour] = useState<BookingHour>(10)
   const [notes, setNotes] = useState('')
   const [avail, setAvail] = useState<AvailabilityPayload>({ blocked: [], busy: [] })
   const [loading, setLoading] = useState(true)
@@ -84,7 +85,7 @@ export function BookProfessional({ profileId }: Props) {
 
   useEffect(() => {
     if (openHours.length && !openHours.includes(hour)) {
-      setHour(openHours[0])
+      setHour(openHours[0] as BookingHour)
     }
   }, [hour, openHours])
 

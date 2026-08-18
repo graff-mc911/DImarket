@@ -3,7 +3,7 @@ import type { Category, Profile } from './types'
 
 type CategoryLink = {
   category_id: string
-  category?: Category | null
+  category?: { id: string; name: string; slug: string } | null
 }
 
 export type ProfessionalDisplayProfile = Profile & {
@@ -65,7 +65,7 @@ export function resolveProfessionalCategoryLabels(
     .map((item) => {
       const category = item.category
       if (!category) return null
-      return translateCategory(category)
+      return translateCategory(category as Category)
     })
     .filter(Boolean)
     .slice(0, max) as string[]

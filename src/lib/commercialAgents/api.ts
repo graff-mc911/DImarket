@@ -1,5 +1,6 @@
 import { supabase } from '../supabase'
 import { createNotification } from '../notifications/notifications'
+import type { Json } from '../types'
 import { slugifyCommercial } from './slug'
 import { normalizeSpokenLanguageCode, spokenLanguageFilterVariants } from '../languageDisplay'
 import { isLikelyQaOrTestName } from '../publicProfileVisibility'
@@ -637,7 +638,7 @@ export async function trackCommercialEvent(
       actor_id: actorId,
       entity_type: entityType ?? null,
       entity_id: entityId ?? null,
-      meta,
+      meta: meta as Json,
     })
   } catch {
     /* non-blocking */

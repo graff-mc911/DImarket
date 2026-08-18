@@ -1,9 +1,10 @@
+import type { TranslateFn } from '../../lib/i18n'
 import { PROJECT_TRADES } from '../../lib/projectWizard'
 
 type CategoryStepProps = {
   selectedId: string | null
   onSelect: (tradeId: string, subcategorySlug: string) => void
-  t: (key: string) => string
+  t: TranslateFn
   error?: string
 }
 

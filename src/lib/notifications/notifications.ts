@@ -104,7 +104,7 @@ export async function fetchNotifications(
     if (typeFilter === 'project') {
       q = q.in('type', ['project', 'quote', 'lead', 'listing', 'match'])
     } else {
-      q = q.eq('type', typeFilter)
+      q = q.eq('type', typeFilter as NotificationType)
     }
   }
 

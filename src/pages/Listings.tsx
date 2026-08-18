@@ -6,6 +6,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { PlusCircle, X } from 'lucide-react'
 import { supabase }            from '../lib/supabase'
 import { useApp }              from '../contexts/AppContext'
+import { tStored }             from '../lib/i18n'
 import { listingLocationMatches, parseListingLocation } from '../lib/listingLocation'
 import { navigateTo }          from '../lib/navigation'
 import { ListingCard }         from '../components/ListingCard'
@@ -144,11 +145,11 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
 
   const translateCategory = (category: Category) => {
     const newKey   = 'category.name.' + category.slug
-    const newValue = t(newKey)
+    const newValue = tStored(t, newKey)
     if (newValue !== newKey) return newValue
 
     const legacyKey   = 'category.' + category.slug
-    const legacyValue = t(legacyKey)
+    const legacyValue = tStored(t, legacyKey)
     if (legacyValue !== legacyKey) return legacyValue
 
     return category.name

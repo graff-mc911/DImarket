@@ -56,6 +56,7 @@ function fallbackMains(): EstimatorMainCategory[] {
     slug,
     name: slug,
     icon_key: slug,
+    name_i18n: {},
     is_main: true,
   }))
 }

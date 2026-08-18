@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MapPin } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
+import { tStored } from '../lib/i18n'
 import { navigateTo } from '../lib/navigation'
 import { LAUNCH_MARKETS } from '../lib/launchMarkets'
 import { launchSeoLinks } from '../lib/seoRoutes'
@@ -69,7 +70,7 @@ export function LaunchCitiesBanner() {
               onClick={() => navigateTo(link.path)}
               className="rounded-full border border-dashed border-[var(--glass-border)] px-2.5 py-1 text-[10px] font-semibold text-[var(--ink-500)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]"
             >
-              {link.city} · {t(link.labelKey)}
+              {link.city} · {tStored(t, link.labelKey)}
             </button>
           ))}
         </div>

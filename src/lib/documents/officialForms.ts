@@ -10,6 +10,7 @@
  * - lastVerified stays null until a human or OSM check confirms the URL.
  */
 
+import type { TranslateFn, TranslationKey } from '../i18n'
 import type { DocumentRecord, FormFieldDef, OfficialFormPack } from './types'
 import { isVehicleDocumentSlug, vehicleCheckPortalsFor } from './vehicleCheckPortals'
 
@@ -1723,8 +1724,8 @@ export function getOfficialFormPack(
   return null
 }
 
-export function fieldDisplayLabel(field: FormFieldDef, t: (key: string) => string): string {
-  return field.label || t(field.labelKey)
+export function fieldDisplayLabel(field: FormFieldDef, t: TranslateFn): string {
+  return field.label || t(field.labelKey as TranslationKey)
 }
 
 /** Attach official-model fields + source to a catalog document. */

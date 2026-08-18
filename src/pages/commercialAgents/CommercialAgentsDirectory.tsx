@@ -15,6 +15,7 @@ import { CommercialAgentsFilters } from '../../components/commercialAgents/Comme
 import { AgentCard } from '../../components/commercialAgents/AgentCard'
 import { ManufacturerCard } from '../../components/commercialAgents/ManufacturerCard'
 import { OpportunityCard } from '../../components/commercialAgents/OpportunityCard'
+import type { TranslateFn } from '../../lib/i18n'
 
 function readQueryParams(): Partial<CommercialSearchFilters> {
   const sp = new URLSearchParams(window.location.search)
@@ -150,7 +151,7 @@ export function CommercialAgentsDirectory({
   )
 }
 
-function Empty({ t }: { t: (k: string) => string }) {
+function Empty({ t }: { t: TranslateFn }) {
   return (
     <p className="rounded-2xl border border-dashed border-[var(--line-200)] bg-white/70 p-8 text-sm text-[var(--ink-600)]">
       {t('commercialAgents.emptyResults')}

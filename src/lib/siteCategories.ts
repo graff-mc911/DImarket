@@ -89,6 +89,18 @@ export function buildDisplayCategories(
       icon: cfg.icon,
       description: categoryDescription(slug, t),
       created_at: new Date(0).toISOString(),
+      cover_image_url: null,
+      sort_order: 0,
+      is_main: true,
+      is_service: false,
+      icon_key: slug,
+      name_i18n: {},
+      description_i18n: {},
+      services_count: 0,
+      professionals_count: 0,
+      avg_rating: null,
+      completed_projects_count: 0,
+      updated_at: new Date(0).toISOString(),
     }
   })
 }

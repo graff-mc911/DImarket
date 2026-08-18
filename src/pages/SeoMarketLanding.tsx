@@ -4,6 +4,7 @@ import { ProfessionalCard } from '../components/ProfessionalCard'
 import { ListingCard } from '../components/ListingCard'
 import { LANGUAGES } from '../lib/types'
 import { useApp } from '../contexts/AppContext'
+import { tStored } from '../lib/i18n'
 import { navigateTo } from '../lib/navigation'
 import { excludeSuppressedFromQuery, filterSuppressedListings } from '../lib/suppressedListings'
 import { filterPublicProfiles } from '../lib/publicProfileVisibility'
@@ -44,7 +45,7 @@ export function SeoMarketLanding({ parts }: SeoMarketLandingProps) {
 
   useEffect(() => {
     if (!route) return
-    const tradeLabel = t(route.trade.labelKey)
+    const tradeLabel = tStored(t, route.trade.labelKey)
     document.title = `${tradeLabel} — ${route.market.city} | DImarket`
   }, [route, t])
 
@@ -118,7 +119,7 @@ export function SeoMarketLanding({ parts }: SeoMarketLandingProps) {
     )
   }
 
-  const tradeLabel = t(route.trade.labelKey)
+  const tradeLabel = tStored(t, route.trade.labelKey)
   const priceGuide = priceGuideForMarketTrade(route.market.id, route.trade.groupSlug)
   const fill = (template: string) =>
     template
@@ -171,10 +172,10 @@ export function SeoMarketLanding({ parts }: SeoMarketLandingProps) {
           <p className="mt-2 text-2xl font-extrabold text-[var(--accent-700)]">
             €{priceGuide.minEur}–{priceGuide.maxEur}
             <span className="ml-2 text-sm font-semibold text-[var(--ink-500)]">
-              {t(priceGuide.unitKey)}
+              {tStored(t, priceGuide.unitKey)}
             </span>
           </p>
-          <p className="mt-2 text-sm text-[var(--ink-600)]">{t(priceGuide.noteKey)}</p>
+          <p className="mt-2 text-sm text-[var(--ink-600)]">{tStored(t, priceGuide.noteKey)}</p>
           <p className="mt-2 text-xs text-[var(--ink-500)]">{t('priceGuide.disclaimer')}</p>
         </section>
       )}

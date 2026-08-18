@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
+import type { TranslationKey } from './i18n'
 import {
   Bath,
   DoorOpen,
@@ -16,7 +17,7 @@ export type ProjectTrade = {
   id: string
   subcategorySlug: string
   icon: LucideIcon
-  labelKey: string
+  labelKey: TranslationKey
   labelEn: string
 }
 

@@ -1,4 +1,5 @@
 import { BadgeCheck } from 'lucide-react'
+import type { TranslateFn } from '../../lib/i18n'
 import type { VerificationStatus } from '../../lib/commercialAgents/types'
 
 export function VerifiedB2BBadge({
@@ -8,7 +9,7 @@ export function VerifiedB2BBadge({
 }: {
   status: VerificationStatus
   kind: 'manufacturer' | 'agent'
-  t: (key: string) => string
+  t: TranslateFn
 }) {
   if (status !== 'verified') return null
   return (

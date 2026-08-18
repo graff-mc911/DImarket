@@ -6,6 +6,7 @@
 import {
   formatGeneratedDocumentFooter,
   generatedDocumentFooterHtml,
+  type GeneratedDocumentMeta,
 } from '../officialSources/pdfMeta'
 
 export type FilledDocumentPdfInput = {
@@ -35,12 +36,14 @@ export function buildFilledDocumentPdfHtml(input: FilledDocumentPdfInput): strin
     ? `<p style="background:#fff4e5;border:1px solid #f5c26b;padding:10px 12px;border-radius:8px;font-size:13px">${escapeHtml(input.needsReviewLabel)}</p>`
     : ''
 
-  const meta = {
+  const meta: GeneratedDocumentMeta = {
+    documentName: input.title,
     version: input.version,
     jurisdiction: input.jurisdiction,
+    generatedAt: new Date().toISOString().slice(0, 10),
     sourceName: input.sourceName,
     sourceUrl: input.sourceUrl,
-    lastVerified: input.lastVerified,
+    lastVerifiedAt: input.lastVerified,
   }
 
   return `<!DOCTYPE html>

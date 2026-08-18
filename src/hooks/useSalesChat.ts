@@ -243,7 +243,7 @@ export function useSalesChat() {
   }, [categories.length, botContext, t])
 
   useEffect(() => {
-    setMessages((prev) => remapAssistantMessages(prev, t))
+    setMessages((prev) => remapAssistantMessages(prev, t, draft))
   }, [language.code, t])
 
   useEffect(() => {

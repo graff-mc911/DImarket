@@ -1,4 +1,5 @@
 import type { RegistrationRole } from './profileSync'
+import type { TranslationKey } from './i18n'
 
 export type AudienceLandingId = 'professionals' | 'companies' | 'advertisers'
 
@@ -6,14 +7,14 @@ export interface AudienceLandingConfig {
   id: AudienceLandingId
   registerRole: RegistrationRole
   registerPath: string
-  eyebrowKey: string
-  titleKey: string
-  subtitleKey: string
-  ctaKey: string
-  freeNoteKey: string
-  benefitKeys: [string, string, string, string]
-  stepKeys: [string, string, string]
-  launchPitchKey: string
+  eyebrowKey: TranslationKey
+  titleKey: TranslationKey
+  subtitleKey: TranslationKey
+  ctaKey: TranslationKey
+  freeNoteKey: TranslationKey
+  benefitKeys: [TranslationKey, TranslationKey, TranslationKey, TranslationKey]
+  stepKeys: [TranslationKey, TranslationKey, TranslationKey]
+  launchPitchKey: TranslationKey
 }
 
 export const AUDIENCE_LANDINGS: Record<AudienceLandingId, AudienceLandingConfig> = {

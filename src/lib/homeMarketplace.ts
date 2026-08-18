@@ -53,15 +53,6 @@ export type HomeMarketplaceData = {
   reviews: HomeReview[]
 }
 
-const DEFAULT_METRICS: HomeMetrics = {
-  professionals: 0,
-  reviews: 0,
-  countries: 0,
-  projects: 0,
-  appStoreUrl: '',
-  playStoreUrl: '',
-}
-
 /** Seeded marketing numbers historically stored in homepage_metrics — never show as live truth. */
 function looksLikePlaceholderMetric(n: number, kind: 'professionals' | 'reviews' | 'countries' | 'projects'): boolean {
   if (kind === 'professionals' && n >= 10000) return true

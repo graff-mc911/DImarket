@@ -164,7 +164,7 @@ export async function markContactVerified(
 export async function listPendingVerifications() {
   const { data, error } = await supabase
     .from('contractor_verifications')
-    .select('*, profile:profiles(full_name, email, location)')
+    .select('*, profile:profiles(full_name, location)')
     .eq('status', 'pending')
     .order('submitted_at', { ascending: true })
 

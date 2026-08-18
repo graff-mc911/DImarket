@@ -45,7 +45,10 @@ export function MyListings() {
         .eq('author_id', user!.id)
         .order('created_at', { ascending: false })
       if (statusFilter) {
-        query = query.eq('status', statusFilter)
+        query = query.eq(
+          'status',
+          statusFilter as 'active' | 'expired' | 'sold' | 'deleted',
+        )
       }
       const { data, error } = await query
       if (error) throw error

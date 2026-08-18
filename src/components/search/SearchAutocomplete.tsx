@@ -3,6 +3,7 @@ import {
   Building2,
   Clock,
   FolderOpen,
+  FileText,
   Search,
   Sparkles,
   UserRound,
@@ -26,6 +27,7 @@ const TYPE_ICON: Record<SearchEntityType, typeof UserRound> = {
   service: Wrench,
   project: Briefcase,
   material: Building2,
+  document: FileText,
 }
 
 interface SearchAutocompleteProps {

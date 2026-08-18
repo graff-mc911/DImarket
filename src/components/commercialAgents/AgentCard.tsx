@@ -1,6 +1,7 @@
 import { MapPin } from 'lucide-react'
 import { navigateTo } from '../../lib/navigation'
 import { normalizeSpokenLanguageList } from '../../lib/languageDisplay'
+import type { TranslateFn } from '../../lib/i18n'
 import type { AgentProfile } from '../../lib/commercialAgents/types'
 import { VerifiedB2BBadge } from './VerifiedB2BBadge'
 
@@ -10,7 +11,7 @@ export function AgentCard({
   matchScore,
 }: {
   item: AgentProfile
-  t: (key: string) => string
+  t: TranslateFn
   matchScore?: number
 }) {
   return (

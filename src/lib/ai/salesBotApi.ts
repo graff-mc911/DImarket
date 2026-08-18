@@ -106,7 +106,7 @@ export async function runSalesChatTurn(req: SalesChatRequest): Promise<SalesChat
     })
 
     const polished = data?.replyText?.trim()
-    if (!error && polished && !data?.error) {
+    if (!error && data && polished && !data.error) {
       const badCategoryAsk =
         /категор|category|яка послуга|what service/i.test(polished) &&
         Boolean(local.draft.problemText || local.draft.tradeRole || local.draft.categorySlug)

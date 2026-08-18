@@ -80,7 +80,7 @@ function dedupeGeoRows(rows: GeoRow[]): GeoRow[] {
   return out
 }
 
-export function mergeGeoCatalogs(...catalogs: AdGeoCountry[]): AdGeoCountry[] {
+export function mergeGeoCatalogs(...catalogs: AdGeoCountry[][]): AdGeoCountry[] {
   return groupGeoRows(
     catalogs.flatMap((catalog) =>
       catalog.flatMap((country) =>
@@ -118,12 +118,17 @@ async function loadGeoRowsFromTable(
   table: 'geo_catalog' | 'active_geo',
   country?: string,
 ): Promise<GeoRow[]> {
-  let query = supabase.from(table).select('country, region, city').order('country')
-  if (country) {
-    const names = countryQueryNames(canonicalCountryName(country))
-    query = names.length === 1 ? query.eq('country', names[0]) : query.in('country', names)
-  }
-  const { data, error } = await query
+  const query =
+    table === 'geo_catalog'
+      ? supabase.from('geo_catalog').select('country, region, city').order('country')
+      : supabase.from('active_geo').select('country, region, city').order('country')
+  const filtered = country
+    ? (() => {
+        const names = countryQueryNames(canonicalCountryName(country))
+        return names.length === 1 ? query.eq('country', names[0]) : query.in('country', names)
+      })()
+    : query
+  const { data, error } = await filtered
   if (error || !data?.length) return []
   return dedupeGeoRows(data as GeoRow[])
 }

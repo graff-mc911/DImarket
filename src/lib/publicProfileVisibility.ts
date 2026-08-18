@@ -61,7 +61,7 @@ export function filterPublicProfiles<T extends PublicProfileGate>(rows: T[]): T[
 export function applyPublicProfileFilters<T extends { is: Function; not?: Function }>(query: T): T {
   // Prefer IS NULL for soft-delete / hide columns.
   // If migration not applied yet, callers should catch and retry without these.
-  return (query as { is: (c: string, v: null) => T }).is('deleted_at', null).is('hidden_at', null)
+  return (query as unknown as { is: (c: string, v: null) => T }).is('deleted_at', null).is('hidden_at', null)
 }
 
 export function sortProfilesForPublicDiscovery<

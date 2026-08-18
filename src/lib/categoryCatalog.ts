@@ -202,11 +202,11 @@ export function labelFor(entry: LocalizedLabel, locale: string, slug?: string): 
   if (fromWorkMap?.[baseLocale as keyof typeof fromWorkMap]) {
     return fromWorkMap[baseLocale as keyof typeof fromWorkMap]
   }
-  if (fromDimarketMap?.[normalized as keyof typeof fromDimarketMap]) {
-    return fromDimarketMap[normalized as keyof typeof fromDimarketMap]
-  }
-  if (fromDimarketMap?.[baseLocale as keyof typeof fromDimarketMap]) {
-    return fromDimarketMap[baseLocale as keyof typeof fromDimarketMap]
+  if (fromDimarketMap) {
+    const dimarketHit =
+      fromDimarketMap[normalized as keyof typeof fromDimarketMap] ||
+      fromDimarketMap[baseLocale as keyof typeof fromDimarketMap]
+    if (dimarketHit) return dimarketHit
   }
   if (entry[normalized]) return entry[normalized] as string
   if (entry[baseLocale]) return entry[baseLocale] as string

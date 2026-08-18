@@ -1,4 +1,5 @@
 import { supabase } from '../supabase'
+import type { Json } from '../types'
 import type { JobRequestDraft } from './jobRequestDraft'
 
 export type JobLeadSession = {
@@ -37,7 +38,7 @@ export async function appendJobLeadMessage(
     session_id: sessionId,
     role,
     content,
-    meta: meta ?? {},
+    meta: (meta ?? {}) as Json,
   })
 }
 
@@ -49,8 +50,8 @@ export async function updateJobLeadDraft(
   await supabase
     .from('ai_job_sessions')
     .update({
-      draft,
-      extracted: extracted ?? {},
+      draft: draft as unknown as Json,
+      extracted: (extracted ?? {}) as Json,
       updated_at: new Date().toISOString(),
     })
     .eq('id', sessionId)

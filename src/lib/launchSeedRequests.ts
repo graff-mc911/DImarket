@@ -1,4 +1,5 @@
 import type { ListingWithImages } from './types'
+import type { TranslateFn, TranslationKey } from './i18n'
 import { LAUNCH_MARKETS, locationMatchesMarket } from './launchMarkets'
 
 const EXAMPLE_MARKER = '[launch_example]'
@@ -101,8 +102,24 @@ function buildExampleListing(
     updated_at: now.toISOString(),
     visibility_radius: 'city',
     subcategory_slugs: [],
+    budget_min: null,
+    budget_max: null,
+    deadline_type: null,
+    deadline_at: null,
+    urgency: null,
+    preferred_language: null,
+    wizard_completed: false,
+    postal_code: null,
+    country_name: null,
+    city_name: null,
+    latitude: null,
+    longitude: null,
+    hired_professional_id: null,
+    pipeline_stage: null,
+    pipeline_completed_at: null,
+    review_prompted_at: null,
     images: [],
-    category: null,
+    category: undefined,
   }
 }
 
@@ -112,7 +129,7 @@ function buildExampleListing(
  */
 export function mergeLaunchExampleRequests(
   realJobs: ListingWithImages[],
-  translate: (key: string) => string,
+  translate: TranslateFn,
   minRealPerLaunchCity = 2,
   maxExamplesTotal = 4,
 ): ListingWithImages[] {
@@ -132,8 +149,8 @@ export function mergeLaunchExampleRequests(
       examples.push(
         buildExampleListing(
           seed,
-          translate(seed.titleKey),
-          translate(seed.descriptionKey),
+          translate(seed.titleKey as TranslationKey),
+          translate(seed.descriptionKey as TranslationKey),
         ),
       )
     }

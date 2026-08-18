@@ -1,6 +1,7 @@
 import { MapPin } from 'lucide-react'
 import { navigateTo } from '../../lib/navigation'
 import { labelForMatchCategory } from '../../lib/commercialAgents/categories'
+import type { TranslateFn } from '../../lib/i18n'
 import type { ManufacturerProfile } from '../../lib/commercialAgents/types'
 import { VerifiedB2BBadge } from './VerifiedB2BBadge'
 import { useApp } from '../../contexts/AppContext'
@@ -11,7 +12,7 @@ export function ManufacturerCard({
   matchScore,
 }: {
   item: ManufacturerProfile
-  t: (key: string) => string
+  t: TranslateFn
   matchScore?: number
 }) {
   const { language } = useApp()

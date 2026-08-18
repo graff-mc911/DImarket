@@ -1,3 +1,4 @@
+import type { TranslateFn } from '../../lib/i18n'
 import type { MatchResult } from '../../lib/commercialAgents/types'
 
 export function MatchScorePanel({
@@ -6,7 +7,7 @@ export function MatchScorePanel({
   compact = false,
 }: {
   match: MatchResult
-  t: (key: string) => string
+  t: TranslateFn
   compact?: boolean
 }) {
   const labelKey =
