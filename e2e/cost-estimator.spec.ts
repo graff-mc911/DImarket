@@ -44,6 +44,8 @@ test.describe('Cost estimator calculator', () => {
     page,
     viewport,
   }) => {
+    test.skip((viewport?.width ?? 1280) < 1024, 'Dept-nav click is desktop Chrome')
+
     await gotoPath(page, '/')
 
     let loads = 0
