@@ -57,14 +57,14 @@
 
   @media (min-width: 1024px) {
     :root {
-      /* Two-line department nav when items wrap */
-      --header-offset: 12rem;
+      /* One department row under the logo/search bar */
+      --header-offset: 9.5rem;
     }
   }
 
   @media (min-width: 1280px) {
     :root {
-      --header-offset: 12.5rem;
+      --header-offset: 9.75rem;
     }
   }
 
@@ -74,13 +74,13 @@
 
   @media (min-width: 1024px) {
     html[data-announcement='true'] {
-      --header-offset: 14rem;
+      --header-offset: 11.75rem;
     }
   }
 
   @media (min-width: 1280px) {
     html[data-announcement='true'] {
-      --header-offset: 14.5rem;
+      --header-offset: 12rem;
     }
   }
 
@@ -2099,9 +2099,9 @@
 
   .amazon-dept-scroll {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.1275rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
@@ -2112,11 +2112,10 @@
 
   .amazon-dept-row {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
-    column-gap: 0.15rem;
-    row-gap: 0.1275rem;
+    column-gap: 0.1rem;
     width: 100%;
     min-width: 0;
   }
@@ -2125,12 +2124,18 @@
     flex-shrink: 0;
     white-space: nowrap;
     border-radius: 0.125rem;
-    padding: 0.31875rem 0.625rem;
+    padding: 0.31875rem 0.45rem;
     font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1.275; /* 15% tighter than Tailwind preflight 1.5 */
     color: #ffffff;
     transition: outline 0.1s;
+  }
+
+  @media (min-width: 1280px) {
+    .amazon-dept-link {
+      padding: 0.31875rem 0.625rem;
+    }
   }
 
   .amazon-dept-link:hover {

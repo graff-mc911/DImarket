@@ -85,14 +85,14 @@ test.describe('Desktop header chrome (lg+)', () => {
         const visualRows = new Set(buttons.map((b) => Math.round(b.getBoundingClientRect().top / 4) * 4))
         const counts = rows.map((row) => row.querySelectorAll('button').length)
         const lastRow = rows.at(-1)
-        let lastRowCentered = true
+        let rowCentered = true
         if (lastRow) {
           const lastButtons = [...lastRow.querySelectorAll('button')]
           if (lastButtons.length) {
             const first = lastButtons[0].getBoundingClientRect()
             const last = lastButtons[lastButtons.length - 1].getBoundingClientRect()
             const mid = (first.left + last.right) / 2
-            lastRowCentered = Math.abs(mid - window.innerWidth / 2) < window.innerWidth * 0.22
+            rowCentered = Math.abs(mid - window.innerWidth / 2) < window.innerWidth * 0.22
           }
         }
         return {
@@ -100,17 +100,17 @@ test.describe('Desktop header chrome (lg+)', () => {
           overflowX: s.overflowX,
           visualRows: visualRows.size,
           counts,
-          lastRowCentered,
+          rowCentered,
           justify: rows[0] ? getComputedStyle(rows[0]).justifyContent : '',
+          wrap: rows[0] ? getComputedStyle(rows[0]).flexWrap : '',
         }
       })
-      expect(deptStyle.flexDirection).toBe('column')
       expect(deptStyle.overflowX).toBe('visible')
       expect(deptStyle.justify).toBe('center')
-      expect(deptStyle.visualRows).toBeGreaterThanOrEqual(2)
-      expect(deptStyle.visualRows).toBeLessThanOrEqual(4)
-      expect(Math.abs((deptStyle.counts[0] ?? 0) - (deptStyle.counts[1] ?? 0))).toBeLessThanOrEqual(1)
-      expect(deptStyle.lastRowCentered, `second row not centered ${JSON.stringify(deptStyle)}`).toBe(true)
+      expect(deptStyle.wrap).toBe('nowrap')
+      expect(deptStyle.visualRows).toBe(1)
+      expect(deptStyle.counts).toEqual([DEPT_ITEMS.length])
+      expect(deptStyle.rowCentered, `row not centered ${JSON.stringify(deptStyle)}`).toBe(true)
 
       for (const name of DEPT_ITEMS) {
         await assertDeptItemReachable(page, name)

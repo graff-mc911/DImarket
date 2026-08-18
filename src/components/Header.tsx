@@ -266,9 +266,6 @@ export function Header() {
       className: 'amazon-dept-link',
     })),
   ]
-  const row1TailCount = Math.max(0, Math.ceil((deptTail.length + 1) / 2) - 1)
-  const deptRow1 = deptTail.slice(0, row1TailCount)
-  const deptRow2 = deptTail.slice(row1TailCount)
 
   const showAnnouncement = announcements.length > 0
 
@@ -603,7 +600,7 @@ export function Header() {
               </div>
             </div>
 
-            {/* Two balanced, centered department rows — no horizontal scrollbar */}
+            {/* One centered department row */}
             <div className="site-header-subnav hidden min-w-0 sm:block">
               <nav
                 className="amazon-dept-scroll px-3 md:px-4"
@@ -618,7 +615,7 @@ export function Header() {
                   >
                     {t('header.categories')}
                   </button>
-                  {deptRow1.map((item) => (
+                  {deptTail.map((item) => (
                     <button
                       key={item.key}
                       type="button"
@@ -629,20 +626,6 @@ export function Header() {
                     </button>
                   ))}
                 </div>
-                {deptRow2.length > 0 ? (
-                  <div className="amazon-dept-row">
-                    {deptRow2.map((item) => (
-                      <button
-                        key={item.key}
-                        type="button"
-                        onClick={item.onClick}
-                        className={item.className}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
               </nav>
             </div>
 
