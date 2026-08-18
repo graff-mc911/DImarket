@@ -24,6 +24,9 @@ jobs:
         run: npm ci
       - name: Production build (app)
         run: npm run build:app
+      - name: Typecheck (non-blocking until Supabase types are synced)
+        continue-on-error: true
+        run: npm run typecheck
       - name: Registration role logic smoke
         run: node scripts/verify-registration-logic.mjs
       - name: Commercial agents matching smoke
@@ -45,4 +48,4 @@ jobs:
       - name: E2E smoke against production
         env:
           PLAYWRIGHT_BASE_URL: https://dimarket.app
-        run: npx playwright test e2e/smoke.spec.ts --project=chromium
+        run: npx playwright test e2e/smoke.spec.ts e2e/cost-estimator.spec.ts e2e/home-map-chrome.spec.ts e2e/header-responsive.spec.ts --project=chromium

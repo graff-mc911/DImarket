@@ -107,6 +107,15 @@ export const STATIC_ROUTES = [
     schema: 'page',
   },
   {
+    path: '/cost-estimator',
+    title: 'Калькулятор вартості ремонту | DImarket',
+    description:
+      'Орієнтовна вартість ремонту в євро: тип проєкту, площа в м², опції та жива сума роботи й матеріалів. Далі — пропозиції майстрів DImarket.',
+    changefreq: 'weekly',
+    priority: 0.8,
+    schema: 'page',
+  },
+  {
     path: '/pricing',
     title: 'Тарифи та плани | DImarket',
     description: 'Тарифи DImarket для фахівців, компаній та рекламодавців.',
