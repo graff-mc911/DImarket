@@ -184,6 +184,12 @@ export function EuropeMarketplaceMap({
   useEffect(() => {
     if (!mapEl.current || mapRef.current) return
     const el = mapEl.current
+    const desktopPointer =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    // Home passes scrollWheelZoom=false so the page can scroll; on desktop Chrome
+    // that feels like a dead map. Enable wheel zoom while the cursor is over it.
+    const hoverWheel = !scrollWheelZoom && desktopPointer
     const map = L.map(el, {
       center: DEFAULT_EUROPE_VIEW.center,
       zoom: DEFAULT_EUROPE_VIEW.zoom,
@@ -193,14 +199,30 @@ export function EuropeMarketplaceMap({
       dragging: true,
       tapTolerance: 25,
       attributionControl: true,
+      // Chrome can leave faded OSM tiles at opacity 0 with plus-lighter compositing.
+      fadeAnimation: false,
     })
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: '&copy; OpenStreetMap',
-    }).addTo(map)
+    })
+    let usedFallback = false
+    let osmTileErrors = 0
+    osm.on('tileerror', () => {
+      osmTileErrors += 1
+      if (usedFallback || osmTileErrors < 3 || !mapRef.current) return
+      usedFallback = true
+      map.removeLayer(osm)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap, &copy; CARTO',
+      }).addTo(map)
+    })
+    osm.addTo(map)
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
     zoomRef.current = map.getZoom()
+    map.dragging.enable()
 
     const emitBounds = () => {
       const b = map.getBounds()
@@ -214,6 +236,7 @@ export function EuropeMarketplaceMap({
 
     const invalidate = () => {
       map.invalidateSize({ animate: false })
+      map.dragging.enable()
     }
 
     map.on('zoomend', () => {
@@ -222,8 +245,30 @@ export function EuropeMarketplaceMap({
     })
     map.on('moveend', emitBounds)
 
+    const onEnter = () => {
+      if (hoverWheel) map.scrollWheelZoom.enable()
+    }
+    const onLeave = () => {
+      if (hoverWheel) map.scrollWheelZoom.disable()
+    }
+    if (hoverWheel) {
+      map.scrollWheelZoom.disable()
+      el.addEventListener('mouseenter', onEnter)
+      el.addEventListener('mouseleave', onLeave)
+    }
+
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => invalidate()) : null
     ro?.observe(el)
+    const io =
+      typeof IntersectionObserver !== 'undefined'
+        ? new IntersectionObserver(
+            (entries) => {
+              if (entries.some((entry) => entry.isIntersecting)) invalidate()
+            },
+            { threshold: 0.05 },
+          )
+        : null
+    io?.observe(el)
     window.addEventListener('orientationchange', invalidate)
     window.visualViewport?.addEventListener('resize', invalidate)
     const t1 = window.setTimeout(invalidate, 80)
@@ -238,6 +283,9 @@ export function EuropeMarketplaceMap({
       window.clearTimeout(t2)
       window.clearTimeout(t3)
       ro?.disconnect()
+      io?.disconnect()
+      el.removeEventListener('mouseenter', onEnter)
+      el.removeEventListener('mouseleave', onLeave)
       window.removeEventListener('orientationchange', invalidate)
       window.visualViewport?.removeEventListener('resize', invalidate)
       map.off('zoomend')

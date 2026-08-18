@@ -5272,8 +5272,12 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .layout-page-gutter:has(.dimarket-map),
 .home-section:has(.dimarket-map),
-.page-bg:has(.dimarket-map) {
-  overflow-x: visible;
+.page-bg:has(.dimarket-map),
+.home-premium:has(.dimarket-map),
+.app-shell:has(.dimarket-map) > main {
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
 }
 
 .home-map__canvas {
@@ -5291,6 +5295,31 @@ select.select-glass.geo-filter-select::-ms-expand {
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/*
+  Chrome desktop: html/body/#root are navy (#232f3e). Leaflet 1.9 paints OSM tiles
+  with mix-blend-mode: plus-lighter (tile-gap workaround). Chrome composites that
+  blend against the dark document background, so the map looks empty/grey while
+  Firefox/Safari isolate the pane. Isolate the map and disable the blend.
+  Also undo Tailwind/base `img { max-width:100%; height:auto }` on tiles.
+*/
+.dimarket-map .leaflet-container {
+  isolation: isolate;
+  background: #cad2d3;
+}
+
+.dimarket-map .leaflet-tile-pane {
+  isolation: isolate;
+}
+
+.dimarket-map .leaflet-container img.leaflet-tile,
+.dimarket-map .leaflet-container .leaflet-tile {
+  max-width: none !important;
+  max-height: none !important;
+  width: unset !important;
+  height: unset !important;
+  mix-blend-mode: normal !important;
 }
 
 .dimarket-map-popup {
