@@ -95,7 +95,6 @@ export function HomeHero({ categories }: HomeHeroProps) {
               <h1 id="home-hero-title" className="home-hero__title">
                 {t('homePremium.heroTitle')}
               </h1>
-              <p className="home-hero__subtitle">{t('homePremium.heroSubtitle')}</p>
             </div>
           </div>
 
