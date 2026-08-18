@@ -91,7 +91,6 @@ export function HomeHero({ categories }: HomeHeroProps) {
         <div className="home-hero__layout">
           <div className="home-hero__content">
             <div className="home-hero__copy">
-              <p className="home-hero__eyebrow">{t('homePremium.eyebrow')}</p>
               <h1 id="home-hero-title" className="home-hero__title">
                 {t('homePremium.heroTitle')}
               </h1>

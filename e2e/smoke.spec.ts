@@ -5,6 +5,7 @@ test.describe('Smoke — публічні сторінки', () => {
   test('головна завантажується з hero і шапкою', async ({ page }) => {
     await gotoPath(page, '/')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(HOME_HERO)
+    await expect(page.locator('.home-hero__eyebrow')).toHaveCount(0)
     await expectAppShell(page)
   })
 

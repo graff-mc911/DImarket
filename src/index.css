@@ -4372,23 +4372,13 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 
-.home-hero__eyebrow,
 .home-section__eyebrow {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #ffb84d;
-  margin-bottom: 0.75rem;
-}
-
-.home-hero__eyebrow {
-  margin-bottom: 0.5rem;
-  font-size: 0.68rem;
-}
-
-.home-section__eyebrow {
   color: #c96d2c;
+  margin-bottom: 0.75rem;
 }
 
 .home-section__eyebrow--on-dark {
