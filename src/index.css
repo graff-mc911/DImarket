@@ -3597,8 +3597,10 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .dimarket-categories__head {
-  max-width: 45rem;
+  width: 100%;
+  max-width: none;
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .dimarket-categories__eyebrow {
@@ -3608,6 +3610,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   font-weight: 850;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  text-align: center;
 }
 
 .dimarket-categories__head h2 {
