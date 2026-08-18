@@ -61,6 +61,7 @@ test.describe('Home Europe map — desktop Chrome', () => {
     expect(info.tileCount ?? 0).toBeGreaterThan(4)
     expect(info.tile?.client[0] ?? 0).toBeGreaterThan(100)
     expect(info.tile?.client[1] ?? 0).toBeGreaterThan(100)
+    expect(info.tile?.mixBlendMode).toBe('normal')
     expect(String(info.hit?.cls || info.hit?.tag || '')).toMatch(
       /leaflet|home-map-pin|dimarket-map-pin/i,
     )
