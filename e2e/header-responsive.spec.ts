@@ -20,18 +20,21 @@ const MOBILE = [
 const DEPT_ITEMS = [
   /Categories|Категорії/i,
   /Today'?s Deals|Актуальні запити/i,
-  /^Map$|^Карта$/i,
   /Find Professionals|Знайти майстр/i,
   /^Companies$|^Компан/i,
   /Manufacturers|Виробник/i,
-  /Commercial Agents|Комерційн/i,
   /^Jobs$|^Вакансії$/i,
-  /Post a job|Опублікувати запит/i,
   /Cost estimator|Калькулятор вартості/i,
   /^Sell$|^Опублікувати$/i,
+  /Analytics|Аналітика/i,
+]
+
+const REMOVED_DEPT_ITEMS = [
+  /^Map$|^Карта$/i,
+  /Commercial Agents|Комерційн/i,
+  /Post a job|Опублікувати запит/i,
   /Pricing|Тарифи/i,
   /AI assistant|AI-помічник/i,
-  /Analytics|Аналітика/i,
   /Customer Service|Підтримка/i,
   /How It Works|Як це працює/i,
 ]
@@ -111,6 +114,9 @@ test.describe('Desktop header chrome (lg+)', () => {
 
       for (const name of DEPT_ITEMS) {
         await assertDeptItemReachable(page, name)
+      }
+      for (const name of REMOVED_DEPT_ITEMS) {
+        await expect(deptNav(page).getByRole('button', { name })).toHaveCount(0)
       }
 
       await expectNoHorizontalOverflow(page)

@@ -19,7 +19,6 @@ import {
   Factory,
   FileText,
   Hammer,
-  Handshake,
   LayoutDashboard,
   LogOut,
   Megaphone,
@@ -186,9 +185,7 @@ export function Header() {
     professionals: Hammer,
     companies: Building2,
     manufacturers: Factory,
-    'commercial-agents': Handshake,
     jobs: Briefcase,
-    map: MapPin,
   }
   const navItems: NavItem[] = navEntriesFor('header-dept').map((entry) => ({
     label: t(labelKeyFor(entry, 'header-dept')),
@@ -205,18 +202,6 @@ export function Header() {
   const goTo = (path: string) => {
     closeAllMenus()
     navigateTo(path)
-  }
-
-  const goToHowItWorks = () => {
-    closeAllMenus()
-    if (window.location.pathname === '/') {
-      document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      return
-    }
-    navigateTo('/')
-    window.setTimeout(() => {
-      document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 150)
   }
 
   const handleSignOut = async () => {
@@ -280,12 +265,6 @@ export function Header() {
       onClick: () => goTo(entry.path),
       className: 'amazon-dept-link',
     })),
-    {
-      key: 'how-it-works',
-      label: t('footer.howItWorks'),
-      onClick: goToHowItWorks,
-      className: 'amazon-dept-link',
-    },
   ]
   const row1TailCount = Math.max(0, Math.ceil((deptTail.length + 1) / 2) - 1)
   const deptRow1 = deptTail.slice(0, row1TailCount)

@@ -66,7 +66,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     path: '/map',
     labelKey: 'nav.map',
     labelKeyBySurface: { 'header-dept': 'header.map' },
-    surfaces: ['mobile-bar', 'header-dept'],
+    surfaces: ['mobile-bar'],
   },
   { id: 'more', path: '#more', labelKey: 'nav.more', surfaces: ['mobile-bar'] },
 
@@ -115,7 +115,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
       'footer-professionals': 'footer.commercialAgents',
       'mobile-more': 'nav.commercialAgents',
     },
-    surfaces: ['mobile-more', 'header-dept', 'footer-services', 'footer-professionals'],
+    surfaces: ['mobile-more', 'footer-services', 'footer-professionals'],
   },
   {
     id: 'documents-procedures',
@@ -148,7 +148,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
       'footer-services': 'homePremium.postProject',
       'header-dept-extra': 'header.postJob',
     },
-    surfaces: ['mobile-more', 'footer-services', 'header-dept-extra'],
+    surfaces: ['mobile-more', 'footer-services'],
   },
   {
     id: 'cost-estimator',
@@ -177,7 +177,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
       'footer-company': 'footer.pricing',
       'header-dept-extra': 'header.pricing',
     },
-    surfaces: ['mobile-more', 'footer-company', 'header-dept-extra'],
+    surfaces: ['mobile-more', 'footer-company'],
   },
   {
     id: 'assistant',
@@ -187,7 +187,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
       'footer-services': 'header.aiAssistant',
       'header-dept-extra': 'header.aiAssistant',
     },
-    surfaces: ['mobile-more', 'footer-services', 'header-dept-extra'],
+    surfaces: ['mobile-more', 'footer-services'],
   },
   {
     id: 'analytics',
@@ -297,7 +297,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
       'footer-company': 'footer.contactLink',
       'header-dept-extra': 'header.customerService',
     },
-    surfaces: ['header-center', 'footer-company', 'header-dept-extra'],
+    surfaces: ['header-center', 'footer-company'],
   },
   {
     id: 'login',
@@ -472,18 +472,13 @@ export function navEntriesFor(surface: NavSurface): NavEntry[] {
 }
 
 /**
- * Header department bar link order around primary `header-dept` items.
- * Matches historical Header.tsx: Deals → (pros/companies/map) → actions → contact.
+ * Header department bar: categories (in Header) + deals + directory + estimator/publish/analytics.
  */
 export const HEADER_DEPT_BEFORE_ORDER = ['search'] as const
 export const HEADER_DEPT_AFTER_ORDER = [
-  'publish-request',
   'cost-estimator',
   'publish',
-  'pricing',
-  'assistant',
   'analytics',
-  'contact',
 ] as const
 
 function pickNavByIds(surface: NavSurface, ids: readonly string[]): NavEntry[] {
