@@ -25,6 +25,7 @@ import {
   Megaphone,
   MapPin,
   MessageSquare,
+  Search,
   Settings,
   Shield,
   User,
@@ -378,29 +379,26 @@ export function Header() {
               {/* Work in / Deliver to — global location */}
               <HeaderLocationControl />
 
-              {/* AI assistant — replaces classic category + search */}
+              {/* Compact header search — still submits to the job assistant */}
               <form
                 onSubmit={handleSearchSubmit}
-                className="amazon-search-bar mx-2 hidden min-w-0 flex-1 sm:flex sm:max-w-3xl"
+                className="amazon-search-bar mx-2 hidden sm:flex"
                 role="search"
-                aria-label={t('ai.widget.open')}
+                aria-label={t('nav.search')}
               >
                 <div className="amazon-search-inner">
-                  <span className="amazon-search-ai-badge" aria-hidden>
-                    <Bot className="h-4 w-4" />
-                  </span>
+                  <button type="submit" className="amazon-search-submit" aria-label={t('nav.search')}>
+                    <Search className="h-3.5 w-3.5" aria-hidden />
+                  </button>
                   <input
                     type="search"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t('home.headerSearchPlaceholder')}
+                    placeholder={t('nav.search')}
                     className="amazon-search-input"
-                    enterKeyHint="go"
+                    enterKeyHint="search"
                     autoComplete="off"
                   />
-                  <button type="submit" className="amazon-search-submit" aria-label={t('ai.widget.open')}>
-                    <Bot className="h-5 w-5" />
-                  </button>
                 </div>
               </form>
 
@@ -661,29 +659,26 @@ export function Header() {
               </nav>
             </div>
 
-            {/* AI assistant (mobile) */}
+            {/* Compact header search (mobile) */}
             <form
               onSubmit={handleSearchSubmit}
               className="amazon-search-bar mt-2 sm:hidden"
               role="search"
-              aria-label={t('ai.widget.open')}
+              aria-label={t('nav.search')}
             >
               <div className="amazon-search-inner">
-                <span className="amazon-search-ai-badge" aria-hidden>
-                  <Bot className="h-4 w-4" />
-                </span>
+                <button type="submit" className="amazon-search-submit" aria-label={t('nav.search')}>
+                  <Search className="h-3.5 w-3.5" aria-hidden />
+                </button>
                 <input
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t('home.headerSearchPlaceholder')}
+                  placeholder={t('nav.search')}
                   className="amazon-search-input"
-                  enterKeyHint="go"
+                  enterKeyHint="search"
                   autoComplete="off"
                 />
-                <button type="submit" className="amazon-search-submit" aria-label={t('ai.widget.open')}>
-                  <Bot className="h-5 w-5" />
-                </button>
               </div>
             </form>
           </div>

@@ -74,7 +74,24 @@ test.describe('Desktop header chrome (lg+)', () => {
 
       await expect(page.locator('header').getByRole('img', { name: /DImarket logo/i })).toBeVisible()
       await expect(page.locator('.header-location button')).toBeVisible()
+      const searchInner = page.locator('header .amazon-search-inner').first()
       await expect(page.locator('header input[type="search"]').first()).toBeVisible()
+      await expect(searchInner.locator('svg')).toHaveCount(1)
+      const searchChrome = await searchInner.evaluate((el) => {
+        const s = getComputedStyle(el)
+        const box = el.getBoundingClientRect()
+        const submit = el.querySelector('.amazon-search-submit')
+        return {
+          bg: s.backgroundColor.replace(/\s/g, ''),
+          height: box.height,
+          width: box.width,
+          submitBg: submit ? getComputedStyle(submit).backgroundColor.replace(/\s/g, '') : '',
+        }
+      })
+      expect(searchChrome.bg).toMatch(/rgb\(255,255,255\)|#fff|#ffffff/i)
+      expect(searchChrome.submitBg).toMatch(/rgba\(0,0,0,0\)|transparent|rgb\(255,255,255\)|#fff/i)
+      expect(searchChrome.height).toBeLessThanOrEqual(36)
+      expect(searchChrome.width).toBeLessThanOrEqual(240)
       await expect(page.getByRole('button', { name: /Sign in|Увійти|Hello|Вітаємо/i }).first()).toBeVisible()
       await expect(page.locator('header').getByRole('button', { name: /^(Messages|Повідомлення)$/ })).toBeVisible()
       await expect(page.locator('header').getByRole('button', { name: /Saved|Збережені/i })).toBeVisible()
