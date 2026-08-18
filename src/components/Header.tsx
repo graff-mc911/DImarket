@@ -84,8 +84,10 @@ export function Header() {
   const languageRef = useRef<HTMLDivElement | null>(null)
   const currencyRef = useRef<HTMLDivElement | null>(null)
   const accountRef  = useRef<HTMLDivElement | null>(null)
+  const accountButtonRef = useRef<HTMLButtonElement | null>(null)
   const fixedHeaderRef = useRef<HTMLDivElement | null>(null)
   const [headerSpacerPx, setHeaderSpacerPx] = useState(128)
+  const [accountPanelMaxH, setAccountPanelMaxH] = useState(360)
 
   // Слухаємо popstate для оновлення активного маршруту
   useEffect(() => {
@@ -300,8 +302,26 @@ export function Header() {
     }
   }, [showAnnouncement, user, unreadCount, language.code, currency.code])
 
+  useLayoutEffect(() => {
+    if (!accountOpen) return
+    const sync = () => {
+      const bottom = accountButtonRef.current?.getBoundingClientRect().bottom ?? 80
+      const vh = window.visualViewport?.height ?? window.innerHeight
+      setAccountPanelMaxH(Math.max(160, Math.floor(vh - bottom - 12)))
+    }
+    sync()
+    window.addEventListener('resize', sync)
+    window.addEventListener('scroll', sync, true)
+    window.visualViewport?.addEventListener('resize', sync)
+    return () => {
+      window.removeEventListener('resize', sync)
+      window.removeEventListener('scroll', sync, true)
+      window.visualViewport?.removeEventListener('resize', sync)
+    }
+  }, [accountOpen])
+
   const dropdownPanelClass =
-    'absolute right-0 top-full mt-2 w-64 rounded-md border border-[#d5d9d9] bg-white p-2 shadow-[0_4px_12px_rgba(15,17,17,0.15)]'
+    'header-account-panel absolute right-0 top-full mt-2 w-64 rounded-md border border-[#d5d9d9] bg-white p-2 shadow-[0_4px_12px_rgba(15,17,17,0.15)]'
 
   const dropdownItemClass =
     'block w-full rounded-sm px-3 py-2.5 text-left text-sm text-[var(--ink-900)] transition hover:bg-[#f7fafa]'
@@ -403,8 +423,9 @@ export function Header() {
                   />
                 </div>
 
-                <div ref={accountRef} className="relative">
+                <div ref={accountRef} className="relative z-[90]">
                   <button
+                    ref={accountButtonRef}
                     onClick={() => {
                       if (isLoggedIn) {
                         setAccountOpen(o => !o)
@@ -432,7 +453,11 @@ export function Header() {
                   </button>
 
                   {isLoggedIn && accountOpen && (
-                    <div className={dropdownPanelClass}>
+                    <div
+                      className={dropdownPanelClass}
+                      style={{ maxHeight: accountPanelMaxH }}
+                      aria-label={t('header.accountLists')}
+                    >
                       {isSiteOwner && user && (
                         <>
                           <p className="px-3 py-1 text-[10px] font-bold uppercase text-[var(--ink-500)]">

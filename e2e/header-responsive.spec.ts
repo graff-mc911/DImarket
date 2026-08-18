@@ -81,6 +81,16 @@ test.describe('Desktop header chrome (lg+)', () => {
       await expect(page.locator('header').getByText(/і замовлення|Returns/i)).toHaveCount(0)
       await expect(page.locator('header .amazon-header-block__bottom', { hasText: /Saved|Збережені/i })).toHaveCount(0)
 
+      const accountPanelScroll = await page.evaluate(() => {
+        const el = document.createElement('div')
+        el.className = 'header-account-panel'
+        document.body.appendChild(el)
+        const overflowY = getComputedStyle(el).overflowY
+        el.remove()
+        return overflowY
+      })
+      expect(accountPanelScroll).toMatch(/auto|scroll/)
+
       await expect(deptNav(page)).toBeVisible()
       const deptStyle = await deptNav(page).evaluate((el) => {
         const s = getComputedStyle(el)
