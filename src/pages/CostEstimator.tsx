@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   Building2,
   Check,
@@ -19,7 +19,6 @@ import {
 } from 'lucide-react'
 import { EstimatorShell } from '../components/cost-estimator/EstimatorShell'
 import { EstimatorCalculator } from '../components/cost-estimator/EstimatorCalculator'
-import { EstimatorResultsMap } from '../components/cost-estimator/EstimatorResultsMap'
 import { EstimatorProcurementPanel } from '../components/cost-estimator/EstimatorProcurementPanel'
 import { LocationStep } from '../components/project-wizard/LocationStep'
 import { ProfessionalCard } from '../components/ProfessionalCard'
@@ -74,7 +73,14 @@ import { submitProjectWizard } from '../lib/submitProjectWizard'
 import { readEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 import { applyPageSeo } from '../lib/pageSeo'
 import { navigateTo } from '../lib/navigation'
+import { lazyWithRetry } from '../lib/lazyWithRetry'
 import type { Profile } from '../lib/types'
+
+const EstimatorResultsMap = lazyWithRetry(() =>
+  import('../components/cost-estimator/EstimatorResultsMap').then((m) => ({
+    default: m.EstimatorResultsMap,
+  })),
+)
 
 const field =
   'w-full rounded-[14px] border border-[#e8e8ed] bg-[#fafafa] px-4 py-3 text-[15px] text-[#1d1d1f] outline-none transition focus:border-[#1d1d1f] focus:bg-white focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]'
@@ -162,7 +168,7 @@ export function CostEstimator() {
         description: t('costEstimator.seoDescription'),
         canonicalPath: '/cost-estimator',
       }),
-    [t],
+    [language.code, t],
   )
 
   // Prefill from AI sales chat (“повний ремонт + кошторис”)
@@ -888,11 +894,13 @@ export function CostEstimator() {
 
           {/* Interactive map — EuropeMarketplaceMap SSoT */}
           <Section title={t('costEstimator.mapTitle')}>
-            <EstimatorResultsMap
-              preferKinds={['professional', 'company', 'marketplace', 'project', 'job']}
-              subcategorySlug={estimate.specialists[0]?.subcategorySlug || getProjectType(state.projectTypeId).subcategorySlug}
-              serviceQuery={estimate.tradeLabel}
-            />
+            <Suspense fallback={<p className="text-[13px] text-[#6e6e73]">{t('costEstimator.working')}</p>}>
+              <EstimatorResultsMap
+                preferKinds={['professional', 'company', 'marketplace', 'project', 'job']}
+                subcategorySlug={estimate.specialists[0]?.subcategorySlug || getProjectType(state.projectTypeId).subcategorySlug}
+                serviceQuery={estimate.tradeLabel}
+              />
+            </Suspense>
           </Section>
 
           {/* Work stages + specialists */}

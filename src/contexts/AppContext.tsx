@@ -12,7 +12,7 @@ import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
 import { isSiteOwner } from '../lib/siteOwner'
 import { isOAuthCallbackUrl } from '../lib/oauth'
 import { navigateTo } from '../lib/navigation'
-import { EMPTY_GEO_SEARCH, type GeoSearchState } from '../lib/geoSearch'
+import { EMPTY_GEO_SEARCH, geoSearchEqual, type GeoSearchState } from '../lib/geoSearch'
 import {
   initializeGlobalLocation,
   saveGlobalLocation,
@@ -55,7 +55,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   })
   const [location, setLocationState] = useState<GeoSearchState>(() => initializeGlobalLocation())
   /** Bumps when a locale pack finishes loading so `t()` re-renders with real strings. */
-  const [, setI18nTick] = useState(0)
+  const [i18nTick, setI18nTick] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -226,6 +226,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.lang = language.code
     document.documentElement.dir = language.code === 'ar' ? 'rtl' : 'ltr'
+    document.documentElement.setAttribute('translate', 'no')
+    document.documentElement.classList.add('notranslate')
     const ogLocale = document.querySelector('meta[property="og:locale"]')
     if (ogLocale) {
       ogLocale.setAttribute('content', language.code.replace('-', '_'))
@@ -247,7 +249,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const onPop = () => {
       const next = initializeGlobalLocation()
-      setLocationState(next)
+      setLocationState((prev) => (geoSearchEqual(prev, next) ? prev : next))
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
@@ -315,9 +317,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setProfile(null)
   }
 
-  const t = (key: TranslationKey): string => {
+  const t = useCallback((key: TranslationKey): string => {
     return getTranslation(language.code as LanguageCode, key)
-  }
+  }, [language.code, i18nTick])
 
   return (
     <AppContext.Provider

@@ -1,7 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no" class="notranslate">
   <head>
     <meta charset="UTF-8" />
+    <!-- Chrome Translate mutates React text nodes and fights i18n → jank + reload flicker. -->
+    <meta name="google" content="notranslate" />
 
     <!-- Favicons — master DImarket app icon (?v=8 cache bust) -->
     <link rel="icon" href="/favicon.ico?v=8" sizes="any" />
@@ -76,7 +78,7 @@
       })()
     </script>
   </head>
-  <body>
+  <body class="notranslate">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

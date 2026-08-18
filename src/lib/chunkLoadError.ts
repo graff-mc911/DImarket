@@ -1,6 +1,7 @@
 /** Detect Vite/Webpack dynamic-import failures after a deploy (stale hashed chunks). */
 
 export const CHUNK_RELOAD_KEY = 'dimarket:chunk-reload'
+const RELOAD_COOLDOWN_MS = 60_000
 
 export function isChunkLoadError(error: unknown): boolean {
   const msg = error instanceof Error ? error.message : String(error ?? '')
@@ -15,14 +16,21 @@ export function isChunkLoadError(error: unknown): boolean {
   )
 }
 
+function recentlyReloaded(raw: string | null): boolean {
+  if (!raw) return false
+  if (raw === '1') return true
+  const ts = Number(raw)
+  return Number.isFinite(ts) && Date.now() - ts < RELOAD_COOLDOWN_MS
+}
+
 /** One-shot full reload so the browser picks up the latest index + asset hashes. */
 export function reloadOnceForStaleChunk(): boolean {
   if (typeof window === 'undefined' || typeof sessionStorage === 'undefined') {
     return false
   }
   try {
-    if (sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1') return false
-    sessionStorage.setItem(CHUNK_RELOAD_KEY, '1')
+    if (recentlyReloaded(sessionStorage.getItem(CHUNK_RELOAD_KEY))) return false
+    sessionStorage.setItem(CHUNK_RELOAD_KEY, String(Date.now()))
   } catch {
     // Private mode / blocked storage — still attempt reload once via URL marker.
     if (window.location.search.includes('chunk_reload=1')) return false
@@ -35,13 +43,9 @@ export function reloadOnceForStaleChunk(): boolean {
   return true
 }
 
+/** Drop the URL marker only. Keep the session cooldown so a later successful
+ *  locale/chunk import cannot clear the flag and start an infinite reload. */
 export function clearChunkReloadFlag(): void {
-  if (typeof sessionStorage === 'undefined') return
-  try {
-    sessionStorage.removeItem(CHUNK_RELOAD_KEY)
-  } catch {
-    /* ignore */
-  }
   if (typeof window !== 'undefined' && window.location.search.includes('chunk_reload=')) {
     const url = new URL(window.location.href)
     url.searchParams.delete('chunk_reload')

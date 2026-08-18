@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { gotoPath } from './helpers'
+import { clickHeaderNavButton, gotoPath } from './helpers'
 
 test.describe('Cost estimator calculator', () => {
   test('три колонки як BuildZoom /cost: тип, опції, жива сума і пропозиції', async ({
@@ -38,5 +38,27 @@ test.describe('Cost estimator calculator', () => {
 
     await page.getByRole('button', { name: /Отримати пропозиції|Get quotes/i }).click()
     await expect(page.getByText(/Орієнтовна оцінка|Reference estimate/i).first()).toBeVisible()
+  })
+
+  test('клік «Калькулятор вартості» — SPA без циклу перезавантаження', async ({
+    page,
+    viewport,
+  }) => {
+    await gotoPath(page, '/')
+
+    let loads = 0
+    page.on('load', () => {
+      loads += 1
+    })
+
+    await clickHeaderNavButton(page, /Cost estimator|Калькулятор вартості/i, viewport)
+    await expect(page).toHaveURL(/\/cost-estimator/)
+    await expect(
+      page.getByRole('heading', { name: /Калькулятор вартості ремонту|Remodeling cost calculator/i }),
+    ).toBeVisible()
+
+    await page.waitForTimeout(2500)
+    expect(loads, 'Chrome reload loop on cost estimator').toBe(0)
+    await expect(page).toHaveURL(/\/cost-estimator/)
   })
 })

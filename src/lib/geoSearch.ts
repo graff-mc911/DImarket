@@ -53,6 +53,19 @@ export const EMPTY_GEO_SEARCH: GeoSearchState = {
   fromGps: false,
 }
 
+export function geoSearchEqual(a: GeoSearchState, b: GeoSearchState): boolean {
+  return (
+    a.country === b.country &&
+    a.region === b.region &&
+    a.province === b.province &&
+    a.city === b.city &&
+    a.radius === b.radius &&
+    a.originLat === b.originLat &&
+    a.originLng === b.originLng &&
+    a.fromGps === b.fromGps
+  )
+}
+
 /** Approximate city centers for fast radius search without waiting on Nominatim. */
 const CITY_CENTERS: Record<string, GeoPoint> = {
   'spain|alicante': { lat: 38.3452, lon: -0.481 },

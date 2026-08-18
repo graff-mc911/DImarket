@@ -5286,9 +5286,11 @@ select.select-glass.geo-filter-select::-ms-expand {
   /* Visible — overflow clip/hidden on this box (or ancestors) breaks Leaflet
      tiles and one-finger pan on iOS/Android WebKit. Radius lives on the canvas. */
   overflow: visible;
+  overflow-anchor: none;
   border: 1px solid rgba(176, 126, 85, 0.14);
   background: #fff;
   box-shadow: 0 12px 28px rgba(47, 42, 36, 0.06);
+  transform: translateZ(0);
 }
 
 .layout-page-gutter:has(.dimarket-map),
@@ -5328,6 +5330,8 @@ select.select-glass.geo-filter-select::-ms-expand {
 .dimarket-map .leaflet-container {
   isolation: isolate;
   background: #cad2d3;
+  overflow-anchor: none;
+  transform: translateZ(0);
 }
 
 .dimarket-map .leaflet-tile-pane {

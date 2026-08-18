@@ -4,7 +4,7 @@ export function registerServiceWorker(): void {
   if (!('serviceWorker' in navigator)) return
 
   const register = () => {
-    void navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch((err) => {
+    void navigator.serviceWorker.register('/sw.js?v=4', { scope: '/' }).catch((err) => {
       console.warn('[pwa] service worker registration failed', err)
     })
   }

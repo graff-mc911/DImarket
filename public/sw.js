@@ -1,7 +1,11 @@
 /* Service worker — required for desktop Chrome/Edge "Install app".
-   Handles web push + a minimal fetch handler (installability criterion). */
+   Handles web push + a minimal fetch handler (installability criterion).
 
-const CACHE = 'dimarket-shell-v3'
+   Never intercept JS/CSS/modulepreload. Chrome + cached hashed Vite chunks
+   causes "Failed to fetch dynamically imported module" and a reload loop
+   (especially on lazy routes like /cost-estimator). */
+
+const CACHE = 'dimarket-shell-v4'
 const PRECACHE = ['/', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
 
 self.addEventListener('install', (event) => {
@@ -24,28 +28,43 @@ self.addEventListener('activate', (event) => {
   )
 })
 
-/** Network-first; fall back to cache. Presence of fetch handler enables PWA install. */
+function shouldBypass(req, url) {
+  if (req.method !== 'GET') return true
+  if (url.origin !== self.location.origin) return true
+
+  const dest = req.destination
+  if (
+    dest === 'script' ||
+    dest === 'style' ||
+    dest === 'worker' ||
+    dest === 'sharedworker' ||
+    dest === 'audioworklet' ||
+    dest === 'paintworklet'
+  ) {
+    return true
+  }
+
+  if (url.pathname.startsWith('/assets/')) return true
+  if (url.pathname.startsWith('/src/')) return true
+  if (url.pathname.startsWith('/api')) return true
+  if (url.pathname.includes('supabase')) return true
+  if (url.pathname.startsWith('/functions')) return true
+  if (/\.(js|mjs|cjs|css|map)(\?|$)/i.test(url.pathname)) return true
+
+  return false
+}
+
+/** Network-first for HTML/icons only. Presence of fetch handler enables PWA install. */
 self.addEventListener('fetch', (event) => {
   const req = event.request
-  if (req.method !== 'GET') return
-
   const url = new URL(req.url)
-  if (url.origin !== self.location.origin) return
-
-  // Never cache API / auth / functions
-  if (
-    url.pathname.startsWith('/api') ||
-    url.pathname.includes('supabase') ||
-    url.pathname.startsWith('/functions')
-  ) {
-    return
-  }
+  if (shouldBypass(req, url)) return
 
   event.respondWith(
     fetch(req)
       .then((res) => {
         const copy = res.clone()
-        if (res.ok && (req.mode === 'navigate' || url.pathname.match(/\.(js|css|png|svg|ico|webmanifest)$/))) {
+        if (res.ok && (req.mode === 'navigate' || url.pathname.match(/\.(png|svg|ico|webmanifest)$/))) {
           void caches.open(CACHE).then((cache) => cache.put(req, copy)).catch(() => undefined)
         }
         return res
