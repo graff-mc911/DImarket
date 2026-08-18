@@ -45,7 +45,7 @@ export function EstimatorShell({
   const { t } = useApp()
   const intake = variant === 'intake'
   const pct = Math.round((Math.min(step, ESTIMATOR_STEP_COUNT) / ESTIMATOR_STEP_COUNT) * 100)
-  const continueLabel = nextLabel || t('costEstimator.continue')
+  const continueLabel = nextLabel || t('common.continue')
   const backText = backLabel || t('common.back')
 
   return (
@@ -85,16 +85,12 @@ export function EstimatorShell({
         ) : null}
 
         <div className="estimator-page__card">
-          {!intake && title ? (
-            <h1 className="estimator-page__title">{title}</h1>
-          ) : null}
-          {!intake && subtitle ? (
-            <p className="estimator-page__subtitle">{subtitle}</p>
-          ) : null}
+          {title ? <h1 className="estimator-page__title">{title}</h1> : null}
+          {subtitle ? <p className="estimator-page__subtitle">{subtitle}</p> : null}
 
           {error ? <p className="estimator-page__error">{error}</p> : null}
 
-          <div className={intake ? '' : 'mt-8'}>{children}</div>
+          <div className={intake ? 'estimator-page__intake-body' : 'mt-8'}>{children}</div>
 
           {(onBack || onNext || footerExtra) && (
             <div className="estimator-page__footer">

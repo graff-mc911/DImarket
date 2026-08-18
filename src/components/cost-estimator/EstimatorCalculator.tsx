@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { X } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
-import { resolveCategoryIcon, resolveCategoryIconColor } from '../../lib/categoryIcons'
 import { formatEuro } from '../../lib/costEstimator'
 import type { EstimatorProjectTypeId, EstimatorState, PricingTierId } from '../../lib/costEstimatorTypes'
 import {
@@ -13,59 +12,54 @@ import {
 import {
   estimatorTypeFromCatalogId,
   loadEstimatorMainCategories,
-  matchMainCategory,
   type EstimatorMainCategory,
 } from '../../lib/estimatorMainCategories'
 import { marketplaceCategoryLabel } from '../../lib/marketplaceCategories'
 
-const FEATURED_SLUGS = [
-  'bathroom',
-  'kitchen',
-  'renovation',
-  'roofing',
-  'painting',
-  'flooring',
-  'windows',
-] as const
+/** Same order as BuildZoom /cost primary types. */
+const PRIMARY_SLUGS = ['bathroom', 'flooring', 'kitchen', 'roofing', 'windows'] as const
 
 const EXTRA_TYPES: EstimatorMainCategory[] = [
-  { id: 'bathroom', slug: 'bathroom', name: 'Bathroom', icon_key: 'droplets', is_main: true },
-  { id: 'kitchen', slug: 'kitchen', name: 'Kitchen', icon_key: 'wrench', is_main: true },
-  { id: 'renovation', slug: 'renovation', name: 'Renovation', icon_key: 'hammer', is_main: true },
+  { id: 'bathroom', slug: 'bathroom', name: 'Bathroom', icon_key: 'droplets', is_main: true, name_i18n: {} },
+  { id: 'kitchen', slug: 'kitchen', name: 'Kitchen', icon_key: 'wrench', is_main: true, name_i18n: {} },
+  { id: 'flooring', slug: 'flooring', name: 'Flooring', icon_key: 'square', is_main: true, name_i18n: {} },
+  { id: 'roofing', slug: 'roofing', name: 'Roofing', icon_key: 'home', is_main: true, name_i18n: {} },
+  { id: 'windows', slug: 'windows', name: 'Windows', icon_key: 'aperture', is_main: true, name_i18n: {} },
 ]
 
 type EstimatorCalculatorProps = {
-  query: string
   state: EstimatorState
   typeLabel: (id: EstimatorProjectTypeId) => string
-  onQueryChange: (value: string) => void
   onStatePatch: (partial: Partial<EstimatorState>) => void
   onGetQuotes: (preview: CalculatorPreview) => void
 }
 
 export function EstimatorCalculator({
-  query,
   state,
   typeLabel,
-  onQueryChange,
   onStatePatch,
   onGetQuotes,
 }: EstimatorCalculatorProps) {
   const { t, language } = useApp()
   const lang = language.code
-  const [open, setOpen] = useState(false)
-  const [mains, setMains] = useState<EstimatorMainCategory[]>([])
-  const wrapRef = useRef<HTMLDivElement>(null)
+  const [mains, setMains] = useState<EstimatorMainCategory[]>(EXTRA_TYPES)
 
   useEffect(() => {
     let cancelled = false
     void loadEstimatorMainCategories().then((rows) => {
       if (cancelled) return
-      const bySlug = new Map(rows.map((row) => [row.slug, row]))
-      for (const extra of EXTRA_TYPES) {
-        if (!bySlug.has(extra.slug)) bySlug.set(extra.slug, extra)
+      const bySlug = new Map<string, EstimatorMainCategory>()
+      for (const extra of EXTRA_TYPES) bySlug.set(extra.slug, extra)
+      for (const row of rows) {
+        if (!bySlug.has(row.slug)) bySlug.set(row.slug, row)
       }
-      setMains([...bySlug.values()])
+      const ordered = [
+        ...PRIMARY_SLUGS.map((slug) => bySlug.get(slug)).filter(Boolean) as EstimatorMainCategory[],
+        ...[...bySlug.values()].filter(
+          (cat) => !(PRIMARY_SLUGS as readonly string[]).includes(cat.slug),
+        ),
+      ]
+      setMains(ordered)
     })
     return () => {
       cancelled = true
@@ -73,63 +67,31 @@ export function EstimatorCalculator({
   }, [])
 
   const labelOf = (cat: EstimatorMainCategory) => {
-    if (cat.slug === 'bathroom' || cat.slug === 'kitchen' || cat.slug === 'renovation') {
-      const id = estimatorTypeFromCatalogId(cat.slug)
-      return typeLabel(id)
+    if (
+      cat.slug === 'bathroom' ||
+      cat.slug === 'kitchen' ||
+      cat.slug === 'flooring' ||
+      cat.slug === 'windows'
+    ) {
+      return typeLabel(estimatorTypeFromCatalogId(cat.slug))
     }
+    if (cat.slug === 'roofing') return typeLabel('roof')
     return marketplaceCategoryLabel(cat, lang)
   }
 
   const catalogId = state.calculatorTypeId || state.projectTypeId
   const features = featuresForCatalog(catalogId)
-  const preview = useMemo(
-    () => computeCalculatorPreview(state, lang),
-    [state, lang],
-  )
+  const preview = useMemo(() => computeCalculatorPreview(state, lang), [state, lang])
+  const selectedCat = mains.find((cat) => cat.slug === catalogId)
 
-  const suggestions = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    const rows = mains.map((cat) => ({ cat, label: labelOf(cat) }))
-    if (!q) return rows.slice(0, 12)
-    return rows
-      .filter(
-        ({ cat, label }) =>
-          label.toLowerCase().includes(q) ||
-          cat.slug.toLowerCase().includes(q) ||
-          (cat.name || '').toLowerCase().includes(q),
-      )
-      .slice(0, 12)
-  }, [query, mains, lang])
-
-  useEffect(() => {
-    const onDoc = (event: MouseEvent) => {
-      if (!wrapRef.current?.contains(event.target as Node)) setOpen(false)
-    }
-    document.addEventListener('mousedown', onDoc)
-    return () => document.removeEventListener('mousedown', onDoc)
-  }, [])
-
-  const pickCatalog = (cat: EstimatorMainCategory) => {
-    const engineId = estimatorTypeFromCatalogId(cat.slug)
-    onQueryChange(labelOf(cat))
+  const pickCatalog = (slug: string) => {
+    const cat = mains.find((row) => row.slug === slug)
+    if (!cat) return
     onStatePatch({
       calculatorTypeId: cat.slug,
-      projectTypeId: engineId,
+      projectTypeId: estimatorTypeFromCatalogId(cat.slug),
       selectedFeatureIds: [],
     })
-    setOpen(false)
-  }
-
-  const submitSearch = () => {
-    const matched = matchMainCategory(query, mains, labelOf)
-    if (matched) {
-      pickCatalog(matched)
-      return
-    }
-    if (catalogId) {
-      onGetQuotes(preview)
-      return
-    }
   }
 
   const toggleFeature = (id: string) => {
@@ -139,136 +101,21 @@ export function EstimatorCalculator({
     onStatePatch({ selectedFeatureIds: [...selected] })
   }
 
-  const featured = FEATURED_SLUGS.map(
-    (slug) => mains.find((cat) => cat.slug === slug) || EXTRA_TYPES.find((cat) => cat.slug === slug),
-  ).filter(Boolean) as EstimatorMainCategory[]
-
-  const selectedCat = mains.find((cat) => cat.slug === catalogId)
-
   return (
     <div className="estimator-calc">
-      <div className="estimator-intake__prompt" ref={wrapRef}>
-        <label className="estimator-intake__lead" htmlFor="estimator-help-input">
-          {t('costEstimator.needHelpWith')}
-        </label>
-        <div className="estimator-intake__field-wrap">
-          <input
-            id="estimator-help-input"
-            className="estimator-intake__field"
-            value={query}
-            autoComplete="off"
-            placeholder={t('costEstimator.searchPlaceholder')}
-            onChange={(e) => {
-              onQueryChange(e.target.value)
-              setOpen(true)
-            }}
-            onFocus={() => setOpen(true)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                setOpen(false)
-                submitSearch()
-              }
-              if (e.key === 'Escape') setOpen(false)
-            }}
-          />
-          {open && suggestions.length > 0 ? (
-            <ul className="estimator-intake__dropdown" role="listbox">
-              {suggestions.map(({ cat, label }) => (
-                <li key={cat.id}>
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={catalogId === cat.slug}
-                    className={
-                      catalogId === cat.slug
-                        ? 'estimator-intake__option is-active'
-                        : 'estimator-intake__option'
-                    }
-                    onClick={() => pickCatalog(cat)}
-                  >
-                    {label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-      </div>
-
-      <p className="estimator-intake__hint">{t('costEstimator.chooseHint')}</p>
-      <ul className="estimator-intake__cards estimator-intake__cards--featured">
-        {featured.map((cat) => {
-          const Icon = resolveCategoryIcon(cat.icon_key)
-          const colors = resolveCategoryIconColor(cat.slug)
-          const active = catalogId === cat.slug
-          return (
-            <li key={cat.slug}>
-              <button
-                type="button"
-                className={active ? 'estimator-intake__card is-active' : 'estimator-intake__card'}
-                onClick={() => pickCatalog(cat)}
-              >
-                <span className="estimator-intake__card-icon" style={{ color: colors.fg }} aria-hidden>
-                  <Icon className="h-7 w-7" strokeWidth={1.4} />
-                </span>
-                <span className="estimator-intake__card-label">{labelOf(cat)}</span>
-              </button>
-            </li>
-          )
-        })}
-      </ul>
-
-      {mains.length > featured.length ? (
-        <>
-          <p className="estimator-intake__hint">{t('marketplace.mainCategories')}</p>
-          <ul className="estimator-intake__cards">
-            {mains
-              .filter((cat) => !FEATURED_SLUGS.includes(cat.slug as (typeof FEATURED_SLUGS)[number]))
-              .map((cat) => {
-                const Icon = resolveCategoryIcon(cat.icon_key)
-                const colors = resolveCategoryIconColor(cat.slug)
-                const active = catalogId === cat.slug
-                return (
-                  <li key={cat.id}>
-                    <button
-                      type="button"
-                      className={
-                        active ? 'estimator-intake__card is-active' : 'estimator-intake__card'
-                      }
-                      onClick={() => pickCatalog(cat)}
-                    >
-                      <span
-                        className="estimator-intake__card-icon"
-                        style={{ color: colors.fg }}
-                        aria-hidden
-                      >
-                        <Icon className="h-6 w-6" strokeWidth={1.4} />
-                      </span>
-                      <span className="estimator-intake__card-label">{labelOf(cat)}</span>
-                    </button>
-                  </li>
-                )
-              })}
-          </ul>
-        </>
-      ) : null}
-
       <div className="estimator-calc__grid">
         <section className="estimator-calc__col" aria-labelledby="estimator-basic-title">
           <p className="estimator-calc__step">1</p>
           <h2 id="estimator-basic-title" className="estimator-calc__title">
             {t('costEstimator.calc.basic')}
           </h2>
-          <label className="estimator-calc__label">
+          <label className="estimator-calc__label" htmlFor="estimator-project-type">
             {t('costEstimator.calc.projectType')}
             <select
+              id="estimator-project-type"
               className="estimator-calc__input"
               value={catalogId || ''}
-              onChange={(e) => {
-                const cat = mains.find((row) => row.slug === e.target.value)
-                if (cat) pickCatalog(cat)
-              }}
+              onChange={(e) => pickCatalog(e.target.value)}
             >
               <option value="">{t('costEstimator.calc.selectType')}</option>
               {mains.map((cat) => (
@@ -278,10 +125,11 @@ export function EstimatorCalculator({
               ))}
             </select>
           </label>
-          <label className="estimator-calc__label">
+          <label className="estimator-calc__label" htmlFor="estimator-area">
             {t('costEstimator.calc.area')}
             <span className="estimator-calc__input-row">
               <input
+                id="estimator-area"
                 className="estimator-calc__input"
                 type="number"
                 min={0}
@@ -305,9 +153,9 @@ export function EstimatorCalculator({
             <div className="estimator-calc__pills">
               {(
                 [
-                  ['economy', t('costEstimator.economy')],
-                  ['standard', t('costEstimator.standard')],
-                  ['premium', t('costEstimator.premium')],
+                  ['economy', t('costEstimator.calc.budgetLow')],
+                  ['standard', t('costEstimator.calc.budgetMid')],
+                  ['premium', t('costEstimator.calc.budgetHigh')],
                 ] as const
               ).map(([id, label]) => (
                 <button
@@ -411,7 +259,9 @@ export function EstimatorCalculator({
             <p className="estimator-calc__total-meta">{t('costEstimator.calc.laborMaterials')}</p>
             <p className="estimator-calc__total-value tabular-nums">{formatEuro(preview.total)}</p>
             {state.location.city ? (
-              <p className="estimator-calc__total-loc">{state.location.locationLabel || state.location.city}</p>
+              <p className="estimator-calc__total-loc">
+                {state.location.locationLabel || state.location.city}
+              </p>
             ) : null}
           </div>
           <button
@@ -423,7 +273,24 @@ export function EstimatorCalculator({
           </button>
         </section>
       </div>
+
+      <section className="estimator-calc__faq" aria-labelledby="estimator-faq-title">
+        <h2 id="estimator-faq-title" className="estimator-calc__faq-title">
+          {t('costEstimator.calc.faqTitle')}
+        </h2>
+        <details>
+          <summary>{t('costEstimator.calc.faq1q')}</summary>
+          <p>{t('costEstimator.calc.faq1a')}</p>
+        </details>
+        <details>
+          <summary>{t('costEstimator.calc.faq2q')}</summary>
+          <p>{t('costEstimator.calc.faq2a')}</p>
+        </details>
+        <details>
+          <summary>{t('costEstimator.calc.faq3q')}</summary>
+          <p>{t('costEstimator.calc.faq3a')}</p>
+        </details>
+      </section>
     </div>
   )
 }
-

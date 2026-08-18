@@ -7272,6 +7272,28 @@ body,
   max-width: 72rem;
 }
 
+.estimator-page--intake {
+  padding-top: 1.15rem;
+}
+
+.estimator-page--intake .estimator-page__brand {
+  margin-bottom: 0.65rem;
+}
+
+.estimator-page--intake .estimator-page__title {
+  font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+}
+
+.estimator-page--intake .estimator-page__subtitle {
+  margin-top: 0.45rem;
+  max-width: 40rem;
+  font-size: 0.88rem;
+}
+
+.estimator-page__intake-body {
+  margin-top: 1rem;
+}
+
 .estimator-page__brand {
   margin: 0 0 1rem;
   text-align: center;
@@ -7574,13 +7596,13 @@ body,
 }
 
 .estimator-calc {
-  margin-top: 0.35rem;
+  margin-top: 0;
 }
 
 .estimator-calc__grid {
   display: grid;
   gap: 1.1rem;
-  margin-top: 1.6rem;
+  margin-top: 0;
 }
 
 @media (min-width: 960px) {
@@ -7791,4 +7813,54 @@ body,
 .estimator-calc__cta {
   width: 100%;
   margin-top: 1rem;
+}
+
+.estimator-calc__faq {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f0ebe4;
+}
+
+.estimator-calc__faq-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1a2330;
+}
+
+.estimator-calc__faq details {
+  border-bottom: 1px solid #f0ebe4;
+}
+
+.estimator-calc__faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.85rem 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a2330;
+}
+
+.estimator-calc__faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.estimator-calc__faq summary::after {
+  float: right;
+  content: '+';
+  font-weight: 650;
+  color: #c96d2c;
+}
+
+.estimator-calc__faq details[open] summary::after {
+  content: '–';
+}
+
+.estimator-calc__faq details p {
+  margin: 0 0 0.95rem;
+  max-width: 42rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #6f665d;
 }

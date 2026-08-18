@@ -182,6 +182,9 @@ export const enTranslations = {
   'costEstimator.calc.selectType': 'Select project type',
   'costEstimator.calc.area': 'Estimated area',
   'costEstimator.calc.budget': 'Budget range',
+  'costEstimator.calc.budgetLow': 'Low',
+  'costEstimator.calc.budgetMid': 'Medium',
+  'costEstimator.calc.budgetHigh': 'High',
   'costEstimator.calc.materials': 'Include cost of materials?',
   'costEstimator.calc.yes': 'Yes',
   'costEstimator.calc.no': 'No',
@@ -192,6 +195,19 @@ export const enTranslations = {
   'costEstimator.calc.dropFeatures': 'Add the features you want for this project',
   'costEstimator.calc.projectTotal': 'Project total',
   'costEstimator.calc.laborMaterials': 'labor & materials',
+  'costEstimator.calc.pageTitle': 'Remodeling cost calculator',
+  'costEstimator.calc.intro':
+    'Choose project type, area, budget and features — see a live labor and materials total, then request quotes from DImarket professionals.',
+  'costEstimator.calc.faqTitle': 'Frequently asked questions',
+  'costEstimator.calc.faq1q': 'How is the estimate calculated?',
+  'costEstimator.calc.faq1a':
+    'The live total uses the selected project type, area in m², budget tier, optional materials, and the features you tick. Amounts are European reference ranges in EUR, not a contractor bid.',
+  'costEstimator.calc.faq2q': 'Are these prices binding?',
+  'costEstimator.calc.faq2a':
+    'No. This is a reference estimate so you can compare scope. Binding prices come only from quotes you request from professionals on DImarket.',
+  'costEstimator.calc.faq3q': 'What happens after Get quotes?',
+  'costEstimator.calc.faq3a':
+    'DImarket opens a full reference estimate with matching professionals, companies and materials near your location, plus options to save, export or start a tender.',
   'costEstimator.working': 'Working…',
   'costEstimator.runEstimate': 'Get estimate',
   'costEstimator.stepOf': 'Step {current} of {total}',

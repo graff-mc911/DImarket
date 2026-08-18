@@ -183,6 +183,9 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'costEstimator.calc.selectType': 'Оберіть тип проєкту',
   'costEstimator.calc.area': 'Орієнтовна площа',
   'costEstimator.calc.budget': 'Діапазон бюджету',
+  'costEstimator.calc.budgetLow': 'Низький',
+  'costEstimator.calc.budgetMid': 'Середній',
+  'costEstimator.calc.budgetHigh': 'Високий',
   'costEstimator.calc.materials': 'Включити вартість матеріалів?',
   'costEstimator.calc.yes': 'Так',
   'costEstimator.calc.no': 'Ні',
@@ -193,6 +196,19 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'costEstimator.calc.dropFeatures': 'Додайте опції, які потрібні в проєкті',
   'costEstimator.calc.projectTotal': 'Разом',
   'costEstimator.calc.laborMaterials': 'робота і матеріали',
+  'costEstimator.calc.pageTitle': 'Калькулятор вартості ремонту',
+  'costEstimator.calc.intro':
+    'Оберіть тип проєкту, площу, бюджет і опції — одразу побачите орієнтовну суму роботи та матеріалів, потім запросіть пропозиції від майстрів DImarket.',
+  'costEstimator.calc.faqTitle': 'Часті запитання',
+  'costEstimator.calc.faq1q': 'Як рахується оцінка?',
+  'costEstimator.calc.faq1a':
+    'Жива сума залежить від типу проєкту, площі в м², рівня бюджету, опції матеріалів і позначених робіт. Це європейські орієнтири в євро, а не оферта підрядника.',
+  'costEstimator.calc.faq2q': 'Чи це фіксована ціна?',
+  'costEstimator.calc.faq2a':
+    'Ні. Це орієнтовна оцінка, щоб порівняти обсяг робіт. Обовʼязкова ціна зʼявляється лише в пропозиціях майстрів на DImarket.',
+  'costEstimator.calc.faq3q': 'Що відбувається після «Отримати пропозиції»?',
+  'costEstimator.calc.faq3a':
+    'DImarket відкриває повну орієнтовну оцінку з підібраними майстрами, компаніями й матеріалами біля вашої локації, плюс збереження, експорт або тендер.',
   'costEstimator.working': 'Рахуємо…',
   'costEstimator.runEstimate': 'Отримати оцінку',
   'costEstimator.stepOf': 'Крок {current} з {total}',

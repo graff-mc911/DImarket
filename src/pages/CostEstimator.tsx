@@ -126,7 +126,6 @@ export function CostEstimator() {
   const [outcomeConsent, setOutcomeConsent] = useState(false)
   const [outcomeSaved, setOutcomeSaved] = useState(false)
   const [publishingTender, setPublishingTender] = useState(false)
-  const [typeQuery, setTypeQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const cameraRef = useRef<HTMLInputElement>(null)
 
@@ -1139,8 +1138,8 @@ export function CostEstimator() {
     <EstimatorShell
       variant={state.step === 1 ? 'intake' : 'wizard'}
       step={state.step}
-      title={state.step === 1 ? undefined : meta.title}
-      subtitle={state.step === 1 ? undefined : meta.sub}
+      title={state.step === 1 ? t('costEstimator.calc.pageTitle') : meta.title}
+      subtitle={state.step === 1 ? t('costEstimator.calc.intro') : meta.sub}
       onBack={state.step > 1 ? goBack : undefined}
       onNext={state.step === 1 ? undefined : () => void goNext()}
       nextLabel={state.step === 5 ? t('costEstimator.runEstimate') : t('common.continue')}
@@ -1159,13 +1158,8 @@ export function CostEstimator() {
     >
       {state.step === 1 && (
         <EstimatorCalculator
-          query={typeQuery}
           state={state}
           typeLabel={typeLabel}
-          onQueryChange={(value) => {
-            setTypeQuery(value)
-            setError(null)
-          }}
           onStatePatch={(partial) => {
             setError(null)
             patch(partial)
