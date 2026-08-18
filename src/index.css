@@ -4166,18 +4166,10 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-hero--stacked .home-hero__copy {
   display: grid;
   gap: 0.45rem;
-  max-width: 48rem;
-}
-
-@media (min-width: 900px) {
-  .home-hero--stacked .home-hero__copy {
-    max-width: none;
-  }
-
-  .home-hero--stacked .home-hero__title {
-    max-width: none;
-    margin: 0;
-  }
+  width: 100%;
+  max-width: none;
+  justify-items: center;
+  text-align: center;
 }
 
 .home-hero__controls {
@@ -4374,7 +4366,9 @@ select.select-glass.geo-filter-select::-ms-expand {
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.08;
-  max-width: 16ch;
+  margin: 0;
+  max-width: none;
+  text-align: center;
 }
 
 .home-hero__search {
