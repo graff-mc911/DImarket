@@ -2505,7 +2505,7 @@
 
   .amazon-header-cart {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 0.125rem;
     border: 1px solid transparent;
     border-radius: 0.125rem;

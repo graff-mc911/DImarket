@@ -76,6 +76,10 @@ test.describe('Desktop header chrome (lg+)', () => {
       await expect(page.locator('.header-location button')).toBeVisible()
       await expect(page.locator('header input[type="search"]').first()).toBeVisible()
       await expect(page.getByRole('button', { name: /Sign in|Увійти|Hello|Вітаємо/i }).first()).toBeVisible()
+      await expect(page.locator('header').getByRole('button', { name: /^(Messages|Повідомлення)$/ })).toBeVisible()
+      await expect(page.locator('header').getByRole('button', { name: /Saved|Збережені/i })).toBeVisible()
+      await expect(page.locator('header').getByText(/і замовлення|Returns/i)).toHaveCount(0)
+      await expect(page.locator('header .amazon-header-block__bottom', { hasText: /Saved|Збережені/i })).toHaveCount(0)
 
       await expect(deptNav(page)).toBeVisible()
       const deptStyle = await deptNav(page).evaluate((el) => {

@@ -21,6 +21,7 @@ import {
   Hammer,
   LayoutDashboard,
   LogOut,
+  Mail,
   Megaphone,
   MapPin,
   MessageSquare,
@@ -547,22 +548,27 @@ export function Header() {
                 <button
                   type="button"
                   onClick={() => goTo(user ? '/messages' : '/login')}
-                  className="amazon-header-block hidden md:flex"
+                  className="amazon-header-cart hidden md:flex"
+                  aria-label={t('header.messages')}
                 >
-                  <span className="amazon-header-block__top">{t('header.returns')}</span>
-                  <span className="amazon-header-block__bottom">{t('header.orders')}</span>
+                  <span className="amazon-header-cart__icon">
+                    <Mail className="h-7 w-7" />
+                    {unreadCount > 0 ? (
+                      <span className="amazon-header-cart__count">{unreadCount}</span>
+                    ) : null}
+                  </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => goTo(user ? '/favorites' : '/login')}
                   className="amazon-header-cart"
+                  aria-label={t('header.saved')}
                 >
                   <span className="amazon-header-cart__icon">
                     <Bookmark className="h-7 w-7" />
                     <span className="amazon-header-cart__count">0</span>
                   </span>
-                  <span className="amazon-header-block__bottom hidden sm:inline">{t('header.saved')}</span>
                 </button>
               </div>
 
@@ -590,6 +596,7 @@ export function Header() {
                   type="button"
                   onClick={() => goTo(user ? '/favorites' : '/login')}
                   className="amazon-header-cart px-1"
+                  aria-label={t('header.saved')}
                 >
                   <span className="amazon-header-cart__icon">
                     <Bookmark className="h-6 w-6" />
