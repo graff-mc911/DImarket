@@ -67,7 +67,7 @@ test.describe('Smoke — публічні сторінки', () => {
     const cards = page.locator('a.home-company-logo')
     await expect(cards).toHaveCount(6)
     await expect(cards.nth(0)).toHaveAttribute('href', 'https://www.knauf.com')
-    await expect(cards.nth(1)).toHaveAttribute('href', 'https://www.bosch-professional.com')
+    await expect(cards.nth(1)).toHaveAttribute('href', 'https://www.festool.com')
     await expect(cards.nth(2)).toHaveAttribute('href', 'https://www.hilti.com')
     await expect(cards.nth(3)).toHaveAttribute('href', 'https://www.velux.com')
     await expect(cards.nth(4)).toHaveAttribute('href', 'https://www.geberit.com')

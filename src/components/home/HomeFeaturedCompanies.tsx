@@ -8,10 +8,10 @@ const FEATURED_COMPANIES = [
     website: 'https://www.knauf.com',
   },
   {
-    id: 'bosch',
-    name: 'Bosch Professional',
-    image: '/ads/brands/bosch.png',
-    website: 'https://www.bosch-professional.com',
+    id: 'festool',
+    name: 'Festool',
+    image: '/ads/brands/festool.png',
+    website: 'https://www.festool.com',
   },
   {
     id: 'hilti',
