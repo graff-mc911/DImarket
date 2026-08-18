@@ -165,7 +165,7 @@ test.describe('Mobile bottom nav regression', () => {
       await gotoPath(page, '/')
       await expect(bottomNav(page)).toBeVisible()
       await expect(page.locator('.site-header-fixed')).toBeVisible()
-      await expect(page.locator('header input[type="search"]')).toBeVisible()
+      await expect(page.locator('header form.sm\\:hidden input[type="search"]')).toBeVisible()
       await expect(page.locator('meta[name="apple-mobile-web-app-status-bar-style"]')).toHaveAttribute(
         'content',
         'black',
