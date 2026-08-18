@@ -18,7 +18,7 @@ import {
   X,
 } from 'lucide-react'
 import { EstimatorShell } from '../components/cost-estimator/EstimatorShell'
-import { EstimatorIntake, matchProjectType } from '../components/cost-estimator/EstimatorIntake'
+import { EstimatorCalculator } from '../components/cost-estimator/EstimatorCalculator'
 import { EstimatorResultsMap } from '../components/cost-estimator/EstimatorResultsMap'
 import { EstimatorProcurementPanel } from '../components/cost-estimator/EstimatorProcurementPanel'
 import { LocationStep } from '../components/project-wizard/LocationStep'
@@ -30,7 +30,9 @@ import {
   appendClarificationsToDescription,
   buildAnalystQuestions,
 } from '../lib/aiAnalyst'
-import { runFullCostEstimate, tierLabel } from '../lib/costEstimatorEngine'
+import { buildFullCostEstimateLocal, runFullCostEstimate, tierLabel } from '../lib/costEstimatorEngine'
+import { descriptionFromFeatures } from '../lib/estimatorCalculator'
+import { estimatorTypeFromCatalogId } from '../lib/estimatorMainCategories'
 import { GEO_RADIUS_OPTIONS, radiusModeToKm } from '../lib/geoSearch'
 import {
   downloadCsv,
@@ -196,16 +198,24 @@ export function CostEstimator() {
       setSavedId(row.id)
       const input = (row.input_json || {}) as {
         projectTypeId?: EstimatorProjectTypeId
+        calculatorTypeId?: string
         description?: string
         location?: EstimatorState['location']
         measurements?: EstimatorState['measurements']
+        selectedFeatureIds?: string[]
+        includeMaterials?: boolean
+        budgetTier?: PricingTierId
       }
       setState((prev) => ({
         ...prev,
         step: 6,
         projectTypeId: input.projectTypeId || prev.projectTypeId,
+        calculatorTypeId: input.calculatorTypeId || input.projectTypeId || prev.calculatorTypeId,
         description: input.description || prev.description,
         location: input.location ? { ...prev.location, ...input.location } : prev.location,
+        selectedFeatureIds: input.selectedFeatureIds || prev.selectedFeatureIds,
+        includeMaterials: input.includeMaterials ?? prev.includeMaterials,
+        budgetTier: input.budgetTier || prev.budgetTier,
         measurements: {
           ...prev.measurements,
           ...(input.measurements || {}),
@@ -583,37 +593,47 @@ export function CostEstimator() {
     return translated === item.labelKey ? item.labelEn : translated
   }
 
-  const pickType = (id: EstimatorProjectTypeId, advance: boolean) => {
-    setTypeQuery(typeLabel(id))
+  const runCalculatorQuotes = () => {
+    const catalogId = state.calculatorTypeId || state.projectTypeId
+    if (!catalogId) {
+      setError(t('costEstimator.chooseTypeError'))
+      return
+    }
+    if (!(Number(state.measurements.areaSqm) > 0)) {
+      setError(t('costEstimator.areaError'))
+      return
+    }
+    const engineId = state.projectTypeId || estimatorTypeFromCatalogId(catalogId)
+    const desc =
+      state.description.trim() ||
+      descriptionFromFeatures(catalogId, state.selectedFeatureIds, language.code)
+    const nextState: EstimatorState = {
+      ...state,
+      projectTypeId: engineId,
+      calculatorTypeId: catalogId,
+      description:
+        desc.trim().length >= 15
+          ? desc
+          : `${desc} ${typeLabel(engineId)}, ${state.measurements.areaSqm} m².`.trim(),
+    }
     setError(null)
-    if (advance) {
-      setState((prev) => ({ ...prev, projectTypeId: id, step: 2 }))
-      return
+    setBusy(true)
+    try {
+      const result = buildFullCostEstimateLocal(nextState)
+      setEstimate(result)
+      setTier(nextState.budgetTier || 'standard')
+      setState({ ...nextState, step: 6 })
+      void fetchEstimatorMatches(result, nextState.location).then(setMatches)
+      void saveCostEstimate({
+        userId: user?.id ?? null,
+        state: nextState,
+        estimate: result,
+      }).then((r) => setSavedId(r.id))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Estimate failed')
+    } finally {
+      setBusy(false)
     }
-    patch({ projectTypeId: id })
-  }
-
-  const submitIntake = () => {
-    const fromQuery = matchProjectType(typeQuery, typeLabel)
-    const matched = fromQuery || state.projectTypeId
-    if (matched) {
-      setTypeQuery(typeLabel(matched))
-      setError(null)
-      setState((prev) => ({ ...prev, projectTypeId: matched, step: 2 }))
-      return
-    }
-    const q = typeQuery.trim()
-    if (q.length >= 3) {
-      setError(null)
-      setState((prev) => ({
-        ...prev,
-        projectTypeId: 'other',
-        description: prev.description || q,
-        step: 2,
-      }))
-      return
-    }
-    setError(t('costEstimator.chooseTypeError'))
   }
 
   if (busy && state.step === 5) {
@@ -1138,16 +1158,19 @@ export function CostEstimator() {
       }
     >
       {state.step === 1 && (
-        <EstimatorIntake
+        <EstimatorCalculator
           query={typeQuery}
-          selectedId={state.projectTypeId}
+          state={state}
           typeLabel={typeLabel}
           onQueryChange={(value) => {
             setTypeQuery(value)
             setError(null)
           }}
-          onPick={pickType}
-          onSubmit={submitIntake}
+          onStatePatch={(partial) => {
+            setError(null)
+            patch(partial)
+          }}
+          onGetQuotes={() => runCalculatorQuotes()}
         />
       )}
 

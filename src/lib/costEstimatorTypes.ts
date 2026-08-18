@@ -37,6 +37,8 @@ export type EstimatorStep =
   | 5 // Measurements
   | 6 // Results (analysis + estimate + specialists + materials + quotes)
 
+export type PricingTierId = 'economy' | 'standard' | 'premium'
+
 export type EstimatorProjectTypeId =
   | 'renovation'
   | 'house_renovation'
@@ -138,12 +140,17 @@ export type EstimatorLocation = {
 export type EstimatorState = {
   step: EstimatorStep
   projectTypeId: EstimatorProjectTypeId | null
+  /** Marketplace main slug or remodel type used by the live calculator. */
+  calculatorTypeId: string | null
   description: string
   files: EstimatorDraftFile[]
   location: EstimatorLocation
   measurements: EstimatorMeasurements
   /** AI Analyst clarifying answers (field → text) */
   clarifications: Record<string, string>
+  selectedFeatureIds: string[]
+  includeMaterials: boolean
+  budgetTier: PricingTierId
 }
 
 export const EMPTY_ESTIMATOR_LOCATION: EstimatorLocation = {
@@ -161,6 +168,7 @@ export const EMPTY_ESTIMATOR_LOCATION: EstimatorLocation = {
 export const EMPTY_ESTIMATOR_STATE: EstimatorState = {
   step: 1,
   projectTypeId: null,
+  calculatorTypeId: null,
   description: '',
   files: [],
   location: { ...EMPTY_ESTIMATOR_LOCATION },
@@ -173,6 +181,9 @@ export const EMPTY_ESTIMATOR_STATE: EstimatorState = {
     floors: 1,
   },
   clarifications: {},
+  selectedFeatureIds: [],
+  includeMaterials: true,
+  budgetTier: 'standard',
 }
 
 export type CostBreakdownLine = {
@@ -232,8 +243,6 @@ export type AiInsight = {
   kind: 'saving' | 'upgrade' | 'risk' | 'sequence' | 'missing' | 'mistake' | 'energy' | 'maintenance'
   text: string
 }
-
-export type PricingTierId = 'economy' | 'standard' | 'premium'
 
 export type FullCostEstimate = {
   projectTypeId: EstimatorProjectTypeId

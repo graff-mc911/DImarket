@@ -7269,7 +7269,7 @@ body,
 }
 
 .estimator-page--intake .estimator-page__inner {
-  max-width: 58rem;
+  max-width: 72rem;
 }
 
 .estimator-page__brand {
@@ -7567,4 +7567,228 @@ body,
 
 .estimator-intake__cta:hover {
   background: #f3a847;
+}
+
+.estimator-intake__cards--featured {
+  margin-bottom: 0.35rem;
+}
+
+.estimator-calc {
+  margin-top: 0.35rem;
+}
+
+.estimator-calc__grid {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 1.6rem;
+}
+
+@media (min-width: 960px) {
+  .estimator-calc__grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) minmax(16rem, 0.9fr);
+    align-items: start;
+  }
+}
+
+.estimator-calc__col {
+  min-width: 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid #f0ebe4;
+}
+
+@media (min-width: 960px) {
+  .estimator-calc__col {
+    padding: 0 0.35rem;
+    border-top: 0;
+    border-left: 1px solid #f0ebe4;
+  }
+
+  .estimator-calc__col:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+}
+
+.estimator-calc__step {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ff9900;
+}
+
+.estimator-calc__title {
+  margin: 0 0 0.9rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1a2330;
+}
+
+.estimator-calc__label {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6f665d;
+}
+
+.estimator-calc__input,
+.estimator-calc__label select {
+  width: 100%;
+  border: 1px solid #e6ddd3;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.95rem;
+  color: #1a2330;
+}
+
+.estimator-calc__input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.estimator-calc__suffix {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a2330;
+}
+
+.estimator-calc__fieldset {
+  margin: 0 0 0.9rem;
+  border: 0;
+  padding: 0;
+}
+
+.estimator-calc__fieldset legend {
+  margin-bottom: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6f665d;
+}
+
+.estimator-calc__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.estimator-calc__pill {
+  border-radius: 999px;
+  border: 1px solid #e6ddd3;
+  background: #fff;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1a2330;
+}
+
+.estimator-calc__pill.is-active {
+  border-color: #ff9900;
+  background: rgba(255, 153, 0, 0.16);
+}
+
+.estimator-calc__features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+  max-height: 28rem;
+  overflow: auto;
+}
+
+.estimator-calc__feature {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.88rem;
+  color: #1a2330;
+  cursor: pointer;
+}
+
+.estimator-calc__feature:hover,
+.estimator-calc__feature.is-on {
+  background: #f6f4f1;
+}
+
+.estimator-calc__empty {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #6f665d;
+}
+
+.estimator-calc__project {
+  margin: 0 0 0.65rem;
+  font-size: 0.92rem;
+  font-weight: 750;
+  color: #1a2330;
+}
+
+.estimator-calc__picked {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+  min-height: 4rem;
+}
+
+.estimator-calc__picked li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.4rem;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #3a3a3c;
+}
+
+.estimator-calc__remove {
+  display: flex;
+  color: #86868b;
+}
+
+.estimator-calc__total {
+  border-top: 1px solid #f0ebe4;
+  padding-top: 0.85rem;
+}
+
+.estimator-calc__total p:first-child {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6f665d;
+}
+
+.estimator-calc__total-meta {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: #aeaeb2;
+}
+
+.estimator-calc__total-value {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #1a2330;
+}
+
+.estimator-calc__total-loc {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  color: #6f665d;
+}
+
+.estimator-calc__cta {
+  width: 100%;
+  margin-top: 1rem;
 }

@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test'
 import { gotoPath } from './helpers'
 
-test.describe('Cost estimator intake', () => {
-  test('пошук, картки і перехід далі як на BuildZoom', async ({ page }) => {
+test.describe('Cost estimator calculator', () => {
+  test('тип, площа, опції, жива сума і пропозиції як калькулятор BuildZoom', async ({ page }) => {
     await gotoPath(page, '/cost-estimator')
 
     await expect(page.getByText(/DImarket/i).first()).toBeVisible()
@@ -13,8 +13,15 @@ test.describe('Cost estimator intake', () => {
     await expect(bathroom).toBeVisible()
     await bathroom.click()
 
-    await expect(
-      page.getByRole('heading', { name: /Опишіть роботу|Describe the work/i }),
-    ).toBeVisible()
+    await expect(page.getByText(/Оберіть опції|Select specific features/i)).toBeVisible()
+    await page.locator('.estimator-calc__input[type="number"]').fill('8')
+    await page.locator('.estimator-calc__feature').first().click()
+
+    const total = page.locator('.estimator-calc__total-value')
+    await expect(total).toBeVisible()
+    await expect(total).not.toHaveText(/€\s*0/)
+
+    await page.getByRole('button', { name: /Отримати пропозиції|Get quotes/i }).click()
+    await expect(page.getByText(/Орієнтовна оцінка|Reference estimate/i).first()).toBeVisible()
   })
 })

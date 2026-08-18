@@ -33,10 +33,14 @@ const db = supabase as any
 function serializableState(state: EstimatorState) {
   return {
     projectTypeId: state.projectTypeId,
+    calculatorTypeId: state.calculatorTypeId,
     description: state.description,
     location: state.location,
     measurements: state.measurements,
     clarifications: state.clarifications || {},
+    selectedFeatureIds: state.selectedFeatureIds || [],
+    includeMaterials: state.includeMaterials !== false,
+    budgetTier: state.budgetTier || 'standard',
     fileCount: state.files.length,
     photoCount: state.files.filter((f) => f.kind === 'photo').length,
   }
