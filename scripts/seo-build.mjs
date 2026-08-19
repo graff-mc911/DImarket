@@ -51,7 +51,6 @@ Sitemap: ${SITE_ORIGIN}/sitemap.xml
 function writeSitemap() {
   const xml = buildSitemapXml()
   writeFileSync(join(distDir, 'sitemap.xml'), xml, 'utf8')
-  writeFileSync(join(root, 'public', 'sitemap.xml'), xml, 'utf8')
   console.log(`wrote sitemap.xml (${allPublicRoutes().length} urls)`)
 }
 

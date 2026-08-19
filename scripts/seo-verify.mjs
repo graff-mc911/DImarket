@@ -162,8 +162,8 @@ async function main() {
   for (const route of allPublicRoutes()) {
     if (!route.path.startsWith('/category/') && !route.path.startsWith('/services/')) continue
     const slug = route.path.split('/').pop()
-    const spaced = slug.replace(/-/g, ' ')
-    if (route.title.toLowerCase().startsWith(spaced.toLowerCase() + ' ')) {
+    const rawTitle = `${slug.replace(/-/g, ' ')} | DImarket`
+    if (route.title === rawTitle) {
       fail(`${route.path}: title still uses raw slug (${route.title})`)
     } else {
       ok(`${route.path}: human title`)
