@@ -234,6 +234,17 @@ export function addWorkPackage(
   return sortWorkPackages([...packages, { workTypeId, selectedFeatureIds: [] }])
 }
 
+/** Next trade in this object's typical site sequence that is not yet added. */
+export function nextRecommendedWork(
+  objectId: EstimatorObjectTypeId | null | undefined,
+  packages: EstimatorWorkPackage[],
+): string | null {
+  const object = getObjectType(objectId)
+  if (!object) return null
+  const have = new Set(packages.map((pack) => pack.workTypeId))
+  return object.recommendedWorks.find((workTypeId) => !have.has(workTypeId)) || null
+}
+
 export function inferObjectTypeFromLegacy(catalogId: string | null | undefined): EstimatorObjectTypeId {
   const id = (catalogId || '').toLowerCase()
   if (['bathroom', 'kitchen', 'painting', 'wallpaper', 'drywall', 'flooring', 'tiling'].includes(id)) {

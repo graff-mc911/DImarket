@@ -20,9 +20,12 @@ import {
   ESTIMATOR_OBJECT_TYPES,
   addWorkPackage,
   flattenWorkFeatureIds,
+  getObjectType,
+  nextRecommendedWork,
   objectTypeLabel,
   packagesFromRecommended,
   sortWorkPackages,
+  workOrderIndex,
   workTypeLabel,
 } from '../../lib/estimatorObjectTypes'
 
@@ -48,10 +51,12 @@ export function EstimatorCalculator({
 
   const packages = sortWorkPackages(state.workPackages || [])
   const activeWorkId = state.calculatorTypeId || packages[0]?.workTypeId || ''
-  const activePack = packages.find((pack) => pack.workTypeId === activeWorkId) || packages[0]
-  const features = featuresForCatalog(activePack?.workTypeId)
   const preview = useMemo(() => computeCalculatorPreview(state, lang), [state, lang])
   const objectLabel = objectTypeLabel(state.objectTypeId, lang) || t('costEstimator.calc.yourProject')
+  const object = getObjectType(state.objectTypeId)
+  const nextWorkId = nextRecommendedWork(state.objectTypeId, packages)
+  const recommendedIds = object?.recommendedWorks || []
+  const recommendedSet = new Set(recommendedIds)
 
   const patchDerived = (partial: Partial<EstimatorState>) => {
     const workPackages = sortWorkPackages(partial.workPackages ?? state.workPackages ?? [])
@@ -79,13 +84,21 @@ export function EstimatorCalculator({
       return
     }
     const objectId = id as EstimatorObjectTypeId
-    const object = ESTIMATOR_OBJECT_TYPES.find((item) => item.id === objectId)
-    const workPackages = packagesFromRecommended(objectId)
+    const chosen = ESTIMATOR_OBJECT_TYPES.find((item) => item.id === objectId)
     patchDerived({
       objectTypeId: objectId,
-      projectTypeId: object?.engineType || 'other',
-      workPackages,
-      calculatorTypeId: workPackages[0]?.workTypeId || null,
+      projectTypeId: chosen?.engineType || 'other',
+      workPackages: [],
+      calculatorTypeId: null,
+    })
+  }
+
+  const focusStage = (slug: string) => {
+    patchDerived({ calculatorTypeId: slug })
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`estimator-stage-${slug}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     })
   }
 
@@ -96,6 +109,23 @@ export function EstimatorCalculator({
       calculatorTypeId: slug,
     })
     setWorkToAdd('')
+    window.setTimeout(() => {
+      document
+        .getElementById(`estimator-stage-${slug}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }, 50)
+  }
+
+  const addTypicalSequence = () => {
+    if (!state.objectTypeId) return
+    let workPackages = packages
+    for (const pack of packagesFromRecommended(state.objectTypeId)) {
+      workPackages = addWorkPackage(workPackages, pack.workTypeId)
+    }
+    patchDerived({
+      workPackages,
+      calculatorTypeId: workPackages[0]?.workTypeId || null,
+    })
   }
 
   const removeWork = (slug: string) => {
@@ -106,22 +136,29 @@ export function EstimatorCalculator({
     })
   }
 
-  const toggleFeature = (id: string) => {
-    if (!activePack) return
-    const selected = new Set(activePack.selectedFeatureIds)
-    if (selected.has(id)) selected.delete(id)
-    else selected.add(id)
+  const toggleFeature = (workTypeId: string, id: string) => {
     patchDerived({
-      calculatorTypeId: activePack.workTypeId,
-      workPackages: packages.map((pack) =>
-        pack.workTypeId === activePack.workTypeId
-          ? { ...pack, selectedFeatureIds: [...selected] }
-          : pack,
-      ),
+      calculatorTypeId: workTypeId,
+      workPackages: packages.map((pack) => {
+        if (pack.workTypeId !== workTypeId) return pack
+        const selected = new Set(pack.selectedFeatureIds)
+        if (selected.has(id)) selected.delete(id)
+        else selected.add(id)
+        return { ...pack, selectedFeatureIds: [...selected] }
+      }),
     })
   }
 
-  const availableToAdd = WORK_SLUGS.filter((slug) => !packages.some((pack) => pack.workTypeId === slug))
+  const availableToAdd = WORK_SLUGS.filter((slug) => !packages.some((pack) => pack.workTypeId === slug)).sort(
+    (a, b) => {
+      const ra = recommendedSet.has(a) ? 0 : 1
+      const rb = recommendedSet.has(b) ? 0 : 1
+      if (ra !== rb) return ra - rb
+      return workOrderIndex(a) - workOrderIndex(b)
+    },
+  )
+  const typicalToAdd = availableToAdd.filter((slug) => recommendedSet.has(slug))
+  const otherToAdd = availableToAdd.filter((slug) => !recommendedSet.has(slug))
   const groupedLines = preview.lines.reduce<Record<string, typeof preview.lines>>((acc, line) => {
     const key = line.workTypeId || 'other'
     acc[key] = acc[key] || []
@@ -153,6 +190,10 @@ export function EstimatorCalculator({
               ))}
             </select>
           </label>
+          <p className="estimator-calc__section-label" id="estimator-works-label">
+            {t('costEstimator.calc.workSequence')}
+          </p>
+          <p className="estimator-calc__hint">{t('costEstimator.calc.workSequenceHint')}</p>
           <label className="estimator-calc__label" htmlFor="estimator-work-type">
             {t('costEstimator.calc.workType')}
             <span className="estimator-calc__add-row">
@@ -161,14 +202,28 @@ export function EstimatorCalculator({
                 className="estimator-calc__input"
                 value={workToAdd}
                 disabled={!state.objectTypeId}
+                aria-labelledby="estimator-works-label"
                 onChange={(e) => setWorkToAdd(e.target.value)}
               >
                 <option value="">{t('costEstimator.calc.selectWork')}</option>
-                {availableToAdd.map((slug) => (
-                  <option key={slug} value={slug}>
-                    {workTypeLabel(slug, lang)}
-                  </option>
-                ))}
+                {typicalToAdd.length ? (
+                  <optgroup label={t('costEstimator.calc.typicalGroup')}>
+                    {typicalToAdd.map((slug) => (
+                      <option key={slug} value={slug}>
+                        {workTypeLabel(slug, lang)}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null}
+                {otherToAdd.length ? (
+                  <optgroup label={t('costEstimator.calc.otherGroup')}>
+                    {otherToAdd.map((slug) => (
+                      <option key={slug} value={slug}>
+                        {workTypeLabel(slug, lang)}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null}
               </select>
               <button
                 type="button"
@@ -181,16 +236,35 @@ export function EstimatorCalculator({
               </button>
             </span>
           </label>
+          <div className="estimator-calc__work-actions">
+            <button
+              type="button"
+              className="estimator-calc__add-work"
+              disabled={!state.objectTypeId || !nextWorkId}
+              onClick={() => nextWorkId && addWork(nextWorkId)}
+            >
+              {t('costEstimator.calc.addNext')}
+              {nextWorkId ? `: ${workTypeLabel(nextWorkId, lang)}` : ''}
+            </button>
+            <button
+              type="button"
+              className="estimator-calc__add-work estimator-calc__add-work--ghost"
+              disabled={!state.objectTypeId || typicalToAdd.length === 0}
+              onClick={addTypicalSequence}
+            >
+              {t('costEstimator.calc.addTypical')}
+            </button>
+          </div>
           {packages.length > 0 ? (
             <ol className="estimator-calc__works">
               {packages.map((pack, index) => {
-                const active = pack.workTypeId === activePack?.workTypeId
+                const active = pack.workTypeId === activeWorkId
                 return (
                   <li key={pack.workTypeId}>
                     <button
                       type="button"
                       className={active ? 'estimator-calc__work is-active' : 'estimator-calc__work'}
-                      onClick={() => patchDerived({ calculatorTypeId: pack.workTypeId })}
+                      onClick={() => focusStage(pack.workTypeId)}
                     >
                       <span className="estimator-calc__work-n">{index + 1}</span>
                       <span>{workTypeLabel(pack.workTypeId, lang)}</span>
@@ -285,32 +359,56 @@ export function EstimatorCalculator({
         <section className="estimator-calc__col" aria-labelledby="estimator-features-title">
           <p className="estimator-calc__step">2</p>
           <h2 id="estimator-features-title" className="estimator-calc__title">
-            {activePack
-              ? `${t('costEstimator.calc.features')} — ${workTypeLabel(activePack.workTypeId, lang)}`
-              : t('costEstimator.calc.features')}
+            {t('costEstimator.calc.features')}
           </h2>
           {!state.objectTypeId ? (
             <p className="estimator-calc__empty">{t('costEstimator.calc.pickObjectFirst')}</p>
-          ) : !activePack ? (
+          ) : packages.length === 0 ? (
             <p className="estimator-calc__empty">{t('costEstimator.calc.pickWorkFirst')}</p>
           ) : (
-            <ul className="estimator-calc__features">
-              {features.map((item) => {
-                const checked = activePack.selectedFeatureIds.includes(item.id)
+            <div className="estimator-calc__stages">
+              {packages.map((pack, index) => {
+                const features = featuresForCatalog(pack.workTypeId)
+                const active = pack.workTypeId === activeWorkId
                 return (
-                  <li key={item.id}>
-                    <label className={checked ? 'estimator-calc__feature is-on' : 'estimator-calc__feature'}>
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => toggleFeature(item.id)}
-                      />
-                      <span>{featureLabel(item, lang)}</span>
-                    </label>
-                  </li>
+                  <section
+                    key={pack.workTypeId}
+                    id={`estimator-stage-${pack.workTypeId}`}
+                    className={active ? 'estimator-calc__stage is-active' : 'estimator-calc__stage'}
+                    aria-labelledby={`estimator-stage-title-${pack.workTypeId}`}
+                  >
+                    <h3
+                      id={`estimator-stage-title-${pack.workTypeId}`}
+                      className="estimator-calc__stage-head"
+                    >
+                      <span className="estimator-calc__work-n">{index + 1}</span>
+                      <span>{workTypeLabel(pack.workTypeId, lang)}</span>
+                    </h3>
+                    <ul className="estimator-calc__features">
+                      {features.map((item) => {
+                        const checked = pack.selectedFeatureIds.includes(item.id)
+                        return (
+                          <li key={item.id}>
+                            <label
+                              className={
+                                checked ? 'estimator-calc__feature is-on' : 'estimator-calc__feature'
+                              }
+                            >
+                              <input
+                                type="checkbox"
+                                checked={checked}
+                                onChange={() => toggleFeature(pack.workTypeId, item.id)}
+                              />
+                              <span>{featureLabel(item, lang)}</span>
+                            </label>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </section>
                 )
               })}
-            </ul>
+            </div>
           )}
         </section>
 

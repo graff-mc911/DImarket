@@ -7730,6 +7730,64 @@ body,
   opacity: 0.45;
 }
 
+.estimator-calc__add-work--ghost {
+  background: #f7f4ef;
+  font-weight: 650;
+}
+
+.estimator-calc__section-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6f665d;
+}
+
+.estimator-calc__hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #8a8178;
+}
+
+.estimator-calc__work-actions {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0 0 0.85rem;
+}
+
+.estimator-calc__stages {
+  display: grid;
+  gap: 0.75rem;
+  max-height: 32rem;
+  overflow: auto;
+  padding-right: 0.1rem;
+}
+
+.estimator-calc__stage {
+  border: 1px solid #efe8df;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.7rem 0.7rem 0.75rem;
+}
+
+.estimator-calc__stage.is-active {
+  border-color: #ff9900;
+}
+
+.estimator-calc__stage-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.92rem;
+  font-weight: 750;
+  color: #1a2330;
+}
+
+.estimator-calc__stage .estimator-calc__features {
+  max-height: none;
+}
+
 .estimator-calc__works {
   list-style: none;
   margin: 0 0 0.9rem;

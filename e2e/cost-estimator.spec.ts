@@ -13,11 +13,12 @@ test.describe('Cost estimator calculator', () => {
     await expect(page.locator('.estimator-intake__card')).toHaveCount(0)
 
     const basic = page.getByRole('heading', { name: /Базові дані|Enter basic info/i })
-    const features = page.getByRole('heading', { name: /Оберіть опції|Select specific features/i })
+    const features = page.getByRole('heading', { name: /Опції кожного виду робіт|Options for each work type/i })
     const estimate = page.getByRole('heading', { name: /Ваша оцінка|Get your estimate/i })
     await expect(basic).toBeVisible()
     await expect(features).toBeVisible()
     await expect(estimate).toBeVisible()
+    await expect(page.locator('#estimator-works-label')).toBeVisible()
 
     const width = page.viewportSize()?.width ?? 0
     if (width >= 960) {
@@ -30,21 +31,31 @@ test.describe('Cost estimator calculator', () => {
     await expect(objectSelect.getByRole('option', { name: /Будинок|House/ })).toHaveCount(1)
     await expect(objectSelect.getByRole('option', { name: /Квартира|Apartment/ })).toHaveCount(1)
     await expect(objectSelect.getByRole('option', { name: /Ангар|Hangar/ })).toHaveCount(1)
+    await expect(objectSelect.getByRole('option', { name: /Навіс|Canopy/ })).toHaveCount(1)
+    await expect(objectSelect.getByRole('option', { name: /Ферма|Farm/ })).toHaveCount(1)
     await objectSelect.selectOption('house')
     await page.locator('#estimator-area').fill('80')
 
-    await expect(page.locator('.estimator-calc__work')).toHaveCount(13)
-    await expect(page.getByRole('button', { name: /Бетонні роботи|Concrete works/ })).toBeVisible()
-    await page.getByRole('button', { name: /Бетонні роботи|Concrete works/ }).click()
-    await page.locator('.estimator-calc__feature').first().click()
+    await expect(page.locator('.estimator-calc__work')).toHaveCount(0)
+    await expect(page.locator('.estimator-calc__stage')).toHaveCount(0)
 
-    await page.getByRole('button', { name: /Мурувальні роботи|Masonry/ }).click()
-    await expect(page.getByRole('heading', { name: /Мурувальні роботи|Masonry/ })).toBeVisible()
-    await page.locator('.estimator-calc__feature').first().click()
-
-    await page.locator('#estimator-work-type').selectOption('kitchen')
+    await page.locator('#estimator-work-type').selectOption('concrete')
     await page.getByRole('button', { name: /^Додати$|^Add$/ }).click()
-    await expect(page.getByRole('heading', { name: /Кухня|Kitchen fit-out/ })).toBeVisible()
+    await expect(page.locator('#estimator-stage-concrete')).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Бетонні роботи|Concrete works/ })).toBeVisible()
+    await expect(page.getByText(/Опалубка|Formwork/)).toBeVisible()
+    await page.locator('#estimator-stage-concrete .estimator-calc__feature').first().click()
+
+    await page.locator('#estimator-work-type').selectOption('masonry')
+    await page.getByRole('button', { name: /^Додати$|^Add$/ }).click()
+    await expect(page.locator('#estimator-stage-masonry')).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Мурувальні роботи|Masonry/ })).toBeVisible()
+    await expect(page.getByText(/Кладка цегли|Brickwork/)).toBeVisible()
+    await page.locator('#estimator-stage-masonry .estimator-calc__feature').first().click()
+
+    await expect(page.locator('.estimator-calc__stage')).toHaveCount(2)
+    await expect(page.locator('#estimator-stage-concrete')).toBeVisible()
+    await expect(page.locator('#estimator-stage-masonry')).toBeVisible()
 
     const total = page.locator('.estimator-calc__total-value')
     await expect(total).toBeVisible()
@@ -85,6 +96,9 @@ test.describe('Cost estimator calculator', () => {
     await expect.poll(async () => select.locator('option').count()).toBeGreaterThan(3)
     await expect(select.getByRole('option', { name: /^(Виробники|Manufacturers)$/ })).toHaveCount(0)
     await expect(select.getByRole('option', { name: /^(Ванна|Bathroom)$/ })).toHaveCount(0)
+    await expect(select.getByRole('option', { name: /Будинок|House/ })).toHaveCount(1)
+    await expect(select.getByRole('option', { name: /Ферма|Farm/ })).toHaveCount(1)
     await expect(page.locator('#estimator-work-type')).toBeVisible()
+    await expect(page.locator('#estimator-works-label')).toBeVisible()
   })
 })

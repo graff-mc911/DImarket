@@ -240,11 +240,25 @@ FEATURES.foundation = [
   f('fd-pour', 'Concrete pour', 'Бетонування', 48, 'perSqm'),
   f('fd-water', 'Tanking', 'Гідроізоляція фундаменту', 16, 'perSqm'),
 ]
-FEATURES.concrete = FEATURES.foundation
+FEATURES.concrete = [
+  f('cn-form', 'Formwork', 'Опалубка', 18, 'perSqm'),
+  f('cn-rebar', 'Rebar cage', 'Арматурний каркас', 24, 'perSqm'),
+  f('cn-slab', 'Slab pour', 'Бетонування плити', 42, 'perSqm'),
+  f('cn-wall', 'Walls / columns', 'Стіни / колони', 48, 'perSqm'),
+  f('cn-pump', 'Concrete pump', 'Подача бетону насосом', 220),
+  f('cn-screed', 'Screed', 'Стяжка', 16, 'perSqm'),
+  f('cn-cure', 'Curing', 'Догляд за бетоном', 6, 'perSqm'),
+  f('cn-joint', 'Expansion joints', 'Деформаційні шви', 90),
+]
 FEATURES.masonry = [
   f('ms-brick', 'Brickwork', 'Кладка цегли', 55, 'perSqm'),
   f('ms-block', 'Blockwork', 'Кладка блоків', 38, 'perSqm'),
-  f('ms-point', 'Repointing', 'Розшивка швів', 22, 'perSqm'),
+  f('ms-aac', 'Aerated concrete blocks', 'Газоблок / піноблок', 32, 'perSqm'),
+  f('ms-lintel', 'Lintels', 'Перемички', 45),
+  f('ms-open', 'Openings / reveals', 'Прорізи та відкоси', 12, 'perSqm'),
+  f('ms-insul', 'Cavity insulation', 'Утеплення в кладці', 14, 'perSqm'),
+  f('ms-mesh', 'Masonry mesh', 'Кладочна сітка', 6, 'perSqm'),
+  f('ms-point', 'Pointing', 'Розшивка швів', 22, 'perSqm'),
 ]
 FEATURES.plastering = [
   f('ps-base', 'Base coat', 'Набризк / ґрунт', 10, 'perSqm'),
@@ -415,7 +429,11 @@ export function descriptionFromFeatures(
         return `${work}: ${labels.join(', ')}`
       })
       .filter(Boolean)
-    if (parts.length) return `Works in sequence: ${parts.join('; ')}.`
+    if (parts.length) {
+      return lang.toLowerCase().startsWith('uk')
+        ? `Роботи по черзі: ${parts.join('; ')}.`
+        : `Works in sequence: ${parts.join('; ')}.`
+    }
   }
   const labels = featuresForCatalog(catalogId)
     .filter((item) => selectedIds.includes(item.id))
