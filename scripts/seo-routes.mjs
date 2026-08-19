@@ -411,6 +411,7 @@ export function prerenderRoutes() {
     '/category/specialists',
     '/category/renovation',
     '/category/hvac',
+    '/category/manufacturers',
     '/category/official-documents',
     '/electrician',
     '/plumber',

@@ -28,7 +28,7 @@ test.describe('Smoke — публічні сторінки', () => {
       { path: '/login', heading: /Вхід до DImarket|Sign In/i },
       {
         path: '/register',
-        heading: /Реєстрація на DImarket|Register on DImarket|Sign up|Join DImarket/i,
+        heading: /Приєднуйтесь до DImarket|Реєстрація на DImarket|Register on DImarket|Sign up|Join DImarket/i,
       },
     ]
 

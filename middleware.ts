@@ -93,7 +93,7 @@ const OG: Record<string, { title: string; description: string }> = {
   },
 }
 
-const FALLBACK = 'en'
+const FALLBACK = 'uk'
 
 function getLang(req: Request): string {
   const al = req.headers.get('accept-language') || ''
