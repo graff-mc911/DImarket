@@ -56,6 +56,23 @@ export function mobileInlineSlotId(page: AdPageKey, index: InlineIndex): string 
   return `${page}_mob_inline_${index}`
 }
 
+/** Слоти сторінки + домашні, щоб уже куплені банери показувались не лише на `/`. */
+export function displaySlotIdsForPage(
+  page: AdPageKey,
+  inlineIndex: InlineIndex = 1,
+): string[] {
+  const pageSlots = [centerSlotId(page), mobileInlineSlotId(page, inlineIndex)]
+  if (page === 'home') {
+    return [...pageSlots, mobileInlineSlotId('home', 1)]
+  }
+  return [
+    ...pageSlots,
+    centerSlotId('home'),
+    mobileInlineSlotId('home', inlineIndex),
+    mobileInlineSlotId('home', 1),
+  ]
+}
+
 export function pageKeyFromSideAdsPage(page?: AdPageKey): AdPageKey {
   return page && AD_PAGE_KEYS.includes(page) ? page : 'default'
 }

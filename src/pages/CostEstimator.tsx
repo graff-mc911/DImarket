@@ -74,7 +74,7 @@ import { readEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 import { applyPageSeo } from '../lib/pageSeo'
 import { navigateTo } from '../lib/navigation'
 import { lazyWithRetry } from '../lib/lazyWithRetry'
-import { MobileAdBanner } from '../components/MobileAdBanner'
+import { PageContentAds } from '../components/CenterPageAd'
 import type { Profile } from '../lib/types'
 
 const EstimatorResultsMap = lazyWithRetry(() =>
@@ -104,7 +104,7 @@ const ESTIMATOR_VOICE_LANG: Record<string, string> = {
 function EstimatorAdBanner() {
   return (
     <div className="layout-page-gutter">
-      <MobileAdBanner variant="horizontal" page="estimator" outerClassName="mt-3 mb-1" />
+      <PageContentAds page="estimator" outerClassName="mt-3 mb-1" />
     </div>
   )
 }

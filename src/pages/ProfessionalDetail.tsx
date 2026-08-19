@@ -31,7 +31,7 @@ import { useApp }      from '../contexts/AppContext'
 import { resolveCompanyAvatarUrl, resolveDirectoryAvatarUrl } from '../lib/directoryAvatars'
 import { isCompanyProfile } from '../lib/professionalDisplay'
 import { navigateTo }  from '../lib/navigation'
-import { MobileAdBanner } from '../components/MobileAdBanner'
+import { PageContentAds } from '../components/CenterPageAd'
 import { VerificationBadge } from '../components/MatchScoreBadge'
 import type { Profile } from '../lib/types'
 import { PortfolioManager } from '../components/portfolio/PortfolioManager'
@@ -467,7 +467,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
         </aside>
       </div>
 
-      <MobileAdBanner variant="horizontal" page="default" outerClassName="mt-6" />
+      <PageContentAds page="default" outerClassName="mt-6" />
     </div>
   )
 }

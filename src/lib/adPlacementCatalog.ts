@@ -48,36 +48,46 @@ function mobileInlineSlots(page: AdPageKey, routes: string[], rows: InlineIndex[
   })
 }
 
-/**
- * Каталог без бокових рейок (як OLX/Avito: центр / топ + inline у стрічці + detail).
- * Продаємо лише слоти, які реально змонтовані в UI.
- */
-export const AD_PLACEMENT_CATALOG: AdPlacementSlotDef[] = [
-  {
-    id: centerSlotId('home'),
-    page: 'home',
+function centerSlot(page: AdPageKey, routes: string[]): AdPlacementSlotDef {
+  return {
+    id: centerSlotId(page),
+    page,
     zone: 'center',
     viewport: 'all',
-    routes: ['/'],
+    routes,
     implemented: true,
     labelKey: 'advertising.slots.center',
     hintKey: 'advertising.catalog.centerHint',
-  },
+  }
+}
+
+/**
+ * Каталог без бокових рейок: лише «По центру» + мобільні блоки.
+ * Продаємо слоти, які реально змонтовані в UI.
+ */
+export const AD_PLACEMENT_CATALOG: AdPlacementSlotDef[] = [
+  centerSlot('home', ['/']),
   ...mobileInlineSlots('home', ['/'], [1]),
 
+  centerSlot('listings', ['/listings', '/vacancies', '/sell-rent']),
   ...mobileInlineSlots('listings', ['/listings', '/vacancies', '/sell-rent'], [1, 2]),
 
+  centerSlot('professionals', ['/professionals']),
   ...mobileInlineSlots('professionals', ['/professionals'], [1, 2]),
 
+  centerSlot('companies', ['/companies']),
   ...mobileInlineSlots('companies', ['/companies'], [1, 2]),
 
+  centerSlot('categories', ['/categories', '/category/']),
   ...mobileInlineSlots('categories', ['/categories', '/category/'], [1]),
 
+  centerSlot('map', ['/map']),
   ...mobileInlineSlots('map', ['/map'], [1]),
 
+  centerSlot('estimator', ['/cost-estimator']),
   ...mobileInlineSlots('estimator', ['/cost-estimator'], [1]),
 
-  /** Картка оголошення / фахівця — один широкий слот */
+  centerSlot('default', ['/listing/', '/professional/']),
   ...mobileInlineSlots('default', ['/listing/', '/professional/'], [1]),
 ]
 

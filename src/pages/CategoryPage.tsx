@@ -19,7 +19,7 @@ import {
 } from '../lib/marketplaceCategories'
 import { pushRecentCategory } from '../lib/recentCategories'
 import { navigateTo } from '../lib/navigation'
-import { MobileAdBanner } from '../components/MobileAdBanner'
+import { PageContentAds } from '../components/CenterPageAd'
 
 interface CategoryPageProps {
   slug: string
@@ -150,7 +150,7 @@ export function CategoryPage({ slug }: CategoryPageProps) {
       />
 
       <div className="layout-page-gutter">
-        <MobileAdBanner variant="horizontal" page="categories" outerClassName="mt-3 mb-1" />
+        <PageContentAds page="categories" outerClassName="mt-3 mb-1" />
       </div>
 
       <div className="layout-page-gutter cat-page__body">

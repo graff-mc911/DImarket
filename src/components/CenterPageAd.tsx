@@ -1,44 +1,41 @@
 import { useEffect, useMemo } from 'react'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard } from './AdOverlayCard'
-import { pickCenterHeroCampaign, pickMobileCampaign, getCampaignPlacements, campaignRendersInSlot, trackAdImpression } from '../lib/adCampaigns'
-import { centerSlotId, mobileInlineSlotId, pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
+import {
+  pickCenterHeroCampaign,
+  resolveRenderableSlotId,
+  trackAdImpression,
+} from '../lib/adCampaigns'
+import { displaySlotIdsForPage, pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
 import type { SideAdsPage } from './PageWithSideAds'
+import { MobileAdBanner } from './MobileAdBanner'
 
 type CenterPageAdProps = {
   page: SideAdsPage
   className?: string
 }
 
-/** Центральний банер у контенті (desktop/tablet); не показуємо на вузьких екранах — там inline-слоти */
+/** Центральний банер («По центру») на desktop/tablet. На телефоні — мобільні блоки. */
 export function CenterPageAd({ page, className = '' }: CenterPageAdProps) {
   const { loading, getForSlots } = usePaidAds()
   const pageKey = pageKeyFromSideAdsPage(page)
 
-  const slotIds = useMemo(
-    () => [centerSlotId(pageKey), mobileInlineSlotId(pageKey, 1)],
-    [pageKey],
-  )
-
+  const slotIds = useMemo(() => displaySlotIdsForPage(pageKey, 1), [pageKey])
   const pool = useMemo(() => getForSlots(slotIds, 16), [getForSlots, slotIds])
 
-  const campaign = useMemo(() => {
-    const center = pickCenterHeroCampaign(pool, pageKey)
-    if (center) return center
-    return pickMobileCampaign(pool, 'horizontal', pageKey, 1)
-  }, [pool, pageKey])
+  const campaign = useMemo(
+    () => pickCenterHeroCampaign(pool, pageKey),
+    [pool, pageKey],
+  )
+
+  const slotId = campaign ? resolveRenderableSlotId(campaign, slotIds) : null
 
   useEffect(() => {
     if (loading || !campaign) return
     void trackAdImpression(campaign.id)
   }, [loading, campaign])
 
-  if (loading || !campaign) return null
-
-  const slotId =
-    slotIds.find((id) => getCampaignPlacements(campaign).includes(id)) ?? slotIds[0]
-
-  if (!campaignRendersInSlot(campaign, slotId)) return null
+  if (loading || !campaign || !slotId) return null
 
   return (
     <section className={`hidden md:block ${className}`}>
@@ -52,5 +49,24 @@ export function CenterPageAd({ page, className = '' }: CenterPageAdProps) {
         />
       </div>
     </section>
+  )
+}
+
+/**
+ * Внутрішні сторінки: «По центру» на десктопі + мобільний блок на телефоні.
+ * На головній обидва лишаються окремо (SponsoredCompanies + MobileAdBanner).
+ */
+export function PageContentAds({
+  page,
+  outerClassName = 'mb-4',
+}: {
+  page: SideAdsPage
+  outerClassName?: string
+}) {
+  return (
+    <div className={outerClassName}>
+      <CenterPageAd page={page} className="mb-4" />
+      <MobileAdBanner variant="horizontal" page={page} outerClassName="md:hidden" />
+    </div>
   )
 }

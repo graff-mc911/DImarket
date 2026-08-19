@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { Profile, Category } from '../lib/types'
 import { DirectoryExpertCard } from '../components/DirectoryExpertCard'
 import { MobileAdBanner } from '../components/MobileAdBanner'
+import { PageContentAds } from '../components/CenterPageAd'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { buildDisplayCategories, SITE_CATEGORY_SLUGS } from '../lib/siteCategories'
@@ -388,7 +389,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
         </aside>
 
         <main className="min-w-0 flex-1">
-          <MobileAdBanner variant="horizontal" page={adPage} outerClassName="mb-4" />
+          <PageContentAds page={adPage} outerClassName="mb-4" />
 
           {loading ? (
             <div className="space-y-4">

@@ -11,6 +11,7 @@ import { listingLocationMatches, parseListingLocation } from '../lib/listingLoca
 import { navigateTo }          from '../lib/navigation'
 import { ListingCard }         from '../components/ListingCard'
 import { MobileAdBanner }      from '../components/MobileAdBanner'
+import { PageContentAds }      from '../components/CenterPageAd'
 import type { Category, ListingWithImages } from '../lib/types'
 import {
   SITE_CATEGORY_CONFIG,
@@ -427,7 +428,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
             </div>
           )}
 
-          <MobileAdBanner variant="horizontal" page="listings" outerClassName="mb-4" />
+          <PageContentAds page="listings" outerClassName="mb-4" />
 
           {loading ? (
             <div className="amazon-section-card p-8 text-center text-[var(--ink-500)]">

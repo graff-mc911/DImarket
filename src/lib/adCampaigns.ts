@@ -171,6 +171,23 @@ export function pickCampaignForSlot(
   return matching[hashSlotId(slotId) % matching.length] ?? null
 }
 
+/** Слот, з якого реально взяти креатив (сторінка або home_center / mobile). */
+export function resolveRenderableSlotId(
+  campaign: AdCampaign,
+  preferred: string[],
+): string | null {
+  for (const id of preferred) {
+    if (campaignRendersInSlot(campaign, id)) return id
+  }
+  for (const id of getCampaignPlacements(campaign)) {
+    if (campaignRendersInSlot(campaign, id)) return id
+  }
+  if (campaign.image_url?.trim() || campaign.media_url?.trim()) {
+    return preferred[0] ?? getCampaignPlacements(campaign)[0] ?? null
+  }
+  return null
+}
+
 export function isCampaignInSchedule(campaign: AdCampaign, now = Date.now()): boolean {
   const startsAt = campaign.starts_at ? new Date(campaign.starts_at).getTime() : null
   const endsAt = campaign.ends_at ? new Date(campaign.ends_at).getTime() : null
@@ -402,7 +419,7 @@ export function pickCampaignsForSideStack(
   return position === 'left' ? stacks.left : stacks.right
 }
 
-/** Один центральний блок — анімована реклама Baumit (або інший GIF/відео бренд) */
+/** Один центральний блок — спочатку слот сторінки, інакше банер з головної */
 export function pickCenterHeroCampaign(
   all: AdCampaignWithAdvertiser[],
   page: AdPageKey = 'home',
@@ -412,6 +429,11 @@ export function pickCenterHeroCampaign(
   const centerId = centerSlotId(page)
   const slotPick = pickCampaignForSlot(all, centerId)
   if (slotPick && campaignRendersInSlot(slotPick, centerId)) return slotPick
+
+  if (page !== 'home') {
+    const homeCenter = pickCampaignForSlot(all, centerSlotId('home'))
+    if (homeCenter && campaignRendersInSlot(homeCenter, centerSlotId('home'))) return homeCenter
+  }
 
   const legacyCenter = all.find(
     (c) =>
@@ -451,9 +473,22 @@ export function pickMobileCampaign(
   const exact = list.find((c) => getCampaignPlacements(c).includes(slotId))
   if (exact) return exact
 
+  if (page !== 'home') {
+    const homeSlot =
+      variant === 'horizontal'
+        ? 'home_mob_inline_1'
+        : `home_mob_inline_${inlineIndex}`
+    const homeExact = list.find((c) => getCampaignPlacements(c).includes(homeSlot))
+    if (homeExact) return homeExact
+    const homeCenter = list.find((c) => getCampaignPlacements(c).includes('home_center'))
+    if (homeCenter) return homeCenter
+  }
+
   if (variant === 'horizontal') {
     const leaderboard = list.find((c) => getCampaignPlacements(c).includes('home_leaderboard'))
     if (leaderboard) return leaderboard
+    const homeCenter = list.find((c) => getCampaignPlacements(c).includes('home_center'))
+    if (homeCenter) return homeCenter
   }
 
   const picked = pickCampaignForSlot(list, slotId)

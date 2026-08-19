@@ -4,6 +4,7 @@ import { DirectoryExpertCard, type DirectoryExpert } from '../components/Directo
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { GeoSearchFilters } from '../components/GeoSearchFilters'
 import { MobileAdBanner } from '../components/MobileAdBanner'
+import { PageContentAds } from '../components/CenterPageAd'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { supabase } from '../lib/supabase'
@@ -556,7 +557,7 @@ function ServiceResultsView({
         </aside>
 
         <main className="min-w-0 flex-1">
-          <MobileAdBanner variant="horizontal" page="professionals" outerClassName="mb-4" />
+          <PageContentAds page="professionals" outerClassName="mb-4" />
 
           {loading ? (
             <div className="space-y-4">

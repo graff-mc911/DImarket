@@ -3,9 +3,9 @@ import { X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard } from './AdOverlayCard'
-import { mobileInlineSlotId, pageKeyFromMobilePage, type AdPageKey, type InlineIndex } from '../lib/adPlacementSlots'
+import { displaySlotIdsForPage, mobileInlineSlotId, pageKeyFromMobilePage, type AdPageKey, type InlineIndex } from '../lib/adPlacementSlots'
 import { adSlotTailwind } from '../lib/adSlotLayout'
-import { pickMobileCampaign, trackAdImpression } from '../lib/adCampaigns'
+import { pickMobileCampaign, resolveRenderableSlotId, trackAdImpression } from '../lib/adCampaigns'
 
 interface MobileAdBannerProps {
   variant: 'inline' | 'horizontal'
@@ -35,15 +35,22 @@ export function MobileAdBanner({
     [pageKey, variant, inlineIndex],
   )
 
+  const lookupSlots = useMemo(
+    () => displaySlotIdsForPage(pageKey, variant === 'horizontal' ? 1 : inlineIndex),
+    [pageKey, variant, inlineIndex],
+  )
+
   const mobileCampaigns = useMemo(
-    () => getForSlots([slotId], 16),
-    [getForSlots, slotId],
+    () => getForSlots(lookupSlots, 16),
+    [getForSlots, lookupSlots],
   )
 
   const campaign = useMemo(
     () => pickMobileCampaign(mobileCampaigns, variant, pageKey, inlineIndex),
     [mobileCampaigns, variant, pageKey, inlineIndex],
   )
+
+  const renderSlotId = campaign ? resolveRenderableSlotId(campaign, lookupSlots) ?? slotId : slotId
 
   const isHorizontal = variant === 'horizontal'
 
@@ -52,7 +59,7 @@ export function MobileAdBanner({
     void trackAdImpression(campaign.id)
   }, [loading, campaign])
 
-  if (!adVisible || loading || !campaign) return null
+  if (!adVisible || loading || !campaign || !renderSlotId) return null
 
   const showOnDesktop = variant === 'horizontal'
 
@@ -68,9 +75,9 @@ export function MobileAdBanner({
           <X className="h-3.5 w-3.5" />
         </button>
 
-        <AdOverlayCard
+          <AdOverlayCard
           campaign={campaign}
-          slotId={slotId}
+          slotId={renderSlotId}
           variant={isHorizontal ? 'leaderboard' : 'mobile-inline'}
           className={isHorizontal ? adSlotTailwind.leaderboard : adSlotTailwind.mobileInline}
           showGeo={!isHorizontal}

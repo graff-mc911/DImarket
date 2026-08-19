@@ -32,7 +32,7 @@ import { isSuppressedListing } from '../lib/suppressedListings'
 import type { ListingWithImages, Profile } from '../lib/types'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
 import { ListingInlineChat } from '../components/listing/ListingInlineChat'
-import { MobileAdBanner } from '../components/MobileAdBanner'
+import { PageContentAds } from '../components/CenterPageAd'
 import { pipelineNextAction, pipelineNextForPro } from '../lib/pipelineNext'
 import { PipelineNextCta, PipelineStageChip } from '../components/pipeline/PipelineNext'
 
@@ -499,7 +499,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
         </aside>
       </div>
 
-      <MobileAdBanner variant="horizontal" page="default" outerClassName="mt-6" />
+      <PageContentAds page="default" outerClassName="mt-6" />
     </div>
   )
 }

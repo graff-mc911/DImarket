@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { CategoriesMegaMenu } from '../components/CategoriesMegaMenu'
-import { MobileAdBanner } from '../components/MobileAdBanner'
+import { PageContentAds } from '../components/CenterPageAd'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { applyPageSeo } from '../lib/pageSeo'
@@ -19,7 +19,7 @@ export function Categories() {
   return (
     <>
       <div className="layout-page-gutter">
-        <MobileAdBanner variant="horizontal" page="categories" outerClassName="mt-3 mb-1" />
+        <PageContentAds page="categories" outerClassName="mt-3 mb-1" />
       </div>
       <CategoriesMegaMenu
         open
