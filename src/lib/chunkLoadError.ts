@@ -1,6 +1,7 @@
 /** Detect Vite/Webpack dynamic-import failures after a deploy (stale hashed chunks). */
 
 export const CHUNK_RELOAD_KEY = 'dimarket:chunk-reload'
+const CHUNK_SW_CLEARED_KEY = 'dimarket:chunk-sw-cleared'
 const RELOAD_COOLDOWN_MS = 60_000
 
 export function isChunkLoadError(error: unknown): boolean {
@@ -43,12 +44,58 @@ export function reloadOnceForStaleChunk(): boolean {
   return true
 }
 
+/**
+ * Chrome: a service worker + HTTP cache can pin HTML (or an aborted import)
+ * to a hashed /assets/*.js URL. Reload alone does not help. Drop SW + Cache
+ * Storage, then reload. HTTP disk cache for that exact filename still needs
+ * a new Vite hash from deploy.
+ */
+export async function recoverFromStaleChunks(): Promise<boolean> {
+  if (typeof window === 'undefined') return false
+  try {
+    if (sessionStorage.getItem(CHUNK_SW_CLEARED_KEY) === '1') return false
+    sessionStorage.setItem(CHUNK_SW_CLEARED_KEY, '1')
+  } catch {
+    if (window.location.search.includes('chunk_sw=1')) return false
+  }
+
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations()
+      await Promise.all(regs.map((reg) => reg.unregister()))
+    }
+    if ('caches' in window) {
+      const keys = await caches.keys()
+      await Promise.all(keys.map((key) => caches.delete(key)))
+    }
+  } catch {
+    /* still reload */
+  }
+
+  try {
+    sessionStorage.removeItem(CHUNK_RELOAD_KEY)
+  } catch {
+    /* ignore */
+  }
+
+  const url = new URL(window.location.href)
+  url.searchParams.delete('chunk_reload')
+  url.searchParams.set('chunk_sw', '1')
+  window.location.replace(url.pathname + url.search + url.hash)
+  return true
+}
+
 /** Drop the URL marker only. Keep the session cooldown so a later successful
  *  locale/chunk import cannot clear the flag and start an infinite reload. */
 export function clearChunkReloadFlag(): void {
   if (typeof window !== 'undefined' && window.location.search.includes('chunk_reload=')) {
     const url = new URL(window.location.href)
     url.searchParams.delete('chunk_reload')
+    window.history.replaceState({}, '', url.pathname + url.search + url.hash)
+  }
+  if (typeof window !== 'undefined' && window.location.search.includes('chunk_sw=')) {
+    const url = new URL(window.location.href)
+    url.searchParams.delete('chunk_sw')
     window.history.replaceState({}, '', url.pathname + url.search + url.hash)
   }
 }

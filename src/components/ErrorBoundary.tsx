@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { captureException } from '../lib/monitoring'
-import { isChunkLoadError, reloadOnceForStaleChunk } from '../lib/chunkLoadError'
+import { isChunkLoadError, recoverFromStaleChunks, reloadOnceForStaleChunk } from '../lib/chunkLoadError'
 
 type Props = {
   children: ReactNode
@@ -54,14 +54,17 @@ export class ErrorBoundary extends Component<Props, State> {
 
     if (!this.autoReloadAttempted && isChunkLoadError(error)) {
       this.autoReloadAttempted = true
-      reloadOnceForStaleChunk()
+      if (!reloadOnceForStaleChunk()) {
+        void recoverFromStaleChunks()
+      }
     }
   }
 
   private reset = () => {
     if (this.state.error && isChunkLoadError(this.state.error)) {
-      // Rejected lazy() promises stay rejected — only a full reload recovers.
-      window.location.reload()
+      void recoverFromStaleChunks().then((did) => {
+        if (!did) window.location.reload()
+      })
       return
     }
     this.setState({ error: null })

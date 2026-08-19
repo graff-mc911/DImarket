@@ -4,9 +4,13 @@ export function registerServiceWorker(): void {
   if (!('serviceWorker' in navigator)) return
 
   const register = () => {
-    void navigator.serviceWorker.register('/sw.js?v=5', { scope: '/' }).catch((err) => {
-      console.warn('[pwa] service worker registration failed', err)
-    })
+    // Delay until after lazy route import() can finish. Immediate skipWaiting +
+    // claim on load aborts CostEstimator-*.js in Chrome.
+    window.setTimeout(() => {
+      void navigator.serviceWorker.register('/sw.js?v=6', { scope: '/' }).catch((err) => {
+        console.warn('[pwa] service worker registration failed', err)
+      })
+    }, 4000)
   }
 
   if (document.readyState === 'complete') {

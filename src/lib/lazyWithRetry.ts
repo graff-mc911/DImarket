@@ -2,6 +2,7 @@ import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 import {
   clearChunkReloadFlag,
   isChunkLoadError,
+  recoverFromStaleChunks,
   reloadOnceForStaleChunk,
 } from './chunkLoadError'
 
@@ -19,7 +20,10 @@ export function lazyWithRetry<T extends ComponentType<any>>(
       return mod
     } catch (error) {
       if (isChunkLoadError(error) && reloadOnceForStaleChunk()) {
-        // Hold suspense open while the page reloads.
+        return new Promise(() => {})
+      }
+      if (isChunkLoadError(error)) {
+        void recoverFromStaleChunks()
         return new Promise(() => {})
       }
       throw error

@@ -5,7 +5,7 @@
    causes "Failed to fetch dynamically imported module" and a reload loop
    (especially on lazy routes like /cost-estimator). */
 
-const CACHE = 'dimarket-shell-v5'
+const CACHE = 'dimarket-shell-v6'
 const PRECACHE = ['/', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
 
 self.addEventListener('install', (event) => {
@@ -23,19 +23,23 @@ self.addEventListener('activate', (event) => {
       .keys()
       .then((keys) =>
         Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))),
-      )
-      .then(() => self.clients.claim()),
+      ),
   )
+  // Do not clients.claim() — Chrome aborts in-flight import() of lazy routes
+  // (CostEstimator-*.js) when a new worker takes over the open page.
 })
 
 function shouldBypass(req, url) {
   if (req.method !== 'GET') return true
   if (url.origin !== self.location.origin) return true
 
+  // Chrome import() often has destination "" not "script". Never intercept
+  // hashed Vite modules — a cached index.html at this URL breaks Chrome forever.
   const dest = req.destination
   if (
     dest === 'script' ||
     dest === 'style' ||
+    dest === '' ||
     dest === 'worker' ||
     dest === 'sharedworker' ||
     dest === 'audioworklet' ||
@@ -50,6 +54,7 @@ function shouldBypass(req, url) {
   if (url.pathname.includes('supabase')) return true
   if (url.pathname.startsWith('/functions')) return true
   if (/\.(js|mjs|cjs|css|map)(\?|$)/i.test(url.pathname)) return true
+  if (req.mode === 'cors') return true
 
   return false
 }

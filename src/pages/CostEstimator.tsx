@@ -1143,6 +1143,7 @@ export function CostEstimator() {
   const meta = titles[state.step] || titles[1]
 
   return (
+    <div data-estimator-chunk="v2">
     <EstimatorShell
       variant={state.step === 1 ? 'intake' : 'wizard'}
       step={state.step}
@@ -1480,6 +1481,7 @@ export function CostEstimator() {
         </div>
       )}
     </EstimatorShell>
+    </div>
   )
 }
 
