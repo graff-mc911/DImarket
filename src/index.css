@@ -5672,6 +5672,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   background: #f6f4f1;
 }
 
+.cat-page__ads {
+  overflow-anchor: none;
+}
+
 .cat-page__body {
   padding-top: 1.75rem;
   padding-bottom: 3.5rem;
@@ -5684,6 +5688,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: flex-end;
   color: #fff;
   overflow: hidden;
+  overflow-anchor: none;
 }
 
 .cat-hero__image {

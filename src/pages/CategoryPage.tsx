@@ -118,71 +118,60 @@ export function CategoryPage({ slug }: CategoryPageProps) {
     )
   }, [page?.projects, search])
 
-  const pageAds = (
-    <div className="layout-page-gutter">
-      <PageContentAds page="categories" outerClassName="mt-3 mb-1" />
-    </div>
-  )
+  return (
+    <div className="cat-page">
+      <div className="cat-page__ads layout-page-gutter">
+        <PageContentAds page="categories" outerClassName="mt-3 mb-1" />
+      </div>
 
-  if (loading) {
-    return (
-      <div className="cat-page cat-page--loading">
-        {pageAds}
+      {loading ? (
         <div className="layout-page-gutter py-16">
           <p className="text-[var(--ink-600)]">{t('marketplace.loading')}</p>
         </div>
-      </div>
-    )
-  }
+      ) : !page?.ok || !category ? (
+        <div className="layout-page-gutter py-16 text-center">
+          <h1 className="text-2xl font-bold text-[var(--ink-900)]">{t('marketplace.notFound')}</h1>
+          <button
+            type="button"
+            className="mt-6 font-semibold text-[#c96d2c]"
+            onClick={() => navigateTo('/categories')}
+          >
+            {t('marketplace.backToCategories')}
+          </button>
+        </div>
+      ) : (
+        <>
+          <CategoryHero
+            category={category}
+            servicesCount={page.services.length}
+            reviewsCount={page.reviews.length}
+          />
 
-  if (!page?.ok || !category) {
-    return (
-      <div className="cat-page layout-page-gutter py-16 text-center">
-        <h1 className="text-2xl font-bold text-[var(--ink-900)]">{t('marketplace.notFound')}</h1>
-        <button
-          type="button"
-          className="mt-6 font-semibold text-[#c96d2c]"
-          onClick={() => navigateTo('/categories')}
-        >
-          {t('marketplace.backToCategories')}
-        </button>
-      </div>
-    )
-  }
+          <div className="layout-page-gutter cat-page__body">
+            <CategorySearchFilters
+              search={search}
+              onSearchChange={setSearch}
+              minRating={minRating}
+              onMinRatingChange={setMinRating}
+              verifiedOnly={verifiedOnly}
+              onVerifiedOnlyChange={setVerifiedOnly}
+            />
 
-  return (
-    <div className="cat-page">
-      {pageAds}
-
-      <CategoryHero
-        category={category}
-        servicesCount={page.services.length}
-        reviewsCount={page.reviews.length}
-      />
-
-      <div className="layout-page-gutter cat-page__body">
-        <CategorySearchFilters
-          search={search}
-          onSearchChange={setSearch}
-          minRating={minRating}
-          onMinRatingChange={setMinRating}
-          verifiedOnly={verifiedOnly}
-          onVerifiedOnlyChange={setVerifiedOnly}
-        />
-
-        <CategoryPopularServices services={services} categorySlug={category.slug} />
-        <CategoryAiRecommendation categoryTitle={title} services={page.services} />
-        <CategoryFeaturedPros professionals={professionals} categorySlug={category.slug} />
-        <CategoryLatestProjects projects={projects} />
-        <CategoryCustomerReviews
-          reviews={page.reviews}
-          averageRating={
-            category.avg_rating != null ? Number(category.avg_rating) : null
-          }
-        />
-        <CategoryFaq categoryTitle={title} />
-        <CategoryRelated categories={page.related} />
-      </div>
+            <CategoryPopularServices services={services} categorySlug={category.slug} />
+            <CategoryAiRecommendation categoryTitle={title} services={page.services} />
+            <CategoryFeaturedPros professionals={professionals} categorySlug={category.slug} />
+            <CategoryLatestProjects projects={projects} />
+            <CategoryCustomerReviews
+              reviews={page.reviews}
+              averageRating={
+                category.avg_rating != null ? Number(category.avg_rating) : null
+              }
+            />
+            <CategoryFaq categoryTitle={title} />
+            <CategoryRelated categories={page.related} />
+          </div>
+        </>
+      )}
     </div>
   )
 }
