@@ -6,7 +6,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { Profile, CURRENCIES, LANGUAGES } from '../lib/types'
-import { getTranslation, ensureLanguageLoaded, TranslationKey, LanguageCode } from '../lib/i18n'
+import { getTranslation, ensureLanguageLoaded, resolveUiLanguageCode, TranslationKey, LanguageCode } from '../lib/i18n'
 import { getPostLoginPath } from '../lib/authMessages'
 import { ensureUserProfile, getIntendedRole } from '../lib/profileSync'
 import { isSiteOwner } from '../lib/siteOwner'
@@ -49,9 +49,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return CURRENCIES.find((c) => c.code === saved) ?? CURRENCIES[0]
   })
   const [language, setLanguage] = useState<typeof LANGUAGES[number]>(() => {
-    const saved = localStorage.getItem('dimarket_language')
-    const code = saved === 'ua' || saved === 'UA' || saved === 'UK' ? 'uk' : saved
-    return LANGUAGES.find((l) => l.code === code) ?? LANGUAGES[0]
+    const code = resolveUiLanguageCode(localStorage.getItem('dimarket_language'))
+    return LANGUAGES.find((l) => l.code === code) ?? LANGUAGES.find((l) => l.code === 'uk') ?? LANGUAGES[0]
   })
   const [location, setLocationState] = useState<GeoSearchState>(() => initializeGlobalLocation())
   /** Bumps when a locale pack finishes loading so `t()` re-renders with real strings. */
@@ -171,7 +170,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     if (savedLanguage) {
-      const found = LANGUAGES.find((l) => l.code === savedLanguage)
+      const code = resolveUiLanguageCode(savedLanguage)
+      const found = LANGUAGES.find((l) => l.code === code)
       if (found) setLanguage(found)
     }
 
@@ -291,8 +291,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const handleSetLanguage = (newLanguage: typeof LANGUAGES[number]) => {
-    const raw = String(newLanguage.code)
-    const code = raw === 'ua' || raw === 'UA' || raw === 'UK' ? 'uk' : newLanguage.code
+    const code = resolveUiLanguageCode(newLanguage.code)
     const resolved = LANGUAGES.find((l) => l.code === code) ?? newLanguage
     setLanguage(resolved)
     localStorage.setItem('dimarket_language', resolved.code)

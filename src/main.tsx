@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { applyAdSlotCssVars } from './lib/adSlotCssVars'
-import { ensureLanguageLoaded } from './lib/i18n'
+import { ensureLanguageLoaded, resolveUiLanguageCode } from './lib/i18n'
 import { initMonitoring } from './lib/monitoring'
 import { disableBrowserScrollRestoration } from './lib/navigation'
 import { registerServiceWorker } from './lib/pwa'
@@ -29,10 +29,8 @@ async function boot() {
   void initMonitoring()
 
   const saved =
-    typeof localStorage !== 'undefined'
-      ? localStorage.getItem('dimarket_language') || 'en'
-      : 'en'
-  await ensureLanguageLoaded(saved)
+    typeof localStorage !== 'undefined' ? localStorage.getItem('dimarket_language') : null
+  await ensureLanguageLoaded(resolveUiLanguageCode(saved))
 
   createRoot(rootElement!).render(
     <StrictMode>

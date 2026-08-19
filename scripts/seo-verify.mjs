@@ -10,7 +10,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { prerenderRoutes, SITE_ORIGIN } from './seo-routes.mjs'
+import { allPublicRoutes, prerenderRoutes, SITE_ORIGIN } from './seo-routes.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
@@ -137,6 +137,18 @@ async function verifyRobotsSitemap() {
   } else {
     const count = (sitemap.text.match(/<loc>/g) || []).length
     ok(`sitemap.xml ok (${count} urls)`)
+    const required = [
+      'https://dimarket.app/cost-estimator',
+      'https://dimarket.app/map',
+      'https://dimarket.app/documents',
+      'https://dimarket.app/vacancies',
+      'https://dimarket.app/commercial-agents',
+      'https://dimarket.app/category/official-documents',
+    ]
+    for (const loc of required) {
+      if (!sitemap.text.includes(`<loc>${loc}</loc>`)) fail(`sitemap.xml missing ${loc}`)
+      else ok(`sitemap has ${loc.replace('https://dimarket.app', '')}`)
+    }
   }
   if (sitemap.contentType && !/xml|text\/plain/i.test(sitemap.contentType) && base) {
     warn(`sitemap.xml content-type is ${sitemap.contentType}`)
@@ -146,6 +158,18 @@ async function verifyRobotsSitemap() {
 async function main() {
   console.log(`SEO verify base: ${base || `file://${distDir}`}`)
   await verifyRobotsSitemap()
+
+  for (const route of allPublicRoutes()) {
+    if (!route.path.startsWith('/category/') && !route.path.startsWith('/services/')) continue
+    const slug = route.path.split('/').pop()
+    const spaced = slug.replace(/-/g, ' ')
+    if (route.title.toLowerCase().startsWith(spaced.toLowerCase() + ' ')) {
+      fail(`${route.path}: title still uses raw slug (${route.title})`)
+    } else {
+      ok(`${route.path}: human title`)
+    }
+  }
+
   for (const route of prerenderRoutes()) {
     try {
       await verifyRoute(route)

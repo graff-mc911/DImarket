@@ -10,9 +10,11 @@ import {
   CATEGORY_SLUGS,
   absoluteUrl,
   allPublicRoutes,
+  buildSitemapXml,
   jsonLdForRoute,
   prerenderRoutes,
 } from './seo-routes.mjs'
+import { humanLabel } from './seo-labels.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const distDir = join(root, 'dist')
@@ -47,22 +49,9 @@ Sitemap: ${SITE_ORIGIN}/sitemap.xml
 }
 
 function writeSitemap() {
-  const now = new Date().toISOString()
-  const urls = allPublicRoutes()
-    .map((route) => `  <url>
-    <loc>${absoluteUrl(route.path)}</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>${route.changefreq ?? 'weekly'}</changefreq>
-    <priority>${(route.priority ?? 0.5).toFixed(1)}</priority>
-  </url>`)
-    .join('\n')
-
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls}
-</urlset>
-`
+  const xml = buildSitemapXml()
   writeFileSync(join(distDir, 'sitemap.xml'), xml, 'utf8')
+  writeFileSync(join(root, 'public', 'sitemap.xml'), xml, 'utf8')
   console.log(`wrote sitemap.xml (${allPublicRoutes().length} urls)`)
 }
 
@@ -121,7 +110,7 @@ function applyHeadToHtml(html, route) {
 function fallbackSeoShell(route) {
   const cats = CATEGORY_SLUGS.map(
     (slug) =>
-      `<li><a href="/category/${slug}">${escapeHtml(slug.replace(/-/g, ' '))}</a></li>`,
+      `<li><a href="/category/${slug}">${escapeHtml(humanLabel(slug, 'uk'))}</a></li>`,
   ).join('')
   const heading = escapeHtml(
     route.title.replace(/\s*\|\s*DImarket$/, '').replace(/^DImarket —\s*/, ''),

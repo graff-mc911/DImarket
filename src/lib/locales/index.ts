@@ -46,6 +46,24 @@ export const LANGUAGE_CODES = [
 
 export type LanguageCode = (typeof LANGUAGE_CODES)[number]
 
+/** Product default for first paint, SEO, and visitors with no saved locale. */
+export const DEFAULT_LANGUAGE_CODE: LanguageCode = 'uk'
+
+const LANGUAGE_CODE_SET = new Set<string>(LANGUAGE_CODES)
+
+/**
+ * Resolve a stored or requested UI locale.
+ * Legacy `ua` / `UA` / `UK` map to Ukrainian. Unknown values fall back to `uk`.
+ */
+export function resolveUiLanguageCode(raw: string | null | undefined): LanguageCode {
+  if (!raw) return DEFAULT_LANGUAGE_CODE
+  const trimmed = raw.trim()
+  if (trimmed === 'ua' || trimmed === 'UA' || trimmed === 'UK') return 'uk'
+  const code = trimmed.toLowerCase().split('-')[0]
+  if (LANGUAGE_CODE_SET.has(code)) return code as LanguageCode
+  return DEFAULT_LANGUAGE_CODE
+}
+
 type LocaleTable = Record<TranslationKey, string>
 type PartialLocale = Partial<Record<TranslationKey, string>>
 
@@ -111,9 +129,7 @@ async function withEnglishFallback(
 
 /** Load a locale pack into memory (idempotent). English is always present. */
 export async function ensureLanguageLoaded(code: string): Promise<void> {
-  const languageCode = (LANGUAGE_CODES as readonly string[]).includes(code)
-    ? (code as LanguageCode)
-    : 'en'
+  const languageCode = resolveUiLanguageCode(code)
 
   if (cache[languageCode]) return
 

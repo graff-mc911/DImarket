@@ -49,16 +49,17 @@ export function CategoryPage({ slug }: CategoryPageProps) {
   }, [slug])
 
   const category = page?.category ?? null
-  const title = category ? marketplaceCategoryLabel(category, language.code) : slug
+  const title = marketplaceCategoryLabel(
+    category ?? { name: '', slug, name_i18n: null },
+    language.code,
+  )
   const description = category
     ? marketplaceCategoryDescription(category, language.code)
     : ''
 
   useEffect(() => {
     const prev = document.title
-    document.title = category
-      ? t('catPage.seoTitle').replace('{category}', title)
-      : t('catPage.seoFallback')
+    document.title = t('catPage.seoTitle').replace('{category}', title)
     const meta = document.querySelector('meta[name="description"]')
     const seoDesc = description
       ? description

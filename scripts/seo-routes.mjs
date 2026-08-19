@@ -4,6 +4,8 @@
  * Does not change UI — metadata only.
  */
 
+import { humanLabel, titleCaseSlug } from './seo-labels.mjs'
+
 export const SITE_ORIGIN = 'https://dimarket.app'
 
 /** @typedef {{ path: string, title: string, description: string, changefreq?: string, priority?: number, schema?: 'home'|'service'|'local'|'page' }} SeoRoute */
@@ -28,6 +30,7 @@ export const CATEGORY_SLUGS = [
   'architecture-design',
   'engineering',
   'legal-services',
+  'official-documents',
 ]
 
 /** Launch SEO city/trade landings (mirrors src/lib/seoRoutes launch set) */
@@ -221,33 +224,87 @@ export const STATIC_ROUTES = [
     priority: 0.6,
     schema: 'page',
   },
+  {
+    path: '/commercial-agents',
+    title: 'Комерційні представники | DImarket',
+    description:
+      'DImarket Commercial Agents — виробники та комерційні представники в Європі.',
+    changefreq: 'weekly',
+    priority: 0.8,
+    schema: 'page',
+  },
+  {
+    path: '/commercial-agents/manufacturers',
+    title: 'Виробники | DImarket',
+    description: 'Каталог виробників, які шукають комерційних представників у Європі.',
+    changefreq: 'weekly',
+    priority: 0.75,
+    schema: 'page',
+  },
+  {
+    path: '/commercial-agents/representatives',
+    title: 'Комерційні представники — каталог | DImarket',
+    description: 'Каталог комерційних представників для виробників будівельних матеріалів і послуг.',
+    changefreq: 'weekly',
+    priority: 0.75,
+    schema: 'page',
+  },
+  {
+    path: '/vacancies',
+    title: 'Вакансії | DImarket',
+    description: 'Відкриті вакансії у будівництві, ремонті та суміжних послугах на DImarket.',
+    changefreq: 'hourly',
+    priority: 0.8,
+    schema: 'page',
+  },
+  {
+    path: '/sell-rent',
+    title: 'Купівля та продаж | DImarket',
+    description: 'Оголошення купівлі, продажу та оренди на маркетплейсі DImarket.',
+    changefreq: 'hourly',
+    priority: 0.7,
+    schema: 'page',
+  },
+  {
+    path: '/projects',
+    title: 'Проєкти та запити | DImarket',
+    description: 'Актуальні проєкти та запити клієнтів на будівництво й ремонт.',
+    changefreq: 'hourly',
+    priority: 0.75,
+    schema: 'page',
+  },
 ]
 
 export function categoryRoutes() {
-  return CATEGORY_SLUGS.map((slug) => ({
-    path: `/category/${slug}`,
-    title: `${slug.replace(/-/g, ' ')} | DImarket`,
-    description: `Знайдіть послуги та фахівців у категорії ${slug.replace(/-/g, ' ')} на DImarket.`,
-    changefreq: 'weekly',
-    priority: 0.8,
-    schema: 'service',
-  }))
+  return CATEGORY_SLUGS.map((slug) => {
+    const label = humanLabel(slug, 'uk')
+    return {
+      path: `/category/${slug}`,
+      title: `${label} — послуги та майстри | DImarket`,
+      description: `Знайдіть послуги та фахівців у категорії ${label} на DImarket.`,
+      changefreq: 'weekly',
+      priority: 0.8,
+      schema: 'service',
+    }
+  })
 }
 
 export function landingRoutes() {
   return SEO_LANDINGS.map((path) => {
     const parts = path.split('/').filter(Boolean)
     const [locale, city, trade] = parts
+    const tradeLabel = humanLabel(trade, locale)
+    const cityLabel = titleCaseSlug(city)
     return {
       path,
-      title: `${trade} — ${city} | DImarket`,
-      description: `Find ${trade} professionals in ${city} on DImarket. Request quotes directly.`,
+      title: `${tradeLabel} — ${cityLabel} | DImarket`,
+      description: `Find ${tradeLabel} professionals in ${cityLabel} on DImarket. Request quotes directly.`,
       changefreq: 'weekly',
       priority: 0.85,
       schema: 'local',
       locale,
-      city,
-      trade,
+      city: cityLabel,
+      trade: tradeLabel,
     }
   })
 }
@@ -286,19 +343,23 @@ export const GEO_SERVICE_LANDINGS = [
 
 export function serviceSeoRoutes() {
   const short = ['electrician', 'plumber', 'painter', 'tiler', 'roofer', 'handyman', 'lawyer', 'accountant']
-  const routes = short.map((slug) => ({
-    path: `/${slug}`,
-    title: `${slug.replace(/-/g, ' ')} specialists & companies | DImarket`,
-    description: `Find verified ${slug.replace(/-/g, ' ')} specialists and companies on DImarket. Compare profiles and request a free quote.`,
-    changefreq: 'daily',
-    priority: 0.9,
-    schema: 'service',
-  }))
+  const routes = short.map((slug) => {
+    const label = humanLabel(slug, 'en')
+    return {
+      path: `/${slug}`,
+      title: `${label} specialists & companies | DImarket`,
+      description: `Find verified ${label.toLowerCase()} specialists and companies on DImarket. Compare profiles and request a free quote.`,
+      changefreq: 'daily',
+      priority: 0.9,
+      schema: 'service',
+    }
+  })
   for (const slug of SERVICE_SEO_SLUGS) {
+    const label = humanLabel(slug, 'en')
     routes.push({
       path: `/services/${slug}`,
-      title: `${slug.replace(/-/g, ' ')} | DImarket`,
-      description: `Browse ${slug.replace(/-/g, ' ')} professionals and companies on DImarket.`,
+      title: `${label} | DImarket`,
+      description: `Browse ${label.toLowerCase()} professionals and companies on DImarket.`,
       changefreq: 'daily',
       priority: 0.85,
       schema: 'service',
@@ -307,11 +368,12 @@ export function serviceSeoRoutes() {
   for (const path of GEO_SERVICE_LANDINGS) {
     const parts = path.split('/').filter(Boolean)
     const trade = parts[parts.length - 1]
-    const place = parts.slice(0, -1).join(', ')
+    const place = parts.slice(0, -1).map(titleCaseSlug).join(', ')
+    const tradeLabel = humanLabel(trade, 'en')
     routes.push({
       path,
-      title: `${trade} in ${place} | DImarket`,
-      description: `Find verified ${trade} near ${place} on DImarket. Filter by radius and request a free quote.`,
+      title: `${tradeLabel} in ${place} | DImarket`,
+      description: `Find verified ${tradeLabel.toLowerCase()} near ${place} on DImarket. Filter by radius and request a free quote.`,
       changefreq: 'daily',
       priority: 0.9,
       schema: 'local',
@@ -342,10 +404,14 @@ export function prerenderRoutes() {
     '/for-companies',
     '/search',
     '/categories',
+    '/cost-estimator',
+    '/vacancies',
+    '/commercial-agents',
     '/category/construction',
     '/category/specialists',
     '/category/renovation',
     '/category/hvac',
+    '/category/official-documents',
     '/electrician',
     '/plumber',
     '/lawyer',
@@ -362,6 +428,26 @@ export function prerenderRoutes() {
 export function absoluteUrl(path) {
   if (!path || path === '/') return `${SITE_ORIGIN}/`
   return `${SITE_ORIGIN}${path.startsWith('/') ? path : `/${path}`}`
+}
+
+/** Sitemap XML from allPublicRoutes() — used for dist/ and public/. */
+export function buildSitemapXml(lastmod = new Date().toISOString()) {
+  const urls = allPublicRoutes()
+    .map(
+      (route) => `  <url>
+    <loc>${absoluteUrl(route.path)}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${route.changefreq ?? 'weekly'}</changefreq>
+    <priority>${(route.priority ?? 0.5).toFixed(1)}</priority>
+  </url>`,
+    )
+    .join('\n')
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>
+`
 }
 
 export function organizationJsonLd() {
@@ -440,7 +526,7 @@ export function breadcrumbJsonLd(route) {
     items.push({
       '@type': 'ListItem',
       position: idx + 2,
-      name: part.replace(/-/g, ' '),
+      name: humanLabel(part, 'uk'),
       item: absoluteUrl(acc),
     })
   })
