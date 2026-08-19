@@ -52,7 +52,47 @@ function categorySlugForSubcategory(subSlug) {
   if (subSlug.startsWith('handyman-')) return 'handyman'
   if (subSlug.startsWith('furniture-')) return 'furniture'
   if (subSlug.startsWith('electrical-')) return 'electrical'
+  if (subSlug.startsWith('design-engineering')) return 'design-engineering'
   return 'construction'
+}
+
+function manufacturerRow(userId, biz) {
+  const m = biz.ca_manufacturer
+  if (!m) return null
+  return {
+    profile_id: userId,
+    slug: m.slug || biz.slug,
+    company_name: m.company_name || biz.full_name,
+    description: m.description || biz.bio || '',
+    website: m.website || biz.website || null,
+    logo_url: m.logo_url || null,
+    public_email: m.public_email || biz.public_email || null,
+    public_phone: m.public_phone || biz.phone || null,
+    show_public_contacts: true,
+    country: m.country || biz.country || null,
+    headquarters: m.headquarters || biz.location || null,
+    categories: m.categories || ['manufacturers'],
+    products: m.products || biz.services || [],
+    target_markets: m.countries_available || [],
+    countries_available: m.countries_available || [],
+    languages: (m.languages || []).map((x) => String(x).toUpperCase()),
+    agent_required: true,
+    non_exclusive_representation: true,
+    exclusive_representation: false,
+    is_published: true,
+    verification_status: 'unverified',
+    images: m.logo_url ? [m.logo_url] : [],
+  }
+}
+
+async function syncManufacturerProfile(client, userId, biz) {
+  const row = manufacturerRow(userId, biz)
+  if (!row) return { synced: 0 }
+  const { error } = await client.from('manufacturer_profiles').upsert(row, {
+    onConflict: 'profile_id',
+  })
+  if (error) throw new Error(`manufacturer_profiles ${biz.slug}: ${error.message}`)
+  return { synced: 1 }
 }
 
 async function findAuthUserByEmail(admin, email) {
@@ -186,6 +226,7 @@ async function ensureViaAdmin(admin, biz) {
     const { error } = await admin.from('profiles').update(patch).eq('id', existing.id)
     if (error) throw new Error(`profile update ${biz.slug}: ${error.message}`)
     await syncProfessionalCategories(admin, existing.id, biz.work_subcategory_slugs)
+    await syncManufacturerProfile(admin, existing.id, biz)
     return { id: existing.id, action: 'updated_existing' }
   }
 
@@ -216,6 +257,7 @@ async function ensureViaAdmin(admin, biz) {
   if (upsertErr) throw new Error(`profile upsert ${biz.slug}: ${upsertErr.message}`)
 
   await syncProfessionalCategories(admin, userId, biz.work_subcategory_slugs)
+  await syncManufacturerProfile(admin, userId, biz)
   return { id: userId, action: error && userId ? 'linked_existing_auth' : 'created' }
 }
 
@@ -271,6 +313,7 @@ async function ensureViaSignup(anonClient, url, anonKey, biz) {
   if (upErr) throw new Error(`profile update ${biz.slug}: ${upErr.message}`)
 
   await syncProfessionalCategories(authed, userId, biz.work_subcategory_slugs)
+  await syncManufacturerProfile(authed, userId, biz)
   await authed.auth.signOut()
 
   return { id: userId, action: 'created_via_signup' }
@@ -378,7 +421,8 @@ async function main() {
     seed_summary: payload.summary,
   }
 
-  const reportPath = resolve(root, 'data/directory/import-run-report.json')
+  const dataBase = dataPath.split('/').pop()?.replace(/\.json$/i, '') || 'import'
+  const reportPath = resolve(root, `data/directory/${dataBase}-import-run-report.json`)
   writeFileSync(reportPath, JSON.stringify(report, null, 2) + '\n')
 
   const md = `# Import run report
@@ -405,7 +449,7 @@ ${report.imported.map((r) => `- \`${r.action}\` **${r.full_name}** (\`${r.slug}\
 
 ${report.failed.map((r) => `- \`${r.slug}\`: ${r.error}`).join('\n') || '_none_'}
 `
-  writeFileSync(resolve(root, 'data/directory/import-run-report.md'), md)
+  writeFileSync(resolve(root, `data/directory/${dataBase}-import-run-report.md`), md)
 
   console.log(`\nImport finished. Report: ${reportPath}`)
   console.log(JSON.stringify(report.totals, null, 2))

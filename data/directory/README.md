@@ -11,6 +11,7 @@ Curated initial directory of publicly listed construction companies and professi
 | Spain electricians | `spain-electricians-from-listing.json` | — | DImarket-style masters |
 | **Slovakia** | `slovakia-directory-nationwide.json` | `build-slovakia-directory-seed.mjs` | Masters + companies + map coords |
 | **Romania** | `romania-directory-nationwide.json` | `build-romania-directory-seed.mjs` | Masters + companies + map coords |
+| **Services expansion** | `public-services-expansion.json` | `build-public-services-expansion.mjs` | Real estate, legal, accounting, cleaning, architects, engineers, manufacturers |
 
 ## What is included
 
@@ -34,6 +35,7 @@ Reviews, ratings, third-party biographies, marketing copy copied verbatim, photo
 node scripts/build-public-directory-seed.mjs
 node scripts/build-slovakia-directory-seed.mjs
 node scripts/build-romania-directory-seed.mjs
+node scripts/build-public-services-expansion.mjs
 ```
 
 ## Import into database
@@ -44,6 +46,9 @@ node scripts/import-public-directory.mjs --data=data/directory/slovakia-director
 
 node scripts/import-public-directory.mjs --data=data/directory/romania-directory-nationwide.json
 node scripts/import-public-directory.mjs --data=data/directory/romania-directory-nationwide.json --apply
+
+node scripts/import-public-directory.mjs --data=data/directory/public-services-expansion.json
+node scripts/import-public-directory.mjs --data=data/directory/public-services-expansion.json --apply
 ```
 
 Requires `SUPABASE_SERVICE_ROLE_KEY` and `VITE_SUPABASE_URL` / `SUPABASE_URL`.

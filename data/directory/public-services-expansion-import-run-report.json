@@ -1,0 +1,273 @@
+{
+  "started_at": "2026-08-19T15:51:30.285Z",
+  "mode": "apply:anon_signup",
+  "imported": [
+    {
+      "slug": "lucas-fox-barcelona",
+      "full_name": "Lucas Fox — Barcelona",
+      "id": "ba040031-7db7-47a0-83da-2661215c4738",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "lucas-fox-madrid",
+      "full_name": "Lucas Fox — Madrid",
+      "id": "137f0c83-63a5-4807-b33b-510aa5b03207",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "gilmar-madrid",
+      "full_name": "Gilmar Consulting Inmobiliario — Madrid",
+      "id": "fad26474-8cad-46d0-a9b2-5e12358554fa",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "engel-volkers-madrid-genova",
+      "full_name": "Engel & Völkers Madrid Génova",
+      "id": "a26847d6-8289-435f-b305-3673925a1668",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "herrys-bratislava",
+      "full_name": "HERRYS s.r.o.",
+      "id": "cb217ead-195e-4771-8340-ab82c36fc829",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "hidalgo-saiz-abogados-valencia",
+      "full_name": "Hidalgo Saiz Abogados",
+      "id": "94021d93-ac9c-41d9-ab03-212d6191deae",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "ijuridic-abogados-valencia",
+      "full_name": "Ijuridic Abogados",
+      "id": "51b833f0-8961-4f2f-9bd6-adc1e33c5dca",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "consul-gvv-sevilla",
+      "full_name": "Consulting GVV — Sevilla",
+      "id": "8dbfb489-32f2-479c-88ae-6cce872672b3",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "alberto-marquez-asesoria-sevilla",
+      "full_name": "J. Alberto Márquez — Asesoría Integral Sevilla",
+      "id": "7d193a3e-69f0-4d2f-9a7e-0ff648f128dc",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "relimpiax-madrid",
+      "full_name": "Relimpiax",
+      "id": "7a326fcb-8d2f-48de-8ca6-b7405ca337f5",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "limpiezas-rodriguez-madrid",
+      "full_name": "Limpiezas Rodríguez",
+      "id": "a1cd2172-57eb-43a5-877a-5d7eabdbc9cf",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "alizan-servicios-madrid",
+      "full_name": "Alizan Servicios",
+      "id": "43c775a7-4e9f-4664-a7b8-148b08bb8cfb",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "ikiwi-barcelona",
+      "full_name": "IKIWI",
+      "id": "04e17cf1-781c-4ec5-a341-c8c9e47c2851",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "alfham-barcelona",
+      "full_name": "ALFHAM",
+      "id": "a76e3ca0-eece-4932-9efc-2d4e1b3eccbe",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "estudio-lamela-madrid",
+      "full_name": "Estudio Lamela Arquitectos",
+      "id": "2c1bdceb-c53e-42ab-8597-da67aa2d519b",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "ortiz-leon-arquitectos-madrid",
+      "full_name": "Ortiz.Leon Arquitectos",
+      "id": "243e575a-d249-45f1-b963-0f1f34f3ca95",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "b720-arquitectos-madrid",
+      "full_name": "b720 Fermín Vázquez Arquitectos — Madrid",
+      "id": "4fbfec2d-758a-4461-9658-911986334ec6",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "idom-bilbao",
+      "full_name": "IDOM — Bilbao",
+      "id": "7468676b-26f9-40f4-83f6-79da836a0fbf",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "idom-madrid",
+      "full_name": "IDOM — Madrid",
+      "id": "8e09f280-7518-4231-a103-f98a2d1edef3",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "typsa-madrid",
+      "full_name": "TYPSA — Técnica y Proyectos",
+      "id": "28fdd776-4f3b-4675-8863-b8d804e52d6e",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "sener-getxo",
+      "full_name": "SENER",
+      "id": "1cdd6e3d-7460-4925-aa7b-90c9b41910c8",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "acr-grupo-madrid",
+      "full_name": "ACR — Madrid",
+      "id": "36d61515-394a-42d9-bced-189b026521ab",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "hormann-steinhagen",
+      "full_name": "Hörmann",
+      "id": "feaf0012-03bb-42fb-977a-40dcb41fe6be",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "schueco-bielefeld",
+      "full_name": "Schüco",
+      "id": "2e6bd237-2e65-4f52-a263-15dd4ddc647d",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "roca-barcelona",
+      "full_name": "Roca",
+      "id": "0a4736de-6286-48f8-89b5-443008ca9f6d",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "porcelanosa-vilareal",
+      "full_name": "PORCELANOSA",
+      "id": "e641f763-37de-4b88-a63a-c90d46dbcc58",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "cortizo-padron",
+      "full_name": "CORTIZO",
+      "id": "af32df8e-adcb-4b3b-a1d5-a132664db87f",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "fakro-nowy-sacz",
+      "full_name": "FAKRO",
+      "id": "f85c455f-d202-44de-87d7-7b4754e5564a",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "mapei-milan",
+      "full_name": "MAPEI",
+      "id": "6b328cd4-35d3-4e7d-b3a5-e09607f725e8",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "vaillant-remscheid",
+      "full_name": "Vaillant",
+      "id": "96fa2052-59de-44ee-8400-575ff7c67356",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "daikin-europe-ostend",
+      "full_name": "Daikin Europe",
+      "id": "e900576c-3900-49b3-936d-27a89f9a6c9d",
+      "action": "created_via_signup"
+    },
+    {
+      "slug": "aluprof-bielsko",
+      "full_name": "Aluprof",
+      "id": "e29b9047-53ca-4e0c-bcb2-aa28857b9d55",
+      "action": "created_via_signup"
+    }
+  ],
+  "failed": [],
+  "created": 32,
+  "updated": 0,
+  "linked": 0,
+  "skipped": 0,
+  "finished_at": "2026-08-19T15:52:12.418Z",
+  "totals": {
+    "attempted": 32,
+    "succeeded": 32,
+    "failed": 0,
+    "created": 32,
+    "updated": 0,
+    "linked": 0,
+    "skipped": 0,
+    "seed_summary": {
+      "businesses_ready_to_import": 32,
+      "by_kind": {
+        "realestate": 5,
+        "legal": 2,
+        "accounting": 2,
+        "cleaning": 5,
+        "architect": 2,
+        "engineer": 5,
+        "manufacturer": 10,
+        "construction": 1
+      },
+      "categories_populated": [
+        "Accountant",
+        "Architecture",
+        "Cleaning",
+        "Construction Company",
+        "Door Manufacturers",
+        "Engineering",
+        "Flooring",
+        "Gestoría",
+        "HVAC",
+        "Interior Design",
+        "Lawyer",
+        "Plumbing",
+        "Real Estate",
+        "Renovation",
+        "Tax Consultant",
+        "Tiles",
+        "Window Manufacturers"
+      ],
+      "site_category_slugs_covered": [
+        "accounting-finance",
+        "cleaning",
+        "construction",
+        "design-engineering",
+        "legal-notary",
+        "sell-rent"
+      ],
+      "cities_count": 17,
+      "cities": [
+        "Barcelona, Catalonia, Spain",
+        "Bielefeld, North Rhine-Westphalia, Germany",
+        "Bielsko-Biała, Silesia, Poland",
+        "Bilbao, Basque Country, Spain",
+        "Bratislava, Bratislava, Slovakia",
+        "Getxo, Basque Country, Spain",
+        "Madrid, Madrid, Spain",
+        "Milan, Lombardy, Italy",
+        "Nowy Sącz, Lesser Poland, Poland",
+        "Ostend, West Flanders, Belgium",
+        "Padrón, Galicia, Spain",
+        "Remscheid, North Rhine-Westphalia, Germany",
+        "San Sebastián de los Reyes, Madrid, Spain",
+        "Sevilla, Andalusia, Spain",
+        "Steinhagen, North Rhine-Westphalia, Germany",
+        "Valencia, Valencia, Spain",
+        "Vila-real, Valencia, Spain"
+      ]
+    }
+  }
+}

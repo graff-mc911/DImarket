@@ -755,5 +755,371 @@
       "IT",
       "PL"
     ]
+  },
+  {
+    "slug": "hormann",
+    "company_name": "Hörmann",
+    "description": "Garage, industrial and entrance doors plus loading equipment for residential and commercial buildings.",
+    "website": "https://www.hormann.com",
+    "logo_url": "https://logo.clearbit.com/hormann.com",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Germany",
+    "headquarters": "Steinhagen, Germany",
+    "lat": 52.0086,
+    "lng": 8.4144,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Garage doors",
+      "Industrial doors",
+      "Entrance doors"
+    ],
+    "countries_available": [
+      "Germany",
+      "Spain",
+      "France",
+      "Poland",
+      "Italy",
+      "Ukraine",
+      "Romania"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "FR",
+      "ES"
+    ]
+  },
+  {
+    "slug": "schueco",
+    "company_name": "Schüco",
+    "description": "Aluminium window, door and facade systems for residential and commercial buildings.",
+    "website": "https://www.schueco.com",
+    "logo_url": "https://logo.clearbit.com/schueco.com",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Germany",
+    "headquarters": "Bielefeld, Germany",
+    "lat": 52.0302,
+    "lng": 8.5325,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Window systems",
+      "Facade systems",
+      "Doors"
+    ],
+    "countries_available": [
+      "Germany",
+      "Spain",
+      "France",
+      "Poland",
+      "Italy",
+      "Ukraine"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "ES",
+      "FR"
+    ]
+  },
+  {
+    "slug": "roca",
+    "company_name": "Roca",
+    "description": "Bathroom ceramics and sanitary products for residential and commercial buildings.",
+    "website": "https://www.roca.com",
+    "logo_url": "https://logo.clearbit.com/roca.com",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Spain",
+    "headquarters": "Barcelona, Spain",
+    "lat": 41.3851,
+    "lng": 2.1734,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Bathroom ceramics",
+      "Sanitary ware",
+      "Bathroom furniture"
+    ],
+    "countries_available": [
+      "Spain",
+      "France",
+      "Germany",
+      "Poland",
+      "Italy",
+      "Romania",
+      "Ukraine"
+    ],
+    "languages": [
+      "ES",
+      "EN",
+      "FR"
+    ]
+  },
+  {
+    "slug": "porcelanosa",
+    "company_name": "PORCELANOSA",
+    "description": "Ceramic tiles and interior surfaces for residential and commercial buildings.",
+    "website": "https://www.porcelanosa.com",
+    "logo_url": "https://logo.clearbit.com/porcelanosa.com",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Spain",
+    "headquarters": "Vila-real, Spain",
+    "lat": 39.9378,
+    "lng": -0.1014,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Ceramic tiles",
+      "Bathroom surfaces",
+      "Kitchen surfaces"
+    ],
+    "countries_available": [
+      "Spain",
+      "France",
+      "Germany",
+      "Italy",
+      "Poland",
+      "Ukraine"
+    ],
+    "languages": [
+      "ES",
+      "EN",
+      "FR"
+    ]
+  },
+  {
+    "slug": "cortizo",
+    "company_name": "CORTIZO",
+    "description": "Aluminium window, door and facade systems for residential and commercial buildings.",
+    "website": "https://www.cortizo.com",
+    "logo_url": "https://logo.clearbit.com/cortizo.com",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Spain",
+    "headquarters": "Padrón, Spain",
+    "lat": 42.7386,
+    "lng": -8.6604,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Aluminium windows",
+      "Facade systems",
+      "Doors"
+    ],
+    "countries_available": [
+      "Spain",
+      "France",
+      "Portugal",
+      "Germany",
+      "Poland",
+      "Italy"
+    ],
+    "languages": [
+      "ES",
+      "EN",
+      "PT"
+    ]
+  },
+  {
+    "slug": "fakro",
+    "company_name": "FAKRO",
+    "description": "Roof windows, loft ladders and daylight systems for residential buildings.",
+    "website": "https://www.fakro.com",
+    "logo_url": "https://logo.clearbit.com/fakro.com",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Poland",
+    "headquarters": "Nowy Sącz, Poland",
+    "lat": 49.6218,
+    "lng": 20.6971,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Roof windows",
+      "Loft ladders",
+      "Daylight systems"
+    ],
+    "countries_available": [
+      "Poland",
+      "Germany",
+      "Spain",
+      "France",
+      "Italy",
+      "Ukraine",
+      "Romania",
+      "Slovakia"
+    ],
+    "languages": [
+      "PL",
+      "EN",
+      "DE"
+    ]
+  },
+  {
+    "slug": "mapei",
+    "company_name": "MAPEI",
+    "description": "Adhesives, sealants and chemical products for tiling, flooring and construction.",
+    "website": "https://www.mapei.com",
+    "logo_url": "https://logo.clearbit.com/mapei.com",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Italy",
+    "headquarters": "Milan, Italy",
+    "lat": 45.4642,
+    "lng": 9.19,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Tile adhesives",
+      "Sealants",
+      "Flooring compounds"
+    ],
+    "countries_available": [
+      "Italy",
+      "Spain",
+      "Germany",
+      "France",
+      "Poland",
+      "Romania",
+      "Ukraine"
+    ],
+    "languages": [
+      "IT",
+      "EN",
+      "ES",
+      "DE"
+    ]
+  },
+  {
+    "slug": "vaillant",
+    "company_name": "Vaillant",
+    "description": "Heat pumps, boilers and heating systems for residential and commercial buildings.",
+    "website": "https://www.vaillant.com",
+    "logo_url": "https://logo.clearbit.com/vaillant.com",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Germany",
+    "headquarters": "Remscheid, Germany",
+    "lat": 51.1788,
+    "lng": 7.1897,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Heat pumps",
+      "Boilers",
+      "Heating systems"
+    ],
+    "countries_available": [
+      "Germany",
+      "Spain",
+      "France",
+      "Poland",
+      "Italy",
+      "Ukraine",
+      "Slovakia"
+    ],
+    "languages": [
+      "DE",
+      "EN",
+      "FR",
+      "ES"
+    ]
+  },
+  {
+    "slug": "daikin-europe",
+    "company_name": "Daikin Europe",
+    "description": "Air conditioning, heat pumps and ventilation systems for residential and commercial buildings.",
+    "website": "https://www.daikin.eu",
+    "logo_url": "https://logo.clearbit.com/daikin.eu",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Belgium",
+    "headquarters": "Ostend, Belgium",
+    "lat": 51.2303,
+    "lng": 2.912,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Air conditioning",
+      "Heat pumps",
+      "Ventilation"
+    ],
+    "countries_available": [
+      "Belgium",
+      "Spain",
+      "Germany",
+      "France",
+      "Poland",
+      "Italy",
+      "Romania",
+      "Ukraine"
+    ],
+    "languages": [
+      "EN",
+      "FR",
+      "DE",
+      "ES",
+      "NL"
+    ]
+  },
+  {
+    "slug": "aluprof",
+    "company_name": "Aluprof",
+    "description": "Aluminium window, door and facade systems for residential and commercial buildings.",
+    "website": "https://aluprof.com",
+    "logo_url": "https://logo.clearbit.com/aluprof.com",
+    "public_email": null,
+    "public_phone": null,
+    "country": "Poland",
+    "headquarters": "Bielsko-Biała, Poland",
+    "lat": 49.8224,
+    "lng": 19.0469,
+    "categories": [
+      "manufacturers",
+      "construction"
+    ],
+    "products": [
+      "Aluminium windows",
+      "Facade systems",
+      "Doors"
+    ],
+    "countries_available": [
+      "Poland",
+      "Germany",
+      "Spain",
+      "France",
+      "Italy",
+      "Ukraine",
+      "Slovakia",
+      "Romania"
+    ],
+    "languages": [
+      "PL",
+      "EN",
+      "DE"
+    ]
   }
 ]

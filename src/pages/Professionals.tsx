@@ -238,11 +238,13 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
         id: category.id,
         slug: category.slug,
         label: translateCategory(category),
-        count: filteredProfessionals.filter((professional) =>
-          (professional.professional_categories || []).some(
+        count: filteredProfessionals.filter((professional) => {
+          const viaJoin = (professional.professional_categories || []).some(
             (item) => item.category?.slug === category.slug || item.category_id === category.id,
-          ),
-        ).length,
+          )
+          if (viaJoin) return true
+          return matchesWorkPrefix(professional.work_subcategory_slugs, category.slug)
+        }).length,
       }))
       .filter((item) => item.count > 0)
       .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))

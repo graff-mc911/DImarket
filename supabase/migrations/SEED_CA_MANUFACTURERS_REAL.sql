@@ -2572,6 +2572,1286 @@ BEGIN
     images = EXCLUDED.images,
     updated_at = now();
 
+  -- Hörmann
+  v_user := '492ca606-482e-4fb9-a8dc-1d27b6598c87'::uuid;
+  v_email := 'directory+mfr-hormann@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'Hörmann', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'Hörmann',
+    'Garage, industrial and entrance doors plus loading equipment for residential and commercial buildings.',
+    'https://www.hormann.com',
+    NULL,
+    'Steinhagen, Germany',
+    'company',
+    true,
+    52.0086,
+    8.4144,
+    'https://logo.clearbit.com/hormann.com',
+    'https://logo.clearbit.com/hormann.com',
+    ARRAY['DE', 'EN', 'FR', 'ES']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'hormann',
+    'Hörmann',
+    'Garage, industrial and entrance doors plus loading equipment for residential and commercial buildings.',
+    'https://www.hormann.com',
+    'https://logo.clearbit.com/hormann.com',
+    NULL,
+    NULL,
+    true,
+    'Germany',
+    'Steinhagen, Germany',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Garage doors', 'Industrial doors', 'Entrance doors']::text[],
+    ARRAY['Germany', 'Spain', 'France', 'Poland', 'Italy', 'Ukraine', 'Romania']::text[],
+    ARRAY['Germany', 'Spain', 'France', 'Poland', 'Italy', 'Ukraine', 'Romania']::text[],
+    ARRAY['DE', 'EN', 'FR', 'ES']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/hormann.com']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
+  -- Schüco
+  v_user := 'a25fbe4f-e3f6-4e52-a5b3-e4eb539277a2'::uuid;
+  v_email := 'directory+mfr-schueco@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'Schüco', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'Schüco',
+    'Aluminium window, door and facade systems for residential and commercial buildings.',
+    'https://www.schueco.com',
+    NULL,
+    'Bielefeld, Germany',
+    'company',
+    true,
+    52.0302,
+    8.5325,
+    'https://logo.clearbit.com/schueco.com',
+    'https://logo.clearbit.com/schueco.com',
+    ARRAY['DE', 'EN', 'ES', 'FR']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'schueco',
+    'Schüco',
+    'Aluminium window, door and facade systems for residential and commercial buildings.',
+    'https://www.schueco.com',
+    'https://logo.clearbit.com/schueco.com',
+    NULL,
+    NULL,
+    true,
+    'Germany',
+    'Bielefeld, Germany',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Window systems', 'Facade systems', 'Doors']::text[],
+    ARRAY['Germany', 'Spain', 'France', 'Poland', 'Italy', 'Ukraine']::text[],
+    ARRAY['Germany', 'Spain', 'France', 'Poland', 'Italy', 'Ukraine']::text[],
+    ARRAY['DE', 'EN', 'ES', 'FR']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/schueco.com']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
+  -- Roca
+  v_user := '05c73599-d4e2-4cd7-aec3-dd1f5577b8db'::uuid;
+  v_email := 'directory+mfr-roca@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'Roca', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'Roca',
+    'Bathroom ceramics and sanitary products for residential and commercial buildings.',
+    'https://www.roca.com',
+    NULL,
+    'Barcelona, Spain',
+    'company',
+    true,
+    41.3851,
+    2.1734,
+    'https://logo.clearbit.com/roca.com',
+    'https://logo.clearbit.com/roca.com',
+    ARRAY['ES', 'EN', 'FR']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'roca',
+    'Roca',
+    'Bathroom ceramics and sanitary products for residential and commercial buildings.',
+    'https://www.roca.com',
+    'https://logo.clearbit.com/roca.com',
+    NULL,
+    NULL,
+    true,
+    'Spain',
+    'Barcelona, Spain',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Bathroom ceramics', 'Sanitary ware', 'Bathroom furniture']::text[],
+    ARRAY['Spain', 'France', 'Germany', 'Poland', 'Italy', 'Romania', 'Ukraine']::text[],
+    ARRAY['Spain', 'France', 'Germany', 'Poland', 'Italy', 'Romania', 'Ukraine']::text[],
+    ARRAY['ES', 'EN', 'FR']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/roca.com']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
+  -- PORCELANOSA
+  v_user := '3d3f1152-6c0d-4b7a-ac43-3bb7f70a3098'::uuid;
+  v_email := 'directory+mfr-porcelanosa@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'PORCELANOSA', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'PORCELANOSA',
+    'Ceramic tiles and interior surfaces for residential and commercial buildings.',
+    'https://www.porcelanosa.com',
+    NULL,
+    'Vila-real, Spain',
+    'company',
+    true,
+    39.9378,
+    -0.1014,
+    'https://logo.clearbit.com/porcelanosa.com',
+    'https://logo.clearbit.com/porcelanosa.com',
+    ARRAY['ES', 'EN', 'FR']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'porcelanosa',
+    'PORCELANOSA',
+    'Ceramic tiles and interior surfaces for residential and commercial buildings.',
+    'https://www.porcelanosa.com',
+    'https://logo.clearbit.com/porcelanosa.com',
+    NULL,
+    NULL,
+    true,
+    'Spain',
+    'Vila-real, Spain',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Ceramic tiles', 'Bathroom surfaces', 'Kitchen surfaces']::text[],
+    ARRAY['Spain', 'France', 'Germany', 'Italy', 'Poland', 'Ukraine']::text[],
+    ARRAY['Spain', 'France', 'Germany', 'Italy', 'Poland', 'Ukraine']::text[],
+    ARRAY['ES', 'EN', 'FR']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/porcelanosa.com']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
+  -- CORTIZO
+  v_user := '27a6706c-1efb-4bca-a9c6-667a60137a40'::uuid;
+  v_email := 'directory+mfr-cortizo@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'CORTIZO', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'CORTIZO',
+    'Aluminium window, door and facade systems for residential and commercial buildings.',
+    'https://www.cortizo.com',
+    NULL,
+    'Padrón, Spain',
+    'company',
+    true,
+    42.7386,
+    -8.6604,
+    'https://logo.clearbit.com/cortizo.com',
+    'https://logo.clearbit.com/cortizo.com',
+    ARRAY['ES', 'EN', 'PT']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'cortizo',
+    'CORTIZO',
+    'Aluminium window, door and facade systems for residential and commercial buildings.',
+    'https://www.cortizo.com',
+    'https://logo.clearbit.com/cortizo.com',
+    NULL,
+    NULL,
+    true,
+    'Spain',
+    'Padrón, Spain',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Aluminium windows', 'Facade systems', 'Doors']::text[],
+    ARRAY['Spain', 'France', 'Portugal', 'Germany', 'Poland', 'Italy']::text[],
+    ARRAY['Spain', 'France', 'Portugal', 'Germany', 'Poland', 'Italy']::text[],
+    ARRAY['ES', 'EN', 'PT']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/cortizo.com']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
+  -- FAKRO
+  v_user := '6be19e19-bd9e-4a9b-a6c4-dd3fd4a00e64'::uuid;
+  v_email := 'directory+mfr-fakro@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'FAKRO', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'FAKRO',
+    'Roof windows, loft ladders and daylight systems for residential buildings.',
+    'https://www.fakro.com',
+    NULL,
+    'Nowy Sącz, Poland',
+    'company',
+    true,
+    49.6218,
+    20.6971,
+    'https://logo.clearbit.com/fakro.com',
+    'https://logo.clearbit.com/fakro.com',
+    ARRAY['PL', 'EN', 'DE']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'fakro',
+    'FAKRO',
+    'Roof windows, loft ladders and daylight systems for residential buildings.',
+    'https://www.fakro.com',
+    'https://logo.clearbit.com/fakro.com',
+    NULL,
+    NULL,
+    true,
+    'Poland',
+    'Nowy Sącz, Poland',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Roof windows', 'Loft ladders', 'Daylight systems']::text[],
+    ARRAY['Poland', 'Germany', 'Spain', 'France', 'Italy', 'Ukraine', 'Romania', 'Slovakia']::text[],
+    ARRAY['Poland', 'Germany', 'Spain', 'France', 'Italy', 'Ukraine', 'Romania', 'Slovakia']::text[],
+    ARRAY['PL', 'EN', 'DE']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/fakro.com']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
+  -- MAPEI
+  v_user := '31bd211f-4417-443b-aed6-eab83e952fd8'::uuid;
+  v_email := 'directory+mfr-mapei@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'MAPEI', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'MAPEI',
+    'Adhesives, sealants and chemical products for tiling, flooring and construction.',
+    'https://www.mapei.com',
+    NULL,
+    'Milan, Italy',
+    'company',
+    true,
+    45.4642,
+    9.19,
+    'https://logo.clearbit.com/mapei.com',
+    'https://logo.clearbit.com/mapei.com',
+    ARRAY['IT', 'EN', 'ES', 'DE']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'mapei',
+    'MAPEI',
+    'Adhesives, sealants and chemical products for tiling, flooring and construction.',
+    'https://www.mapei.com',
+    'https://logo.clearbit.com/mapei.com',
+    NULL,
+    NULL,
+    true,
+    'Italy',
+    'Milan, Italy',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Tile adhesives', 'Sealants', 'Flooring compounds']::text[],
+    ARRAY['Italy', 'Spain', 'Germany', 'France', 'Poland', 'Romania', 'Ukraine']::text[],
+    ARRAY['Italy', 'Spain', 'Germany', 'France', 'Poland', 'Romania', 'Ukraine']::text[],
+    ARRAY['IT', 'EN', 'ES', 'DE']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/mapei.com']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
+  -- Vaillant
+  v_user := 'e1d0e6d4-1fc1-4fa1-a8c2-b0c61925dd52'::uuid;
+  v_email := 'directory+mfr-vaillant@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'Vaillant', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'Vaillant',
+    'Heat pumps, boilers and heating systems for residential and commercial buildings.',
+    'https://www.vaillant.com',
+    NULL,
+    'Remscheid, Germany',
+    'company',
+    true,
+    51.1788,
+    7.1897,
+    'https://logo.clearbit.com/vaillant.com',
+    'https://logo.clearbit.com/vaillant.com',
+    ARRAY['DE', 'EN', 'FR', 'ES']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'vaillant',
+    'Vaillant',
+    'Heat pumps, boilers and heating systems for residential and commercial buildings.',
+    'https://www.vaillant.com',
+    'https://logo.clearbit.com/vaillant.com',
+    NULL,
+    NULL,
+    true,
+    'Germany',
+    'Remscheid, Germany',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Heat pumps', 'Boilers', 'Heating systems']::text[],
+    ARRAY['Germany', 'Spain', 'France', 'Poland', 'Italy', 'Ukraine', 'Slovakia']::text[],
+    ARRAY['Germany', 'Spain', 'France', 'Poland', 'Italy', 'Ukraine', 'Slovakia']::text[],
+    ARRAY['DE', 'EN', 'FR', 'ES']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/vaillant.com']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
+  -- Daikin Europe
+  v_user := '0d3cdc65-6349-452b-aa12-b32228ed9012'::uuid;
+  v_email := 'directory+mfr-daikin-europe@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'Daikin Europe', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'Daikin Europe',
+    'Air conditioning, heat pumps and ventilation systems for residential and commercial buildings.',
+    'https://www.daikin.eu',
+    NULL,
+    'Ostend, Belgium',
+    'company',
+    true,
+    51.2303,
+    2.912,
+    'https://logo.clearbit.com/daikin.eu',
+    'https://logo.clearbit.com/daikin.eu',
+    ARRAY['EN', 'FR', 'DE', 'ES', 'NL']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'daikin-europe',
+    'Daikin Europe',
+    'Air conditioning, heat pumps and ventilation systems for residential and commercial buildings.',
+    'https://www.daikin.eu',
+    'https://logo.clearbit.com/daikin.eu',
+    NULL,
+    NULL,
+    true,
+    'Belgium',
+    'Ostend, Belgium',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Air conditioning', 'Heat pumps', 'Ventilation']::text[],
+    ARRAY['Belgium', 'Spain', 'Germany', 'France', 'Poland', 'Italy', 'Romania', 'Ukraine']::text[],
+    ARRAY['Belgium', 'Spain', 'Germany', 'France', 'Poland', 'Italy', 'Romania', 'Ukraine']::text[],
+    ARRAY['EN', 'FR', 'DE', 'ES', 'NL']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/daikin.eu']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
+  -- Aluprof
+  v_user := 'e479c307-f765-4f5b-ad16-8b26e86d4297'::uuid;
+  v_email := 'directory+mfr-aluprof@users.dimarket.app';
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = v_user) THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(encode(gen_random_bytes(16), 'hex'), gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', 'Aluprof', 'commercial_manufacturer', true),
+      now(), now(),
+      '', '', '', ''
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = v_user AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+    ) VALUES (
+      v_user,
+      v_user,
+      jsonb_build_object('sub', v_user::text, 'email', v_email),
+      'email',
+      v_user::text,
+      now(), now(), now()
+    );
+  END IF;
+
+  INSERT INTO public.profiles AS p (
+    id, full_name, bio, website, phone, location, user_role, is_professional,
+    service_latitude, service_longitude, avatar_url, profile_photo, languages,
+    availability_status, is_verified, verification_level
+  ) VALUES (
+    v_user,
+    'Aluprof',
+    'Aluminium window, door and facade systems for residential and commercial buildings.',
+    'https://aluprof.com',
+    NULL,
+    'Bielsko-Biała, Poland',
+    'company',
+    true,
+    49.8224,
+    19.0469,
+    'https://logo.clearbit.com/aluprof.com',
+    'https://logo.clearbit.com/aluprof.com',
+    ARRAY['PL', 'EN', 'DE']::text[],
+    'available',
+    true,
+    'gold'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    bio = EXCLUDED.bio,
+    website = EXCLUDED.website,
+    phone = COALESCE(EXCLUDED.phone, p.phone),
+    location = EXCLUDED.location,
+    user_role = 'company',
+    is_professional = true,
+    service_latitude = EXCLUDED.service_latitude,
+    service_longitude = EXCLUDED.service_longitude,
+    avatar_url = EXCLUDED.avatar_url,
+    profile_photo = EXCLUDED.profile_photo,
+    languages = EXCLUDED.languages,
+    is_verified = true,
+    verification_level = 'gold';
+
+  INSERT INTO public.manufacturer_profiles AS mfr (
+    profile_id, slug, company_name, description, website, logo_url,
+    public_email, public_phone, show_public_contacts,
+    country, headquarters, categories, products,
+    target_markets, countries_available, languages,
+    agent_required, non_exclusive_representation, exclusive_representation,
+    verification_status, is_published, images
+  ) VALUES (
+    v_user,
+    'aluprof',
+    'Aluprof',
+    'Aluminium window, door and facade systems for residential and commercial buildings.',
+    'https://aluprof.com',
+    'https://logo.clearbit.com/aluprof.com',
+    NULL,
+    NULL,
+    true,
+    'Poland',
+    'Bielsko-Biała, Poland',
+    ARRAY['manufacturers', 'construction']::text[],
+    ARRAY['Aluminium windows', 'Facade systems', 'Doors']::text[],
+    ARRAY['Poland', 'Germany', 'Spain', 'France', 'Italy', 'Ukraine', 'Slovakia', 'Romania']::text[],
+    ARRAY['Poland', 'Germany', 'Spain', 'France', 'Italy', 'Ukraine', 'Slovakia', 'Romania']::text[],
+    ARRAY['PL', 'EN', 'DE']::text[],
+    true,
+    true,
+    false,
+    'verified',
+    true,
+    ARRAY['https://logo.clearbit.com/aluprof.com']::text[]
+  )
+  ON CONFLICT (profile_id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    company_name = EXCLUDED.company_name,
+    description = EXCLUDED.description,
+    website = EXCLUDED.website,
+    logo_url = EXCLUDED.logo_url,
+    public_email = EXCLUDED.public_email,
+    public_phone = EXCLUDED.public_phone,
+    show_public_contacts = true,
+    country = EXCLUDED.country,
+    headquarters = EXCLUDED.headquarters,
+    categories = EXCLUDED.categories,
+    products = EXCLUDED.products,
+    countries_available = EXCLUDED.countries_available,
+    languages = EXCLUDED.languages,
+    verification_status = 'verified',
+    is_published = true,
+    images = EXCLUDED.images,
+    updated_at = now();
+
 END $$;
 
 NOTIFY pgrst, 'reload schema';
