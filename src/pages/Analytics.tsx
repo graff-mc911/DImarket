@@ -22,7 +22,7 @@ import { OwnerMarketHealth } from '../components/OwnerMarketHealth'
 type RangeDays = 7 | 14 | 30
 
 export function Analytics() {
-  const { user, profile } = useApp()
+  const { user, profile, t } = useApp()
   const owner = isSiteOwner(profile, user?.email)
   const isPro =
     profile?.user_role === 'professional' ||
@@ -62,7 +62,7 @@ export function Analytics() {
           : await fetchProAnalytics(days)
       setData(series)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load analytics')
+      setError(e instanceof Error ? e.message : t('analytics.loadError'))
     } finally {
       setLoading(false)
     }
@@ -81,6 +81,7 @@ export function Analytics() {
   if (!user) return null
 
   const k = data?.kpis || {}
+  const lastDays = t('analytics.chart.lastDays').replace('{n}', String(days))
 
   return (
     <div className="py-6 pb-24 lg:pb-10">
@@ -89,14 +90,12 @@ export function Analytics() {
           <div>
             <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">
               <BarChart3 className="h-4 w-4" />
-              Analytics
+              {t('analytics.eyebrow')}
             </p>
             <h1 className="mt-2 text-[28px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[32px]">
-              {mode === 'platform' ? 'Platform performance' : 'Your performance'}
+              {mode === 'platform' ? t('analytics.title.platform') : t('analytics.title.pro')}
             </h1>
-            <p className="mt-1 text-[14px] text-[#6e6e73]">
-              Revenue · Projects · Conversion · Views · Profile visitors · Response time · Satisfaction
-            </p>
+            <p className="mt-1 text-[14px] text-[#6e6e73]">{t('analytics.subtitle')}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {owner && isPro ? (
@@ -108,7 +107,7 @@ export function Analytics() {
                     mode === 'platform' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
                   }`}
                 >
-                  Platform
+                  {t('analytics.mode.platform')}
                 </button>
                 <button
                   type="button"
@@ -117,7 +116,7 @@ export function Analytics() {
                     mode === 'pro' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
                   }`}
                 >
-                  My business
+                  {t('analytics.mode.pro')}
                 </button>
               </>
             ) : null}
@@ -130,7 +129,7 @@ export function Analytics() {
                   days === d ? 'bg-[#1d1d1f] text-white' : 'border border-[#d2d2d7] bg-white'
                 }`}
               >
-                {d}d
+                {t('analytics.rangeDays').replace('{n}', String(d))}
               </button>
             ))}
             <button
@@ -139,7 +138,7 @@ export function Analytics() {
               className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold"
             >
               <RefreshCw className="h-3.5 w-3.5" />
-              Refresh
+              {t('analytics.refresh')}
             </button>
           </div>
         </header>
@@ -158,33 +157,45 @@ export function Analytics() {
           <>
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               <MetricCard
-                label="Revenue"
+                label={t('analytics.revenue')}
                 value={formatEuro(k.revenue_total)}
-                hint={mode === 'platform' ? 'Completed payments' : 'Accepted quotes'}
+                hint={
+                  mode === 'platform'
+                    ? t('analytics.hint.completedPayments')
+                    : t('analytics.hint.acceptedQuotes')
+                }
               />
               <MetricCard
-                label="Projects"
+                label={t('analytics.projects')}
                 value={String(k.projects_total ?? 0)}
-                hint={mode === 'platform' ? 'New service requests' : 'Applications'}
+                hint={
+                  mode === 'platform'
+                    ? t('analytics.hint.newRequests')
+                    : t('analytics.hint.applications')
+                }
               />
               <MetricCard
-                label="Conversion"
+                label={t('analytics.conversion')}
                 value={`${data?.conversionPct ?? 0}%`}
-                hint="Quotes accepted / sent"
+                hint={t('analytics.hint.quotesAcceptedSent')}
                 accent="#059669"
               />
               <MetricCard
-                label="Views"
+                label={t('analytics.views')}
                 value={String(k.listing_views ?? 0)}
-                hint="Listing views (all time)"
+                hint={t('analytics.hint.listingViews')}
               />
               <MetricCard
-                label="Profile visitors"
+                label={t('analytics.profileVisitors')}
                 value={String(k.profile_views_total ?? 0)}
-                hint={mode === 'platform' ? `Last ${days} days` : 'Total profile views'}
+                hint={
+                  mode === 'platform'
+                    ? t('analytics.hint.lastDays').replace('{n}', String(days))
+                    : t('analytics.hint.totalProfileViews')
+                }
               />
               <MetricCard
-                label="Lead response"
+                label={t('analytics.leadResponse')}
                 value={
                   mode === 'pro'
                     ? formatHours(k.response_hours) !== '—'
@@ -196,48 +207,64 @@ export function Analytics() {
                       ? `${k.response_rate}%`
                       : '—'
                 }
-                hint={mode === 'pro' ? 'Avg time to first reply' : 'Platform avg (when available)'}
+                hint={
+                  mode === 'pro'
+                    ? t('analytics.hint.avgFirstReply')
+                    : t('analytics.hint.platformAvg')
+                }
               />
               <MetricCard
-                label="Satisfaction"
+                label={t('analytics.satisfaction')}
                 value={k.avg_rating != null ? `${Number(k.avg_rating).toFixed(1)}★` : '—'}
                 hint={
-                  k.recommend_pct != null ? `${k.recommend_pct}% would recommend` : 'From reviews'
+                  k.recommend_pct != null
+                    ? t('analytics.hint.wouldRecommend').replace('{n}', String(k.recommend_pct))
+                    : t('analytics.hint.fromReviews')
                 }
                 accent="#d97706"
               />
               <MetricCard
-                label={mode === 'platform' ? 'Active projects' : 'Quotes won'}
+                label={mode === 'platform' ? t('analytics.activeProjects') : t('analytics.quotesWon')}
                 value={String(
                   mode === 'platform' ? k.active_projects ?? 0 : k.quotes_accepted ?? 0,
                 )}
-                hint={data?.source === 'rpc' ? 'Live data' : 'Client aggregate'}
+                hint={
+                  data?.source === 'rpc'
+                    ? t('analytics.hint.liveData')
+                    : t('analytics.hint.clientAggregate')
+                }
               />
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
-              <ChartCard title="Revenue" subtitle={`Last ${days} days`}>
+              <ChartCard title={t('analytics.revenue')} subtitle={lastDays}>
                 <AreaSparkline
                   values={data?.revenue || []}
                   labels={sparseLabels}
                   color="#059669"
                 />
               </ChartCard>
-              <ChartCard title="Projects" subtitle={`Last ${days} days`}>
+              <ChartCard title={t('analytics.projects')} subtitle={lastDays}>
                 <BarChart
                   values={data?.projects || []}
                   labels={sparseLabels}
                   color="#1d1d1f"
                 />
               </ChartCard>
-              <ChartCard title="Profile visitors" subtitle={`Daily views · ${days}d`}>
+              <ChartCard
+                title={t('analytics.profileVisitors')}
+                subtitle={t('analytics.chart.dailyViews').replace('{n}', String(days))}
+              >
                 <BarChart
                   values={data?.profile_views || []}
                   labels={sparseLabels}
                   color="#6366f1"
                 />
               </ChartCard>
-              <ChartCard title="Customer satisfaction" subtitle="Average rating by day">
+              <ChartCard
+                title={t('analytics.satisfaction')}
+                subtitle={t('analytics.chart.avgRatingByDay')}
+              >
                 <AreaSparkline
                   values={data?.satisfaction || []}
                   labels={sparseLabels}
@@ -248,11 +275,14 @@ export function Analytics() {
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
-              <ChartCard title="Conversion funnel" subtitle="Quotes pipeline">
+              <ChartCard title={t('analytics.funnel.title')} subtitle={t('analytics.funnel.subtitle')}>
                 <FunnelChart
                   steps={[
                     {
-                      label: mode === 'pro' ? 'Applications' : 'Quotes created',
+                      label:
+                        mode === 'pro'
+                          ? t('analytics.funnel.applications')
+                          : t('analytics.funnel.quotesCreated'),
                       value: Number(
                         mode === 'pro'
                           ? k.apps_total || k.quotes_sent || 0
@@ -261,32 +291,36 @@ export function Analytics() {
                       color: '#94a3b8',
                     },
                     {
-                      label: 'Quotes sent',
+                      label: t('analytics.funnel.quotesSent'),
                       value: Number(k.quotes_sent || 0),
                       color: '#64748b',
                     },
                     {
-                      label: 'Accepted',
+                      label: t('analytics.funnel.accepted'),
                       value: Number(k.quotes_accepted || 0),
                       color: '#059669',
                     },
                   ]}
                 />
                 <p className="mt-3 text-[12px] text-[#86868b]">
-                  Conversion rate: <strong className="text-[#1d1d1f]">{data?.conversionPct ?? 0}%</strong>
+                  {t('analytics.funnel.rate')}{' '}
+                  <strong className="text-[#1d1d1f]">{data?.conversionPct ?? 0}%</strong>
                 </p>
               </ChartCard>
 
               {mode === 'platform' && owner ? (
-                <ChartCard title="Market health" subtitle="City readiness">
+                <ChartCard title={t('analytics.market.title')} subtitle={t('analytics.market.subtitle')}>
                   <OwnerMarketHealth />
                 </ChartCard>
               ) : (
-                <ChartCard title="Response & quality" subtitle="Lead handling">
+                <ChartCard
+                  title={t('analytics.quality.title')}
+                  subtitle={t('analytics.quality.subtitle')}
+                >
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-xl bg-[#f5f5f7] p-4">
                       <p className="text-[11px] font-semibold uppercase text-[#86868b]">
-                        Response time
+                        {t('analytics.quality.responseTime')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
                         {formatHours(k.response_hours)}
@@ -294,7 +328,7 @@ export function Analytics() {
                     </div>
                     <div className="rounded-xl bg-[#f5f5f7] p-4">
                       <p className="text-[11px] font-semibold uppercase text-[#86868b]">
-                        Response rate
+                        {t('analytics.quality.responseRate')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
                         {k.response_rate != null ? `${k.response_rate}%` : '—'}
@@ -302,14 +336,16 @@ export function Analytics() {
                     </div>
                     <div className="rounded-xl bg-[#f5f5f7] p-4">
                       <p className="text-[11px] font-semibold uppercase text-[#86868b]">
-                        Recommend
+                        {t('analytics.quality.recommend')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
                         {k.recommend_pct != null ? `${k.recommend_pct}%` : '—'}
                       </p>
                     </div>
                     <div className="rounded-xl bg-[#f5f5f7] p-4">
-                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">Rating</p>
+                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">
+                        {t('analytics.quality.rating')}
+                      </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
                         {k.avg_rating != null ? Number(k.avg_rating).toFixed(1) : '—'}
                       </p>
@@ -327,6 +363,7 @@ export function Analytics() {
 
 /** Compact embed for Admin Panel analytics tab */
 export function AnalyticsEmbed({ days = 14 }: { days?: number }) {
+  const { t } = useApp()
   const [data, setData] = useState<AnalyticsSeries | null>(null)
 
   useEffect(() => {
@@ -347,25 +384,25 @@ export function AnalyticsEmbed({ days = 14 }: { days?: number }) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <MetricCard label="Revenue" value={formatEuro(k.revenue_total)} />
-        <MetricCard label="Projects" value={String(k.projects_total ?? 0)} />
-        <MetricCard label="Conversion" value={`${data.conversionPct}%`} />
+        <MetricCard label={t('analytics.revenue')} value={formatEuro(k.revenue_total)} />
+        <MetricCard label={t('analytics.projects')} value={String(k.projects_total ?? 0)} />
+        <MetricCard label={t('analytics.conversion')} value={`${data.conversionPct}%`} />
         <MetricCard
-          label="Satisfaction"
+          label={t('analytics.satisfaction')}
           value={k.avg_rating != null ? `${Number(k.avg_rating).toFixed(1)}★` : '—'}
         />
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <ChartCard title="Revenue">
+        <ChartCard title={t('analytics.revenue')}>
           <AreaSparkline values={data.revenue} labels={labels} color="#059669" />
         </ChartCard>
-        <ChartCard title="Projects">
+        <ChartCard title={t('analytics.projects')}>
           <BarChart values={data.projects} labels={labels} />
         </ChartCard>
-        <ChartCard title="Profile visitors">
+        <ChartCard title={t('analytics.profileVisitors')}>
           <BarChart values={data.profile_views} labels={labels} color="#6366f1" />
         </ChartCard>
-        <ChartCard title="Satisfaction">
+        <ChartCard title={t('analytics.satisfaction')}>
           <AreaSparkline values={data.satisfaction} labels={labels} color="#d97706" />
         </ChartCard>
       </div>
