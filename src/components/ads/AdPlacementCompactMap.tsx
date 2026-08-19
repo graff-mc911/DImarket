@@ -19,6 +19,7 @@ const PURCHASE_EDITOR_PAGES: PlacementEditorPageId[] = [
   'estimator',
   'listing-detail',
   'professional-detail',
+  'create-ad',
 ]
 
 type AdPlacementCompactMapProps = {

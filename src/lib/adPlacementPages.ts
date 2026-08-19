@@ -13,6 +13,7 @@ export type PlacementEditorPageId =
   | 'estimator'
   | 'listing-detail'
   | 'professional-detail'
+  | 'create-ad'
 
 export type PlacementEditorPage = {
   id: PlacementEditorPageId
@@ -32,6 +33,7 @@ export const PLACEMENT_EDITOR_PAGES: PlacementEditorPage[] = [
   { id: 'estimator', adPageKey: 'estimator', route: '/cost-estimator', labelKey: 'advertising.places.page.estimator' },
   { id: 'listing-detail', adPageKey: 'default', route: '/listing/', labelKey: 'advertising.places.page.listingDetail' },
   { id: 'professional-detail', adPageKey: 'default', route: '/professional/', labelKey: 'advertising.places.page.professionalDetail' },
+  { id: 'create-ad', adPageKey: 'default', route: '/create-ad', labelKey: 'advertising.places.page.createAd' },
 ]
 
 const EDITOR_BY_ID = new Map(PLACEMENT_EDITOR_PAGES.map((p) => [p.id, p]))
@@ -104,6 +106,7 @@ export function editorPageFromPath(path: string): PlacementEditorPageId {
   if (path === '/cost-estimator' || path === '/estimate') return 'estimator'
   if (path.startsWith('/listing/')) return 'listing-detail'
   if (path.startsWith('/professional/')) return 'professional-detail'
+  if (path === '/create-ad') return 'create-ad'
   return 'home'
 }
 

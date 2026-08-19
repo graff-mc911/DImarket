@@ -78,8 +78,8 @@ export const AD_PLACEMENT_CATALOG: AdPlacementSlotDef[] = [
   centerSlot('companies', ['/companies']),
   ...mobileInlineSlots('companies', ['/companies'], [1, 2]),
 
-  centerSlot('categories', ['/categories', '/category/']),
-  ...mobileInlineSlots('categories', ['/categories', '/category/'], [1]),
+  centerSlot('categories', ['/categories', '/category/', '/category/manufacturers', '/commercial-agents/manufacturers']),
+  ...mobileInlineSlots('categories', ['/categories', '/category/', '/category/manufacturers', '/commercial-agents/manufacturers'], [1]),
 
   centerSlot('map', ['/map']),
   ...mobileInlineSlots('map', ['/map'], [1]),
@@ -87,8 +87,8 @@ export const AD_PLACEMENT_CATALOG: AdPlacementSlotDef[] = [
   centerSlot('estimator', ['/cost-estimator']),
   ...mobileInlineSlots('estimator', ['/cost-estimator'], [1]),
 
-  centerSlot('default', ['/listing/', '/professional/']),
-  ...mobileInlineSlots('default', ['/listing/', '/professional/'], [1]),
+  centerSlot('default', ['/listing/', '/professional/', '/create-ad']),
+  ...mobileInlineSlots('default', ['/listing/', '/professional/', '/create-ad'], [1]),
 ]
 
 const CATALOG_BY_ID = new Map(AD_PLACEMENT_CATALOG.map((s) => [s.id, s]))

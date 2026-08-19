@@ -17,6 +17,7 @@ import {
   getCategoryDef,
   type CategoryPickerValue,
 } from '../lib/categoryCatalog'
+import { PageContentAds } from '../components/CenterPageAd'
 
 type VisibilityRadius =
   | 'city'
@@ -246,6 +247,7 @@ export function CreateAd() {
 
   return (
     <div className="py-8 pb-24 lg:pb-8">
+            <PageContentAds page="default" outerClassName="mt-0 mb-4" />
             <section className="glass-panel p-5 md:p-6 xl:p-8">
               <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
                 {t('createAd.heroTitle')}

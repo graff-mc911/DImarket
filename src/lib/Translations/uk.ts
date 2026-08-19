@@ -1203,7 +1203,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.places.page.map': 'Карта',
   'advertising.places.page.estimator': 'Калькулятор вартості',
   'advertising.places.page.contact': 'Контакти',
-  'advertising.places.page.createAd': 'Створення реклами',
+  'advertising.places.page.createAd': 'Опублікувати',
   'advertising.places.page.advertising': 'Реклама',
   'advertising.places.page.assistantJob': 'Помічник (заявка)',
   'advertising.places.page.login': 'Вхід',

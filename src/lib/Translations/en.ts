@@ -1202,7 +1202,7 @@ export const enTranslations = {
   'advertising.places.page.map': 'Map',
   'advertising.places.page.estimator': 'Cost estimator',
   'advertising.places.page.contact': 'Contact',
-  'advertising.places.page.createAd': 'Create ad',
+  'advertising.places.page.createAd': 'Publish',
   'advertising.places.page.advertising': 'Advertising',
   'advertising.places.page.assistantJob': 'Assistant (job request)',
   'advertising.places.page.login': 'Sign in',

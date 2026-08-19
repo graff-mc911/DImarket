@@ -118,10 +118,19 @@ export function CategoryPage({ slug }: CategoryPageProps) {
     )
   }, [page?.projects, search])
 
+  const pageAds = (
+    <div className="layout-page-gutter">
+      <PageContentAds page="categories" outerClassName="mt-3 mb-1" />
+    </div>
+  )
+
   if (loading) {
     return (
-      <div className="cat-page cat-page--loading layout-page-gutter py-16">
-        <p className="text-[var(--ink-600)]">{t('marketplace.loading')}</p>
+      <div className="cat-page cat-page--loading">
+        {pageAds}
+        <div className="layout-page-gutter py-16">
+          <p className="text-[var(--ink-600)]">{t('marketplace.loading')}</p>
+        </div>
       </div>
     )
   }
@@ -143,15 +152,13 @@ export function CategoryPage({ slug }: CategoryPageProps) {
 
   return (
     <div className="cat-page">
+      {pageAds}
+
       <CategoryHero
         category={category}
         servicesCount={page.services.length}
         reviewsCount={page.reviews.length}
       />
-
-      <div className="layout-page-gutter">
-        <PageContentAds page="categories" outerClassName="mt-3 mb-1" />
-      </div>
 
       <div className="layout-page-gutter cat-page__body">
         <CategorySearchFilters

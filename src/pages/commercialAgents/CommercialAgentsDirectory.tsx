@@ -15,6 +15,7 @@ import { CommercialAgentsFilters } from '../../components/commercialAgents/Comme
 import { AgentCard } from '../../components/commercialAgents/AgentCard'
 import { ManufacturerCard } from '../../components/commercialAgents/ManufacturerCard'
 import { OpportunityCard } from '../../components/commercialAgents/OpportunityCard'
+import { PageContentAds } from '../../components/CenterPageAd'
 import type { TranslateFn } from '../../lib/i18n'
 
 function readQueryParams(): Partial<CommercialSearchFilters> {
@@ -92,6 +93,9 @@ export function CommercialAgentsDirectory({
   return (
     <div className="page-bg pb-24 lg:pb-12">
       <div className="layout-page-gutter py-8">
+        {mode === 'manufacturers' ? (
+          <PageContentAds page="categories" outerClassName="mt-0 mb-4" />
+        ) : null}
         <h1 className="text-2xl font-extrabold tracking-tight text-[var(--ink-900)] md:text-3xl">{title}</h1>
         <p className="mt-2 max-w-2xl text-sm text-[var(--ink-600)] md:text-base">
           {mode === 'manufacturers'
