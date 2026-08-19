@@ -3,7 +3,7 @@ import { X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard } from './AdOverlayCard'
-import { displaySlotIdsForPage, mobileInlineSlotId, pageKeyFromMobilePage, type AdPageKey, type InlineIndex } from '../lib/adPlacementSlots'
+import { displayMobileSlotIdsForPage, pageKeyFromMobilePage, type AdPageKey, type InlineIndex } from '../lib/adPlacementSlots'
 import { adSlotTailwind } from '../lib/adSlotLayout'
 import { pickMobileCampaign, resolveRenderableSlotId, trackAdImpression } from '../lib/adCampaigns'
 
@@ -27,16 +27,9 @@ export function MobileAdBanner({
   const [adVisible, setAdVisible] = useState(true)
 
   const pageKey = pageKeyFromMobilePage(page)
-  const slotId = useMemo(
-    () =>
-      variant === 'horizontal'
-        ? mobileInlineSlotId(pageKey, 1)
-        : mobileInlineSlotId(pageKey, inlineIndex),
-    [pageKey, variant, inlineIndex],
-  )
 
   const lookupSlots = useMemo(
-    () => displaySlotIdsForPage(pageKey, variant === 'horizontal' ? 1 : inlineIndex),
+    () => displayMobileSlotIdsForPage(pageKey, variant === 'horizontal' ? 1 : inlineIndex),
     [pageKey, variant, inlineIndex],
   )
 
@@ -50,7 +43,7 @@ export function MobileAdBanner({
     [mobileCampaigns, variant, pageKey, inlineIndex],
   )
 
-  const renderSlotId = campaign ? resolveRenderableSlotId(campaign, lookupSlots) ?? slotId : slotId
+  const renderSlotId = campaign ? resolveRenderableSlotId(campaign, lookupSlots) : null
 
   const isHorizontal = variant === 'horizontal'
 

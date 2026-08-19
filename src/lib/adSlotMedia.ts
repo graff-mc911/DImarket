@@ -100,30 +100,6 @@ export function ensureSlotMediaForSelection(
   return next
 }
 
-export function mergeSlotMediaWithDefault(
-  slotMedia: SlotMediaMap,
-  selectedSlots: string[],
-  fallback: AdCampaignMediaState,
-): SlotMediaMap {
-  const merged: SlotMediaMap = {}
-  for (const slotId of selectedSlots) {
-    const custom = slotMedia[slotId]
-    if (slotMediaEntryHasMedia(custom)) {
-      merged[slotId] = normalizeSlotMediaEntry(custom!)
-      continue
-    }
-    if (fallback.mediaUrl.trim() || fallback.slideUrls.length) {
-      merged[slotId] = {
-        mediaUrl: fallback.slideUrls[0] || fallback.mediaUrl,
-        mediaType: fallback.mediaType,
-        slideUrls: fallback.slideUrls.length ? fallback.slideUrls : [fallback.mediaUrl],
-        mediaStyle: { ...fallback.mediaStyle },
-      }
-    }
-  }
-  return merged
-}
-
 export function slotMediaMapFromCampaign(
   campaign: AdCampaign & { slot_media?: unknown },
 ): SlotMediaMap {
@@ -195,11 +171,10 @@ export function campaignWithSlotMedia(
 export function buildSlotMediaPayload(
   slotMedia: SlotMediaMap,
   selectedSlots: string[],
-  fallback: AdCampaignMediaState,
 ): Record<string, unknown> {
-  const merged = mergeSlotMediaWithDefault(slotMedia, selectedSlots, fallback)
   const payload: Record<string, unknown> = {}
-  for (const [slotId, entry] of Object.entries(merged)) {
+  for (const slotId of selectedSlots) {
+    const entry = slotMedia[slotId]
     if (!slotMediaEntryHasMedia(entry)) continue
     const norm = normalizeSlotMediaEntry(entry)
     payload[slotId] = {
@@ -217,22 +192,21 @@ export function buildFullCampaignMediaFields(
   selectedSlots: string[],
   fallback: AdCampaignMediaState,
 ) {
-  const merged = mergeSlotMediaWithDefault(slotMedia, selectedSlots, fallback)
-  const firstSlot = selectedSlots[0]
-  const firstEntry = firstSlot ? merged[firstSlot] : undefined
+  const firstId = selectedSlots.find((id) => slotMediaEntryHasMedia(slotMedia[id]))
+  const firstEntry = firstId ? slotMedia[firstId] : undefined
   const baseState: AdCampaignMediaState =
-    slotMediaEntryHasMedia(firstEntry)
+    firstEntry && slotMediaEntryHasMedia(firstEntry)
       ? {
-          mediaUrl: firstEntry!.slideUrls[0] || firstEntry!.mediaUrl,
-          slideUrls: firstEntry!.slideUrls,
-          mediaStyle: firstEntry!.mediaStyle,
-          mediaType: firstEntry!.mediaType,
+          mediaUrl: firstEntry.slideUrls[0] || firstEntry.mediaUrl,
+          slideUrls: firstEntry.slideUrls.length ? firstEntry.slideUrls : [firstEntry.mediaUrl],
+          mediaStyle: firstEntry.mediaStyle,
+          mediaType: firstEntry.mediaType,
         }
       : fallback
 
   return {
     ...buildCampaignMediaFields(baseState),
-    slot_media: buildSlotMediaPayload(slotMedia, selectedSlots, fallback),
+    slot_media: buildSlotMediaPayload(slotMedia, selectedSlots),
   }
 }
 

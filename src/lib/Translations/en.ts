@@ -1178,7 +1178,7 @@ export const enTranslations = {
   'advertising.slotMedia.copySide': 'Copy first side banner to all side slots',
   'advertising.slotMedia.fillEmpty': 'Fill empty slots from default media below',
   'advertising.slotMedia.fallbackTitle': 'Default media (optional)',
-  'advertising.slotMedia.fallbackDesc': 'Used for any selected slot without its own file.',
+  'advertising.slotMedia.fallbackDesc': 'Not copied into other slots. The wide banner shows only its own file.',
   'advertising.slotMedia.sideNote': 'Side banners L1–L4 and R1–R4 appear on desktop (wide screen).',
   'advertising.sidePromo.title': 'Side banners on DiMarket',
   'advertising.sidePromo.desc': 'Promote on the left and right columns (4 slots per side). Each slot can have its own image and animation.',

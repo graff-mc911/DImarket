@@ -282,10 +282,7 @@ export function getCampaignPosterUrl(
     if (slotId) {
       const pick = slotMediaEntryUrl(map[slotId])
       if (pick) return pick
-      if (granularKeys.length > 0) {
-        if (!campaignOwnsSlot(campaign, slotId)) return ''
-        return campaign.image_url?.trim() || ''
-      }
+      if (granularKeys.length > 0) return ''
     } else {
       for (const val of Object.values(map)) {
         const pick = slotMediaEntryUrl(val)
@@ -469,30 +466,25 @@ export function pickMobileCampaign(
       : `${page}_mob_inline_${inlineIndex}`
 
   const list = campaigns as AdCampaignWithAdvertiser[]
-
-  const exact = list.find((c) => getCampaignPlacements(c).includes(slotId))
-  if (exact) return exact
-
+  const tryIds: string[] = [slotId]
   if (page !== 'home') {
-    const homeSlot =
-      variant === 'horizontal'
-        ? 'home_mob_inline_1'
-        : `home_mob_inline_${inlineIndex}`
-    const homeExact = list.find((c) => getCampaignPlacements(c).includes(homeSlot))
-    if (homeExact) return homeExact
-    const homeCenter = list.find((c) => getCampaignPlacements(c).includes('home_center'))
-    if (homeCenter) return homeCenter
+    tryIds.push(variant === 'horizontal' ? 'home_mob_inline_1' : `home_mob_inline_${inlineIndex}`)
+    if (inlineIndex !== 1) tryIds.push('home_mob_inline_1')
   }
+  if (variant === 'horizontal') tryIds.push('home_leaderboard')
 
-  if (variant === 'horizontal') {
-    const leaderboard = list.find((c) => getCampaignPlacements(c).includes('home_leaderboard'))
-    if (leaderboard) return leaderboard
-    const homeCenter = list.find((c) => getCampaignPlacements(c).includes('home_center'))
-    if (homeCenter) return homeCenter
+  const seen = new Set<string>()
+  for (const id of tryIds) {
+    if (seen.has(id)) continue
+    seen.add(id)
+    const hit = list.find(
+      (c) => getCampaignPlacements(c).includes(id) && campaignRendersInSlot(c, id),
+    )
+    if (hit) return hit
   }
 
   const picked = pickCampaignForSlot(list, slotId)
-  if (picked) return picked
+  if (picked && campaignRendersInSlot(picked, slotId)) return picked
 
   const legacyOnly = list.filter((c) => !campaignUsesGranularPlacements(c))
   if (legacyOnly.length === 0) return null

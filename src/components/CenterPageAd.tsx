@@ -6,7 +6,7 @@ import {
   resolveRenderableSlotId,
   trackAdImpression,
 } from '../lib/adCampaigns'
-import { displaySlotIdsForPage, pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
+import { displayCenterSlotIdsForPage, pageKeyFromSideAdsPage } from '../lib/adPlacementSlots'
 import type { SideAdsPage } from './PageWithSideAds'
 import { MobileAdBanner } from './MobileAdBanner'
 
@@ -20,7 +20,7 @@ export function CenterPageAd({ page, className = '' }: CenterPageAdProps) {
   const { loading, getForSlots } = usePaidAds()
   const pageKey = pageKeyFromSideAdsPage(page)
 
-  const slotIds = useMemo(() => displaySlotIdsForPage(pageKey, 1), [pageKey])
+  const slotIds = useMemo(() => displayCenterSlotIdsForPage(pageKey), [pageKey])
   const pool = useMemo(() => getForSlots(slotIds, 16), [getForSlots, slotIds])
 
   const campaign = useMemo(

@@ -1179,7 +1179,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.slotMedia.copySide': 'Скопіювати перший боковий на всі бокові',
   'advertising.slotMedia.fillEmpty': 'Заповнити порожні з базового медіа нижче',
   'advertising.slotMedia.fallbackTitle': 'Базове медіа (опційно)',
-  'advertising.slotMedia.fallbackDesc': 'Для слотів без окремого файлу.',
+  'advertising.slotMedia.fallbackDesc': 'Не копіюється в інші слоти. Широкий банер показується лише зі своїм файлом.',
   'advertising.slotMedia.sideNote': 'Бокові банери L1–R4 та R1–R4 — на десктопі (широкий екран).',
   'advertising.sidePromo.title': 'Бокові банери на DiMarket',
   'advertising.sidePromo.desc': 'Реклама в лівій і правій колонках (по 4 слоти з кожного боку). Для кожного — своє зображення та анімація.',

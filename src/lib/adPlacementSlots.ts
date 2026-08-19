@@ -56,21 +56,33 @@ export function mobileInlineSlotId(page: AdPageKey, index: InlineIndex): string 
   return `${page}_mob_inline_${index}`
 }
 
-/** Слоти сторінки + домашні, щоб уже куплені банери показувались не лише на `/`. */
+/** Центральні слоти сторінки + home_center. Без широкого/мобільного. */
+export function displayCenterSlotIdsForPage(page: AdPageKey): string[] {
+  if (page === 'home') return [centerSlotId('home')]
+  return [centerSlotId(page), centerSlotId('home')]
+}
+
+/** Широкий / мобільний слот сторінки + home_mob_inline. Без center. */
+export function displayMobileSlotIdsForPage(
+  page: AdPageKey,
+  inlineIndex: InlineIndex = 1,
+): string[] {
+  const ids = [mobileInlineSlotId(page, inlineIndex)]
+  if (page !== 'home') {
+    ids.push(mobileInlineSlotId('home', inlineIndex))
+    if (inlineIndex !== 1) ids.push(mobileInlineSlotId('home', 1))
+  } else if (inlineIndex !== 1) {
+    ids.push(mobileInlineSlotId('home', 1))
+  }
+  return ids
+}
+
+/** Слоти сторінки + домашні (center і mobile окремо, без змішування зон). */
 export function displaySlotIdsForPage(
   page: AdPageKey,
   inlineIndex: InlineIndex = 1,
 ): string[] {
-  const pageSlots = [centerSlotId(page), mobileInlineSlotId(page, inlineIndex)]
-  if (page === 'home') {
-    return [...pageSlots, mobileInlineSlotId('home', 1)]
-  }
-  return [
-    ...pageSlots,
-    centerSlotId('home'),
-    mobileInlineSlotId('home', inlineIndex),
-    mobileInlineSlotId('home', 1),
-  ]
+  return [...displayCenterSlotIdsForPage(page), ...displayMobileSlotIdsForPage(page, inlineIndex)]
 }
 
 export function pageKeyFromSideAdsPage(page?: AdPageKey): AdPageKey {
