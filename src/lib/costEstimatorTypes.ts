@@ -137,11 +137,32 @@ export type EstimatorLocation = {
   radiusKm: number | null
 }
 
+/** Physical object being built or renovated (not a trade). */
+export type EstimatorObjectTypeId =
+  | 'house'
+  | 'apartment'
+  | 'hangar'
+  | 'canopy'
+  | 'farm'
+  | 'garage'
+  | 'warehouse'
+  | 'office'
+  | 'commercial'
+
+export type EstimatorWorkPackage = {
+  workTypeId: string
+  selectedFeatureIds: string[]
+}
+
 export type EstimatorState = {
   step: EstimatorStep
   projectTypeId: EstimatorProjectTypeId | null
-  /** Marketplace main slug or remodel type used by the live calculator. */
+  /** House / apartment / hangar — the object, not the trade. */
+  objectTypeId: EstimatorObjectTypeId | null
+  /** Marketplace work slug currently open in the options column. */
   calculatorTypeId: string | null
+  /** Trades added in construction sequence, each with its own options. */
+  workPackages: EstimatorWorkPackage[]
   description: string
   files: EstimatorDraftFile[]
   location: EstimatorLocation
@@ -168,7 +189,9 @@ export const EMPTY_ESTIMATOR_LOCATION: EstimatorLocation = {
 export const EMPTY_ESTIMATOR_STATE: EstimatorState = {
   step: 1,
   projectTypeId: null,
+  objectTypeId: null,
   calculatorTypeId: null,
+  workPackages: [],
   description: '',
   files: [],
   location: { ...EMPTY_ESTIMATOR_LOCATION },

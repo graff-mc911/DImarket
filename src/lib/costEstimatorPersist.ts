@@ -34,6 +34,8 @@ function serializableState(state: EstimatorState) {
   return {
     projectTypeId: state.projectTypeId,
     calculatorTypeId: state.calculatorTypeId,
+    objectTypeId: state.objectTypeId,
+    workPackages: state.workPackages || [],
     description: state.description,
     location: state.location,
     measurements: state.measurements,

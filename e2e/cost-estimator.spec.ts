@@ -2,9 +2,7 @@ import { test, expect } from '@playwright/test'
 import { clickHeaderNavButton, gotoPath } from './helpers'
 
 test.describe('Cost estimator calculator', () => {
-  test('три колонки як BuildZoom /cost: тип, опції, жива сума і пропозиції', async ({
-    page,
-  }) => {
+  test('три колонки: тип обʼєкта, види робіт по черзі, жива сума', async ({ page }) => {
     await gotoPath(page, '/cost-estimator')
 
     await expect(page.locator('.estimator-page__brand')).toBeVisible()
@@ -28,9 +26,25 @@ test.describe('Cost estimator calculator', () => {
       await expect(estimate).toBeInViewport()
     }
 
-    await page.locator('#estimator-project-type').selectOption('bathroom')
-    await page.locator('#estimator-area').fill('8')
+    const objectSelect = page.locator('#estimator-project-type')
+    await expect(objectSelect.getByRole('option', { name: /Будинок|House/ })).toHaveCount(1)
+    await expect(objectSelect.getByRole('option', { name: /Квартира|Apartment/ })).toHaveCount(1)
+    await expect(objectSelect.getByRole('option', { name: /Ангар|Hangar/ })).toHaveCount(1)
+    await objectSelect.selectOption('house')
+    await page.locator('#estimator-area').fill('80')
+
+    await expect(page.locator('.estimator-calc__work')).toHaveCount(13)
+    await expect(page.getByRole('button', { name: /Бетонні роботи|Concrete works/ })).toBeVisible()
+    await page.getByRole('button', { name: /Бетонні роботи|Concrete works/ }).click()
     await page.locator('.estimator-calc__feature').first().click()
+
+    await page.getByRole('button', { name: /Мурувальні роботи|Masonry/ }).click()
+    await expect(page.getByRole('heading', { name: /Мурувальні роботи|Masonry/ })).toBeVisible()
+    await page.locator('.estimator-calc__feature').first().click()
+
+    await page.locator('#estimator-work-type').selectOption('kitchen')
+    await page.getByRole('button', { name: /^Додати$|^Add$/ }).click()
+    await expect(page.getByRole('heading', { name: /Кухня|Kitchen fit-out/ })).toBeVisible()
 
     const total = page.locator('.estimator-calc__total-value')
     await expect(total).toBeVisible()
@@ -64,11 +78,13 @@ test.describe('Cost estimator calculator', () => {
     await expect(page).toHaveURL(/\/cost-estimator/)
   })
 
-  test('тип проєкту не містить Виробники / Manufacturers', async ({ page }) => {
+  test('тип проєкту — обʼєкт, не Виробники і не окрема робота', async ({ page }) => {
     await gotoPath(page, '/cost-estimator')
     const select = page.locator('#estimator-project-type')
     await expect(select).toBeVisible()
     await expect.poll(async () => select.locator('option').count()).toBeGreaterThan(3)
     await expect(select.getByRole('option', { name: /^(Виробники|Manufacturers)$/ })).toHaveCount(0)
+    await expect(select.getByRole('option', { name: /^(Ванна|Bathroom)$/ })).toHaveCount(0)
+    await expect(page.locator('#estimator-work-type')).toBeVisible()
   })
 })

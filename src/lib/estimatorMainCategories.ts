@@ -26,6 +26,7 @@ const SLUG_TO_TYPE: Record<string, EstimatorProjectTypeId> = {
   flooring: 'flooring',
   carpentry: 'kitchen',
   windows: 'windows',
+  doors: 'doors',
   plumbing: 'plumbing',
   electro: 'electrical',
   hvac: 'hvac',

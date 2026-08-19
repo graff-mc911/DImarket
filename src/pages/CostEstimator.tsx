@@ -31,7 +31,12 @@ import {
 } from '../lib/aiAnalyst'
 import { buildFullCostEstimateLocal, runFullCostEstimate, tierLabel } from '../lib/costEstimatorEngine'
 import { descriptionFromFeatures } from '../lib/estimatorCalculator'
-import { estimatorTypeFromCatalogId } from '../lib/estimatorMainCategories'
+import {
+  flattenWorkFeatureIds,
+  getObjectType,
+  inferObjectTypeFromLegacy,
+  objectTypeLabel,
+} from '../lib/estimatorObjectTypes'
 import { GEO_RADIUS_OPTIONS, radiusModeToKm } from '../lib/geoSearch'
 import {
   downloadCsv,
@@ -62,9 +67,11 @@ import {
   fileKindFromMime,
   getProjectType,
   type EstimatorDraftFile,
+  type EstimatorObjectTypeId,
   type EstimatorProjectTypeId,
   type EstimatorState,
   type EstimatorStep,
+  type EstimatorWorkPackage,
   type FullCostEstimate,
   type PricingTierId,
 } from '../lib/costEstimatorTypes'
@@ -212,7 +219,9 @@ export function CostEstimator() {
       setSavedId(row.id)
       const input = (row.input_json || {}) as {
         projectTypeId?: EstimatorProjectTypeId
+        objectTypeId?: EstimatorObjectTypeId
         calculatorTypeId?: string
+        workPackages?: EstimatorWorkPackage[]
         description?: string
         location?: EstimatorState['location']
         measurements?: EstimatorState['measurements']
@@ -220,14 +229,33 @@ export function CostEstimator() {
         includeMaterials?: boolean
         budgetTier?: PricingTierId
       }
+      const catalogId = input.calculatorTypeId || input.projectTypeId || null
+      const objectTypeId =
+        input.objectTypeId || inferObjectTypeFromLegacy(catalogId ? String(catalogId) : null)
+      const workPackages =
+        input.workPackages?.length
+          ? input.workPackages
+          : catalogId
+            ? [
+                {
+                  workTypeId: String(catalogId),
+                  selectedFeatureIds: input.selectedFeatureIds || [],
+                },
+              ]
+            : []
       setState((prev) => ({
         ...prev,
         step: 6,
-        projectTypeId: input.projectTypeId || prev.projectTypeId,
-        calculatorTypeId: input.calculatorTypeId || input.projectTypeId || prev.calculatorTypeId,
+        projectTypeId: input.projectTypeId || getObjectType(objectTypeId)?.engineType || prev.projectTypeId,
+        objectTypeId,
+        calculatorTypeId: input.calculatorTypeId || workPackages[0]?.workTypeId || prev.calculatorTypeId,
+        workPackages,
         description: input.description || prev.description,
         location: input.location ? { ...prev.location, ...input.location } : prev.location,
-        selectedFeatureIds: input.selectedFeatureIds || prev.selectedFeatureIds,
+        selectedFeatureIds:
+          flattenWorkFeatureIds(workPackages).length > 0
+            ? flattenWorkFeatureIds(workPackages)
+            : input.selectedFeatureIds || prev.selectedFeatureIds,
         includeMaterials: input.includeMaterials ?? prev.includeMaterials,
         budgetTier: input.budgetTier || prev.budgetTier,
         measurements: {
@@ -608,8 +636,7 @@ export function CostEstimator() {
   }
 
   const runCalculatorQuotes = () => {
-    const catalogId = state.calculatorTypeId || state.projectTypeId
-    if (!catalogId) {
+    if (!state.objectTypeId) {
       setError(t('costEstimator.chooseTypeError'))
       return
     }
@@ -617,18 +644,27 @@ export function CostEstimator() {
       setError(t('costEstimator.areaError'))
       return
     }
-    const engineId = state.projectTypeId || estimatorTypeFromCatalogId(catalogId)
+    const object = getObjectType(state.objectTypeId)
+    const engineId = object?.engineType || state.projectTypeId || 'other'
+    const catalogId = state.calculatorTypeId || state.workPackages[0]?.workTypeId || engineId
     const desc =
       state.description.trim() ||
-      descriptionFromFeatures(catalogId, state.selectedFeatureIds, language.code)
+      descriptionFromFeatures(
+        catalogId,
+        flattenWorkFeatureIds(state.workPackages),
+        language.code,
+        state.workPackages,
+      )
+    const objectName = objectTypeLabel(state.objectTypeId, language.code) || typeLabel(engineId)
     const nextState: EstimatorState = {
       ...state,
       projectTypeId: engineId,
       calculatorTypeId: catalogId,
+      selectedFeatureIds: flattenWorkFeatureIds(state.workPackages),
       description:
         desc.trim().length >= 15
           ? desc
-          : `${desc} ${typeLabel(engineId)}, ${state.measurements.areaSqm} m².`.trim(),
+          : `${desc} ${objectName}, ${state.measurements.areaSqm} m².`.trim(),
     }
     setError(null)
     setBusy(true)

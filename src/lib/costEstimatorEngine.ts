@@ -7,6 +7,8 @@ import type { QuoteEstimate } from './bots/types'
 import { formatEuro } from './costEstimator'
 import { estimatorGeoMultiplier, vatRateForCountry } from './costEstimatorGeo'
 import { featureExtraEur } from './estimatorCalculator'
+import { flattenWorkFeatureIds, getObjectType, workTypeLabel } from './estimatorObjectTypes'
+import { estimatorTypeFromCatalogId } from './estimatorMainCategories'
 import {
   ESTIMATOR_PROJECT_TYPES,
   getProjectType,
@@ -255,6 +257,36 @@ function materialQty(unit: string, area: number, rooms: number): number {
   return 1
 }
 
+function specialistsForEstimate(
+  state: EstimatorState,
+  fallbackTypeId: EstimatorProjectTypeId,
+  area: number,
+): SpecialistNeed[] {
+  const packs = state.workPackages || []
+  if (!packs.length) return buildSpecialists(fallbackTypeId, area)
+  const hoursBase = Math.max(4, area * 1.2)
+  const seen = new Set<string>()
+  const rows: SpecialistNeed[] = []
+  for (const pack of packs) {
+    const mapped = estimatorTypeFromCatalogId(pack.workTypeId)
+    const type = getProjectType(mapped)
+    const key = type.subcategorySlug || pack.workTypeId
+    if (seen.has(key)) continue
+    seen.add(key)
+    rows.push({
+      id: `sp-work-${pack.workTypeId}`,
+      tradeId: type.tradeId,
+      label: workTypeLabel(pack.workTypeId, 'en') || type.labelEn,
+      subcategorySlug: type.subcategorySlug,
+      laborHours: 0,
+    })
+  }
+  return rows.map((row) => ({
+    ...row,
+    laborHours: Math.round((hoursBase / Math.max(rows.length, 1)) * 10) / 10,
+  }))
+}
+
 function buildSpecialists(typeId: EstimatorProjectTypeId, area: number): SpecialistNeed[] {
   const templates = SPECIALIST_TEMPLATES[typeId] || SPECIALIST_TEMPLATES.other
   const hoursBase = Math.max(4, area * 1.2)
@@ -439,7 +471,8 @@ function sumTier(
 }
 
 export function buildFullCostEstimateLocal(state: EstimatorState): FullCostEstimate {
-  const type = getProjectType(state.projectTypeId)
+  const object = getObjectType(state.objectTypeId)
+  const type = getProjectType(object?.engineType || state.projectTypeId)
   const area =
     state.measurements.areaSqm > 0
       ? state.measurements.areaSqm
@@ -469,8 +502,9 @@ export function buildFullCostEstimateLocal(state: EstimatorState): FullCostEstim
   if (state.measurements.heightM && state.measurements.heightM > 2.8) {
     factors.push(`High ceilings (${state.measurements.heightM} m)`)
   }
+  const perSqm = object?.perSqm ?? type.perSqm
   const base =
-    type.perSqm *
+    perSqm *
     area *
     geo *
     complexity *
@@ -481,7 +515,9 @@ export function buildFullCostEstimateLocal(state: EstimatorState): FullCostEstim
 
   const extra = featureExtraEur(
     state.calculatorTypeId || state.projectTypeId,
-    state.selectedFeatureIds || [],
+    flattenWorkFeatureIds(state.workPackages).length
+      ? flattenWorkFeatureIds(state.workPackages)
+      : state.selectedFeatureIds || [],
     area,
     state.location.country,
     state.location.city,
@@ -516,7 +552,7 @@ export function buildFullCostEstimateLocal(state: EstimatorState): FullCostEstim
     taxPct,
   )
 
-  const specialists = buildSpecialists(type.id, area)
+  const specialists = specialistsForEstimate(state, type.id, area)
   const materials = buildMaterials(type.id, area, rooms, geo)
   const workStages = buildWorkStages(specialists)
 
