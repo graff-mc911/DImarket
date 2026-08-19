@@ -9,7 +9,7 @@ import { useApp }            from '../contexts/AppContext'
 import { navigateTo }        from '../lib/navigation'
 import { isLaunchExampleListing } from '../lib/launchSeedRequests'
 import { listingCityLabel }  from '../lib/listingLocation'
-import { getListingDisplayImage, shouldCompactListingThemeImage } from '../lib/listingThemeImage'
+import { getListingDisplayImage, listingShowsImage, shouldCompactListingThemeImage } from '../lib/listingThemeImage'
 import type { ListingWithImages } from '../lib/types'
 
 interface ListingCardProps {
@@ -99,8 +99,9 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
     return labels[type] || type
   }
 
-  const primaryImage = getListingDisplayImage(listing, 400)
-  const compactImage = shouldCompactListingThemeImage(listing)
+  const showPhoto = listingShowsImage(listing)
+  const primaryImage = showPhoto ? getListingDisplayImage(listing, 400) : ''
+  const compactImage = showPhoto && shouldCompactListingThemeImage(listing)
 
   const isPromoted = (listing as { is_promoted?: boolean }).is_promoted === true
   const categoryLabel =
@@ -136,14 +137,16 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
           isLast ? '' : 'border-b border-[var(--glass-border)]',
         ].join(' ')}
       >
-        <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-md bg-[#f7fafa] sm:h-[96px] sm:w-[96px]">
-          <img
-            src={primaryImage}
-            alt=""
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-            loading="lazy"
-          />
-        </div>
+        {showPhoto && (
+          <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-md bg-[#f7fafa] sm:h-[96px] sm:w-[96px]">
+            <img
+              src={primaryImage}
+              alt=""
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              loading="lazy"
+            />
+          </div>
+        )}
         <div className="flex min-w-0 flex-1 flex-col justify-center">
           <h3 className="line-clamp-2 text-[15px] font-medium leading-snug text-[var(--ink-900)] sm:text-base">
             {listing.title}
@@ -170,58 +173,82 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
       }}
       className="product-card group cursor-pointer text-left"
     >
-      <div className="relative">
-        <div
-          className={
-            compactImage
-              ? 'mx-auto mt-1 aspect-[4/3] w-1/5 overflow-hidden rounded-sm bg-[#f7fafa]'
-              : 'aspect-square w-full overflow-hidden rounded-sm bg-[#f7fafa]'
-          }
-        >
-          <img
-            src={primaryImage}
-            alt=""
+      {showPhoto ? (
+        <div className="relative">
+          <div
             className={
               compactImage
-                ? 'h-full w-full object-contain'
-                : 'h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]'
+                ? 'mx-auto mt-1 aspect-[4/3] w-1/5 overflow-hidden rounded-sm bg-[#f7fafa]'
+                : 'aspect-square w-full overflow-hidden rounded-sm bg-[#f7fafa]'
             }
-            loading="lazy"
-          />
+          >
+            <img
+              src={primaryImage}
+              alt=""
+              className={
+                compactImage
+                  ? 'h-full w-full object-contain'
+                  : 'h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]'
+              }
+              loading="lazy"
+            />
+          </div>
+
+          {listing.is_premium && (
+            <span className="absolute left-1.5 top-1.5 flex items-center gap-0.5 rounded-sm bg-[#cc0c39] px-1.5 py-0.5 text-[9px] font-bold text-white">
+              <Star className="h-2.5 w-2.5 fill-current" />
+              {t('listing.premium')}
+            </span>
+          )}
+
+          {isPromoted && !listing.is_premium && (
+            <span className="absolute left-1.5 top-1.5 rounded-sm bg-[#ff9900] px-1.5 py-0.5 text-[9px] font-bold text-[#0f1111]">
+              ↑
+            </span>
+          )}
+
+          <button
+            type="button"
+            onClick={toggleSave}
+            disabled={savingInProgress}
+            title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
+            className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[var(--ink-500)] shadow-sm transition hover:bg-white disabled:opacity-50"
+            style={isSaved ? { color: '#ef4444' } : undefined}
+          >
+            <Heart
+              className="h-4 w-4"
+              style={{
+                fill: isSaved ? 'currentColor' : 'none',
+                color: isSaved ? '#ef4444' : 'var(--ink-500)',
+              }}
+            />
+          </button>
         </div>
+      ) : (
+        <div className="flex items-start justify-between gap-2">
+          <p className="line-clamp-1 min-w-0 text-[11px] text-[var(--ink-500)]">{categoryLabel}</p>
+          <button
+            type="button"
+            onClick={toggleSave}
+            disabled={savingInProgress}
+            title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--ink-500)] transition hover:bg-[#f7fafa] disabled:opacity-50"
+            style={isSaved ? { color: '#ef4444' } : undefined}
+          >
+            <Heart
+              className="h-4 w-4"
+              style={{
+                fill: isSaved ? 'currentColor' : 'none',
+                color: isSaved ? '#ef4444' : 'var(--ink-500)',
+              }}
+            />
+          </button>
+        </div>
+      )}
 
-        {listing.is_premium && (
-          <span className="absolute left-1.5 top-1.5 flex items-center gap-0.5 rounded-sm bg-[#cc0c39] px-1.5 py-0.5 text-[9px] font-bold text-white">
-            <Star className="h-2.5 w-2.5 fill-current" />
-            {t('listing.premium')}
-          </span>
-        )}
-
-        {isPromoted && !listing.is_premium && (
-          <span className="absolute left-1.5 top-1.5 rounded-sm bg-[#ff9900] px-1.5 py-0.5 text-[9px] font-bold text-[#0f1111]">
-            ↑
-          </span>
-        )}
-
-        <button
-          type="button"
-          onClick={toggleSave}
-          disabled={savingInProgress}
-          title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
-          className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[var(--ink-500)] shadow-sm transition hover:bg-white disabled:opacity-50"
-          style={isSaved ? { color: '#ef4444' } : undefined}
-        >
-          <Heart
-            className="h-4 w-4"
-            style={{
-              fill: isSaved ? 'currentColor' : 'none',
-              color: isSaved ? '#ef4444' : 'var(--ink-500)',
-            }}
-          />
-        </button>
-      </div>
-
-      <p className="mt-2 line-clamp-1 text-[11px] text-[var(--ink-500)]">{categoryLabel}</p>
+      {showPhoto && (
+        <p className="mt-2 line-clamp-1 text-[11px] text-[var(--ink-500)]">{categoryLabel}</p>
+      )}
 
       <h3 className="mt-0.5 line-clamp-2 min-h-[2.5rem] text-sm font-normal leading-snug text-[var(--ink-900)]">
         {listing.title}

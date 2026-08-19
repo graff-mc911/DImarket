@@ -466,9 +466,6 @@ export function ProjectFeed() {
           <ul className="space-y-4">
             {items.map((project) => {
               const app = appByListing.get(project.id)
-              const photos = (project.project_files || [])
-                .filter((f) => f.kind === 'photo' || f.mime_type?.startsWith('image/'))
-                .slice(0, 4)
               const applied =
                 app?.status === 'applied' ||
                 app?.status === 'accepted' ||
@@ -486,31 +483,7 @@ export function ProjectFeed() {
                   key={project.id}
                   className="overflow-hidden rounded-[20px] border border-[#e8e8ed] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
                 >
-                  <div className="grid gap-0 md:grid-cols-[220px_1fr]">
-                    <div className="bg-[#fafafa] p-3">
-                      {photos.length ? (
-                        <div
-                          className={`grid gap-1.5 ${
-                            photos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
-                          }`}
-                        >
-                          {photos.map((ph) => (
-                            <img
-                              key={ph.id}
-                              src={ph.url}
-                              alt=""
-                              className="h-24 w-full rounded-xl object-cover md:h-28"
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="flex h-28 items-center justify-center rounded-xl border border-dashed border-[#d2d2d7] text-[12px] text-[#86868b] md:h-full md:min-h-[140px]">
-                          No photos
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col p-4 md:p-5">
+                  <div className="flex flex-col p-4 md:p-5">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
@@ -674,7 +647,6 @@ export function ProjectFeed() {
                         )}
                       </div>
                     </div>
-                  </div>
                 </li>
               )
             })}

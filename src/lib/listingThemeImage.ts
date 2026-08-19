@@ -213,6 +213,7 @@ const THEME_KEYWORDS: Array<{ key: string; words: string[] }> = [
 export type ListingImageSource = {
   title?: string | null
   description?: string | null
+  listing_type?: string | null
   subcategory_slugs?: string[] | null
   category?: { slug?: string | null; name?: string | null } | null
   images?: Array<{ image_url?: string | null }> | null
@@ -266,9 +267,18 @@ export function listingHasUploadedImage(listing: ListingImageSource): boolean {
   return Boolean(listing.images?.some((img) => Boolean(img?.image_url?.trim())))
 }
 
+/** Запити клієнтів (Потрібна послуга) показуємо без фото — лише текст. */
+export function listingShowsImage(listing: ListingImageSource): boolean {
+  return listing.listing_type !== 'service_request'
+}
+
 /** Компактна заглушка (1/5 кадру) лише для сантехніки без власного фото */
 export function shouldCompactListingThemeImage(listing: ListingImageSource): boolean {
-  return !listingHasUploadedImage(listing) && resolveListingThemeKey(listing) === 'plumbing'
+  return (
+    listingShowsImage(listing) &&
+    !listingHasUploadedImage(listing) &&
+    resolveListingThemeKey(listing) === 'plumbing'
+  )
 }
 
 /** Реальне фото оголошення або тематична заглушка */

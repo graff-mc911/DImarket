@@ -27,7 +27,7 @@ import {
 import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
-import { getListingThemeImageUrl, shouldCompactListingThemeImage } from '../lib/listingThemeImage'
+import { getListingThemeImageUrl, listingShowsImage, shouldCompactListingThemeImage } from '../lib/listingThemeImage'
 import { isSuppressedListing } from '../lib/suppressedListings'
 import type { ListingWithImages, Profile } from '../lib/types'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
@@ -228,11 +228,14 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
     )
   }
 
-  // Фото оголошення або тематична заглушка за видом робіт
-  const compactThemeImage = shouldCompactListingThemeImage(listing)
-  const images = listing.images?.length > 0
-    ? listing.images.map(img => img.image_url)
-    : [getListingThemeImageUrl(listing, compactThemeImage ? 400 : 1200)]
+  // Фото лише для продажів / пропозицій послуг — запити клієнтів без зображень
+  const showPhoto = listingShowsImage(listing)
+  const compactThemeImage = showPhoto && shouldCompactListingThemeImage(listing)
+  const images = showPhoto
+    ? (listing.images?.length > 0
+      ? listing.images.map(img => img.image_url)
+      : [getListingThemeImageUrl(listing, compactThemeImage ? 400 : 1200)])
+    : []
 
   // Скільки днів залишилось
   const daysLeft = Math.ceil(
@@ -253,6 +256,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-6">
         {/* Ліва колонка: фото + опис */}
         <div>
+          {showPhoto && (
           <div className="amazon-pdp-image">
             <div
               className={
@@ -303,14 +307,25 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
               </div>
             )}
           </div>
+          )}
 
-          <div className="mt-4 lg:hidden">
+          <div className={showPhoto ? 'mt-4 lg:hidden' : 'lg:hidden'}>
             <h1 className="text-xl font-normal leading-snug text-[var(--ink-900)]">{listing.title}</h1>
             <p className="mt-2 text-2xl font-normal text-[var(--ink-900)]">{formatPrice(listing.price)}</p>
           </div>
 
-          <div className="amazon-section-card mt-4">
-            <h2 className="text-lg font-bold text-[var(--ink-900)]">Про оголошення</h2>
+          <div className={showPhoto ? 'amazon-section-card mt-4' : 'amazon-section-card'}>
+            <div className="flex flex-wrap items-center gap-2">
+              {!showPhoto && (
+                <span
+                  className="rounded-sm px-2 py-1 text-xs font-bold text-white"
+                  style={{ background: getTypeBg(listing.listing_type) }}
+                >
+                  {getTypeLabel(listing.listing_type)}
+                </span>
+              )}
+              <h2 className="text-lg font-bold text-[var(--ink-900)]">Про оголошення</h2>
+            </div>
             <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-[var(--ink-700)]">
               {listing.description}
             </p>
