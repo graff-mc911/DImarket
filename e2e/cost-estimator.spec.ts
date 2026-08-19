@@ -28,11 +28,11 @@ test.describe('Cost estimator calculator', () => {
     }
 
     const objectSelect = page.locator('#estimator-project-type')
-    await expect(objectSelect.getByRole('option', { name: /Будинок|House/ })).toHaveCount(1)
-    await expect(objectSelect.getByRole('option', { name: /Квартира|Apartment/ })).toHaveCount(1)
-    await expect(objectSelect.getByRole('option', { name: /Ангар|Hangar/ })).toHaveCount(1)
-    await expect(objectSelect.getByRole('option', { name: /Навіс|Canopy/ })).toHaveCount(1)
-    await expect(objectSelect.getByRole('option', { name: /Ферма|Farm/ })).toHaveCount(1)
+    await expect(objectSelect.getByRole('option', { name: /^(Будинок|House)$/ })).toHaveCount(1)
+    await expect(objectSelect.getByRole('option', { name: /^(Квартира|Apartment)$/ })).toHaveCount(1)
+    await expect(objectSelect.getByRole('option', { name: /^(Ангар|Hangar)$/ })).toHaveCount(1)
+    await expect(objectSelect.getByRole('option', { name: /^(Навіс|Canopy \/ shelter)$/ })).toHaveCount(1)
+    await expect(objectSelect.getByRole('option', { name: /^(Ферма|Farm building)$/ })).toHaveCount(1)
     await objectSelect.selectOption('house')
     await page.locator('#estimator-area').fill('80')
 
@@ -96,8 +96,8 @@ test.describe('Cost estimator calculator', () => {
     await expect.poll(async () => select.locator('option').count()).toBeGreaterThan(3)
     await expect(select.getByRole('option', { name: /^(Виробники|Manufacturers)$/ })).toHaveCount(0)
     await expect(select.getByRole('option', { name: /^(Ванна|Bathroom)$/ })).toHaveCount(0)
-    await expect(select.getByRole('option', { name: /Будинок|House/ })).toHaveCount(1)
-    await expect(select.getByRole('option', { name: /Ферма|Farm/ })).toHaveCount(1)
+    await expect(select.getByRole('option', { name: /^(Будинок|House)$/ })).toHaveCount(1)
+    await expect(select.getByRole('option', { name: /^(Ферма|Farm building)$/ })).toHaveCount(1)
     await expect(page.locator('#estimator-work-type')).toBeVisible()
     await expect(page.locator('#estimator-works-label')).toBeVisible()
   })
