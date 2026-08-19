@@ -2014,6 +2014,9 @@
     min-width: 0;
     max-width: 100%;
     margin-top: 0.2125rem; /* 15% tighter than mt-1 */
+    /* Clip page overflow without creating a scrollport (overflow:hidden would). */
+    overflow-x: clip;
+    overflow-y: visible;
   }
 
   .site-header-shell .header-link {
@@ -2127,19 +2130,33 @@
     padding-block: 0.31875rem; /* 15% less than py-1.5 */
   }
 
+  /*
+    Chrome nested-flex: a 100% / min-width:0 row inside another flex can
+    ignore flex-shrink:0 on children and stack their hit boxes. Then a later
+    item (Калькулятор вартості) steals clicks from Виробники. Size the row
+    to its labels so items cannot overlap.
+  */
   .amazon-dept-row {
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
     column-gap: 0.1rem;
-    width: 100%;
-    min-width: 0;
+    width: max-content;
+    min-width: max-content;
+    max-width: none;
+    flex: 0 0 auto;
+    isolation: isolate;
   }
 
   .amazon-dept-link {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
     flex-shrink: 0;
     white-space: nowrap;
+    overflow: hidden;
+    isolation: isolate;
     border-radius: 0.125rem;
     padding: 0.31875rem 0.45rem;
     font-size: 0.8125rem;

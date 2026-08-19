@@ -23,9 +23,14 @@ export async function clickHeaderLogo(page: Page) {
     .click()
 }
 
+/** Нижній ряд пунктів шапки (Категорії · Виробники · Калькулятор вартості · …). */
+export function headerDeptNav(page: Page) {
+  return page.locator('header nav.amazon-dept-scroll')
+}
+
 /** Основна навігація в шапці (не footer / hero). Видна лише на lg+ (≥1024px). */
 export function headerNav(page: Page) {
-  return page.locator('header').getByRole('navigation').first()
+  return headerDeptNav(page)
 }
 
 const DESKTOP_HEADER_NAV_MIN_WIDTH = 1024

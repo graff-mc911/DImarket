@@ -51,6 +51,7 @@ import { isSiteOwner as checkSiteOwner } from '../lib/siteOwner'
 import { PwaInstallButton } from './PwaInstallButton'
 
 interface NavItem {
+  id: string
   label: string
   path: string
   icon: LucideIcon
@@ -192,6 +193,7 @@ export function Header() {
     jobs: Briefcase,
   }
   const navItems: NavItem[] = navEntriesFor('header-dept').map((entry) => ({
+    id: entry.id,
     label: t(labelKeyFor(entry, 'header-dept')),
     path: entry.path,
     icon: HEADER_DEPT_ICONS[entry.id] ?? MapPin,
@@ -253,18 +255,24 @@ export function Header() {
   const deptTail = [
     ...headerDeptBeforeEntries().map((entry) => ({
       key: entry.id,
+      navId: entry.id,
+      path: entry.path,
       label: t(labelKeyFor(entry, 'header-dept-extra')),
       onClick: () => goTo(entry.path),
       className: 'amazon-dept-link',
     })),
     ...navItems.map((item) => ({
-      key: item.path,
+      key: item.id,
+      navId: item.id,
+      path: item.path,
       label: item.label,
       onClick: () => goTo(item.path),
       className: navTextClass(isActiveRoute(item.path), true),
     })),
     ...headerDeptAfterEntries().map((entry) => ({
       key: entry.id,
+      navId: entry.id,
+      path: entry.path,
       label: t(labelKeyFor(entry, 'header-dept-extra')),
       onClick: () => goTo(entry.path),
       className: 'amazon-dept-link',
@@ -640,6 +648,7 @@ export function Header() {
                   <button
                     onClick={() => goTo('/categories')}
                     type="button"
+                    data-nav-id="categories"
                     aria-current={isActiveRoute('/categories') ? 'page' : undefined}
                     className={`${navTextClass(isActiveRoute('/categories'))} font-bold`}
                   >
@@ -649,6 +658,8 @@ export function Header() {
                     <button
                       key={item.key}
                       type="button"
+                      data-nav-id={item.navId}
+                      aria-current={isActiveRoute(item.path) ? 'page' : undefined}
                       onClick={item.onClick}
                       className={item.className}
                     >

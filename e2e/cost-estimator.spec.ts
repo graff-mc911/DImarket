@@ -63,4 +63,12 @@ test.describe('Cost estimator calculator', () => {
     expect(loads, 'Chrome reload loop on cost estimator').toBe(0)
     await expect(page).toHaveURL(/\/cost-estimator/)
   })
+
+  test('тип проєкту не містить Виробники / Manufacturers', async ({ page }) => {
+    await gotoPath(page, '/cost-estimator')
+    const select = page.locator('#estimator-project-type')
+    await expect(select).toBeVisible()
+    await expect.poll(async () => select.locator('option').count()).toBeGreaterThan(3)
+    await expect(select.getByRole('option', { name: /^(Виробники|Manufacturers)$/ })).toHaveCount(0)
+  })
 })

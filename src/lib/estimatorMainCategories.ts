@@ -50,6 +50,11 @@ export function estimatorTypeFromCatalogId(id: string | null | undefined): Estim
   return SLUG_TO_TYPE[id] || (id as EstimatorProjectTypeId) || 'other'
 }
 
+/** Directory / marketplace slugs (Виробники, stores, jobs…) are not project types. */
+export function isEstimatorProjectSlug(slug: string | null | undefined): boolean {
+  return Boolean(slug && slug in SLUG_TO_TYPE)
+}
+
 function fallbackMains(): EstimatorMainCategory[] {
   return MARKETPLACE_MAIN_COVER_SLUGS.map((slug) => ({
     id: slug,
@@ -65,14 +70,16 @@ export async function loadEstimatorMainCategories(): Promise<EstimatorMainCatego
   try {
     const rows = await fetchMainMarketplaceCategories()
     if (rows.length) {
-      return rows.map((row) => ({
-        id: row.id,
-        slug: row.slug,
-        name: row.name,
-        icon_key: row.icon_key,
-        name_i18n: row.name_i18n,
-        is_main: true,
-      }))
+      return rows
+        .filter((row) => isEstimatorProjectSlug(row.slug))
+        .map((row) => ({
+          id: row.id,
+          slug: row.slug,
+          name: row.name,
+          icon_key: row.icon_key,
+          name_i18n: row.name_i18n,
+          is_main: true,
+        }))
     }
   } catch {
     /* use static fallback */

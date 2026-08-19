@@ -11,6 +11,7 @@ import {
 } from '../../lib/estimatorCalculator'
 import {
   estimatorTypeFromCatalogId,
+  isEstimatorProjectSlug,
   loadEstimatorMainCategories,
   type EstimatorMainCategory,
 } from '../../lib/estimatorMainCategories'
@@ -51,6 +52,7 @@ export function EstimatorCalculator({
       const bySlug = new Map<string, EstimatorMainCategory>()
       for (const extra of EXTRA_TYPES) bySlug.set(extra.slug, extra)
       for (const row of rows) {
+        if (!isEstimatorProjectSlug(row.slug)) continue
         if (!bySlug.has(row.slug)) bySlug.set(row.slug, row)
       }
       const ordered = [
