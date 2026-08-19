@@ -19,13 +19,12 @@ export function lazyWithRetry<T extends ComponentType<any>>(
       clearChunkReloadFlag()
       return mod
     } catch (error) {
-      if (isChunkLoadError(error) && reloadOnceForStaleChunk()) {
+      if (!isChunkLoadError(error)) throw error
+      if (reloadOnceForStaleChunk()) {
         return new Promise(() => {})
       }
-      if (isChunkLoadError(error)) {
-        void recoverFromStaleChunks()
-        return new Promise(() => {})
-      }
+      const started = await recoverFromStaleChunks()
+      if (started) return new Promise(() => {})
       throw error
     }
   })

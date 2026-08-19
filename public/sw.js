@@ -5,7 +5,7 @@
    causes "Failed to fetch dynamically imported module" and a reload loop
    (especially on lazy routes like /cost-estimator). */
 
-const CACHE = 'dimarket-shell-v6'
+const CACHE = 'dimarket-shell-v7'
 const PRECACHE = ['/', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
 
 self.addEventListener('install', (event) => {
@@ -29,47 +29,22 @@ self.addEventListener('activate', (event) => {
   // (CostEstimator-*.js) when a new worker takes over the open page.
 })
 
-function shouldBypass(req, url) {
-  if (req.method !== 'GET') return true
-  if (url.origin !== self.location.origin) return true
-
-  // Chrome import() often has destination "" not "script". Never intercept
-  // hashed Vite modules — a cached index.html at this URL breaks Chrome forever.
-  const dest = req.destination
-  if (
-    dest === 'script' ||
-    dest === 'style' ||
-    dest === '' ||
-    dest === 'worker' ||
-    dest === 'sharedworker' ||
-    dest === 'audioworklet' ||
-    dest === 'paintworklet'
-  ) {
-    return true
-  }
-
-  if (url.pathname.startsWith('/assets/')) return true
-  if (url.pathname.startsWith('/src/')) return true
-  if (url.pathname.startsWith('/api')) return true
-  if (url.pathname.includes('supabase')) return true
-  if (url.pathname.startsWith('/functions')) return true
-  if (/\.(js|mjs|cjs|css|map)(\?|$)/i.test(url.pathname)) return true
-  if (req.mode === 'cors') return true
-
-  return false
-}
-
-/** Network-first for HTML/icons only. Presence of fetch handler enables PWA install. */
+/** Network-first for HTML navigations only. Presence of fetch handler enables PWA install.
+ *  Never intercept module/script fetches — Chrome import() hangs or throws if a worker
+ *  touches hashed /assets/*.js (lazy CategoryPage / CostEstimator). */
 self.addEventListener('fetch', (event) => {
   const req = event.request
+  if (req.mode !== 'navigate') return
   const url = new URL(req.url)
-  if (shouldBypass(req, url)) return
+  if (url.origin !== self.location.origin) return
+  if (url.pathname.startsWith('/assets/')) return
+  if (/\.(js|mjs|cjs|css|map)(\?|$)/i.test(url.pathname)) return
 
   event.respondWith(
     fetch(req)
       .then((res) => {
         const copy = res.clone()
-        if (res.ok && (req.mode === 'navigate' || url.pathname.match(/\.(png|svg|ico|webmanifest)$/))) {
+        if (res.ok) {
           void caches.open(CACHE).then((cache) => cache.put(req, copy)).catch(() => undefined)
         }
         return res
@@ -77,10 +52,8 @@ self.addEventListener('fetch', (event) => {
       .catch(async () => {
         const cached = await caches.match(req)
         if (cached) return cached
-        if (req.mode === 'navigate') {
-          const shell = await caches.match('/')
-          if (shell) return shell
-        }
+        const shell = await caches.match('/')
+        if (shell) return shell
         return Response.error()
       }),
   )

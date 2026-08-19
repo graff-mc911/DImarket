@@ -150,7 +150,7 @@ export function NotificationCenter({ compact = true }: Props) {
     try {
       const perm = await Notification.requestPermission()
       if (perm !== 'granted') return
-      const reg = await navigator.serviceWorker.register('/sw.js?v=6')
+      const reg = await navigator.serviceWorker.register('/sw.js?v=7')
       const existing = await reg.pushManager.getSubscription()
       const sub =
         existing ||

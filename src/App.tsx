@@ -27,8 +27,10 @@ import { isDocumentsSubcategorySlug } from './lib/documents/subcategories'
 
 // Eager: first paint / shell
 import { Home } from './pages/Home'
+import { CategoryPage } from './pages/CategoryPage'
+import { CostEstimator } from './pages/CostEstimator'
 
-// Lazy: all other routes — keeps initial JS small
+// Lazy: remaining routes — keeps initial JS small
 const Professionals = lazyWithRetry(() =>
   import('./pages/Professionals').then((m) => ({ default: m.Professionals })),
 )
@@ -161,9 +163,6 @@ const BookProfessional = lazyWithRetry(() =>
 const CustomerDashboard = lazyWithRetry(() =>
   import('./pages/CustomerDashboard').then((m) => ({ default: m.CustomerDashboard })),
 )
-const CostEstimator = lazyWithRetry(() =>
-  import('./pages/CostEstimator').then((m) => ({ default: m.CostEstimator })),
-)
 const CostEstimatorHistory = lazyWithRetry(() =>
   import('./pages/CostEstimatorHistory').then((m) => ({
     default: m.CostEstimatorHistory,
@@ -177,9 +176,6 @@ const AiAssistant = lazyWithRetry(() =>
 )
 const Analytics = lazyWithRetry(() =>
   import('./pages/Analytics').then((m) => ({ default: m.Analytics })),
-)
-const CategoryPage = lazyWithRetry(() =>
-  import('./pages/CategoryPage').then((m) => ({ default: m.CategoryPage })),
 )
 const SearchPage = lazyWithRetry(() =>
   import('./pages/Search').then((m) => ({ default: m.SearchPage })),
