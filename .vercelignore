@@ -10,6 +10,7 @@ scripts/**
 !scripts/seo-build.mjs
 !scripts/seo-routes.mjs
 !scripts/seo-verify.mjs
+!scripts/seo-labels.mjs
 supabase
 .git
 *.txt
