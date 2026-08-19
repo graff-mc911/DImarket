@@ -27,7 +27,7 @@ import {
 import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { navigateTo }  from '../lib/navigation'
-import { getListingThemeImageUrl } from '../lib/listingThemeImage'
+import { getListingThemeImageUrl, shouldCompactListingThemeImage } from '../lib/listingThemeImage'
 import { isSuppressedListing } from '../lib/suppressedListings'
 import type { ListingWithImages, Profile } from '../lib/types'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
@@ -229,9 +229,10 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
   }
 
   // Фото оголошення або тематична заглушка за видом робіт
+  const compactThemeImage = shouldCompactListingThemeImage(listing)
   const images = listing.images?.length > 0
     ? listing.images.map(img => img.image_url)
-    : [getListingThemeImageUrl(listing, 1200)]
+    : [getListingThemeImageUrl(listing, compactThemeImage ? 400 : 1200)]
 
   // Скільки днів залишилось
   const daysLeft = Math.ceil(
@@ -253,11 +254,21 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
         {/* Ліва колонка: фото + опис */}
         <div>
           <div className="amazon-pdp-image">
-            <div className="relative aspect-square overflow-hidden bg-[#f7fafa] sm:aspect-[4/3]">
+            <div
+              className={
+                compactThemeImage
+                  ? 'relative overflow-hidden bg-[#f7fafa] py-5'
+                  : 'relative aspect-square overflow-hidden bg-[#f7fafa] sm:aspect-[4/3]'
+              }
+            >
               <img
                 src={images[activeImage]}
                 alt={listing.title}
-                className="h-full w-full object-contain"
+                className={
+                  compactThemeImage
+                    ? 'mx-auto h-auto w-1/5 object-contain'
+                    : 'h-full w-full object-contain'
+                }
               />
               <div
                 className="absolute left-3 top-3 rounded-sm px-2 py-1 text-xs font-bold text-white"

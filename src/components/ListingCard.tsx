@@ -9,7 +9,7 @@ import { useApp }            from '../contexts/AppContext'
 import { navigateTo }        from '../lib/navigation'
 import { isLaunchExampleListing } from '../lib/launchSeedRequests'
 import { listingCityLabel }  from '../lib/listingLocation'
-import { getListingDisplayImage } from '../lib/listingThemeImage'
+import { getListingDisplayImage, shouldCompactListingThemeImage } from '../lib/listingThemeImage'
 import type { ListingWithImages } from '../lib/types'
 
 interface ListingCardProps {
@@ -100,6 +100,7 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
   }
 
   const primaryImage = getListingDisplayImage(listing, 400)
+  const compactImage = shouldCompactListingThemeImage(listing)
 
   const isPromoted = (listing as { is_promoted?: boolean }).is_promoted === true
   const categoryLabel =
@@ -169,13 +170,25 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
       }}
       className="product-card group cursor-pointer text-left"
     >
-      <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-[#f7fafa]">
-        <img
-          src={primaryImage}
-          alt=""
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-          loading="lazy"
-        />
+      <div className="relative">
+        <div
+          className={
+            compactImage
+              ? 'mx-auto mt-1 aspect-[4/3] w-1/5 overflow-hidden rounded-sm bg-[#f7fafa]'
+              : 'aspect-square w-full overflow-hidden rounded-sm bg-[#f7fafa]'
+          }
+        >
+          <img
+            src={primaryImage}
+            alt=""
+            className={
+              compactImage
+                ? 'h-full w-full object-contain'
+                : 'h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]'
+            }
+            loading="lazy"
+          />
+        </div>
 
         {listing.is_premium && (
           <span className="absolute left-1.5 top-1.5 flex items-center gap-0.5 rounded-sm bg-[#cc0c39] px-1.5 py-0.5 text-[9px] font-bold text-white">

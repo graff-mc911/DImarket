@@ -1,18 +1,22 @@
 /**
  * Тематичні фото-заглушки для оголошень без завантажених зображень.
- * Тільки процес роботи: руки, інструмент, матеріали. Без облич.
- * (перевірені Pexels: крупний план роботи / інструменту)
+ * Зазвичай процес роботи: руки, інструмент, матеріали. Без облич.
+ * Сантехніка — виняток: сантехнік ремонтує змішувач (компактне локальне фото).
+ * (інші теми: перевірені Pexels, крупний план роботи / інструменту)
  */
 
 const P = (id: number, w = 640) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`
 
-/** Ключ теми → URL (hands / tools / materials only — no faces) */
+/** Локальне компактне фото (≈1/5 від попереднього Pexels w=640) */
+const PLUMBING_FAUCET_IMAGE = '/images/listing-themes/plumbing-faucet.jpg'
+
+/** Ключ теми → URL (hands / tools / materials only — no faces, except plumbing) */
 export const LISTING_THEME_IMAGES: Record<string, string> = {
   // Електрика: руки + плоскогубці біля розеток
   electro: P(5691588),
-  // Сантехніка: труби / арматура (без людей)
-  plumbing: P(6419126),
+  // Сантехніка: сантехнік ремонтує кухонний змішувач води
+  plumbing: PLUMBING_FAUCET_IMAGE,
   // Малярні: пензель і фарба крупно
   painting: P(4792485),
   // Плитка: рука в рукавиці + хрестики
@@ -254,8 +258,17 @@ export function getListingThemeImageUrl(
 ): string {
   const key = resolveListingThemeKey(listing)
   const base = LISTING_THEME_IMAGES[key] || LISTING_THEME_IMAGES.default
-  if (width === 640) return base
+  if (!/w=\d+/.test(base) || width === 640) return base
   return base.replace(/w=\d+/, `w=${width}`)
+}
+
+export function listingHasUploadedImage(listing: ListingImageSource): boolean {
+  return Boolean(listing.images?.some((img) => Boolean(img?.image_url?.trim())))
+}
+
+/** Компактна заглушка (1/5 кадру) лише для сантехніки без власного фото */
+export function shouldCompactListingThemeImage(listing: ListingImageSource): boolean {
+  return !listingHasUploadedImage(listing) && resolveListingThemeKey(listing) === 'plumbing'
 }
 
 /** Реальне фото оголошення або тематична заглушка */
