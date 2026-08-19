@@ -132,7 +132,7 @@ export async function fetchSearchSuggestions(
     supabase
       .from('profiles')
       .select(
-        'id, full_name, location, is_professional, user_role, bio, work_subcategory_slugs, professional_categories:professional_categories(category:categories(name, slug))',
+        'id, full_name, location, phone, website, is_professional, user_role, bio, work_subcategory_slugs, professional_categories:professional_categories(category:categories(name, slug))',
       )
       .eq('is_professional', true)
       .in('user_role', ['professional', 'company'])

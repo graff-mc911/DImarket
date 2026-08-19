@@ -7,7 +7,7 @@ BEGIN;
 UPDATE profiles SET
   full_name = 'B&P Bau',
   bio = 'Construction and renovation company headquartered in Darmstadt. Public service list covers new build and renovation, interior fit-out, facade and painting work, plus electrical, sanitary, and climate trades.',
-  phone = NULL,
+  phone = '+49 172 6399986',
   location = 'Darmstadt, Hessen, Germany',
   website = 'https://www.b-pbau.de/',
   user_role = 'company',
@@ -24,7 +24,7 @@ WHERE website = 'https://www.b-pbau.de/'
 UPDATE profiles SET
   full_name = 'Domenico Di Santo Malerbetrieb',
   bio = 'Family-run painting business serving Darmstadt and nearby towns. Publicly described services include painting, wallpapering, plastering, drywall, and floor covering for private, commercial, and institutional clients.',
-  phone = NULL,
+  phone = '+49 6151 5011204',
   location = 'Darmstadt, Hessen, Germany',
   website = 'https://www.disanto-domenico.de/malerbetrieb-darmstadt/',
   user_role = 'professional',

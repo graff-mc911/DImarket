@@ -33,6 +33,7 @@
     "db:apply-project-escrows": "node scripts/apply-project-escrows-migration.mjs",
     "db:apply-stripe-connect": "node scripts/apply-stripe-connect-migration.mjs",
     "db:apply-commercial-agents": "node scripts/apply-commercial-agents-migration.mjs",
+    "db:apply-directory-contacts": "node scripts/apply-directory-contact-backfill.mjs",
     "db:seed-commercial-agents": "node scripts/seed-commercial-agents-demo.mjs",
     "db:generate-ca-manufacturers-sql": "node scripts/generate-ca-manufacturers-sql.mjs",
     "test:commercial-agents": "node scripts/verify-commercial-agents-matching.mjs",

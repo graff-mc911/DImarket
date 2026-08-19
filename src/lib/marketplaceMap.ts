@@ -124,11 +124,11 @@ export const MAP_KIND_GLYPH: Record<MapMarkerKind | 'mixed', string> = {
   mixed: '+',
 }
 
-const CACHE_KEY = 'dimarket_map_markers_v9'
+const CACHE_KEY = 'dimarket_map_markers_v10'
 const CACHE_TTL_MS = 90_000
 
 const PROFILE_MAP_SELECT = `
-  id, full_name, bio, location, service_latitude, service_longitude,
+  id, full_name, bio, location, phone, website, service_latitude, service_longitude,
   rating, is_verified, verification_level, profile_photo, avatar_url, user_role,
   work_subcategory_slugs, availability_status, is_professional,
   professional_categories(category:categories(name, slug))

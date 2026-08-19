@@ -8,6 +8,35 @@ export type PublicProfileGate = {
   deleted_at?: string | null
   hidden_at?: string | null
   email?: string | null
+  phone?: string | null
+  location?: string | null
+  website?: string | null
+}
+
+function hasOwn(profile: object, key: string): boolean {
+  return Object.prototype.hasOwnProperty.call(profile, key)
+}
+
+function nonempty(value: string | null | undefined): boolean {
+  return typeof value === 'string' && value.trim().length > 0
+}
+
+/** True when the loaded row has a public city/region string. */
+export function hasPublicDirectoryLocation(profile: PublicProfileGate): boolean {
+  if (!hasOwn(profile, 'location')) return true
+  return nonempty(profile.location)
+}
+
+/** True when the loaded row can be reached (phone or website). */
+export function hasPublicDirectoryReachability(profile: PublicProfileGate): boolean {
+  const loadedPhone = hasOwn(profile, 'phone')
+  const loadedWebsite = hasOwn(profile, 'website')
+  if (!loadedPhone && !loadedWebsite) return true
+  return nonempty(profile.phone) || nonempty(profile.website)
+}
+
+export function hasCompletePublicDirectoryContact(profile: PublicProfileGate): boolean {
+  return nonempty(profile.phone) && nonempty(profile.location)
 }
 
 /** QA / agent / e2e junk that must never appear as "Top Masters". */
@@ -45,11 +74,15 @@ export function isProfileSoftRemoved(profile: PublicProfileGate): boolean {
 /**
  * Can this profile appear in public directories / Top Masters / map?
  * Does not decide ranking — only eligibility.
+ * Contact rules apply only when the caller actually loaded those columns
+ * (missing keys are treated as "not evaluated", not as empty).
  */
 export function isProfilePubliclyListable(profile: PublicProfileGate): boolean {
   if (isProfileSoftRemoved(profile)) return false
   if (isLikelyQaOrTestProfile(profile)) return false
   if (profile.is_professional !== true) return false
+  if (!hasPublicDirectoryLocation(profile)) return false
+  if (!hasPublicDirectoryReachability(profile)) return false
   return true
 }
 
@@ -65,7 +98,7 @@ export function applyPublicProfileFilters<T extends { is: Function; not?: Functi
 }
 
 export function sortProfilesForPublicDiscovery<
-  T extends {
+  T extends PublicProfileGate & {
     ranking_priority?: number | null
     is_featured?: boolean | null
     rating?: number | null
@@ -80,6 +113,9 @@ export function sortProfilesForPublicDiscovery<
     const af = a.is_featured ? 1 : 0
     const bf = b.is_featured ? 1 : 0
     if (bf !== af) return bf - af
+    const ac = hasCompletePublicDirectoryContact(a) ? 1 : 0
+    const bc = hasCompletePublicDirectoryContact(b) ? 1 : 0
+    if (bc !== ac) return bc - ac
     const ratingDiff = (b.rating ?? 0) - (a.rating ?? 0)
     if (ratingDiff !== 0) return ratingDiff
     const reviewsDiff = (b.total_reviews ?? 0) - (a.total_reviews ?? 0)

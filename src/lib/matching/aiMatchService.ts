@@ -326,7 +326,7 @@ export function scoreMatchCandidate(
 }
 
 const PROFILE_SELECT = `
-  id, full_name, location, rating, total_reviews, response_rate,
+  id, full_name, location, phone, website, rating, total_reviews, response_rate,
   preferred_language, languages, trust_score, is_verified, is_premium,
   verification_level, portfolio_images, work_subcategory_slugs,
   completed_jobs, availability_status, service_latitude, service_longitude,
@@ -336,7 +336,7 @@ const PROFILE_SELECT = `
 `
 
 const PROFILE_SELECT_FALLBACK = `
-  id, full_name, location, rating, total_reviews, response_rate,
+  id, full_name, location, phone, website, rating, total_reviews, response_rate,
   preferred_language, trust_score, is_verified, is_premium,
   portfolio_images, work_subcategory_slugs,
   profile_photo, avatar_url,

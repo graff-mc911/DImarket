@@ -11,6 +11,8 @@ export type EstimatorMatchProfile = {
   id: string
   full_name: string | null
   location: string | null
+  phone?: string | null
+  website?: string | null
   rating: number | null
   is_verified: boolean | null
   user_role: string | null
@@ -68,7 +70,7 @@ export async function fetchEstimatorMatches(
   const { data: profiles } = await supabase
     .from('profiles')
     .select(
-      'id, full_name, location, rating, is_verified, user_role, avatar_url, profile_photo, service_latitude, service_longitude, work_subcategory_slugs',
+      'id, full_name, location, phone, website, rating, is_verified, user_role, avatar_url, profile_photo, service_latitude, service_longitude, work_subcategory_slugs',
     )
     .eq('is_professional', true)
     .in('user_role', ['professional', 'company'])
