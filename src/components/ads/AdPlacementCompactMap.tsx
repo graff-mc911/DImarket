@@ -13,6 +13,10 @@ const PURCHASE_EDITOR_PAGES: PlacementEditorPageId[] = [
   'home',
   'listings',
   'professionals',
+  'companies',
+  'categories',
+  'map',
+  'estimator',
   'listing-detail',
   'professional-detail',
 ]

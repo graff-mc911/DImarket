@@ -74,6 +74,7 @@ import { readEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 import { applyPageSeo } from '../lib/pageSeo'
 import { navigateTo } from '../lib/navigation'
 import { lazyWithRetry } from '../lib/lazyWithRetry'
+import { MobileAdBanner } from '../components/MobileAdBanner'
 import type { Profile } from '../lib/types'
 
 const EstimatorResultsMap = lazyWithRetry(() =>
@@ -100,6 +101,14 @@ const ESTIMATOR_VOICE_LANG: Record<string, string> = {
 }
 
 /** AI Cost Estimator — /cost-estimator · /estimate */
+function EstimatorAdBanner() {
+  return (
+    <div className="layout-page-gutter">
+      <MobileAdBanner variant="horizontal" page="estimator" outerClassName="mt-3 mb-1" />
+    </div>
+  )
+}
+
 export function CostEstimator() {
   const { t, location: globalLoc, user, profile, setLocation, language } = useApp()
   const [state, setState] = useState<EstimatorState>(() => ({
@@ -643,6 +652,8 @@ export function CostEstimator() {
 
   if (busy && state.step === 5) {
     return (
+      <>
+        <EstimatorAdBanner />
       <EstimatorShell
         step={5}
         title={t('costEstimator.analyzing')}
@@ -660,6 +671,7 @@ export function CostEstimator() {
           <p className="mt-3 text-[13px] text-[#86868b]">{progress}%</p>
         </div>
       </EstimatorShell>
+      </>
     )
   }
 
@@ -667,6 +679,7 @@ export function CostEstimator() {
     const totals = estimate.totals[tier]
     return (
       <div className="min-h-[80vh] bg-[#f5f5f7] pb-24">
+        <EstimatorAdBanner />
         <div className="border-b border-[#e8e8ed] bg-white">
           <div className="mx-auto max-w-5xl px-4 py-8 md:px-6">
             <div className="flex flex-wrap items-center gap-2">
@@ -1144,6 +1157,7 @@ export function CostEstimator() {
 
   return (
     <div data-estimator-chunk="v2">
+    <EstimatorAdBanner />
     <EstimatorShell
       variant={state.step === 1 ? 'intake' : 'wizard'}
       step={state.step}

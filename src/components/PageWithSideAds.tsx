@@ -1,7 +1,8 @@
 import { type ReactNode } from 'react'
 import { isSeoLocale } from '../lib/seoRoutes'
+import type { AdPageKey } from '../lib/adPlacementSlots'
 
-export type SideAdsPage = 'home' | 'listings' | 'professionals' | 'companies' | 'default'
+export type SideAdsPage = AdPageKey
 
 export function adPageForPath(path: string): SideAdsPage {
   const parts = path.split('/').filter(Boolean)
@@ -9,6 +10,9 @@ export function adPageForPath(path: string): SideAdsPage {
   if (path === '/listings' || path === '/vacancies' || path === '/sell-rent') return 'listings'
   if (path === '/professionals') return 'professionals'
   if (path === '/companies') return 'companies'
+  if (path === '/categories' || path.startsWith('/category/')) return 'categories'
+  if (path === '/map') return 'map'
+  if (path === '/cost-estimator' || path === '/estimate') return 'estimator'
   if (parts.length === 3 && isSeoLocale(parts[0])) return 'professionals'
   if (path === '/advertising' || path === '/advertise' || path === '/create-ad' || path === '/assistant/job') {
     return 'default'

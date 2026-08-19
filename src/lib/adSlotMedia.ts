@@ -253,7 +253,11 @@ export function sortSlotsForEditor(slots: string[]): string[] {
       home: 0,
       listings: 1,
       professionals: 2,
-      default: 3,
+      companies: 3,
+      categories: 4,
+      map: 5,
+      estimator: 6,
+      default: 7,
     }
     const zone = def?.zone ?? 'mob_inline'
     const zoneIdx: Record<string, number> = {

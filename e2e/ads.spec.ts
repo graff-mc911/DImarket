@@ -3,7 +3,7 @@ import { gotoPath } from './helpers'
 
 test.describe('Реклама на сайті', () => {
   test('публічні сторінки без порожніх placeholder «Рекламне місце»', async ({ page }) => {
-    for (const path of ['/', '/listings', '/professionals', '/contact']) {
+    for (const path of ['/', '/listings', '/professionals', '/companies', '/categories', '/map', '/cost-estimator', '/contact']) {
       await gotoPath(page, path)
       await expect(page.getByText(/^Рекламне місце$|^Ad Space$/i)).toHaveCount(0)
       await expect(page.getByText(/^Рекламуйте свій бізнес тут$|^Advertise your business here$/i)).toHaveCount(

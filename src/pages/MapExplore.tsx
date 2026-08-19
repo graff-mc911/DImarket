@@ -22,6 +22,7 @@ import {
 import { isDocumentsProceduresPublicCategory, serviceCategories } from '../config/categories'
 import { dimarketLabel } from '../config/categoriesI18n'
 import { navigateTo } from '../lib/navigation'
+import { MobileAdBanner } from '../components/MobileAdBanner'
 
 type ViewMode = 'map' | 'list' | 'split'
 
@@ -174,6 +175,8 @@ export function MapExplore() {
           </div>
         </div>
       </section>
+
+      <MobileAdBanner variant="horizontal" page="map" outerClassName="mb-4" />
 
       <button
         type="button"

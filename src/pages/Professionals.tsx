@@ -35,6 +35,7 @@ interface ProfessionalsProps {
 export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
   const { t, location, setLocation } = useApp()
   const isCompanyCatalog = catalog === 'companies'
+  const adPage = isCompanyCatalog ? 'companies' : 'professionals'
 
   const [professionals, setProfessionals] = useState<ProfessionalWithCategories[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -387,7 +388,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
         </aside>
 
         <main className="min-w-0 flex-1">
-          <MobileAdBanner variant="horizontal" page="professionals" outerClassName="mb-4" />
+          <MobileAdBanner variant="horizontal" page={adPage} outerClassName="mb-4" />
 
           {loading ? (
             <div className="space-y-4">
@@ -410,7 +411,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
                   {(index + 1) % 8 === 0 && index < filteredProfessionals.length - 1 && (
                     <MobileAdBanner
                       variant="inline"
-                      page="professionals"
+                      page={adPage}
                       inlineIndex={2}
                       outerClassName="mt-4"
                     />

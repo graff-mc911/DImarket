@@ -15,14 +15,14 @@ import {
   AD_SIDE_RAIL_STICKY_STACK_CLASS,
   adSlotTailwind,
 } from '../lib/adSlotLayout'
-import { pageKeyFromSideAdsPage, sideSlotId, type SideIndex } from '../lib/adPlacementSlots'
+import { pageKeyFromSideAdsPage, sideSlotId, type AdPageKey, type SideIndex } from '../lib/adPlacementSlots'
 
 interface AdBannerProps {
   position: 'left' | 'right'
   sticky?: boolean
   /** Fixed у viewport (shell layout) */
   fixedViewport?: boolean
-  page?: 'home' | 'listings' | 'professionals' | 'default'
+  page?: AdPageKey
   stackCount?: number
   /** Якщо задано — не рахувати слоти повторно (спільний пул L/R) */
   stackCampaigns?: (AdCampaignWithAdvertiser | null)[]

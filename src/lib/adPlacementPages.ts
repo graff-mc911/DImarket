@@ -7,6 +7,10 @@ export type PlacementEditorPageId =
   | 'home'
   | 'listings'
   | 'professionals'
+  | 'companies'
+  | 'categories'
+  | 'map'
+  | 'estimator'
   | 'listing-detail'
   | 'professional-detail'
 
@@ -22,6 +26,10 @@ export const PLACEMENT_EDITOR_PAGES: PlacementEditorPage[] = [
   { id: 'home', adPageKey: 'home', route: '/', labelKey: 'advertising.places.page.home' },
   { id: 'listings', adPageKey: 'listings', route: '/listings', labelKey: 'advertising.places.page.listings' },
   { id: 'professionals', adPageKey: 'professionals', route: '/professionals', labelKey: 'advertising.places.page.professionals' },
+  { id: 'companies', adPageKey: 'companies', route: '/companies', labelKey: 'advertising.places.page.companies' },
+  { id: 'categories', adPageKey: 'categories', route: '/categories', labelKey: 'advertising.places.page.categories' },
+  { id: 'map', adPageKey: 'map', route: '/map', labelKey: 'advertising.places.page.map' },
+  { id: 'estimator', adPageKey: 'estimator', route: '/cost-estimator', labelKey: 'advertising.places.page.estimator' },
   { id: 'listing-detail', adPageKey: 'default', route: '/listing/', labelKey: 'advertising.places.page.listingDetail' },
   { id: 'professional-detail', adPageKey: 'default', route: '/professional/', labelKey: 'advertising.places.page.professionalDetail' },
 ]
@@ -48,6 +56,9 @@ export function slotIdsForEditorPage(editorId: PlacementEditorPageId): string[] 
 function routesMatchEditorPage(catalogRoute: string, editor: PlacementEditorPage): boolean {
   if (editor.id === 'listings') {
     return ['/listings', '/vacancies', '/sell-rent'].includes(catalogRoute)
+  }
+  if (editor.id === 'categories') {
+    return catalogRoute === '/categories' || catalogRoute.startsWith('/category/')
   }
   if (editor.route.endsWith('/')) {
     return catalogRoute === editor.route || catalogRoute.startsWith(editor.route)
@@ -87,6 +98,10 @@ export function editorPageFromPath(path: string): PlacementEditorPageId {
   if (path === '/') return 'home'
   if (path === '/listings' || path === '/vacancies' || path === '/sell-rent') return 'listings'
   if (path === '/professionals') return 'professionals'
+  if (path === '/companies') return 'companies'
+  if (path === '/categories' || path.startsWith('/category/')) return 'categories'
+  if (path === '/map') return 'map'
+  if (path === '/cost-estimator' || path === '/estimate') return 'estimator'
   if (path.startsWith('/listing/')) return 'listing-detail'
   if (path.startsWith('/professional/')) return 'professional-detail'
   return 'home'
@@ -102,6 +117,10 @@ export function editorPageFromSlotId(slotId: string): PlacementEditorPageId {
   const prefix = slotId.split('_')[0]
   if (prefix === 'listings') return 'listings'
   if (prefix === 'professionals') return 'professionals'
+  if (prefix === 'companies') return 'companies'
+  if (prefix === 'categories') return 'categories'
+  if (prefix === 'map') return 'map'
+  if (prefix === 'estimator') return 'estimator'
   if (prefix === 'default') return 'listing-detail'
   return 'home'
 }

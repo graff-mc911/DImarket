@@ -19,6 +19,7 @@ import {
 } from '../lib/marketplaceCategories'
 import { pushRecentCategory } from '../lib/recentCategories'
 import { navigateTo } from '../lib/navigation'
+import { MobileAdBanner } from '../components/MobileAdBanner'
 
 interface CategoryPageProps {
   slug: string
@@ -147,6 +148,10 @@ export function CategoryPage({ slug }: CategoryPageProps) {
         servicesCount={page.services.length}
         reviewsCount={page.reviews.length}
       />
+
+      <div className="layout-page-gutter">
+        <MobileAdBanner variant="horizontal" page="categories" outerClassName="mt-3 mb-1" />
+      </div>
 
       <div className="layout-page-gutter cat-page__body">
         <CategorySearchFilters

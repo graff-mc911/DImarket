@@ -3,13 +3,13 @@ import { X } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard } from './AdOverlayCard'
-import { mobileInlineSlotId, pageKeyFromMobilePage, type InlineIndex } from '../lib/adPlacementSlots'
+import { mobileInlineSlotId, pageKeyFromMobilePage, type AdPageKey, type InlineIndex } from '../lib/adPlacementSlots'
 import { adSlotTailwind } from '../lib/adSlotLayout'
 import { pickMobileCampaign, trackAdImpression } from '../lib/adCampaigns'
 
 interface MobileAdBannerProps {
   variant: 'inline' | 'horizontal'
-  page?: 'home' | 'listings' | 'professionals' | 'default'
+  page?: AdPageKey
   /** Слот 1–4 між картками / секціями (лише inline) */
   inlineIndex?: InlineIndex
   /** Обгортка лише коли є реклама (без порожніх відступів у сітці) */

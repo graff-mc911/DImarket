@@ -348,7 +348,7 @@ function fillSideStack(
 export function pickSideStacksForPage(
   all: AdCampaignWithAdvertiser[],
   count: number,
-  page?: 'home' | 'listings' | 'professionals' | 'default',
+  page?: AdPageKey
 ): {
   left: (AdCampaignWithAdvertiser | null)[]
   right: (AdCampaignWithAdvertiser | null)[]
@@ -375,7 +375,7 @@ function mergeSideStackRows(
 export function pickSideStacksForPageWithFallback(
   all: AdCampaignWithAdvertiser[],
   count: number,
-  page?: 'home' | 'listings' | 'professionals' | 'default',
+  page?: AdPageKey
 ): {
   left: (AdCampaignWithAdvertiser | null)[]
   right: (AdCampaignWithAdvertiser | null)[]
@@ -396,7 +396,7 @@ export function pickCampaignsForSideStack(
   all: AdCampaignWithAdvertiser[],
   position: 'left' | 'right',
   count: number,
-  page?: 'home' | 'listings' | 'professionals' | 'default',
+  page?: AdPageKey
 ): (AdCampaignWithAdvertiser | null)[] {
   const stacks = pickSideStacksForPage(all, count, page)
   return position === 'left' ? stacks.left : stacks.right

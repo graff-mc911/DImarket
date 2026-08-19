@@ -2,14 +2,35 @@ import type { AdPlacement } from './adCampaigns'
 import type { TranslationKey } from './i18n'
 
 /** Сторінки, для яких можна купити окремі слоти */
-export type AdPageKey = 'home' | 'listings' | 'professionals' | 'default'
+export type AdPageKey =
+  | 'home'
+  | 'listings'
+  | 'professionals'
+  | 'companies'
+  | 'categories'
+  | 'map'
+  | 'estimator'
+  | 'default'
 
-export const AD_PAGE_KEYS: AdPageKey[] = ['home', 'listings', 'professionals', 'default']
+export const AD_PAGE_KEYS: AdPageKey[] = [
+  'home',
+  'listings',
+  'professionals',
+  'companies',
+  'categories',
+  'map',
+  'estimator',
+  'default',
+]
 
 export const PAGE_LABEL_KEYS: Record<AdPageKey, TranslationKey> = {
   home: 'advertising.slots.page.home',
   listings: 'advertising.slots.page.listings',
   professionals: 'advertising.slots.page.professionals',
+  companies: 'advertising.slots.page.companies',
+  categories: 'advertising.slots.page.categories',
+  map: 'advertising.slots.page.map',
+  estimator: 'advertising.slots.page.estimator',
   default: 'advertising.slots.page.default',
 }
 
@@ -35,20 +56,12 @@ export function mobileInlineSlotId(page: AdPageKey, index: InlineIndex): string 
   return `${page}_mob_inline_${index}`
 }
 
-export function pageKeyFromSideAdsPage(
-  page?: 'home' | 'listings' | 'professionals' | 'companies' | 'default',
-): AdPageKey {
-  if (page === 'home') return 'home'
-  if (page === 'listings') return 'listings'
-  if (page === 'professionals') return 'professionals'
-  return 'default'
+export function pageKeyFromSideAdsPage(page?: AdPageKey): AdPageKey {
+  return page && AD_PAGE_KEYS.includes(page) ? page : 'default'
 }
 
-export function pageKeyFromMobilePage(page?: 'home' | 'listings' | 'professionals' | 'companies' | 'default'): AdPageKey {
-  if (page === 'home') return 'home'
-  if (page === 'listings') return 'listings'
-  if (page === 'professionals') return 'professionals'
-  return 'default'
+export function pageKeyFromMobilePage(page?: AdPageKey): AdPageKey {
+  return pageKeyFromSideAdsPage(page)
 }
 
 /** Усі гранульовані ID слотів */
@@ -72,6 +85,7 @@ export function slotToLegacyPlacement(slotId: string): AdPlacement {
   if (slotId.includes('_side_')) return 'sidebar'
   if (slotId.startsWith('listings')) return 'listings'
   if (slotId.startsWith('professionals')) return 'listings'
+  if (slotId.startsWith('companies')) return 'listings'
   return 'home'
 }
 
@@ -101,7 +115,7 @@ for (const page of AD_PAGE_KEYS) {
       ? ['home', 'sidebar', 'footer', 'mobile_sticky']
       : page === 'listings'
         ? ['listings', 'sidebar', 'home', 'mobile_sticky']
-        : page === 'professionals'
+        : page === 'professionals' || page === 'companies'
           ? ['listings', 'sidebar', 'home', 'mobile_sticky']
           : ['sidebar', 'home', 'listings', 'footer', 'mobile_sticky']
   legacyFor(page, base)
@@ -199,7 +213,10 @@ const INLINE_ROW_KEYS: Record<string, TranslationKey> = {
 }
 
 export function formatSlotLabel(slotId: string, t: (key: TranslationKey) => string): string {
-  const page = AD_PAGE_KEYS.find((p) => slotId.startsWith(p + '_')) ?? 'default'
+  const page =
+    [...AD_PAGE_KEYS]
+      .sort((a, b) => b.length - a.length)
+      .find((p) => slotId.startsWith(`${p}_`)) ?? 'default'
   const pageLabel = t(PAGE_LABEL_KEYS[page])
 
   const sideMatch = slotId.match(/_side_(l|r)(\d)$/)

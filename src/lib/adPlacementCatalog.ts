@@ -69,6 +69,14 @@ export const AD_PLACEMENT_CATALOG: AdPlacementSlotDef[] = [
 
   ...mobileInlineSlots('professionals', ['/professionals'], [1, 2]),
 
+  ...mobileInlineSlots('companies', ['/companies'], [1, 2]),
+
+  ...mobileInlineSlots('categories', ['/categories', '/category/'], [1]),
+
+  ...mobileInlineSlots('map', ['/map'], [1]),
+
+  ...mobileInlineSlots('estimator', ['/cost-estimator'], [1]),
+
   /** Картка оголошення / фахівця — один широкий слот */
   ...mobileInlineSlots('default', ['/listing/', '/professional/'], [1]),
 ]
