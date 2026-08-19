@@ -218,8 +218,8 @@
       "country_code": "DE",
       "location": "Darmstadt, Hessen, Germany",
       "address": null,
-      "phone": null,
-      "public_email": null,
+      "phone": "+49 6151 5011204",
+      "public_email": "info@disanto-domenico.de",
       "website": "https://www.disanto-domenico.de/malerbetrieb-darmstadt/",
       "business_hours": null,
       "services": [
@@ -1000,7 +1000,7 @@
     {
       "slug": "reformas-esquivel-alicante",
       "full_name": "Reformas Esquivel",
-      "user_role": "professional",
+      "user_role": "company",
       "is_professional": true,
       "categories": [
         "Plumbing",
@@ -2254,7 +2254,7 @@
     {
       "slug": "lamin-reformas-fontaneria-valencia",
       "full_name": "Lamin Reformas y Fontanería",
-      "user_role": "professional",
+      "user_role": "company",
       "is_professional": true,
       "categories": [
         "Plumbing",

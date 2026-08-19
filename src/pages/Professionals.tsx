@@ -10,6 +10,7 @@ import { navigateTo } from '../lib/navigation'
 import { buildDisplayCategories, SITE_CATEGORY_SLUGS } from '../lib/siteCategories'
 import { findServiceBySlug, matchesServiceProfile } from '../lib/serviceTaxonomy'
 import { matchesWorkLoose, matchesWorkPrefix } from '../lib/categoryMatching'
+import { isBusinessNamedProfessional } from '../lib/professionalDisplay'
 import { GeoSearchFilters } from '../components/GeoSearchFilters'
 import {
   EMPTY_GEO_SEARCH,
@@ -113,7 +114,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
         .from('profiles')
         .select(select)
         .eq('is_professional', true)
-        .eq('user_role', isCompanyCatalog ? 'company' : 'professional')
+        .in('user_role', isCompanyCatalog ? ['company', 'professional'] : ['professional'])
         .order('rating', { ascending: false })
         .order('total_reviews', { ascending: false })
 
@@ -123,7 +124,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
           .from('profiles')
           .select(select)
           .eq('is_professional', true)
-          .eq('user_role', isCompanyCatalog ? 'company' : 'professional')
+          .in('user_role', isCompanyCatalog ? ['company', 'professional'] : ['professional'])
           .order('rating', { ascending: false })
           .order('total_reviews', { ascending: false }))
       }
@@ -131,9 +132,11 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
       const { filterPublicProfiles, sortProfilesForPublicDiscovery } = await import(
         '../lib/publicProfileVisibility'
       )
-      const rows = sortProfilesForPublicDiscovery(
-        filterPublicProfiles((data as ProfessionalWithCategories[] | null) ?? []),
-      )
+      const publicRows = filterPublicProfiles((data as ProfessionalWithCategories[] | null) ?? [])
+      const catalogRows = isCompanyCatalog
+        ? publicRows.filter((p) => p.user_role === 'company' || isBusinessNamedProfessional(p))
+        : publicRows.filter((p) => !isBusinessNamedProfessional(p))
+      const rows = sortProfilesForPublicDiscovery(catalogRows)
       setProfessionals(rows)
     } finally {
       setLoading(false)

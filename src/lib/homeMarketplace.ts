@@ -11,6 +11,7 @@ import {
   filterPublicProfiles,
   sortProfilesForPublicDiscovery,
 } from './publicProfileVisibility'
+import { isBusinessNamedProfessional } from './professionalDisplay'
 import type { ListingWithImages, Profile } from './types'
 
 export type HomeMetrics = {
@@ -318,7 +319,18 @@ export async function fetchHomeMarketplaceData(): Promise<HomeMarketplaceData> {
       fetchHomeReviews(),
     ])
 
-  return { metrics, categories, projects, professionals, companies, reviews }
+  const misplacedCompanies = professionals.filter(isBusinessNamedProfessional)
+  const masterPros = professionals.filter((p) => !isBusinessNamedProfessional(p))
+  const companyRows = sortProfilesForPublicDiscovery([...companies, ...misplacedCompanies])
+
+  return {
+    metrics,
+    categories,
+    projects,
+    professionals: masterPros,
+    companies: companyRows,
+    reviews,
+  }
 }
 
 export function formatHomeBudget(

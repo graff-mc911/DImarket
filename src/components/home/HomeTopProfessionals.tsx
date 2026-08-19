@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Globe, Languages, Phone, ShieldCheck, Star } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Globe, Languages, MapPin, Phone, ShieldCheck, Star } from 'lucide-react'
 import { useRef } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import type { HomeProfessional } from '../../lib/homeMarketplace'
@@ -73,6 +73,7 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
             const name = formatProfessionalCardTitle(pro, t('professional.defaultName'))
             const avatar = resolveDirectoryAvatarUrl(pro.id, pro.profile_photo, pro.avatar_url)
             const langs = (pro.languages ?? []).slice(0, 3)
+            const location = (pro.location || '').trim()
             const responseTime = t('homePremium.responseTypical')
             const phone = (pro.phone ?? '').trim()
             const websiteHref = normalizeWebsiteHref(pro.website)
@@ -109,6 +110,12 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
                         · {pro.completed_jobs ?? 0} {t('homePremium.completedProjects')}
                       </span>
                     </p>
+                    {location ? (
+                      <p className="home-pro-card__langs">
+                        <MapPin className="h-3.5 w-3.5" aria-hidden />
+                        {location}
+                      </p>
+                    ) : null}
                     {langs.length > 0 ? (
                       <p className="home-pro-card__langs">
                         <Languages className="h-3.5 w-3.5" aria-hidden />

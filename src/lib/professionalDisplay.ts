@@ -56,6 +56,21 @@ export function isCompanyProfile(professional: ProfessionalDisplayProfile): bool
   return professional.user_role === 'company'
 }
 
+/** Business / legal names that were imported as user_role=professional by mistake. */
+const COMPANY_LEGAL_SUFFIX =
+  /\b(gmbh|gbr|\bag\b|kg\b|ug\b|ltd|llc|inc\.?|plc|s\.?l\.?|s\.?a\.?|sas|srl|bv\b|oy\b)\b/i
+const COMPANY_TRADE_NAME = /\breformas\b/i
+
+export function isBusinessNamedProfessional(profile: {
+  full_name?: string | null
+  user_role?: string | null
+}): boolean {
+  if (profile.user_role !== 'professional') return false
+  const name = (profile.full_name || '').trim()
+  if (!name) return false
+  return COMPANY_LEGAL_SUFFIX.test(name) || COMPANY_TRADE_NAME.test(name)
+}
+
 export function resolveProfessionalCategoryLabels(
   professional: ProfessionalDisplayProfile,
   translateCategory: (category: Category) => string,
