@@ -1,3 +1,4 @@
+import { parseListingLocation } from './listingLocation'
 import { supabase } from './supabase'
 
 export type OwnerProfileRow = {
@@ -73,6 +74,87 @@ export function isTopMastersProfile(row: Pick<OwnerProfileRow, 'is_professional'
 /** Same base set as homepage «Топ компанії». */
 export function isTopCompaniesProfile(row: Pick<OwnerProfileRow, 'is_professional' | 'user_role'>): boolean {
   return row.is_professional === true && row.user_role === 'company'
+}
+
+export const OWNER_GEO_UNKNOWN_COUNTRY = 'Без локації'
+export const OWNER_GEO_UNKNOWN_REGION = 'Без регіону'
+export const OWNER_GEO_ALL_REGIONS = '*'
+
+export function ownerProfileGeo(row: Pick<OwnerProfileRow, 'location'>): {
+  country: string
+  region: string
+} {
+  const loc = row.location?.trim() ?? ''
+  if (!loc) return { country: OWNER_GEO_UNKNOWN_COUNTRY, region: OWNER_GEO_UNKNOWN_REGION }
+  const parsed = parseListingLocation(loc)
+  if (!parsed) return { country: loc, region: OWNER_GEO_UNKNOWN_REGION }
+  return {
+    country: parsed.country || OWNER_GEO_UNKNOWN_COUNTRY,
+    region: parsed.region || OWNER_GEO_UNKNOWN_REGION,
+  }
+}
+
+export type OwnerGeoRegionGroup = {
+  region: string
+  count: number
+  rows: OwnerProfileRow[]
+}
+
+export type OwnerGeoCountryGroup = {
+  country: string
+  count: number
+  regions: OwnerGeoRegionGroup[]
+}
+
+function localeNameSort(a: string, b: string): number {
+  return a.localeCompare(b, 'uk', { sensitivity: 'base' })
+}
+
+/** Групування кабінету власника: країна → регіон (щоб довгі списки не зсипались в одну купу). */
+export function groupOwnerProfilesByGeo(rows: OwnerProfileRow[]): OwnerGeoCountryGroup[] {
+  const countries = new Map<string, Map<string, OwnerProfileRow[]>>()
+  const labels = new Map<string, string>()
+
+  for (const row of rows) {
+    const geo = ownerProfileGeo(row)
+    const cKey = geo.country.trim().toLowerCase()
+    const rKey = geo.region.trim().toLowerCase()
+    labels.set(`c:${cKey}`, geo.country.trim())
+    labels.set(`r:${cKey}|${rKey}`, geo.region.trim())
+    let regions = countries.get(cKey)
+    if (!regions) {
+      regions = new Map()
+      countries.set(cKey, regions)
+    }
+    const list = regions.get(rKey) ?? []
+    list.push(row)
+    regions.set(rKey, list)
+  }
+
+  const groups: OwnerGeoCountryGroup[] = []
+  for (const [cKey, regions] of countries) {
+    const regionGroups: OwnerGeoRegionGroup[] = []
+    for (const [rKey, list] of regions) {
+      regionGroups.push({
+        region: labels.get(`r:${cKey}|${rKey}`) ?? rKey,
+        count: list.length,
+        rows: list,
+      })
+    }
+    regionGroups.sort((a, b) => b.count - a.count || localeNameSort(a.region, b.region))
+    groups.push({
+      country: labels.get(`c:${cKey}`) ?? cKey,
+      count: regionGroups.reduce((n, r) => n + r.count, 0),
+      regions: regionGroups,
+    })
+  }
+
+  groups.sort((a, b) => {
+    if (a.country === OWNER_GEO_UNKNOWN_COUNTRY) return 1
+    if (b.country === OWNER_GEO_UNKNOWN_COUNTRY) return -1
+    return b.count - a.count || localeNameSort(a.country, b.country)
+  })
+  return groups
 }
 
 function parseOwnerSearchRows(data: unknown): OwnerProfileRow[] {

@@ -3896,6 +3896,13 @@ select.select-glass.geo-filter-select::-ms-expand {
   color: #fff;
 }
 
+.dimarket-subcategory-chip--primary,
+.dimarket-subcategory-chip[aria-pressed='true'] {
+  border-color: var(--dimarket-primary) !important;
+  background: var(--dimarket-primary);
+  color: #fff;
+}
+
 .dimarket-categories__empty {
   border-radius: 18px;
   background: #fff;
