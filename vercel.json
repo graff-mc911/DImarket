@@ -4,7 +4,7 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ],
@@ -27,6 +27,14 @@
         {
           "key": "Permissions-Policy",
           "value": "camera=(self), microphone=(self), geolocation=(self)"
+        },
+        {
+          "key": "Reporting-Endpoints",
+          "value": "csp-endpoint=\"/api/csp-report\""
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: data:; worker-src 'self' blob:; manifest-src 'self'; connect-src 'self' https://wjlfvajloxkevggwjgtk.supabase.co wss://wjlfvajloxkevggwjgtk.supabase.co https://*.supabase.co wss://*.supabase.co https://nominatim.openstreetmap.org https://ipapi.co https://maps.googleapis.com https://maps.gstatic.com https://places.googleapis.com https://*.ingest.sentry.io https://*.sentry.io; report-uri /api/csp-report; report-to csp-endpoint"
         }
       ]
     },
