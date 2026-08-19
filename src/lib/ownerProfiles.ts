@@ -94,16 +94,16 @@ export function ownerProfileGeo(row: Pick<OwnerProfileRow, 'location'>): {
   }
 }
 
-export type OwnerGeoRegionGroup = {
+export type OwnerGeoRegionGroup<T = OwnerProfileRow> = {
   region: string
   count: number
-  rows: OwnerProfileRow[]
+  rows: T[]
 }
 
-export type OwnerGeoCountryGroup = {
+export type OwnerGeoCountryGroup<T = OwnerProfileRow> = {
   country: string
   count: number
-  regions: OwnerGeoRegionGroup[]
+  regions: OwnerGeoRegionGroup<T>[]
 }
 
 function localeNameSort(a: string, b: string): number {
@@ -111,12 +111,15 @@ function localeNameSort(a: string, b: string): number {
 }
 
 /** Групування кабінету власника: країна → регіон (щоб довгі списки не зсипались в одну купу). */
-export function groupOwnerProfilesByGeo(rows: OwnerProfileRow[]): OwnerGeoCountryGroup[] {
-  const countries = new Map<string, Map<string, OwnerProfileRow[]>>()
+export function groupRowsByLocation<T>(
+  rows: T[],
+  locationOf: (row: T) => string | null | undefined,
+): OwnerGeoCountryGroup<T>[] {
+  const countries = new Map<string, Map<string, T[]>>()
   const labels = new Map<string, string>()
 
   for (const row of rows) {
-    const geo = ownerProfileGeo(row)
+    const geo = ownerProfileGeo({ location: locationOf(row) ?? null })
     const cKey = geo.country.trim().toLowerCase()
     const rKey = geo.region.trim().toLowerCase()
     labels.set(`c:${cKey}`, geo.country.trim())
@@ -131,9 +134,9 @@ export function groupOwnerProfilesByGeo(rows: OwnerProfileRow[]): OwnerGeoCountr
     regions.set(rKey, list)
   }
 
-  const groups: OwnerGeoCountryGroup[] = []
+  const groups: OwnerGeoCountryGroup<T>[] = []
   for (const [cKey, regions] of countries) {
-    const regionGroups: OwnerGeoRegionGroup[] = []
+    const regionGroups: OwnerGeoRegionGroup<T>[] = []
     for (const [rKey, list] of regions) {
       regionGroups.push({
         region: labels.get(`r:${cKey}|${rKey}`) ?? rKey,
@@ -155,6 +158,10 @@ export function groupOwnerProfilesByGeo(rows: OwnerProfileRow[]): OwnerGeoCountr
     return b.count - a.count || localeNameSort(a.country, b.country)
   })
   return groups
+}
+
+export function groupOwnerProfilesByGeo(rows: OwnerProfileRow[]): OwnerGeoCountryGroup[] {
+  return groupRowsByLocation(rows, (row) => row.location)
 }
 
 function parseOwnerSearchRows(data: unknown): OwnerProfileRow[] {

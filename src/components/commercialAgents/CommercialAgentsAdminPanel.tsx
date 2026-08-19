@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { BadgeCheck, Clock, XCircle } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import {
   ownerDeleteCommercialEntity,
@@ -6,6 +7,7 @@ import {
 } from '../../lib/commercialAgents/api'
 import { navigateTo } from '../../lib/navigation'
 import type { VerificationStatus } from '../../lib/commercialAgents/types'
+import { OwnerCabinetGeoQueue, type OwnerCabinetQueueFilter } from '../OwnerCabinetGeoQueue'
 
 type QueueFilter = 'pending' | 'verified' | 'rejected'
 
@@ -19,6 +21,8 @@ type Row = {
   profile_id: string
   verification_status: VerificationStatus | string
   country: string | null
+  headquarters: string | null
+  profile_location: string | null
   is_published: boolean
 }
 
@@ -26,10 +30,36 @@ type ConfirmState = {
   row: Row
 } | null
 
+const FILTERS: OwnerCabinetQueueFilter<QueueFilter>[] = [
+  { id: 'pending', label: 'Очікують', icon: Clock },
+  { id: 'verified', label: 'Схвалені', icon: BadgeCheck },
+  { id: 'rejected', label: 'Відхилені', icon: XCircle },
+]
+
 const FILTER_STATUSES: Record<QueueFilter, Array<'unverified' | 'pending' | 'verified' | 'rejected'>> = {
   pending: ['pending', 'unverified'],
   verified: ['verified'],
   rejected: ['rejected'],
+}
+
+function applyQueueFilter<T extends { or: Function; in: Function; eq: Function }>(
+  query: T,
+  filter: QueueFilter,
+): T {
+  const statuses = FILTER_STATUSES[filter]
+  if (filter === 'rejected') {
+    return query.or(
+      'verification_status.eq.rejected,and(is_published.eq.false,verification_status.neq.verified)',
+    ) as T
+  }
+  if (filter === 'pending') {
+    return query.in('verification_status', statuses).eq('is_published', true) as T
+  }
+  return query.in('verification_status', statuses) as T
+}
+
+function rowLocation(row: Row): string | null {
+  return row.profile_location || row.headquarters || row.country
 }
 
 /**
@@ -38,6 +68,7 @@ const FILTER_STATUSES: Record<QueueFilter, Array<'unverified' | 'pending' | 'ver
 export function CommercialAgentsAdminPanel() {
   const [filter, setFilter] = useState<QueueFilter>('pending')
   const [rows, setRows] = useState<Row[]>([])
+  const [counts, setCounts] = useState<Record<QueueFilter, number> | null>(null)
   const [reports, setReports] = useState<
     Array<{ id: string; entity_type: string; reason: string; status: string; details: string | null }>
   >([])
@@ -47,52 +78,59 @@ export function CommercialAgentsAdminPanel() {
   const [error, setError] = useState('')
   const [confirm, setConfirm] = useState<ConfirmState>(null)
 
-  const reload = async () => {
+  const countForFilter = async (next: QueueFilter) => {
+    const mfrQ = applyQueueFilter(
+      supabase.from('manufacturer_profiles').select('id', { count: 'exact', head: true }),
+      next,
+    )
+    const agentQ = applyQueueFilter(
+      supabase.from('agent_profiles').select('id', { count: 'exact', head: true }),
+      next,
+    )
+    const [mfr, agents] = await Promise.all([mfrQ, agentQ])
+    return (mfr.count ?? 0) + (agents.count ?? 0)
+  }
+
+  const reload = useCallback(async (nextFilter = filter) => {
     setLoading(true)
     setError('')
-    const statuses = FILTER_STATUSES[filter]
 
-    const mfrQuery = supabase
-      .from('manufacturer_profiles')
-      .select(
-        'id, profile_id, company_name, slug, verification_status, country, public_email, is_published',
-      )
-      .order('updated_at', { ascending: false })
-      .limit(40)
-
-    const agentQuery = supabase
-      .from('agent_profiles')
-      .select(
-        'id, profile_id, full_name, company_name, slug, verification_status, country, public_email, is_published',
-      )
-      .order('updated_at', { ascending: false })
-      .limit(40)
-
-    // Rejected tab: status=rejected OR soft-rejected (unpublished + not verified)
-    // until APPLY_CA_OWNER_MODERATION.sql adds the rejected CHECK value.
-    if (filter === 'rejected') {
-      mfrQuery.or('verification_status.eq.rejected,and(is_published.eq.false,verification_status.neq.verified)')
-      agentQuery.or(
-        'verification_status.eq.rejected,and(is_published.eq.false,verification_status.neq.verified)',
-      )
-    } else if (filter === 'pending') {
-      mfrQuery.in('verification_status', statuses).eq('is_published', true)
-      agentQuery.in('verification_status', statuses).eq('is_published', true)
-    } else {
-      mfrQuery.in('verification_status', statuses)
-      agentQuery.in('verification_status', statuses)
-    }
-
-    const [{ data: mfr }, { data: agents }, { data: reps }] = await Promise.all([
-      mfrQuery,
-      agentQuery,
+    const mfrQuery = applyQueueFilter(
       supabase
-        .from('commercial_entity_reports')
-        .select('id, entity_type, reason, status, details')
-        .eq('status', 'open')
-        .order('created_at', { ascending: false })
-        .limit(20),
-    ])
+        .from('manufacturer_profiles')
+        .select(
+          'id, profile_id, company_name, slug, verification_status, country, headquarters, public_email, is_published, profile:profiles(location)',
+        )
+        .order('updated_at', { ascending: false })
+        .limit(200),
+      nextFilter,
+    )
+
+    const agentQuery = applyQueueFilter(
+      supabase
+        .from('agent_profiles')
+        .select(
+          'id, profile_id, full_name, company_name, slug, verification_status, country, public_email, is_published, profile:profiles(location)',
+        )
+        .order('updated_at', { ascending: false })
+        .limit(200),
+      nextFilter,
+    )
+
+    const [{ data: mfr }, { data: agents }, { data: reps }, pendingN, verifiedN, rejectedN] =
+      await Promise.all([
+        mfrQuery,
+        agentQuery,
+        supabase
+          .from('commercial_entity_reports')
+          .select('id, entity_type, reason, status, details')
+          .eq('status', 'open')
+          .order('created_at', { ascending: false })
+          .limit(20),
+        countForFilter('pending'),
+        countForFilter('verified'),
+        countForFilter('rejected'),
+      ])
 
     const next: Row[] = [
       ...((mfr ?? []) as Array<{
@@ -102,20 +140,27 @@ export function CommercialAgentsAdminPanel() {
         slug: string
         verification_status: string
         country: string | null
+        headquarters: string | null
         public_email: string | null
         is_published: boolean
-      }>).map((r) => ({
-        id: r.id,
-        kind: 'manufacturer' as const,
-        name: r.company_name,
-        company: r.company_name,
-        email: r.public_email,
-        slug: r.slug,
-        profile_id: r.profile_id,
-        verification_status: r.verification_status,
-        country: r.country,
-        is_published: r.is_published,
-      })),
+        profile?: { location: string | null } | { location: string | null }[] | null
+      }>).map((r) => {
+        const loc = Array.isArray(r.profile) ? r.profile[0]?.location : r.profile?.location
+        return {
+          id: r.id,
+          kind: 'manufacturer' as const,
+          name: r.company_name,
+          company: r.company_name,
+          email: r.public_email,
+          slug: r.slug,
+          profile_id: r.profile_id,
+          verification_status: r.verification_status,
+          country: r.country,
+          headquarters: r.headquarters,
+          profile_location: loc ?? null,
+          is_published: r.is_published,
+        }
+      }),
       ...((agents ?? []) as Array<{
         id: string
         profile_id: string
@@ -126,33 +171,34 @@ export function CommercialAgentsAdminPanel() {
         country: string | null
         public_email: string | null
         is_published: boolean
-      }>).map((r) => ({
-        id: r.id,
-        kind: 'agent' as const,
-        name: r.full_name,
-        company: r.company_name,
-        email: r.public_email,
-        slug: r.slug,
-        profile_id: r.profile_id,
-        verification_status: r.verification_status,
-        country: r.country,
-        is_published: r.is_published,
-      })),
+        profile?: { location: string | null } | { location: string | null }[] | null
+      }>).map((r) => {
+        const loc = Array.isArray(r.profile) ? r.profile[0]?.location : r.profile?.location
+        return {
+          id: r.id,
+          kind: 'agent' as const,
+          name: r.full_name,
+          company: r.company_name,
+          email: r.public_email,
+          slug: r.slug,
+          profile_id: r.profile_id,
+          verification_status: r.verification_status,
+          country: r.country,
+          headquarters: null,
+          profile_location: loc ?? null,
+          is_published: r.is_published,
+        }
+      }),
     ]
     setRows(next)
+    setCounts({ pending: pendingN, verified: verifiedN, rejected: rejectedN })
     setReports((reps as typeof reports) ?? [])
     setLoading(false)
-  }
+  }, [filter])
 
   useEffect(() => {
-    void reload()
-  }, [filter])
-
-  const filterLabel = useMemo(() => {
-    if (filter === 'pending') return 'Pending'
-    if (filter === 'verified') return 'Approved'
-    return 'Rejected'
-  }, [filter])
+    void reload(filter)
+  }, [filter, reload])
 
   const verify = async (row: Row) => {
     setBusyId(row.id)
@@ -214,127 +260,115 @@ export function CommercialAgentsAdminPanel() {
   }
 
   return (
-    <section className="rounded-2xl border border-[var(--line-200)] bg-white/95 p-5">
-      <h2 className="text-lg font-bold text-[var(--ink-900)]">Комерційні агенти</h2>
-      <p className="mt-1 text-sm text-[var(--ink-600)]">
-        Заявки виробників і представників: перегляд, підтвердження, відхилення або видалення.
-      </p>
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        {([
-          ['pending', 'Очікують'],
-          ['verified', 'Схвалені'],
-          ['rejected', 'Відхилені'],
-        ] as const).map(([key, label]) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setFilter(key)}
-            className={`rounded-full px-3 py-1 text-xs font-bold ${
-              filter === key
-                ? 'bg-[var(--ink-900)] text-white'
-                : 'border border-[var(--line-200)] text-[var(--ink-700)]'
-            }`}
+    <>
+      <OwnerCabinetGeoQueue
+        title="Комерційні агенти"
+        subtitle="Заявки виробників і представників: перегляд, підтвердження, відхилення або видалення. Натисніть групу — як категорію. Далі країна і регіон, потім список."
+        filters={FILTERS}
+        activeId={filter}
+        rows={rows}
+        locationOf={rowLocation}
+        loading={loading}
+        countFor={(id) => counts?.[id] ?? null}
+        emptyText="Немає заявок у цій групі."
+        onSelect={setFilter}
+        notice={notice}
+        error={error}
+        renderRow={(row) => (
+          <div
+            key={`${row.kind}-${row.id}`}
+            className="rounded-xl border border-[rgba(148,163,184,0.28)] bg-white p-4"
           >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {notice ? <p className="mt-2 text-sm text-[#248a3d]">{notice}</p> : null}
-      {error ? <p className="mt-2 text-sm text-[#c0392b]">{error}</p> : null}
-
-      {loading ? (
-        <p className="mt-4 text-sm text-[var(--ink-500)]">Loading…</p>
-      ) : (
-        <div className="mt-4 space-y-3">
-          {rows.length === 0 ? (
-            <p className="text-sm text-[var(--ink-600)]">Немає профілів зі статусом «{filterLabel}».</p>
-          ) : (
-            rows.map((row) => (
-              <div
-                key={`${row.kind}-${row.id}`}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--line-200)] px-3 py-2.5"
-              >
-                <div>
-                  <p className="text-sm font-semibold text-[var(--ink-900)]">
-                    {row.name}{' '}
-                    <span className="text-xs font-medium uppercase text-[var(--ink-500)]">({row.kind})</span>
-                  </p>
-                  <p className="text-xs text-[var(--ink-500)]">
-                    {row.company || '—'} · {row.email || 'no public email'} · {row.country || '—'} ·{' '}
-                    {row.verification_status}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    className="rounded-full border px-3 py-1 text-xs font-semibold"
-                    onClick={() =>
-                      navigateTo(
-                        row.kind === 'manufacturer'
-                          ? `/commercial-agents/manufacturers/${row.slug}`
-                          : `/commercial-agents/representatives/${row.slug}`,
-                      )
-                    }
-                  >
-                    View
-                  </button>
-                  {row.verification_status !== 'verified' ? (
-                    <button
-                      type="button"
-                      disabled={busyId === row.id}
-                      className="rounded-full bg-[#248a3d] px-3 py-1 text-xs font-bold text-white disabled:opacity-50"
-                      onClick={() => void verify(row)}
-                    >
-                      Verify
-                    </button>
-                  ) : null}
-                  {row.verification_status !== 'rejected' ? (
-                    <button
-                      type="button"
-                      disabled={busyId === row.id}
-                      className="rounded-full bg-[#b45309] px-3 py-1 text-xs font-bold text-white disabled:opacity-50"
-                      onClick={() => void reject(row)}
-                    >
-                      Reject
-                    </button>
-                  ) : null}
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-bold text-[#2f2a24]">
+                  {row.name}{' '}
+                  <span className="text-xs font-medium uppercase text-[#6f665d]">({row.kind})</span>
+                </p>
+                <p className="mt-0.5 text-xs text-[#6f665d]">
+                  {row.company || '—'} · {row.email || 'no public email'} · {row.country || '—'} ·{' '}
+                  {row.verification_status}
+                </p>
+                {rowLocation(row) ? (
+                  <p className="mt-0.5 text-xs text-[#6f665d]">{rowLocation(row)}</p>
+                ) : null}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="rounded-full border px-3 py-1 text-xs font-semibold"
+                  onClick={() =>
+                    navigateTo(
+                      row.kind === 'manufacturer'
+                        ? `/commercial-agents/manufacturers/${row.slug}`
+                        : `/commercial-agents/representatives/${row.slug}`,
+                    )
+                  }
+                >
+                  View
+                </button>
+                {row.verification_status !== 'verified' ? (
                   <button
                     type="button"
                     disabled={busyId === row.id}
-                    className="rounded-full bg-[#b91c1c] px-3 py-1 text-xs font-bold text-white disabled:opacity-50"
-                    onClick={() => setConfirm({ row })}
+                    className="rounded-full bg-[#248a3d] px-3 py-1 text-xs font-bold text-white disabled:opacity-50"
+                    onClick={() => void verify(row)}
                   >
-                    Delete
+                    Verify
                   </button>
-                </div>
-              </div>
-            ))
-          )}
-
-          <h3 className="pt-2 text-sm font-bold text-[var(--ink-800)]">Скарги</h3>
-          {reports.length === 0 ? (
-            <p className="text-sm text-[var(--ink-600)]">Немає відкритих скарг.</p>
-          ) : (
-            reports.map((r) => (
-              <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border px-3 py-2.5">
-                <p className="text-sm text-[var(--ink-800)]">
-                  {r.entity_type} · {r.reason}
-                  {r.details ? ` — ${r.details}` : ''}
-                </p>
+                ) : null}
+                {row.verification_status !== 'rejected' ? (
+                  <button
+                    type="button"
+                    disabled={busyId === row.id}
+                    className="rounded-full bg-[#b45309] px-3 py-1 text-xs font-bold text-white disabled:opacity-50"
+                    onClick={() => void reject(row)}
+                  >
+                    Reject
+                  </button>
+                ) : null}
                 <button
                   type="button"
-                  className="rounded-full bg-[#e7e9ec] px-3 py-1 text-xs font-bold"
-                  onClick={() => void dismissReport(r.id)}
+                  disabled={busyId === row.id}
+                  className="rounded-full bg-[#b91c1c] px-3 py-1 text-xs font-bold text-white disabled:opacity-50"
+                  onClick={() => setConfirm({ row })}
                 >
-                  Dismiss
+                  Delete
                 </button>
               </div>
-            ))
-          )}
-        </div>
-      )}
+            </div>
+          </div>
+        )}
+        extra={
+          <div className="mt-6">
+            <h3 className="text-sm font-bold text-[#2f2a24]">Скарги</h3>
+            {reports.length === 0 ? (
+              <p className="mt-2 text-sm text-[#6f665d]">Немає відкритих скарг.</p>
+            ) : (
+              <div className="mt-2 space-y-2">
+                {reports.map((r) => (
+                  <div
+                    key={r.id}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[rgba(148,163,184,0.28)] bg-white px-3 py-2.5"
+                  >
+                    <p className="text-sm text-[#2f2a24]">
+                      {r.entity_type} · {r.reason}
+                      {r.details ? ` — ${r.details}` : ''}
+                    </p>
+                    <button
+                      type="button"
+                      className="rounded-full bg-[#e7e9ec] px-3 py-1 text-xs font-bold"
+                      onClick={() => void dismissReport(r.id)}
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        }
+      />
 
       {confirm ? (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4">
@@ -379,6 +413,6 @@ export function CommercialAgentsAdminPanel() {
           </div>
         </div>
       ) : null}
-    </section>
+    </>
   )
 }

@@ -542,15 +542,12 @@ export function Dashboard() {
                 <OwnerProfilesManager />
               </div>
 
-              <div className="mb-8 rounded-[22px] border border-[var(--glass-border)] bg-white/50 p-5">
-                <h2 className="text-lg font-extrabold text-[#2f2a24]">Верифікація підрядників</h2>
-                <p className="mt-1 text-sm text-[#6f665d]">Заявки на перевірку документів</p>
-                <div className="mt-4">
-                  <VerificationAdminPanel />
-                  <div className="mt-6">
-                    <CommercialAgentsAdminPanel />
-                  </div>
-                </div>
+              <div className="mb-8">
+                <VerificationAdminPanel />
+              </div>
+
+              <div className="mb-8">
+                <CommercialAgentsAdminPanel />
               </div>
 
               {/* Верхній рядок ключових owner-метрик. */}

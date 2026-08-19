@@ -161,13 +161,47 @@ export async function markContactVerified(
   return !error
 }
 
-export async function listPendingVerifications() {
+export type VerificationQueueStatus = 'pending' | 'verified' | 'rejected'
+
+export type VerificationQueueRow = ContractorVerification & {
+  profile?: { full_name: string | null; location: string | null } | null
+}
+
+export async function listVerificationsByStatus(
+  status: VerificationQueueStatus,
+): Promise<VerificationQueueRow[]> {
   const { data, error } = await supabase
     .from('contractor_verifications')
     .select('*, profile:profiles(full_name, location)')
-    .eq('status', 'pending')
-    .order('submitted_at', { ascending: true })
+    .eq('status', status)
+    .order('submitted_at', { ascending: false })
+    .limit(200)
 
   if (error) return []
-  return data ?? []
+  return (data ?? []) as VerificationQueueRow[]
+}
+
+export async function countVerificationsByStatus(): Promise<
+  Record<VerificationQueueStatus, number>
+> {
+  const empty: Record<VerificationQueueStatus, number> = {
+    pending: 0,
+    verified: 0,
+    rejected: 0,
+  }
+  const statuses: VerificationQueueStatus[] = ['pending', 'verified', 'rejected']
+  await Promise.all(
+    statuses.map(async (status) => {
+      const { count } = await supabase
+        .from('contractor_verifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', status)
+      empty[status] = count ?? 0
+    }),
+  )
+  return empty
+}
+
+export async function listPendingVerifications() {
+  return listVerificationsByStatus('pending')
 }
