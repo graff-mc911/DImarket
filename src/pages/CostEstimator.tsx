@@ -1486,11 +1486,6 @@ export function CostEstimator() {
             setQuoteDraft(next)
             advanceQuote(next, 'property')
           }}
-          onSelectBids={(n) => {
-            const next = { ...quoteDraft, bids: n }
-            setQuoteDraft(next)
-            advanceQuote(next, 'bids')
-          }}
           onSelectRelationship={(id) => {
             const next = { ...quoteDraft, relationship: id }
             setQuoteDraft(next)

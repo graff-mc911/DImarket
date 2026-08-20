@@ -5,7 +5,6 @@ import { ESTIMATOR_PROJECT_TYPES } from '../../lib/costEstimatorTypes'
 import { autocompleteLocations, resolveLocationDetails } from '../../lib/locationAutocomplete'
 import type { LocationSuggestion } from '../../lib/geocoding'
 import {
-  BZ_BID_OPTIONS,
   BZ_BUDGET_OPTIONS,
   BZ_DESIGN_OPTIONS,
   BZ_LAND_OPTIONS,
@@ -34,7 +33,6 @@ type EstimatorQuoteWizardProps = {
   onSelectUrgency: (id: NonNullable<BzQuoteDraft['urgency']>) => void
   onSelectLand: (id: NonNullable<BzQuoteDraft['land']>) => void
   onSelectProperty: (id: NonNullable<BzQuoteDraft['propertyType']>) => void
-  onSelectBids: (n: NonNullable<BzQuoteDraft['bids']>) => void
   onSelectRelationship: (id: NonNullable<BzQuoteDraft['relationship']>) => void
   onSelectDesign: (id: NonNullable<BzQuoteDraft['designStatus']>) => void
   onPatch: (patch: Partial<BzQuoteDraft>) => void
@@ -108,7 +106,6 @@ export function EstimatorQuoteWizard({
   onSelectUrgency,
   onSelectLand,
   onSelectProperty,
-  onSelectBids,
   onSelectRelationship,
   onSelectDesign,
   onPatch,
@@ -347,27 +344,6 @@ export function EstimatorQuoteWizard({
           />
           <FieldError message={fieldError} />
           <ContinueButton label={continueLabel} onClick={onContinue} />
-        </div>
-      ) : null}
-
-      {screen === 'bids' ? (
-        <div className="bz-quote__survey">
-          <h2 className="bz-quote__question">{t('costEstimator.quote.bidsTitle')}</h2>
-          <div className="bz-quote__answers">
-            {BZ_BID_OPTIONS.map((n) => (
-              <button
-                key={n}
-                type="button"
-                className={draft.bids === n ? 'bz-quote__answer is-active' : 'bz-quote__answer'}
-                onClick={() => onSelectBids(n)}
-              >
-                {n}
-                {n === 4 ? (
-                  <span className="bz-quote__answer-sub">{t('costEstimator.quote.bidsRecommended')}</span>
-                ) : null}
-              </button>
-            ))}
-          </div>
         </div>
       ) : null}
 

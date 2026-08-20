@@ -61,7 +61,6 @@ test.describe('Cost estimator calculator', () => {
     await clickContinue(page)
     await page.getByPlaceholder(/Ім'я|^Name$/).fill('Test Owner')
     await clickContinue(page)
-    await page.getByRole('button', { name: /^4/ }).click()
     await page.getByPlaceholder(/^Місто$|^City$/).fill('Kyiv')
     await clickContinue(page)
     await expect(
@@ -83,8 +82,8 @@ test.describe('Cost estimator calculator', () => {
     await clickContinue(page)
     await page.getByPlaceholder(/Ім'я|^Name$/).fill('Test Owner')
     await clickContinue(page)
-    await expect(page.getByRole('heading', { name: /Скільки пропозицій|How many bids/ })).toBeVisible()
-    await page.getByRole('button', { name: /^4/ }).click()
+    await expect(page.getByRole('heading', { name: /Де вам потрібен підрядник\?|Where do you need a contractor\?/ })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Скільки пропозицій|How many bids/ })).toHaveCount(0)
     await page.getByPlaceholder(/^Місто$|^City$/).fill('Kyiv')
     await clickContinue(page)
     await expect(
@@ -127,7 +126,6 @@ test.describe('Cost estimator calculator', () => {
     await clickContinue(page)
     await page.getByPlaceholder(/Ім'я|^Name$/).fill('Test Owner')
     await clickContinue(page)
-    await page.getByRole('button', { name: /^3$/ }).click()
     await page.getByPlaceholder(/^Місто$|^City$/).fill('Kyiv')
     await clickContinue(page)
     await page.getByRole('button', { name: /Я орендую|I rent it/ }).click()

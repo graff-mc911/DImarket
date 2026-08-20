@@ -18,15 +18,24 @@ export function loadQuoteSession(): BzQuoteSession | null {
   try {
     const raw = sessionStorage.getItem(SESSION_KEY)
     if (!raw) return null
-    const parsed = JSON.parse(raw) as BzQuoteSession
+    const parsed = JSON.parse(raw) as {
+      draft: BzQuoteDraft
+      screen: string
+      farthest?: string
+      savedAt: number
+    }
     if (!parsed?.draft || !parsed.screen) return null
     if (Date.now() - (parsed.savedAt || 0) > MAX_AGE_MS) {
       clearQuoteSession()
       return null
     }
+    const rawScreen = String(parsed.screen)
+    const rawFarthest = parsed.farthest ? String(parsed.farthest) : rawScreen
+    const screen = (rawScreen === 'bids' ? 'location' : rawScreen) as BzQuoteScreen
+    const farthest = (rawFarthest === 'bids' ? 'location' : rawFarthest) as BzQuoteScreen
     return {
-      screen: parsed.screen,
-      farthest: parsed.farthest || parsed.screen,
+      screen,
+      farthest,
       draft: { ...EMPTY_BZ_QUOTE, ...parsed.draft },
       savedAt: parsed.savedAt,
     }

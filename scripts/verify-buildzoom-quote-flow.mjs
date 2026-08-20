@@ -29,7 +29,6 @@ const expected = {
     'email',
     'phone',
     'name',
-    'bids',
     'location',
     'relationship',
     'budget',
@@ -43,7 +42,6 @@ const expected = {
     'email',
     'phone',
     'name',
-    'bids',
     'location',
     'design',
     'budget',
@@ -57,7 +55,6 @@ const expected = {
     'email',
     'phone',
     'name',
-    'bids',
     'location',
     'design',
     'budget',
@@ -99,12 +96,11 @@ if (afterUrgency.remodel !== 'property') throw new Error('remodel after urgency 
 if (afterUrgency.home_addition !== 'property') throw new Error('addition after urgency must be property')
 if (afterUrgency.new_construction !== 'land') throw new Error('new construction after urgency must be land')
 
-const bidsIndex = remodel.indexOf('bids')
-if (bidsIndex !== remodel.indexOf('name') + 1) {
-  throw new Error('bids must come after name, not after urgency')
+if (remodel.includes('bids') || homeAddition.includes('bids') || newConstruction.includes('bids')) {
+  throw new Error('bids / expected-responses must not appear in the DImarket quote flow')
 }
 
-console.log('BuildZoom quote screen lists match kt / Zs / vJ')
+console.log('BuildZoom quote screen lists (without bids)')
 console.log('  remodel', remodel.join(' → '))
 console.log('  addition', homeAddition.join(' → '))
 console.log('  new home', newConstruction.join(' → '))
