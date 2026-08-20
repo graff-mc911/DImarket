@@ -21,7 +21,7 @@ export function SponsoredCompanies() {
   }
 
   return (
-    <section className="py-6" aria-labelledby="home-center-ad-title">
+    <section className="px-1 py-6" aria-labelledby="home-center-ad-title">
       <h2 id="home-center-ad-title" className="sr-only">
         {t('home.sponsoredTitle')}
       </h2>
