@@ -7524,6 +7524,7 @@ body,
 .bz-quote {
   position: relative;
   z-index: 1;
+  overflow: hidden;
   width: 100%;
   max-width: 500px;
   margin: 24px auto 0;
@@ -7753,8 +7754,14 @@ body,
 }
 .bz-quote__loc-row {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
   gap: 8px;
   margin-top: 8px;
+}
+@media (max-width: 420px) {
+  .bz-quote__loc-row {
+    grid-template-columns: 1fr;
+  }
 }
 .bz-quote__suggest {
   margin: 0;
@@ -7778,7 +7785,86 @@ body,
   font-size: 13px;
 }
 .bz-quote__email-display span {
+  display: block;
+  margin-top: 4px;
+  color: #9b9b9b;
+  cursor: default;
+}
+.bz-quote__change {
+  margin-left: 6px;
+  border: 0;
+  background: none;
+  padding: 0;
   color: #4abde9;
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline;
+}
+.bz-quote__privacy {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #7a7a7a;
+  line-height: 1.4;
+}
+.bz-quote__terms {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: #7a7a7a;
+  line-height: 1.4;
+}
+.bz-quote__terms a {
+  color: #4abde9;
+  text-decoration: underline;
+}
+.bz-quote__add-more {
+  display: inline-block;
+  margin: 10px 0 0;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: #4abde9;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.bz-quote__confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 28px 36px;
+  background: #fff;
+  text-align: center;
+}
+.bz-quote__confirm-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #4a4a4a;
+}
+.bz-quote__confirm-copy {
+  margin: 0 0 24px;
+  max-width: 360px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #4a4a4a;
+}
+.bz-quote__confirm .bz-quote__continue {
+  width: min(100%, 360px);
+}
+.bz-quote__quit {
+  margin-top: 16px;
+  border: 0;
+  background: transparent;
+  color: #9b9b9b;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
 }
 .bz-quote__loading {

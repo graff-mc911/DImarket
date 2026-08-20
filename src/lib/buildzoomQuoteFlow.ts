@@ -7,19 +7,20 @@
  *
  * remodel (kt) — every type except new construction and home addition:
  *   title → urgency → property-type → email → phone → name
- *   → location → property-relationship → budget → description → password
+ *   → expected-responses → location → property-relationship → budget → description → password
  *
  * home addition (Zs) — projectTypeGroupId HOME_ADDITION:
  *   title → urgency → property-type → email → phone → name
- *   → location → design-status → budget → description → password
+ *   → expected-responses → location → design-status → budget → description → password
  *
  * new construction (vJ) — projectTypeGroupId NEW_CONSTRUCTION:
  *   title → urgency → land-ownership-status → email → phone → name
- *   → location → design-status → budget → description → password
+ *   → expected-responses → location → design-status → budget → description → password
  *
  * Logged-in (setUserScreen): drop email, name; drop phone if a number already exists.
  * After description, existing users skip password (description.continue isNew check).
- * competing-bids / expected-responses (3/4/5 bids) are not shown — rejected from the DImarket flow.
+ * expected-responses is after name (module 19075). competing-bids is only for
+ * potentialLeadFormVersion — not the homepage Get-quotes list.
  *
  * setInitialScreen (homepage): a prefilled title (card click, popular tile, or
  * typed “Get quotes”) skips the title screen and opens urgency. Title stays in
@@ -138,6 +139,7 @@ export type BzQuoteScreen =
   | 'email'
   | 'phone'
   | 'name'
+  | 'bids'
   | 'location'
   | 'relationship'
   | 'design'
@@ -217,6 +219,7 @@ export const BZ_SCREEN_LISTS: Record<BzQuoteGroup, BzQuoteScreen[]> = {
     'email',
     'phone',
     'name',
+    'bids',
     'location',
     'relationship',
     'budget',
@@ -230,6 +233,7 @@ export const BZ_SCREEN_LISTS: Record<BzQuoteGroup, BzQuoteScreen[]> = {
     'email',
     'phone',
     'name',
+    'bids',
     'location',
     'design',
     'budget',
@@ -243,6 +247,7 @@ export const BZ_SCREEN_LISTS: Record<BzQuoteGroup, BzQuoteScreen[]> = {
     'email',
     'phone',
     'name',
+    'bids',
     'location',
     'design',
     'budget',
@@ -316,6 +321,7 @@ export function isSurveyScreen(screen: BzQuoteScreen) {
     screen === 'urgency' ||
     screen === 'land' ||
     screen === 'property' ||
+    screen === 'bids' ||
     screen === 'relationship' ||
     screen === 'design'
   )

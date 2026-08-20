@@ -1501,6 +1501,11 @@ export function CostEstimator() {
             setQuoteDraft(next)
             advanceQuote(next, 'property')
           }}
+          onSelectBids={(count) => {
+            const next = { ...quoteDraft, bids: count }
+            setQuoteDraft(next)
+            advanceQuote(next, 'bids')
+          }}
           onSelectRelationship={(id) => {
             const next = { ...quoteDraft, relationship: id }
             setQuoteDraft(next)
@@ -1522,6 +1527,9 @@ export function CostEstimator() {
           onContinue={continueQuote}
           onSubmitPassword={(password) => {
             void submitQuotePassword(password)
+          }}
+          onChangeEmail={() => {
+            goQuoteScreen('email', quoteDraft)
           }}
           onAttachFiles={addFiles}
           onRemoveFile={removeFile}

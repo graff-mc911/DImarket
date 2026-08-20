@@ -5,6 +5,7 @@ import type { EstimatorDraftFile, EstimatorProjectTypeId } from '../../lib/costE
 import { autocompleteLocations, resolveLocationDetails } from '../../lib/locationAutocomplete'
 import type { LocationSuggestion } from '../../lib/geocoding'
 import {
+  BZ_BID_OPTIONS,
   BZ_BUDGET_OPTIONS,
   BZ_DESIGN_OPTIONS,
   BZ_LAND_OPTIONS,
@@ -33,11 +34,13 @@ type EstimatorQuoteWizardProps = {
   onSelectUrgency: (id: NonNullable<BzQuoteDraft['urgency']>) => void
   onSelectLand: (id: NonNullable<BzQuoteDraft['land']>) => void
   onSelectProperty: (id: NonNullable<BzQuoteDraft['propertyType']>) => void
+  onSelectBids: (count: NonNullable<BzQuoteDraft['bids']>) => void
   onSelectRelationship: (id: NonNullable<BzQuoteDraft['relationship']>) => void
   onSelectDesign: (id: NonNullable<BzQuoteDraft['designStatus']>) => void
   onPatch: (patch: Partial<BzQuoteDraft>) => void
   onContinue: () => void
   onSubmitPassword: (password: string) => void
+  onChangeEmail: () => void
   onAttachFiles: (files: FileList) => void
   onRemoveFile: (id: string) => void
   onBack: () => void
@@ -95,6 +98,18 @@ function FieldError({ message }: { message: string | null }) {
   return <p className="bz-quote__error">{message}</p>
 }
 
+function TermsNote() {
+  const { t } = useApp()
+  return (
+    <p className="bz-quote__terms">
+      {t('costEstimator.quote.termsPrefix')}{' '}
+      <a href="/contact?topic=terms" target="_blank" rel="noopener noreferrer">
+        {t('costEstimator.quote.termsOfService')}
+      </a>
+    </p>
+  )
+}
+
 export function EstimatorQuoteWizard({
   draft,
   screen,
@@ -107,11 +122,13 @@ export function EstimatorQuoteWizard({
   onSelectUrgency,
   onSelectLand,
   onSelectProperty,
+  onSelectBids,
   onSelectRelationship,
   onSelectDesign,
   onPatch,
   onContinue,
   onSubmitPassword,
+  onChangeEmail,
   onAttachFiles,
   onRemoveFile,
   onBack,
@@ -125,6 +142,7 @@ export function EstimatorQuoteWizard({
   const pct = progressPercent(screen, draft.typeId, auth)
   const fileRef = useRef<HTMLInputElement>(null)
   const [password, setPassword] = useState('')
+  const [closeConfirmOpen, setCloseConfirmOpen] = useState(false)
   const [citySuggestions, setCitySuggestions] = useState<LocationSuggestion[]>([])
   const [loadingStep, setLoadingStep] = useState(0)
   const loadingCompleteRef = useRef(onLoadingComplete)
@@ -169,14 +187,17 @@ export function EstimatorQuoteWizard({
     return () => window.clearTimeout(timer)
   }, [draft.city, draft.locationLabel, screen])
 
-  const onCloseRef = useRef(onClose)
-  onCloseRef.current = onClose
+  const requestClose = () => setCloseConfirmOpen(true)
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onCloseRef.current()
+      if (event.key !== 'Escape') return
+      setCloseConfirmOpen((open) => {
+        if (open) return false
+        return true
+      })
     }
     window.addEventListener('keydown', onKey)
     return () => {
@@ -190,7 +211,7 @@ export function EstimatorQuoteWizard({
 
   return createPortal(
     <div className="bz-quote-overlay">
-      <div className="bz-quote-overlay__scrim" onClick={onClose} aria-hidden />
+      <div className="bz-quote-overlay__scrim" onClick={requestClose} aria-hidden />
       <div className="bz-quote" data-quote-screen={screen} role="dialog" aria-modal="true">
       {!isFirst ? (
         <div className="bz-quote__progress" aria-hidden>
@@ -214,7 +235,7 @@ export function EstimatorQuoteWizard({
         ) : (
           <span className="bz-quote__nav-spacer" />
         )}
-        <button type="button" className="bz-quote__close" onClick={onClose} aria-label={t('common.close')}>
+        <button type="button" className="bz-quote__close" onClick={requestClose} aria-label={t('common.close')}>
           ×
         </button>
       </div>
@@ -354,7 +375,9 @@ export function EstimatorQuoteWizard({
             }}
           />
           <FieldError message={fieldError} />
+          <p className="bz-quote__privacy">{t('costEstimator.quote.phonePrivacy')}</p>
           <ContinueButton label={continueLabel} onClick={onContinue} />
+          <TermsNote />
         </div>
       ) : null}
 
@@ -380,6 +403,21 @@ export function EstimatorQuoteWizard({
         </div>
       ) : null}
 
+      {screen === 'bids' ? (
+        <div className="bz-quote__survey">
+          <h2 className="bz-quote__question">{t('costEstimator.quote.bidsTitle')}</h2>
+          <SurveyButtons
+            options={BZ_BID_OPTIONS.map((count) => ({
+              id: String(count),
+              labelKey: `costEstimator.quote.bids.count${count}`,
+              subKey: count === 4 ? 'costEstimator.quote.bidsRecommended' : undefined,
+            }))}
+            value={draft.bids ? String(draft.bids) : null}
+            onSelect={(id) => onSelectBids(Number(id) as NonNullable<BzQuoteDraft['bids']>)}
+          />
+        </div>
+      ) : null}
+
       {screen === 'location' ? (
         <div className="bz-quote__survey">
           <h2 className="bz-quote__question">{t('costEstimator.quote.locationTitle')}</h2>
@@ -395,7 +433,7 @@ export function EstimatorQuoteWizard({
               <input
                 className="bz-quote__input"
                 autoComplete="address-level2"
-                placeholder={t('costEstimator.quote.cityPlaceholder')}
+                placeholder={t('costEstimator.quote.cityStatePlaceholder')}
                 value={draft.city}
                 onChange={(e) => onPatch({ city: e.target.value })}
               />
@@ -521,18 +559,24 @@ export function EstimatorQuoteWizard({
               {t('costEstimator.quote.attach')}
             </button>
           ) : (
-            <ul className="bz-quote__files">
-              {files.map((f) => (
-                <li key={f.id}>
-                  <span>{f.file.name}</span>
-                  <button type="button" onClick={() => onRemoveFile(f.id)}>
-                    ×
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="bz-quote__files">
+                {files.map((f) => (
+                  <li key={f.id}>
+                    <span>{f.file.name}</span>
+                    <button type="button" onClick={() => onRemoveFile(f.id)}>
+                      ×
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button type="button" className="bz-quote__add-more" onClick={() => fileRef.current?.click()}>
+                {t('costEstimator.quote.addMore')}
+              </button>
+            </>
           )}
           <ContinueButton label={continueLabel} onClick={onContinue} />
+          <TermsNote />
         </div>
       ) : null}
 
@@ -541,7 +585,10 @@ export function EstimatorQuoteWizard({
           <h2 className="bz-quote__question">{t('costEstimator.quote.passwordTitle')}</h2>
           {draft.email ? (
             <p className="bz-quote__email-display">
-              {draft.email}
+              {draft.email}{' '}
+              <button type="button" className="bz-quote__change" onClick={onChangeEmail}>
+                {t('costEstimator.quote.change')}
+              </button>
               <span>{t('costEstimator.quote.passwordEmailHint')}</span>
             </p>
           ) : null}
@@ -589,6 +636,19 @@ export function EstimatorQuoteWizard({
         <p className="bz-quote__step-index" hidden>
           {screens.indexOf(screen) + 1}/{screens.length}
         </p>
+      ) : null}
+
+      {closeConfirmOpen ? (
+        <div className="bz-quote__confirm" role="alertdialog" aria-labelledby="bz-quote-confirm-title" aria-modal="true">
+          <p id="bz-quote-confirm-title" className="bz-quote__confirm-title">
+            {t('costEstimator.quote.closeConfirmTitle')}
+          </p>
+          <p className="bz-quote__confirm-copy">{t('costEstimator.quote.closeConfirmCopy')}</p>
+          <ContinueButton label={t('costEstimator.quote.closeConfirmStay')} onClick={() => setCloseConfirmOpen(false)} />
+          <button type="button" className="bz-quote__quit" onClick={onClose}>
+            {t('costEstimator.quote.closeConfirmQuit')}
+          </button>
+        </div>
       ) : null}
       </div>
     </div>,

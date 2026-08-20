@@ -31,8 +31,8 @@ export function loadQuoteSession(): BzQuoteSession | null {
     }
     const rawScreen = String(parsed.screen)
     const rawFarthest = parsed.farthest ? String(parsed.farthest) : rawScreen
-    const screen = (rawScreen === 'bids' ? 'location' : rawScreen) as BzQuoteScreen
-    const farthest = (rawFarthest === 'bids' ? 'location' : rawFarthest) as BzQuoteScreen
+    const screen = rawScreen as BzQuoteScreen
+    const farthest = rawFarthest as BzQuoteScreen
     return {
       screen,
       farthest,

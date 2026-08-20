@@ -29,6 +29,7 @@ const expected = {
     'email',
     'phone',
     'name',
+    'bids',
     'location',
     'relationship',
     'budget',
@@ -42,6 +43,7 @@ const expected = {
     'email',
     'phone',
     'name',
+    'bids',
     'location',
     'design',
     'budget',
@@ -55,6 +57,7 @@ const expected = {
     'email',
     'phone',
     'name',
+    'bids',
     'location',
     'design',
     'budget',
@@ -96,15 +99,35 @@ if (afterUrgency.remodel !== 'property') throw new Error('remodel after urgency 
 if (afterUrgency.home_addition !== 'property') throw new Error('addition after urgency must be property')
 if (afterUrgency.new_construction !== 'land') throw new Error('new construction after urgency must be land')
 
-if (remodel.includes('bids') || homeAddition.includes('bids') || newConstruction.includes('bids')) {
-  throw new Error('bids / expected-responses must not appear in the DImarket quote flow')
+if (remodel[remodel.indexOf('name') + 1] !== 'bids') {
+  throw new Error('remodel after name must be expected-responses (bids)')
+}
+if (homeAddition[homeAddition.indexOf('name') + 1] !== 'bids') {
+  throw new Error('addition after name must be expected-responses (bids)')
+}
+if (newConstruction[newConstruction.indexOf('name') + 1] !== 'bids') {
+  throw new Error('new construction after name must be expected-responses (bids)')
 }
 
 if (!src.includes('export function initialQuoteScreen')) {
   throw new Error('missing BuildZoom setInitialScreen helper (skip title when prefilled)')
 }
 
-console.log('BuildZoom quote screen lists (without bids)')
+const wizard = readFileSync(join(root, '../src/components/cost-estimator/EstimatorQuoteWizard.tsx'), 'utf8')
+if (!wizard.includes("screen === 'bids'")) {
+  throw new Error('EstimatorQuoteWizard is missing the bids screen')
+}
+if (!wizard.includes('phonePrivacy')) {
+  throw new Error('EstimatorQuoteWizard is missing phone privacy copy')
+}
+if (!wizard.includes('closeConfirmOpen')) {
+  throw new Error('EstimatorQuoteWizard is missing close confirm')
+}
+if (!wizard.includes('onChangeEmail')) {
+  throw new Error('EstimatorQuoteWizard is missing change-email')
+}
+
+console.log('BuildZoom quote screen lists (kt / Zs / vJ)')
 console.log('  remodel', remodel.join(' → '))
 console.log('  addition', homeAddition.join(' → '))
 console.log('  new home', newConstruction.join(' → '))
