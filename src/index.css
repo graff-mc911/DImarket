@@ -833,7 +833,7 @@
 
   .ad-slot-center {
     width: 100%;
-    max-width: min(72rem, 100%);
+    max-width: var(--ad-center-slot-w, 45rem);
     margin-inline: auto;
   }
 
@@ -848,7 +848,7 @@
     display: grid;
     grid-template-columns: 1fr;
     width: 100%;
-    max-width: min(72rem, 100%);
+    max-width: var(--ad-center-slot-w, 45rem);
     margin-inline: auto;
     overflow: visible;
     background: #fff;
