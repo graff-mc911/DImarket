@@ -1449,7 +1449,7 @@ export function CostEstimator() {
 
   return (
     <div data-estimator-chunk="v2">
-    {quoteScreen ? null : <EstimatorAdBanner />}
+    {quoteScreen || state.step === 1 ? null : <EstimatorAdBanner />}
     <EstimatorShell
       variant={state.step === 1 ? 'intake' : 'wizard'}
       step={state.step}

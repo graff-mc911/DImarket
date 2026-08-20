@@ -28,28 +28,36 @@
  */
 import type { EstimatorProjectTypeId, PricingTierId } from './costEstimatorTypes'
 
-/** BuildZoom homepage tiles — source: buildzoom.com need-help row. */
-export const BZ_HOMEPAGE_CARDS: Array<{ id: EstimatorProjectTypeId; labelKey: string }> = [
-  { id: 'bathroom', labelKey: 'costEstimator.featured.bathroom' },
-  { id: 'kitchen', labelKey: 'costEstimator.featured.kitchen' },
-  { id: 'renovation', labelKey: 'costEstimator.featured.multiRoom' },
-  { id: 'house_renovation', labelKey: 'costEstimator.featured.addition' },
-  { id: 'new_construction', labelKey: 'costEstimator.featured.newHome' },
-  { id: 'roof', labelKey: 'costEstimator.featured.roofing' },
-  { id: 'painting', labelKey: 'costEstimator.featured.painting' },
-  { id: 'flooring', labelKey: 'costEstimator.featured.flooring' },
+/** BuildZoom homepage tiles — source: buildzoom.com #needs-help. */
+export const BZ_HOMEPAGE_CARDS: Array<{
+  id: EstimatorProjectTypeId
+  labelKey: string
+  icon: string
+}> = [
+  { id: 'bathroom', labelKey: 'costEstimator.featured.bathroom', icon: 'bathroom' },
+  { id: 'kitchen', labelKey: 'costEstimator.featured.kitchen', icon: 'kitchen' },
+  { id: 'renovation', labelKey: 'costEstimator.featured.multiRoom', icon: 'multi-room' },
+  { id: 'house_renovation', labelKey: 'costEstimator.featured.addition', icon: 'home-addition' },
+  { id: 'new_construction', labelKey: 'costEstimator.featured.newHome', icon: 'new-home' },
+  { id: 'roof', labelKey: 'costEstimator.featured.roofing', icon: 'roofing' },
+  { id: 'painting', labelKey: 'costEstimator.featured.painting', icon: 'painting' },
+  { id: 'flooring', labelKey: 'costEstimator.featured.flooring', icon: 'flooring' },
 ]
 
 /** BuildZoom quote-modal popular projects — source: predefinedProjectTypes in BZ JS. */
-export const BZ_POPULAR_PROJECTS: Array<{ id: EstimatorProjectTypeId; labelKey: string }> = [
-  { id: 'bathroom', labelKey: 'costEstimator.featured.bathroom' },
-  { id: 'kitchen', labelKey: 'costEstimator.featured.kitchen' },
-  { id: 'renovation', labelKey: 'costEstimator.featured.multiRoom' },
-  { id: 'house_renovation', labelKey: 'costEstimator.featured.addition' },
-  { id: 'new_construction', labelKey: 'costEstimator.featured.newHome' },
-  { id: 'roof', labelKey: 'costEstimator.featured.roofing' },
-  { id: 'solar', labelKey: 'costEstimator.featured.solar' },
-  { id: 'commercial', labelKey: 'costEstimator.featured.commercial' },
+export const BZ_POPULAR_PROJECTS: Array<{
+  id: EstimatorProjectTypeId
+  labelKey: string
+  icon: string
+}> = [
+  { id: 'bathroom', labelKey: 'costEstimator.featured.bathroom', icon: 'bathroom' },
+  { id: 'kitchen', labelKey: 'costEstimator.featured.kitchen', icon: 'kitchen' },
+  { id: 'renovation', labelKey: 'costEstimator.featured.multiRoom', icon: 'multi-room' },
+  { id: 'house_renovation', labelKey: 'costEstimator.featured.addition', icon: 'home-addition' },
+  { id: 'new_construction', labelKey: 'costEstimator.featured.newHome', icon: 'new-home' },
+  { id: 'roof', labelKey: 'costEstimator.featured.roofing', icon: 'roofing' },
+  { id: 'solar', labelKey: 'costEstimator.featured.solar', icon: 'solar' },
+  { id: 'commercial', labelKey: 'costEstimator.featured.commercial', icon: 'commercial' },
 ]
 
 /** urgencyTypesModel.getInitial() minus the empty placeholder. */

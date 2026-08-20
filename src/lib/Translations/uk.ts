@@ -190,10 +190,10 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'costEstimator.featured.solar': 'Сонячна установка',
   'costEstimator.featured.commercial': 'Нова комерційна реконструкція',
   'costEstimator.quote.slogan':
-    'Ми знаємо, хто найкращі (і найгірші) підрядники. Цей інструмент допоможе вам отримати пропозиції від найкращих.',
+    'Ми знаємо, хто найкращі (і найгірші) підрядники.\nЦей інструмент допоможе вам отримати пропозиції від найкращих.',
   'costEstimator.quote.question': 'З чим вам потрібна допомога?',
   'costEstimator.quote.placeholder': 'наприклад, реконструкція, будинок на замовлення тощо',
-  'costEstimator.quote.continue': 'ПРОДОВЖУВАТИ',
+  'costEstimator.quote.continue': 'продовжити',
   'costEstimator.quote.popular': 'Популярні проекти:',
   'costEstimator.quote.urgencyTitle': 'Коли вам потрібно розпочати ваш проєкт?',
   'costEstimator.quote.urgency.flexible': 'Я гнучкий/гнучка',

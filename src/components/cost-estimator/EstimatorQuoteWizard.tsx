@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useApp } from '../../contexts/AppContext'
 import type { EstimatorDraftFile, EstimatorProjectTypeId } from '../../lib/costEstimatorTypes'
-import { ESTIMATOR_PROJECT_TYPES } from '../../lib/costEstimatorTypes'
 import { autocompleteLocations, resolveLocationDetails } from '../../lib/locationAutocomplete'
 import type { LocationSuggestion } from '../../lib/geocoding'
 import {
@@ -222,7 +221,16 @@ export function EstimatorQuoteWizard({
 
       {screen === 'title' ? (
         <div className="bz-quote__title-screen">
-          <p className="bz-quote__slogan">{t('costEstimator.quote.slogan')}</p>
+          <p className="bz-quote__slogan">
+            {t('costEstimator.quote.slogan')
+              .split('\n')
+              .map((line, i) => (
+                <span key={i}>
+                  {i > 0 ? <br /> : null}
+                  {line}
+                </span>
+              ))}
+          </p>
           <h2 className="bz-quote__question">{t('costEstimator.quote.question')}</h2>
           <input
             id="bz-quote-title"
@@ -243,7 +251,6 @@ export function EstimatorQuoteWizard({
           <p className="bz-quote__popular-label">{t('costEstimator.quote.popular')}</p>
           <ul className="bz-quote__popular">
             {BZ_POPULAR_PROJECTS.map((card) => {
-              const Icon = ESTIMATOR_PROJECT_TYPES.find((pt) => pt.id === card.id)?.icon
               const label = t(card.labelKey as never)
               const active = draft.typeId === card.id
               return (
@@ -253,12 +260,8 @@ export function EstimatorQuoteWizard({
                     className={active ? 'bz-quote__tile is-active' : 'bz-quote__tile'}
                     onClick={() => onSelectPopular(card.id, label)}
                   >
-                    {Icon ? (
-                      <span className="bz-quote__tile-icon" aria-hidden>
-                        <Icon className="h-7 w-7" strokeWidth={1.35} />
-                      </span>
-                    ) : null}
-                    <span>{label}</span>
+                    <span className={`bz-quote__tile-icon bz-quote__tile-icon--${card.icon}`} aria-hidden />
+                    <span className="bz-quote__tile-label">{label}</span>
                   </button>
                 </li>
               )

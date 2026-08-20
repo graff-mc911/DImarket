@@ -12,7 +12,7 @@ async function openBathroomQuote(page: Page) {
 }
 
 async function clickContinue(page: Page) {
-  await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE|НАДІСЛАТИ|SUBMIT/i }).click()
+  await page.getByRole('button', { name: /продовжити|ПРОДОВЖУВАТИ|continue|CONTINUE|НАДІСЛАТИ|SUBMIT/i }).click()
 }
 
 test.describe('Cost estimator calculator', () => {
@@ -171,7 +171,7 @@ test.describe('Cost estimator calculator', () => {
     await page.getByRole('button', { name: /Я орендую|I rent it/ }).click()
     await page.locator('select.bz-quote__select').selectOption('0-1000')
     await expect(page.getByText(/дешевше €1 000|under €1,000/i)).toBeVisible()
-    await expect(page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i })).toBeDisabled()
+    await expect(page.getByRole('button', { name: /продовжити|ПРОДОВЖУВАТИ|continue|CONTINUE/i })).toBeDisabled()
   })
 
   test('Back keeps the previous urgency answer', async ({ page }) => {
