@@ -2,9 +2,7 @@ import { test, expect } from '@playwright/test'
 import { clickHeaderNavButton, gotoPath } from './helpers'
 
 test.describe('Cost estimator calculator', () => {
-  test('три колонки як BuildZoom /cost: тип, опції, жива сума і пропозиції', async ({
-    page,
-  }) => {
+  test('BuildZoom-style: тип, роботи, жива сума, знайти виконавця', async ({ page }) => {
     await gotoPath(page, '/cost-estimator')
 
     await expect(page.locator('.estimator-page__brand')).toBeVisible()
@@ -12,39 +10,70 @@ test.describe('Cost estimator calculator', () => {
       page.getByRole('heading', { name: /Калькулятор вартості ремонту|Remodeling cost calculator/i }),
     ).toBeVisible()
     await expect(page.getByLabel(/Мені потрібна допомога з|I need help with/i)).toHaveCount(0)
-    await expect(page.locator('.estimator-intake__card')).toHaveCount(0)
 
-    const basic = page.getByRole('heading', { name: /Базові дані|Enter basic info/i })
-    const features = page.getByRole('heading', { name: /Оберіть опції|Select specific features/i })
-    const estimate = page.getByRole('heading', { name: /Ваша оцінка|Get your estimate/i })
+    const basic = page.getByRole('heading', { name: /Введіть основну інформацію|Enter basic info/i })
+    const features = page.getByRole('heading', { name: /Виберіть конкретні роботи|Select specific features/i })
+    const project = page.getByRole('heading', { name: /Ваш проєкт|Your project/i })
     await expect(basic).toBeVisible()
     await expect(features).toBeVisible()
-    await expect(estimate).toBeVisible()
-
-    const width = page.viewportSize()?.width ?? 0
-    if (width >= 960) {
-      await expect(basic).toBeInViewport()
-      await expect(features).toBeInViewport()
-      await expect(estimate).toBeInViewport()
-    }
+    await expect(project).toBeVisible()
 
     const typeSelect = page.locator('#estimator-project-type')
-    await expect(typeSelect.getByRole('option', { name: /^(Ванна|Bathroom)$/ })).toHaveCount(1)
-    await expect(typeSelect.getByRole('option', { name: /^(Кухня|Kitchen)$/ })).toHaveCount(1)
-    await expect(typeSelect.getByRole('option', { name: /^(Підлога|Flooring)$/ })).toHaveCount(1)
-    await expect(typeSelect.getByRole('option', { name: /Дах|Roof/ })).toHaveCount(1)
-    await expect(typeSelect.getByRole('option', { name: /^(Вікна|Windows)$/ })).toHaveCount(1)
+    await expect(typeSelect.getByRole('option', { name: /Ремонт ванної кімнати|Bathroom remodel/ })).toHaveCount(1)
+    await expect(typeSelect.getByRole('option', { name: /Реконструкція кухні|Kitchen remodel/ })).toHaveCount(1)
     await expect(typeSelect.getByRole('option', { name: /^(Виробники|Manufacturers)$/ })).toHaveCount(0)
 
-    await typeSelect.selectOption('bathroom')
-    await page.locator('#estimator-area').fill('8')
-    await page.locator('.estimator-calc__feature').first().click()
+    await typeSelect.selectOption('bathroom_remodel')
+    await page.locator('#estimator-area').fill('10')
+
+    const add = async (name: RegExp) => {
+      await page.getByRole('button', { name }).click()
+    }
+    await add(/Укладання плитки на підлогу|Floor tiling/)
+    await add(/Укладання плитки на стіни|Wall tiling/)
+    await add(/Нова душова|New shower/)
+    await add(/Новий унітаз|New toilet/)
+    await add(/Новий умивальник|New sink/)
+
+    const picked = page.locator('.estimator-calc__picked')
+    await expect(picked.getByText(/Укладання плитки на підлогу|Floor tiling/)).toBeVisible()
+    await expect(picked.getByText(/Укладання плитки на стіни|Wall tiling/)).toBeVisible()
+    await expect(picked.getByText(/Нова душова|New shower/)).toBeVisible()
+    await expect(picked.getByText(/Новий унітаз|New toilet/)).toBeVisible()
+    await expect(picked.getByText(/Новий умивальник|New sink/)).toBeVisible()
 
     const total = page.locator('.estimator-calc__total-value')
     await expect(total).toBeVisible()
-    await expect(total).not.toHaveText(/€\s*0/)
+    const standardText = await total.innerText()
+    expect(standardText).not.toMatch(/€\s*0[,.]00/)
 
-    await page.getByRole('button', { name: /Отримати пропозиції|Get quotes/i }).click()
+    await page.getByRole('button', { name: /^Економ$|^Economy$/ }).click()
+    await expect(total).not.toHaveText(standardText)
+    const economyText = await total.innerText()
+
+    await page.getByRole('button', { name: /^Преміум$|^Premium$/ }).click()
+    const premiumText = await total.innerText()
+    expect(premiumText).not.toBe(economyText)
+
+    await page.getByRole('button', { name: /^Ні$|^No$/ }).click()
+    const laborOnlyText = await total.innerText()
+    expect(laborOnlyText).not.toBe(premiumText)
+
+    await page.locator('#estimator-area').fill('20')
+    await expect(total).not.toHaveText(laborOnlyText)
+    const largerAreaText = await total.innerText()
+
+    await picked.getByRole('button', { name: /Прибрати|Remove/ }).first().click()
+    await expect(total).not.toHaveText(largerAreaText)
+
+    await page.reload()
+    await expect(basic).toBeVisible()
+    await expect(page.locator('.estimator-calc__total-value')).toBeVisible()
+
+    await typeSelect.selectOption('bathroom_remodel')
+    await page.locator('#estimator-area').fill('10')
+    await add(/Укладання плитки на підлогу|Floor tiling/)
+    await page.getByRole('button', { name: /Знайти виконавця|Find a contractor/i }).click()
     await expect(page.getByText(/Орієнтовна оцінка|Reference estimate/i).first()).toBeVisible()
   })
 

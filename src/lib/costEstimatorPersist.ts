@@ -3,6 +3,7 @@
  */
 import { supabase } from './supabase'
 import type { EstimatorState, FullCostEstimate } from './costEstimatorTypes'
+import type { CalculatorProjectPayload } from './costCalculator/types'
 
 export type SavedCostEstimateRow = {
   id: string
@@ -30,7 +31,10 @@ const LOCAL_KEY = 'dimarket_cost_estimates_v1'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any
 
-function serializableState(state: EstimatorState) {
+function serializableState(
+  state: EstimatorState,
+  calculatorProject?: CalculatorProjectPayload | null,
+) {
   return {
     projectTypeId: state.projectTypeId,
     calculatorTypeId: state.calculatorTypeId,
@@ -45,6 +49,7 @@ function serializableState(state: EstimatorState) {
     budgetTier: state.budgetTier || 'standard',
     fileCount: state.files.length,
     photoCount: state.files.filter((f) => f.kind === 'photo').length,
+    calculatorProject: calculatorProject || null,
   }
 }
 
@@ -53,6 +58,7 @@ export async function saveCostEstimate(opts: {
   state: EstimatorState
   estimate: FullCostEstimate
   title?: string
+  calculatorProject?: CalculatorProjectPayload | null
 }): Promise<{ id: string; remote: boolean }> {
   const title =
     opts.title ||
@@ -70,7 +76,7 @@ export async function saveCostEstimate(opts: {
     total_premium: opts.estimate.totals.premium.grandTotal,
     confidence: opts.estimate.confidence,
     estimate_json: opts.estimate,
-    input_json: serializableState(opts.state),
+    input_json: serializableState(opts.state, opts.calculatorProject),
   }
 
   if (opts.userId) {

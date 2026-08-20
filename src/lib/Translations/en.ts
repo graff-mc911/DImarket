@@ -1,5 +1,6 @@
 // English UI translations — source of TranslationKey.
 import { documentsEn } from './documents'
+import { costCalculatorEn } from './costCalculator'
 
 export const enTranslations = {
   'header.browse': 'Browse',
@@ -2798,6 +2799,7 @@ export const enTranslations = {
   'analytics.quality.recommend': 'Recommend',
   'analytics.quality.rating': 'Rating',
   ...documentsEn,
+  ...costCalculatorEn,
 } as const
 
 export type TranslationKey = keyof typeof enTranslations

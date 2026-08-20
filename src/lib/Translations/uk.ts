@@ -1,5 +1,6 @@
 import type { TranslationKey } from './en'
 import { documentsUk } from './documents'
+import { costCalculatorUk } from './costCalculator'
 
 // Complete uk UI translations — full TranslationKey coverage.
 export const ukTranslations: Partial<Record<TranslationKey, string>> = {
@@ -2795,4 +2796,5 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'analytics.quality.recommend': 'Рекомендують',
   'analytics.quality.rating': 'Оцінка',
   ...documentsUk,
+  ...costCalculatorUk,
 }

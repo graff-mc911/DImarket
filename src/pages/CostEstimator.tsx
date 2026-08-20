@@ -30,8 +30,14 @@ import {
   buildAnalystQuestions,
 } from '../lib/aiAnalyst'
 import { buildFullCostEstimateLocal, runFullCostEstimate, tierLabel } from '../lib/costEstimatorEngine'
-import { descriptionFromFeatures } from '../lib/estimatorCalculator'
 import { estimatorTypeFromCatalogId } from '../lib/estimatorMainCategories'
+import {
+  CALCULATOR_TYPE_TO_ENGINE,
+  budgetLevelFromTier,
+  isCalculatorProjectTypeId,
+  type CalculatorEstimate,
+  type CalculatorProjectPayload,
+} from '../lib/costCalculator'
 import { flattenWorkFeatureIds } from '../lib/estimatorObjectTypes'
 import { GEO_RADIUS_OPTIONS, radiusModeToKm } from '../lib/geoSearch'
 import {
@@ -614,40 +620,55 @@ export function CostEstimator() {
     })
   }
 
-  const typeLabel = (id: EstimatorProjectTypeId) => {
-    const item = ESTIMATOR_PROJECT_TYPES.find((x) => x.id === id)!
-    const key = item.labelKey as never
-    const translated = t(key)
-    return translated === item.labelKey ? item.labelEn : translated
-  }
-
-  const runCalculatorQuotes = () => {
-    const catalogId = state.calculatorTypeId || state.projectTypeId
-    if (!catalogId) {
-      setError(t('costEstimator.chooseTypeError'))
+  const runCalculatorQuotes = (calcEstimate: CalculatorEstimate) => {
+    const catalogId = state.calculatorTypeId
+    if (!isCalculatorProjectTypeId(catalogId)) {
+      setError(t('costCalc.needType'))
       return
     }
     if (!(Number(state.measurements.areaSqm) > 0)) {
-      setError(t('costEstimator.areaError'))
+      setError(t('costCalc.needArea'))
       return
     }
-    const engineId = estimatorTypeFromCatalogId(String(catalogId))
-    const features = state.selectedFeatureIds || []
+    if (!calcEstimate.selectedItems.length) {
+      setError(t('costCalc.needFeature'))
+      return
+    }
+    const engineId = CALCULATOR_TYPE_TO_ENGINE[catalogId]
+    const featureNames = calcEstimate.selectedItems
+      .map((item) => t(item.nameKey as never))
+      .join(', ')
+    const typeName = t(`costCalc.type.${catalogId}` as never)
     const desc =
       state.description.trim() ||
-      descriptionFromFeatures(String(catalogId), features, language.code)
-    const typeName = typeLabel(engineId)
+      `${typeName}: ${featureNames}. ${state.measurements.areaSqm} m². ${t('costCalc.projectTotal')} ${calcEstimate.projectTotal} EUR.`
     const nextState: EstimatorState = {
       ...state,
       projectTypeId: engineId,
-      calculatorTypeId: String(catalogId),
+      calculatorTypeId: catalogId,
       objectTypeId: null,
       workPackages: [],
-      selectedFeatureIds: features,
+      selectedFeatureIds: calcEstimate.selectedItems.map((item) => item.featureId),
       description:
         desc.trim().length >= 15
           ? desc
           : `${desc} ${typeName}, ${state.measurements.areaSqm} m².`.trim(),
+    }
+    const calculatorProject: CalculatorProjectPayload = {
+      projectType: catalogId,
+      area: Number(state.measurements.areaSqm) || 0,
+      budgetLevel: budgetLevelFromTier(nextState.budgetTier || 'standard'),
+      includeMaterials: nextState.includeMaterials !== false,
+      selectedFeatures: calcEstimate.selectedItems.map((item) => ({
+        id: item.featureId,
+        quantity: item.quantity,
+        unit: item.unit,
+        laborTotal: item.laborTotal,
+        materialsTotal: item.materialsTotal,
+      })),
+      estimatedLabor: calcEstimate.laborTotal,
+      estimatedMaterials: calcEstimate.materialsTotal,
+      estimatedTotal: calcEstimate.projectTotal,
     }
     setError(null)
     setBusy(true)
@@ -661,6 +682,7 @@ export function CostEstimator() {
         userId: user?.id ?? null,
         state: nextState,
         estimate: result,
+        calculatorProject,
       }).then((r) => setSavedId(r.id))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Estimate failed')
@@ -1180,8 +1202,8 @@ export function CostEstimator() {
     <EstimatorShell
       variant={state.step === 1 ? 'intake' : 'wizard'}
       step={state.step}
-      title={state.step === 1 ? t('costEstimator.calc.pageTitle') : meta.title}
-      subtitle={state.step === 1 ? t('costEstimator.calc.intro') : meta.sub}
+      title={state.step === 1 ? t('costCalc.pageTitle') : meta.title}
+      subtitle={state.step === 1 ? t('costCalc.intro') : meta.sub}
       onBack={state.step > 1 ? goBack : undefined}
       onNext={state.step === 1 ? undefined : () => void goNext()}
       nextLabel={state.step === 5 ? t('costEstimator.runEstimate') : t('common.continue')}
@@ -1201,12 +1223,11 @@ export function CostEstimator() {
       {state.step === 1 && (
         <EstimatorCalculator
           state={state}
-          typeLabel={typeLabel}
           onStatePatch={(partial) => {
             setError(null)
             patch(partial)
           }}
-          onGetQuotes={() => runCalculatorQuotes()}
+          onFindContractor={(estimate) => runCalculatorQuotes(estimate)}
         />
       )}
 

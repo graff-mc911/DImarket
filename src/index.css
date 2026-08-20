@@ -7673,11 +7673,25 @@ body,
 }
 
 .estimator-calc__title {
-  margin: 0 0 0.9rem;
+  margin: 0 0 0.35rem;
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #1a2330;
+}
+
+.estimator-calc__lead {
+  margin: 0 0 0.9rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #6f665d;
+}
+
+.estimator-calc__error {
+  margin: 0.65rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #b91c1c;
 }
 
 .estimator-calc__label {
@@ -7760,16 +7774,24 @@ body,
   display: flex;
   align-items: center;
   gap: 0.55rem;
+  width: 100%;
+  border: 1px solid #efe8df;
   border-radius: 10px;
+  background: #fff;
   padding: 0.55rem 0.65rem;
   font-size: 0.88rem;
   color: #1a2330;
+  text-align: left;
   cursor: pointer;
 }
 
-.estimator-calc__feature:hover,
-.estimator-calc__feature.is-on {
+.estimator-calc__feature:hover {
   background: #f6f4f1;
+}
+
+.estimator-calc__feature.is-on {
+  border-color: #ff9900;
+  background: #fff8ef;
 }
 
 .estimator-calc__empty {
@@ -7843,9 +7865,18 @@ body,
   color: #6f665d;
 }
 
+@media (min-width: 960px) {
+  .estimator-calc__col--total {
+    position: sticky;
+    top: 5.75rem;
+  }
+}
+
 .estimator-calc__cta {
   width: 100%;
   margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .estimator-calc__faq {
