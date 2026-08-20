@@ -10,6 +10,7 @@ import {
 import { campaignWithSlotMedia, mediaStateFromCampaignAndSlot } from '../lib/adSlotMedia'
 import { layoutKeyFromOverlayVariant } from '../lib/adBannerLayouts'
 import { AdMediaDisplay } from './AdMediaDisplay'
+import { ProjectStoryBanner } from './ProjectStoryBanner'
 import { useApp } from '../contexts/AppContext'
 import { AD_TEXT_PANEL_CLASS, adSlotTailwind } from '../lib/adSlotLayout'
 import {
@@ -75,7 +76,7 @@ const variantStyles: Record<
   },
   center: {
     shell: `${adSlotTailwind.center} ad-slot-center`,
-    image: 'ad-slot-center__media w-full min-h-0 shrink-0 overflow-hidden',
+    image: 'ad-story__fill w-full h-full min-h-0 overflow-hidden',
     text: 'px-2.5 py-1',
     brand: 'text-[10px]',
     title: 'text-sm line-clamp-2 leading-tight',
@@ -129,9 +130,7 @@ function AdCampaignMedia({
     slotId,
   )
   const shouldAdaptRatio =
-    (variant === 'mobile-inline' ||
-      variant === 'center' ||
-      variant === 'leaderboard') &&
+    (variant === 'mobile-inline' || variant === 'leaderboard') &&
     (slotState.mediaType === 'image' || slotState.mediaType === 'gif')
   // Width fluid; height comes from the real asset (no fixed 248px slot crop/stretch).
   const adaptiveImageStyle: CSSProperties | undefined = shouldAdaptRatio
@@ -237,8 +236,9 @@ export function AdOverlayCard({
   const { brand, title } = localizeAdDisplayCopy(campaign, t)
   const styles = variantStyles[variant]
   const isLeaderboard = variant === 'leaderboard' || imageOnly
+  const isCenterStory = variant === 'center'
   const showDesc = showDescription && Boolean(campaign.description?.trim())
-  const geoLabel = showGeo ? getGeoTargetLabel(campaign, t) : null
+  const geoLabel = showGeo || isCenterStory ? getGeoTargetLabel(campaign, t) : null
   const showText = hasAdTextBlock(brand, title, showDesc ? campaign.description : null, geoLabel)
   const slotState = mediaStateFromCampaignAndSlot(
     campaign as AdCampaignWithAdvertiser & { slot_media?: unknown; media_style?: unknown },
@@ -249,11 +249,39 @@ export function AdOverlayCard({
   const shellStyle: CSSProperties | undefined =
     slotSpec && variant !== 'stack' ? adSlotShellStyle(slotSpec, variant) : undefined
   const imageStyle: CSSProperties | undefined =
-    variant === 'stack'
+    variant === 'stack' || isCenterStory
       ? { width: '100%', height: '100%', minHeight: 0, maxHeight: '100%' }
       : slotSpec
         ? adSlotImageStyle(slotSpec, variant)
         : undefined
+
+  if (isCenterStory) {
+    const rows = [
+      brand ? { label: t('ads.story.contractor'), value: brand, accent: true } : null,
+      geoLabel ? { label: t('ads.story.location'), value: geoLabel } : null,
+    ].filter((row): row is { label: string; value: string; accent?: boolean } => Boolean(row))
+
+    return (
+      <ProjectStoryBanner
+        href={campaign.link_url}
+        title={title}
+        rows={rows}
+        quote={showDesc ? campaign.description : null}
+        sponsored
+        className={className}
+        onClick={() => void trackAdClick(campaign.id)}
+        media={
+          <AdCampaignMedia
+            campaign={campaign}
+            slotId={slotId}
+            variant={variant}
+            imageClass={styles.image}
+            imageStyle={imageStyle}
+          />
+        }
+      />
+    )
+  }
 
   return (
     <a

@@ -833,7 +833,7 @@
 
   .ad-slot-center {
     width: 100%;
-    max-width: var(--ad-center-slot-w, 45rem);
+    max-width: min(72rem, 100%);
     margin-inline: auto;
   }
 
@@ -842,6 +842,103 @@
     height: auto;
     max-height: none;
     min-height: 0;
+  }
+
+  .ad-story {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: min(72rem, 100%);
+    margin-inline: auto;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(15, 17, 17, 0.06);
+  }
+  .ad-story:hover {
+    box-shadow: 0 4px 16px rgba(15, 17, 17, 0.08);
+  }
+  @media (min-width: 768px) {
+    .ad-story {
+      grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 1fr);
+      min-height: 280px;
+    }
+  }
+  .ad-story__media {
+    position: relative;
+    min-height: 200px;
+    background: #e8ecec;
+  }
+  @media (min-width: 768px) {
+    .ad-story__media {
+      min-height: 100%;
+    }
+  }
+  .ad-story__photo,
+  .ad-story__fill,
+  .ad-story__media img,
+  .ad-story__media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .ad-story__media .relative,
+  .ad-story__fill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .ad-story__body {
+    padding: 1.6rem 1.45rem 1.7rem;
+    text-align: left;
+  }
+  .ad-story__title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: #1a2330;
+  }
+  .ad-story__meta {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0 0 1.15rem;
+  }
+  .ad-story__row {
+    display: grid;
+    grid-template-columns: 7.2rem minmax(0, 1fr);
+    gap: 0.65rem;
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+  .ad-story__row dt {
+    margin: 0;
+    color: #6f665d;
+    font-weight: 400;
+  }
+  .ad-story__row dd {
+    margin: 0;
+    color: #1a2330;
+  }
+  .ad-story__value--accent {
+    color: var(--accent-600);
+    font-weight: 600;
+  }
+  .ad-story__quote {
+    margin: 0;
+    color: #6f665d;
+    font-size: 0.92rem;
+    line-height: 1.55;
   }
 
   .ad-slot-leaderboard__media {

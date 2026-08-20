@@ -2,8 +2,8 @@ import { useEffect, useMemo } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { usePaidAds } from '../contexts/PaidAdsContext'
 import { AdOverlayCard } from './AdOverlayCard'
+import { DimarketProjectStoryBanner } from './DimarketProjectStoryBanner'
 import { pickCenterHeroCampaign, trackAdImpression } from '../lib/adCampaigns'
-import { navigateTo } from '../lib/navigation'
 
 export function SponsoredCompanies() {
   const { t } = useApp()
@@ -16,28 +16,17 @@ export function SponsoredCompanies() {
     void trackAdImpression(campaign.id)
   }, [loading, campaign])
 
-  if (loading || !campaign) {
+  if (loading) {
     return null
   }
 
   return (
-    <section className="py-6">
-        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 className="text-xl font-extrabold tracking-[-0.02em] text-[var(--ink-900)] md:text-2xl">
-              {t('home.sponsoredTitle')}
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigateTo('/advertising')}
-            className="text-sm font-semibold text-[var(--accent-700)] transition hover:underline"
-          >
-            {t('home.sponsoredCta')}
-          </button>
-        </div>
-
-        <div className="flex justify-center">
+    <section className="py-6" aria-labelledby="home-center-ad-title">
+      <h2 id="home-center-ad-title" className="sr-only">
+        {t('home.sponsoredTitle')}
+      </h2>
+      <div className="flex justify-center">
+        {campaign ? (
           <AdOverlayCard
             campaign={campaign}
             slotId="home_center"
@@ -45,7 +34,10 @@ export function SponsoredCompanies() {
             className="w-full"
             showDescription
           />
-        </div>
+        ) : (
+          <DimarketProjectStoryBanner className="w-full" />
+        )}
+      </div>
     </section>
   )
 }

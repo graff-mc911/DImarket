@@ -27,4 +27,13 @@ test.describe('Реклама на сайті', () => {
       page.getByRole('button', { name: /Увійти для додавання|Sign in to add advertising/i }).first(),
     ).toBeVisible()
   })
+
+  test('homepage mid-page story banner uses project-card layout', async ({ page }) => {
+    await gotoPath(page, '/')
+    const story = page.locator('.ad-story').first()
+    await expect(story).toBeVisible()
+    await expect(story.locator('.ad-story__title')).toBeVisible()
+    await expect(story.locator('.ad-story__media')).toBeVisible()
+    await expect(story.getByText(/^Підрядник$|^Contractor$/)).toBeVisible()
+  })
 })
