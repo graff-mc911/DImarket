@@ -238,7 +238,7 @@ export function AdOverlayCard({
   const isLeaderboard = variant === 'leaderboard' || imageOnly
   const isCenterStory = variant === 'center'
   const showDesc = showDescription && Boolean(campaign.description?.trim())
-  const geoLabel = showGeo || isCenterStory ? getGeoTargetLabel(campaign, t) : null
+  const geoLabel = showGeo ? getGeoTargetLabel(campaign, t) : null
   const showText = hasAdTextBlock(brand, title, showDesc ? campaign.description : null, geoLabel)
   const slotState = mediaStateFromCampaignAndSlot(
     campaign as AdCampaignWithAdvertiser & { slot_media?: unknown; media_style?: unknown },
@@ -258,7 +258,6 @@ export function AdOverlayCard({
   if (isCenterStory) {
     const rows = [
       brand ? { label: t('ads.story.contractor'), value: brand, accent: true } : null,
-      geoLabel ? { label: t('ads.story.location'), value: geoLabel } : null,
     ].filter((row): row is { label: string; value: string; accent?: boolean } => Boolean(row))
 
     return (

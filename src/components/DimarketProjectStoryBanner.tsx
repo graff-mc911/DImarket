@@ -33,6 +33,7 @@ export function DimarketProjectStoryBanner({ className = '' }: { className?: str
         },
       ]}
       quote={t('ads.story.fallbackQuote')}
+      asQuote
       className={className}
     />
   )

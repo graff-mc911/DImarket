@@ -15,6 +15,7 @@ type ProjectStoryBannerProps = {
   media?: ReactNode
   rows?: ProjectStoryRow[]
   quote?: string | null
+  asQuote?: boolean
   onClick?: () => void
   sponsored?: boolean
   className?: string
@@ -28,13 +29,17 @@ export function ProjectStoryBanner({
   media,
   rows = [],
   quote,
+  asQuote = false,
   onClick,
   sponsored = false,
   className = '',
 }: ProjectStoryBannerProps) {
   const trimmedQuote = quote?.trim()
-  const quoted =
-    trimmedQuote && /^[«"“']/.test(trimmedQuote) ? trimmedQuote : trimmedQuote ? `«${trimmedQuote}»` : null
+  const quoted = !trimmedQuote
+    ? null
+    : asQuote && !/^[«"“']/.test(trimmedQuote)
+      ? `«${trimmedQuote}»`
+      : trimmedQuote
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     onClick?.()
