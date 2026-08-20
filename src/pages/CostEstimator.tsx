@@ -23,6 +23,7 @@ import {
   EstimatorIntake,
   matchProjectType,
 } from '../components/cost-estimator/EstimatorIntake'
+import { EstimatorQuoteWizard } from '../components/cost-estimator/EstimatorQuoteWizard'
 import { EstimatorProcurementPanel } from '../components/cost-estimator/EstimatorProcurementPanel'
 import { LocationStep } from '../components/project-wizard/LocationStep'
 import { ProfessionalCard } from '../components/ProfessionalCard'
@@ -35,6 +36,12 @@ import {
 } from '../lib/aiAnalyst'
 import { buildFullCostEstimateLocal, runFullCostEstimate, tierLabel } from '../lib/costEstimatorEngine'
 import { estimatorTypeFromCatalogId } from '../lib/estimatorMainCategories'
+import {
+  BZ_POPULAR_PROJECTS,
+  EMPTY_BZ_QUOTE,
+  type BzQuoteDraft,
+  type BzQuoteScreen,
+} from '../lib/buildzoomQuoteFlow'
 import { flattenWorkFeatureIds } from '../lib/estimatorObjectTypes'
 import { GEO_RADIUS_OPTIONS, radiusModeToKm } from '../lib/geoSearch'
 import {
@@ -148,6 +155,8 @@ export function CostEstimator() {
   const [outcomeSaved, setOutcomeSaved] = useState(false)
   const [publishingTender, setPublishingTender] = useState(false)
   const [typeQuery, setTypeQuery] = useState('')
+  const [quoteScreen, setQuoteScreen] = useState<BzQuoteScreen | null>(null)
+  const [quoteDraft, setQuoteDraft] = useState<BzQuoteDraft>(EMPTY_BZ_QUOTE)
   const inputRef = useRef<HTMLInputElement>(null)
   const cameraRef = useRef<HTMLInputElement>(null)
 
@@ -619,7 +628,9 @@ export function CostEstimator() {
   }
 
   const typeLabel = (id: EstimatorProjectTypeId) => {
-    const featured = BUILDZOOM_INTAKE_CARDS.find((card) => card.id === id)
+    const featured =
+      BUILDZOOM_INTAKE_CARDS.find((card) => card.id === id) ||
+      BZ_POPULAR_PROJECTS.find((card) => card.id === id)
     if (featured) {
       const translated = t(featured.labelKey as never)
       if (translated !== featured.labelKey) return translated
@@ -631,13 +642,25 @@ export function CostEstimator() {
     return translated === item.labelKey ? item.labelEn : translated
   }
 
-  const runQuotesFromIntake = (typeId: EstimatorProjectTypeId, queryText: string) => {
+  const runQuotesFromIntake = (
+    typeId: EstimatorProjectTypeId,
+    queryText: string,
+    draft: BzQuoteDraft = quoteDraft,
+  ) => {
     const label = typeLabel(typeId)
     const q = queryText.trim()
+    const urgency = draft.urgency
+      ? t(`costEstimator.quote.urgency.${draft.urgency}` as never)
+      : ''
+    const property = draft.propertyType
+      ? t(`costEstimator.quote.property.${draft.propertyType}` as never)
+      : ''
+    const bids = draft.bids ? `${draft.bids}` : ''
+    const extra = [urgency, property, bids ? `${bids} bids` : ''].filter(Boolean).join('. ')
     const desc =
       q.length >= 15
-        ? q
-        : `${label}. ${q || label}. ${state.location.city || ''}`.trim()
+        ? `${q}. ${extra}`.trim()
+        : `${label}. ${q || label}. ${extra} ${state.location.city || ''}`.trim()
     const area = Number(state.measurements.areaSqm) > 0 ? Number(state.measurements.areaSqm) : 10
     const nextState: EstimatorState = {
       ...state,
@@ -669,29 +692,71 @@ export function CostEstimator() {
   }
 
   const pickType = (id: EstimatorProjectTypeId, advance: boolean) => {
-    setTypeQuery(typeLabel(id))
+    const label = typeLabel(id)
+    setTypeQuery(label)
     setError(null)
-    if (advance) {
-      runQuotesFromIntake(id, typeLabel(id))
-      return
-    }
     patch({ projectTypeId: id })
+    if (advance) {
+      setQuoteDraft({ ...EMPTY_BZ_QUOTE, title: label, typeId: id })
+      setQuoteScreen('title')
+    }
   }
 
   const submitIntake = () => {
     const fromQuery = matchProjectType(typeQuery, typeLabel)
     const matched = fromQuery || state.projectTypeId
-    if (matched) {
-      setTypeQuery(typeLabel(matched))
-      runQuotesFromIntake(matched, typeQuery)
+    const title = typeQuery.trim() || (matched ? typeLabel(matched) : '')
+    if (!matched && title.length < 3) {
+      setError(t('costEstimator.chooseTypeError'))
       return
     }
-    const q = typeQuery.trim()
-    if (q.length >= 3) {
-      runQuotesFromIntake('other', q)
+    setError(null)
+    setQuoteDraft({
+      ...EMPTY_BZ_QUOTE,
+      title,
+      typeId: matched || 'other',
+    })
+    setQuoteScreen('title')
+  }
+
+  const closeQuoteWizard = () => {
+    setQuoteScreen(null)
+  }
+
+  const quoteBack = () => {
+    if (quoteScreen === 'title') {
+      closeQuoteWizard()
       return
     }
-    setError(t('costEstimator.chooseTypeError'))
+    if (quoteScreen === 'urgency') setQuoteScreen('title')
+    else if (quoteScreen === 'bids') setQuoteScreen('urgency')
+    else if (quoteScreen === 'property') setQuoteScreen('bids')
+  }
+
+  const continueQuoteTitle = () => {
+    const title = quoteDraft.title.trim()
+    if (title.length < 3) {
+      setError(t('costEstimator.chooseTypeError'))
+      return
+    }
+    const matched = matchProjectType(title, typeLabel) || quoteDraft.typeId || 'other'
+    setError(null)
+    setQuoteDraft((prev) => ({ ...prev, title, typeId: matched }))
+    patch({ projectTypeId: matched })
+    setQuoteScreen('urgency')
+  }
+
+  const selectPopular = (id: EstimatorProjectTypeId, label: string) => {
+    setTypeQuery(label)
+    patch({ projectTypeId: id })
+    setQuoteDraft((prev) => ({ ...prev, title: label, typeId: id }))
+    setError(null)
+    setQuoteScreen('urgency')
+  }
+
+  const finishQuote = (draft: BzQuoteDraft) => {
+    const typeId = draft.typeId || state.projectTypeId || 'other'
+    runQuotesFromIntake(typeId, draft.title, draft)
   }
 
   if (busy && state.step === 5) {
@@ -1223,7 +1288,34 @@ export function CostEstimator() {
         </button>
       }
     >
-      {state.step === 1 && (
+      {state.step === 1 && quoteScreen ? (
+        <EstimatorQuoteWizard
+          draft={quoteDraft}
+          screen={quoteScreen}
+          onTitleChange={(value) => {
+            setError(null)
+            setQuoteDraft((prev) => ({ ...prev, title: value }))
+          }}
+          onSelectPopular={selectPopular}
+          onContinueTitle={continueQuoteTitle}
+          onSelectUrgency={(id) => {
+            setQuoteDraft((prev) => ({ ...prev, urgency: id }))
+            setQuoteScreen('bids')
+          }}
+          onSelectBids={(n) => {
+            setQuoteDraft((prev) => ({ ...prev, bids: n }))
+            setQuoteScreen('property')
+          }}
+          onSelectProperty={(id) => {
+            const next = { ...quoteDraft, propertyType: id }
+            setQuoteDraft(next)
+            finishQuote(next)
+          }}
+          onBack={quoteBack}
+        />
+      ) : null}
+
+      {state.step === 1 && !quoteScreen ? (
         <EstimatorIntake
           query={typeQuery}
           selectedId={state.projectTypeId}
@@ -1235,7 +1327,7 @@ export function CostEstimator() {
           onPick={pickType}
           onSubmit={submitIntake}
         />
-      )}
+      ) : null}
 
       {state.step === 2 && (
         <div className="space-y-3">

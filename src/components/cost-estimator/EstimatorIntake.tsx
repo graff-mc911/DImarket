@@ -1,24 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useApp } from '../../contexts/AppContext'
+import { BZ_HOMEPAGE_CARDS } from '../../lib/buildzoomQuoteFlow'
 import {
   ESTIMATOR_PROJECT_TYPES,
   type EstimatorProjectTypeId,
 } from '../../lib/costEstimatorTypes'
 
-/** Same eight homepage tiles as BuildZoom.com — not the /cost calculator types. */
-export const BUILDZOOM_INTAKE_CARDS: Array<{
-  id: EstimatorProjectTypeId
-  labelKey: string
-}> = [
-  { id: 'bathroom', labelKey: 'costEstimator.featured.bathroom' },
-  { id: 'kitchen', labelKey: 'costEstimator.featured.kitchen' },
-  { id: 'renovation', labelKey: 'costEstimator.featured.multiRoom' },
-  { id: 'house_renovation', labelKey: 'costEstimator.featured.addition' },
-  { id: 'new_construction', labelKey: 'costEstimator.featured.newHome' },
-  { id: 'roof', labelKey: 'costEstimator.featured.roofing' },
-  { id: 'painting', labelKey: 'costEstimator.featured.painting' },
-  { id: 'flooring', labelKey: 'costEstimator.featured.flooring' },
-]
+export const BUILDZOOM_INTAKE_CARDS = BZ_HOMEPAGE_CARDS
 
 function normalize(value: string) {
   return value.trim().toLowerCase()
