@@ -1,44 +1,168 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 import { clickHeaderNavButton, gotoPath } from './helpers'
 
+async function openBathroomQuote(page: Page) {
+  await gotoPath(page, '/cost-estimator')
+  await page.getByRole('button', { name: /Ремонт ванної кімнати|Bathroom Remodel/ }).click()
+  await expect(page.getByRole('heading', { name: /З чим вам потрібна допомога\?|What do you need help with\?/ })).toBeVisible()
+  await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i }).click()
+  await expect(
+    page.getByRole('heading', {
+      name: /Коли вам потрібно розпочати ваш проєкт\?|When do you need your project started\?/,
+    }),
+  ).toBeVisible()
+}
+
+async function clickContinue(page: Page) {
+  await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE|НАДІСЛАТИ|SUBMIT/i }).click()
+}
+
 test.describe('Cost estimator calculator', () => {
-  test('BuildZoom quote flow: головна → допомога → коли почати → пропозиції', async ({ page }) => {
-    await gotoPath(page, '/cost-estimator')
-
-    await expect(page.getByLabel(/Мені потрібна допомога з|I need help with/i)).toBeVisible()
-    await expect(page.getByRole('button', { name: /Отримати котирування|Get quotes/i })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Ремонт ванної кімнати|Bathroom Remodel/ })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Фарбування|Painting/ })).toBeVisible()
-
-    await page.getByRole('button', { name: /Ремонт ванної кімнати|Bathroom Remodel/ }).click()
-
-    await expect(page.getByRole('heading', { name: /З чим вам потрібна допомога\?|What do you need help with\?/ })).toBeVisible()
-    await expect(page.getByText(/Ми знаємо, хто найкращі|We know who the best/i)).toBeVisible()
-    await expect(page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Сонячна установка|Solar Installation/ })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Нова комерційна реконструкція|New Commercial Remodel/ })).toBeVisible()
-
-    await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i }).click()
-
-    await expect(
-      page.getByRole('heading', { name: /Коли вам потрібно розпочати ваш проєкт\?|When do you need to start your project\?/ }),
-    ).toBeVisible()
+  test('bathroom remodel: urgency → property type, not bids or land', async ({ page }) => {
+    await openBathroomQuote(page)
     await expect(page.getByRole('button', { name: /Я гнучкий\/гнучка|I'm flexible/ })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Якомога швидше|As soon as possible/ })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Протягом кількох тижнів|Within a few weeks/ })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Протягом кількох місяців|Within a few months/ })).toBeVisible()
 
     await page.getByRole('button', { name: /Протягом кількох тижнів|Within a few weeks/ }).click()
 
     await expect(
-      page.getByRole('heading', { name: /Скільки пропозицій|How many bids/i }),
+      page.getByRole('heading', { name: /Який це тип нерухомості\?|What type of property is this\?/ }),
     ).toBeVisible()
-    await page.getByRole('button', { name: /^4/ }).click()
+    await expect(page.getByRole('button', { name: /Приватний будинок|Single Family Home/ })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: /Скільки пропозицій|How many bids/ }),
+    ).toHaveCount(0)
+    await expect(page.getByRole('heading', { name: /У вас вже є земля\?|Do you already have land\?/ })).toHaveCount(0)
+  })
 
-    await expect(page.getByRole('heading', { name: /Який це тип нерухомості|What type of property/i })).toBeVisible()
+  test('new home construction: urgency → land ownership', async ({ page }) => {
+    await gotoPath(page, '/cost-estimator')
+    await page.getByRole('button', { name: /Будівництво нового будинку|New Home Construction/ }).click()
+    await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i }).click()
+    await page.getByRole('button', { name: /Якомога швидше|As soon as possible/ }).click()
+    await expect(page.getByRole('heading', { name: /У вас вже є земля\?|Do you already have land\?/ })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^Так$|^Yes$/ })).toBeVisible()
+    await expect(page.getByRole('button', { name: /У процесі|In process/ })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^Ні$|^No$/ })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: /Який це тип нерухомості\?|What type of property is this\?/ }),
+    ).toHaveCount(0)
+  })
+
+  test('home addition uses design status after location, not relationship', async ({ page }) => {
+    test.setTimeout(90_000)
+    await gotoPath(page, '/cost-estimator')
+    await page.getByRole('button', { name: /Добудова до будинку|Home Addition/ }).click()
+    await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i }).click()
+    await page.getByRole('button', { name: /Я гнучкий\/гнучка|I'm flexible/ }).click()
     await page.getByRole('button', { name: /Приватний будинок|Single Family Home/ }).click()
+    await page.getByPlaceholder(/^Email$/i).fill('addition-e2e@example.com')
+    await clickContinue(page)
+    await page.getByPlaceholder(/Мобільний телефон|Mobile phone/).fill('+380501112233')
+    await clickContinue(page)
+    await page.getByPlaceholder(/Ім'я|^Name$/).fill('Test Owner')
+    await clickContinue(page)
+    await page.getByRole('button', { name: /^4/ }).click()
+    await page.getByPlaceholder(/^Місто$|^City$/).fill('Kyiv')
+    await clickContinue(page)
+    await expect(
+      page.getByRole('heading', { name: /Чи є у вас готові проєкти|Do you have completed designs\?/ }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: /Який ваш звʼязок|What is your relationship with this property\?/ }),
+    ).toHaveCount(0)
+  })
 
-    await expect(page.getByText(/Орієнтовна оцінка|Reference estimate/i).first()).toBeVisible()
+  test('remodel guest path reaches results after every BuildZoom screen', async ({ page }) => {
+    test.setTimeout(90_000)
+    await openBathroomQuote(page)
+    await page.getByRole('button', { name: /Протягом кількох тижнів|Within a few weeks/ }).click()
+    await page.getByRole('button', { name: /Приватний будинок|Single Family Home/ }).click()
+    await page.getByPlaceholder(/^Email$/i).fill('bathroom-e2e@example.com')
+    await clickContinue(page)
+    await page.getByPlaceholder(/Мобільний телефон|Mobile phone/).fill('+380501112233')
+    await clickContinue(page)
+    await page.getByPlaceholder(/Ім'я|^Name$/).fill('Test Owner')
+    await clickContinue(page)
+    await expect(page.getByRole('heading', { name: /Скільки пропозицій|How many bids/ })).toBeVisible()
+    await page.getByRole('button', { name: /^4/ }).click()
+    await page.getByPlaceholder(/^Місто$|^City$/).fill('Kyiv')
+    await clickContinue(page)
+    await expect(
+      page.getByRole('heading', { name: /Який ваш звʼязок|What is your relationship with this property\?/ }),
+    ).toBeVisible()
+    await page.getByRole('button', { name: /Я власник|I own or help manage it/ }).click()
+    await expect(page.getByRole('heading', { name: /Який у вас бюджет\?|What is your budget\?/ })).toBeVisible()
+    await page.locator('select.bz-quote__select').selectOption('5000-20000')
+    await clickContinue(page)
+    await expect(page.getByRole('heading', { name: /Коротко опишіть|Please give a brief description/ })).toBeVisible()
+    await clickContinue(page)
+    await expect(
+      page.getByRole('heading', { name: /Створіть пароль|Create a password to easily access your matches/ }),
+    ).toBeVisible()
+    await page.getByPlaceholder(/^Пароль$|^Password$/).fill('secret1')
+    await page.getByRole('button', { name: /НАДІСЛАТИ|SUBMIT/i }).click()
+    await expect(page.getByText(/Орієнтовна оцінка|Reference estimate/i).first()).toBeVisible({
+      timeout: 25_000,
+    })
+  })
+
+  test('email validation blocks continue and keeps the value', async ({ page }) => {
+    await openBathroomQuote(page)
+    await page.getByRole('button', { name: /Протягом кількох тижнів|Within a few weeks/ }).click()
+    await page.getByRole('button', { name: /Приватний будинок|Single Family Home/ }).click()
+    await page.getByPlaceholder(/^Email$/i).fill('not-an-email')
+    await clickContinue(page)
+    await expect(page.getByText(/дійсну електронну|valid email address/i)).toBeVisible()
+    await expect(page.getByPlaceholder(/^Email$/i)).toHaveValue('not-an-email')
+  })
+
+  test('low budget blocks continue', async ({ page }) => {
+    test.setTimeout(60_000)
+    await openBathroomQuote(page)
+    await page.getByRole('button', { name: /Протягом кількох тижнів|Within a few weeks/ }).click()
+    await page.getByRole('button', { name: /Приватний будинок|Single Family Home/ }).click()
+    await page.getByPlaceholder(/^Email$/i).fill('lowbudget@example.com')
+    await clickContinue(page)
+    await page.getByPlaceholder(/Мобільний телефон|Mobile phone/).fill('+380501112233')
+    await clickContinue(page)
+    await page.getByPlaceholder(/Ім'я|^Name$/).fill('Test Owner')
+    await clickContinue(page)
+    await page.getByRole('button', { name: /^3$/ }).click()
+    await page.getByPlaceholder(/^Місто$|^City$/).fill('Kyiv')
+    await clickContinue(page)
+    await page.getByRole('button', { name: /Я орендую|I rent it/ }).click()
+    await page.locator('select.bz-quote__select').selectOption('0-1000')
+    await expect(page.getByText(/дешевше €1 000|under €1,000/i)).toBeVisible()
+    await expect(page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i })).toBeDisabled()
+  })
+
+  test('Back keeps the previous urgency answer', async ({ page }) => {
+    await openBathroomQuote(page)
+    await page.getByRole('button', { name: /Протягом кількох тижнів|Within a few weeks/ }).click()
+    await expect(
+      page.getByRole('heading', { name: /Який це тип нерухомості\?|What type of property is this\?/ }),
+    ).toBeVisible()
+    await page.locator('.bz-quote__back').click()
+    await expect(
+      page.getByRole('heading', {
+        name: /Коли вам потрібно розпочати ваш проєкт\?|When do you need your project started\?/,
+      }),
+    ).toBeVisible()
+    await expect(page.getByRole('button', { name: /Протягом кількох тижнів|Within a few weeks/ })).toHaveClass(
+      /is-active/,
+    )
+  })
+
+  test('refresh restores the current quote screen', async ({ page }) => {
+    await openBathroomQuote(page)
+    await page.getByRole('button', { name: /Протягом кількох тижнів|Within a few weeks/ }).click()
+    await expect(
+      page.getByRole('heading', { name: /Який це тип нерухомості\?|What type of property is this\?/ }),
+    ).toBeVisible()
+    await page.reload()
+    await expect(
+      page.getByRole('heading', { name: /Який це тип нерухомості\?|What type of property is this\?/ }),
+    ).toBeVisible()
   })
 
   test('клік «Калькулятор вартості» — SPA без циклу перезавантаження', async ({

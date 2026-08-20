@@ -39,9 +39,19 @@ import { estimatorTypeFromCatalogId } from '../lib/estimatorMainCategories'
 import {
   BZ_POPULAR_PROJECTS,
   EMPTY_BZ_QUOTE,
+  areaSqmFromBudget,
+  budgetTierFromBand,
+  isLowBudget,
+  nextScreenAfter,
+  prevScreenBefore,
+  screensForQuoteType,
+  validateQuoteScreen,
   type BzQuoteDraft,
   type BzQuoteScreen,
 } from '../lib/buildzoomQuoteFlow'
+import { clearQuoteSession, loadQuoteSession, saveQuoteSession } from '../lib/buildzoomQuoteSession'
+import { supabase } from '../lib/supabase'
+import { savePendingRegistration } from '../lib/profileSync'
 import { flattenWorkFeatureIds } from '../lib/estimatorObjectTypes'
 import { GEO_RADIUS_OPTIONS, radiusModeToKm } from '../lib/geoSearch'
 import {
@@ -157,6 +167,8 @@ export function CostEstimator() {
   const [typeQuery, setTypeQuery] = useState('')
   const [quoteScreen, setQuoteScreen] = useState<BzQuoteScreen | null>(null)
   const [quoteDraft, setQuoteDraft] = useState<BzQuoteDraft>(EMPTY_BZ_QUOTE)
+  const [quoteFarthest, setQuoteFarthest] = useState<BzQuoteScreen>('title')
+  const [quoteFieldError, setQuoteFieldError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const cameraRef = useRef<HTMLInputElement>(null)
 
@@ -195,6 +207,28 @@ export function CostEstimator() {
       }),
     [language.code, t],
   )
+
+  const quoteAuth = {
+    signedIn: Boolean(user?.id),
+    hasPhone: Boolean(profile?.phone?.trim()),
+  }
+
+  useEffect(() => {
+    const session = loadQuoteSession()
+    if (!session) return
+    setQuoteDraft(session.draft)
+    if (session.screen && session.screen !== 'loading') {
+      setQuoteScreen(session.screen)
+      setQuoteFarthest(session.farthest)
+    }
+    // Restore mid-flow answers after refresh — once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (!quoteScreen || quoteScreen === 'loading') return
+    saveQuoteSession({ screen: quoteScreen, farthest: quoteFarthest, draft: quoteDraft })
+  }, [quoteScreen, quoteFarthest, quoteDraft])
 
   // Prefill from AI sales chat (“повний ремонт + кошторис”)
   useEffect(() => {
@@ -652,16 +686,34 @@ export function CostEstimator() {
     const urgency = draft.urgency
       ? t(`costEstimator.quote.urgency.${draft.urgency}` as never)
       : ''
-    const property = draft.propertyType
-      ? t(`costEstimator.quote.property.${draft.propertyType}` as never)
-      : ''
-    const bids = draft.bids ? `${draft.bids}` : ''
-    const extra = [urgency, property, bids ? `${bids} bids` : ''].filter(Boolean).join('. ')
+    const extra = [
+      urgency,
+      draft.propertyType
+        ? t(`costEstimator.quote.property.${draft.propertyType}` as never)
+        : '',
+      draft.land ? t(`costEstimator.quote.land.${draft.land}` as never) : '',
+      draft.relationship
+        ? t(`costEstimator.quote.relationship.${draft.relationship}` as never)
+        : '',
+      draft.designStatus
+        ? t(`costEstimator.quote.design.${draft.designStatus}` as never)
+        : '',
+      draft.bids ? String(draft.bids) : '',
+      draft.financing ? t('costEstimator.quote.financing') : '',
+    ]
+      .filter(Boolean)
+      .join('. ')
     const desc =
-      q.length >= 15
-        ? `${q}. ${extra}`.trim()
-        : `${label}. ${q || label}. ${extra} ${state.location.city || ''}`.trim()
-    const area = Number(state.measurements.areaSqm) > 0 ? Number(state.measurements.areaSqm) : 10
+      draft.description.trim().length >= 15
+        ? draft.description.trim()
+        : q.length >= 15
+          ? `${q}. ${extra}`.trim()
+          : `${label}. ${q || label}. ${extra} ${draft.city || state.location.city || ''}`.trim()
+    const perSqm = getProjectType(typeId).perSqm
+    const area =
+      Number(state.measurements.areaSqm) > 0
+        ? Number(state.measurements.areaSqm)
+        : areaSqmFromBudget(draft.budget, perSqm)
     const nextState: EstimatorState = {
       ...state,
       projectTypeId: typeId,
@@ -669,6 +721,20 @@ export function CostEstimator() {
       objectTypeId: null,
       workPackages: [],
       description: desc,
+      budgetTier: budgetTierFromBand(draft.budget),
+      location: {
+        ...state.location,
+        city: draft.city || state.location.city,
+        country: draft.country || state.location.country,
+        region: draft.region || state.location.region,
+        postalCode: draft.postalCode || state.location.postalCode,
+        locationLabel:
+          draft.locationLabel ||
+          [draft.city, draft.region, draft.country].filter(Boolean).join(', ') ||
+          state.location.locationLabel,
+        latitude: draft.latitude ?? state.location.latitude,
+        longitude: draft.longitude ?? state.location.longitude,
+      },
       measurements: { ...state.measurements, areaSqm: area },
     }
     setError(null)
@@ -678,6 +744,8 @@ export function CostEstimator() {
       setEstimate(result)
       setTier(nextState.budgetTier || 'standard')
       setState({ ...nextState, step: 6 })
+      setQuoteScreen(null)
+      clearQuoteSession()
       void fetchEstimatorMatches(result, nextState.location).then(setMatches)
       void saveCostEstimate({
         userId: user?.id ?? null,
@@ -691,14 +759,41 @@ export function CostEstimator() {
     }
   }
 
+  const locateDraft = (draft: BzQuoteDraft): BzQuoteDraft => ({
+    ...draft,
+    city: draft.city || state.location.city,
+    country: draft.country || state.location.country,
+    region: draft.region || state.location.region || state.location.province,
+    postalCode: draft.postalCode || state.location.postalCode,
+    locationLabel: draft.locationLabel || state.location.locationLabel,
+    latitude: draft.latitude ?? state.location.latitude,
+    longitude: draft.longitude ?? state.location.longitude,
+    email: draft.email || user?.email || '',
+    name: draft.name || profile?.full_name || '',
+    phone: draft.phone || profile?.phone || '',
+  })
+
+  const markFarthest = (screen: BzQuoteScreen, typeId: EstimatorProjectTypeId | null) => {
+    const list = screensForQuoteType(typeId, quoteAuth)
+    setQuoteFarthest((prev) => (list.indexOf(screen) > list.indexOf(prev) ? screen : prev))
+  }
+
+  const goQuoteScreen = (screen: BzQuoteScreen, draft: BzQuoteDraft) => {
+    setQuoteFieldError(null)
+    setQuoteScreen(screen)
+    markFarthest(screen, draft.typeId)
+  }
+
   const pickType = (id: EstimatorProjectTypeId, advance: boolean) => {
     const label = typeLabel(id)
     setTypeQuery(label)
     setError(null)
     patch({ projectTypeId: id })
     if (advance) {
-      setQuoteDraft({ ...EMPTY_BZ_QUOTE, title: label, typeId: id })
-      setQuoteScreen('title')
+      const next = locateDraft({ ...EMPTY_BZ_QUOTE, title: label, typeId: id })
+      setQuoteDraft(next)
+      setQuoteFarthest('title')
+      goQuoteScreen('title', next)
     }
   }
 
@@ -711,52 +806,127 @@ export function CostEstimator() {
       return
     }
     setError(null)
-    setQuoteDraft({
+    const next = locateDraft({
       ...EMPTY_BZ_QUOTE,
       title,
       typeId: matched || 'other',
     })
-    setQuoteScreen('title')
+    setQuoteDraft(next)
+    setQuoteFarthest('title')
+    goQuoteScreen('title', next)
   }
 
   const closeQuoteWizard = () => {
     setQuoteScreen(null)
+    setQuoteFieldError(null)
   }
 
   const quoteBack = () => {
-    if (quoteScreen === 'title') {
+    if (!quoteScreen || quoteScreen === 'title') {
       closeQuoteWizard()
       return
     }
-    if (quoteScreen === 'urgency') setQuoteScreen('title')
-    else if (quoteScreen === 'bids') setQuoteScreen('urgency')
-    else if (quoteScreen === 'property') setQuoteScreen('bids')
+    const prev = prevScreenBefore(quoteScreen, quoteDraft.typeId, quoteAuth)
+    if (!prev) {
+      closeQuoteWizard()
+      return
+    }
+    goQuoteScreen(prev, quoteDraft)
+  }
+
+  const quoteForward = () => {
+    if (!quoteScreen) return
+    const next = nextScreenAfter(quoteScreen, quoteDraft.typeId, quoteAuth)
+    const list = screensForQuoteType(quoteDraft.typeId, quoteAuth)
+    if (next === 'loading') return
+    if (list.indexOf(next) > list.indexOf(quoteFarthest)) return
+    goQuoteScreen(next, quoteDraft)
   }
 
   const continueQuoteTitle = () => {
     const title = quoteDraft.title.trim()
-    if (title.length < 3) {
-      setError(t('costEstimator.chooseTypeError'))
+    const err = validateQuoteScreen('title', { ...quoteDraft, title })
+    if (err) {
+      setQuoteFieldError(t(err as never))
       return
     }
     const matched = matchProjectType(title, typeLabel) || quoteDraft.typeId || 'other'
     setError(null)
-    setQuoteDraft((prev) => ({ ...prev, title, typeId: matched }))
+    const next = { ...quoteDraft, title, typeId: matched }
+    setQuoteDraft(next)
     patch({ projectTypeId: matched })
-    setQuoteScreen('urgency')
+    goQuoteScreen('urgency', next)
   }
 
   const selectPopular = (id: EstimatorProjectTypeId, label: string) => {
     setTypeQuery(label)
     patch({ projectTypeId: id })
-    setQuoteDraft((prev) => ({ ...prev, title: label, typeId: id }))
+    const next = { ...quoteDraft, title: label, typeId: id }
+    setQuoteDraft(next)
     setError(null)
-    setQuoteScreen('urgency')
+    goQuoteScreen('urgency', next)
   }
 
-  const finishQuote = (draft: BzQuoteDraft) => {
-    const typeId = draft.typeId || state.projectTypeId || 'other'
-    runQuotesFromIntake(typeId, draft.title, draft)
+  const advanceQuote = (draft: BzQuoteDraft, from: BzQuoteScreen) => {
+    const next = nextScreenAfter(from, draft.typeId, quoteAuth)
+    goQuoteScreen(next, draft)
+  }
+
+  const continueQuote = () => {
+    if (!quoteScreen) return
+    const err = validateQuoteScreen(quoteScreen, quoteDraft)
+    if (err) {
+      setQuoteFieldError(t(err as never))
+      return
+    }
+    advanceQuote(quoteDraft, quoteScreen)
+  }
+
+  const finishQuote = useCallback(
+    (draft: BzQuoteDraft) => {
+      const typeId = draft.typeId || state.projectTypeId || 'other'
+      runQuotesFromIntake(typeId, draft.title, draft)
+    },
+    // runQuotesFromIntake closes over latest state/t
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [state, t, user?.id],
+  )
+
+  const submitQuotePassword = async (password: string) => {
+    const err = validateQuoteScreen('password', quoteDraft, { password })
+    if (err) {
+      setQuoteFieldError(t(err as never))
+      return
+    }
+    const locationStr = [quoteDraft.city, quoteDraft.region, quoteDraft.country]
+      .filter(Boolean)
+      .join(', ')
+    savePendingRegistration({
+      role: 'client',
+      full_name: quoteDraft.name.trim() || undefined,
+      phone: quoteDraft.phone.trim() || undefined,
+      location: locationStr || undefined,
+    })
+    if (quoteDraft.email.trim()) {
+      try {
+        await supabase.auth.signUp({
+          email: quoteDraft.email.trim(),
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: {
+              full_name: quoteDraft.name.trim(),
+              user_role: 'client',
+              phone: quoteDraft.phone.trim() || null,
+              location: locationStr || null,
+            },
+          },
+        })
+      } catch {
+        /* Dimarket auth is best-effort; the quote still continues like BZ after password. */
+      }
+    }
+    goQuoteScreen('loading', quoteDraft)
   }
 
   if (busy && state.step === 5) {
@@ -1292,26 +1462,67 @@ export function CostEstimator() {
         <EstimatorQuoteWizard
           draft={quoteDraft}
           screen={quoteScreen}
+          auth={quoteAuth}
+          fieldError={quoteFieldError}
+          files={state.files}
           onTitleChange={(value) => {
-            setError(null)
+            setQuoteFieldError(null)
             setQuoteDraft((prev) => ({ ...prev, title: value }))
           }}
           onSelectPopular={selectPopular}
           onContinueTitle={continueQuoteTitle}
           onSelectUrgency={(id) => {
-            setQuoteDraft((prev) => ({ ...prev, urgency: id }))
-            setQuoteScreen('bids')
+            const next = { ...quoteDraft, urgency: id }
+            setQuoteDraft(next)
+            advanceQuote(next, 'urgency')
           }}
-          onSelectBids={(n) => {
-            setQuoteDraft((prev) => ({ ...prev, bids: n }))
-            setQuoteScreen('property')
+          onSelectLand={(id) => {
+            const next = { ...quoteDraft, land: id }
+            setQuoteDraft(next)
+            advanceQuote(next, 'land')
           }}
           onSelectProperty={(id) => {
             const next = { ...quoteDraft, propertyType: id }
             setQuoteDraft(next)
-            finishQuote(next)
+            advanceQuote(next, 'property')
           }}
+          onSelectBids={(n) => {
+            const next = { ...quoteDraft, bids: n }
+            setQuoteDraft(next)
+            advanceQuote(next, 'bids')
+          }}
+          onSelectRelationship={(id) => {
+            const next = { ...quoteDraft, relationship: id }
+            setQuoteDraft(next)
+            advanceQuote(next, 'relationship')
+          }}
+          onSelectDesign={(id) => {
+            const next = { ...quoteDraft, designStatus: id }
+            setQuoteDraft(next)
+            advanceQuote(next, 'design')
+          }}
+          onPatch={(patchDraft) => {
+            setQuoteDraft((prev) => ({ ...prev, ...patchDraft }))
+            if (patchDraft.budget && isLowBudget(patchDraft.budget)) {
+              setQuoteFieldError(t('costEstimator.quote.errors.lowBudget'))
+              return
+            }
+            setQuoteFieldError(null)
+          }}
+          onContinue={continueQuote}
+          onSubmitPassword={(password) => {
+            void submitQuotePassword(password)
+          }}
+          onAttachFiles={addFiles}
+          onRemoveFile={removeFile}
           onBack={quoteBack}
+          onForward={quoteForward}
+          canForward={
+            quoteScreen !== 'loading' &&
+            screensForQuoteType(quoteDraft.typeId, quoteAuth).indexOf(quoteScreen) <
+              screensForQuoteType(quoteDraft.typeId, quoteAuth).indexOf(quoteFarthest)
+          }
+          onLoadingComplete={() => finishQuote(quoteDraft)}
         />
       ) : null}
 
