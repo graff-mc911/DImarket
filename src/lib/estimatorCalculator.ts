@@ -1,10 +1,7 @@
 import { estimatorGeoMultiplier, vatRateForCountry } from './costEstimatorGeo'
 import { getProjectType, type EstimatorState, type PricingTierId } from './costEstimatorTypes'
-import {
-  flattenWorkFeatureIds,
-  getObjectType,
-  workTypeLabel,
-} from './estimatorObjectTypes'
+import { estimatorTypeFromCatalogId } from './estimatorMainCategories'
+import { flattenWorkFeatureIds, workTypeLabel } from './estimatorObjectTypes'
 
 export type CalculatorFeature = {
   id: string
@@ -361,17 +358,16 @@ export function computeCalculatorPreview(
   >,
   lang: string,
 ): CalculatorPreview {
-  const object = getObjectType(state.objectTypeId)
-  const type = getProjectType(object?.engineType || state.projectTypeId)
+  const catalogId = state.calculatorTypeId || state.projectTypeId
+  const type = getProjectType(state.projectTypeId || estimatorTypeFromCatalogId(catalogId))
   const area = Math.max(0, Number(state.measurements.areaSqm) || 0)
   const geo = estimatorGeoMultiplier(state.location.country, state.location.city)
   const tierMul = TIER_MUL[state.budgetTier] || 1
-  const packages = state.workPackages?.length
-    ? state.workPackages
-    : state.calculatorTypeId
-      ? [{ workTypeId: state.calculatorTypeId, selectedFeatureIds: state.selectedFeatureIds || [] }]
-      : []
-  const perSqm = object?.perSqm ?? type.perSqm
+  const selectedIds =
+    state.selectedFeatureIds?.length
+      ? state.selectedFeatureIds
+      : flattenWorkFeatureIds(state.workPackages)
+  const perSqm = type.perSqm
   const laborShare = type.laborShare
 
   const base = perSqm * area * geo
@@ -380,21 +376,17 @@ export function computeCalculatorPreview(
   let features = 0
   const lines: CalculatorPreviewLine[] = []
 
-  for (const pack of packages) {
-    const selected = featuresForCatalog(pack.workTypeId).filter((item) =>
-      pack.selectedFeatureIds.includes(item.id),
-    )
-    for (const item of selected) {
-      const raw = item.kind === 'perSqm' ? item.amount * Math.max(area, 1) * geo : item.amount * geo
-      const amount = state.includeMaterials ? raw : raw * laborShare
-      features += amount
-      lines.push({
-        id: item.id,
-        label: featureLabel(item, lang),
-        amount: roundEuro(amount * tierMul),
-        workTypeId: pack.workTypeId,
-      })
-    }
+  const selected = featuresForCatalog(catalogId).filter((item) => selectedIds.includes(item.id))
+  for (const item of selected) {
+    const raw = item.kind === 'perSqm' ? item.amount * Math.max(area, 1) * geo : item.amount * geo
+    const amount = state.includeMaterials ? raw : raw * laborShare
+    features += amount
+    lines.push({
+      id: item.id,
+      label: featureLabel(item, lang),
+      amount: roundEuro(amount * tierMul),
+      workTypeId: catalogId ? String(catalogId) : undefined,
+    })
   }
 
   labor *= tierMul
@@ -439,7 +431,9 @@ export function descriptionFromFeatures(
     .filter((item) => selectedIds.includes(item.id))
     .map((item) => featureLabel(item, lang))
   if (!labels.length) return catalogId ? `Project: ${catalogId}` : ''
-  return `Selected features: ${labels.join(', ')}.`
+  return lang.toLowerCase().startsWith('uk')
+    ? `Опції: ${labels.join(', ')}.`
+    : `Selected features: ${labels.join(', ')}.`
 }
 
 export function featureExtraEur(

@@ -31,12 +31,8 @@ import {
 } from '../lib/aiAnalyst'
 import { buildFullCostEstimateLocal, runFullCostEstimate, tierLabel } from '../lib/costEstimatorEngine'
 import { descriptionFromFeatures } from '../lib/estimatorCalculator'
-import {
-  flattenWorkFeatureIds,
-  getObjectType,
-  inferObjectTypeFromLegacy,
-  objectTypeLabel,
-} from '../lib/estimatorObjectTypes'
+import { estimatorTypeFromCatalogId } from '../lib/estimatorMainCategories'
+import { flattenWorkFeatureIds } from '../lib/estimatorObjectTypes'
 import { GEO_RADIUS_OPTIONS, radiusModeToKm } from '../lib/geoSearch'
 import {
   downloadCsv,
@@ -229,33 +225,23 @@ export function CostEstimator() {
         includeMaterials?: boolean
         budgetTier?: PricingTierId
       }
-      const catalogId = input.calculatorTypeId || input.projectTypeId || null
-      const objectTypeId =
-        input.objectTypeId || inferObjectTypeFromLegacy(catalogId ? String(catalogId) : null)
-      const workPackages =
-        input.workPackages?.length
-          ? input.workPackages
-          : catalogId
-            ? [
-                {
-                  workTypeId: String(catalogId),
-                  selectedFeatureIds: input.selectedFeatureIds || [],
-                },
-              ]
-            : []
+      const catalogId = input.calculatorTypeId || input.projectTypeId || input.workPackages?.[0]?.workTypeId || null
+      const selectedFeatureIds =
+        input.selectedFeatureIds?.length
+          ? input.selectedFeatureIds
+          : flattenWorkFeatureIds(input.workPackages)
       setState((prev) => ({
         ...prev,
         step: 6,
-        projectTypeId: input.projectTypeId || getObjectType(objectTypeId)?.engineType || prev.projectTypeId,
-        objectTypeId,
-        calculatorTypeId: input.calculatorTypeId || workPackages[0]?.workTypeId || prev.calculatorTypeId,
-        workPackages,
+        projectTypeId:
+          input.projectTypeId ||
+          (catalogId ? estimatorTypeFromCatalogId(String(catalogId)) : prev.projectTypeId),
+        objectTypeId: null,
+        calculatorTypeId: catalogId ? String(catalogId) : prev.calculatorTypeId,
+        workPackages: [],
         description: input.description || prev.description,
         location: input.location ? { ...prev.location, ...input.location } : prev.location,
-        selectedFeatureIds:
-          flattenWorkFeatureIds(workPackages).length > 0
-            ? flattenWorkFeatureIds(workPackages)
-            : input.selectedFeatureIds || prev.selectedFeatureIds,
+        selectedFeatureIds: selectedFeatureIds.length > 0 ? selectedFeatureIds : prev.selectedFeatureIds,
         includeMaterials: input.includeMaterials ?? prev.includeMaterials,
         budgetTier: input.budgetTier || prev.budgetTier,
         measurements: {
@@ -636,7 +622,8 @@ export function CostEstimator() {
   }
 
   const runCalculatorQuotes = () => {
-    if (!state.objectTypeId) {
+    const catalogId = state.calculatorTypeId || state.projectTypeId
+    if (!catalogId) {
       setError(t('costEstimator.chooseTypeError'))
       return
     }
@@ -644,27 +631,23 @@ export function CostEstimator() {
       setError(t('costEstimator.areaError'))
       return
     }
-    const object = getObjectType(state.objectTypeId)
-    const engineId = object?.engineType || state.projectTypeId || 'other'
-    const catalogId = state.calculatorTypeId || state.workPackages[0]?.workTypeId || engineId
+    const engineId = estimatorTypeFromCatalogId(String(catalogId))
+    const features = state.selectedFeatureIds || []
     const desc =
       state.description.trim() ||
-      descriptionFromFeatures(
-        catalogId,
-        flattenWorkFeatureIds(state.workPackages),
-        language.code,
-        state.workPackages,
-      )
-    const objectName = objectTypeLabel(state.objectTypeId, language.code) || typeLabel(engineId)
+      descriptionFromFeatures(String(catalogId), features, language.code)
+    const typeName = typeLabel(engineId)
     const nextState: EstimatorState = {
       ...state,
       projectTypeId: engineId,
-      calculatorTypeId: catalogId,
-      selectedFeatureIds: flattenWorkFeatureIds(state.workPackages),
+      calculatorTypeId: String(catalogId),
+      objectTypeId: null,
+      workPackages: [],
+      selectedFeatureIds: features,
       description:
         desc.trim().length >= 15
           ? desc
-          : `${desc} ${objectName}, ${state.measurements.areaSqm} m².`.trim(),
+          : `${desc} ${typeName}, ${state.measurements.areaSqm} m².`.trim(),
     }
     setError(null)
     setBusy(true)
