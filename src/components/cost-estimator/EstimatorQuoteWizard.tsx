@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useApp } from '../../contexts/AppContext'
 import type { EstimatorDraftFile, EstimatorProjectTypeId } from '../../lib/costEstimatorTypes'
 import { ESTIMATOR_PROJECT_TYPES } from '../../lib/costEstimatorTypes'
@@ -169,11 +170,29 @@ export function EstimatorQuoteWizard({
     return () => window.clearTimeout(timer)
   }, [draft.city, draft.locationLabel, screen])
 
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onCloseRef.current()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [])
+
   const continueLabel = t('costEstimator.quote.continue')
   const isFirst = screen === 'title'
 
-  return (
-    <div className="bz-quote" data-quote-screen={screen}>
+  return createPortal(
+    <div className="bz-quote-overlay">
+      <div className="bz-quote-overlay__scrim" onClick={onClose} aria-hidden />
+      <div className="bz-quote" data-quote-screen={screen} role="dialog" aria-modal="true">
       {!isFirst ? (
         <div className="bz-quote__progress" aria-hidden>
           <div className="bz-quote__progress-fill" style={{ width: `${pct}%` }} />
@@ -568,6 +587,8 @@ export function EstimatorQuoteWizard({
           {screens.indexOf(screen) + 1}/{screens.length}
         </p>
       ) : null}
-    </div>
+      </div>
+    </div>,
+    document.body,
   )
 }

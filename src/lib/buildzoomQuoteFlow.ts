@@ -20,6 +20,11 @@
  * Logged-in (setUserScreen): drop email, name; drop phone if a number already exists.
  * After description, existing users skip password (description.continue isNew check).
  * competing-bids / expected-responses (3/4/5 bids) are not shown — rejected from the DImarket flow.
+ *
+ * setInitialScreen (homepage): a prefilled title (card click, popular tile, or
+ * typed “Get quotes”) skips the title screen and opens urgency. Title stays in
+ * the screen list so Back from urgency still returns to it. Empty Get quotes
+ * opens title.
  */
 import type { EstimatorProjectTypeId, PricingTierId } from './costEstimatorTypes'
 
@@ -269,6 +274,11 @@ export function nextScreenAfter(
   if (index < 0) return screens[0] ?? 'loading'
   if (index >= screens.length - 1) return 'loading'
   return screens[index + 1]
+}
+
+/** BuildZoom `setInitialScreen`: skip title when it is already filled. */
+export function initialQuoteScreen(draft: Pick<BzQuoteDraft, 'title'>): BzQuoteScreen {
+  return draft.title.trim() ? 'urgency' : 'title'
 }
 
 export function prevScreenBefore(

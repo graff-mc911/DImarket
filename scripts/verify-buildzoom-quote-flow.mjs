@@ -100,6 +100,10 @@ if (remodel.includes('bids') || homeAddition.includes('bids') || newConstruction
   throw new Error('bids / expected-responses must not appear in the DImarket quote flow')
 }
 
+if (!src.includes('export function initialQuoteScreen')) {
+  throw new Error('missing BuildZoom setInitialScreen helper (skip title when prefilled)')
+}
+
 console.log('BuildZoom quote screen lists (without bids)')
 console.log('  remodel', remodel.join(' → '))
 console.log('  addition', homeAddition.join(' → '))

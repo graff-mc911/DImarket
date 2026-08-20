@@ -4,8 +4,6 @@ import { clickHeaderNavButton, gotoPath } from './helpers'
 async function openBathroomQuote(page: Page) {
   await gotoPath(page, '/cost-estimator')
   await page.getByRole('button', { name: /Ремонт ванної кімнати|Bathroom Remodel/ }).click()
-  await expect(page.getByRole('heading', { name: /З чим вам потрібна допомога\?|What do you need help with\?/ })).toBeVisible()
-  await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i }).click()
   await expect(
     page.getByRole('heading', {
       name: /Коли вам потрібно розпочати ваш проєкт\?|When do you need your project started\?/,
@@ -18,6 +16,34 @@ async function clickContinue(page: Page) {
 }
 
 test.describe('Cost estimator calculator', () => {
+  test('homepage card click skips title; Back returns to the title screen', async ({ page }) => {
+    await openBathroomQuote(page)
+    await expect(page.getByRole('dialog')).toBeVisible()
+    await expect(page.getByLabel(/Мені потрібна допомога з|I need help with/i)).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: /З чим вам потрібна допомога\?|What do you need help with\?/ }),
+    ).toHaveCount(0)
+
+    await page.locator('.bz-quote__back').click()
+    await expect(
+      page.getByRole('heading', { name: /З чим вам потрібна допомога\?|What do you need help with\?/ }),
+    ).toBeVisible()
+    await expect(page.locator('#bz-quote-title')).toHaveValue(/Ремонт ванної кімнати|Bathroom Remodel/)
+  })
+
+  test('empty Get quotes opens the title screen', async ({ page }) => {
+    await gotoPath(page, '/cost-estimator')
+    await page.getByRole('button', { name: /Отримати котирування|Get quotes/ }).click()
+    await expect(
+      page.getByRole('heading', { name: /З чим вам потрібна допомога\?|What do you need help with\?/ }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole('heading', {
+        name: /Коли вам потрібно розпочати ваш проєкт\?|When do you need your project started\?/,
+      }),
+    ).toHaveCount(0)
+  })
+
   test('bathroom remodel: urgency → property type, not bids or land', async ({ page }) => {
     await openBathroomQuote(page)
     await expect(page.getByRole('button', { name: /Я гнучкий\/гнучка|I'm flexible/ })).toBeVisible()
@@ -37,7 +63,6 @@ test.describe('Cost estimator calculator', () => {
   test('new home construction: urgency → land ownership', async ({ page }) => {
     await gotoPath(page, '/cost-estimator')
     await page.getByRole('button', { name: /Будівництво нового будинку|New Home Construction/ }).click()
-    await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i }).click()
     await page.getByRole('button', { name: /Якомога швидше|As soon as possible/ }).click()
     await expect(page.getByRole('heading', { name: /У вас вже є земля\?|Do you already have land\?/ })).toBeVisible()
     await expect(page.locator('.bz-quote__progress-fill')).toBeVisible()
@@ -57,7 +82,6 @@ test.describe('Cost estimator calculator', () => {
     test.setTimeout(90_000)
     await gotoPath(page, '/cost-estimator')
     await page.getByRole('button', { name: /Добудова до будинку|Home Addition/ }).click()
-    await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i }).click()
     await page.getByRole('button', { name: /Я гнучкий\/гнучка|I'm flexible/ }).click()
     await page.getByRole('button', { name: /Приватний будинок|Single Family Home/ }).click()
     await page.getByPlaceholder(/^Email$/i).fill('addition-e2e@example.com')

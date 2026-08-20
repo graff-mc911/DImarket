@@ -41,6 +41,7 @@ import {
   EMPTY_BZ_QUOTE,
   areaSqmFromBudget,
   budgetTierFromBand,
+  initialQuoteScreen,
   isLowBudget,
   nextScreenAfter,
   prevScreenBefore,
@@ -784,16 +785,20 @@ export function CostEstimator() {
     markFarthest(screen, draft.typeId)
   }
 
+  /** Homepage Get quotes / card click — same as BuildZoom setInitialScreen. */
+  const openQuoteWizard = (draft: BzQuoteDraft) => {
+    setQuoteDraft(draft)
+    setQuoteFarthest('title')
+    goQuoteScreen(initialQuoteScreen(draft), draft)
+  }
+
   const pickType = (id: EstimatorProjectTypeId, advance: boolean) => {
     const label = typeLabel(id)
     setTypeQuery(label)
     setError(null)
     patch({ projectTypeId: id })
     if (advance) {
-      const next = locateDraft({ ...EMPTY_BZ_QUOTE, title: label, typeId: id })
-      setQuoteDraft(next)
-      setQuoteFarthest('title')
-      goQuoteScreen('title', next)
+      openQuoteWizard(locateDraft({ ...EMPTY_BZ_QUOTE, title: label, typeId: id }))
     }
   }
 
@@ -801,24 +806,21 @@ export function CostEstimator() {
     const fromQuery = matchProjectType(typeQuery, typeLabel)
     const matched = fromQuery || state.projectTypeId
     const title = typeQuery.trim() || (matched ? typeLabel(matched) : '')
-    if (!matched && title.length < 3) {
-      setError(t('costEstimator.chooseTypeError'))
-      return
-    }
     setError(null)
-    const next = locateDraft({
-      ...EMPTY_BZ_QUOTE,
-      title,
-      typeId: matched || 'other',
-    })
-    setQuoteDraft(next)
-    setQuoteFarthest('title')
-    goQuoteScreen('title', next)
+    openQuoteWizard(
+      locateDraft({
+        ...EMPTY_BZ_QUOTE,
+        title,
+        typeId: matched || (title ? 'other' : null),
+      }),
+    )
   }
 
   const closeQuoteWizard = () => {
     setQuoteScreen(null)
     setQuoteFieldError(null)
+    setQuoteFarthest('title')
+    clearQuoteSession()
   }
 
   const quoteBack = () => {
@@ -1447,7 +1449,7 @@ export function CostEstimator() {
       nextLabel={state.step === 5 ? t('costEstimator.runEstimate') : t('common.continue')}
       nextDisabled={busy}
       busy={busy}
-      error={error}
+      error={quoteScreen ? null : error}
       footerExtra={
         quoteScreen ? undefined : (
         <button
@@ -1524,7 +1526,7 @@ export function CostEstimator() {
         />
       ) : null}
 
-      {state.step === 1 && !quoteScreen ? (
+      {state.step === 1 ? (
         <EstimatorIntake
           query={typeQuery}
           selectedId={state.projectTypeId}
