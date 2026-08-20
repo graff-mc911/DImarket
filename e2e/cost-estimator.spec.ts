@@ -29,6 +29,17 @@ test.describe('Cost estimator calculator', () => {
       page.getByRole('heading', { name: /З чим вам потрібна допомога\?|What do you need help with\?/ }),
     ).toBeVisible()
     await expect(page.locator('#bz-quote-title')).toHaveValue(/Ремонт ванної кімнати|Bathroom Remodel/)
+    const commercial = page.getByRole('button', {
+      name: /Нова комерційна реконструкція|New Commercial Remodel/,
+    })
+    await expect(commercial).toBeVisible()
+    const tileBox = await commercial.boundingBox()
+    const dialogBox = await page.getByRole('dialog').boundingBox()
+    expect(tileBox, 'commercial tile box').toBeTruthy()
+    expect(dialogBox, 'quote dialog box').toBeTruthy()
+    expect((tileBox?.y ?? 0) + (tileBox?.height ?? 0)).toBeLessThanOrEqual(
+      (dialogBox?.y ?? 0) + (dialogBox?.height ?? 0) + 2,
+    )
   })
 
   test('empty Get quotes opens the title screen', async ({ page }) => {

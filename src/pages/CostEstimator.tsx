@@ -677,6 +677,17 @@ export function CostEstimator() {
     return translated === item.labelKey ? item.labelEn : translated
   }
 
+  useEffect(() => {
+    if (quoteScreen !== 'title' || !quoteDraft.typeId) return
+    const featured =
+      BUILDZOOM_INTAKE_CARDS.find((card) => card.id === quoteDraft.typeId) ||
+      BZ_POPULAR_PROJECTS.find((card) => card.id === quoteDraft.typeId)
+    if (!featured) return
+    const localized = t(featured.labelKey as never)
+    if (!localized || localized === featured.labelKey) return
+    setQuoteDraft((prev) => (prev.title === localized ? prev : { ...prev, title: localized }))
+  }, [quoteScreen, quoteDraft.typeId, language.code, t])
+
   const runQuotesFromIntake = (
     typeId: EstimatorProjectTypeId,
     queryText: string,
