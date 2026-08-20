@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useApp } from '../../contexts/AppContext'
+import { Logo } from '../Logo'
 import type { EstimatorDraftFile, EstimatorProjectTypeId } from '../../lib/costEstimatorTypes'
 import { autocompleteLocations, resolveLocationDetails } from '../../lib/locationAutocomplete'
 import type { LocationSuggestion } from '../../lib/geocoding'
@@ -616,7 +617,9 @@ export function EstimatorQuoteWizard({
 
       {screen === 'loading' ? (
         <div className="bz-quote__loading">
-          <p className="bz-quote__logo-mark">DImarket</p>
+          <div className="bz-quote__logo-mark">
+            <Logo size="sm" variant="text" />
+          </div>
           <h2 className="bz-quote__question">
             {draft.city
               ? t('costEstimator.quote.loading.near').replace('{city}', draft.city)

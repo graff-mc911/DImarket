@@ -7302,8 +7302,8 @@ body,
 }
 
 .estimator-page--intake {
-  background: #fff;
-  padding: 0 0 4rem;
+  background: #f6f4f1;
+  padding: 1.25rem 1rem 4rem;
   min-height: calc(100vh - 4rem);
 }
 
@@ -7312,7 +7312,18 @@ body,
   width: 100%;
 }
 
-.estimator-page--intake .estimator-page__brand,
+.estimator-page--intake .estimator-page__brand {
+  display: block;
+  max-width: 925px;
+  margin: 0 auto 0.35rem;
+  padding: 0 16px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c96d2c;
+}
+
 .estimator-page--intake .estimator-page__footer {
   display: none;
 }
@@ -7330,13 +7341,23 @@ body,
   margin-top: 0;
 }
 
-/* BuildZoom homepage #needs-help + project form — live CSS tokens from assets.buildzoom.com */
+/* Get-quotes intake + modal — BuildZoom flow, DImarket paint */
+.bz-needs-help,
+.bz-quote-overlay {
+  --quote-accent: var(--brand-primary);
+  --quote-accent-hover: var(--brand-primary-hover);
+  --quote-ink: var(--ink-900);
+  --quote-muted: #6f665d;
+  --quote-line: var(--line);
+  --quote-wash: rgba(255, 153, 0, 0.1);
+  --quote-link: var(--accent-600);
+  font-family: var(--font-sans);
+}
 .bz-needs-help {
   position: relative;
   margin: 0 auto;
   min-height: 500px;
   overflow: hidden;
-  font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
 }
 .bz-needs-help__gradient {
   position: absolute;
@@ -7345,7 +7366,7 @@ body,
   width: 120%;
   transform: rotate(2deg);
   height: 300px;
-  background-image: linear-gradient(90deg, #f3fcff, #e8faff 100%);
+  background-image: linear-gradient(90deg, rgba(255, 153, 0, 0.08), rgba(255, 216, 20, 0.12) 100%);
   pointer-events: none;
 }
 .bz-needs-help__gradient--bottom {
@@ -7369,8 +7390,8 @@ body,
   display: inline-block;
   margin: 0;
   font-size: 22px;
-  font-weight: 400;
-  color: #4a4a4a;
+  font-weight: 600;
+  color: var(--quote-ink);
 }
 .bz-needs-help__lead label {
   cursor: text;
@@ -7378,7 +7399,7 @@ body,
 .bz-needs-help__cursor {
   display: inline-block;
   font-size: 22px;
-  color: #4a4a4a;
+  color: var(--quote-accent);
   animation: bz-cursor-blink 1s step-end infinite;
 }
 .bz-needs-help__cursor.is-off {
@@ -7397,14 +7418,14 @@ body,
   height: 50px;
   width: 100%;
   border: none;
-  border-bottom: 2px solid #01a1dd;
+  border-bottom: 2px solid var(--quote-accent);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
   padding: 0;
   font-size: 22px;
-  color: #9b9b9b;
-  caret-color: #4a4a4a;
+  color: var(--quote-ink);
+  caret-color: var(--quote-accent);
   outline: none;
 }
 .bz-needs-help__dropdown {
@@ -7430,13 +7451,13 @@ body,
   background: #fff;
   border: 0;
   font-size: 14px;
-  color: #4a4a4a;
+  color: var(--quote-ink);
   cursor: pointer;
 }
 .bz-needs-help__option:hover,
 .bz-needs-help__option.is-active {
-  background: #f3fcff;
-  color: #4abde9;
+  background: var(--quote-wash);
+  color: var(--quote-accent-hover);
 }
 .bz-needs-help__categories {
   margin-top: 30px;
@@ -7444,7 +7465,7 @@ body,
 .bz-needs-help__hint {
   margin: 0 0 8px;
   font-size: 14px;
-  color: #9b9b9b;
+  color: var(--quote-muted);
 }
 .bz-needs-help__tile {
   position: relative;
@@ -7455,11 +7476,11 @@ body,
   height: 80px;
   padding: 0 4px;
   border: 0;
-  border-radius: 3px;
+  border-radius: 10px;
   background: #fff;
   font-size: 10px;
-  font-weight: 600;
-  color: #4a4a4a;
+  font-weight: 700;
+  color: var(--quote-ink);
   text-align: center;
   cursor: pointer;
 }
@@ -7468,17 +7489,17 @@ body,
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: 3px;
-  box-shadow: -10px 10px 40px 0 rgba(0,0,0,0.1);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(15, 17, 17, 0.08), 0 8px 24px rgba(15, 17, 17, 0.06);
 }
 .bz-needs-help__tile:hover,
 .bz-needs-help__tile.is-active {
-  color: #4abde9;
+  color: var(--quote-accent-hover);
   transform: scale(1.05);
 }
 .bz-needs-help__tile:hover::before,
 .bz-needs-help__tile.is-active::before {
-  box-shadow: -10px 10px 40px 0 rgba(74,189,233,0.3);
+  box-shadow: 0 8px 24px rgba(255, 153, 0, 0.28);
 }
 .bz-needs-help__icon {
   display: block;
@@ -7495,16 +7516,16 @@ body,
   height: 46px;
   padding: 0 22px;
   border: 0;
-  border-radius: 3px;
-  background: #01a1dd;
+  border-radius: 8px;
+  background: var(--quote-accent);
   color: #fff;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 700;
   text-transform: none;
   cursor: pointer;
 }
 .bz-needs-help__cta:hover {
-  background: #1ba6db;
+  background: var(--quote-accent-hover);
 }
 
 .bz-quote-overlay {
@@ -7514,12 +7535,11 @@ body,
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 24px 12px 48px;
-  font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
 }
 .bz-quote-overlay__scrim {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(35, 47, 62, 0.55);
 }
 .bz-quote {
   position: relative;
@@ -7530,11 +7550,12 @@ body,
   margin: 24px auto 0;
   padding: 0 0 36px;
   background: #fff;
-  border-radius: 2px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+  border: 1px solid var(--quote-line);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(15, 17, 17, 0.16);
   font-size: 14px;
   font-weight: 400;
-  color: #4a4a4a;
+  color: var(--quote-ink);
 }
 .bz-quote__nav {
   display: flex;
@@ -7565,7 +7586,7 @@ body,
 .bz-quote__forward {
   font-size: 22px;
   font-weight: 400;
-  color: #4a4a4a;
+  color: var(--quote-muted);
 }
 .bz-quote__close {
   margin-left: auto;
@@ -7578,7 +7599,7 @@ body,
 }
 .bz-quote__progress-fill {
   height: 5px;
-  background: #4abde9;
+  background: var(--quote-accent);
   transition: width 500ms;
 }
 .bz-quote__progress--hidden {
@@ -7595,27 +7616,34 @@ body,
   margin: 8px 0 16px;
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.2px;
   line-height: 1.45;
-  color: #4a4a4a;
+  color: var(--quote-muted);
 }
 .bz-quote__question {
   margin: 12px 0 16px;
   font-size: 16px;
-  font-weight: 600;
-  color: #4a4a4a;
+  font-weight: 700;
+  color: #1a2330;
 }
 .bz-quote__input,
 .bz-quote__select,
 .bz-quote__textarea {
   width: 100%;
   height: 40px;
-  border: 1px solid #d0d0d0;
-  border-radius: 2px;
+  border: 1px solid var(--quote-line);
+  border-radius: 8px;
   background: #fff;
   padding: 8px 10px;
   font-size: 14px;
-  color: #4a4a4a;
+  color: var(--quote-ink);
+}
+.bz-quote__input:focus,
+.bz-quote__select:focus,
+.bz-quote__textarea:focus {
+  outline: 2px solid #e77600;
+  outline-offset: 1px;
+  border-color: #e77600;
 }
 .bz-quote__textarea {
   height: auto;
@@ -7626,18 +7654,18 @@ body,
   width: 100%;
   margin: 12px 0 0;
   border: 0;
-  border-radius: 3px;
-  background: #4abde9;
-  padding: 7px 18px 6px;
+  border-radius: 8px;
+  background: var(--quote-accent);
+  padding: 10px 18px;
   font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
   color: #fff;
   cursor: pointer;
 }
 .bz-quote__continue:hover {
-  background: #1ba6db;
+  background: var(--quote-accent-hover);
 }
 .bz-quote__continue:disabled {
   opacity: 0.45;
@@ -7646,9 +7674,10 @@ body,
 .bz-quote__popular-label {
   margin: 24px 0 16px;
   font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-  color: #4a4a4a;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--quote-muted);
 }
 .bz-quote__popular {
   display: flex;
@@ -7670,16 +7699,16 @@ body,
   width: 104.9px;
   height: 76.3px;
   padding: 8px 4px 10px;
-  border-radius: 2.2px;
-  border: 0.7px solid #dfdfdf;
+  border-radius: 10px;
+  border: 1px solid var(--quote-line);
   background: #fff;
-  color: #4a4a4a;
+  color: var(--quote-ink);
   cursor: pointer;
 }
 .bz-quote__tile.is-active,
 .bz-quote__tile:hover {
-  border-color: #4abde9;
-  color: #4abde9;
+  border-color: var(--quote-accent);
+  color: var(--quote-accent-hover);
 }
 .bz-quote__tile-icon {
   display: block;
@@ -7706,18 +7735,19 @@ body,
 .bz-quote__answer {
   display: block;
   width: 100%;
-  border: 1px solid #d0d0d0;
-  border-radius: 3px;
+  border: 1px solid var(--quote-line);
+  border-radius: 8px;
   background: #fff;
   padding: 12px 16px;
   font-size: 14px;
-  color: #4a4a4a;
+  color: var(--quote-ink);
   cursor: pointer;
 }
 .bz-quote__answer:hover,
 .bz-quote__answer.is-active {
-  border-color: #4abde9;
-  color: #4abde9;
+  border-color: var(--quote-accent);
+  color: var(--quote-accent-hover);
+  background: var(--quote-wash);
 }
 .bz-quote__error {
   margin: 8px 0 0;
@@ -7734,7 +7764,7 @@ body,
 .bz-quote__attach {
   display: inline-block;
   margin: 10px 0 0;
-  color: #4abde9;
+  color: var(--quote-link);
   font-size: 13px;
   cursor: pointer;
 }
@@ -7778,7 +7808,7 @@ body,
   text-align: left;
 }
 .bz-quote__suggest button:hover {
-  background: #f3fcff;
+  background: var(--quote-wash);
 }
 .bz-quote__email-display {
   margin-bottom: 12px;
@@ -7795,7 +7825,7 @@ body,
   border: 0;
   background: none;
   padding: 0;
-  color: #4abde9;
+  color: var(--quote-link);
   cursor: pointer;
   font-size: 13px;
   text-decoration: underline;
@@ -7803,17 +7833,17 @@ body,
 .bz-quote__privacy {
   margin: 10px 0 0;
   font-size: 12px;
-  color: #7a7a7a;
+  color: var(--quote-muted);
   line-height: 1.4;
 }
 .bz-quote__terms {
   margin: 12px 0 0;
   font-size: 12px;
-  color: #7a7a7a;
+  color: var(--quote-muted);
   line-height: 1.4;
 }
 .bz-quote__terms a {
-  color: #4abde9;
+  color: var(--quote-link);
   text-decoration: underline;
 }
 .bz-quote__add-more {
@@ -7822,11 +7852,11 @@ body,
   border: 0;
   background: none;
   padding: 0;
-  color: #4abde9;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  color: var(--quote-link);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
   cursor: pointer;
 }
 .bz-quote__confirm {
@@ -7844,15 +7874,15 @@ body,
 .bz-quote__confirm-title {
   margin: 0 0 12px;
   font-size: 20px;
-  font-weight: 600;
-  color: #4a4a4a;
+  font-weight: 700;
+  color: #1a2330;
 }
 .bz-quote__confirm-copy {
   margin: 0 0 24px;
   max-width: 360px;
   font-size: 14px;
   line-height: 1.45;
-  color: #4a4a4a;
+  color: var(--quote-muted);
 }
 .bz-quote__confirm .bz-quote__continue {
   width: min(100%, 360px);
@@ -7861,10 +7891,10 @@ body,
   margin-top: 16px;
   border: 0;
   background: transparent;
-  color: #9b9b9b;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: var(--quote-muted);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
   cursor: pointer;
 }
 .bz-quote__loading {
@@ -7872,10 +7902,9 @@ body,
   text-align: center;
 }
 .bz-quote__logo-mark {
+  display: flex;
+  justify-content: center;
   margin: 0 0 16px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #4abde9;
 }
 .bz-quote__timeline {
   margin: 24px auto 0;
@@ -7887,11 +7916,11 @@ body,
 .bz-quote__timeline li {
   position: relative;
   padding: 0.45rem 0 0.45rem 1.4rem;
-  color: #9ca3af;
+  color: var(--ink-400);
   font-size: 0.88rem;
 }
 .bz-quote__timeline li.is-active {
-  color: #4a4a4a;
+  color: #1a2330;
   font-weight: 650;
 }
 .bz-quote__timeline li::before {
@@ -7902,10 +7931,10 @@ body,
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 99px;
-  background: #e5e7eb;
+  background: #e6ddd3;
 }
 .bz-quote__timeline li.is-active::before {
-  background: #4abde9;
+  background: var(--quote-accent);
 }
 .bz-quote__answer-sub {
   display: block;
@@ -7916,55 +7945,15 @@ body,
 }
 
 .bz-needs-help__icon--bathroom, .bz-quote__tile-icon--bathroom { background-image: url('/quote-icons/bathroom.png'); background-size: 22px 23px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--bathroom,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--bathroom,
-.bz-quote__tile:hover .bz-quote__tile-icon--bathroom,
-.bz-quote__tile.is-active .bz-quote__tile-icon--bathroom { background-image: url('/quote-icons/bathroom-selected.png'); }
 .bz-needs-help__icon--kitchen, .bz-quote__tile-icon--kitchen { background-image: url('/quote-icons/kitchen.png'); background-size: 19px 28px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--kitchen,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--kitchen,
-.bz-quote__tile:hover .bz-quote__tile-icon--kitchen,
-.bz-quote__tile.is-active .bz-quote__tile-icon--kitchen { background-image: url('/quote-icons/kitchen-selected.png'); }
 .bz-needs-help__icon--multi-room, .bz-quote__tile-icon--multi-room { background-image: url('/quote-icons/multi-room.png'); background-size: 25px 24px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--multi-room,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--multi-room,
-.bz-quote__tile:hover .bz-quote__tile-icon--multi-room,
-.bz-quote__tile.is-active .bz-quote__tile-icon--multi-room { background-image: url('/quote-icons/multi-room-selected.png'); }
 .bz-needs-help__icon--home-addition, .bz-quote__tile-icon--home-addition { background-image: url('/quote-icons/home-addition.png'); background-size: 21px 21px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--home-addition,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--home-addition,
-.bz-quote__tile:hover .bz-quote__tile-icon--home-addition,
-.bz-quote__tile.is-active .bz-quote__tile-icon--home-addition { background-image: url('/quote-icons/home-addition-selected.png'); }
 .bz-needs-help__icon--new-home, .bz-quote__tile-icon--new-home { background-image: url('/quote-icons/new-home.png'); background-size: 22px 18px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--new-home,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--new-home,
-.bz-quote__tile:hover .bz-quote__tile-icon--new-home,
-.bz-quote__tile.is-active .bz-quote__tile-icon--new-home { background-image: url('/quote-icons/new-home-selected.png'); }
 .bz-needs-help__icon--roofing, .bz-quote__tile-icon--roofing { background-image: url('/quote-icons/roofing.png'); background-size: 30px 15px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--roofing,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--roofing,
-.bz-quote__tile:hover .bz-quote__tile-icon--roofing,
-.bz-quote__tile.is-active .bz-quote__tile-icon--roofing { background-image: url('/quote-icons/roofing-selected.png'); }
 .bz-needs-help__icon--painting, .bz-quote__tile-icon--painting { background-image: url('/quote-icons/painting.png'); background-size: 23px 23px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--painting,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--painting,
-.bz-quote__tile:hover .bz-quote__tile-icon--painting,
-.bz-quote__tile.is-active .bz-quote__tile-icon--painting { background-image: url('/quote-icons/painting-selected.png'); }
 .bz-needs-help__icon--flooring, .bz-quote__tile-icon--flooring { background-image: url('/quote-icons/flooring.png'); background-size: 25px 18px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--flooring,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--flooring,
-.bz-quote__tile:hover .bz-quote__tile-icon--flooring,
-.bz-quote__tile.is-active .bz-quote__tile-icon--flooring { background-image: url('/quote-icons/flooring-selected.png'); }
 .bz-needs-help__icon--solar, .bz-quote__tile-icon--solar { background-image: url('/quote-icons/solar.png'); background-size: 24px 24px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--solar,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--solar,
-.bz-quote__tile:hover .bz-quote__tile-icon--solar,
-.bz-quote__tile.is-active .bz-quote__tile-icon--solar { background-image: url('/quote-icons/solar-selected.png'); }
 .bz-needs-help__icon--commercial, .bz-quote__tile-icon--commercial { background-image: url('/quote-icons/commercial.png'); background-size: 24px 24px; }
-.bz-needs-help__tile:hover .bz-needs-help__icon--commercial,
-.bz-needs-help__tile.is-active .bz-needs-help__icon--commercial,
-.bz-quote__tile:hover .bz-quote__tile-icon--commercial,
-.bz-quote__tile.is-active .bz-quote__tile-icon--commercial { background-image: url('/quote-icons/commercial-selected.png'); }
 
 .estimator-calc {
   margin-top: 0;
