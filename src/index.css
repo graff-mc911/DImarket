@@ -7309,8 +7309,14 @@ body,
   padding-top: 1.15rem;
 }
 
-.estimator-page--intake .estimator-page__brand {
-  margin-bottom: 0.65rem;
+.estimator-page:has([data-quote-screen]) {
+  background: #fff;
+  padding-top: 0.5rem;
+}
+
+.estimator-page:has([data-quote-screen]) .estimator-page__brand,
+.estimator-page:has([data-quote-screen]) .estimator-page__footer {
+  display: none;
 }
 
 .estimator-page--intake .estimator-page__title {
@@ -7660,21 +7666,35 @@ body,
 .bz-quote__nav {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 1.25rem;
+  margin: 0.65rem 0 1.35rem;
 }
 
-.bz-quote__back {
+.bz-quote__nav-spacer {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.bz-quote__back,
+.bz-quote__forward,
+.bz-quote__close {
   border: 0;
   background: transparent;
-  font-size: 1.25rem;
-  color: #4b5563;
+  font-size: 1.55rem;
+  line-height: 1;
+  color: #6b7280;
   cursor: pointer;
-  padding: 0.2rem 0.4rem;
+  padding: 0.15rem 0.35rem;
+  min-width: 1.75rem;
+}
+
+.bz-quote__close {
+  font-size: 1.7rem;
+  font-weight: 400;
 }
 
 .bz-quote__progress {
-  flex: 1;
   height: 4px;
   border-radius: 99px;
   background: #e5e7eb;
@@ -7688,15 +7708,6 @@ body,
 
 .bz-quote__progress--hidden {
   visibility: hidden;
-}
-
-.bz-quote__forward {
-  border: 0;
-  background: transparent;
-  font-size: 1.25rem;
-  color: #4b5563;
-  cursor: pointer;
-  padding: 0.2rem 0.4rem;
 }
 
 .bz-quote__title-screen,

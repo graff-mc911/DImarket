@@ -40,12 +40,17 @@ test.describe('Cost estimator calculator', () => {
     await page.getByRole('button', { name: /ПРОДОВЖУВАТИ|CONTINUE/i }).click()
     await page.getByRole('button', { name: /Якомога швидше|As soon as possible/ }).click()
     await expect(page.getByRole('heading', { name: /У вас вже є земля\?|Do you already have land\?/ })).toBeVisible()
+    await expect(page.locator('.bz-quote__progress-fill')).toBeVisible()
+    await expect(page.getByRole('button', { name: /Закрити|Close/ })).toBeVisible()
+    await expect(page.locator('.bz-quote__back')).toBeVisible()
     await expect(page.getByRole('button', { name: /^Так$|^Yes$/ })).toBeVisible()
     await expect(page.getByRole('button', { name: /У процесі|In process/ })).toBeVisible()
     await expect(page.getByRole('button', { name: /^Ні$|^No$/ })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^Так$|^Yes$/ })).not.toHaveClass(/is-active/)
     await expect(
       page.getByRole('heading', { name: /Який це тип нерухомості\?|What type of property is this\?/ }),
     ).toHaveCount(0)
+    await expect(page.getByRole('heading', { name: /Скільки пропозицій|How many bids/ })).toHaveCount(0)
   })
 
   test('home addition uses design status after location, not relationship', async ({ page }) => {

@@ -1436,7 +1436,7 @@ export function CostEstimator() {
 
   return (
     <div data-estimator-chunk="v2">
-    <EstimatorAdBanner />
+    {quoteScreen ? null : <EstimatorAdBanner />}
     <EstimatorShell
       variant={state.step === 1 ? 'intake' : 'wizard'}
       step={state.step}
@@ -1449,6 +1449,7 @@ export function CostEstimator() {
       busy={busy}
       error={error}
       footerExtra={
+        quoteScreen ? undefined : (
         <button
           type="button"
           className="rounded-full px-3 py-2 text-[12px] font-medium text-[#6f665d] hover:bg-[#f6f4f1]"
@@ -1456,6 +1457,7 @@ export function CostEstimator() {
         >
           {t('costEstimator.history')}
         </button>
+        )
       }
     >
       {state.step === 1 && quoteScreen ? (
@@ -1511,6 +1513,7 @@ export function CostEstimator() {
           onAttachFiles={addFiles}
           onRemoveFile={removeFile}
           onBack={quoteBack}
+          onClose={closeQuoteWizard}
           onForward={quoteForward}
           canForward={
             quoteScreen !== 'loading' &&

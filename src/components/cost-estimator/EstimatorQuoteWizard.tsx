@@ -41,6 +41,7 @@ type EstimatorQuoteWizardProps = {
   onAttachFiles: (files: FileList) => void
   onRemoveFile: (id: string) => void
   onBack: () => void
+  onClose: () => void
   onForward?: () => void
   canForward?: boolean
   onLoadingComplete: () => void
@@ -114,6 +115,7 @@ export function EstimatorQuoteWizard({
   onAttachFiles,
   onRemoveFile,
   onBack,
+  onClose,
   onForward,
   canForward,
   onLoadingComplete,
@@ -121,7 +123,6 @@ export function EstimatorQuoteWizard({
   const { t } = useApp()
   const screens = screensForQuoteType(draft.typeId, auth)
   const pct = progressPercent(screen, draft.typeId, auth)
-  const hideProgress = screen === 'title'
   const fileRef = useRef<HTMLInputElement>(null)
   const [password, setPassword] = useState('')
   const [citySuggestions, setCitySuggestions] = useState<LocationSuggestion[]>([])
@@ -169,25 +170,35 @@ export function EstimatorQuoteWizard({
   }, [draft.city, draft.locationLabel, screen])
 
   const continueLabel = t('costEstimator.quote.continue')
+  const isFirst = screen === 'title'
 
   return (
     <div className="bz-quote" data-quote-screen={screen}>
+      {!isFirst ? (
+        <div className="bz-quote__progress" aria-hidden>
+          <div className="bz-quote__progress-fill" style={{ width: `${pct}%` }} />
+        </div>
+      ) : (
+        <div className="bz-quote__progress bz-quote__progress--hidden" aria-hidden />
+      )}
       <div className="bz-quote__nav">
-        <button type="button" className="bz-quote__back" onClick={onBack} aria-label={t('common.back')}>
-          ←
-        </button>
-        {hideProgress ? (
-          <div className="bz-quote__progress bz-quote__progress--hidden" aria-hidden />
+        {isFirst ? (
+          <span className="bz-quote__nav-spacer" />
         ) : (
-          <div className="bz-quote__progress" aria-hidden>
-            <div className="bz-quote__progress-fill" style={{ width: `${pct}%` }} />
-          </div>
-        )}
-        {canForward && onForward ? (
-          <button type="button" className="bz-quote__forward" onClick={onForward} aria-label={t('common.continue')}>
-            →
+          <button type="button" className="bz-quote__back" onClick={onBack} aria-label={t('common.back')}>
+            ‹
           </button>
-        ) : null}
+        )}
+        {canForward && onForward && !isFirst ? (
+          <button type="button" className="bz-quote__forward" onClick={onForward} aria-label={t('common.continue')}>
+            ›
+          </button>
+        ) : (
+          <span className="bz-quote__nav-spacer" />
+        )}
+        <button type="button" className="bz-quote__close" onClick={onClose} aria-label={t('common.close')}>
+          ×
+        </button>
       </div>
 
       {screen === 'title' ? (
