@@ -872,7 +872,8 @@
   }
   @media (min-width: 768px) {
     .ad-story__media {
-      min-height: 100%;
+      min-height: 0;
+      align-self: stretch;
     }
   }
   .ad-story__photo,
