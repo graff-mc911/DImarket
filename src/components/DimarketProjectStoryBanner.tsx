@@ -1,7 +1,7 @@
 import { useApp } from '../contexts/AppContext'
 import { ProjectStoryBanner } from './ProjectStoryBanner'
 
-const FALLBACK_IMAGE = '/ads/banners/project-story-home.jpg'
+const FALLBACK_IMAGE = '/media/banners/project-story-home.jpg'
 
 /** Own-media mid-page story when no paid center campaign is booked. */
 export function DimarketProjectStoryBanner({ className = '' }: { className?: string }) {

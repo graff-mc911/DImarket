@@ -4,37 +4,37 @@ const FEATURED_COMPANIES = [
   {
     id: 'knauf',
     name: 'Knauf',
-    image: '/ads/brands/knauf.png',
+    image: '/media/brands/knauf.png',
     website: 'https://www.knauf.com',
   },
   {
     id: 'festool',
     name: 'Festool',
-    image: '/ads/brands/festool.png',
+    image: '/media/brands/festool.png',
     website: 'https://www.festool.com',
   },
   {
     id: 'hilti',
     name: 'Hilti',
-    image: '/ads/brands/hilti.png',
+    image: '/media/brands/hilti.png',
     website: 'https://www.hilti.com',
   },
   {
     id: 'velux',
     name: 'VELUX',
-    image: '/ads/brands/velux.png',
+    image: '/media/brands/velux.png',
     website: 'https://www.velux.com',
   },
   {
     id: 'geberit',
     name: 'Geberit',
-    image: '/ads/brands/geberit.png',
+    image: '/media/brands/geberit.png',
     website: 'https://www.geberit.com',
   },
   {
     id: 'wurth',
     name: 'Würth',
-    image: '/ads/brands/wurth.png',
+    image: '/media/brands/wurth.png',
     website: 'https://www.wuerth.com',
   },
 ] as const
