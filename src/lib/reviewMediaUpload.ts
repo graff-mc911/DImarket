@@ -46,12 +46,12 @@ export async function uploadReviewMedia(userId: string, file: File): Promise<Rev
 
   if (error) {
     const fallbackPath = `campaigns/profiles/${userId}/review-${Date.now()}.${ext}`
-    const alt = await supabase.storage.from('ad-media').upload(fallbackPath, file, {
+    const alt = await supabase.storage.from('media').upload(fallbackPath, file, {
       cacheControl: '3600',
       upsert: false,
     })
     if (alt.error) throw alt.error || error
-    const { data } = supabase.storage.from('ad-media').getPublicUrl(fallbackPath)
+    const { data } = supabase.storage.from('media').getPublicUrl(fallbackPath)
     return { url: data.publicUrl, type: mediaType }
   }
 

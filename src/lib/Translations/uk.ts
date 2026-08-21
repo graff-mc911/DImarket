@@ -1903,7 +1903,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.draft.clearBtn': 'Очистити чернетку',
   'advertising.form.mediaUrlLabel': 'URL банера (якщо завантаження не працює)',
   'advertising.form.mediaUrlPlaceholder': 'https://example.com/banner.jpg',
-  'advertising.form.mediaUrlHint': 'Публічне посилання на JPG, PNG, GIF або MP4 — працює без сховища ad-media.',
+  'advertising.form.mediaUrlHint': 'Публічне посилання на JPG, PNG, GIF або MP4 — працює без сховища media.',
   'advertising.success': 'Кампанію створено. Наступний крок — підключення Stripe.',
   'advertising.successOwner': 'Кампанію опубліковано — банер уже активний на сайті.',
   'advertising.submitOwner': 'Опублікувати без оплати (власник)',

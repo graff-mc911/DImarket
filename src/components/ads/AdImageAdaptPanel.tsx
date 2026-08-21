@@ -44,13 +44,13 @@ export function AdImageAdaptPanel({ userId, campaignId, onVariantsReady }: AdIma
     try {
       const ext = file.name.split('.').pop() ?? 'jpg'
       const origPath = `ad-assets/${userId}/${Date.now()}-orig.${ext}`
-      const { error: upErr } = await supabase.storage.from('ad-media').upload(origPath, file, {
+      const { error: upErr } = await supabase.storage.from('media').upload(origPath, file, {
         cacheControl: '3600',
         upsert: false,
       })
       if (upErr) throw upErr
 
-      const { data: origUrl } = supabase.storage.from('ad-media').getPublicUrl(origPath)
+      const { data: origUrl } = supabase.storage.from('media').getPublicUrl(origPath)
       setStatus('original_uploaded')
 
       const { data: assetRow, error: assetErr } = await aiDb
@@ -77,12 +77,12 @@ export function AdImageAdaptPanel({ userId, campaignId, onVariantsReady }: AdIma
       for (const spec of AD_IMAGE_VARIANTS) {
         const blob = blobs[spec.key as AdImageVariantKey]
         const vPath = `ad-assets/${userId}/${aid}-${spec.key}.jpg`
-        const { error: vErr } = await supabase.storage.from('ad-media').upload(vPath, blob, {
+        const { error: vErr } = await supabase.storage.from('media').upload(vPath, blob, {
           contentType: 'image/jpeg',
           upsert: true,
         })
         if (vErr) throw vErr
-        const { data: vUrl } = supabase.storage.from('ad-media').getPublicUrl(vPath)
+        const { data: vUrl } = supabase.storage.from('media').getPublicUrl(vPath)
         urls[spec.key] = vUrl.publicUrl
 
         await aiDb.from('ad_image_variants').upsert({

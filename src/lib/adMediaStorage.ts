@@ -2,7 +2,7 @@ import { supabase } from './supabase'
 import { formatSupabaseError } from './supabaseErrors'
 import type { AdMediaStyle } from './adMediaStyle'
 
-const BUCKET = 'ad-media'
+const BUCKET = 'media'
 const MAX_FILE_MB = 20
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024
 
@@ -19,7 +19,7 @@ export function mediaTypeFromFile(file: File): SlotBannerMediaType {
   return 'image'
 }
 
-/** Завантажує один файл у ad-media, повертає публічний URL */
+/** Завантажує один файл у media, повертає публічний URL */
 export async function uploadAdMediaFile(file: File): Promise<string> {
   if (!ACCEPTED_MIME.includes(file.type)) {
     throw new Error('JPG, PNG, WebP, GIF, MP4, WebM')
@@ -84,10 +84,10 @@ export function collectUrlsFromSlotEntry(entry: {
   return [...set]
 }
 
-/** Видаляє файли з ad-media (ігнорує зовнішні URL) */
+/** Видаляє файли з media (ігнорує зовнішні URL) */
 export async function deleteAdMediaUrls(urls: string[]): Promise<void> {
   const paths = [...new Set(urls.map(storagePathFromPublicUrl).filter(Boolean))] as string[]
   if (!paths.length) return
   const { error } = await supabase.storage.from(BUCKET).remove(paths)
-  if (error) console.warn('ad-media delete:', error.message)
+  if (error) console.warn('media delete:', error.message)
 }

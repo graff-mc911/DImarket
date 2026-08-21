@@ -1334,7 +1334,7 @@ export const ruTranslations: Partial<Record<TranslationKey, string>> = {
   'advertising.error.upload': 'Не удалось загрузить баннер. Попробуйте URL изображение ниже.',
   'advertising.form.mediaUrlLabel': 'URL баннера (если загрузка не работает)',
   'advertising.form.mediaUrlPlaceholder': 'https://example.com/banner.jpg',
-  'advertising.form.mediaUrlHint': 'Публичная ссылка на JPG, PNG, GIF или MP4 — работает без хранилища ad-media.',
+  'advertising.form.mediaUrlHint': 'Публичная ссылка на JPG, PNG, GIF или MP4 — работает без хранилища media.',
   'advertising.success': 'Кампания создана. Следующий шаг — подключение Stripe.',
   'advertising.successOwner': 'Кампания опубликована — баннер уже активный на сайте.',
   'advertising.submitOwner': 'Опубликовать без оплаты (владелец)',

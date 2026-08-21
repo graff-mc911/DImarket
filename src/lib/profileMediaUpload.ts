@@ -39,11 +39,11 @@ export async function uploadProfileImage(
   const path = `campaigns/profiles/${userId}/${kind}-${Date.now()}-${Math.random().toString(36).slice(2)}.${safeExt}`
 
   const { error } = await supabase.storage
-    .from('ad-media')
+    .from('media')
     .upload(path, file, { cacheControl: '3600', upsert: false })
 
   if (error) throw error
 
-  const { data } = supabase.storage.from('ad-media').getPublicUrl(path)
+  const { data } = supabase.storage.from('media').getPublicUrl(path)
   return data.publicUrl
 }

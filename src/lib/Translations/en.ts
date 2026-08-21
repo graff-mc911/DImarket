@@ -1902,7 +1902,7 @@ export const enTranslations = {
   'advertising.draft.clearBtn': 'Clear draft',
   'advertising.form.mediaUrlLabel': 'Banner URL (if upload does not work)',
   'advertising.form.mediaUrlPlaceholder': 'https://example.com/banner.jpg',
-  'advertising.form.mediaUrlHint': 'Public link to JPG, PNG, GIF or MP4 — works without ad-media storage.',
+  'advertising.form.mediaUrlHint': 'Public link to JPG, PNG, GIF or MP4 — works without media storage.',
   'advertising.success': 'Campaign created. Next step — connect Stripe payment.',
   'advertising.successOwner': 'Campaign published — your banner is live on the site.',
   'advertising.submitOwner': 'Publish without payment (owner)',

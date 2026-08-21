@@ -7,7 +7,7 @@ export function formatSupabaseError(err: unknown, fallback: string): string {
   if (!msg) return fallback
 
   if (msg.includes('Bucket not found') || (msg.includes('bucket') && msg.includes('not found'))) {
-    return 'Сховище для банерів (ad-media) не налаштовано на сервері. Вставте URL зображення вручну або зверніться до підтримки.'
+    return 'Сховище для банерів (media) не налаштовано на сервері. Вставте URL зображення вручну або зверніться до підтримки.'
   }
   if (msg.includes('row-level security') || msg.includes('policy')) {
     return 'Немає прав на цю дію (RLS). Перевірте, що ви увійшли як власник або рекламодавець, і спробуйте знову.'

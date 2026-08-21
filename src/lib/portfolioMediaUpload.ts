@@ -51,14 +51,14 @@ export async function uploadPortfolioMedia(
   })
 
   if (error) {
-    // Fallback to ad-media used by existing profile uploads
+    // Fallback to media bucket used by existing profile uploads
     const fallbackPath = `campaigns/profiles/${userId}/portfolio-${Date.now()}.${ext}`
-    const alt = await supabase.storage.from('ad-media').upload(fallbackPath, file, {
+    const alt = await supabase.storage.from('media').upload(fallbackPath, file, {
       cacheControl: '3600',
       upsert: false,
     })
     if (alt.error) throw alt.error || error
-    const { data } = supabase.storage.from('ad-media').getPublicUrl(fallbackPath)
+    const { data } = supabase.storage.from('media').getPublicUrl(fallbackPath)
     return data.publicUrl
   }
 

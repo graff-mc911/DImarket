@@ -61,10 +61,10 @@ export function useAdBannerMediaUpload({
     const ext = file.name.split('.').pop() ?? 'bin'
     const path = `campaigns/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     const { error } = await supabase.storage
-      .from('ad-media')
+      .from('media')
       .upload(path, file, { cacheControl: '3600', upsert: false })
     if (error) throw error
-    const { data } = supabase.storage.from('ad-media').getPublicUrl(path)
+    const { data } = supabase.storage.from('media').getPublicUrl(path)
     return data.publicUrl
   }, [])
 
