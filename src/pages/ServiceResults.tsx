@@ -175,19 +175,22 @@ export function ServiceResults({ slug, initialGeo }: ServiceResultsProps) {
             category:categories(*)
           )
         `
-      let { data, error } = await (supabase
+      let { data, error } = await supabase
         .from('profiles')
         .select(select)
         .eq('is_professional', true)
         .in('user_role', ['professional', 'company'])
         .order('rating', { ascending: false })
         .order('total_reviews', { ascending: false })
-        .limit(500) as any)
+        .limit(500)
         .is('deleted_at', null)
         .is('hidden_at', null)
 
+      // If soft-delete columns are not applied (PostgREST 42703), retry without
+      // the filter — the publicProfileVisibility filter applied downstream still
+      // strips soft-removed rows client-side, so nothing leaks.
       if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
-        ;({ data } = await supabase
+        ;({ data, error } = await supabase
           .from('profiles')
           .select(select)
           .eq('is_professional', true)

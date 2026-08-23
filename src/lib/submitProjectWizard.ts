@@ -22,7 +22,7 @@ export async function uploadProjectFile(
   file: File,
 ): Promise<{ url: string; path: string; kind: ReturnType<typeof fileKindFromMime> } | null> {
   const kind = fileKindFromMime(file.type, file.name)
-  const safe = file.name.replace(/[^\w.\-]+/g, '_')
+  const safe = file.name.replace(/[^\w.-]+/g, '_')
   const path = `${userId}/${listingId}/${Date.now()}_${safe}`
   const { error } = await supabase.storage.from('project-files').upload(path, file, {
     cacheControl: '3600',

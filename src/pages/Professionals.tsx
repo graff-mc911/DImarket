@@ -110,7 +110,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
             category:categories(*)
           )
         `
-      let q = supabase
+      const q = supabase
         .from('profiles')
         .select(select)
         .eq('is_professional', true)
@@ -118,9 +118,12 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
         .order('rating', { ascending: false })
         .order('total_reviews', { ascending: false })
 
-      let { data, error } = await (q as any).is('deleted_at', null).is('hidden_at', null)
+      let { data, error } = await q.is('deleted_at', null).is('hidden_at', null)
+      // If soft-delete columns are not applied (PostgREST 42703), retry without
+      // the filter — filterPublicProfiles() below still strips soft-removed rows
+      // client-side, so deleted/hidden profiles never leak into the catalog.
       if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
-        ;({ data } = await supabase
+        ;({ data, error } = await supabase
           .from('profiles')
           .select(select)
           .eq('is_professional', true)

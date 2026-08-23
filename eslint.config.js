@@ -23,6 +23,16 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      // Convention: identifiers prefixed with _ are intentionally unused.
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+        },
+      ],
     },
   }
 );

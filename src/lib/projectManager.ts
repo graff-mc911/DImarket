@@ -349,7 +349,7 @@ export async function uploadProjectPhasePhoto(opts: {
   file: File
   caption?: string
 }): Promise<ProjectMediaItem | null> {
-  const safe = opts.file.name.replace(/[^\w.\-]+/g, '_')
+  const safe = opts.file.name.replace(/[^\w.-]+/g, '_')
   const path = `${opts.userId}/${opts.listingId}/${opts.phase}_${Date.now()}_${safe}`
   const { error: upErr } = await supabase.storage.from('project-files').upload(path, opts.file, {
     cacheControl: '3600',

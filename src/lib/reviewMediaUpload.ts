@@ -39,7 +39,7 @@ export async function uploadReviewMedia(userId: string, file: File): Promise<Rev
   const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
   const mediaType: 'image' | 'video' = isReviewVideoFile(file) ? 'video' : 'image'
 
-  let { error } = await supabase.storage.from('review-media').upload(path, file, {
+  const { error } = await supabase.storage.from('review-media').upload(path, file, {
     cacheControl: '3600',
     upsert: false,
   })

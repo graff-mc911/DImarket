@@ -586,7 +586,7 @@ export async function fetchPaidAdCampaigns(
 
   // Без join на profiles: RLS дозволяє читати лише is_professional=true,
   // через що вбудований advertiser часто ламає публічний fetch у браузері.
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from('ad_campaigns')
     .select('*')
     .eq('status', 'active')
