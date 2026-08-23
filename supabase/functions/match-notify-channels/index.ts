@@ -1,6 +1,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
+import { isServiceRoleRequest } from '../_shared/auth.ts'
 
 type Body = {
   listing_id?: string
@@ -35,11 +36,8 @@ async function sendTelegram(chatId: string, text: string): Promise<boolean> {
 }
 
 function verifyInvokeAuth(req: Request): boolean {
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-  const auth = req.headers.get('Authorization') ?? ''
-  if (serviceKey && auth === `Bearer ${serviceKey}`) return true
-  if (auth.startsWith('Bearer ')) return true
-  return false
+  // Strict service-role only. A bare "Bearer <anything>" is NOT authorization.
+  return isServiceRoleRequest(req)
 }
 
 Deno.serve(async (req: Request) => {

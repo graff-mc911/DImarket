@@ -2,6 +2,7 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
 import { chatCompletion, normalizeConfidence } from '../_shared/openai.ts'
+import { rateLimit } from '../_shared/rateLimit.ts'
 
 type Body = {
   tool: string
@@ -30,6 +31,13 @@ Deno.serve(async (req: Request) => {
   }
   if (req.method !== 'POST') {
     return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405)
+  }
+
+  // Rate-limit anonymous/authenticated LLM calls per IP to prevent OpenAI
+  // billing abuse. Anonymous access is kept for onboarding flows.
+  const rl = rateLimit(req, { windowMs: 60_000, max: 20, keyPrefix: 'ai-assistant' })
+  if (!rl.ok) {
+    return jsonResponse({ ok: false, error: 'rate_limited', retry_after: rl.retryAfter }, 429)
   }
 
   try {
