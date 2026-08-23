@@ -138,7 +138,7 @@ export function geoFromCountrySlug(slug: string, prev: GeoSearchState = EMPTY_GE
     return { ...EMPTY_GEO_SEARCH, radius: prev.radius || '25' }
   }
   const country = COUNTRY_SLUG_TO_NAME[slug.toLowerCase()]
-  if (!country) return { ...EMPTY_GEO_SEARCH, city: slug, radius: prev.radius || '25' }
+  if (!country) return { ...EMPTY_GEO_SEARCH, country: prev.country, city: slug, radius: prev.radius || '25' }
   return {
     ...EMPTY_GEO_SEARCH,
     country,
