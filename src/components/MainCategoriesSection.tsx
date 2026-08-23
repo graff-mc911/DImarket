@@ -29,7 +29,6 @@ import {
 import {
   appendLocationToPath,
   countrySlugFromGeo,
-  formatGlobalLocationLabel,
   geoFromCountrySlug,
   hasActiveLocation,
 } from '../lib/globalLocation'
@@ -104,10 +103,7 @@ export function MainCategoriesSection({
   )
 
   const countrySlug = countrySlugFromGeo(location)
-  const locationDisplay = formatGlobalLocationLabel(
-    location,
-    t('dimarket.loc.all-europe'),
-  )
+  const locationDisplay = location.country || t('dimarket.loc.all-europe')
   const selectValue = categoryLocationOptions.some((o) => o.id === countrySlug)
     ? countrySlug
     : 'all-europe'
