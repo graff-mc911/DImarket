@@ -8,6 +8,7 @@ import {
   filterSuppressedListings,
 } from './suppressedListings'
 import {
+  applyPublicProfileFilters,
   filterPublicProfiles,
   sortProfilesForPublicDiscovery,
 } from './publicProfileVisibility'
@@ -178,7 +179,7 @@ export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfession
       )
     `
 
-  let query = supabase
+  const query = supabase
     .from('profiles')
     .select(select)
     .eq('is_professional', true)
@@ -186,8 +187,11 @@ export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfession
     .order('rating', { ascending: false })
     .limit(Math.max(limit * 8, 96))
 
-  // Soft-delete / hide columns (APPLY_OWNER_PROFILE_MODERATION.sql)
-  let { data, error } = await (query as any).is('deleted_at', null).is('hidden_at', null)
+  // Soft-delete / hide columns (APPLY_OWNER_PROFILE_MODERATION.sql).
+  // If the migration is not applied (PostgREST 42703), retry without the
+  // filter — filterPublicProfiles() below still removes soft-removed rows
+  // client-side, so the fallback never leaks deleted/hidden profiles.
+  let { data, error } = await applyPublicProfileFilters(query)
   if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
     ;({ data, error } = await supabase
       .from('profiles')
@@ -211,7 +215,7 @@ export async function fetchHomeCompanies(limit = 12): Promise<HomeProfessional[]
       )
     `
 
-  let query = supabase
+  const query = supabase
     .from('profiles')
     .select(select)
     .eq('is_professional', true)
@@ -219,9 +223,9 @@ export async function fetchHomeCompanies(limit = 12): Promise<HomeProfessional[]
     .order('rating', { ascending: false })
     .limit(Math.max(limit * 8, 96))
 
-  let { data, error } = await (query as any).is('deleted_at', null).is('hidden_at', null)
+  let { data, error } = await applyPublicProfileFilters(query)
   if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
-    ;({ data } = await supabase
+    ;({ data, error } = await supabase
       .from('profiles')
       .select(select)
       .eq('is_professional', true)

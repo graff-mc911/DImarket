@@ -289,11 +289,16 @@ Deno.serve(async (req: Request) => {
     return new Response('not configured', { status: 503 })
   }
 
-  if (webhookSecret) {
-    const header = req.headers.get('x-telegram-bot-api-secret-token')
-    if (header !== webhookSecret) {
-      return new Response('forbidden', { status: 403 })
-    }
+  if (!webhookSecret) {
+    // Fail closed: if the webhook secret is not configured, refuse to serve.
+    // Accepting unauthenticated POSTs would let anyone mint accounts / publish
+    // listings by spoofing Telegram updates.
+    console.error('telegram-bot: TELEGRAM_WEBHOOK_SECRET not configured — refusing request')
+    return new Response('not configured', { status: 500 })
+  }
+  const header = req.headers.get('x-telegram-bot-api-secret-token')
+  if (header !== webhookSecret) {
+    return new Response('forbidden', { status: 403 })
   }
 
   const admin = createAdminClient()

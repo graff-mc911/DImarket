@@ -1,5 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
+import { rateLimit } from '../_shared/rateLimit.ts'
 
 const LOCALE_NAMES: Record<string, string> = {
   en: 'English',
@@ -63,6 +64,9 @@ Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'Method not allowed' }, 405)
   }
+
+  const rl = rateLimit(req, { windowMs: 60_000, max: 30, keyPrefix: 'sales-chat' })
+  if (!rl.ok) return jsonResponse({ error: 'rate_limited', retry_after: rl.retryAfter }, 429)
 
   try {
     const body = (await req.json()) as Body
@@ -192,6 +196,7 @@ Local fallback text: ${body.suggestedReplyText ?? ''}`
       canPublish: false,
     })
   } catch (e) {
-    return jsonResponse({ error: String(e) }, 500)
+    console.error('sales-chat:', e)
+    return jsonResponse({ error: 'internal_error' }, 500)
   }
 })

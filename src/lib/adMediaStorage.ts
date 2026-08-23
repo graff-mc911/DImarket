@@ -6,6 +6,12 @@ const BUCKET = 'media'
 const MAX_FILE_MB = 20
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024
 
+/** Returns the authenticated user id, or null if not logged in. */
+async function currentUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getUser()
+  return data?.user?.id ?? null
+}
+
 export const AD_MEDIA_ACCEPT =
   'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm'
 
@@ -28,7 +34,11 @@ export async function uploadAdMediaFile(file: File): Promise<string> {
     throw new Error(`Max ${MAX_FILE_MB} MB`)
   }
   const ext = file.name.split('.').pop() ?? 'bin'
-  const path = `campaigns/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+  // Owner-scoped path `campaigns/<user_id>/<file>` — required by storage RLS
+  // so only the owning user can mutate their own campaign creatives.
+  const userId = await currentUserId()
+  if (!userId) throw new Error('auth_required')
+  const path = `campaigns/${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
   const { error } = await supabase.storage
     .from(BUCKET)
     .upload(path, file, { cacheControl: '3600', upsert: false })

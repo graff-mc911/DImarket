@@ -29,6 +29,22 @@ async function sendResendEmail(to: string, subject: string, html: string): Promi
   return { ok: true }
 }
 
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) =>
+    c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '"' ? '&quot;' : '&#39;',
+  )
+}
+
+function safeHttpsUrl(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null
+  try {
+    const u = new URL(raw)
+    return u.protocol === 'https:' ? raw : null
+  } catch {
+    return null
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders })
@@ -57,9 +73,12 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ ok: false, error: 'invalid_json' }, 400)
   }
 
-  const to = String(body.to_email || '').trim().toLowerCase()
-  if (!to || !to.includes('@')) {
-    return jsonResponse({ ok: false, error: 'invalid_email' }, 400)
+  // A quote_id is REQUIRED: the caller must own the quote they are emailing.
+  // The recipient is DERIVED from the quote's listing owner (looked up via the
+  // service role) — never from the request body. This prevents the function
+  // from being used as an open email relay (arbitrary HTML to arbitrary address).
+  if (!body.quote_id) {
+    return jsonResponse({ ok: false, error: 'quote_id_required' }, 400)
   }
 
   const admin = createClient(
@@ -67,29 +86,46 @@ Deno.serve(async (req: Request) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
   )
 
-  if (body.quote_id) {
-    const { data: quote } = await admin
-      .from('quotes')
-      .select('id, professional_id, listing_id, total, status')
-      .eq('id', body.quote_id)
-      .maybeSingle()
-    if (!quote || quote.professional_id !== user.id) {
-      return jsonResponse({ ok: false, error: 'forbidden' }, 403)
-    }
+  // Load the quote + its listing + the listing owner (customer). Reject if the
+  // caller does not own the quote.
+  const { data: quote, error: qErr } = await admin
+    .from('quotes')
+    .select('id, professional_id, listing_id, total, currency, pdf_url, status')
+    .eq('id', body.quote_id)
+    .maybeSingle()
+  if (qErr || !quote || quote.professional_id !== user.id) {
+    return jsonResponse({ ok: false, error: 'forbidden' }, 403)
   }
 
+  // Resolve the customer (listing owner) email from auth — the ONLY allowed recipient.
+  const { data: listing } = await admin
+    .from('listings')
+    .select('id, author_id, title')
+    .eq('id', quote.listing_id)
+    .maybeSingle()
+  if (!listing?.author_id) {
+    return jsonResponse({ ok: false, error: 'customer_not_found' }, 404)
+  }
+  const { data: custUser } = await admin.auth.admin.getUserById(listing.author_id)
+  const to = (custUser?.user?.email || '').trim().toLowerCase()
+  if (!to || !to.includes('@')) {
+    return jsonResponse({ ok: false, error: 'customer_email_unavailable' }, 404)
+  }
+
+  // All email content is built SERVER-SIDE from DB data — body.html / body.to_email
+  // from the request are intentionally ignored to prevent content injection.
   const siteUrl = Deno.env.get('SITE_URL') ?? Deno.env.get('VITE_SITE_URL') ?? 'https://dimarket.app'
-  const title = body.project_title || 'your project'
-  const total = Number(body.total) || 0
-  const currency = body.currency === 'EUR' || !body.currency ? '€' : `${body.currency} `
-  const name = body.customer_name || 'there'
-  const pdfLink = body.pdf_url
-    ? `<p style="margin:24px 0"><a href="${body.pdf_url}" style="display:inline-block;background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px">View quote PDF</a></p>`
+  const rawTitle = listing.title || 'your project'
+  const title = escapeHtml(rawTitle)
+  const total = Number(quote.total) || 0
+  const currency = quote.currency === 'EUR' || !quote.currency ? '€' : `${quote.currency} `
+  const name = escapeHtml((custUser?.user?.user_metadata?.full_name as string) || 'there')
+  const pdfUrl = safeHttpsUrl(quote.pdf_url)
+  const pdfLink = pdfUrl
+    ? `<p style="margin:24px 0"><a href="${escapeHtml(pdfUrl)}" style="display:inline-block;background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px">View quote PDF</a></p>`
     : ''
 
-  const html = body.html && body.html.includes('<html')
-    ? body.html
-    : `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;color:#1d1d1f;background:#f5f5f7;padding:32px">
+  const html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;color:#1d1d1f;background:#f5f5f7;padding:32px">
   <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:20px;padding:32px">
     <p style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#86868b">DImarket</p>
     <h1 style="margin:8px 0 0;font-size:24px;letter-spacing:-0.02em">New quote for ${title}</h1>
@@ -99,19 +135,17 @@ Deno.serve(async (req: Request) => {
   </div>
 </body></html>`
 
-  const subject = `Quote for ${title} — ${currency}${total.toFixed(2)}`
+  const subject = `Quote for ${rawTitle} — ${currency}${total.toFixed(2)}`
   const sent = await sendResendEmail(to, subject, html)
   if (!sent.ok) {
     return jsonResponse({ ok: false, error: sent.error || 'email_failed' }, 502)
   }
 
-  if (body.quote_id) {
-    await admin
-      .from('quotes')
-      .update({ status: 'sent', updated_at: new Date().toISOString() })
-      .eq('id', body.quote_id)
-      .eq('professional_id', user.id)
-  }
+  await admin
+    .from('quotes')
+    .update({ status: 'sent', updated_at: new Date().toISOString() })
+    .eq('id', body.quote_id)
+    .eq('professional_id', user.id)
 
   return jsonResponse({ ok: true })
 })

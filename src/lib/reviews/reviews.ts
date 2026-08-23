@@ -274,7 +274,7 @@ export async function fetchReviewFeed(
     liked = new Set((likes ?? []).map((l) => String((l as { review_id: string }).review_id)))
   }
 
-  let repliesByReview = new Map<string, ReviewReplyRow[]>()
+  const repliesByReview = new Map<string, ReviewReplyRow[]>()
   if (ids.length) {
     const { data: replies } = await supabase
       .from('review_replies')

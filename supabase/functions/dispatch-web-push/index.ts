@@ -2,6 +2,7 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import webpush from 'npm:web-push@3.6.7'
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
+import { denyNonService } from '../_shared/auth.ts'
 
 type Body = {
   user_id?: string
@@ -18,16 +19,13 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405)
   }
 
-  const auth = req.headers.get('Authorization') || ''
+  // Service-to-service only (DB trigger / webhook). Strict service-role
+  // check — a bare non-empty Bearer header is NOT authorization.
+  const denied = denyNonService(req)
+  if (denied) return denied
+
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY') || ''
-  const isService = Boolean(serviceKey && auth.includes(serviceKey))
-
-  if (!isService) {
-    // Allow authenticated user to push-test only their own tokens via user JWT is not needed;
-    // production path is service-role from DB trigger / webhook.
-    if (!auth) return jsonResponse({ ok: false, error: 'unauthorized' }, 401)
-  }
 
   const vapidPublic = Deno.env.get('VAPID_PUBLIC_KEY') || Deno.env.get('VITE_VAPID_PUBLIC_KEY')
   const vapidPrivate = Deno.env.get('VAPID_PRIVATE_KEY')

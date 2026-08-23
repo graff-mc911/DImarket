@@ -1,6 +1,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
+import { rateLimit } from '../_shared/rateLimit.ts'
 import { chatCompletion, normalizeConfidence, translateWithOpenai } from '../_shared/openai.ts'
 
 type Body = {
@@ -20,6 +21,9 @@ Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') {
     return jsonResponse({ ok: false, error: 'method_not_allowed' }, 405)
   }
+
+  const rl = rateLimit(req, { windowMs: 60_000, max: 20, keyPrefix: 'ai-router' })
+  if (!rl.ok) return jsonResponse({ ok: false, error: 'rate_limited', retry_after: rl.retryAfter }, 429)
 
   const authHeader = req.headers.get('Authorization')
   const supabase = createClient(
@@ -287,6 +291,7 @@ Deno.serve(async (req: Request) => {
 
     return jsonResponse({ ok: false, error: 'unknown_action' }, 400)
   } catch (e) {
-    return jsonResponse({ ok: false, error: String(e) }, 500)
+    console.error('ai-router:', e)
+    return jsonResponse({ ok: false, error: 'internal_error' }, 500)
   }
 })

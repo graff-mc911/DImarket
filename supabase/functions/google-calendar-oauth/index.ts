@@ -20,6 +20,56 @@ function redirectUri() {
   return `${base.replace(/\/$/, '')}/functions/v1/google-calendar-oauth`
 }
 
+// HMAC secret for signing the OAuth state param. Prefer a dedicated secret;
+// fall back to the service role key (always present, never leaves the server).
+// If no secret is available at all, fail closed — never send an unsigned state.
+function stateSecret(): string {
+  return (
+    Deno.env.get('GOOGLE_OAUTH_STATE_SECRET') ||
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ||
+    ''
+  )
+}
+
+const STATE_TTL_MS = 10 * 60 * 1000 // 10 minutes
+
+async function hmacSign(message: string, secret: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  )
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message))
+  return btoa(String.fromCharCode(...new Uint8Array(sig)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+async function makeState(userId: string): Promise<string> {
+  const exp = Date.now() + STATE_TTL_MS
+  const payload = `${userId}.${exp}`
+  const sig = await hmacSign(payload, stateSecret())
+  return `${payload}.${sig}`
+}
+
+async function verifyState(state: string): Promise<string | null> {
+  const secret = stateSecret()
+  if (!secret) return null // fail closed if no signing secret is available
+  const parts = state.split('.')
+  if (parts.length !== 3) return null
+  const [userId, expStr, sig] = parts
+  if (!userId || !expStr || !sig) return null
+  const exp = Number(expStr)
+  if (!Number.isFinite(exp) || exp < Date.now()) return null
+  const expected = await hmacSign(`${userId}.${exp}`, secret)
+  // Constant-time-ish comparison.
+  if (expected.length !== sig.length) return null
+  let diff = 0
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ sig.charCodeAt(i)
+  return diff === 0 ? userId : null
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders })
@@ -34,9 +84,12 @@ Deno.serve(async (req: Request) => {
   // OAuth callback from Google
   if (code) {
     try {
-      const userId = state || ''
+      // Verify the signed state to defeat CSRF. The state must be HMAC-signed
+      // by this server and not expired; the userId it carries is trusted only
+      // after verification.
+      const userId = state ? await verifyState(state) : null
       if (!userId) {
-        return Response.redirect(`${site}/pro/calendar?gcal=missing_state`, 302)
+        return Response.redirect(`${site}/pro/calendar?gcal=invalid_state`, 302)
       }
 
       const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
@@ -96,6 +149,9 @@ Deno.serve(async (req: Request) => {
     if (!clientId()) {
       return jsonResponse({ ok: false, error: 'google_client_not_configured' }, 503)
     }
+    if (!stateSecret()) {
+      return jsonResponse({ ok: false, error: 'state_secret_missing' }, 503)
+    }
 
     const params = new URLSearchParams({
       client_id: clientId(),
@@ -104,7 +160,7 @@ Deno.serve(async (req: Request) => {
       access_type: 'offline',
       prompt: 'consent',
       scope: SCOPES,
-      state: user.id,
+      state: await makeState(user.id),
     })
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
     return jsonResponse({ ok: true, url: authUrl })

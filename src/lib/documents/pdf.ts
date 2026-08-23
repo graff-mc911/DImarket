@@ -90,7 +90,7 @@ export function openFilledDocumentPdf(input: FilledDocumentPdfInput, filename: s
 }
 
 export function filledDocumentFilename(title: string): string {
-  const base = title.replace(/[^\w\-]+/g, '_').slice(0, 60) || 'document'
+  const base = title.replace(/[^\w-]+/g, '_').slice(0, 60) || 'document'
   return `${base}.pdf`
 }
 

@@ -96,6 +96,14 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'Method not allowed' }, 405)
   }
 
+  const enabled = Deno.env.get('ENABLE_AUTH_PROFILE_MIGRATION_ENDPOINT') === 'true'
+  if (!enabled) {
+    // One-shot migration endpoint: disabled by default. Must be explicitly
+    // opt-in via ENABLE_AUTH_PROFILE_MIGRATION_ENDPOINT=true to run, so a
+    // leaked/guessed MIGRATION_SECRET alone cannot execute raw SQL.
+    return jsonResponse({ error: 'endpoint disabled' }, 503)
+  }
+
   const secret = Deno.env.get('MIGRATION_SECRET')
   const header = req.headers.get('x-migration-secret')
   if (!secret || header !== secret) {
@@ -121,8 +129,9 @@ Deno.serve(async (req: Request) => {
 
     return jsonResponse({ ok: true, total_professionals: Number(count) })
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err)
-    return jsonResponse({ error: message }, 500)
+    // Log full error server-side; return a generic message to the client.
+    console.error('apply-auth-profile-migration failed:', err)
+    return jsonResponse({ error: 'migration_failed' }, 500)
   } finally {
     await sql.end({ timeout: 5 })
   }

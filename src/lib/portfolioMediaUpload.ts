@@ -45,7 +45,7 @@ export async function uploadPortfolioMedia(
   const ext = file.name.split('.').pop()?.toLowerCase() || 'bin'
   const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
-  let { error } = await supabase.storage.from('portfolio-media').upload(path, file, {
+  const { error } = await supabase.storage.from('portfolio-media').upload(path, file, {
     cacheControl: '3600',
     upsert: false,
   })

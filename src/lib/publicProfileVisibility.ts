@@ -52,10 +52,10 @@ export function isLikelyQaOrTestProfile(profile: PublicProfileGate): boolean {
   if (!name) return false
   // Exact placeholder names left by smoke/register tests
   if (/^(test|tester|demo|demo user|test user)$/i.test(name)) return true
-  if (/^qa([\s_\-.]|$)/i.test(name)) return true
+  if (/^qa([\s_.-]|$)/i.test(name)) return true
   if (/^side-ads-e2e-/i.test(name)) return true
   if (/^investor\s+(ad|demo)/i.test(name)) return true
-  if (/\bqa[\s_\-]*(smoke|chat|master|e2e|admin|client|company|mfr|mfg|pv|advertiser|final|stranger|audit|self)\b/i.test(name)) {
+  if (/\bqa[\s_.-]*(smoke|chat|master|e2e|admin|client|company|mfr|mfg|pv|advertiser|final|stranger|audit|self)\b/i.test(name)) {
     return true
   }
   return false
@@ -91,10 +91,12 @@ export function filterPublicProfiles<T extends PublicProfileGate>(rows: T[]): T[
 }
 
 /** Apply PostgREST filters when columns exist; safe no-op if caller omits. */
-export function applyPublicProfileFilters<T extends { is: Function; not?: Function }>(query: T): T {
+export function applyPublicProfileFilters<
+  T extends { is: (column: string, value: null) => T },
+>(query: T): T {
   // Prefer IS NULL for soft-delete / hide columns.
   // If migration not applied yet, callers should catch and retry without these.
-  return (query as unknown as { is: (c: string, v: null) => T }).is('deleted_at', null).is('hidden_at', null)
+  return query.is('deleted_at', null).is('hidden_at', null)
 }
 
 export function sortProfilesForPublicDiscovery<

@@ -379,17 +379,22 @@ Deno.serve(async (req: Request) => {
 
     if (!userId) return jsonResponse({ ok: false, error: 'missing_user' }, 400)
 
+    // Authorization is REQUIRED: the calling user must authenticate and their
+    // JWT subject must match the userId in the payload. Previously this was
+    // only checked `if (authHeader)` — an anonymous caller could trigger paid
+    // LLM generation that auto-publishes to real Telegram/blog channels.
     const authHeader = req.headers.get('Authorization')
-    if (authHeader) {
-      const userClient = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_ANON_KEY')!,
-        { global: { headers: { Authorization: authHeader } } },
-      )
-      const { data: { user } } = await userClient.auth.getUser()
-      if (!user || user.id !== userId) {
-        return jsonResponse({ ok: false, error: 'forbidden' }, 403)
-      }
+    if (!authHeader) {
+      return jsonResponse({ ok: false, error: 'unauthorized' }, 401)
+    }
+    const userClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } },
+    )
+    const { data: { user } } = await userClient.auth.getUser()
+    if (!user || user.id !== userId) {
+      return jsonResponse({ ok: false, error: 'forbidden' }, 403)
     }
 
     await admin.from('marketing_registration_attribution').insert({
