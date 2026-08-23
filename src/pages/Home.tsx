@@ -24,7 +24,6 @@ import {
   type HomeMarketplaceData,
   type HomeMetrics,
 } from '../lib/homeMarketplace'
-import { matchProfileGeo } from '../lib/geoSearch'
 
 const EMPTY_METRICS: HomeMetrics = {
   professionals: 0,
@@ -36,7 +35,7 @@ const EMPTY_METRICS: HomeMetrics = {
 }
 
 export function Home() {
-  const { t, location } = useApp()
+  const { t } = useApp()
   const [data, setData] = useState<HomeMarketplaceData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -85,13 +84,12 @@ export function Home() {
 
   const metrics = data?.metrics ?? EMPTY_METRICS
   const professionals = useMemo(() => {
-    const rows = (data?.professionals ?? []).filter((p) => matchProfileGeo(p, location).matches)
-    return rows.slice(0, 12)
-  }, [data?.professionals, location])
+    return (data?.professionals ?? []).slice(0, 12)
+  }, [data?.professionals])
   const companies = useMemo(() => {
-    const rows = (data?.companies ?? []).filter((p) => matchProfileGeo(p, location).matches)
-    return rows.slice(0, 12)
-  }, [data?.companies, location])
+    return (data?.companies ?? []).slice(0, 12)
+  }, [data?.companies])
+
 
   return (
     <div className="home-premium">
