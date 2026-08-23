@@ -33,6 +33,28 @@ export function getViewerGeo(profile: Profile | null | undefined): {
   return { city: null, country: null }
 }
 
+let headerCountryDetectStarted = false
+
+/**
+ * Одноразово визначає країну відвідувача за IP і повертає її канонічну назву
+ * (як у REGISTRATION_COUNTRIES), або null якщо визначити не вдалось.
+ * Використовується для автозаповнення локації в хедері при першому візиті,
+ * коли відвідувач ще нічого не обирав сам.
+ */
+export function detectHeaderCountryOnce(): Promise<string | null> {
+  if (headerCountryDetectStarted) return Promise.resolve(null)
+  headerCountryDetectStarted = true
+
+  return fetch('https://ipapi.co/json/')
+    .then((res) => (res.ok ? res.json() : null))
+    .then((data: { country_code?: string } | null) => {
+      if (!data?.country_code) return null
+      const name = IP_COUNTRY_MAP[data.country_code]
+      return name && isRegistrationCountry(name) ? name : null
+    })
+    .catch(() => null)
+}
+
 let ipDetectStarted = false
 
 /** Одноразово визначає країну відвідувача для гео-таргетингу реклами (анонімні користувачі). */

@@ -3133,6 +3133,35 @@ select.select-glass.geo-filter-select::-ms-expand {
   white-space: normal;
 }
 
+.header-location__country-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.header-location__country-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.55rem 0.4rem;
+  font-size: 0.92rem;
+  text-align: left;
+  color: var(--ink-900);
+  border-bottom: 1px solid var(--adv-line, #efe9e0);
+}
+
+.header-location__country-option:hover {
+  background: var(--adv-surface-muted, #f7f3ec);
+}
+
+.header-location__country-option[aria-selected='true'] {
+  font-weight: 700;
+  color: #c96d2c;
+}
+
 .btn-secondary.geo-filter-gps {
   min-height: 2.5rem;
   height: auto;

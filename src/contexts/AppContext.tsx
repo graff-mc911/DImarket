@@ -17,7 +17,9 @@ import {
   initializeGlobalLocation,
   saveGlobalLocation,
   syncLocationToCurrentUrl,
+  hasActiveLocation,
 } from '../lib/globalLocation'
+import { detectHeaderCountryOnce } from '../lib/viewerGeo'
 
 interface AppContextType {
   user: User | null
@@ -55,6 +57,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [location, setLocationState] = useState<GeoSearchState>(() => initializeGlobalLocation())
   /** Bumps when a locale pack finishes loading so `t()` re-renders with real strings. */
   const [i18nTick, setI18nTick] = useState(0)
+
+  useEffect(() => {
+    if (hasActiveLocation(location)) return
+    let cancelled = false
+    void detectHeaderCountryOnce().then((country) => {
+      if (cancelled || !country) return
+      setLocationState((prev) => {
+        // Пропускаємо, якщо відвідувач вже встиг сам щось обрати, поки чекали IP-відповідь
+        if (hasActiveLocation(prev)) return prev
+        const next = { ...prev, country }
+        saveGlobalLocation(next)
+        return next
+      })
+    })
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     let cancelled = false

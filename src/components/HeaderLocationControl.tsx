@@ -1,8 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { MapPin } from 'lucide-react'
+import { Check, MapPin } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
-import { GeoSearchFilters } from './GeoSearchFilters'
+import { EMPTY_GEO_SEARCH } from '../lib/geoSearch'
+import { REGISTRATION_COUNTRIES } from '../lib/registrationGeoData'
 import {
   formatGlobalLocationLabel,
   hasActiveLocation,
@@ -81,7 +82,40 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
                 ? formatGlobalLocationLabel(location)
                 : t('dimarket.loc.all-europe')}
             </p>
-            <GeoSearchFilters value={location} onChange={setLocation} />
+            <ul className="header-location__country-list" role="listbox">
+              <li>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={!location.country}
+                  className="header-location__country-option"
+                  onClick={() => {
+                    setLocation({ ...EMPTY_GEO_SEARCH })
+                    setOpen(false)
+                  }}
+                >
+                  <span>{t('dimarket.loc.all-europe')}</span>
+                  {!location.country ? <Check className="h-4 w-4" aria-hidden /> : null}
+                </button>
+              </li>
+              {REGISTRATION_COUNTRIES.map((country) => (
+                <li key={country}>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={location.country === country}
+                    className="header-location__country-option"
+                    onClick={() => {
+                      setLocation({ ...EMPTY_GEO_SEARCH, country })
+                      setOpen(false)
+                    }}
+                  >
+                    <span>{country}</span>
+                    {location.country === country ? <Check className="h-4 w-4" aria-hidden /> : null}
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>,
           document.body,
         )
