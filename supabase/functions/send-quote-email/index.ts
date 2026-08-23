@@ -62,6 +62,13 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ ok: false, error: 'invalid_email' }, 400)
   }
 
+  // A quote_id is REQUIRED: the caller must own the quote they are emailing.
+  // Without this, any authenticated user could use this function as an open
+  // email relay to send arbitrary HTML to any address.
+  if (!body.quote_id) {
+    return jsonResponse({ ok: false, error: 'quote_id_required' }, 400)
+  }
+
   const admin = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -77,7 +84,6 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ ok: false, error: 'forbidden' }, 403)
     }
   }
-
   const siteUrl = Deno.env.get('SITE_URL') ?? Deno.env.get('VITE_SITE_URL') ?? 'https://dimarket.app'
   const title = body.project_title || 'your project'
   const total = Number(body.total) || 0

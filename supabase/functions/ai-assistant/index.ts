@@ -87,7 +87,7 @@ Deno.serve(async (req: Request) => {
     return jsonResponse(result, result.ok ? 200 : 400)
   } catch (e) {
     console.error('ai-assistant:', e)
-    return jsonResponse({ ok: false, error: String(e) }, 500)
+    return jsonResponse({ ok: false, error: 'internal_error' }, 500)
   }
 })
 

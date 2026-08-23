@@ -291,6 +291,7 @@ Deno.serve(async (req: Request) => {
 
     return jsonResponse({ ok: false, error: 'unknown_action' }, 400)
   } catch (e) {
-    return jsonResponse({ ok: false, error: String(e) }, 500)
+    console.error('ai-router:', e)
+    return jsonResponse({ ok: false, error: 'internal_error' }, 500)
   }
 })

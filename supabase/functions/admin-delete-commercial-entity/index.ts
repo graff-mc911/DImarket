@@ -13,7 +13,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const OWNER_EMAIL = "ivan.sovban@gmail.com";
+// Owner authorization is derived from the profile (is_site_owner / user_role='owner')
+// — no hardcoded email bypass.
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -58,11 +59,9 @@ Deno.serve(async (req: Request) => {
       .eq("id", user.id)
       .maybeSingle();
 
-    const email = (user.email || "").trim().toLowerCase();
     const isOwner =
       profile?.is_site_owner === true ||
-      profile?.user_role === "owner" ||
-      email === OWNER_EMAIL.toLowerCase();
+      profile?.user_role === "owner";
 
     if (!isOwner) {
       return new Response(JSON.stringify({ error: "Forbidden" }), {
@@ -130,7 +129,8 @@ Deno.serve(async (req: Request) => {
       // Never delete the site owner account via this path.
       const { data: targetUser } = await supabaseAdmin.auth.admin.getUserById(profileId);
       const targetEmail = (targetUser?.user?.email || "").toLowerCase();
-      if (targetEmail === OWNER_EMAIL.toLowerCase() || profileId === user.id) {
+      void targetEmail; // reserved for audit logging
+      if (profileId === user.id) {
         return new Response(
           JSON.stringify({
             ok: true,

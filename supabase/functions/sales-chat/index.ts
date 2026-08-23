@@ -196,6 +196,7 @@ Local fallback text: ${body.suggestedReplyText ?? ''}`
       canPublish: false,
     })
   } catch (e) {
-    return jsonResponse({ error: String(e) }, 500)
+    console.error('sales-chat:', e)
+    return jsonResponse({ error: 'internal_error' }, 500)
   }
 })
