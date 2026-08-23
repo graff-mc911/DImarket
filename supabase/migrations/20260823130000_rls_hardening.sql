@@ -23,6 +23,12 @@ DROP POLICY IF EXISTS "ai_review_insert" ON public.ai_review_analysis;
 ALTER TABLE public.geo_catalog ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.osm_weekly_digest_runs ENABLE ROW LEVEL SECURITY;
 
+-- geo_catalog is public reference data read by the frontend (adGeoCatalog.ts).
+-- Re-create an explicit public SELECT policy so enabling RLS does not break reads.
+DROP POLICY IF EXISTS "Public read geo_catalog" ON public.geo_catalog;
+CREATE POLICY "Public read geo_catalog" ON public.geo_catalog
+  FOR SELECT TO public USING (true);
+
 -- M3: tighten profile_view_events INSERT — require a non-null profile_id
 -- (viewer_id may be NULL for anonymous views, matching the record_profile_view
 -- RPC which inserts NULL viewer_id for anonymous visitors).

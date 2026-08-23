@@ -8,17 +8,22 @@
 -- Legacy objects at `campaigns/<file>` (no user_id segment) remain publicly
 -- readable but can no longer be mutated by anyone except the service role.
 
--- 1. Create the `media` bucket if it does not exist (idempotent).
+-- 1. Create the `media` bucket if it does not exist, and ensure it is public
+--    even if it was previously created as private.
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('media', 'media', true)
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET public = true;
 
--- 2. Drop stale `ad-media` policies (the bucket was renamed in the frontend;
---    these policies no longer match any live bucket).
-DROP POLICY IF EXISTS "Public read ad media" ON storage.objects;
+-- 2. Drop stale `ad-media` WRITE policies (INSERT/UPDATE/DELETE) — the bucket
+--    was renamed in the frontend to `media`. KEEP the public SELECT policy so
+--    any legacy objects still in `ad-media` keep loading publicly (no broken URLs).
 DROP POLICY IF EXISTS "Authenticated upload ad media" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated update ad media" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated delete ad media" ON storage.objects;
+-- Public read on ad-media (recreate in case the next block dropped it).
+DROP POLICY IF EXISTS "Public read ad media" ON storage.objects;
+CREATE POLICY "Public read ad media" ON storage.objects FOR SELECT TO public
+  USING (bucket_id = 'ad-media');
 
 -- 3. Drop any prior `media` policies so this migration is re-runnable.
 DROP POLICY IF EXISTS "Public read media" ON storage.objects;
