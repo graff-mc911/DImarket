@@ -5,8 +5,8 @@
    causes "Failed to fetch dynamically imported module" and a reload loop
    (especially on lazy routes like /cost-estimator). */
 
-const CACHE = 'dimarket-shell-v7'
-const PRECACHE = ['/', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
+const CACHE = 'dimarket-shell-v8'
+const PRECACHE = ['/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -23,10 +23,9 @@ self.addEventListener('activate', (event) => {
       .keys()
       .then((keys) =>
         Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))),
-      ),
+      )
+      .then(() => self.clients.claim()),
   )
-  // Do not clients.claim() — Chrome aborts in-flight import() of lazy routes
-  // (CostEstimator-*.js) when a new worker takes over the open page.
 })
 
 /** Network-first for HTML navigations only. Presence of fetch handler enables PWA install.
