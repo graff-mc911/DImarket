@@ -29,6 +29,17 @@ DROP POLICY IF EXISTS "Public read geo_catalog" ON public.geo_catalog;
 CREATE POLICY "Public read geo_catalog" ON public.geo_catalog
   FOR SELECT TO public USING (true);
 
+-- Authenticated users may add reference geo points (best-effort client fallback
+-- in adGeoCatalog.ts after the RPC path). Require non-null country/region/city.
+DROP POLICY IF EXISTS "Authenticated insert geo_catalog" ON public.geo_catalog;
+CREATE POLICY "Authenticated insert geo_catalog" ON public.geo_catalog
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    country IS NOT NULL AND country <> ''
+    AND region IS NOT NULL AND region <> ''
+    AND city IS NOT NULL AND city <> ''
+  );
+
 -- M3: tighten profile_view_events INSERT — require a non-null profile_id
 -- (viewer_id may be NULL for anonymous views, matching the record_profile_view
 -- RPC which inserts NULL viewer_id for anonymous visitors).

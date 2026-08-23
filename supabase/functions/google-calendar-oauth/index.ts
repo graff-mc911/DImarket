@@ -54,13 +54,15 @@ async function makeState(userId: string): Promise<string> {
 }
 
 async function verifyState(state: string): Promise<string | null> {
+  const secret = stateSecret()
+  if (!secret) return null // fail closed if no signing secret is available
   const parts = state.split('.')
   if (parts.length !== 3) return null
   const [userId, expStr, sig] = parts
   if (!userId || !expStr || !sig) return null
   const exp = Number(expStr)
   if (!Number.isFinite(exp) || exp < Date.now()) return null
-  const expected = await hmacSign(`${userId}.${exp}`, stateSecret())
+  const expected = await hmacSign(`${userId}.${exp}`, secret)
   // Constant-time-ish comparison.
   if (expected.length !== sig.length) return null
   let diff = 0

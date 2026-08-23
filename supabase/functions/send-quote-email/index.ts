@@ -29,6 +29,22 @@ async function sendResendEmail(to: string, subject: string, html: string): Promi
   return { ok: true }
 }
 
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) =>
+    c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '"' ? '&quot;' : '&#39;',
+  )
+}
+
+function safeHttpsUrl(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null
+  try {
+    const u = new URL(raw)
+    return u.protocol === 'https:' ? raw : null
+  } catch {
+    return null
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders })
@@ -99,12 +115,14 @@ Deno.serve(async (req: Request) => {
   // All email content is built SERVER-SIDE from DB data — body.html / body.to_email
   // from the request are intentionally ignored to prevent content injection.
   const siteUrl = Deno.env.get('SITE_URL') ?? Deno.env.get('VITE_SITE_URL') ?? 'https://dimarket.app'
-  const title = listing.title || 'your project'
+  const rawTitle = listing.title || 'your project'
+  const title = escapeHtml(rawTitle)
   const total = Number(quote.total) || 0
   const currency = quote.currency === 'EUR' || !quote.currency ? '€' : `${quote.currency} `
-  const name = (custUser?.user?.user_metadata?.full_name as string) || 'there'
-  const pdfLink = quote.pdf_url
-    ? `<p style="margin:24px 0"><a href="${quote.pdf_url}" style="display:inline-block;background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px">View quote PDF</a></p>`
+  const name = escapeHtml((custUser?.user?.user_metadata?.full_name as string) || 'there')
+  const pdfUrl = safeHttpsUrl(quote.pdf_url)
+  const pdfLink = pdfUrl
+    ? `<p style="margin:24px 0"><a href="${escapeHtml(pdfUrl)}" style="display:inline-block;background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px">View quote PDF</a></p>`
     : ''
 
   const html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;color:#1d1d1f;background:#f5f5f7;padding:32px">
@@ -117,7 +135,7 @@ Deno.serve(async (req: Request) => {
   </div>
 </body></html>`
 
-  const subject = `Quote for ${title} — ${currency}${total.toFixed(2)}`
+  const subject = `Quote for ${rawTitle} — ${currency}${total.toFixed(2)}`
   const sent = await sendResendEmail(to, subject, html)
   if (!sent.ok) {
     return jsonResponse({ ok: false, error: sent.error || 'email_failed' }, 502)

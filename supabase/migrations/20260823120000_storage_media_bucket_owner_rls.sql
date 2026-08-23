@@ -44,9 +44,15 @@ CREATE POLICY "Authenticated upload media" ON storage.objects FOR INSERT TO auth
     AND (storage.foldername(name))[2] = auth.uid()::text
   );
 
--- 6. UPDATE / DELETE scoped to the owning user's folder.
+-- 6. UPDATE / DELETE scoped to the owning user's folder. WITH CHECK on UPDATE
+--    prevents path reparenting (moving an object into another user's folder).
 CREATE POLICY "Authenticated update media" ON storage.objects FOR UPDATE TO authenticated
   USING (
+    bucket_id = 'media'
+    AND (storage.foldername(name))[1] = 'campaigns'
+    AND (storage.foldername(name))[2] = auth.uid()::text
+  )
+  WITH CHECK (
     bucket_id = 'media'
     AND (storage.foldername(name))[1] = 'campaigns'
     AND (storage.foldername(name))[2] = auth.uid()::text
