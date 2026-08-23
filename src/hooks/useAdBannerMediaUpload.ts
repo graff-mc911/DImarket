@@ -59,7 +59,11 @@ export function useAdBannerMediaUpload({
       throw new Error(`Max ${MAX_FILE_MB} MB`)
     }
     const ext = file.name.split('.').pop() ?? 'bin'
-    const path = `campaigns/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    // Owner-scoped path `campaigns/<user_id>/<file>` — required by storage RLS.
+    const { data: userData } = await supabase.auth.getUser()
+    const userId = userData?.user?.id
+    if (!userId) throw new Error('auth_required')
+    const path = `campaigns/${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     const { error } = await supabase.storage
       .from('media')
       .upload(path, file, { cacheControl: '3600', upsert: false })
