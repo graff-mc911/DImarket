@@ -4650,6 +4650,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   text-align: center;
 }
 
+.home-section__title--sm {
+  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
+}
+
 .home-section__title {
   font-size: clamp(1.55rem, 2.6vw, 2.1rem);
   font-weight: 800;
@@ -4668,6 +4672,11 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-section__head--center .home-section__subtitle {
   margin-left: auto;
   margin-right: auto;
+}
+
+.home-section__head--center .home-section__link {
+  display: inline-block;
+  margin-top: 0.85rem;
 }
 
 .home-section__link {
@@ -4826,9 +4835,83 @@ select.select-glass.geo-filter-select::-ms-expand {
   flex: 0 0 min(18.5rem, 82vw);
 }
 
-.home-rail--pros > * {
-  flex: 0 0 min(20rem, 85vw);
+.home-rail--grid4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: visible;
+  padding-bottom: 0;
 }
+
+.home-rail--grid4 > * {
+  flex: none;
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .home-rail--grid4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .home-rail--grid4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-find-contractor {
+  padding: 3rem 0 1rem;
+}
+
+.home-find-contractor__title {
+  text-align: center;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 400;
+  color: #232f3e;
+  margin-bottom: 2rem;
+}
+
+.home-find-contractor__title strong {
+  font-weight: 800;
+}
+
+.home-find-contractor__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.9rem 2rem;
+  max-width: 68rem;
+  margin: 0 auto;
+}
+
+.home-find-contractor__grid a {
+  font-size: 0.95rem;
+  color: #232f3e;
+  transition: color 0.15s ease;
+}
+
+.home-find-contractor__grid a:hover {
+  color: #c96d2c;
+  text-decoration: underline;
+}
+
+.home-find-contractor__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.25rem;
+}
+
+@media (max-width: 900px) {
+  .home-find-contractor__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .home-find-contractor__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 .home-project-card,
 .home-pro-card {

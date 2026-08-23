@@ -8,6 +8,7 @@ import {
   HomeCustomerReviews,
   HomeFaq,
   HomeFeaturedCompanies,
+  HomeFindContractor,
   HomeHero,
   HomeInteractiveMap,
   HomePopularProjects,
@@ -84,10 +85,10 @@ export function Home() {
 
   const metrics = data?.metrics ?? EMPTY_METRICS
   const professionals = useMemo(() => {
-    return (data?.professionals ?? []).slice(0, 12)
+    return (data?.professionals ?? []).slice(0, 4)
   }, [data?.professionals])
   const companies = useMemo(() => {
-    return (data?.companies ?? []).slice(0, 12)
+    return (data?.companies ?? []).slice(0, 4)
   }, [data?.companies])
 
 
@@ -103,6 +104,7 @@ export function Home() {
 
       <HomeCategoriesPreview categories={data?.categories ?? []} loading={loading} />
       <HomePopularProjects projects={data?.projects ?? []} loading={loading} />
+      <HomeFindContractor />
       <HomeTopProfessionals professionals={professionals} loading={loading} />
       <HomeTopCompanies companies={companies} loading={loading} />
       <HomeWhyDimarket />

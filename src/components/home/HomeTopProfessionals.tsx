@@ -1,5 +1,4 @@
-import { ChevronLeft, ChevronRight, Globe, Languages, MapPin, Phone, ShieldCheck, Star } from 'lucide-react'
-import { useRef } from 'react'
+import { Globe, Languages, MapPin, Phone, ShieldCheck, Star } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import type { HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
@@ -24,31 +23,16 @@ interface HomeTopProfessionalsProps {
 
 export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessionalsProps) {
   const { t } = useApp()
-  const railRef = useRef<HTMLDivElement>(null)
-
-  const scroll = (dir: -1 | 1) => {
-    const el = railRef.current
-    if (!el) return
-    el.scrollBy({ left: dir * Math.min(360, el.clientWidth * 0.8), behavior: 'smooth' })
-  }
 
   return (
     <section className="home-section layout-page-gutter" aria-labelledby="home-pros-title">
-      <div className="home-section__head">
+      <div className="home-section__head home-section__head--center">
         <div>
           <p className="home-section__eyebrow">{t('homePremium.prosEyebrow')}</p>
-          <h2 id="home-pros-title" className="home-section__title">
+          <h2 id="home-pros-title" className="home-section__title home-section__title--sm">
             {t('homePremium.prosTitle')}
           </h2>
           <p className="home-section__subtitle">{t('homePremium.prosSubtitle')}</p>
-        </div>
-        <div className="home-carousel-nav">
-          <button type="button" onClick={() => scroll(-1)} aria-label={t('common.previous')}>
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button type="button" onClick={() => scroll(1)} aria-label={t('common.next')}>
-            <ChevronRight className="h-5 w-5" />
-          </button>
           <button
             type="button"
             className="home-section__link"
@@ -60,7 +44,7 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
       </div>
 
       {loading ? (
-        <div className="home-rail home-rail--pros" aria-busy="true">
+        <div className="home-rail home-rail--pros home-rail--grid4" aria-busy="true">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="home-pro-card home-pro-card--skeleton" />
           ))}
@@ -68,7 +52,7 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
       ) : professionals.length === 0 ? (
         <p className="home-section__empty">{t('home.noProfessionals')}</p>
       ) : (
-        <div ref={railRef} className="home-rail home-rail--pros" role="list">
+        <div className="home-rail home-rail--pros home-rail--grid4" role="list">
           {professionals.map((pro) => {
             const name = formatProfessionalCardTitle(pro, t('professional.defaultName'))
             const avatar = resolveDirectoryAvatarUrl(pro.id, pro.profile_photo, pro.avatar_url)
