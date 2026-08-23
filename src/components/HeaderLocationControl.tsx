@@ -4,10 +4,6 @@ import { Check, MapPin } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { EMPTY_GEO_SEARCH } from '../lib/geoSearch'
 import { REGISTRATION_COUNTRIES } from '../lib/registrationGeoData'
-import {
-  formatGlobalLocationLabel,
-  hasActiveLocation,
-} from '../lib/globalLocation'
 
 /**
  * Header "Work in / Deliver to" control — same visual block, wired to global location.
@@ -62,10 +58,7 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
     }
   }, [open])
 
-  const label = formatGlobalLocationLabel(
-    location,
-    t('dimarket.loc.all-europe'),
-  )
+  const label = location.country || t('dimarket.loc.all-europe')
 
   const panel =
     open && typeof document !== 'undefined'
@@ -78,9 +71,7 @@ export function HeaderLocationControl({ className = '' }: { className?: string }
             style={{ top: panelBox.top, left: panelBox.left, width: panelBox.width }}
           >
             <p className="header-location__panel-title">
-              {hasActiveLocation(location)
-                ? formatGlobalLocationLabel(location)
-                : t('dimarket.loc.all-europe')}
+              {location.country || t('dimarket.loc.all-europe')}
             </p>
             <ul className="header-location__country-list" role="listbox">
               <li>
