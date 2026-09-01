@@ -11,7 +11,7 @@ import {
   radiusModeToKm,
   type GeoSearchState,
 } from './geoSearch'
-import { resolveDirectoryAvatarUrl } from './directoryAvatars'
+import { resolveProfileAvatarUrl } from './directoryAvatars'
 import { matchesServiceProfile, resolveServiceQuery } from './serviceTaxonomy'
 import {
   excludeSuppressedFromQuery,
@@ -371,7 +371,7 @@ function toProfileMarker(
     country: parts.country,
     rating: p.rating,
     verified: profileVerified(p),
-    photoUrl: resolveDirectoryAvatarUrl(p.id, p.profile_photo, p.avatar_url),
+    photoUrl: resolveProfileAvatarUrl(p),
     category: categoryLabel(p),
     budgetLabel: '',
     status: availability,

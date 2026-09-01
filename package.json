@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "test": "node scripts/verify-public-profile-visibility.mjs",
+    "test": "node scripts/verify-public-profile-visibility.mjs && npx tsx scripts/verify-company-avatars.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",

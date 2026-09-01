@@ -13,7 +13,7 @@ import {
   isCompanyProfile,
   resolveProfessionalCategoryLabels,
 } from '../lib/professionalDisplay'
-import { resolveCompanyAvatarUrl, resolveDirectoryAvatarUrl } from '../lib/directoryAvatars'
+import { resolveProfileAvatarUrl } from '../lib/directoryAvatars'
 import { supabase } from '../lib/supabase'
 import { formatDistanceKm, formatLocationParts } from '../lib/geoSearch'
 
@@ -109,13 +109,7 @@ export function DirectoryExpertCard({ professional, distanceKm }: DirectoryExper
     t('professional.defaultName'),
   )
   const isCompany = isCompanyProfile(professional)
-  const avatarUrl = isCompany
-    ? resolveCompanyAvatarUrl(professional)
-    : resolveDirectoryAvatarUrl(
-        professional.id,
-        professional.profile_photo,
-        professional.avatar_url,
-      )
+  const avatarUrl = resolveProfileAvatarUrl(professional)
   const reviewsLabel =
     (professional.total_reviews ?? 0) > 0
       ? `${professional.rating?.toFixed?.(1) ?? professional.rating} · ${professional.total_reviews} ${t('professional.reviews')}`

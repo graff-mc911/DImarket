@@ -14,7 +14,7 @@ import {
   resolvePrimaryActivityLabels,
   resolveProfessionalActivityLine,
 } from '../lib/professionalDisplay'
-import { resolveCompanyAvatarUrl, resolveDirectoryAvatarUrl } from '../lib/directoryAvatars'
+import { resolveProfileAvatarUrl } from '../lib/directoryAvatars'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -43,13 +43,7 @@ export function ProfessionalCard({
 }: ProfessionalCardProps) {
   const { t, language } = useApp()
 
-  const avatarUrl = isCompanyProfile(professional)
-    ? resolveCompanyAvatarUrl(professional)
-    : resolveDirectoryAvatarUrl(
-        professional.id,
-        professional.profile_photo,
-        professional.avatar_url,
-      )
+  const avatarUrl = resolveProfileAvatarUrl(professional)
   const ratingLabel =
     professional.rating > 0 ? professional.rating.toFixed(1) : t('professional.new')
   const isVerified = professional.is_verified === true

@@ -1,42 +1,32 @@
 /**
- * Public directory avatars hosted on DImarket Supabase Storage (media).
- * Used when profile_photo / avatar_url are still empty (RLS blocks anon profile updates).
- * Prefer DB fields once service-role backfill has run.
+ * Directory avatars for Top Masters / Top Companies / catalog cards.
+ *
+ * DB backfill stored the same listing-theme JPEG on many rows, and campaign
+ * storage URLs 404 for anonymous browsers. Those must never be shown as
+ * unique profile photos — fall back to a per-profile monogram instead.
  */
 import { isStockListingThemeUrl } from './listingThemeImage'
 
-export const DIRECTORY_AVATAR_BY_PROFILE_ID: Record<string, string> = {
-  '89ccac50-eded-47be-9426-ae6087bd16da':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/89ccac50-eded-47be-9426-ae6087bd16da/avatar.jpeg',
-  '0000b137-1ab4-48d6-8c8a-8d8f1f5d0f5f':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/0000b137-1ab4-48d6-8c8a-8d8f1f5d0f5f/avatar.jpeg',
-  '74d22af9-67ea-4dbf-baae-7640d638ea7d':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/74d22af9-67ea-4dbf-baae-7640d638ea7d/avatar.jpeg',
-  '37c6f253-06cb-42ca-9d72-ab8e49d51e13':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/37c6f253-06cb-42ca-9d72-ab8e49d51e13/avatar.jpeg',
-  '27bccd1d-3309-402e-977b-86be4048fa66':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/27bccd1d-3309-402e-977b-86be4048fa66/avatar.jpeg',
-  '6d6517d5-565a-40a7-9f80-6f8d9b9c03cf':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/6d6517d5-565a-40a7-9f80-6f8d9b9c03cf/avatar.jpeg',
-  'b2a7e44d-128a-4cf3-9906-097efa8a7c8b':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/b2a7e44d-128a-4cf3-9906-097efa8a7c8b/avatar.png',
-  '358eb5f3-d7f9-4228-9b21-4d1c4f2ab3b0':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/358eb5f3-d7f9-4228-9b21-4d1c4f2ab3b0/avatar.jpeg',
-  'c8fe9419-9049-4a14-a440-38c44ae7be51':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/c8fe9419-9049-4a14-a440-38c44ae7be51/avatar.jpeg',
-  'aedc48d6-dc72-4f83-b443-4987fb8ddcaf':
-    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/aedc48d6-dc72-4f83-b443-4987fb8ddcaf/avatar.jpeg',
+/** Seeded campaign objects are not publicly readable (GET → NoSuchKey). */
+export function isUnreadableCampaignAvatarUrl(url: string | null | undefined): boolean {
+  const value = (url || '').trim()
+  if (!value) return false
+  return /\/storage\/v1\/object\/public\/media\/campaigns\//i.test(value)
+}
+
+export function isUnusableDirectoryAvatarUrl(url: string | null | undefined): boolean {
+  const value = (url || '').trim()
+  if (!value) return true
+  return isStockListingThemeUrl(value) || isUnreadableCampaignAvatarUrl(value)
 }
 
 export function resolveDirectoryAvatarUrl(
-  profileId: string,
+  _profileId: string,
   profilePhoto?: string | null,
   avatarUrl?: string | null,
 ): string | null {
   const uploaded = (profilePhoto || avatarUrl || '').trim()
-  if (uploaded && !isStockListingThemeUrl(uploaded)) return uploaded
-  const mapped = DIRECTORY_AVATAR_BY_PROFILE_ID[profileId]
-  if (mapped && !isStockListingThemeUrl(mapped)) return mapped
+  if (uploaded && !isUnusableDirectoryAvatarUrl(uploaded)) return uploaded
   return null
 }
 
@@ -66,12 +56,12 @@ function firstPortfolioImage(images: string[] | null | undefined): string | null
   if (!Array.isArray(images)) return null
   for (const raw of images) {
     const url = (raw || '').trim()
-    if (/^https?:\/\//i.test(url) && !isStockListingThemeUrl(url)) return url
+    if (/^https?:\/\//i.test(url) && !isUnusableDirectoryAvatarUrl(url)) return url
   }
   return null
 }
 
-/** 1–2 letters for a company mark, skipping legal suffixes. */
+/** 1–2 letters for a company/master mark, skipping legal suffixes. */
 export function companyLogoInitials(name: string | null | undefined): string {
   const cleaned = (name || '')
     .replace(/[—–]/g, ' ')
@@ -110,13 +100,18 @@ export type CompanyAvatarSource = {
 }
 
 /**
- * Company avatars always resolve to an image: uploaded logo/photo, portfolio still,
- * or a generated monogram logo. Never leave a Top Company tile empty.
+ * Always resolve to a displayable image: a real uploaded photo, a unique
+ * portfolio still, or a generated monogram. Never reuse listing-theme stock
+ * or unreadable campaign storage URLs.
  */
-export function resolveCompanyAvatarUrl(company: CompanyAvatarSource): string {
+export function resolveProfileAvatarUrl(profile: CompanyAvatarSource): string {
   return (
-    resolveDirectoryAvatarUrl(company.id, company.profile_photo, company.avatar_url) ||
-    firstPortfolioImage(company.portfolio_images) ||
-    companyLogoDataUri(company.full_name, company.id)
+    resolveDirectoryAvatarUrl(profile.id, profile.profile_photo, profile.avatar_url) ||
+    firstPortfolioImage(profile.portfolio_images) ||
+    companyLogoDataUri(profile.full_name, profile.id)
   )
+}
+
+export function resolveCompanyAvatarUrl(company: CompanyAvatarSource): string {
+  return resolveProfileAvatarUrl(company)
 }

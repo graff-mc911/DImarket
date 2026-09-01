@@ -51,11 +51,39 @@ test.describe('Homepage rails follow header country', () => {
     await expectSectionRespectsSpain(pros)
     await expectSectionRespectsSpain(companies)
 
-    const companySrcs = await companies.locator('.home-pro-card__avatar img').evaluateAll((imgs) =>
-      imgs.map((img) => (img as HTMLImageElement).currentSrc || img.getAttribute('src') || ''),
-    )
-    expect(companySrcs.length).toBeGreaterThan(1)
-    expect(companySrcs.some((src) => src.includes('listing-themes'))).toBe(false)
-    expect(new Set(companySrcs).size, companySrcs.join('\n')).toBe(companySrcs.length)
+    async function expectUniqueLoadedAvatars(
+      section: import('@playwright/test').Locator,
+      label: string,
+    ) {
+      const imgs = section.locator('.home-pro-card__avatar img')
+      await expect(imgs.first()).toBeVisible()
+      const srcs = await imgs.evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const img = node as HTMLImageElement
+          return {
+            src: img.currentSrc || img.getAttribute('src') || '',
+            width: img.naturalWidth,
+          }
+        }),
+      )
+      expect(srcs.length, label).toBeGreaterThan(1)
+      expect(
+        srcs.some((item) => item.src.includes('listing-themes')),
+        `${label} still uses listing-theme stock`,
+      ).toBe(false)
+      expect(
+        srcs.some((item) => item.src.includes('campaigns/profiles')),
+        `${label} still uses unreadable campaign URLs`,
+      ).toBe(false)
+      expect(new Set(srcs.map((item) => item.src)).size, srcs.map((s) => s.src).join('\n')).toBe(
+        srcs.length,
+      )
+      for (const item of srcs) {
+        expect(item.width, item.src).toBeGreaterThan(0)
+      }
+    }
+
+    await expectUniqueLoadedAvatars(pros, 'Top майстри')
+    await expectUniqueLoadedAvatars(companies, 'Top компанії')
   })
 })

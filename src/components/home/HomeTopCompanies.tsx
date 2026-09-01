@@ -2,8 +2,9 @@ import { Globe, Languages, MapPin, Phone, ShieldCheck, Star } from 'lucide-react
 import { useApp } from '../../contexts/AppContext'
 import type { HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
-import { resolveCompanyAvatarUrl } from '../../lib/directoryAvatars'
+import { resolveProfileAvatarUrl } from '../../lib/directoryAvatars'
 import { navigateTo } from '../../lib/navigation'
+import { HomeRailAvatar } from './HomeRailAvatar'
 
 function normalizeWebsiteHref(raw: string | null | undefined): string | null {
   const value = (raw ?? '').trim()
@@ -55,7 +56,7 @@ export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) 
         <div className="home-rail home-rail--pros home-rail--grid4" role="list">
           {companies.map((company) => {
             const name = formatProfessionalCardTitle(company, t('professional.defaultName'))
-            const avatar = resolveCompanyAvatarUrl(company)
+            const avatar = resolveProfileAvatarUrl(company)
             const langs = (company.languages ?? []).slice(0, 3)
             const location = (company.location || '').trim()
             const phone = (company.phone ?? '').trim()
@@ -70,7 +71,7 @@ export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) 
                   onClick={() => navigateTo(`/professional/${company.id}`)}
                 >
                   <div className="home-pro-card__avatar">
-                    <img src={avatar} alt="" loading="lazy" />
+                    <HomeRailAvatar name={name} profileId={company.id} src={avatar} />
                   </div>
                   <div className="home-pro-card__info">
                     <div className="home-pro-card__name-row">
