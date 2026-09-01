@@ -4,7 +4,7 @@ import type { Database } from './types';
 // Проєкт wjlfvajloxkevggwjgtk. Vercel/Vite: VITE_SUPABASE_* (fallback — лише anon public key).
 const supabaseUrl =
   import.meta.env.VITE_SUPABASE_URL || 'https://wjlfvajloxkevggwjgtk.supabase.co';
-const envAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim()
+const envAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 const supabaseAnonKey =
   envAnonKey.length > 40
     ? envAnonKey
