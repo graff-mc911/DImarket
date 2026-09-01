@@ -53,6 +53,8 @@
     --layout-side-ads-min: 80rem;
     /* відступ під фіксовану шапку (синхрон з Header spacer) */
     --header-offset: 8rem;
+    /* Тінь карток — як на .ad-story під хедером */
+    --card-shadow: 0 0 22px 4px rgba(15, 17, 17, 0.16);
   }
 
   @media (min-width: 1024px) {
@@ -540,10 +542,11 @@
 
   .product-card {
     @apply flex h-full flex-col rounded-md border border-[#d5d9d9] bg-white p-3 transition-shadow duration-200;
+    box-shadow: var(--card-shadow);
   }
 
   .product-card:hover {
-    box-shadow: 0 2px 5px rgba(15, 17, 17, 0.15);
+    box-shadow: var(--card-shadow);
   }
 
   .product-card:focus-visible {
@@ -874,7 +877,7 @@
     border-radius: 0;
     color: inherit;
     text-decoration: none;
-    box-shadow: 0 0 22px 4px rgba(15, 17, 17, 0.16);
+    box-shadow: var(--card-shadow);
   }
   @media (min-width: 768px) {
     .ad-story {
@@ -1922,16 +1925,16 @@
     background: var(--panel);
     border: 1px solid var(--glass-border);
     border-radius: 0;
-    box-shadow: 0 1px 3px rgba(15, 17, 17, 0.06);
+    box-shadow: var(--card-shadow);
   }
 
   .glass-panel {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     background: var(--panel);
     border: 1px solid var(--glass-border);
     border-radius: 0;
-    box-shadow: 0 1px 3px rgba(15, 17, 17, 0.06);
+    box-shadow: var(--card-shadow);
   }
 
   .glass-panel::before {
@@ -1945,25 +1948,25 @@
 
   .hero-glass {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     background: var(--panel);
     border: 1px solid var(--glass-border);
     border-radius: 0;
-    box-shadow: 0 1px 3px rgba(26, 26, 26, 0.04);
+    box-shadow: var(--card-shadow);
   }
 
   .soft-card {
     background: var(--panel);
     border: 1px solid var(--glass-border);
     border-radius: 0;
-    box-shadow: 0 1px 3px rgba(26, 26, 26, 0.04);
+    box-shadow: var(--card-shadow);
   }
 
   .trust-card {
     background: var(--panel);
     border: 1px solid var(--glass-border);
     border-radius: 0;
-    box-shadow: 0 1px 3px rgba(26, 26, 26, 0.04);
+    box-shadow: var(--card-shadow);
   }
 
   .logo-letter-d {
@@ -2293,10 +2296,12 @@
 
   .amazon-section-card {
     @apply rounded-md border border-[#d5d9d9] bg-white p-4;
+    box-shadow: var(--card-shadow);
   }
 
   .amazon-filter-sidebar {
     @apply rounded-md border border-[#d5d9d9] bg-white p-4;
+    box-shadow: var(--card-shadow);
   }
 
   .amazon-filter-sidebar h2 {
@@ -2316,7 +2321,7 @@
 
   .amazon-buy-box {
     @apply rounded-md border border-[#d5d9d9] bg-white p-4;
-    box-shadow: 0 2px 5px rgba(15, 17, 17, 0.08);
+    box-shadow: var(--card-shadow);
   }
 
   .amazon-buy-box--sticky {
@@ -2509,13 +2514,13 @@
     display: flex;
     min-height: 16.5rem;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
     isolation: isolate;
     border-radius: 0;
     border: none;
     background: #ffffff;
     padding: 1.25rem 1.25rem 1rem;
-    box-shadow: 0 1px 2px rgba(15, 17, 17, 0.08);
+    box-shadow: var(--card-shadow);
   }
 
   .amazon-deal-card--wide {
@@ -3316,11 +3321,11 @@ select.select-glass.geo-filter-select::-ms-expand {
 .marketplace-category-card {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.1);
-  box-shadow: 0 10px 30px rgba(47, 42, 36, 0.06);
+  box-shadow: var(--card-shadow);
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 220ms ease,
@@ -3330,9 +3335,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .marketplace-category-card:hover {
   transform: translateY(-5px);
   border-color: rgba(255, 153, 0, 0.45);
-  box-shadow:
-    0 18px 40px rgba(47, 42, 36, 0.1),
-    0 0 0 1px rgba(255, 153, 0, 0.12);
+  box-shadow: var(--card-shadow);
 }
 
 .marketplace-category-card--skeleton {
@@ -3635,7 +3638,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  box-shadow: 0 8px 22px rgba(47, 42, 36, 0.04);
+  box-shadow: var(--card-shadow);
   text-align: left;
   transition:
     transform 180ms ease,
@@ -3646,7 +3649,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .category-service-tile:hover {
   transform: translateY(-2px);
   border-color: rgba(255, 153, 0, 0.4);
-  box-shadow: 0 14px 28px rgba(47, 42, 36, 0.08);
+  box-shadow: var(--card-shadow);
 }
 
 .category-service-tile__title {
@@ -3672,7 +3675,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: linear-gradient(160deg, #fff8f0 0%, #ffffff 70%);
   border: 1px solid rgba(255, 153, 0, 0.22);
-  box-shadow: 0 10px 28px rgba(176, 126, 85, 0.08);
+  box-shadow: var(--card-shadow);
 }
 
 .category-ai-card p {
@@ -3733,7 +3736,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  box-shadow: 0 8px 22px rgba(47, 42, 36, 0.04);
+  box-shadow: var(--card-shadow);
   text-align: left;
   transition: transform 180ms ease, border-color 180ms ease;
 }
@@ -4060,11 +4063,11 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .dimarket-category-card {
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid transparent;
   border-radius: 0;
   background: #fff;
-  box-shadow: 0 14px 34px rgba(17, 24, 39, 0.07);
+  box-shadow: var(--card-shadow);
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 }
 
@@ -4072,7 +4075,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .dimarket-category-card:focus-within {
   transform: translateY(-4px);
   border-color: var(--dimarket-primary);
-  box-shadow: 0 24px 54px rgba(17, 24, 39, 0.12);
+  box-shadow: var(--card-shadow);
 }
 
 .dimarket-category-card__button {
@@ -4182,7 +4185,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   background: #fff;
   color: var(--dimarket-muted);
   padding: 1.2rem;
-  box-shadow: 0 12px 34px rgba(17, 24, 39, 0.06);
+  box-shadow: var(--card-shadow);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4260,11 +4263,11 @@ select.select-glass.geo-filter-select::-ms-expand {
 .category-service-card {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.1);
-  box-shadow: 0 12px 32px rgba(47, 42, 36, 0.06);
+  box-shadow: var(--card-shadow);
   transition:
     transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 240ms ease,
@@ -4274,9 +4277,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .category-service-card:hover {
   transform: translateY(-6px);
   border-color: rgba(255, 153, 0, 0.4);
-  box-shadow:
-    0 22px 48px rgba(47, 42, 36, 0.11),
-    0 0 0 1px rgba(255, 153, 0, 0.1);
+  box-shadow: var(--card-shadow);
 }
 
 .category-service-card--skeleton {
@@ -4890,17 +4891,17 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-category-card {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  box-shadow: 0 12px 28px rgba(47, 42, 36, 0.06);
+  box-shadow: var(--card-shadow);
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
 }
 
 .home-category-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(47, 42, 36, 0.1);
+  box-shadow: var(--card-shadow);
 }
 
 .home-category-card--skeleton {
@@ -5128,7 +5129,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  box-shadow: 0 10px 26px rgba(47, 42, 36, 0.05);
+  box-shadow: var(--card-shadow);
 }
 
 .home-project-card--skeleton,
@@ -5323,7 +5324,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  box-shadow: 0 12px 28px rgba(47, 42, 36, 0.05);
+  box-shadow: var(--card-shadow);
 }
 
 .home-why-card__icon {
@@ -5375,7 +5376,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  box-shadow: 0 12px 28px rgba(47, 42, 36, 0.05);
+  box-shadow: var(--card-shadow);
 }
 
 .home-review-card__quote {
@@ -5467,7 +5468,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.14);
-  box-shadow: 0 12px 28px rgba(47, 42, 36, 0.07);
+  box-shadow: var(--card-shadow);
   opacity: 0;
   transform: translateY(10px);
   animation: home-trust-in 480ms ease forwards;
@@ -5661,18 +5662,19 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-company-logo {
   display: block;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   text-decoration: none;
   color: inherit;
+  box-shadow: var(--card-shadow);
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
 .home-company-logo:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 28px rgba(47, 42, 36, 0.08);
+  box-shadow: var(--card-shadow);
 }
 
 .home-company-logo:focus-visible {
@@ -5686,6 +5688,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   aspect-ratio: 16 / 9;
   object-fit: cover;
   background: #1a2330;
+  overflow: hidden;
 }
 
 /* Interactive map */
@@ -5698,7 +5701,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   overflow-anchor: none;
   border: 1px solid rgba(176, 126, 85, 0.14);
   background: #fff;
-  box-shadow: 0 12px 28px rgba(47, 42, 36, 0.06);
+  box-shadow: var(--card-shadow);
   transform: translateZ(0);
 }
 
@@ -5997,14 +6000,15 @@ select.select-glass.geo-filter-select::-ms-expand {
   max-width: 46rem;
   margin: 0 auto;
   display: grid;
-  gap: 0.55rem;
+  gap: 0.85rem;
 }
 
 .home-faq__item {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  overflow: hidden;
+  overflow: visible;
+  box-shadow: var(--card-shadow);
 }
 
 .home-faq__item h3 {
@@ -6274,7 +6278,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  box-shadow: 0 8px 22px rgba(47, 42, 36, 0.04);
+  box-shadow: var(--card-shadow);
   text-align: left;
   font-size: 0.95rem;
   font-weight: 700;
@@ -6284,7 +6288,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .cat-service-tile:hover {
   transform: translateY(-2px);
   border-color: rgba(255, 153, 0, 0.4);
-  box-shadow: 0 14px 28px rgba(47, 42, 36, 0.08);
+  box-shadow: var(--card-shadow);
 }
 
 .cat-ai-grid { display: grid; grid-template-columns: 1fr; gap: 0.85rem; }
@@ -6297,7 +6301,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: linear-gradient(160deg, #fff8f0 0%, #ffffff 70%);
   border: 1px solid rgba(255, 153, 0, 0.22);
-  box-shadow: 0 10px 28px rgba(176, 126, 85, 0.08);
+  box-shadow: var(--card-shadow);
 }
 .cat-ai-card p {
   font-size: 0.92rem;
@@ -6336,7 +6340,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  box-shadow: 0 8px 22px rgba(47, 42, 36, 0.04);
+  box-shadow: var(--card-shadow);
   text-align: left;
   transition: transform 180ms ease, border-color 180ms ease;
 }
@@ -6379,7 +6383,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-radius: 0;
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
-  box-shadow: 0 12px 28px rgba(47, 42, 36, 0.05);
+  box-shadow: var(--card-shadow);
 }
 .cat-review-card__quote {
   position: absolute;
@@ -7376,12 +7380,13 @@ select.select-glass.geo-filter-select::-ms-expand {
   border: 1px solid #d5d9d9;
   border-radius: 0;
   background: #fff;
+  box-shadow: var(--card-shadow);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .directory-expert:hover {
   border-color: #b9bcbc;
-  box-shadow: 0 2px 8px rgba(15, 17, 17, 0.08);
+  box-shadow: var(--card-shadow);
 }
 
 .directory-expert__photo {
@@ -7875,7 +7880,7 @@ body,
   inset: 0;
   z-index: -1;
   border-radius: 0;
-  box-shadow: 0 1px 2px rgba(15, 17, 17, 0.08), 0 8px 24px rgba(15, 17, 17, 0.06);
+  box-shadow: var(--card-shadow);
 }
 .bz-needs-help__tile:hover,
 .bz-needs-help__tile.is-active {
@@ -7884,7 +7889,7 @@ body,
 }
 .bz-needs-help__tile:hover::before,
 .bz-needs-help__tile.is-active::before {
-  box-shadow: 0 8px 24px rgba(255, 153, 0, 0.28);
+  box-shadow: var(--card-shadow);
 }
 .bz-needs-help__icon {
   display: block;

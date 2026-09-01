@@ -388,7 +388,7 @@ export function Profile() {
           <ScbLightPanel userId={userId} />
         ) : null}
 
-        <div className="glass-card overflow-hidden">
+        <div className="glass-card">
           <div className="flex border-b border-[var(--glass-border)]">
             <button
               type="button"

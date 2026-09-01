@@ -319,7 +319,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                       if (!listing) return null
 
                       return (
-                        <div key={item.id} className="glass-card overflow-hidden">
+                        <div key={item.id} className="glass-card">
                           <div className="p-4">
                             <div className="flex items-start justify-between gap-3">
 
@@ -404,7 +404,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                         : '?'
 
                       return (
-                        <div key={item.id} className="glass-card overflow-hidden">
+                        <div key={item.id} className="glass-card">
                           <div className="p-4">
                             <div className="flex items-start justify-between gap-3">
 
