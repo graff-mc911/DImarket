@@ -171,9 +171,8 @@ export async function fetchHomeProjects(
     .limit(geo?.country ? Math.max(limit * 8, 48) : limit)
 
   if (geo?.country) {
-    const loc = locationCountryOrFilter('location', geo.country)
-    const countryCol = locationCountryOrFilter('country_name', geo.country)
-    query = query.or(`${loc},${countryCol}`)
+    const country = canonicalCountryName(geo.country)
+    query = query.or(`location.ilike.%${country}%,country_name.ilike.%${country}%`)
   }
 
   const { data } = await excludeSuppressedFromQuery(query)
@@ -184,10 +183,10 @@ export async function fetchHomeProjects(
   )
 }
 
-function locationCountryOrFilter(column: string, country: string): string {
-  return countryQueryNames(canonicalCountryName(country))
-    .map((name) => `${column}.ilike.%${name.replace(/[,()]/g, '')}%`)
-    .join(',')
+function applyCountryLocationFilter(query: any, country?: string | null) {
+  const name = country?.trim()
+  if (!name) return query
+  return query.ilike('location', `%${canonicalCountryName(name)}%`)
 }
 
 function listingMatchesGeo(listing: ListingWithImages, geo: GeoSearchState | undefined): boolean {
@@ -202,12 +201,6 @@ function listingMatchesGeo(listing: ListingWithImages, geo: GeoSearchState | und
   if (geo.city && !listingLocationMatches(geo.city, blob)) return false
   if (geo.region && !geo.city && !listingLocationMatches(geo.region, blob)) return false
   return true
-}
-
-function applyCountryLocationFilter(query: any, country?: string | null) {
-  const name = country?.trim()
-  if (!name) return query
-  return query.or(locationCountryOrFilter('location', name))
 }
 
 export function filterHomeProfessionalsByGeo(
