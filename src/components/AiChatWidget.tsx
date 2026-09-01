@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 interface Message {
   sender: 'user' | 'bot'
@@ -6,7 +6,7 @@ interface Message {
 }
 
 export interface AiChatWidgetProps {
-  /** Optional override; if not provided the component will look for NEXT_PUBLIC_AI_WEBHOOK_URL */
+  /** Optional override; if not provided the component will look for VITE_AI_WEBHOOK_URL */
   webhookUrl?: string
 }
 
@@ -20,10 +20,24 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [lastError, setLastError] = useState<string | null>(null)
 
-  // Resolve webhook URL: prop -> process.env -> empty
+  const listRef = useRef<HTMLDivElement | null>(null)
+
+  // Resolve webhook URL: prop -> Vite env -> empty
   const resolvedWebhookUrl =
-    webhookUrl || (typeof process !== 'undefined' ? (process.env as any)?.NEXT_PUBLIC_AI_WEBHOOK_URL : undefined) || ''
+    webhookUrl || (typeof import.meta !== 'undefined' ? (import.meta as any)?.env?.VITE_AI_WEBHOOK_URL : undefined) || ''
+
+  useEffect(() => {
+    // Autoscroll to bottom when messages change
+    if (listRef.current) {
+      try {
+        listRef.current.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
+      } catch {
+        listRef.current.scrollTop = listRef.current.scrollHeight
+      }
+    }
+  }, [messages])
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,9 +47,10 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
     setInput('')
     setMessages((prev) => [...prev, { sender: 'user', text: userMessage }])
     setLoading(true)
+    setLastError(null)
 
     if (!resolvedWebhookUrl) {
-      console.warn('AiChatWidget: no webhook configured (NEXT_PUBLIC_AI_WEBHOOK_URL or webhookUrl prop)')
+      console.warn('AiChatWidget: no webhook configured (VITE_AI_WEBHOOK_URL or webhookUrl prop)')
       setMessages((prev) => [
         ...prev,
         {
@@ -59,21 +74,22 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
       })
 
       if (!response.ok) {
-        // Try to surface HTTP error
-        const text = await response.text()
-        console.error('AiChatWidget: webhook responded with non-OK status', response.status, text)
-        setMessages((prev) => [...prev, { sender: 'bot', text: 'Помилка з'єднання з агентом (HTTP ' + response.status + ').' }])
+        const text = await response.text().catch(() => '')
+        const errMsg = `Помилка: агент відповів статусом ${response.status}` + (text ? ` — ${text.slice(0, 200)}` : '')
+        console.error('AiChatWidget: webhook non-OK', response.status, text)
+        setMessages((prev) => [...prev, { sender: 'bot', text: errMsg }])
+        setLastError(errMsg)
         return
       }
 
       const data = await response.json().catch(() => null)
-      setMessages((prev) => [
-        ...prev,
-        { sender: 'bot', text: (data && (data.response || data.reply)) || 'Отримано порожню відповідь від агента.' }
-      ])
-    } catch (error) {
+      const reply = (data && (data.response || data.reply)) || 'Отримано порожню відповідь від агента.'
+      setMessages((prev) => [...prev, { sender: 'bot', text: reply }])
+    } catch (error: any) {
+      const errMsg = 'Вибачте, сталася тимчасова помилка зв\'язку з сервером.'
       console.error('Помилка запиту до агента:', error)
-      setMessages((prev) => [...prev, { sender: 'bot', text: "Вибачте, сталася тимчасова помилка зв'язку з сервером." }])
+      setMessages((prev) => [...prev, { sender: 'bot', text: errMsg }])
+      setLastError(error?.message ?? String(error))
     } finally {
       setLoading(false)
     }
@@ -101,7 +117,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
         <div
           style={{
             width: '350px',
-            height: '450px',
+            height: '500px',
             background: '#fff',
             borderRadius: '12px',
             boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
@@ -115,7 +131,14 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
             <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '16px' }}>✕</button>
           </div>
 
-          <div style={{ flex: 1, padding: '12px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', background: '#f8fafc' }}>
+          {/* show configuration warning if webhook missing */}
+          {!resolvedWebhookUrl && (
+            <div style={{ padding: '8px 12px', background: '#fff7f7', color: '#7f1d1d', fontSize: 13 }}>
+              Віджет не налаштовано: встановіть VITE_AI_WEBHOOK_URL у .env або передайте webhookUrl prop.
+            </div>
+          )}
+
+          <div ref={listRef} style={{ flex: 1, padding: '12px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', background: '#f8fafc' }}>
             {messages.map((m, idx) => (
               <div
                 key={idx}
@@ -134,6 +157,11 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
               </div>
             ))}
             {loading && <div style={{ alignSelf: 'flex-start', color: '#64748b', fontSize: '13px' }}>Друкує відповідь...</div>}
+            {lastError && (
+              <div style={{ alignSelf: 'stretch', padding: '8px 12px', background: '#fff7ed', color: '#92400e', fontSize: 13, borderRadius: 8 }}>
+                Помилка: {String(lastError)}
+              </div>
+            )}
           </div>
 
           <form onSubmit={sendMessage} style={{ display: 'flex', borderTop: '1px solid #e2e8f0', padding: '8px', background: '#fff' }}>
@@ -144,7 +172,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
               placeholder="Напишіть запит..."
               style={{ flex: 1, border: '1px solid #cbd5e1', borderRadius: '6px', padding: '8px', outline: 'none', fontSize: '14px' }}
             />
-            <button type="submit" style={{ background: '#FFD700', border: 'none', padding: '8px 14px', marginLeft: '6px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>➤</button>
+            <button type="submit" disabled={loading} style={{ background: '#FFD700', border: 'none', padding: '8px 14px', marginLeft: '6px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>➤</button>
           </form>
         </div>
       )}
