@@ -28,7 +28,6 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
     <section className="home-section layout-page-gutter" aria-labelledby="home-pros-title">
       <div className="home-section__head home-section__head--center">
         <div>
-          <p className="home-section__eyebrow">{t('homePremium.prosEyebrow')}</p>
           <h2 id="home-pros-title" className="home-section__title home-section__title--sm">
             {t('homePremium.prosTitle')}
           </h2>
