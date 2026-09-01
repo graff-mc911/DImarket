@@ -4,18 +4,23 @@ import { gotoPath } from './helpers'
 test.describe('Homepage categories link grid', () => {
   test.use({ viewport: { width: 1440, height: 900 } })
 
-  test('shows a 4-column text grid and subcategory menu on hover', async ({ page }) => {
+  test('opens subcategory menu on click and keeps it for picking a subcategory', async ({ page }) => {
     await gotoPath(page, '/')
     const section = page.locator('#choose-category')
     await expect(section).toBeVisible()
     await expect(section.locator('.dimarket-cat-grid')).toBeVisible()
     await expect(section.locator('.dimarket-category-card')).toHaveCount(0)
-    await expect(section.locator('.dimarket-cat-item__link').first()).toBeVisible()
 
     const first = section.locator('.dimarket-cat-item').first()
-    await first.hover()
     const menu = first.locator('.dimarket-cat-item__menu')
+    await first.hover()
+    await expect(menu).toBeHidden()
+
+    await first.locator('.dimarket-cat-item__link').click()
     await expect(menu).toBeVisible()
-    await expect(menu.getByRole('menuitem').nth(1)).toBeVisible()
+    const subcategory = menu.getByRole('menuitem').nth(1)
+    await expect(subcategory).toBeVisible()
+    await subcategory.click()
+    await expect(page).not.toHaveURL(/\/$/)
   })
 })
