@@ -65,6 +65,8 @@ export function Home() {
       try {
         const payload = await fetchHomeMarketplaceData(location)
         if (!cancelled) setData(payload)
+      } catch (err) {
+        console.warn('[home] marketplace load failed', err)
       } finally {
         if (!cancelled) setLoading(false)
       }

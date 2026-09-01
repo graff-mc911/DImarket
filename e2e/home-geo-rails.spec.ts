@@ -45,11 +45,11 @@ test.describe('Homepage rails follow header country', () => {
     const companies = page.locator('section[aria-labelledby="home-companies-rail-title"]')
     await expect(pros).toBeVisible()
     await expect(companies).toBeVisible()
+    await expect(pros.locator('.home-pro-card--skeleton')).toHaveCount(0)
+    await expect(pros.locator('.home-pro-card').first()).toBeVisible({ timeout: 20_000 })
+    await expect(companies.locator('.home-pro-card').first()).toBeVisible({ timeout: 20_000 })
     await expectSectionRespectsSpain(pros)
     await expectSectionRespectsSpain(companies)
-
-    expect(await pros.locator('.home-pro-card').count()).toBeGreaterThan(0)
-    expect(await companies.locator('.home-pro-card').count()).toBeGreaterThan(0)
 
     const companySrcs = await companies.locator('.home-pro-card__avatar img').evaluateAll((imgs) =>
       imgs.map((img) => (img as HTMLImageElement).currentSrc || img.getAttribute('src') || ''),

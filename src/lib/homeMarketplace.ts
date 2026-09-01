@@ -183,12 +183,6 @@ export async function fetchHomeProjects(
   )
 }
 
-function applyCountryLocationFilter(query: any, country?: string | null) {
-  const name = country?.trim()
-  if (!name) return query
-  return query.ilike('location', `%${canonicalCountryName(name)}%`)
-}
-
 function listingMatchesGeo(listing: ListingWithImages, geo: GeoSearchState | undefined): boolean {
   if (!geo?.country && !geo?.city && !geo?.region) return true
   const blob = [listing.country_name, listing.city_name, listing.location].filter(Boolean).join(', ')
@@ -221,41 +215,38 @@ export function filterHomeProjectsByGeo(
   return matched.slice(0, limit)
 }
 
-export async function fetchHomeProfessionals(
-  limit = 12,
+async function fetchHomeDirectoryProfiles(
+  role: 'professional' | 'company',
   geo?: GeoSearchState,
+  limit = 12,
 ): Promise<HomeProfessional[]> {
-  const select = `
-      *,
-      professional_categories(
-        category_id,
-        category:categories(id, name, slug)
-      )
-    `
-
   const rowLimit = Math.max(limit * 8, 96)
-  let query = supabase
-    .from('profiles')
-    .select(select)
-    .eq('is_professional', true)
-    .eq('user_role', 'professional')
-    .order('rating', { ascending: false })
-    .limit(rowLimit)
+  const country = geo?.country?.trim()
+    ? canonicalCountryName(geo.country)
+    : ''
 
-  query = applyCountryLocationFilter(query, geo?.country)
-
-  // Soft-delete / hide columns (APPLY_OWNER_PROFILE_MODERATION.sql)
-  let { data, error } = await (query as any).is('deleted_at', null).is('hidden_at', null)
-  if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
-    let fallback = supabase
+  const run = async (withModerationCols: boolean) => {
+    let query = supabase
       .from('profiles')
-      .select(select)
+      .select('*')
       .eq('is_professional', true)
-      .eq('user_role', 'professional')
+      .eq('user_role', role)
       .order('rating', { ascending: false })
       .limit(rowLimit)
-    fallback = applyCountryLocationFilter(fallback, geo?.country)
-    ;({ data, error } = await fallback)
+    if (country) query = query.ilike('location', `%${country}%`)
+    if (withModerationCols) {
+      return await (query as any).is('deleted_at', null).is('hidden_at', null)
+    }
+    return await query
+  }
+
+  let { data, error } = await run(true)
+  if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
+    ;({ data, error } = await run(false))
+  }
+  if (error) {
+    console.warn('[home] fetchHomeDirectoryProfiles', role, error.message)
+    return []
   }
 
   const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [], {
@@ -264,46 +255,18 @@ export async function fetchHomeProfessionals(
   return sortProfilesForPublicDiscovery(rows)
 }
 
+export async function fetchHomeProfessionals(
+  limit = 12,
+  geo?: GeoSearchState,
+): Promise<HomeProfessional[]> {
+  return fetchHomeDirectoryProfiles('professional', geo, limit)
+}
+
 export async function fetchHomeCompanies(
   limit = 12,
   geo?: GeoSearchState,
 ): Promise<HomeProfessional[]> {
-  const select = `
-      *,
-      professional_categories(
-        category_id,
-        category:categories(id, name, slug)
-      )
-    `
-
-  const rowLimit = Math.max(limit * 8, 96)
-  let query = supabase
-    .from('profiles')
-    .select(select)
-    .eq('is_professional', true)
-    .eq('user_role', 'company')
-    .order('rating', { ascending: false })
-    .limit(rowLimit)
-
-  query = applyCountryLocationFilter(query, geo?.country)
-
-  let { data, error } = await (query as any).is('deleted_at', null).is('hidden_at', null)
-  if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
-    let fallback = supabase
-      .from('profiles')
-      .select(select)
-      .eq('is_professional', true)
-      .eq('user_role', 'company')
-      .order('rating', { ascending: false })
-      .limit(rowLimit)
-    fallback = applyCountryLocationFilter(fallback, geo?.country)
-    ;({ data } = await fallback)
-  }
-
-  const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [], {
-    requireReachability: false,
-  })
-  return sortProfilesForPublicDiscovery(rows)
+  return fetchHomeDirectoryProfiles('company', geo, limit)
 }
 
 export async function fetchHomeReviews(limit = 8): Promise<HomeReview[]> {
@@ -383,27 +346,41 @@ function guessCountryCode(name: string | null | undefined): string | null {
 export async function fetchHomeMarketplaceData(
   geo?: GeoSearchState,
 ): Promise<HomeMarketplaceData> {
-  const [metrics, categories, projects, professionals, companies, reviews] =
-    await Promise.all([
-      fetchHomepageMetrics(),
-      fetchMainMarketplaceCategories(),
-      fetchHomeProjects(12, geo),
-      fetchHomeProfessionals(12, geo),
-      fetchHomeCompanies(12, geo),
-      fetchHomeReviews(),
-    ])
+  const settled = await Promise.allSettled([
+    fetchHomepageMetrics(),
+    fetchMainMarketplaceCategories(),
+    fetchHomeProjects(12, geo),
+    fetchHomeProfessionals(12, geo),
+    fetchHomeCompanies(12, geo),
+    fetchHomeReviews(),
+  ])
+  const value = <T,>(index: number, fallback: T): T => {
+    const item = settled[index]
+    if (item.status === 'fulfilled') return item.value as T
+    console.warn('[home] marketplace fetch failed', index, item.reason)
+    return fallback
+  }
 
+  const professionals = value<HomeProfessional[]>(3, [])
+  const companies = value<HomeProfessional[]>(4, [])
   const misplacedCompanies = professionals.filter(isBusinessNamedProfessional)
   const masterPros = professionals.filter((p) => !isBusinessNamedProfessional(p))
   const companyRows = sortProfilesForPublicDiscovery([...companies, ...misplacedCompanies])
 
   return {
-    metrics,
-    categories,
-    projects,
+    metrics: value(0, {
+      professionals: 0,
+      reviews: 0,
+      countries: 0,
+      projects: 0,
+      appStoreUrl: '',
+      playStoreUrl: '',
+    }),
+    categories: value(1, []),
+    projects: value(2, []),
     professionals: masterPros,
     companies: companyRows,
-    reviews,
+    reviews: value(5, []),
   }
 }
 
