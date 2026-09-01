@@ -34,6 +34,20 @@ test.describe('Реклама на сайті', () => {
     await expect(story).toBeVisible()
     await expect(story.locator('.ad-story__title')).toBeVisible()
     await expect(story.locator('.ad-story__media')).toBeVisible()
-    await expect(story.getByText(/^Підрядник$|^Contractor$/)).toBeVisible()
+
+    const rel = (await story.getAttribute('rel')) ?? ''
+    const isPaid = rel.includes('sponsored')
+    if (isPaid) {
+      // Geo targeting is not advertiser copy — paid cards must not inject Location / Worldwide.
+      await expect(
+        story.locator('.ad-story__meta dt').filter({ hasText: /^(Розташування|Location)$/ }),
+      ).toHaveCount(0)
+      await expect(
+        story.locator('.ad-story__meta dd').filter({ hasText: /^(Весь світ|Worldwide)$/ }),
+      ).toHaveCount(0)
+    } else {
+      await expect(story.getByText(/^Підрядник$|^Contractor$/)).toBeVisible()
+      await expect(story.getByText(/^Європа$|^Europe$/)).toBeVisible()
+    }
   })
 })
