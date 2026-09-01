@@ -57,6 +57,27 @@ test.describe('Homepage rails follow header country', () => {
     ) {
       const imgs = section.locator('.home-pro-card__avatar img')
       await expect(imgs.first()).toBeVisible()
+      await expect
+        .poll(
+          async () => {
+            const srcs = await imgs.evaluateAll((nodes) =>
+              nodes.map((node) => {
+                const img = node as HTMLImageElement
+                return {
+                  src: img.currentSrc || img.getAttribute('src') || '',
+                  width: img.naturalWidth,
+                  complete: img.complete,
+                }
+              }),
+            )
+            if (srcs.length < 2) return null
+            if (srcs.some((item) => !item.complete || item.width <= 0)) return null
+            return srcs
+          },
+          { timeout: 10_000 },
+        )
+        .not.toBeNull()
+
       const srcs = await imgs.evaluateAll((nodes) =>
         nodes.map((node) => {
           const img = node as HTMLImageElement
