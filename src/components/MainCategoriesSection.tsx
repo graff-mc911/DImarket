@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { AnimatePresence, LazyMotion, domAnimation, m } from 'framer-motion'
-import { ChevronRight, MapPin, Search } from 'lucide-react'
+import { useMemo, useState, type MouseEvent } from 'react'
+import { MapPin, Search } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import {
@@ -15,17 +14,8 @@ import {
 import { dimarketLabel } from '../config/categoriesI18n'
 import type { TranslationKey } from '../lib/i18n'
 import type { MarketplaceCategory } from '../lib/marketplaceCategories'
-import {
-  dbOverlayForHome,
-  homeCategoryPath,
-  marketplaceBySiteSlug,
-} from '../lib/homeCategoryAdapter'
-import { supabase } from '../lib/supabase'
-import {
-  findServiceBySlug,
-  matchesServiceProfile,
-  servicesPath,
-} from '../lib/serviceTaxonomy'
+import { homeCategoryPath } from '../lib/homeCategoryAdapter'
+import { findServiceBySlug, servicesPath } from '../lib/serviceTaxonomy'
 import {
   appendLocationToPath,
   countrySlugFromGeo,
@@ -44,8 +34,6 @@ export interface MainCategoriesSectionProps {
   loading?: boolean
   className?: string
 }
-
-type CategoryStats = { specialists: number; companies: number }
 
 function localizedTitle(
   value: LocalizedText,
@@ -77,30 +65,26 @@ function professionalPath(
   return homeCategoryPath(category, subcategory)
 }
 
+function isCoarsePointer(): boolean {
+  if (typeof window === 'undefined' || !window.matchMedia) return false
+  return window.matchMedia('(hover: none), (pointer: coarse)').matches
+}
+
 /**
- * DImarket category browser: expand a card, then open matching professionals.
- * Paints marketing tree from serviceCategories; enriches counts from DB mains
- * via homeCategoryAdapter when `categories` prop is provided (SSoT bridge).
+ * DImarket category browser: 4-column text grid with hover/focus subcategory menus.
  */
 export function MainCategoriesSection({
   id = 'choose-category',
   title,
   subtitle,
   eyebrow,
-  categories: marketplaceCategories,
-  loading: marketplaceLoading,
+  showSearch = true,
   className = '',
 }: MainCategoriesSectionProps) {
   const { language, t, location, setLocation } = useApp()
   const [query, setQuery] = useState('')
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [statsByCategory, setStatsByCategory] = useState<Record<string, CategoryStats>>({})
   const lang = language.code
-
-  const dbBySite = useMemo(
-    () => marketplaceBySiteSlug(marketplaceCategories),
-    [marketplaceCategories],
-  )
 
   const countrySlug = countrySlugFromGeo(location)
   const locationDisplay = location.country || t('dimarket.loc.all-europe')
@@ -109,9 +93,6 @@ export function MainCategoriesSection({
     : 'all-europe'
 
   const filtered = useMemo(() => {
-    // Intentionally no .slice() / MAX_CATEGORIES — render every public serviceCategories entry
-    // (including buy-sell and jobs). Search only filters; it never caps the list.
-    // Documents & Procedures hub stays at /documents — do not promote as an empty category card.
     const publicCategories = serviceCategories.filter(
       (category) => !isDocumentsProceduresPublicCategory(category.slug),
     )
@@ -122,57 +103,12 @@ export function MainCategoriesSection({
     )
   }, [query, lang])
 
-  // Lazy-load directory counts once (for category card stats).
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id, user_role, bio, full_name, work_subcategory_slugs, professional_categories(category:categories(name, slug))')
-        .eq('is_professional', true)
-        .in('user_role', ['professional', 'company'])
-        .limit(500)
-
-      if (cancelled || !data) return
-
-      const next: Record<string, CategoryStats> = {}
-      for (const category of serviceCategories) {
-        const specialistIds = new Set<string>()
-        const companyIds = new Set<string>()
-        for (const sub of category.subcategories) {
-          const resolved = findServiceBySlug(sub.slug)
-          if (!resolved) continue
-          for (const profile of data as Array<{
-            id?: string
-            user_role?: string
-            bio?: string | null
-            full_name?: string | null
-            work_subcategory_slugs?: string[] | null
-            professional_categories?: { category?: { name?: string; slug?: string } | null }[]
-          }>) {
-            if (!matchesServiceProfile(profile, resolved.matcher)) continue
-            const pid = profile.id ?? `${profile.full_name}-${profile.user_role}`
-            if (profile.user_role === 'company') companyIds.add(pid)
-            else specialistIds.add(pid)
-          }
-        }
-        next[category.id] = {
-          specialists: specialistIds.size,
-          companies: companyIds.size,
-        }
-      }
-      if (!cancelled) setStatsByCategory(next)
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
   const sectionTitle = title ?? t('dimarket.title')
   const sectionSubtitle = subtitle ?? t('dimarket.subtitle')
   const sectionEyebrow = eyebrow ?? t('dimarket.eyebrow')
 
   const handleSubcategoryClick = (category: ServiceCategory, subcategory: ServiceSubcategory) => {
+    setExpandedId(null)
     if (category.slug === 'documents-procedures' || category.slug === 'official-documents') {
       navigateTo(appendLocationToPath(`/documents/${subcategory.slug}`, location))
       return
@@ -198,33 +134,18 @@ export function MainCategoriesSection({
     if (popular) setQuery(popular.query)
   }
 
-  const handleCategoryCardClick = (category: ServiceCategory) => {
-    // Buy & Sell / Jobs: open dedicated listing page immediately.
-    if (category.href) {
-      navigateTo(appendLocationToPath(homeCategoryPath(category), location))
-      return
-    }
-    setExpandedId(expandedId === category.id ? null : category.id)
+  const openCategory = (category: ServiceCategory) => {
+    setExpandedId(null)
+    navigateTo(appendLocationToPath(homeCategoryPath(category), location))
   }
 
-  const formatCategoryStats = (category: ServiceCategory): string => {
-    const overlay = dbOverlayForHome(category.slug, dbBySite)
-    if (overlay.professionalsCount != null && !marketplaceLoading) {
-      const companies = statsByCategory[category.id]?.companies ?? 0
-      return t('services.statsSpecialistsCompanies')
-        .replace('{specialists}', String(overlay.professionalsCount))
-        .replace('{companies}', String(companies))
+  const handleCategoryActivate = (event: MouseEvent<HTMLAnchorElement>, category: ServiceCategory) => {
+    if (isCoarsePointer() && category.subcategories.length > 0 && expandedId !== category.id) {
+      event.preventDefault()
+      setExpandedId(category.id)
+      return
     }
-    const stats = statsByCategory[category.id]
-    if (!stats) {
-      if (overlay.servicesCount != null) {
-        return `${overlay.servicesCount} ${t('dimarket.servicesLabel')}`
-      }
-      return `${category.serviceCount} ${t('dimarket.servicesLabel')}`
-    }
-    return t('services.statsSpecialistsCompanies')
-      .replace('{specialists}', String(stats.specialists))
-      .replace('{companies}', String(stats.companies))
+    openCategory(category)
   }
 
   return (
@@ -234,136 +155,137 @@ export function MainCategoriesSection({
       aria-labelledby={`${id}-title`}
     >
       <div className="dimarket-categories__head">
-        <p className="dimarket-categories__eyebrow">{sectionEyebrow}</p>
-        <h2 id={`${id}-title`}>{sectionTitle}</h2>
-        <p>{sectionSubtitle}</p>
+        {showSearch ? <p className="dimarket-categories__eyebrow">{sectionEyebrow}</p> : null}
+        <h2 id={`${id}-title`} className="dimarket-categories__title">
+          {sectionTitle}
+        </h2>
+        {showSearch ? <p>{sectionSubtitle}</p> : null}
       </div>
 
-      <div className="dimarket-search" role="search">
-        <label className="dimarket-search__input">
-          <Search className="h-5 w-5" aria-hidden />
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={t('dimarket.searchPlaceholder')}
-            aria-label={t('dimarket.searchPlaceholder')}
-          />
-        </label>
-        <label className="dimarket-search__location">
-          <MapPin className="h-5 w-5" aria-hidden />
-          <span>{t('dimarket.locationLabel')}</span>
-          <select
-            value={selectValue}
-            onChange={(event) => setLocation(geoFromCountrySlug(event.target.value, location))}
-            aria-label={t('dimarket.locationLabel')}
-            title={locationDisplay}
-          >
-            <option value="all-europe">
-              {hasActiveLocation(location) && selectValue === 'all-europe'
-                ? locationDisplay
-                : t('dimarket.loc.all-europe')}
-            </option>
-            {categoryLocationOptions
-              .filter((option) => option.id !== 'all-europe')
-              .map((option) => (
-                <option key={option.id} value={option.id}>
-                  {selectValue === option.id && hasActiveLocation(location)
+      {showSearch ? (
+        <>
+          <div className="dimarket-search" role="search">
+            <label className="dimarket-search__input">
+              <Search className="h-5 w-5" aria-hidden />
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={t('dimarket.searchPlaceholder')}
+                aria-label={t('dimarket.searchPlaceholder')}
+              />
+            </label>
+            <label className="dimarket-search__location">
+              <MapPin className="h-5 w-5" aria-hidden />
+              <span>{t('dimarket.locationLabel')}</span>
+              <select
+                value={selectValue}
+                onChange={(event) => setLocation(geoFromCountrySlug(event.target.value, location))}
+                aria-label={t('dimarket.locationLabel')}
+                title={locationDisplay}
+              >
+                <option value="all-europe">
+                  {hasActiveLocation(location) && selectValue === 'all-europe'
                     ? locationDisplay
-                    : t(`dimarket.loc.${option.id}` as TranslationKey)}
+                    : t('dimarket.loc.all-europe')}
                 </option>
-              ))}
-          </select>
-        </label>
-      </div>
+                {categoryLocationOptions
+                  .filter((option) => option.id !== 'all-europe')
+                  .map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {selectValue === option.id && hasActiveLocation(location)
+                        ? locationDisplay
+                        : t(`dimarket.loc.${option.id}` as TranslationKey)}
+                    </option>
+                  ))}
+              </select>
+            </label>
+          </div>
 
-      <div className="dimarket-popular" aria-label={t('dimarket.popularSearchesLabel')}>
-        <span>{t('dimarket.popularSearchesLabel')}</span>
-        <div>
-          {popularCategorySearches.map((item) => (
-            <button key={item.id} type="button" onClick={() => handlePopularClick(item.id)}>
-              {t(`dimarket.popular.${item.id}` as TranslationKey)}
-            </button>
-          ))}
-        </div>
-      </div>
+          <div className="dimarket-popular" aria-label={t('dimarket.popularSearchesLabel')}>
+            <span>{t('dimarket.popularSearchesLabel')}</span>
+            <div>
+              {popularCategorySearches.map((item) => (
+                <button key={item.id} type="button" onClick={() => handlePopularClick(item.id)}>
+                  {t(`dimarket.popular.${item.id}` as TranslationKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      ) : null}
 
       {filtered.length === 0 ? (
         <p className="dimarket-categories__empty">{t('dimarket.noResults')}</p>
       ) : (
-        <LazyMotion features={domAnimation}>
-          <m.div
-            className="dimarket-category-grid"
-            layout
-            data-category-count={filtered.length}
-            data-includes-buy-sell={filtered.some((c) => c.id === 'buy-sell') ? '1' : '0'}
-            data-includes-jobs={filtered.some((c) => c.id === 'jobs') ? '1' : '0'}
-          >
-            {filtered.map((category) => {
-              const expanded = expandedId === category.id
-              const categoryTitle = localizedTitle(category.title, lang, category.slug)
-              return (
-                <m.article key={category.id} className="dimarket-category-card" layout>
-                  <button
-                    type="button"
-                    className="dimarket-category-card__button"
-                    onClick={() => handleCategoryCardClick(category)}
-                    aria-expanded={expanded}
-                    aria-label={`${expanded ? t('dimarket.closeCategory') : t('dimarket.openCategory')}: ${categoryTitle}`}
+        <ul
+          className="dimarket-cat-grid"
+          data-category-count={filtered.length}
+          data-includes-buy-sell={filtered.some((c) => c.id === 'buy-sell') ? '1' : '0'}
+          data-includes-jobs={filtered.some((c) => c.id === 'jobs') ? '1' : '0'}
+        >
+          {filtered.map((category) => {
+            const expanded = expandedId === category.id
+            const categoryTitle = localizedTitle(category.title, lang, category.slug)
+            const categoryHref = appendLocationToPath(homeCategoryPath(category), location)
+            const hasSubs = category.subcategories.length > 0
+            return (
+              <li
+                key={category.id}
+                className={`dimarket-cat-item${expanded ? ' is-open' : ''}`}
+                onMouseEnter={() => {
+                  if (!isCoarsePointer() && hasSubs) setExpandedId(category.id)
+                }}
+                onMouseLeave={() => {
+                  if (!isCoarsePointer()) {
+                    setExpandedId((current) => (current === category.id ? null : current))
+                  }
+                }}
+              >
+                <a
+                  href={categoryHref}
+                  className="dimarket-cat-item__link"
+                  aria-haspopup={hasSubs ? 'menu' : undefined}
+                  aria-expanded={hasSubs ? expanded : undefined}
+                  aria-controls={hasSubs ? `${id}-subs-${category.id}` : undefined}
+                  onClick={(event) => handleCategoryActivate(event, category)}
+                >
+                  {categoryTitle}
+                </a>
+                {hasSubs ? (
+                  <ul
+                    id={`${id}-subs-${category.id}`}
+                    className="dimarket-cat-item__menu"
+                    role="menu"
+                    aria-label={categoryTitle}
                   >
-                    <span className="dimarket-category-card__icon" aria-hidden>
-                      {category.icon}
-                    </span>
-                    <span className="dimarket-category-card__body">
-                      <strong>{categoryTitle}</strong>
-                      <span>{formatCategoryStats(category)}</span>
-                    </span>
-                    <ChevronRight className="dimarket-category-card__chevron" aria-hidden />
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {expanded ? (
-                      <m.div
-                        className="dimarket-subcategories"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                    <li role="none">
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="dimarket-cat-item__all"
+                        onClick={() => openCategory(category)}
                       >
-                        <div>
-                          {category.href ? (
-                            <button
-                              type="button"
-                              className="dimarket-subcategory-chip dimarket-subcategory-chip--primary"
-                              onClick={() =>
-                                navigateTo(appendLocationToPath(homeCategoryPath(category), location))
-                              }
-                            >
-                              <span aria-hidden>{category.icon}</span>
-                              {categoryTitle}
-                            </button>
-                          ) : null}
-                          {category.subcategories.map((subcategory) => (
-                            <button
-                              key={subcategory.id}
-                              type="button"
-                              className="dimarket-subcategory-chip"
-                              onClick={() => handleSubcategoryClick(category, subcategory)}
-                              title={subcategory.description.en}
-                            >
-                              <span aria-hidden>{subcategory.icon}</span>
-                              {localizedTitle(subcategory.title, lang, subcategory.slug)}
-                            </button>
-                          ))}
-                        </div>
-                      </m.div>
-                    ) : null}
-                  </AnimatePresence>
-                </m.article>
-              )
-            })}
-          </m.div>
-        </LazyMotion>
+                        {categoryTitle}
+                      </button>
+                    </li>
+                    {category.subcategories.map((subcategory) => (
+                      <li key={subcategory.id} role="none">
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => handleSubcategoryClick(category, subcategory)}
+                        >
+                          {localizedTitle(subcategory.title, lang, subcategory.slug)}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </li>
+            )
+          })}
+        </ul>
       )}
     </section>
   )
