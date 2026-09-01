@@ -2483,7 +2483,7 @@ export const enTranslations = {
   'boost.subtitle': 'Highlight your profile among other professionals and get more jobs.',
   'dimarket.eyebrow': 'Service categories',
   'dimarket.title': 'Find the right service faster',
-  'dimarket.subtitle': 'Browse DImarket services by category, expand a card, and jump straight to matching professionals.',
+  'dimarket.subtitle': 'Browse DImarket services by category and pick a subcategory.',
   'dimarket.searchPlaceholder': 'Search services...',
   'dimarket.locationLabel': 'Location',
   'dimarket.popularSearchesLabel': 'Popular searches',

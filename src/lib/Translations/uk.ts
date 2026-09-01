@@ -2484,7 +2484,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'boost.subtitle': 'Виділіть свій профіль серед інших майстрів і отримуйте більше замовлень.',
   'dimarket.eyebrow': 'Категорії послуг',
   'dimarket.title': 'Знайдіть потрібну послугу швидше',
-  'dimarket.subtitle': 'Переглядайте послуги DImarket за категоріями, розгорніть картку й одразу перейдіть до відповідних фахівців.',
+  'dimarket.subtitle': 'Переглядайте послуги DImarket за категоріями та оберіть підкатегорію.',
   'dimarket.searchPlaceholder': 'Пошук послуг...',
   'dimarket.locationLabel': 'Локація',
   'dimarket.popularSearchesLabel': 'Популярні пошуки',
