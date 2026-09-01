@@ -10,7 +10,7 @@ const COUNTRY_ALIASES: Record<string, string[]> = {
   Hungary: ['Hungary', 'Угорщина'],
   Austria: ['Austria', 'Австрія'],
   France: ['France', 'Франція'],
-  Spain: ['Spain', 'Іспанія'],
+  Spain: ['Spain', 'Іспанія', 'España', 'Espana'],
   Italy: ['Italy', 'Італія'],
   'United Kingdom': ['United Kingdom', 'Великобританія', 'UK'],
 }

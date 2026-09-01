@@ -4,6 +4,7 @@
  */
 
 import { parseRegistrationLocation } from './registrationGeoData'
+import { canonicalCountryName, countryQueryNames } from './geoAliases'
 import { haversineKm, formatDistanceKm, type GeoPoint } from './projectFeed'
 import type { GeoHierarchySelection } from './geoHierarchy'
 import { searchLocations } from './geocoding'
@@ -436,9 +437,13 @@ function includesLoose(haystack: string, needle: string): boolean {
 function countryMatches(location: string | null | undefined, country: string): boolean {
   if (!country) return true
   const loc = (location ?? '').trim()
-  if (!loc) return true
+  if (!loc) return false
+  const wanted = canonicalCountryName(country)
+  const names = countryQueryNames(wanted)
   const parsed = parseRegistrationLocation(loc)
-  return includesLoose(loc, country) || Boolean(parsed?.country && includesLoose(parsed.country, country))
+  const storedCountry = parsed?.country ? canonicalCountryName(parsed.country) : ''
+  if (storedCountry && storedCountry === wanted) return true
+  return names.some((name) => includesLoose(loc, name) || Boolean(parsed?.country && includesLoose(parsed.country, name)))
 }
 
 function adminMatch(location: string | null | undefined, geo: GeoSearchState): boolean {
@@ -447,9 +452,7 @@ function adminMatch(location: string | null | undefined, geo: GeoSearchState): b
   const parsed = parseRegistrationLocation(loc)
 
   if (geo.country) {
-    const countryOk =
-      includesLoose(loc, geo.country) ||
-      (parsed?.country ? includesLoose(parsed.country, geo.country) : false)
+    const countryOk = countryMatches(loc, geo.country)
     if (!countryOk) return false
   }
 

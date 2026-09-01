@@ -12,6 +12,9 @@ import {
   sortProfilesForPublicDiscovery,
 } from './publicProfileVisibility'
 import { isBusinessNamedProfessional } from './professionalDisplay'
+import { canonicalCountryName, countryQueryNames } from './geoAliases'
+import { matchProfileGeo, type GeoSearchState } from './geoSearch'
+import { listingLocationMatches } from './listingLocation'
 import type { ListingWithImages, Profile } from './types'
 
 export type HomeMetrics = {
@@ -153,23 +156,82 @@ export async function fetchHomepageMetrics(): Promise<HomeMetrics> {
   return metrics
 }
 
-export async function fetchHomeProjects(limit = 12): Promise<ListingWithImages[]> {
+export async function fetchHomeProjects(
+  limit = 12,
+  geo?: GeoSearchState,
+): Promise<ListingWithImages[]> {
   const now = new Date().toISOString()
-  const { data } = await excludeSuppressedFromQuery(
-    supabase
-      .from('listings')
-      .select('*, images:listing_images(*), category:categories(*)')
-      .eq('listing_type', 'service_request')
-      .eq('status', 'active')
-      .gte('expires_at', now)
-      .order('created_at', { ascending: false })
-      .limit(limit),
-  )
+  let query = supabase
+    .from('listings')
+    .select('*, images:listing_images(*), category:categories(*)')
+    .eq('listing_type', 'service_request')
+    .eq('status', 'active')
+    .gte('expires_at', now)
+    .order('created_at', { ascending: false })
+    .limit(geo?.country ? Math.max(limit * 8, 48) : limit)
 
-  return filterSuppressedListings((data as ListingWithImages[] | null) ?? [])
+  if (geo?.country) {
+    const loc = locationCountryOrFilter('location', geo.country)
+    const countryCol = locationCountryOrFilter('country_name', geo.country)
+    query = query.or(`${loc},${countryCol}`)
+  }
+
+  const { data } = await excludeSuppressedFromQuery(query)
+  return filterHomeProjectsByGeo(
+    filterSuppressedListings((data as ListingWithImages[] | null) ?? []),
+    geo,
+    limit,
+  )
 }
 
-export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfessional[]> {
+function locationCountryOrFilter(column: string, country: string): string {
+  return countryQueryNames(canonicalCountryName(country))
+    .map((name) => `${column}.ilike.%${name.replace(/[,()]/g, '')}%`)
+    .join(',')
+}
+
+function listingMatchesGeo(listing: ListingWithImages, geo: GeoSearchState | undefined): boolean {
+  if (!geo?.country && !geo?.city && !geo?.region) return true
+  const blob = [listing.country_name, listing.city_name, listing.location].filter(Boolean).join(', ')
+  if (geo.country) {
+    const countryOk = countryQueryNames(canonicalCountryName(geo.country)).some((name) =>
+      listingLocationMatches(name, blob),
+    )
+    if (!countryOk) return false
+  }
+  if (geo.city && !listingLocationMatches(geo.city, blob)) return false
+  if (geo.region && !geo.city && !listingLocationMatches(geo.region, blob)) return false
+  return true
+}
+
+function applyCountryLocationFilter(query: any, country?: string | null) {
+  const name = country?.trim()
+  if (!name) return query
+  return query.or(locationCountryOrFilter('location', name))
+}
+
+export function filterHomeProfessionalsByGeo(
+  rows: HomeProfessional[],
+  geo: GeoSearchState | undefined,
+  limit = 4,
+): HomeProfessional[] {
+  const matched = geo ? rows.filter((row) => matchProfileGeo(row, geo).matches) : rows
+  return matched.slice(0, limit)
+}
+
+export function filterHomeProjectsByGeo(
+  rows: ListingWithImages[],
+  geo: GeoSearchState | undefined,
+  limit = 12,
+): ListingWithImages[] {
+  const matched = geo ? rows.filter((row) => listingMatchesGeo(row, geo)) : rows
+  return matched.slice(0, limit)
+}
+
+export async function fetchHomeProfessionals(
+  limit = 12,
+  geo?: GeoSearchState,
+): Promise<HomeProfessional[]> {
   const select = `
       *,
       professional_categories(
@@ -178,31 +240,39 @@ export async function fetchHomeProfessionals(limit = 12): Promise<HomeProfession
       )
     `
 
+  const rowLimit = Math.max(limit * 8, 96)
   let query = supabase
     .from('profiles')
     .select(select)
     .eq('is_professional', true)
     .eq('user_role', 'professional')
     .order('rating', { ascending: false })
-    .limit(Math.max(limit * 8, 96))
+    .limit(rowLimit)
+
+  query = applyCountryLocationFilter(query, geo?.country)
 
   // Soft-delete / hide columns (APPLY_OWNER_PROFILE_MODERATION.sql)
   let { data, error } = await (query as any).is('deleted_at', null).is('hidden_at', null)
   if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
-    ;({ data, error } = await supabase
+    let fallback = supabase
       .from('profiles')
       .select(select)
       .eq('is_professional', true)
       .eq('user_role', 'professional')
       .order('rating', { ascending: false })
-      .limit(Math.max(limit * 8, 96)))
+      .limit(rowLimit)
+    fallback = applyCountryLocationFilter(fallback, geo?.country)
+    ;({ data, error } = await fallback)
   }
 
   const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [])
   return sortProfilesForPublicDiscovery(rows)
 }
 
-export async function fetchHomeCompanies(limit = 12): Promise<HomeProfessional[]> {
+export async function fetchHomeCompanies(
+  limit = 12,
+  geo?: GeoSearchState,
+): Promise<HomeProfessional[]> {
   const select = `
       *,
       professional_categories(
@@ -211,23 +281,28 @@ export async function fetchHomeCompanies(limit = 12): Promise<HomeProfessional[]
       )
     `
 
+  const rowLimit = Math.max(limit * 8, 96)
   let query = supabase
     .from('profiles')
     .select(select)
     .eq('is_professional', true)
     .eq('user_role', 'company')
     .order('rating', { ascending: false })
-    .limit(Math.max(limit * 8, 96))
+    .limit(rowLimit)
+
+  query = applyCountryLocationFilter(query, geo?.country)
 
   let { data, error } = await (query as any).is('deleted_at', null).is('hidden_at', null)
   if (error && /deleted_at|hidden_at|42703/i.test(error.message || '')) {
-    ;({ data } = await supabase
+    let fallback = supabase
       .from('profiles')
       .select(select)
       .eq('is_professional', true)
       .eq('user_role', 'company')
       .order('rating', { ascending: false })
-      .limit(Math.max(limit * 8, 96)))
+      .limit(rowLimit)
+    fallback = applyCountryLocationFilter(fallback, geo?.country)
+    ;({ data } = await fallback)
   }
 
   const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [])
@@ -308,14 +383,16 @@ function guessCountryCode(name: string | null | undefined): string | null {
   return null
 }
 
-export async function fetchHomeMarketplaceData(): Promise<HomeMarketplaceData> {
+export async function fetchHomeMarketplaceData(
+  geo?: GeoSearchState,
+): Promise<HomeMarketplaceData> {
   const [metrics, categories, projects, professionals, companies, reviews] =
     await Promise.all([
       fetchHomepageMetrics(),
       fetchMainMarketplaceCategories(),
-      fetchHomeProjects(),
-      fetchHomeProfessionals(),
-      fetchHomeCompanies(),
+      fetchHomeProjects(12, geo),
+      fetchHomeProfessionals(12, geo),
+      fetchHomeCompanies(12, geo),
       fetchHomeReviews(),
     ])
 

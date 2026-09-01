@@ -22,6 +22,8 @@ import { SponsoredCompanies } from '../components/SponsoredCompanies'
 import { useApp } from '../contexts/AppContext'
 import {
   fetchHomeMarketplaceData,
+  filterHomeProfessionalsByGeo,
+  filterHomeProjectsByGeo,
   type HomeMarketplaceData,
   type HomeMetrics,
 } from '../lib/homeMarketplace'
@@ -36,7 +38,7 @@ const EMPTY_METRICS: HomeMetrics = {
 }
 
 export function Home() {
-  const { t } = useApp()
+  const { t, location } = useApp()
   const [data, setData] = useState<HomeMarketplaceData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -61,7 +63,7 @@ export function Home() {
     ;(async () => {
       setLoading(true)
       try {
-        const payload = await fetchHomeMarketplaceData()
+        const payload = await fetchHomeMarketplaceData(location)
         if (!cancelled) setData(payload)
       } finally {
         if (!cancelled) setLoading(false)
@@ -70,7 +72,7 @@ export function Home() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [location.country, location.region, location.province, location.city])
 
   useEffect(() => {
     if (loading) return
@@ -84,12 +86,18 @@ export function Home() {
   }, [loading])
 
   const metrics = data?.metrics ?? EMPTY_METRICS
-  const professionals = useMemo(() => {
-    return (data?.professionals ?? []).slice(0, 4)
-  }, [data?.professionals])
-  const companies = useMemo(() => {
-    return (data?.companies ?? []).slice(0, 4)
-  }, [data?.companies])
+  const professionals = useMemo(
+    () => filterHomeProfessionalsByGeo(data?.professionals ?? [], location, 4),
+    [data?.professionals, location],
+  )
+  const companies = useMemo(
+    () => filterHomeProfessionalsByGeo(data?.companies ?? [], location, 4),
+    [data?.companies, location],
+  )
+  const projects = useMemo(
+    () => filterHomeProjectsByGeo(data?.projects ?? [], location, 12),
+    [data?.projects, location],
+  )
 
 
   return (
@@ -103,7 +111,7 @@ export function Home() {
       </div>
 
       <HomeCategoriesPreview categories={data?.categories ?? []} loading={loading} />
-      <HomePopularProjects projects={data?.projects ?? []} loading={loading} />
+      <HomePopularProjects projects={projects} loading={loading} />
       <HomeFindContractor />
       <HomeTopProfessionals professionals={professionals} loading={loading} />
       <HomeTopCompanies companies={companies} loading={loading} />
