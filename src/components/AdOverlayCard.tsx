@@ -10,7 +10,7 @@ import {
 import { campaignWithSlotMedia, mediaStateFromCampaignAndSlot } from '../lib/adSlotMedia'
 import { layoutKeyFromOverlayVariant } from '../lib/adBannerLayouts'
 import { AdMediaDisplay } from './AdMediaDisplay'
-import { ProjectStoryBanner } from './ProjectStoryBanner'
+import { ProjectStoryBanner, type ProjectStoryRow } from './ProjectStoryBanner'
 import { useApp } from '../contexts/AppContext'
 import { AD_TEXT_PANEL_CLASS, adSlotTailwind } from '../lib/adSlotLayout'
 import {
@@ -256,9 +256,9 @@ export function AdOverlayCard({
         : undefined
 
   if (isCenterStory) {
-    const rows = [
-      brand ? { label: t('ads.story.contractor'), value: brand, accent: true } : null,
-    ].filter((row): row is { label: string; value: string; accent?: boolean } => Boolean(row))
+    const rows: ProjectStoryRow[] = brand
+      ? [{ label: t('ads.story.contractor'), value: brand, accent: true }]
+      : []
 
     return (
       <ProjectStoryBanner
