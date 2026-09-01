@@ -187,6 +187,20 @@ test.describe('Categories is a page with site chrome', () => {
     await expect(page.locator('.mega-menu__chips')).toHaveCount(0)
     await expect(page.locator('.mega-menu__body')).toBeVisible()
   })
+
+  test('chat FAB sits above the mobile tab bar', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await gotoPath(page, '/')
+    const nav = bottomNav(page)
+    const chat = page.locator('.ai-chat-n8n')
+    await expect(nav).toBeVisible()
+    await expect(chat).toBeVisible()
+    const navBox = await nav.boundingBox()
+    const chatBox = await chat.boundingBox()
+    expect(navBox, 'bottom nav box').toBeTruthy()
+    expect(chatBox, 'chat FAB box').toBeTruthy()
+    expect(chatBox!.y + chatBox!.height).toBeLessThanOrEqual(navBox!.y + 1)
+  })
 })
 
 test.describe('Mobile bottom nav regression', () => {

@@ -96,7 +96,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}>
+    <div className="ai-chat-n8n">
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}

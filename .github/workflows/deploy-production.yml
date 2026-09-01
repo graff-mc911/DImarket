@@ -50,15 +50,22 @@ jobs:
           fi
 
       - name: Pull production env
+        id: pull
         if: steps.check_secrets.outputs.skip != 'true'
+        continue-on-error: true
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
+      - name: Skip workflow deploy when Vercel project link fails
+        if: steps.check_secrets.outputs.skip != 'true' && steps.pull.outcome != 'success'
+        run: |
+          echo "::warning::vercel pull could not load project settings. Rely on Vercel Git auto-deploy (dimarket.app/build-id.txt)."
+
       - name: Build (production)
-        if: steps.check_secrets.outputs.skip != 'true'
+        if: steps.check_secrets.outputs.skip != 'true' && steps.pull.outcome == 'success'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -67,7 +74,7 @@ jobs:
         run: npx vercel build --prod --token="$VERCEL_TOKEN"
 
       - name: Deploy prebuilt to production
-        if: steps.check_secrets.outputs.skip != 'true'
+        if: steps.check_secrets.outputs.skip != 'true' && steps.pull.outcome == 'success'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -75,7 +82,7 @@ jobs:
         run: npx vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
 
       - name: Verify live build-id
-        if: steps.check_secrets.outputs.skip != 'true'
+        if: steps.check_secrets.outputs.skip != 'true' && steps.pull.outcome == 'success'
         run: |
           sleep 5
           live="$(curl -fsS 'https://dimarket.app/build-id.txt' | tr -d '[:space:]')"

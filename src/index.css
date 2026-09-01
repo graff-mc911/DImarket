@@ -229,6 +229,24 @@
   }
 
   /**
+   * n8n assistant FAB — sit above the mobile tab bar so it cannot steal taps
+   * from Категорії / Карта / Ще. Below `.mobile-nav-more` (z-index 45).
+   */
+  .ai-chat-n8n {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 35;
+  }
+
+  @media (max-width: 1023px) {
+    .ai-chat-n8n {
+      right: 0.75rem;
+      bottom: calc(4.5rem + 0.75rem + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  /**
    * Mobile bottom nav — native app layout (Airbnb / Telegram style)
    *
    * Root cause of previous label clipping:

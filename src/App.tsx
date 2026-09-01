@@ -445,13 +445,15 @@ function App() {
                 <Suspense fallback={<PageLoading />}>{getPage()}</Suspense>
               </PageWithSideAds>
             </ErrorBoundary>
-            <AiChatWidget />
           </main>
           <ErrorBoundary name="Footer">
             <Footer />
           </ErrorBoundary>
           <ErrorBoundary name="MobileBottomNav">
             <MobileBottomNav />
+          </ErrorBoundary>
+          <ErrorBoundary name="AiChat">
+            <AiChatWidget />
           </ErrorBoundary>
           <ErrorBoundary name="PwaInstall">
             <PwaInstallPrompt />
