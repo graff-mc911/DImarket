@@ -1,6 +1,6 @@
 // ============================================================
 // App.tsx — Кореневий компонент додатку DImarket
-// Відповідає за маршрутизацію між усіми сторінками.
+// Відповідає за маршрутизацію між усіма сторінками.
 // ============================================================
 
 import { Suspense, useEffect, useLayoutEffect, useState } from 'react'
@@ -24,6 +24,7 @@ import {
 } from './lib/serviceTaxonomy'
 import { parseGeoServicePath } from './lib/geoSearch'
 import { isDocumentsSubcategorySlug } from './lib/documents/subcategories'
+import { AiChatWidget } from './components/AiChatWidget'
 
 // Eager: first paint / shell
 import { Home } from './pages/Home'
@@ -288,8 +289,6 @@ function App() {
     if (parts[0] === 'listing'      && parts[1]) return <ListingDetail listingId={parts[1]} />
     if (parts[0] === 'professional' && parts[1]) return <ProfessionalDetail profileId={parts[1]} />
     if (parts[0] === 'book' && parts[1]) return <BookProfessional profileId={parts[1]} />
-    if (parts[0] === 'project' && parts[1] === 'new') return <CreateProject />
-    if (parts[0] === 'create-project') return <CreateProject />
     if (parts[0] === 'project' && parts[1] && parts[2] === 'matches') {
       return <ProjectMatches listingId={parts[1]} />
     }
@@ -446,6 +445,7 @@ function App() {
                 <Suspense fallback={<PageLoading />}>{getPage()}</Suspense>
               </PageWithSideAds>
             </ErrorBoundary>
+            <AiChatWidget />
           </main>
           <ErrorBoundary name="Footer">
             <Footer />
