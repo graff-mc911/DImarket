@@ -24,9 +24,9 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
 
   const listRef = useRef<HTMLDivElement | null>(null)
 
-  // Resolve webhook URL: prop -> Vite env -> empty
+  // Resolve webhook URL: prop -> hardcoded n8n URL
   const resolvedWebhookUrl =
-    webhookUrl || (typeof import.meta !== 'undefined' ? (import.meta as any)?.env?.VITE_AI_WEBHOOK_URL : undefined) || ''
+    webhookUrl || 'https://karpatsky.app.n8n.cloud/webhook/97ce5a05-05d7-4d25-87e0-9521d23a9713'
 
   useEffect(() => {
     // Autoscroll to bottom when messages change
