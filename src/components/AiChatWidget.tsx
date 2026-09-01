@@ -1,239 +1,88 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from 'react';
 
-type Role = "user" | "assistant" | "system";
-
-export interface AiMessage {
-  id: string;
-  role: Role;
+interface Message {
+  sender: 'user' | 'bot';
   text: string;
-  time?: string;
 }
 
-export interface AiChatWidgetProps {
-  title?: string;
-  initialMessages?: AiMessage[];
-  openByDefault?: boolean;
-  onSend?: (message: AiMessage) => Promise<AiMessage | void>;
-}
+export const AiChatWidget: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([
+    { sender: 'bot', text: 'Вітаю! Я віртуальний помічник Dimarket. Чим можу допомогти з документами чи пошуком фахівця?' }
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
 
-const formatTime = (d = new Date()) =>
-  d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
 
-export default function AiChatWidget({
-  title = "AI Chat",
-  initialMessages = [],
-  openByDefault = false,
-  onSend,
-}: AiChatWidgetProps) {
-  const [open, setOpen] = useState(openByDefault);
-  const [messages, setMessages] = useState<AiMessage[]>(initialMessages);
-  const [input, setInput] = useState("");
-  const [sending, setSending] = useState(false);
-  const listRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    // scroll to bottom when messages change
-    if (listRef.current) {
-      listRef.current.scrollTop = listRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const addMessage = (m: AiMessage) =>
-    setMessages((prev) => [...prev, { ...m, time: m.time ?? formatTime() }]);
-
-  const handleSend = async () => {
-    const text = input.trim();
-    if (!text || sending) return;
-    setSending(true);
-
-    const userMessage: AiMessage = {
-      id: `u-${Date.now()}`,
-      role: "user",
-      text,
-      time: formatTime(),
-    };
-
-    addMessage(userMessage);
-    setInput("");
+    const userMessage = input.trim();
+    setInput('');
+    setMessages(prev => [...prev, { sender: 'user', text: userMessage }]);
+    setLoading(true);
 
     try {
-      if (onSend) {
-        // let caller handle sending and optionally return assistant message
-        const result = await onSend(userMessage);
-        if (result) addMessage(result);
-      } else {
-        // default local behavior: simulate an assistant reply
-        await new Promise((r) => setTimeout(r, 700));
-        const assistantMessage: AiMessage = {
-          id: `a-${Date.now()}`,
-          role: "assistant",
-          text: `Відповідь: ${text}`,
-          time: formatTime(),
-        };
-        addMessage(assistantMessage);
-      }
-    } catch (err) {
-      const errMsg: AiMessage = {
-        id: `e-${Date.now()}`,
-        role: "assistant",
-        text: "Сталася помилка при надсиланні повідомлення.",
-        time: formatTime(),
-      };
-      addMessage(errMsg);
-      // rethrow if caller wants to handle
-      // throw err;
+      // Вставте сюди ваш Production Webhook URL з n8n
+      const webhookUrl = 'ТУТ_ВАШ_PRODUCTION_WEBHOOK_URL';
+
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userMessage,
+          chat_id: 'web_user_' + Math.random().toString(36).substring(2, 9),
+          source: 'dimarket_website'
+        })
+      });
+
+      const data = await response.json();
+      setMessages(prev => [...prev, { sender: 'bot', text: data.response || 'Отримано порожню відповідь від агента.' }]);
+    } catch (error) {
+      console.error('Помилка запиту до агента:', error);
+      setMessages(prev => [...prev, { sender: 'bot', text: 'Вибачте, сталася тимчасова помилка зв\'язку з сервером.' }]);
     } finally {
-      setSending(false);
+      setLoading(false);
     }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      void handleSend();
-    }
-  };
-
-  // basic inline styles so the component works without external CSS
-  const styles: { [k: string]: React.CSSProperties } = {
-    wrapper: {
-      position: "fixed",
-      right: 20,
-      bottom: 20,
-      width: 340,
-      maxHeight: "60vh",
-      boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-      borderRadius: 12,
-      overflow: "hidden",
-      fontFamily: "Inter, Roboto, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial",
-      background: "#fff",
-      zIndex: 9999,
-    },
-    header: {
-      background: "linear-gradient(90deg,#4f46e5,#06b6d4)",
-      color: "#fff",
-      padding: "10px 12px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      cursor: "pointer",
-    },
-    title: {
-      fontSize: 14,
-      fontWeight: 600,
-    },
-    body: {
-      display: open ? "flex" : "none",
-      flexDirection: "column",
-      height: "100%",
-    },
-    messages: {
-      padding: 12,
-      display: "flex",
-      flexDirection: "column",
-      gap: 8,
-      overflowY: "auto",
-      maxHeight: "calc(60vh - 120px)",
-      background: "#f8fafc",
-    },
-    msgUser: {
-      alignSelf: "flex-end",
-      background: "#111827",
-      color: "#fff",
-      padding: "8px 12px",
-      borderRadius: 12,
-      maxWidth: "80%",
-      whiteSpace: "pre-wrap",
-      fontSize: 14,
-    },
-    msgAssistant: {
-      alignSelf: "flex-start",
-      background: "#eef2ff",
-      color: "#0f172a",
-      padding: "8px 12px",
-      borderRadius: 12,
-      maxWidth: "80%",
-      whiteSpace: "pre-wrap",
-      fontSize: 14,
-    },
-    inputRow: {
-      display: "flex",
-      gap: 8,
-      padding: 12,
-      borderTop: "1px solid rgba(15,23,42,0.06)",
-      background: "#fff",
-      alignItems: "center",
-    },
-    input: {
-      flex: 1,
-      padding: "8px 10px",
-      borderRadius: 8,
-      border: "1px solid #e6e9ef",
-      fontSize: 14,
-    },
-    sendBtn: {
-      background: "#4f46e5",
-      color: "#fff",
-      border: "none",
-      padding: "8px 12px",
-      borderRadius: 8,
-      cursor: "pointer",
-      fontWeight: 600,
-    },
-    footerNote: {
-      padding: "6px 12px",
-      fontSize: 12,
-      color: "#475569",
-    },
   };
 
   return (
-    <div style={styles.wrapper} aria-live="polite">
-      <div
-        style={styles.header}
-        role="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-      >
-        <div style={styles.title}>{title}</div>
-        <div style={{ fontSize: 12 }}>{open ? "Закрити" : "Відкрити"}</div>
-      </div>
+    <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}>
+      {!isOpen ? (
+        <button 
+          onClick={() => setIsOpen(true)}
+          style={{ background: '#FFD700', color: '#000', border: 'none', padding: '12px 20px', borderRadius: '30px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+        >
+          💬 Чат з помічником
+        </button>
+      ) : (
+        <div style={{ width: '350px', height: '450px', background: '#fff', borderRadius: '12px', boxShadow: '0 5px 20px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div style={{ background: '#0f172a', color: '#fff', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontWeight: 'bold', color: '#FFD700' }}>Dimarket AI Assistant</span>
+            <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+          </div>
 
-      <div style={styles.body}>
-        <div style={styles.messages} ref={listRef}>
-          {messages.length === 0 && (
-            <div style={{ color: "#64748b", fontSize: 13 }}>
-              Почніть розмову — введіть повідомлення нижче.
-            </div>
-          )}
-
-          {messages.map((m) => (
-            <div key={m.id} style={m.role === "user" ? styles.msgUser : styles.msgAssistant}>
-              <div style={{ marginBottom: 6, opacity: 0.9 }}>{m.text}</div>
-              <div style={{ fontSize: 11, opacity: 0.6, textAlign: m.role === "user" ? "right" : "left" }}>
-                {m.time}
+          <div style={{ flex: 1, padding: '12px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', background: '#f8fafc' }}>
+            {messages.map((m, idx) => (
+              <div key={idx} style={{ alignSelf: m.sender === 'user' ? 'flex-end' : 'flex-start', background: m.sender === 'user' ? '#2563eb' : '#e2e8f0', color: m.sender === 'user' ? '#fff' : '#1e293b', padding: '8px 12px', borderRadius: '8px', maxWidth: '80%', fontSize: '14px', whiteSpace: 'pre-line' }}>
+                {m.text}
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+            {loading && <div style={{ alignSelf: 'flex-start', color: '#64748b', fontSize: '13px' }}>Друкує відповідь...</div>}
+          </div>
 
-        <div style={styles.inputRow}>
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Напишіть повідомлення..."
-            style={styles.input}
-            aria-label="AI chat input"
-            disabled={sending}
-          />
-          <button onClick={() => void handleSend()} style={styles.sendBtn} disabled={sending}>
-            {sending ? "..." : "Надіслати"}
-          </button>
+          <form onSubmit={sendMessage} style={{ display: 'flex', borderTop: '1px solid #e2e8f0', padding: '8px', background: '#fff' }}>
+            <input 
+              type="text" 
+              value={input} 
+              onChange={e => setInput(e.target.value)} 
+              placeholder="Напишіть запит..." 
+              style={{ flex: 1, border: '1px solid #cbd5e1', borderRadius: '6px', padding: '8px', outline: 'none', fontSize: '14px' }}
+            />
+            <button type="submit" style={{ background: '#FFD700', border: 'none', padding: '8px 14px', marginLeft: '6px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>➤</button>
+          </form>
         </div>
-
-        <div style={styles.footerNote}>Цей віджет працює локально, додайте onSend для інтеграції з бекендом.</div>
-      </div>
+      )}
     </div>
   );
-}
+};
