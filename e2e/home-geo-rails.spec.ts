@@ -47,5 +47,15 @@ test.describe('Homepage rails follow header country', () => {
     await expect(companies).toBeVisible()
     await expectSectionRespectsSpain(pros)
     await expectSectionRespectsSpain(companies)
+
+    expect(await pros.locator('.home-pro-card').count()).toBeGreaterThan(0)
+    expect(await companies.locator('.home-pro-card').count()).toBeGreaterThan(0)
+
+    const companySrcs = await companies.locator('.home-pro-card__avatar img').evaluateAll((imgs) =>
+      imgs.map((img) => (img as HTMLImageElement).currentSrc || img.getAttribute('src') || ''),
+    )
+    expect(companySrcs.length).toBeGreaterThan(1)
+    expect(companySrcs.some((src) => src.includes('listing-themes'))).toBe(false)
+    expect(new Set(companySrcs).size, companySrcs.join('\n')).toBe(companySrcs.length)
   })
 })

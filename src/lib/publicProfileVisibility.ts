@@ -76,18 +76,26 @@ export function isProfileSoftRemoved(profile: PublicProfileGate): boolean {
  * Does not decide ranking — only eligibility.
  * Contact rules apply only when the caller actually loaded those columns
  * (missing keys are treated as "not evaluated", not as empty).
+ * Homepage rails may pass `{ requireReachability: false }` so a country
+ * filter does not hide every master who has a city but no phone yet.
  */
-export function isProfilePubliclyListable(profile: PublicProfileGate): boolean {
+export function isProfilePubliclyListable(
+  profile: PublicProfileGate,
+  options?: { requireReachability?: boolean },
+): boolean {
   if (isProfileSoftRemoved(profile)) return false
   if (isLikelyQaOrTestProfile(profile)) return false
   if (profile.is_professional !== true) return false
   if (!hasPublicDirectoryLocation(profile)) return false
-  if (!hasPublicDirectoryReachability(profile)) return false
+  if (options?.requireReachability !== false && !hasPublicDirectoryReachability(profile)) return false
   return true
 }
 
-export function filterPublicProfiles<T extends PublicProfileGate>(rows: T[]): T[] {
-  return rows.filter(isProfilePubliclyListable)
+export function filterPublicProfiles<T extends PublicProfileGate>(
+  rows: T[],
+  options?: { requireReachability?: boolean },
+): T[] {
+  return rows.filter((row) => isProfilePubliclyListable(row, options))
 }
 
 /** Apply PostgREST filters when columns exist; safe no-op if caller omits. */

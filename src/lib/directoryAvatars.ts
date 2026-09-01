@@ -3,6 +3,8 @@
  * Used when profile_photo / avatar_url are still empty (RLS blocks anon profile updates).
  * Prefer DB fields once service-role backfill has run.
  */
+import { isStockListingThemeUrl } from './listingThemeImage'
+
 export const DIRECTORY_AVATAR_BY_PROFILE_ID: Record<string, string> = {
   '89ccac50-eded-47be-9426-ae6087bd16da':
     'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/89ccac50-eded-47be-9426-ae6087bd16da/avatar.jpeg',
@@ -31,7 +33,11 @@ export function resolveDirectoryAvatarUrl(
   profilePhoto?: string | null,
   avatarUrl?: string | null,
 ): string | null {
-  return profilePhoto || avatarUrl || DIRECTORY_AVATAR_BY_PROFILE_ID[profileId] || null
+  const uploaded = (profilePhoto || avatarUrl || '').trim()
+  if (uploaded && !isStockListingThemeUrl(uploaded)) return uploaded
+  const mapped = DIRECTORY_AVATAR_BY_PROFILE_ID[profileId]
+  if (mapped && !isStockListingThemeUrl(mapped)) return mapped
+  return null
 }
 
 const COMPANY_LOGO_SKIP =
@@ -60,7 +66,7 @@ function firstPortfolioImage(images: string[] | null | undefined): string | null
   if (!Array.isArray(images)) return null
   for (const raw of images) {
     const url = (raw || '').trim()
-    if (/^https?:\/\//i.test(url)) return url
+    if (/^https?:\/\//i.test(url) && !isStockListingThemeUrl(url)) return url
   }
   return null
 }

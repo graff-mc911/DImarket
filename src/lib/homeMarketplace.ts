@@ -258,7 +258,9 @@ export async function fetchHomeProfessionals(
     ;({ data, error } = await fallback)
   }
 
-  const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [])
+  const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [], {
+    requireReachability: false,
+  })
   return sortProfilesForPublicDiscovery(rows)
 }
 
@@ -298,7 +300,9 @@ export async function fetchHomeCompanies(
     ;({ data } = await fallback)
   }
 
-  const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [])
+  const rows = filterPublicProfiles((data as HomeProfessional[] | null) ?? [], {
+    requireReachability: false,
+  })
   return sortProfilesForPublicDiscovery(rows)
 }
 

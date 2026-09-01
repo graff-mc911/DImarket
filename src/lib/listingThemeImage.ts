@@ -267,6 +267,22 @@ export function listingHasUploadedImage(listing: ListingImageSource): boolean {
   return Boolean(listing.images?.some((img) => Boolean(img?.image_url?.trim())))
 }
 
+const STOCK_THEME_URLS = new Set(Object.values(LISTING_THEME_IMAGES))
+
+/** Shared listing-theme stock photos must not be reused as company/master avatars. */
+export function isStockListingThemeUrl(url: string | null | undefined): boolean {
+  const value = (url || '').trim()
+  if (!value) return false
+  if (value.includes('/images/listing-themes/')) return true
+  if (STOCK_THEME_URLS.has(value)) return true
+  const withoutQuery = value.split('?')[0]
+  for (const theme of STOCK_THEME_URLS) {
+    const themeBase = theme.split('?')[0]
+    if (withoutQuery === themeBase || value.startsWith(themeBase)) return true
+  }
+  return false
+}
+
 /** Запити клієнтів (Потрібна послуга) показуємо без фото — лише текст. */
 export function listingShowsImage(listing: ListingImageSource): boolean {
   return listing.listing_type !== 'service_request'
