@@ -23,4 +23,17 @@ test.describe('Homepage categories link grid', () => {
     await subcategory.click()
     await expect(page).not.toHaveURL(/\/$/)
   })
+
+  test('uses two columns on a phone viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await gotoPath(page, '/')
+    const categoryCols = await page.locator('#choose-category .dimarket-cat-grid').evaluate((el) =>
+      getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length,
+    )
+    const cityCols = await page.locator('.home-find-contractor__grid').evaluate((el) =>
+      getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length,
+    )
+    expect(categoryCols).toBe(2)
+    expect(cityCols).toBe(2)
+  })
 })

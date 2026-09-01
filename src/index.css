@@ -3999,18 +3999,47 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 @media (max-width: 900px) {
   .dimarket-cat-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem 0.75rem;
   }
 
   .dimarket-cat-item:nth-child(even) .dimarket-cat-item__menu {
     left: auto;
     right: 0;
   }
+
+  .dimarket-cat-item__link {
+    display: block;
+    min-height: 2.75rem;
+    padding: 0.7rem 0.75rem;
+    font-size: 0.86rem;
+    font-weight: 650;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+    background: #fff;
+    border: 1px solid rgba(35, 47, 62, 0.08);
+    box-shadow: 0 2px 4px rgba(35, 47, 62, 0.06), 0 10px 22px rgba(35, 47, 62, 0.1);
+  }
+
+  .dimarket-cat-item.is-open .dimarket-cat-item__link {
+    box-shadow: 0 3px 6px rgba(35, 47, 62, 0.08), 0 12px 26px rgba(35, 47, 62, 0.14);
+  }
 }
 
 @media (max-width: 520px) {
   .dimarket-cat-grid {
-    grid-template-columns: 1fr;
+    gap: 0.55rem 0.55rem;
+  }
+
+  .dimarket-cat-item__link {
+    min-height: 2.55rem;
+    padding: 0.58rem 0.62rem;
+    font-size: 0.8rem;
+    letter-spacing: -0.01em;
+  }
+
+  .dimarket-categories__title {
+    font-size: 1.35rem;
   }
 }
 
@@ -5052,13 +5081,43 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 @media (max-width: 900px) {
   .home-find-contractor__grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem 0.75rem;
+  }
+
+  .home-find-contractor__grid a {
+    display: block;
+    min-height: 2.75rem;
+    padding: 0.7rem 0.75rem;
+    font-size: 0.86rem;
+    font-weight: 650;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+    background: #fff;
+    border: 1px solid rgba(35, 47, 62, 0.08);
+    box-shadow: 0 2px 4px rgba(35, 47, 62, 0.06), 0 10px 22px rgba(35, 47, 62, 0.1);
   }
 }
 
 @media (max-width: 520px) {
+  .home-find-contractor {
+    padding: 2rem 0 0.5rem;
+  }
+
+  .home-find-contractor__title {
+    font-size: 1.35rem;
+    margin-bottom: 1.25rem;
+  }
+
   .home-find-contractor__grid {
-    grid-template-columns: 1fr;
+    gap: 0.55rem 0.55rem;
+  }
+
+  .home-find-contractor__grid a {
+    min-height: 2.55rem;
+    padding: 0.58rem 0.62rem;
+    font-size: 0.8rem;
+    letter-spacing: -0.01em;
   }
 }
 
