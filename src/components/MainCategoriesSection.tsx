@@ -1,4 +1,4 @@
-import { useMemo, useState, type MouseEvent } from 'react'
+import { useEffect, useMemo, useState, type MouseEvent } from 'react'
 import { MapPin, Search } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
@@ -65,13 +65,8 @@ function professionalPath(
   return homeCategoryPath(category, subcategory)
 }
 
-function isCoarsePointer(): boolean {
-  if (typeof window === 'undefined' || !window.matchMedia) return false
-  return window.matchMedia('(hover: none), (pointer: coarse)').matches
-}
-
 /**
- * DImarket category browser: 4-column text grid with hover/focus subcategory menus.
+ * DImarket category browser: 4-column text grid with click-to-open subcategory menus.
  */
 export function MainCategoriesSection({
   id = 'choose-category',
@@ -85,6 +80,26 @@ export function MainCategoriesSection({
   const [query, setQuery] = useState('')
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const lang = language.code
+
+  useEffect(() => {
+    if (!expandedId) return
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target
+      if (!(target instanceof Node)) return
+      const item = target instanceof Element ? target.closest('.dimarket-cat-item') : null
+      if (item?.classList.contains('is-open')) return
+      setExpandedId(null)
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setExpandedId(null)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [expandedId])
 
   const countrySlug = countrySlugFromGeo(location)
   const locationDisplay = location.country || t('dimarket.loc.all-europe')
@@ -140,9 +155,9 @@ export function MainCategoriesSection({
   }
 
   const handleCategoryActivate = (event: MouseEvent<HTMLAnchorElement>, category: ServiceCategory) => {
-    if (isCoarsePointer() && category.subcategories.length > 0 && expandedId !== category.id) {
+    if (category.subcategories.length > 0) {
       event.preventDefault()
-      setExpandedId(category.id)
+      setExpandedId((current) => (current === category.id ? null : category.id))
       return
     }
     openCategory(category)
@@ -233,14 +248,6 @@ export function MainCategoriesSection({
               <li
                 key={category.id}
                 className={`dimarket-cat-item${expanded ? ' is-open' : ''}`}
-                onMouseEnter={() => {
-                  if (!isCoarsePointer() && hasSubs) setExpandedId(category.id)
-                }}
-                onMouseLeave={() => {
-                  if (!isCoarsePointer()) {
-                    setExpandedId((current) => (current === category.id ? null : current))
-                  }
-                }}
               >
                 <a
                   href={categoryHref}

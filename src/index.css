@@ -3962,8 +3962,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   box-shadow: 0 14px 36px rgba(35, 47, 62, 0.12);
 }
 
-.dimarket-cat-item:hover .dimarket-cat-item__menu,
-.dimarket-cat-item:focus-within .dimarket-cat-item__menu,
 .dimarket-cat-item.is-open .dimarket-cat-item__menu {
   display: block;
 }
