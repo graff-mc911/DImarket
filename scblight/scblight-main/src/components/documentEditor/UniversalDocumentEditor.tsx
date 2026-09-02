@@ -24,6 +24,7 @@ import {
   FileJson,
   FileText,
   FolderOpen,
+  GripVertical,
   Layout,
   Loader2,
   MonitorPlay,
@@ -85,6 +86,8 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocum
   const [presenting, setPresenting] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [dragBlockId, setDragBlockId] = useState<string | null>(null);
+  const [dragOverBlockId, setDragOverBlockId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const activeBlocks = (): ContentBlock[] => {
@@ -280,6 +283,33 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocum
         const swap = idx + dir;
         if (swap < 0 || swap >= next.length) return blocks;
         [next[idx], next[swap]] = [next[swap], next[idx]];
+        return next;
+      };
+      if (d.mode === 'document' && d.sections) {
+        return { ...d, sections: d.sections.map((s) => (s.id === activeSectionId ? { ...s, blocks: reorder(s.blocks) } : s)) };
+      }
+      if (d.mode === 'presentation' && d.slides) {
+        return { ...d, slides: d.slides.map((s) => (s.id === activeSlideId ? { ...s, blocks: reorder(s.blocks) } : s)) };
+      }
+      if (d.chapters) {
+        return { ...d, chapters: d.chapters.map((c) => (c.id === activeChapterId ? { ...c, blocks: reorder(c.blocks) } : c)) };
+      }
+      return d;
+    });
+  };
+
+  /** Переміщення блоку drag-and-drop: вставити before targetId */
+  const moveBlockBefore = (fromId: string, toId: string) => {
+    if (fromId === toId) return;
+    updateDoc((d) => {
+      const reorder = (blocks: ContentBlock[]) => {
+        const fromIdx = blocks.findIndex((b) => b.id === fromId);
+        const toIdx = blocks.findIndex((b) => b.id === toId);
+        if (fromIdx < 0 || toIdx < 0) return blocks;
+        const next = [...blocks];
+        const [item] = next.splice(fromIdx, 1);
+        const insertAt = next.findIndex((b) => b.id === toId);
+        next.splice(insertAt < 0 ? next.length : insertAt, 0, item);
         return next;
       };
       if (d.mode === 'document' && d.sections) {
@@ -576,12 +606,49 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocum
             {blocks.map((block, idx) => (
               <div
                 key={block.id}
+                draggable
+                onDragStart={(e) => {
+                  setDragBlockId(block.id);
+                  e.dataTransfer.effectAllowed = 'move';
+                  e.dataTransfer.setData('text/plain', block.id);
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = 'move';
+                  if (dragOverBlockId !== block.id) setDragOverBlockId(block.id);
+                }}
+                onDragLeave={() => {
+                  if (dragOverBlockId === block.id) setDragOverBlockId(null);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const fromId = e.dataTransfer.getData('text/plain') || dragBlockId;
+                  if (fromId) moveBlockBefore(fromId, block.id);
+                  setDragBlockId(null);
+                  setDragOverBlockId(null);
+                }}
+                onDragEnd={() => {
+                  setDragBlockId(null);
+                  setDragOverBlockId(null);
+                }}
                 className={`rounded-xl border transition-all ${
                   activeBlockId === block.id ? 'border-orange-500/50 bg-white/8' : 'border-white/10 bg-white/5'
+                } ${dragBlockId === block.id ? 'opacity-50' : ''} ${
+                  dragOverBlockId === block.id && dragBlockId !== block.id
+                    ? 'border-t-4 border-t-orange-400'
+                    : ''
                 }`}
               >
                 <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5">
-                  <span className="text-white/40 text-xs uppercase">{block.type}</span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="cursor-grab active:cursor-grabbing text-white/30 hover:text-white/70 p-0.5"
+                      title="Перетягніть блок"
+                    >
+                      <GripVertical size={16} />
+                    </span>
+                    <span className="text-white/40 text-xs uppercase">{block.type}</span>
+                  </div>
                   <div className="flex gap-1">
                     <button type="button" onClick={() => moveBlock(block.id, -1)} disabled={idx === 0} className="p-1 text-white/40 hover:text-white disabled:opacity-30">
                       <ChevronUp size={14} />

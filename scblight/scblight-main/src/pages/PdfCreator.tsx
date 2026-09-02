@@ -10,6 +10,7 @@ import {
   Image as ImageIcon,
   Layers,
   Loader2,
+  Minimize2,
   PenLine,
   RefreshCw,
   ScanText,
@@ -27,6 +28,11 @@ import {
   type QuickTemplateId,
 } from '../lib/documentEditor/templates';
 import type { UniversalDocument } from '../lib/documentEditor/types';
+import {
+  compressFilesToPdf,
+  type CompressQuality,
+  renderPdfPageToDataUrl,
+} from '../lib/documentEditor/pdfTools';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -104,17 +110,7 @@ function getImageDimensions(dataUrl: string): Promise<{ width: number; height: n
 }
 
 async function renderPdfPageToImage(file: File, pageNum: number): Promise<string> {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  const page = await pdf.getPage(pageNum);
-  const viewport = page.getViewport({ scale: 2 });
-  const canvas = document.createElement('canvas');
-  canvas.width = viewport.width;
-  canvas.height = viewport.height;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('Canvas context unavailable');
-  await page.render({ canvasContext: ctx, viewport }).promise;
-  return canvas.toDataURL('image/jpeg', 0.92);
+  return renderPdfPageToDataUrl(file, pageNum, 2, 0.92);
 }
 
 function formatFileSize(size: number): string {
@@ -136,6 +132,8 @@ export default function PdfCreator() {
   const [isDragging, setIsDragging] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [uploadFilename, setUploadFilename] = useState('document');
+  const [compressQuality, setCompressQuality] = useState<CompressQuality>('medium');
+  const [compressStatus, setCompressStatus] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const openInEditor = (doc: UniversalDocument) => {
@@ -247,6 +245,26 @@ export default function PdfCreator() {
     }
   }, [files, uploadFilename, showError, showSuccess]);
 
+  const handleCompress = useCallback(async () => {
+    if (files.length === 0) return;
+    setIsGenerating(true);
+    setCompressStatus('');
+    try {
+      await compressFilesToPdf(
+        files.map((f) => f.file),
+        compressQuality,
+        `${uploadFilename || 'compressed'}_compressed`,
+        setCompressStatus,
+      );
+      showSuccess('PDF стиснуто і завантажено!');
+    } catch {
+      showError('Не вдалося стиснути PDF.');
+    } finally {
+      setIsGenerating(false);
+      setCompressStatus('');
+    }
+  }, [files, compressQuality, uploadFilename, showError, showSuccess]);
+
   const typeIcon = {
     image: <ImageIcon size={18} className="text-blue-400" />,
     pdf: <FileText size={18} className="text-red-400" />,
@@ -257,7 +275,7 @@ export default function PdfCreator() {
     edit: 'Універсальний редактор: документ, презентація, книга — збереження в додатку та на пристрій',
     merge: "Об'єднайте PDF, фото та текстові файли в один документ",
     convert: 'Швидкі шаблони та перетворення файлів',
-    ocr: 'Розпізнайте текст зі скану або фото',
+    ocr: 'Розпізнайте текст зі скану, фото або PDF-сторінок',
   };
 
   return (
@@ -397,19 +415,68 @@ export default function PdfCreator() {
             )}
           </AnimatePresence>
 
-          <button
-            type="button"
-            onClick={() => void handleMergeGenerate()}
-            disabled={files.length === 0 || isGenerating}
-            className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 disabled:opacity-40 text-white font-semibold py-3.5 rounded-2xl"
-          >
-            {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
-            {files.length === 0 ? 'Додайте файли' : `Обʼєднати в PDF (${files.length})`}
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              type="button"
+              onClick={() => void handleMergeGenerate()}
+              disabled={files.length === 0 || isGenerating}
+              className="flex-1 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 disabled:opacity-40 text-white font-semibold py-3.5 rounded-2xl"
+            >
+              {isGenerating && !compressStatus ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Download size={18} />
+              )}
+              {files.length === 0 ? 'Додайте файли' : `Обʼєднати в PDF (${files.length})`}
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleCompress()}
+              disabled={files.length === 0 || isGenerating}
+              className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 disabled:opacity-40 text-white font-semibold py-3.5 rounded-2xl border border-white/10"
+            >
+              {isGenerating && compressStatus ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Minimize2 size={18} />
+              )}
+              Стиснути PDF
+            </button>
+          </div>
 
-          <p className="text-white/30 text-xs text-center mt-4">
-            Стиснення PDF — у наступному оновленні
-          </p>
+          <div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/10">
+            <p className="text-white/70 text-sm mb-3">Якість стиснення</p>
+            <div className="flex gap-2">
+              {(
+                [
+                  ['high', 'Висока'],
+                  ['medium', 'Середня'],
+                  ['low', 'Сильна'],
+                ] as const
+              ).map(([q, label]) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => setCompressQuality(q)}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+                    compressQuality === q
+                      ? 'bg-orange-500/20 text-orange-300 border border-orange-500/40'
+                      : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <p className="text-white/35 text-xs mt-2">
+              Сильніше стиснення = менший файл, трохи гірша чіткість
+            </p>
+            {compressStatus && (
+              <p className="text-orange-300 text-xs mt-2 flex items-center gap-2">
+                <Loader2 size={12} className="animate-spin" /> {compressStatus}
+              </p>
+            )}
+          </div>
         </div>
       )}
 
