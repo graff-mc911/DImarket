@@ -11,7 +11,7 @@ function openDb(): Promise<IDBDatabase> {
     req.onerror = () => reject(req.error);
     req.onsuccess = () => resolve(req.result);
     req.onupgradeneeded = () => {
-      const db = req.objectStore;
+      const db = req.result;
       if (!db.objectStoreNames.contains(STORE)) {
         db.createObjectStore(STORE, { keyPath: 'id' });
       }

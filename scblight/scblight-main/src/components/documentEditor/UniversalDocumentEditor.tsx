@@ -68,9 +68,13 @@ const extensions = [
 
 interface Props {
   onClose?: () => void;
+  /** Документ для відкриття ззовні (шаблон, OCR тощо) */
+  initialDocument?: UniversalDocument | null;
+  /** Зміна ключа перемонтовує редактор */
+  documentKey?: string;
 }
 
-export const UniversalDocumentEditor: React.FC<Props> = ({ onClose }) => {
+export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocument, documentKey }) => {
   const [doc, setDoc] = useState<UniversalDocument | null>(null);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const [activeSlideId, setActiveSlideId] = useState<string | null>(null);
@@ -172,6 +176,11 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose }) => {
     }
     setShowLibrary(false);
   };
+
+  useEffect(() => {
+    if (initialDocument) openDoc(initialDocument);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [documentKey]);
 
   const addBlock = (type: ContentBlock['type']) => {
     if (!doc) return;
@@ -401,11 +410,11 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose }) => {
           className="bg-transparent text-white font-semibold text-lg border-none focus:outline-none min-w-[120px]"
         />
         <div className="flex flex-wrap gap-1 ml-auto">
-          <button type="button" onClick={() => void saveDocumentToApp(doc)} className="toolbar-btn">
-            <Save size={14} /> Зберегти
+          <button type="button" onClick={() => void saveDocumentToApp(doc)} className="toolbar-btn" title="IndexedDB у браузері">
+            <Save size={14} /> В додатку
           </button>
-          <button type="button" onClick={() => exportDocumentJson(doc)} className="toolbar-btn">
-            <Download size={14} /> JSON
+          <button type="button" onClick={() => exportDocumentJson(doc)} className="toolbar-btn" title="Файл .scbdoc.json">
+            <Download size={14} /> На пристрій
           </button>
           <button
             type="button"
