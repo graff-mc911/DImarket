@@ -34,20 +34,23 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
-import type { ContentBlock, EditorMode, UniversalDocument } from '../../lib/documentEditor/types';
+import type {
+  ContentBlock,
+  DocumentSaveDestination,
+  EditorMode,
+  UniversalDocument,
+} from '../../lib/documentEditor/types';
 import { createDocument, emptyTableBlock, emptyTextBlock, uid } from '../../lib/documentEditor/utils';
-import {
-  deleteStoredDocument,
-  listStoredDocuments,
-  loadDocumentFromApp,
-  saveDocumentToApp,
-} from '../../lib/documentEditor/storage';
+import { saveDocumentToApp } from '../../lib/documentEditor/storage';
 import { exportDocumentJson, readDocumentFile } from '../../lib/documentEditor/exportJson';
 import { exportDocumentHtml, createShareLink } from '../../lib/documentEditor/exportHtml';
 import { exportDocumentPdf } from '../../lib/documentEditor/exportPdf';
 import { exportBookToEpub } from '../../lib/documentEditor/exportEpub';
+import { useToastContext } from '../../contexts/ToastContext';
 import { EditorToolbar } from './EditorToolbar';
 import { PresentationPlayer } from './PresentationPlayer';
+import { SaveDestinationDialog } from './SaveDestinationDialog';
+import { DocumentLibraryPanel } from './DocumentLibraryPanel';
 
 const extensions = [
   StarterKit,
@@ -76,13 +79,15 @@ interface Props {
 }
 
 export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocument, documentKey }) => {
+  const { showSuccess, showError } = useToastContext();
   const [doc, setDoc] = useState<UniversalDocument | null>(null);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const [activeSlideId, setActiveSlideId] = useState<string | null>(null);
   const [activeChapterId, setActiveChapterId] = useState<string | null>(null);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [showLibrary, setShowLibrary] = useState(false);
-  const [library, setLibrary] = useState<Awaited<ReturnType<typeof listStoredDocuments>>>([]);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [presenting, setPresenting] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
@@ -178,6 +183,27 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocum
       setActiveBlockId(d.chapters[0].blocks[0]?.id || null);
     }
     setShowLibrary(false);
+  };
+
+  const handleSaveToApp = async (destination: DocumentSaveDestination) => {
+    if (!doc) return;
+    setSaving(true);
+    try {
+      const saved = await saveDocumentToApp(doc, destination);
+      setDoc(saved);
+      setShowSaveDialog(false);
+      const where =
+        destination.saveScope === 'client'
+          ? `до клієнта «${destination.clientName || 'клієнт'}»`
+          : destination.saveScope === 'invoice'
+            ? `до інвойсу №${destination.invoiceLabel || '—'}`
+            : 'у загальну папку';
+      showSuccess(`Збережено ${where}`);
+    } catch {
+      showError('Не вдалося зберегти документ');
+    } finally {
+      setSaving(false);
+    }
   };
 
   useEffect(() => {
@@ -362,10 +388,7 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocum
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={async () => {
-              setLibrary(await listStoredDocuments());
-              setShowLibrary(true);
-            }}
+            onClick={() => setShowLibrary(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 text-white text-sm hover:bg-white/15"
           >
             <FolderOpen size={16} /> Відкрити з додатку
@@ -391,37 +414,12 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocum
         </div>
 
         {showLibrary && (
-          <div className="bg-white/8 border border-white/10 rounded-2xl p-4 space-y-2 max-h-64 overflow-y-auto">
-            {library.length === 0 ? (
-              <p className="text-white/40 text-sm">Немає збережених документів</p>
-            ) : (
-              library.map((item) => (
-                <div key={item.id} className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      const loaded = await loadDocumentFromApp(item.id);
-                      if (loaded) openDoc(loaded);
-                    }}
-                    className="flex-1 text-left p-3 rounded-xl hover:bg-white/10"
-                  >
-                    <p className="text-white text-sm font-medium">{item.name}</p>
-                    <p className="text-white/40 text-xs truncate">{item.preview}</p>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      await deleteStoredDocument(item.id);
-                      setLibrary(await listStoredDocuments());
-                    }}
-                    className="p-2 text-red-400"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
+          <DocumentLibraryPanel
+            open
+            inline
+            onClose={() => setShowLibrary(false)}
+            onOpen={openDoc}
+          />
         )}
       </div>
     );
@@ -440,8 +438,22 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocum
           className="bg-transparent text-white font-semibold text-lg border-none focus:outline-none min-w-[120px]"
         />
         <div className="flex flex-wrap gap-1 ml-auto">
-          <button type="button" onClick={() => void saveDocumentToApp(doc)} className="toolbar-btn" title="IndexedDB у браузері">
-            <Save size={14} /> В додатку
+          <button
+            type="button"
+            onClick={() => setShowLibrary(true)}
+            className="toolbar-btn"
+            title="Відкрити збережений документ"
+          >
+            <FolderOpen size={14} /> Відкрити
+          </button>
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() => setShowSaveDialog(true)}
+            className="toolbar-btn"
+            title="Зберегти в додатку: загальна / клієнт / інвойс"
+          >
+            {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} В додатку
           </button>
           <button type="button" onClick={() => exportDocumentJson(doc)} className="toolbar-btn" title="Файл .scbdoc.json">
             <Download size={14} /> На пристрій
@@ -752,6 +764,25 @@ export const UniversalDocumentEditor: React.FC<Props> = ({ onClose, initialDocum
       {presenting && doc.slides && (
         <PresentationPlayer slides={doc.slides} onClose={() => setPresenting(false)} />
       )}
+
+      <SaveDestinationDialog
+        open={showSaveDialog}
+        documentName={doc.name}
+        initial={{
+          saveScope: doc.saveScope || 'general',
+          folderId: doc.folderId,
+          clientId: doc.clientId || '',
+          invoiceId: doc.invoiceId || '',
+        }}
+        onClose={() => setShowSaveDialog(false)}
+        onConfirm={(dest) => void handleSaveToApp(dest)}
+      />
+
+      <DocumentLibraryPanel
+        open={showLibrary}
+        onClose={() => setShowLibrary(false)}
+        onOpen={openDoc}
+      />
 
       <style>{`.toolbar-btn{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:10px;font-size:12px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);transition:all 0.15s}.toolbar-btn:hover{background:rgba(255,255,255,0.15);color:#fff}`}</style>
     </div>

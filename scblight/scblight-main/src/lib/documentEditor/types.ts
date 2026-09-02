@@ -4,6 +4,9 @@ export type EditorMode = 'document' | 'presentation' | 'book';
 
 export type BlockType = 'text' | 'image' | 'table' | 'attachment' | 'divider';
 
+/** Куди зберігати документ у додатку */
+export type DocumentSaveScope = 'general' | 'client' | 'invoice';
+
 export interface TextBlock {
   id: string;
   type: 'text';
@@ -66,6 +69,16 @@ export interface BookCover {
   image?: string;
 }
 
+export interface DocumentFolder {
+  id: string;
+  name: string;
+  scope: DocumentSaveScope;
+  clientId?: string | null;
+  invoiceId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface UniversalDocument {
   version: 1;
   id: string;
@@ -73,6 +86,13 @@ export interface UniversalDocument {
   mode: EditorMode;
   createdAt: string;
   updatedAt: string;
+  /** Куди збережено в додатку */
+  saveScope?: DocumentSaveScope;
+  folderId?: string | null;
+  clientId?: string | null;
+  clientName?: string | null;
+  invoiceId?: string | null;
+  invoiceLabel?: string | null;
   sections?: DocumentSection[];
   slides?: Slide[];
   cover?: BookCover;
@@ -85,4 +105,19 @@ export interface StoredDocumentMeta {
   mode: EditorMode;
   updatedAt: string;
   preview: string;
+  saveScope?: DocumentSaveScope;
+  folderId?: string | null;
+  clientId?: string | null;
+  clientName?: string | null;
+  invoiceId?: string | null;
+  invoiceLabel?: string | null;
+}
+
+export interface DocumentSaveDestination {
+  saveScope: DocumentSaveScope;
+  folderId?: string | null;
+  clientId?: string | null;
+  clientName?: string | null;
+  invoiceId?: string | null;
+  invoiceLabel?: string | null;
 }
