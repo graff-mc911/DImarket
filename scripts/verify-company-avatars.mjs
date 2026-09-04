@@ -1,11 +1,11 @@
 /**
- * Directory avatar resolver: unique portraits for masters, unique marks for companies.
+ * Directory avatar resolver: unique initials for masters and companies.
  * npx tsx scripts/verify-company-avatars.mjs
  */
 import assert from 'assert'
 import {
+  companyLogoDataUri,
   companyLogoInitials,
-  masterPortraitDataUri,
   resolveCompanyAvatarUrl,
   resolveProfileAvatarUrl,
 } from '../src/lib/directoryAvatars.ts'
@@ -14,6 +14,8 @@ assert.equal(companyLogoInitials('Geberit'), 'GE')
 assert.equal(companyLogoInitials('Madrid Legal — Gestoría & Abogados'), 'ML')
 assert.equal(companyLogoInitials('Kraft GmbH Darmstadt'), 'KD')
 assert.equal(companyLogoInitials('B&P Bau'), 'BP')
+assert.equal(companyLogoInitials('Alfonso'), 'AL')
+assert.equal(companyLogoInitials('Sergio Castaneda'), 'SC')
 assert.equal(companyLogoInitials(''), 'CO')
 
 const withPhoto = resolveCompanyAvatarUrl({
@@ -48,7 +50,8 @@ const masterStock = resolveProfileAvatarUrl({
 })
 assert.ok(masterStock.startsWith('data:image/svg+xml'), 'listing-theme is not a master photo')
 assert.ok(!masterStock.includes('listing-themes'))
-assert.equal(masterStock, masterPortraitDataUri('Alfonso', 'master-alfonso'))
+assert.equal(masterStock, companyLogoDataUri('Alfonso', 'master-alfonso'))
+assert.ok(decodeURIComponent(masterStock).includes('AL'))
 
 const masterCampaign = resolveProfileAvatarUrl({
   id: 'master-javier',
@@ -57,7 +60,8 @@ const masterCampaign = resolveProfileAvatarUrl({
   user_role: 'professional',
 })
 assert.ok(masterCampaign.startsWith('data:image/svg+xml'), 'campaign 404 URL is not a master photo')
-assert.notEqual(masterStock, masterCampaign, 'each master gets a unique portrait')
+assert.ok(decodeURIComponent(masterCampaign).includes('JA'))
+assert.notEqual(masterStock, masterCampaign, 'each master gets unique initials colors')
 
 const masterAdMedia = resolveProfileAvatarUrl({
   id: 'master-sergio',
@@ -66,6 +70,7 @@ const masterAdMedia = resolveProfileAvatarUrl({
   user_role: 'professional',
 })
 assert.ok(masterAdMedia.startsWith('data:image/svg+xml'), 'ad-media avatar.jpeg 404 is skipped')
+assert.ok(decodeURIComponent(masterAdMedia).includes('SC'))
 
 const liveUpload = resolveProfileAvatarUrl({
   id: 'live-user',

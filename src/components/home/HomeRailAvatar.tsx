@@ -13,7 +13,7 @@ interface ProfileAvatarProps {
   userRole?: string | null
 }
 
-/** Always paints an image. Remote 404s fall back to a unique portrait or company mark. */
+/** Always paints an image. Remote 404s fall back to unique initials. */
 export function ProfileAvatar({
   name,
   profileId,
