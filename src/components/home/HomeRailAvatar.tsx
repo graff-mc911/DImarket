@@ -1,25 +1,62 @@
-import { useState } from 'react'
-import { companyLogoDataUri } from '../../lib/directoryAvatars'
+import { useEffect, useRef, useState } from 'react'
+import {
+  avatarFallbackDataUri,
+  type CompanyAvatarSource,
+} from '../../lib/directoryAvatars'
 
-interface HomeRailAvatarProps {
+interface ProfileAvatarProps {
   name: string
   profileId: string
   src: string
+  className?: string
+  alt?: string
+  userRole?: string | null
 }
 
-/** Home rail photo with a unique monogram fallback if the remote file 404s. */
-export function HomeRailAvatar({ name, profileId, src }: HomeRailAvatarProps) {
-  const fallback = companyLogoDataUri(name, profileId)
+/** Always paints an image. Remote 404s fall back to a unique portrait or company mark. */
+export function ProfileAvatar({
+  name,
+  profileId,
+  src,
+  className,
+  alt = '',
+  userRole,
+}: ProfileAvatarProps) {
+  const fallback = avatarFallbackDataUri({
+    id: profileId,
+    full_name: name,
+    user_role: userRole,
+  } satisfies CompanyAvatarSource)
   const [uri, setUri] = useState(src || fallback)
+  const imgRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    setUri(src || fallback)
+  }, [src, fallback])
+
+  useEffect(() => {
+    const el = imgRef.current
+    if (el && el.complete && el.naturalWidth === 0 && uri !== fallback) {
+      setUri(fallback)
+    }
+  }, [uri, fallback])
 
   return (
     <img
+      ref={imgRef}
       src={uri}
-      alt=""
+      alt={alt}
+      className={className}
       loading="lazy"
+      decoding="async"
       onError={() => {
         if (uri !== fallback) setUri(fallback)
       }}
     />
   )
+}
+
+/** @deprecated use ProfileAvatar */
+export function HomeRailAvatar(props: ProfileAvatarProps) {
+  return <ProfileAvatar {...props} />
 }

@@ -1,11 +1,13 @@
 /**
- * Company avatar resolver: every Top Company must resolve to an image URL.
+ * Directory avatar resolver: unique portraits for masters, unique marks for companies.
  * npx tsx scripts/verify-company-avatars.mjs
  */
 import assert from 'assert'
 import {
   companyLogoInitials,
+  masterPortraitDataUri,
   resolveCompanyAvatarUrl,
+  resolveProfileAvatarUrl,
 } from '../src/lib/directoryAvatars.ts'
 
 assert.equal(companyLogoInitials('Geberit'), 'GE')
@@ -35,21 +37,44 @@ assert.notEqual(a, b, 'same name, different id → different logo color')
 const faucet = '/images/listing-themes/plumbing-faucet.jpg'
 const campaign =
   'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/aedc48d6-dc72-4f83-b443-4987fb8ddcaf/avatar.jpeg'
+const adMedia =
+  'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/ad-media/campaigns/profiles/b2a7e44d-128a-4cf3-9906-097efa8a7c8b/avatar.png'
 
-const masterStock = resolveCompanyAvatarUrl({
+const masterStock = resolveProfileAvatarUrl({
   id: 'master-alfonso',
   full_name: 'Alfonso',
   avatar_url: faucet,
+  user_role: 'professional',
 })
 assert.ok(masterStock.startsWith('data:image/svg+xml'), 'listing-theme is not a master photo')
-assert.ok(decodeURIComponent(masterStock).includes('AL'))
+assert.ok(!masterStock.includes('listing-themes'))
+assert.equal(masterStock, masterPortraitDataUri('Alfonso', 'master-alfonso'))
 
-const masterCampaign = resolveCompanyAvatarUrl({
+const masterCampaign = resolveProfileAvatarUrl({
   id: 'master-javier',
   full_name: 'Javier',
   avatar_url: campaign,
+  user_role: 'professional',
 })
 assert.ok(masterCampaign.startsWith('data:image/svg+xml'), 'campaign 404 URL is not a master photo')
+assert.notEqual(masterStock, masterCampaign, 'each master gets a unique portrait')
+
+const masterAdMedia = resolveProfileAvatarUrl({
+  id: 'master-sergio',
+  full_name: 'Sergio Castaneda',
+  avatar_url: adMedia,
+  user_role: 'professional',
+})
+assert.ok(masterAdMedia.startsWith('data:image/svg+xml'), 'ad-media avatar.jpeg 404 is skipped')
+
+const liveUpload = resolveProfileAvatarUrl({
+  id: 'live-user',
+  full_name: 'Live Master',
+  avatar_url:
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/profiles/live-user/avatar-1710000000-ab12cd.jpg',
+  user_role: 'professional',
+})
+assert.ok(liveUpload.includes('avatar-1710000000'), 'timestamped live uploads stay')
 
 const companyStock = resolveCompanyAvatarUrl({
   id: 'company-gd',
@@ -64,5 +89,6 @@ const companyStock2 = resolveCompanyAvatarUrl({
 assert.notEqual(companyStock, companyStock2, 'stock faucet must not be reused across companies')
 assert.ok(companyStock.startsWith('data:image/svg+xml'))
 assert.ok(companyStock2.startsWith('data:image/svg+xml'))
+assert.ok(decodeURIComponent(companyStock).includes('GA'))
 
 console.log('✓ company avatar checks passed')

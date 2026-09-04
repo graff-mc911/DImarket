@@ -14,6 +14,7 @@ import {
   resolveProfessionalCategoryLabels,
 } from '../lib/professionalDisplay'
 import { resolveProfileAvatarUrl } from '../lib/directoryAvatars'
+import { ProfileAvatar } from './home/HomeRailAvatar'
 import { supabase } from '../lib/supabase'
 import { formatDistanceKm, formatLocationParts } from '../lib/geoSearch'
 
@@ -232,7 +233,12 @@ export function DirectoryExpertCard({ professional, distanceKm }: DirectoryExper
         aria-label={displayName}
       >
         {avatarUrl ? (
-          <img src={avatarUrl} alt="" loading="lazy" />
+          <ProfileAvatar
+            name={displayName}
+            profileId={professional.id}
+            src={avatarUrl}
+            userRole={professional.user_role}
+          />
         ) : (
           <span className="directory-expert__photo-fallback" aria-hidden>
             {displayName.slice(0, 1).toUpperCase()}

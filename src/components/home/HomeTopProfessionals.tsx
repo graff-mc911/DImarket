@@ -4,7 +4,7 @@ import type { HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
 import { resolveProfileAvatarUrl } from '../../lib/directoryAvatars'
 import { navigateTo } from '../../lib/navigation'
-import { HomeRailAvatar } from './HomeRailAvatar'
+import { ProfileAvatar } from './HomeRailAvatar'
 
 function normalizeWebsiteHref(raw: string | null | undefined): string | null {
   const value = (raw ?? '').trim()
@@ -71,7 +71,12 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
                   onClick={() => navigateTo(`/professional/${pro.id}`)}
                 >
                   <div className="home-pro-card__avatar">
-                    <HomeRailAvatar name={name} profileId={pro.id} src={avatar} />
+                    <ProfileAvatar
+                      name={name}
+                      profileId={pro.id}
+                      src={avatar}
+                      userRole={pro.user_role}
+                    />
                   </div>
                   <div className="home-pro-card__info">
                     <div className="home-pro-card__name-row">

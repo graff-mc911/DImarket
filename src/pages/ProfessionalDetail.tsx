@@ -29,6 +29,7 @@ import {
 import { supabase }    from '../lib/supabase'
 import { useApp }      from '../contexts/AppContext'
 import { resolveProfileAvatarUrl } from '../lib/directoryAvatars'
+import { ProfileAvatar } from '../components/home/HomeRailAvatar'
 import { navigateTo }  from '../lib/navigation'
 import { PageContentAds } from '../components/CenterPageAd'
 import { VerificationBadge } from '../components/MatchScoreBadge'
@@ -245,10 +246,13 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           <div className="amazon-pdp-image">
             {avatarPhoto ? (
               <div className="aspect-square bg-[#f7fafa] sm:aspect-[4/3]">
-                <img
+                <ProfileAvatar
+                  name={profile.full_name || 'Майстер'}
+                  profileId={profile.id}
                   src={avatarPhoto}
                   alt={profile.full_name || 'Майстер'}
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-cover"
+                  userRole={profile.user_role}
                 />
               </div>
             ) : (

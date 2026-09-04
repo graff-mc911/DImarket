@@ -15,6 +15,7 @@ import {
   resolveProfessionalActivityLine,
 } from '../lib/professionalDisplay'
 import { resolveProfileAvatarUrl } from '../lib/directoryAvatars'
+import { ProfileAvatar } from './home/HomeRailAvatar'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -154,10 +155,13 @@ export function ProfessionalCard({
           }
         >
           {avatarUrl ? (
-            <img
+            <ProfileAvatar
+              name={displayName}
+              profileId={professional.id}
               src={avatarUrl}
               alt={displayName}
               className={avatarClass}
+              userRole={professional.user_role}
             />
           ) : (
             <div className={avatarFallbackClass}>{getInitials(displayName)}</div>
