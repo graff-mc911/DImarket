@@ -62,12 +62,6 @@ export function HomeFindContractor() {
           </a>
         ))}
       </div>
-
-      <div className="home-find-contractor__footer">
-        <button type="button" className="home-btn home-btn--ghost" onClick={() => navigateTo('/map')}>
-          {t('homePremium.findContractorViewAll')}
-        </button>
-      </div>
     </section>
   )
 }

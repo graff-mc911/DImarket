@@ -21,7 +21,7 @@ import {
 } from '../lib/adSlotDisplay'
 
 export const adOverlayGlow =
-  'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_2px_8px_rgba(67,44,26,0.07)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_3px_12px_rgba(67,44,26,0.1)]'
+  'rounded-[14px] border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_0_22px_4px_rgba(15,17,17,0.16)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_0_22px_4px_rgba(15,17,17,0.16)]'
 
 type AdOverlayVariant = AdOverlayVariantKey
 

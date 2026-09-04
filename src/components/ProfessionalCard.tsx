@@ -128,8 +128,8 @@ export function ProfessionalCard({
   const showPublicContacts = Boolean(phone) || Boolean(websiteHref)
 
   const rootClass = compact
-    ? 'glass-card card-hover-lift pro-card--compact flex h-full min-w-0 flex-col overflow-hidden'
-    : 'glass-card flex h-full flex-col overflow-hidden p-5'
+    ? 'glass-card card-hover-lift pro-card--compact flex h-full min-w-0 flex-col'
+    : 'glass-card flex h-full flex-col p-5'
 
   const avatarClass = compact
     ? 'pro-card__avatar shrink-0 rounded-[0.5rem] object-cover'
