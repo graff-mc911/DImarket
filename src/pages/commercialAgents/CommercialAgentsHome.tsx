@@ -125,7 +125,7 @@ export function CommercialAgentsHome() {
             <button
               type="button"
               onClick={() => navigateTo('/commercial-agents/representatives')}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff9900] px-5 py-3 text-sm font-bold text-[#0f1111] hover:bg-[#ffb84d]"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff9900] px-5 py-3 text-sm font-bold text-[#2f2a24] hover:bg-[#ffb84d]"
             >
               <Handshake className="h-4 w-4" />
               {t('commercialAgents.ctaFindAgent')}

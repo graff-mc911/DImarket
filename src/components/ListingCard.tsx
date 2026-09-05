@@ -202,7 +202,7 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
           )}
 
           {isPromoted && !listing.is_premium && (
-            <span className="absolute left-1.5 top-1.5 rounded-sm bg-[#ff9900] px-1.5 py-0.5 text-[9px] font-bold text-[#0f1111]">
+            <span className="absolute left-1.5 top-1.5 rounded-sm bg-[#ff9900] px-1.5 py-0.5 text-[9px] font-bold text-[#2f2a24]">
               ↑
             </span>
           )}

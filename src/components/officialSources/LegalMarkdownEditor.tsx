@@ -79,17 +79,17 @@ export function LegalMarkdownEditor({
     .replace(/^# (.+)$/gm, '<h1 class="text-lg font-bold mt-3 mb-1">$1</h1>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/^- (.+)$/gm, '<p class="ml-3">• $1</p>')
-    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[#d2d2d7] pl-2 text-[#6e6e73]">$1</blockquote>')
-    .replace(/`([^`]+)`/g, '<code class="rounded bg-[#f5f5f7] px-1">$1</code>')
+    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[rgba(148,163,184,0.35)] pl-2 text-[#6f665d]">$1</blockquote>')
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-[#f3f0ea] px-1">$1</code>')
     .replace(/\n\n/g, '<br/><br/>')
 
   return (
-    <div className="rounded-xl border border-[#d2d2d7] bg-white">
-      <div className="flex flex-wrap items-center gap-1 border-b border-[#e8e8ed] px-2 py-1.5">
+    <div className="rounded-xl border border-[rgba(148,163,184,0.35)] bg-white">
+      <div className="flex flex-wrap items-center gap-1 border-b border-[rgba(148,163,184,0.22)] px-2 py-1.5">
         <button
           type="button"
           title={t('osm.editor.bold')}
-          className="rounded p-1 hover:bg-[#f5f5f7]"
+          className="rounded p-1 hover:bg-[#f3f0ea]"
           onClick={() =>
             apply((el) => wrapSelection(el, '**', '**', t('osm.editor.boldPlaceholder')))
           }
@@ -99,7 +99,7 @@ export function LegalMarkdownEditor({
         <button
           type="button"
           title={t('osm.editor.heading')}
-          className="rounded p-1 hover:bg-[#f5f5f7]"
+          className="rounded p-1 hover:bg-[#f3f0ea]"
           onClick={() => apply((el) => insertLinePrefix(el, '## '))}
         >
           <Heading2 className="h-4 w-4" />
@@ -107,7 +107,7 @@ export function LegalMarkdownEditor({
         <button
           type="button"
           title={t('osm.editor.heading3')}
-          className="rounded p-1 hover:bg-[#f5f5f7]"
+          className="rounded p-1 hover:bg-[#f3f0ea]"
           onClick={() => apply((el) => insertLinePrefix(el, '### '))}
         >
           <Heading3 className="h-4 w-4" />
@@ -115,7 +115,7 @@ export function LegalMarkdownEditor({
         <button
           type="button"
           title={t('osm.editor.list')}
-          className="rounded p-1 hover:bg-[#f5f5f7]"
+          className="rounded p-1 hover:bg-[#f3f0ea]"
           onClick={() => apply((el) => insertLinePrefix(el, '- '))}
         >
           <List className="h-4 w-4" />
@@ -123,7 +123,7 @@ export function LegalMarkdownEditor({
         <button
           type="button"
           title={t('osm.editor.quote')}
-          className="rounded p-1 hover:bg-[#f5f5f7]"
+          className="rounded p-1 hover:bg-[#f3f0ea]"
           onClick={() => apply((el) => insertLinePrefix(el, '> '))}
         >
           <Quote className="h-4 w-4" />
@@ -131,7 +131,7 @@ export function LegalMarkdownEditor({
         <button
           type="button"
           title={t('osm.editor.code')}
-          className="rounded p-1 hover:bg-[#f5f5f7]"
+          className="rounded p-1 hover:bg-[#f3f0ea]"
           onClick={() =>
             apply((el) => wrapSelection(el, '`', '`', t('osm.editor.codePlaceholder')))
           }
@@ -141,7 +141,7 @@ export function LegalMarkdownEditor({
         <button
           type="button"
           title={t('osm.editor.link')}
-          className="rounded p-1 hover:bg-[#f5f5f7]"
+          className="rounded p-1 hover:bg-[#f3f0ea]"
           onClick={() =>
             apply((el) => wrapSelection(el, '[', '](https://)', t('osm.editor.linkText')))
           }
@@ -152,17 +152,17 @@ export function LegalMarkdownEditor({
           <button
             type="button"
             title={t('osm.editor.insertTemplate')}
-            className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold hover:bg-[#f5f5f7]"
+            className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold hover:bg-[#f3f0ea]"
             onClick={() => onChange(templateSnippet)}
           >
             <FileText className="h-3.5 w-3.5" />
             {t('osm.editor.insertTemplate')}
           </button>
         ) : null}
-        <span className="mx-1 h-4 w-px bg-[#e8e8ed]" />
+        <span className="mx-1 h-4 w-px bg-[rgba(148,163,184,0.22)]" />
         <button
           type="button"
-          className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold hover:bg-[#f5f5f7]"
+          className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold hover:bg-[#f3f0ea]"
           onClick={() => setPreview((p) => !p)}
         >
           {preview ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
@@ -171,9 +171,9 @@ export function LegalMarkdownEditor({
       </div>
       {preview ? (
         <div
-          className="min-h-[120px] px-3 py-2 text-xs leading-5 text-[#1d1d1f]"
+          className="min-h-[120px] px-3 py-2 text-xs leading-5 text-[#2f2a24]"
           dangerouslySetInnerHTML={{
-            __html: previewHtml || `<p class="text-[#86868b]">${placeholder ?? ''}</p>`,
+            __html: previewHtml || `<p class="text-[#8a8178]">${placeholder ?? ''}</p>`,
           }}
         />
       ) : (

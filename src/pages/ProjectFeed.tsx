@@ -37,7 +37,7 @@ import { PROJECT_TRADES } from '../lib/projectWizard'
 import type { ProjectApplication } from '../lib/types'
 
 const filterInput =
-  'w-full rounded-xl border border-[#d2d2d7] bg-white px-3 py-2.5 text-[13px] text-[#1d1d1f] outline-none transition focus:border-[#1d1d1f] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
+  'w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
 
 export function ProjectFeed() {
   const { user, profile, t } = useApp()
@@ -233,8 +233,8 @@ export function ProjectFeed() {
   if (!user) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">Project feed</h1>
-        <p className="mt-2 text-[15px] text-[#86868b]">Sign in as a professional to see incoming projects.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-[#2f2a24]">Project feed</h1>
+        <p className="mt-2 text-[15px] text-[#8a8178]">Sign in as a professional to see incoming projects.</p>
         <button type="button" className="btn-primary mt-6" onClick={() => navigateTo('/login')}>
           Sign in
         </button>
@@ -245,8 +245,8 @@ export function ProjectFeed() {
   if (!isPro) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">Professionals only</h1>
-        <p className="mt-2 text-[15px] text-[#86868b]">
+        <h1 className="text-2xl font-semibold tracking-tight text-[#2f2a24]">Professionals only</h1>
+        <p className="mt-2 text-[15px] text-[#8a8178]">
           Switch to a professional account to browse customer projects.
         </p>
         <button
@@ -261,8 +261,8 @@ export function ProjectFeed() {
   }
 
   return (
-    <div className="min-h-[70vh] bg-[#f5f5f7] pb-24">
-      <div className="border-b border-[#e8e8ed] bg-white/80 backdrop-blur-xl">
+    <div className="min-h-[70vh] bg-[#f3f0ea] pb-24">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-4 px-4 py-6 md:px-6">
           <div>
             <div className="mb-1 flex items-center gap-2">
@@ -270,7 +270,7 @@ export function ProjectFeed() {
                 className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
                   livePulse
                     ? 'border-[#34c759]/40 bg-[#34c759]/10 text-[#248a3d]'
-                    : 'border-[#e8e8ed] bg-[#f5f5f7] text-[#86868b]'
+                    : 'border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] text-[#8a8178]'
                 }`}
               >
                 <Radio className="h-3 w-3" />
@@ -282,17 +282,17 @@ export function ProjectFeed() {
                 </span>
               ) : null}
             </div>
-            <h1 className="text-[28px] font-semibold tracking-tight text-[#1d1d1f] md:text-[34px]">
+            <h1 className="text-[28px] font-semibold tracking-tight text-[#2f2a24] md:text-[34px]">
               {t('projects.title' as never) || 'Project feed'}
             </h1>
-            <p className="mt-1 text-[15px] text-[#86868b]">
+            <p className="mt-1 text-[15px] text-[#8a8178]">
               {t('projects.sub' as never) || 'Incoming customer projects — apply, save, or hide'}
             </p>
           </div>
           {!origin ? (
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-medium text-[#1d1d1f]"
+              className="inline-flex items-center gap-2 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-medium text-[#2f2a24]"
               onClick={() => {
                 void getBrowserLocation().then((g) => {
                   setOrigin(g)
@@ -305,16 +305,16 @@ export function ProjectFeed() {
               Enable distance
             </button>
           ) : (
-            <p className="text-[12px] text-[#86868b]">Distance from your location</p>
+            <p className="text-[12px] text-[#8a8178]">Distance from your location</p>
           )}
         </div>
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
-        <div className="mb-6 rounded-[20px] border border-[#e8e8ed] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] md:p-5">
+        <div className="mb-6 rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] md:p-5">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <label className="block">
-              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#86868b]">
+              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#8a8178]">
                 Country
               </span>
               <input
@@ -325,7 +325,7 @@ export function ProjectFeed() {
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#86868b]">
+              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#8a8178]">
                 Category
               </span>
               <select
@@ -342,7 +342,7 @@ export function ProjectFeed() {
               </select>
             </label>
             <label className="block">
-              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#86868b]">
+              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#8a8178]">
                 Budget min €
               </span>
               <input
@@ -355,7 +355,7 @@ export function ProjectFeed() {
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#86868b]">
+              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#8a8178]">
                 Budget max €
               </span>
               <input
@@ -368,7 +368,7 @@ export function ProjectFeed() {
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#86868b]">
+              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#8a8178]">
                 Distance km
               </span>
               <select
@@ -385,7 +385,7 @@ export function ProjectFeed() {
               </select>
             </label>
             <label className="block">
-              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#86868b]">
+              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#8a8178]">
                 Urgency
               </span>
               <select
@@ -408,7 +408,7 @@ export function ProjectFeed() {
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[#f0f0f2] pt-4">
-            <span className="mr-1 text-[12px] font-semibold text-[#86868b]">Sort</span>
+            <span className="mr-1 text-[12px] font-semibold text-[#8a8178]">Sort</span>
             {(
               [
                 ['newest', 'Newest'],
@@ -422,8 +422,8 @@ export function ProjectFeed() {
                 onClick={() => setDraft((d) => ({ ...d, sort: value }))}
                 className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition ${
                   draft.sort === value
-                    ? 'bg-[#1d1d1f] text-white'
-                    : 'bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed]'
+                    ? 'bg-[#2f2a24] text-white'
+                    : 'bg-[#f3f0ea] text-[#2f2a24] hover:bg-[rgba(148,163,184,0.22)]'
                 }`}
               >
                 {label}
@@ -433,14 +433,14 @@ export function ProjectFeed() {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="rounded-full px-4 py-2 text-[13px] font-medium text-[#86868b] hover:text-[#1d1d1f]"
+                className="rounded-full px-4 py-2 text-[13px] font-medium text-[#8a8178] hover:text-[#2f2a24]"
               >
                 Reset
               </button>
               <button
                 type="button"
                 onClick={applyFilters}
-                className="rounded-full bg-[#1d1d1f] px-5 py-2 text-[13px] font-semibold text-white hover:bg-black"
+                className="rounded-full bg-[#2f2a24] px-5 py-2 text-[13px] font-semibold text-white hover:bg-black"
               >
                 Apply filters
               </button>
@@ -453,14 +453,14 @@ export function ProjectFeed() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-44 animate-pulse rounded-[20px] border border-[#e8e8ed] bg-white"
+                className="h-44 animate-pulse rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white"
               />
             ))}
           </div>
         ) : items.length === 0 ? (
-          <div className="rounded-[20px] border border-[#e8e8ed] bg-white px-6 py-16 text-center">
-            <p className="text-[17px] font-semibold text-[#1d1d1f]">No projects match</p>
-            <p className="mt-1 text-[14px] text-[#86868b]">Try widening filters or check back soon.</p>
+          <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white px-6 py-16 text-center">
+            <p className="text-[17px] font-semibold text-[#2f2a24]">No projects match</p>
+            <p className="mt-1 text-[14px] text-[#8a8178]">Try widening filters or check back soon.</p>
           </div>
         ) : (
           <ul className="space-y-4">
@@ -481,7 +481,7 @@ export function ProjectFeed() {
               return (
                 <li
                   key={project.id}
-                  className="overflow-hidden rounded-[20px] border border-[#e8e8ed] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
+                  className="overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
                 >
                   <div className="flex flex-col p-4 md:p-5">
                       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -492,7 +492,7 @@ export function ProjectFeed() {
                                 Sponsored
                               </span>
                             ) : null}
-                            <span className="rounded-full bg-[#1d1d1f] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
+                            <span className="rounded-full bg-[#2f2a24] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
                               {project.tradeLabel || 'Project'}
                             </span>
                             <span
@@ -503,10 +503,10 @@ export function ProjectFeed() {
                               {urgency}
                             </span>
                           </div>
-                          <h2 className="mt-2 text-[18px] font-semibold leading-snug tracking-tight text-[#1d1d1f] md:text-[20px]">
+                          <h2 className="mt-2 text-[18px] font-semibold leading-snug tracking-tight text-[#2f2a24] md:text-[20px]">
                             {project.title}
                           </h2>
-                          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-[#6e6e73]">
+                          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-[#6f665d]">
                             <span className="inline-flex items-center gap-1.5">
                               <MapPin className="h-3.5 w-3.5 shrink-0" />
                               {[project.city_name, project.country_name || project.location]
@@ -517,8 +517,8 @@ export function ProjectFeed() {
                               <Navigation className="h-3.5 w-3.5 shrink-0" />
                               {formatDistanceKm(project.distanceKm)}
                             </span>
-                            <span className="inline-flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
-                              <Wallet className="h-3.5 w-3.5 shrink-0 text-[#6e6e73]" />
+                            <span className="inline-flex items-center gap-1.5 font-semibold text-[#2f2a24]">
+                              <Wallet className="h-3.5 w-3.5 shrink-0 text-[#6f665d]" />
                               {formatBudget(project)}
                             </span>
                             <span className="inline-flex items-center gap-1.5">
@@ -529,7 +529,7 @@ export function ProjectFeed() {
                         </div>
                       </div>
 
-                      <p className="mt-3 line-clamp-2 text-[14px] leading-relaxed text-[#6e6e73]">
+                      <p className="mt-3 line-clamp-2 text-[14px] leading-relaxed text-[#6f665d]">
                         {project.description}
                       </p>
 
@@ -538,7 +538,7 @@ export function ProjectFeed() {
                           <>
                             <button
                               type="button"
-                              className="inline-flex items-center gap-1.5 rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-black"
+                              className="inline-flex items-center gap-1.5 rounded-full bg-[#2f2a24] px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-black"
                               onClick={() => navigateTo(`/project/${project.id}/manage`)}
                             >
                               <CheckCircle2 className="h-3.5 w-3.5" />
@@ -553,7 +553,7 @@ export function ProjectFeed() {
                         <button
                           type="button"
                           disabled={busyId === project.id || app?.status === 'ready'}
-                          className="inline-flex items-center gap-1.5 rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-black disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-[#2f2a24] px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-black disabled:opacity-50"
                           onClick={async () => {
                             setBusyId(project.id)
                             const res = await respondToProject(project.id, user.id, 'ready')
@@ -570,7 +570,7 @@ export function ProjectFeed() {
                         <button
                           type="button"
                           disabled={busyId === project.id || app?.status === 'needs_inspection'}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#1d1d1f] transition hover:bg-[#f5f5f7] disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#2f2a24] transition hover:bg-[#f3f0ea] disabled:opacity-50"
                           onClick={async () => {
                             setBusyId(project.id)
                             await respondToProject(project.id, user.id, 'needs_inspection')
@@ -584,7 +584,7 @@ export function ProjectFeed() {
                         <button
                           type="button"
                           disabled={busyId === project.id}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#6e6e73] transition hover:bg-[#f5f5f7] hover:text-[#c41e3a]"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#6f665d] transition hover:bg-[#f3f0ea] hover:text-[#c41e3a]"
                           onClick={async () => {
                             setBusyId(project.id)
                             await respondToProject(project.id, user.id, 'declined')
@@ -600,7 +600,7 @@ export function ProjectFeed() {
                         <button
                           type="button"
                           disabled={busyId === project.id || applied}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#1d1d1f] transition hover:bg-[#f5f5f7] disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#2f2a24] transition hover:bg-[#f3f0ea] disabled:opacity-50"
                           onClick={async () => {
                             setBusyId(project.id)
                             const res = await applyToProject(project.id, user.id)
@@ -618,8 +618,8 @@ export function ProjectFeed() {
                           type="button"
                           className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-[13px] font-semibold transition ${
                             app?.saved
-                              ? 'border-[#1d1d1f] bg-[#1d1d1f] text-white'
-                              : 'border-[#d2d2d7] bg-white text-[#1d1d1f] hover:bg-[#f5f5f7]'
+                              ? 'border-[#2f2a24] bg-[#2f2a24] text-white'
+                              : 'border-[rgba(148,163,184,0.35)] bg-white text-[#2f2a24] hover:bg-[#f3f0ea]'
                           }`}
                           onClick={async () => {
                             await setApplicationSaved(project.id, user.id, !app?.saved)
@@ -630,7 +630,7 @@ export function ProjectFeed() {
                           {app?.saved ? 'Saved' : 'Save'}
                         </button>
                         {responded ? (
-                          <span className="ml-auto self-center text-[12px] font-semibold capitalize text-[#86868b]">
+                          <span className="ml-auto self-center text-[12px] font-semibold capitalize text-[#8a8178]">
                             Status: {String(app?.status || '').replace(/_/g, ' ')}
                           </span>
                         ) : null}
@@ -655,10 +655,10 @@ export function ProjectFeed() {
 
         <div ref={sentinelRef} className="h-8" />
         {loadingMore ? (
-          <p className="py-4 text-center text-[13px] text-[#86868b]">Loading more…</p>
+          <p className="py-4 text-center text-[13px] text-[#8a8178]">Loading more…</p>
         ) : null}
         {!hasMore && items.length > 0 ? (
-          <p className="py-4 text-center text-[13px] text-[#86868b]">You&apos;re all caught up</p>
+          <p className="py-4 text-center text-[13px] text-[#8a8178]">You&apos;re all caught up</p>
         ) : null}
       </div>
     </div>

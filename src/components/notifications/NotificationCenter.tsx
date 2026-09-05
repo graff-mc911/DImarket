@@ -171,14 +171,14 @@ export function NotificationCenter({ compact = true }: Props) {
     <div
       className={
         compact
-          ? 'absolute right-0 z-[70] mt-2 w-[min(400px,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-[#e8e8ed] bg-white shadow-xl'
-          : 'mx-auto max-w-2xl overflow-hidden rounded-[22px] border border-[#e8e8ed] bg-white shadow-sm'
+          ? 'absolute right-0 z-[70] mt-2 w-[min(400px,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white shadow-xl'
+          : 'mx-auto max-w-2xl overflow-hidden rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white shadow-sm'
       }
     >
       <div className="flex items-center justify-between gap-2 border-b border-[#f0f0f2] px-4 py-3">
         <div>
-          <p className="text-[14px] font-semibold text-[#1d1d1f]">{t('notifications.title')}</p>
-          <p className="text-[11px] text-[#86868b]">
+          <p className="text-[14px] font-semibold text-[#2f2a24]">{t('notifications.title')}</p>
+          <p className="text-[11px] text-[#8a8178]">
             {t('notifications.channelsHint')}
           </p>
         </div>
@@ -192,7 +192,7 @@ export function NotificationCenter({ compact = true }: Props) {
           </button>
           <button
             type="button"
-            className="text-[11px] font-semibold text-[#86868b]"
+            className="text-[11px] font-semibold text-[#8a8178]"
             onClick={() => void markAllNotificationsRead(user.id).then(() => load())}
           >
             <CheckCheck className="mr-0.5 inline h-3.5 w-3.5" />
@@ -212,8 +212,8 @@ export function NotificationCenter({ compact = true }: Props) {
             }}
             className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
               filter === f.id
-                ? 'bg-[#1d1d1f] text-white'
-                : 'bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed]'
+                ? 'bg-[#2f2a24] text-white'
+                : 'bg-[#f3f0ea] text-[#2f2a24] hover:bg-[rgba(148,163,184,0.22)]'
             }`}
           >
             {t(f.labelKey as never)}
@@ -244,24 +244,24 @@ export function NotificationCenter({ compact = true }: Props) {
             >
               <span
                 className={`mt-0.5 flex h-8 w-8 items-center justify-center rounded-full ${
-                  !n.is_read ? 'bg-indigo-100 text-indigo-700' : 'bg-[#f5f5f7] text-[#86868b]'
+                  !n.is_read ? 'bg-indigo-100 text-indigo-700' : 'bg-[#f3f0ea] text-[#8a8178]'
                 }`}
               >
                 <TypeIcon type={n.type} />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wide text-[#86868b]">
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-[#8a8178]">
                     {typeLabel(n.type, t)}
                   </span>
                   {!n.is_read ? (
                     <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
                   ) : null}
                 </span>
-                <span className="mt-0.5 block text-[13px] font-semibold text-[#1d1d1f]">
+                <span className="mt-0.5 block text-[13px] font-semibold text-[#2f2a24]">
                   {n.title}
                 </span>
-                <span className="mt-0.5 line-clamp-2 block text-[12px] text-[#6e6e73]">
+                <span className="mt-0.5 line-clamp-2 block text-[12px] text-[#6f665d]">
                   {n.body}
                 </span>
                 <span className="mt-1 block text-[10px] text-[#a1a1a6]">
@@ -287,7 +287,7 @@ export function NotificationCenter({ compact = true }: Props) {
         {!compact ? null : (
           <button
             type="button"
-            className="text-[12px] font-semibold text-[#86868b]"
+            className="text-[12px] font-semibold text-[#8a8178]"
             onClick={() => {
               setOpen(false)
               navigateTo('/notifications')
@@ -303,7 +303,7 @@ export function NotificationCenter({ compact = true }: Props) {
   if (!compact) {
     return (
       <div className="px-4 py-8">
-        <h1 className="mb-4 text-[22px] font-semibold text-[#1d1d1f]">{t('notifications.centerTitle')}</h1>
+        <h1 className="mb-4 text-[22px] font-semibold text-[#2f2a24]">{t('notifications.centerTitle')}</h1>
         {panel}
       </div>
     )
@@ -322,7 +322,7 @@ export function NotificationCenter({ compact = true }: Props) {
       >
         <Bell className="h-5 w-5" />
         {unread > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#ff9900] px-1 text-[10px] font-bold text-[#0f1111]">
+          <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#ff9900] px-1 text-[10px] font-bold text-[#2f2a24]">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
@@ -338,10 +338,10 @@ export function NotificationsPage() {
   if (!user) {
     return (
       <div className="px-4 py-16 text-center">
-        <p className="text-[14px] text-[#6e6e73]">{t('notifications.signIn')}</p>
+        <p className="text-[14px] text-[#6f665d]">{t('notifications.signIn')}</p>
         <button
           type="button"
-          className="mt-4 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white"
+          className="mt-4 rounded-full bg-[#2f2a24] px-5 py-2.5 text-[13px] font-semibold text-white"
           onClick={() => navigateTo('/login')}
         >
           {t('notifications.logIn')}

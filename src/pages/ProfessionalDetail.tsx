@@ -354,7 +354,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
             </div>
           )}
           {isFeatured && !isPremium && (
-            <div className="mb-3 flex items-center gap-1 rounded-sm bg-[#ff9900] px-2 py-1 text-xs font-bold text-[#0f1111]">
+            <div className="mb-3 flex items-center gap-1 rounded-sm bg-[#ff9900] px-2 py-1 text-xs font-bold text-[#2f2a24]">
               <Zap className="h-3 w-3 fill-current" />
               Рекомендований
             </div>

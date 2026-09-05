@@ -143,8 +143,8 @@ export function CustomerDashboard() {
   if (!user) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">Customer Dashboard</h1>
-        <p className="mt-2 text-[#86868b]">Sign in to manage your projects and quotes.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-[#2f2a24]">Customer Dashboard</h1>
+        <p className="mt-2 text-[#8a8178]">Sign in to manage your projects and quotes.</p>
         <button type="button" className="btn-primary mt-6" onClick={() => navigateTo('/login')}>
           Sign in
         </button>
@@ -154,26 +154,26 @@ export function CustomerDashboard() {
 
   const card = dark
     ? 'rounded-[22px] border border-white/[0.08] bg-white/[0.04]'
-    : 'rounded-[22px] border border-[#e8e8ed] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
-  const ink = dark ? 'text-white' : 'text-[#1d1d1f]'
-  const muted = dark ? 'text-white/45' : 'text-[#86868b]'
-  const soft = dark ? 'text-white/70' : 'text-[#6e6e73]'
-  const chip = dark ? 'bg-white/10 text-white/75' : 'bg-[#f5f5f7] text-[#6e6e73]'
+    : 'rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+  const ink = dark ? 'text-white' : 'text-[#2f2a24]'
+  const muted = dark ? 'text-white/45' : 'text-[#8a8178]'
+  const soft = dark ? 'text-white/70' : 'text-[#6f665d]'
+  const chip = dark ? 'bg-white/10 text-white/75' : 'bg-[#f3f0ea] text-[#6f665d]'
   const btnGhost = dark
     ? 'border-white/15 bg-white/5 text-white hover:bg-white/10'
-    : 'border-[#d2d2d7] bg-white text-[#1d1d1f] hover:bg-[#f5f5f7]'
+    : 'border-[rgba(148,163,184,0.35)] bg-white text-[#2f2a24] hover:bg-[#f3f0ea]'
   const btnPrimary = dark
     ? 'bg-white text-[#0b0b0f] hover:bg-white/90'
-    : 'bg-[#1d1d1f] text-white hover:bg-black'
+    : 'bg-[#2f2a24] text-white hover:bg-black'
   const hoverRow = dark ? 'hover:bg-white/[0.04]' : 'hover:bg-[#fafafa]'
 
   const name = profile?.full_name?.split(' ')[0] || 'there'
 
   return (
-    <div className={`min-h-[80vh] pb-24 transition-colors ${dark ? 'bg-[#0a0a0c] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'}`}>
+    <div className={`min-h-[80vh] pb-24 transition-colors ${dark ? 'bg-[#0a0a0c] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'}`}>
       <div
         className={`sticky top-0 z-20 border-b backdrop-blur-2xl ${
-          dark ? 'border-white/10 bg-[#0a0a0c]/80' : 'border-[#e8e8ed]/80 bg-white/80'
+          dark ? 'border-white/10 bg-[#0a0a0c]/80' : 'border-[rgba(148,163,184,0.22)]/80 bg-white/80'
         }`}
       >
         <div className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4 py-5 md:px-6">
@@ -426,7 +426,7 @@ export function CustomerDashboard() {
                   <DonutProgress
                     percent={stats.profileComplete}
                     color={dark ? '#a78bfa' : '#7c3aed'}
-                    track={dark ? '#fff' : '#1d1d1f'}
+                    track={dark ? '#fff' : '#2f2a24'}
                   />
                   <div className="min-w-0 flex-1 space-y-1.5">
                     {stats.profileHints.map((h) => (
@@ -475,11 +475,11 @@ export function CustomerDashboard() {
                             )
                           }
                         >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#e8e8ed]">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[rgba(148,163,184,0.22)]">
                             {photo ? (
                               <img src={photo} alt="" className="h-full w-full object-cover" />
                             ) : (
-                              <User className="h-4 w-4 text-[#86868b]" />
+                              <User className="h-4 w-4 text-[#8a8178]" />
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -580,11 +580,11 @@ export function CustomerDashboard() {
                           }`}
                           onClick={() => navigateTo(`/professional/${p.id}`)}
                         >
-                          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#e8e8ed]">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[rgba(148,163,184,0.22)]">
                             {photo ? (
                               <img src={photo} alt="" className="h-full w-full object-cover" />
                             ) : (
-                              <User className="h-5 w-5 text-[#86868b]" />
+                              <User className="h-5 w-5 text-[#8a8178]" />
                             )}
                           </div>
                           <div className="min-w-0">

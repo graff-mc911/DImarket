@@ -335,7 +335,7 @@ export function Profile() {
                     }
                   })()
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 py-3 text-sm font-bold text-white transition hover:bg-black disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2f2a24] px-5 py-3 text-sm font-bold text-white transition hover:bg-black disabled:opacity-60"
               >
                 <LogOut className="h-4 w-4" />
                 {t('header.signOut')}

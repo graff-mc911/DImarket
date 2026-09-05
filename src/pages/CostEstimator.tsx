@@ -108,7 +108,7 @@ const EstimatorResultsMap = lazyWithRetry(() =>
 )
 
 const field =
-  'w-full rounded-[14px] border border-[#e8e8ed] bg-[#fafafa] px-4 py-3 text-[15px] text-[#1d1d1f] outline-none transition focus:border-[#1d1d1f] focus:bg-white focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]'
+  'w-full rounded-[14px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:bg-white focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]'
 
 const PREFILL_KEY = ESTIMATOR_PREFILL_KEY
 
@@ -960,7 +960,7 @@ export function CostEstimator() {
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="mt-3 text-[13px] text-[#86868b]">{progress}%</p>
+          <p className="mt-3 text-[13px] text-[#8a8178]">{progress}%</p>
         </div>
       </EstimatorShell>
       </>
@@ -970,16 +970,16 @@ export function CostEstimator() {
   if (state.step === 6 && estimate) {
     const totals = estimate.totals[tier]
     return (
-      <div className="min-h-[80vh] bg-[#f5f5f7] pb-24">
+      <div className="min-h-[80vh] bg-[#f3f0ea] pb-24">
         <EstimatorAdBanner />
-        <div className="border-b border-[#e8e8ed] bg-white">
+        <div className="border-b border-[rgba(148,163,184,0.22)] bg-white">
           <div className="mx-auto max-w-5xl px-4 py-8 md:px-6">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1d1d1f] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2f2a24] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white">
                 <Sparkles className="h-3 w-3" />
                 {t('costEstimator.referenceBadge')}
               </span>
-              <span className="rounded-full bg-[#f5f5f7] px-3 py-1 text-[12px] font-semibold text-[#1d1d1f]">
+              <span className="rounded-full bg-[#f3f0ea] px-3 py-1 text-[12px] font-semibold text-[#2f2a24]">
                 {estimate.confidence}% · {estimate.source === 'local' ? 'Model' : 'AI + model'}
               </span>
               {savedId ? (
@@ -989,17 +989,17 @@ export function CostEstimator() {
                 </span>
               ) : null}
             </div>
-            <h1 className="mt-4 text-[28px] font-semibold tracking-tight text-[#1d1d1f] md:text-[36px]">
+            <h1 className="mt-4 text-[28px] font-semibold tracking-tight text-[#2f2a24] md:text-[36px]">
               {estimate.tradeLabel} · {state.measurements.areaSqm} m²
             </h1>
-            <p className="mt-2 max-w-2xl text-[15px] text-[#6e6e73]">{estimate.explanation}</p>
-            <p className="mt-2 text-[13px] font-medium text-[#86868b]">{t('costEstimator.disclaimer')}</p>
+            <p className="mt-2 max-w-2xl text-[15px] text-[#6f665d]">{estimate.explanation}</p>
+            <p className="mt-2 text-[13px] font-medium text-[#8a8178]">{t('costEstimator.disclaimer')}</p>
             {estimate.factors.length > 0 ? (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {estimate.factors.map((f) => (
                   <span
                     key={f}
-                    className="rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[11px] font-medium text-[#6e6e73]"
+                    className="rounded-full bg-[#f3f0ea] px-2.5 py-1 text-[11px] font-medium text-[#6f665d]"
                   >
                     {f}
                   </span>
@@ -1064,7 +1064,7 @@ export function CostEstimator() {
             </ActionBtn>
             <button
               type="button"
-              className="rounded-full px-4 py-2 text-[13px] font-medium text-[#6e6e73] hover:bg-white"
+              className="rounded-full px-4 py-2 text-[13px] font-medium text-[#6f665d] hover:bg-white"
               onClick={goBack}
             >
               ← Edit inputs
@@ -1072,7 +1072,7 @@ export function CostEstimator() {
             {historyCount > 0 ? (
               <button
                 type="button"
-                className="rounded-full px-4 py-2 text-[13px] font-medium text-[#6e6e73] hover:bg-white"
+                className="rounded-full px-4 py-2 text-[13px] font-medium text-[#6f665d] hover:bg-white"
                 onClick={() => navigateTo('/cost-estimator/history')}
               >
                 {t('costEstimator.history')} ({historyCount})
@@ -1089,8 +1089,8 @@ export function CostEstimator() {
                 onClick={() => setTier(id)}
                 className={`rounded-[22px] border p-5 text-left transition ${
                   tier === id
-                    ? 'border-[#1d1d1f] bg-[#1d1d1f] text-white shadow-[0_8px_30px_rgba(0,0,0,0.12)]'
-                    : 'border-[#e8e8ed] bg-white text-[#1d1d1f] hover:border-[#d2d2d7]'
+                    ? 'border-[#2f2a24] bg-[#2f2a24] text-white shadow-[0_8px_30px_rgba(0,0,0,0.12)]'
+                    : 'border-[rgba(148,163,184,0.22)] bg-white text-[#2f2a24] hover:border-[rgba(148,163,184,0.35)]'
                 }`}
               >
                 <p className="text-[11px] font-bold uppercase tracking-wide opacity-70">
@@ -1105,7 +1105,7 @@ export function CostEstimator() {
                 <p className="mt-2 text-[28px] font-semibold tabular-nums tracking-tight">
                   {formatEuro(estimate.totals[id].grandTotal)}
                 </p>
-                <p className={`mt-1 text-[12px] ${tier === id ? 'opacity-70' : 'text-[#86868b]'}`}>
+                <p className={`mt-1 text-[12px] ${tier === id ? 'opacity-70' : 'text-[#8a8178]'}`}>
                   {id === 'standard' ? 'Most common' : id === 'economy' ? 'Budget-friendly' : 'High-end finish'}
                 </p>
               </button>
@@ -1113,7 +1113,7 @@ export function CostEstimator() {
           </div>
 
           {/* Metrics */}
-          <div className="grid gap-3 rounded-[24px] border border-[#e8e8ed] bg-white p-5 sm:grid-cols-4">
+          <div className="grid gap-3 rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-white p-5 sm:grid-cols-4">
             <Metric icon={<Hammer className="h-4 w-4" />} label={t('costEstimator.labor')} value={formatEuro(totals.labor)} />
             <Metric icon={<Package className="h-4 w-4" />} label={t('costEstimator.materials')} value={formatEuro(totals.materials)} />
             <Metric icon={<Wallet className="h-4 w-4" />} label={t('costEstimator.equipment')} value={formatEuro(totals.equipment)} />
@@ -1129,7 +1129,7 @@ export function CostEstimator() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-[13px]">
                 <thead>
-                  <tr className="text-[11px] uppercase tracking-wide text-[#86868b]">
+                  <tr className="text-[11px] uppercase tracking-wide text-[#8a8178]">
                     <th className="pb-2 font-semibold">Item</th>
                     <th className="pb-2 font-semibold">{t('costEstimator.economy')}</th>
                     <th className="pb-2 font-semibold">{t('costEstimator.standard')}</th>
@@ -1139,7 +1139,7 @@ export function CostEstimator() {
                 <tbody>
                   {estimate.breakdown.map((b) => (
                     <tr key={b.id} className="border-t border-[#f0f0f2]">
-                      <td className="py-2.5 text-[#1d1d1f]">{b.label}</td>
+                      <td className="py-2.5 text-[#2f2a24]">{b.label}</td>
                       <td className="py-2.5 tabular-nums">{formatEuro(b.amountEconomy)}</td>
                       <td className="py-2.5 tabular-nums font-medium">{formatEuro(b.amountStandard)}</td>
                       <td className="py-2.5 tabular-nums">{formatEuro(b.amountPremium)}</td>
@@ -1152,17 +1152,17 @@ export function CostEstimator() {
 
           {/* Timeline */}
           <Section title={t('costEstimator.timeline')}>
-            <p className="mb-3 text-[13px] text-[#6e6e73]">
+            <p className="mb-3 text-[13px] text-[#6f665d]">
               Est. completion{' '}
-              <strong className="text-[#1d1d1f]">
+              <strong className="text-[#2f2a24]">
                 {new Date(estimate.estimatedCompletionIso).toLocaleDateString()}
               </strong>
             </p>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {estimate.timeline.map((ph) => (
-                <div key={ph.id} className="rounded-2xl bg-[#f5f5f7] px-4 py-3">
-                  <p className="text-[12px] font-semibold text-[#86868b]">{ph.label}</p>
-                  <p className="mt-1 text-[16px] font-semibold text-[#1d1d1f]">
+                <div key={ph.id} className="rounded-2xl bg-[#f3f0ea] px-4 py-3">
+                  <p className="text-[12px] font-semibold text-[#8a8178]">{ph.label}</p>
+                  <p className="mt-1 text-[16px] font-semibold text-[#2f2a24]">
                     {ph.daysMin}–{ph.daysMax} days
                   </p>
                 </div>
@@ -1181,15 +1181,15 @@ export function CostEstimator() {
                     className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#f0f0f2] px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] text-[12px] font-bold text-white">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2f2a24] text-[12px] font-bold text-white">
                         {i + 1}
                       </span>
                       <div>
-                        <p className="text-[14px] font-semibold text-[#1d1d1f]">{stage.label}</p>
-                        <p className="text-[12px] text-[#86868b]">Trade: {stage.tradeId}</p>
+                        <p className="text-[14px] font-semibold text-[#2f2a24]">{stage.label}</p>
+                        <p className="text-[12px] text-[#8a8178]">Trade: {stage.tradeId}</p>
                       </div>
                     </div>
-                    <p className="text-[13px] font-medium tabular-nums text-[#1d1d1f]">
+                    <p className="text-[13px] font-medium tabular-nums text-[#2f2a24]">
                       ~{stage.laborHours} h
                     </p>
                   </li>
@@ -1199,7 +1199,7 @@ export function CostEstimator() {
 
           {/* Interactive map — EuropeMarketplaceMap SSoT */}
           <Section title={t('costEstimator.mapTitle')}>
-            <Suspense fallback={<p className="text-[13px] text-[#6e6e73]">{t('costEstimator.working')}</p>}>
+            <Suspense fallback={<p className="text-[13px] text-[#6f665d]">{t('costEstimator.working')}</p>}>
               <EstimatorResultsMap
                 preferKinds={['professional', 'company', 'marketplace', 'project', 'job']}
                 subcategorySlug={estimate.specialists[0]?.subcategorySlug || getProjectType(state.projectTypeId).subcategorySlug}
@@ -1219,16 +1219,16 @@ export function CostEstimator() {
                     className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#f0f0f2] px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f5f5f7] text-[12px] font-bold text-[#1d1d1f]">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f3f0ea] text-[12px] font-bold text-[#2f2a24]">
                         {i + 1}
                       </span>
                       <div>
-                        <p className="text-[14px] font-semibold text-[#1d1d1f]">{sp.label}</p>
-                        <p className="text-[12px] text-[#86868b]">~{sp.laborHours} labour hours</p>
+                        <p className="text-[14px] font-semibold text-[#2f2a24]">{sp.label}</p>
+                        <p className="text-[12px] text-[#8a8178]">~{sp.laborHours} labour hours</p>
                       </div>
                     </div>
                     {counts ? (
-                      <p className="text-[12px] text-[#6e6e73]">
+                      <p className="text-[12px] text-[#6f665d]">
                         {counts.pros} pros · {counts.companies} companies nearby
                       </p>
                     ) : null}
@@ -1243,7 +1243,7 @@ export function CostEstimator() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-[13px]">
                 <thead>
-                  <tr className="text-[11px] uppercase tracking-wide text-[#86868b]">
+                  <tr className="text-[11px] uppercase tracking-wide text-[#8a8178]">
                     <th className="pb-2 font-semibold">Material</th>
                     <th className="pb-2 font-semibold">Qty</th>
                     <th className="pb-2 font-semibold">Category</th>
@@ -1265,7 +1265,7 @@ export function CostEstimator() {
                         <td className="py-2.5 tabular-nums">
                           {m.quantity} {m.unit}
                         </td>
-                        <td className="py-2.5 text-[#86868b]">{m.category}</td>
+                        <td className="py-2.5 text-[#8a8178]">{m.category}</td>
                         <td className="py-2.5 tabular-nums">{formatEuro(unit * m.quantity)}</td>
                         <td className="py-2.5">
                           <button
@@ -1286,7 +1286,7 @@ export function CostEstimator() {
             </div>
             {matches?.materialListings?.length ? (
               <div className="mt-4 space-y-2">
-                <p className="text-[12px] font-semibold uppercase tracking-wide text-[#86868b]">
+                <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8a8178]">
                   {t('costEstimator.materialShops')}
                 </p>
                 {matches.materialListings.map((l) => (
@@ -1296,8 +1296,8 @@ export function CostEstimator() {
                     onClick={() => navigateTo(`/listing/${l.id}`)}
                     className="flex w-full items-center justify-between rounded-2xl border border-[#f0f0f2] px-4 py-3 text-left hover:bg-[#fafafa]"
                   >
-                    <span className="text-[14px] font-medium text-[#1d1d1f]">{l.title}</span>
-                    <span className="text-[13px] text-[#6e6e73]">
+                    <span className="text-[14px] font-medium text-[#2f2a24]">{l.title}</span>
+                    <span className="text-[13px] text-[#6f665d]">
                       {l.price != null ? formatEuro(l.price) : '—'}
                     </span>
                   </button>
@@ -1323,9 +1323,9 @@ export function CostEstimator() {
               {estimate.insights.map((ins) => (
                 <li
                   key={ins.id}
-                  className="rounded-2xl bg-[#f5f5f7] px-4 py-3 text-[13px] leading-relaxed text-[#3a3a3c]"
+                  className="rounded-2xl bg-[#f3f0ea] px-4 py-3 text-[13px] leading-relaxed text-[#3a3a3c]"
                 >
-                  <span className="mr-2 text-[11px] font-bold uppercase tracking-wide text-[#86868b]">
+                  <span className="mr-2 text-[11px] font-bold uppercase tracking-wide text-[#8a8178]">
                     {ins.kind}
                   </span>
                   {ins.text}
@@ -1336,7 +1336,7 @@ export function CostEstimator() {
 
           {/* Learning loop — actual final cost */}
           <Section title={t('costEstimator.actualCostTitle')}>
-            <p className="mb-3 text-[13px] text-[#6e6e73]">{t('costEstimator.actualCostHint')}</p>
+            <p className="mb-3 text-[13px] text-[#6f665d]">{t('costEstimator.actualCostHint')}</p>
             {outcomeSaved ? (
               <p className="rounded-2xl bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
                 {t('costEstimator.actualCostThanks')}
@@ -1365,12 +1365,12 @@ export function CostEstimator() {
                   type="button"
                   disabled={!user || !outcomeConsent || !actualTotal}
                   onClick={() => void submitActualCost()}
-                  className="rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white disabled:opacity-40"
+                  className="rounded-full bg-[#2f2a24] px-5 py-2.5 text-[13px] font-semibold text-white disabled:opacity-40"
                 >
                   {t('costEstimator.actualCostSubmit')}
                 </button>
                 {!user ? (
-                  <p className="text-[12px] text-[#86868b]">{t('costEstimator.actualCostLogin')}</p>
+                  <p className="text-[12px] text-[#8a8178]">{t('costEstimator.actualCostLogin')}</p>
                 ) : null}
               </div>
             )}
@@ -1379,9 +1379,9 @@ export function CostEstimator() {
           {/* Recommended pros */}
           <Section title={t('costEstimator.recommendedPros')}>
             {!matches ? (
-              <p className="text-[13px] text-[#86868b]">Loading matches…</p>
+              <p className="text-[13px] text-[#8a8178]">Loading matches…</p>
             ) : matches.professionals.length === 0 ? (
-              <p className="text-[13px] text-[#86868b]">
+              <p className="text-[13px] text-[#8a8178]">
                 No specialists found nearby — broaden location or publish a project.
               </p>
             ) : (
@@ -1400,7 +1400,7 @@ export function CostEstimator() {
 
           <Section title={t('costEstimator.recommendedCompanies')}>
             {!matches?.companies.length ? (
-              <p className="text-[13px] text-[#86868b]">No companies matched yet in this area.</p>
+              <p className="text-[13px] text-[#8a8178]">No companies matched yet in this area.</p>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
                 {matches.companies.map((p) => (
@@ -1415,11 +1415,11 @@ export function CostEstimator() {
             )}
           </Section>
 
-          <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-[24px] border border-[#e8e8ed] bg-white/95 p-3 shadow-[0_8px_40px_rgba(0,0,0,0.1)] backdrop-blur">
+          <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-white/95 p-3 shadow-[0_8px_40px_rgba(0,0,0,0.1)] backdrop-blur">
             <button
               type="button"
               onClick={requestQuotes}
-              className="flex-1 rounded-full bg-[#1d1d1f] px-5 py-3.5 text-[14px] font-semibold text-white"
+              className="flex-1 rounded-full bg-[#2f2a24] px-5 py-3.5 text-[14px] font-semibold text-white"
             >
               {t('costEstimator.sendQuotes')}
               {selectedPros.size ? ` (${selectedPros.size})` : ''}
@@ -1427,7 +1427,7 @@ export function CostEstimator() {
             <button
               type="button"
               onClick={convertToProject}
-              className="rounded-full border border-[#d2d2d7] bg-white px-5 py-3.5 text-[14px] font-semibold text-[#1d1d1f]"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-5 py-3.5 text-[14px] font-semibold text-[#2f2a24]"
             >
               {t('costEstimator.createProject')}
             </button>
@@ -1575,7 +1575,7 @@ export function CostEstimator() {
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[12px] font-semibold disabled:opacity-40 ${
               listening
                 ? 'bg-[#c41e3a] text-white'
-                : 'border border-[#d2d2d7] bg-white text-[#1d1d1f]'
+                : 'border border-[rgba(148,163,184,0.35)] bg-white text-[#2f2a24]'
             }`}
           >
             {listening ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
@@ -1587,28 +1587,28 @@ export function CostEstimator() {
       {state.step === 3 && (
         <div>
           <div
-            className="rounded-[18px] border-2 border-dashed border-[#d2d2d7] bg-[#fafafa] px-4 py-10 text-center"
+            className="rounded-[18px] border-2 border-dashed border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-4 py-10 text-center"
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault()
               if (e.dataTransfer.files?.length) addFiles(e.dataTransfer.files)
             }}
           >
-            <ImagePlus className="mx-auto h-7 w-7 text-[#86868b]" />
-            <p className="mt-2 text-[14px] font-medium text-[#1d1d1f]">
+            <ImagePlus className="mx-auto h-7 w-7 text-[#8a8178]" />
+            <p className="mt-2 text-[14px] font-medium text-[#2f2a24]">
               Photos, video, PDF or CAD
             </p>
             <div className="mt-3 flex flex-wrap justify-center gap-2">
               <button
                 type="button"
-                className="rounded-full bg-[#1d1d1f] px-4 py-2 text-[12px] font-semibold text-white"
+                className="rounded-full bg-[#2f2a24] px-4 py-2 text-[12px] font-semibold text-white"
                 onClick={() => inputRef.current?.click()}
               >
                 Gallery / files
               </button>
               <button
                 type="button"
-                className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[12px] font-semibold text-[#1d1d1f]"
+                className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
                 onClick={() => cameraRef.current?.click()}
               >
                 Camera
@@ -1644,7 +1644,7 @@ export function CostEstimator() {
               ))}
             </ul>
           ) : (
-            <p className="mt-3 text-center text-[12px] text-[#86868b]">Optional — skip if none</p>
+            <p className="mt-3 text-center text-[12px] text-[#8a8178]">Optional — skip if none</p>
           )}
         </div>
       )}
@@ -1678,7 +1678,7 @@ export function CostEstimator() {
           />
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="block">
-              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                 Region
               </span>
               <input
@@ -1690,7 +1690,7 @@ export function CostEstimator() {
               />
             </label>
             <label className="block">
-              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                 Province
               </span>
               <input
@@ -1702,7 +1702,7 @@ export function CostEstimator() {
               />
             </label>
             <label className="block">
-              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                 Radius
               </span>
               <select
@@ -1792,8 +1792,8 @@ export function CostEstimator() {
             const analyst = buildAnalystQuestions(state, state.clarifications || {})
             if (!analyst.missing.length && !analyst.workHints.length) return null
             return (
-              <div className="rounded-[18px] border border-[#e8e8ed] bg-[#fafafa] p-4">
-                <p className="text-[12px] font-semibold uppercase tracking-wide text-[#86868b]">
+              <div className="rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-4">
+                <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8a8178]">
                   AI Analyst
                 </p>
                 {analyst.workHints.length ? (
@@ -1801,7 +1801,7 @@ export function CostEstimator() {
                     {analyst.workHints.map((h) => (
                       <span
                         key={h}
-                        className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-[#1d1d1f] ring-1 ring-[#e8e8ed]"
+                        className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-[#2f2a24] ring-1 ring-[rgba(148,163,184,0.22)]"
                       >
                         {h}
                       </span>
@@ -1813,12 +1813,12 @@ export function CostEstimator() {
                     {analyst.missing.map((q) => (
                       <li key={q.id}>
                         <label className="block">
-                          <span className="text-[13px] font-semibold text-[#1d1d1f]">
+                          <span className="text-[13px] font-semibold text-[#2f2a24]">
                             {q.question}
                             {q.required ? ' *' : ''}
                           </span>
                           {q.hint ? (
-                            <span className="mt-0.5 block text-[12px] text-[#86868b]">{q.hint}</span>
+                            <span className="mt-0.5 block text-[12px] text-[#8a8178]">{q.hint}</span>
                           ) : null}
                           <input
                             type="text"
@@ -1878,7 +1878,7 @@ function NumField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+      <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
         {label}
       </span>
       <input
@@ -1895,8 +1895,8 @@ function NumField({
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="rounded-[24px] border border-[#e8e8ed] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-      <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+    <section className="rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+      <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
         {title}
       </h2>
       {children}
@@ -1914,12 +1914,12 @@ function Metric({
   value: string
 }) {
   return (
-    <div className="rounded-2xl bg-[#f5f5f7] px-3 py-3">
-      <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#86868b]">
+    <div className="rounded-2xl bg-[#f3f0ea] px-3 py-3">
+      <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
         {icon}
         {label}
       </div>
-      <p className="mt-1 text-[18px] font-semibold tabular-nums tracking-tight text-[#1d1d1f]">
+      <p className="mt-1 text-[18px] font-semibold tabular-nums tracking-tight text-[#2f2a24]">
         {value}
       </p>
     </div>
@@ -1946,8 +1946,8 @@ function ActionBtn({
       disabled={disabled}
       className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
         primary
-          ? 'bg-[#1d1d1f] text-white hover:bg-black'
-          : 'border border-[#d2d2d7] bg-white text-[#1d1d1f] hover:bg-[#fafafa]'
+          ? 'bg-[#2f2a24] text-white hover:bg-black'
+          : 'border border-[rgba(148,163,184,0.35)] bg-white text-[#2f2a24] hover:bg-[#fafafa]'
       }`}
     >
       {icon}
@@ -1958,11 +1958,11 @@ function ActionBtn({
 
 function FileThumb({ file, onRemove }: { file: EstimatorDraftFile; onRemove: () => void }) {
   return (
-    <li className="relative aspect-square overflow-hidden rounded-xl bg-[#f5f5f7]">
+    <li className="relative aspect-square overflow-hidden rounded-xl bg-[#f3f0ea]">
       {file.previewUrl ? (
         <img src={file.previewUrl} alt="" className="h-full w-full object-cover" />
       ) : (
-        <div className="flex h-full items-center justify-center p-2 text-center text-[10px] font-medium text-[#6e6e73]">
+        <div className="flex h-full items-center justify-center p-2 text-center text-[10px] font-medium text-[#6f665d]">
           {file.kind.toUpperCase()}
           <br />
           {file.file.name.slice(0, 18)}
@@ -1994,21 +1994,21 @@ function MatchPickCard({
   return (
     <div
       className={`relative rounded-[20px] border p-2 transition ${
-        selected ? 'border-[#1d1d1f] ring-2 ring-[#1d1d1f]/ring-offset-2' : 'border-[#e8e8ed]'
+        selected ? 'border-[#2f2a24] ring-2 ring-[#2f2a24]/ring-offset-2' : 'border-[rgba(148,163,184,0.22)]'
       }`}
     >
       <button
         type="button"
         onClick={onToggle}
         className={`absolute right-3 top-3 z-10 rounded-full px-2.5 py-1 text-[11px] font-bold ${
-          selected ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+          selected ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
         }`}
       >
         {selected ? 'Selected' : 'Select'}
       </button>
       <ProfessionalCard professional={asProfile} compact />
       {profile.distanceKm != null ? (
-        <p className="px-3 pb-2 text-[11px] text-[#86868b]">
+        <p className="px-3 pb-2 text-[11px] text-[#8a8178]">
           ~{profile.distanceKm < 10 ? profile.distanceKm.toFixed(1) : Math.round(profile.distanceKm)}{' '}
           km
         </p>

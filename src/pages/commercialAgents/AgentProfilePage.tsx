@@ -248,7 +248,7 @@ export function AgentProfilePage({ slug }: { slug: string }) {
                 {t('commercialAgents.invite')}
               </label>
               <textarea
-                className="mt-1.5 w-full rounded-xl border border-[#d2d2d7] bg-white p-3 text-sm outline-none"
+                className="mt-1.5 w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white p-3 text-sm outline-none"
                 rows={3}
                 value={inviteMsg}
                 onChange={(e) => setInviteMsg(e.target.value)}

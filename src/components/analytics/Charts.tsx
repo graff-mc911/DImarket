@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 export function BarChart({
   values,
   labels,
-  color = '#1d1d1f',
+  color = '#2f2a24',
   height = 160,
   formatValue,
 }: {
@@ -35,7 +35,7 @@ export function BarChart({
                 x={x + barW / 2}
                 y={y - 4}
                 textAnchor="middle"
-                style={{ fontSize: 9, fill: '#86868b' }}
+                style={{ fontSize: 9, fill: '#8a8178' }}
               >
                 {formatValue ? formatValue(v) : v >= 1000 ? `${Math.round(v / 100) / 10}k` : String(Math.round(v))}
               </text>
@@ -44,7 +44,7 @@ export function BarChart({
               x={x + barW / 2}
               y={height - 10}
               textAnchor="middle"
-              style={{ fontSize: 10, fill: '#86868b' }}
+              style={{ fontSize: 10, fill: '#8a8178' }}
             >
               {labels[i] || ''}
             </text>
@@ -107,7 +107,7 @@ export function AreaSparkline({
                 x={x}
                 y={height - 6}
                 textAnchor="middle"
-                style={{ fontSize: 9, fill: '#86868b' }}
+                style={{ fontSize: 9, fill: '#8a8178' }}
               >
                 {l}
               </text>
@@ -132,14 +132,14 @@ export function FunnelChart({
           <div key={s.label}>
             <div className="mb-1 flex items-center justify-between text-[12px]">
               <span className="font-medium text-[#3a3a3c]">{s.label}</span>
-              <span className="tabular-nums text-[#86868b]">{s.value}</span>
+              <span className="tabular-nums text-[#8a8178]">{s.value}</span>
             </div>
             <div className="h-2.5 overflow-hidden rounded-full bg-[#f0f0f2]">
               <div
                 className="h-full rounded-full transition-all"
                 style={{
                   width: `${pct}%`,
-                  background: s.color || '#1d1d1f',
+                  background: s.color || '#2f2a24',
                 }}
               />
             </div>
@@ -162,13 +162,13 @@ export function MetricCard({
   accent?: string
 }) {
   return (
-    <div className="rounded-[20px] border border-[#e8e8ed] bg-white p-4 shadow-sm">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b]">{label}</p>
-      <p className="mt-2 text-[24px] font-semibold tracking-tight tabular-nums text-[#1d1d1f]">
+    <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">{label}</p>
+      <p className="mt-2 text-[24px] font-semibold tracking-tight tabular-nums text-[#2f2a24]">
         {value}
       </p>
       {hint ? (
-        <p className="mt-1 text-[12px]" style={{ color: accent || '#6e6e73' }}>
+        <p className="mt-1 text-[12px]" style={{ color: accent || '#6f665d' }}>
           {hint}
         </p>
       ) : null}
@@ -189,11 +189,11 @@ export function ChartCard({
 }) {
   return (
     <section
-      className={`rounded-[22px] border border-[#e8e8ed] bg-white p-4 shadow-sm sm:p-5 ${className}`}
+      className={`rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5 ${className}`}
     >
       <div className="mb-3">
-        <h2 className="text-[15px] font-semibold text-[#1d1d1f]">{title}</h2>
-        {subtitle ? <p className="mt-0.5 text-[12px] text-[#86868b]">{subtitle}</p> : null}
+        <h2 className="text-[15px] font-semibold text-[#2f2a24]">{title}</h2>
+        {subtitle ? <p className="mt-0.5 text-[12px] text-[#8a8178]">{subtitle}</p> : null}
       </div>
       {children}
     </section>

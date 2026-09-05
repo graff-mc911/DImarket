@@ -86,7 +86,7 @@ export function LegalDocuments() {
   if (loading) {
     return (
       <div className="layout-page-content flex justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-[#86868b]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#8a8178]" />
       </div>
     )
   }
@@ -95,25 +95,25 @@ export function LegalDocuments() {
     <div className="layout-page-content py-8 pb-24 lg:pb-8">
       <div className="mx-auto max-w-4xl">
         <header className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#86868b]">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#8a8178]">
             {t('osm.public.categoryEyebrow')}
           </p>
-          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#1d1d1f]">
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
             {t('osm.public.title')}
           </h1>
-          <p className="mt-2 text-sm leading-6 text-[#6e6e73]">{t('osm.public.subtitle')}</p>
+          <p className="mt-2 text-sm leading-6 text-[#6f665d]">{t('osm.public.subtitle')}</p>
           {fromStatic ? (
-            <p className="mt-2 text-xs text-[#6e6e73]">{t('osm.public.staticCatalogNote')}</p>
+            <p className="mt-2 text-xs text-[#6f665d]">{t('osm.public.staticCatalogNote')}</p>
           ) : null}
           {countries.length > 1 || kinds.length > 1 ? (
             <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
               {countries.length > 1 ? (
                 <label className="inline-flex items-center gap-2">
-                  <span className="font-semibold text-[#1d1d1f]">{t('osm.public.filterCountry')}</span>
+                  <span className="font-semibold text-[#2f2a24]">{t('osm.public.filterCountry')}</span>
                   <select
                     value={countryFilter}
                     onChange={(e) => setCountryFilter(e.target.value)}
-                    className="rounded-lg border border-[#d2d2d7] px-2 py-1 text-sm"
+                    className="rounded-lg border border-[rgba(148,163,184,0.35)] px-2 py-1 text-sm"
                   >
                     <option value="">{t('osm.public.filterAll')}</option>
                     {countries.map((code) => (
@@ -126,11 +126,11 @@ export function LegalDocuments() {
               ) : null}
               {kinds.length > 1 ? (
                 <label className="inline-flex items-center gap-2">
-                  <span className="font-semibold text-[#1d1d1f]">{t('osm.public.filterKind')}</span>
+                  <span className="font-semibold text-[#2f2a24]">{t('osm.public.filterKind')}</span>
                   <select
                     value={kindFilter}
                     onChange={(e) => setKindFilter(e.target.value)}
-                    className="rounded-lg border border-[#d2d2d7] px-2 py-1 text-sm"
+                    className="rounded-lg border border-[rgba(148,163,184,0.35)] px-2 py-1 text-sm"
                   >
                     <option value="">{t('osm.public.filterAllKinds')}</option>
                     {kinds.map((kind) => (
@@ -153,7 +153,7 @@ export function LegalDocuments() {
 
         <ul className="space-y-3">
           {filtered.length === 0 ? (
-            <li className="rounded-2xl border border-dashed border-[#d2d2d7] px-4 py-8 text-center text-sm text-[#86868b]">
+            <li className="rounded-2xl border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-8 text-center text-sm text-[#8a8178]">
               {t('osm.public.empty')}
             </li>
           ) : (
@@ -162,13 +162,13 @@ export function LegalDocuments() {
                 <button
                   type="button"
                   onClick={() => navigateTo(`/legal-documents/${doc.doc_key}`)}
-                  className="w-full rounded-2xl border border-[#e8e8ed] bg-white p-4 text-left transition hover:border-[#007185]/40 hover:shadow-sm"
+                  className="w-full rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4 text-left transition hover:border-[#007185]/40 hover:shadow-sm"
                 >
                   <div className="flex items-start gap-3">
-                    <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[#1d1d1f]" />
+                    <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[#2f2a24]" />
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-[#1d1d1f]">{doc.title}</p>
-                      <p className="mt-0.5 text-xs text-[#6e6e73]">
+                      <p className="font-semibold text-[#2f2a24]">{doc.title}</p>
+                      <p className="mt-0.5 text-xs text-[#6f665d]">
                         {doc.country_code}
                         {doc.region ? ` · ${doc.region}` : ''} · {doc.doc_kind}
                       </p>
@@ -181,7 +181,7 @@ export function LegalDocuments() {
                         />
                       </div>
                     </div>
-                    <ExternalLink className="h-4 w-4 shrink-0 text-[#86868b]" aria-hidden />
+                    <ExternalLink className="h-4 w-4 shrink-0 text-[#8a8178]" aria-hidden />
                   </div>
                 </button>
               </li>
