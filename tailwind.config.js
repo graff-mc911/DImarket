@@ -37,21 +37,21 @@ export default {
       },
 
       borderRadius: {
-        glass: '22px',
+        glass: '0px',
       },
     },
 
-    /* Soft-glass radii (owner cabinet language) — header/footer locked in CSS */
+    /* Square corners everywhere — owner cabinet keeps its own rounded-[Npx] */
     borderRadius: {
       none: '0px',
-      sm: '10px',
-      DEFAULT: '14px',
-      md: '16px',
-      lg: '18px',
-      xl: '20px',
-      '2xl': '22px',
-      '3xl': '26px',
-      full: '9999px',
+      sm: '0px',
+      DEFAULT: '0px',
+      md: '0px',
+      lg: '0px',
+      xl: '0px',
+      '2xl': '0px',
+      '3xl': '0px',
+      full: '0px',
     },
   },
 

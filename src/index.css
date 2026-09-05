@@ -42,10 +42,10 @@
     --accent-500: #ff9900;
     --accent-soft: rgba(201, 109, 44, 0.12);
     --mint-soft: rgba(61, 122, 82, 0.12);
-    --radius-panel: 22px;
-    --radius-card: 20px;
-    --radius-control: 16px;
-    --radius-pill: 9999px;
+    --radius-panel: 0px;
+    --radius-card: 0px;
+    --radius-control: 0px;
+    --radius-pill: 0px;
     /* бокові реклами: 276 / 298 / 348px; gutter = відступ від краю екрана = між колонками */
     --ad-side-rail-width: 17.25rem;
     --layout-side-rail-inset: min(var(--ad-side-rail-width), 16.8vw);
@@ -1768,7 +1768,7 @@
   .pro-card--compact .pro-card__avatar {
     height: 2.75rem;
     width: 2.75rem;
-    border-radius: 9999px;
+    border-radius: 0;
     font-size: 0.75rem;
   }
 
@@ -2030,7 +2030,7 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
     background: linear-gradient(180deg, #f7dfa5 0%, #f0c14b 100%);
     color: #2f2a24;
     border: 1px solid #a88734;
@@ -2045,7 +2045,7 @@
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
     background: rgba(255, 255, 255, 0.72);
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
@@ -2060,7 +2060,7 @@
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
     background: rgba(255, 255, 255, 0.45);
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
@@ -2074,7 +2074,7 @@
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-4 py-2 text-sm font-semibold transition-all duration-200;
     color: var(--ink-700);
     background: transparent;
     box-shadow: none;
@@ -2088,7 +2088,7 @@
 
   .input-glass,
   .select-glass {
-    @apply w-full rounded-2xl px-4 py-3 outline-none transition-all duration-200;
+    @apply w-full rounded-none px-4 py-3 outline-none transition-all duration-200;
     background: rgba(255, 255, 255, 0.72);
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
@@ -2106,7 +2106,7 @@
   }
 
   .input-hero {
-    @apply w-full rounded-2xl px-4 py-3 outline-none transition-all duration-200;
+    @apply w-full rounded-none px-4 py-3 outline-none transition-all duration-200;
     background: rgba(255, 255, 255, 0.82);
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
@@ -3034,7 +3034,7 @@
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold;
+    @apply inline-flex items-center gap-2 rounded-none px-4 py-2 text-[13px] font-semibold;
     background: rgba(255, 252, 248, 0.42);
     color: var(--accent-700);
     backdrop-filter: blur(8px);
@@ -3083,7 +3083,7 @@
     .glass-card,
     .glass-panel,
     .hero-glass {
-      border-radius: max(16px, calc(var(--radius-card) - 4px));
+      border-radius: 0;
     }
   }
 
@@ -3511,7 +3511,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: center;
   width: 4rem;
   height: 4rem;
-  border-radius: 18px;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 153, 0, 0.45);
   color: #ffb84d;
@@ -4154,7 +4154,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 3.75rem;
   align-items: center;
   justify-content: center;
-  border-radius: 18px;
+  border-radius: 0;
   background:
     radial-gradient(circle at 30% 20%, rgba(201, 109, 44, 0.28), transparent 48%),
     rgba(148, 163, 184, 0.14);
@@ -4215,7 +4215,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.35rem;
   border: 1px solid rgba(148, 163, 184, 0.22) !important;
-  border-radius: 9999px;
+  border-radius: 0;
   background: #f2f5f4;
   color: var(--dimarket-ink);
   font-size: 0.82rem;
@@ -5287,7 +5287,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-pro-card__avatar {
   width: 4.25rem;
   height: 4.25rem;
-  border-radius: 9999px;
+  border-radius: 0;
   overflow: hidden;
   background: #efe8df;
   flex-shrink: 0;
@@ -5487,7 +5487,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.4rem;
   align-items: center;
   justify-content: center;
-  border-radius: 9999px;
+  border-radius: 0;
   background: #fff4e8;
   color: #c96d2c;
   font-weight: 800;
@@ -5559,7 +5559,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: 18px;
+  border-radius: 0;
   background: #fff4e8;
   color: #c96d2c;
 }
@@ -5634,7 +5634,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-review-card__avatar-img {
   width: 2.4rem;
   height: 2.4rem;
-  border-radius: 9999px;
+  border-radius: 0;
   object-fit: cover;
 }
 
@@ -5697,7 +5697,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-carousel__dot {
   width: 0.5rem;
   height: 0.5rem;
-  border-radius: 9999px;
+  border-radius: 0;
   border: 0;
   background: #d9d0c5;
   cursor: pointer;
@@ -6192,7 +6192,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: center;
   width: 4.1rem;
   height: 4.1rem;
-  border-radius: 18px;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 153, 0, 0.45);
   color: #ffb84d;
@@ -6560,8 +6560,11 @@ select.select-glass.geo-filter-select::-ms-expand {
   flex-direction: column;
   width: 100%;
   max-height: 100%;
-  background: #f7f4f0;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--card-shadow);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   animation: mega-slide-down 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -6584,10 +6587,14 @@ select.select-glass.geo-filter-select::-ms-expand {
   max-height: none;
   min-height: 0;
   height: auto;
-  box-shadow: none;
+  margin-inline: var(--layout-gutter);
+  margin-bottom: 1.25rem;
+  box-shadow: var(--card-shadow);
   animation: none;
-  border-radius: var(--radius-panel);
+  border-radius: 0;
   overflow: hidden;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid var(--glass-border);
 }
 
 .mega-menu--page .mega-menu__header {
@@ -6611,8 +6618,8 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.75rem 1rem;
   align-items: center;
   padding: 1rem max(var(--layout-gutter), 1rem);
-  background: #fff;
-  border-bottom: 1px solid rgba(176, 126, 85, 0.14);
+  background: rgba(255, 255, 255, 0.45);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 @media (max-width: 767px) {
@@ -6632,7 +6639,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #1a1612;
+  color: var(--ink-900);
 }
 
 .mega-menu__back {
@@ -6649,9 +6656,9 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.55rem;
   padding: 0.7rem 0.9rem;
-  border-radius: var(--radius-pill);
-  background: #f6f2ed;
-  border: 1px solid rgba(176, 126, 85, 0.16);
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--glass-border);
 }
 
 .mega-menu__search input {
@@ -6669,9 +6676,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.5rem;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-card);
-  background: #f6f2ed;
-  color: #2f2a24;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--glass-border);
+  color: var(--ink-900);
 }
 
 .mega-menu__body {
@@ -6695,14 +6703,14 @@ select.select-glass.geo-filter-select::-ms-expand {
 .mega-menu__left {
   overflow: auto;
   padding: 1rem 0.75rem 1.5rem;
-  background: linear-gradient(180deg, #fffaf5 0%, #fff 40%);
-  border-right: 1px solid rgba(176, 126, 85, 0.12);
+  background: rgba(255, 255, 255, 0.28);
+  border-right: 1px solid var(--glass-border);
 }
 
 .mega-menu__right {
   overflow: auto;
   padding: 1.15rem 1.25rem 1.75rem;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.34);
 }
 
 .mega-menu__col-label {
@@ -6747,7 +6755,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.4rem;
   align-items: center;
   justify-content: center;
-  border-radius: 18px;
+  border-radius: 0;
   flex-shrink: 0;
 }
 
