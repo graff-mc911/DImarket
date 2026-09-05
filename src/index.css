@@ -3902,10 +3902,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   min-height: 4rem;
   align-items: center;
   gap: 0.8rem;
-  border: 1px solid var(--dimarket-line);
-  border-radius: 0;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: var(--card-shadow);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 0 !important;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(47, 42, 36, 0.08);
   color: var(--dimarket-primary);
   padding: 0 1.15rem;
 }
