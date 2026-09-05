@@ -105,7 +105,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
             color: '#000',
             border: 'none',
             padding: '12px 20px',
-            borderRadius: '30px',
+            borderRadius: '0',
             fontWeight: 'bold',
             cursor: 'pointer',
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
@@ -119,7 +119,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
             width: '350px',
             height: '500px',
             background: '#fff',
-            borderRadius: '12px',
+            borderRadius: '0',
             boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
             display: 'flex',
             flexDirection: 'column',
