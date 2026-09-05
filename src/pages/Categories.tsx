@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
-import { CategoriesMegaMenu } from '../components/CategoriesMegaMenu'
+import { CabinetCategoryBrowser } from '../components/CabinetCategoryBrowser'
 import { PageContentAds } from '../components/CenterPageAd'
 import { useApp } from '../contexts/AppContext'
-import { navigateTo } from '../lib/navigation'
 import { applyPageSeo } from '../lib/pageSeo'
 
 export function Categories() {
@@ -21,12 +20,7 @@ export function Categories() {
       <div className="layout-page-gutter">
         <PageContentAds page="categories" outerClassName="mt-3 mb-1" />
       </div>
-      <CategoriesMegaMenu
-        open
-        variant="page"
-        onClose={() => undefined}
-        onNavigate={navigateTo}
-      />
+      <CabinetCategoryBrowser mode="categories" />
     </>
   )
 }

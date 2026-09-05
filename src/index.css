@@ -3903,9 +3903,9 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.8rem;
   border: 1px solid var(--dimarket-line);
-  border-radius: var(--radius-pill);
-  background: #fff;
-  box-shadow: 0 12px 34px rgba(17, 24, 39, 0.06);
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--card-shadow);
   color: var(--dimarket-primary);
   padding: 0 1.15rem;
 }

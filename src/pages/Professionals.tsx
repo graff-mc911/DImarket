@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CheckCircle2, ShieldCheck, Sparkles, Users } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Profile, Category } from '../lib/types'
 import { DirectoryExpertCard } from '../components/DirectoryExpertCard'
 import { MobileAdBanner } from '../components/MobileAdBanner'
 import { PageContentAds } from '../components/CenterPageAd'
+import { CabinetCategoryBrowser } from '../components/CabinetCategoryBrowser'
 import { useApp } from '../contexts/AppContext'
 import { navigateTo } from '../lib/navigation'
 import { buildDisplayCategories, SITE_CATEGORY_SLUGS } from '../lib/siteCategories'
@@ -256,58 +257,67 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
 
   return (
     <div className="directory-page pb-24 lg:pb-8">
-      <section className="directory-hero mb-6 overflow-hidden rounded-xl border border-[#d5d9d9] bg-gradient-to-br from-[#f7fafc] via-white to-[#fff8ef]">
-        <div className="flex flex-col gap-5 p-5 md:flex-row md:items-end md:justify-between md:p-8">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">
-              {isCompanyCatalog ? t('header.findCompanies') : t('professionals.eyebrow')}
-            </p>
-            <h1 className="mt-2 text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-3xl">
-              {isCompanyCatalog ? t('companies.simpleTitle') : t('professionals.simpleTitle')}
-            </h1>
-            <p className="mt-2 text-sm text-[var(--ink-600)] md:text-base">
-              {isCompanyCatalog ? t('companies.catalogHint') : t('professionals.simpleDescription')}
-            </p>
-            <ul className="mt-4 flex flex-col gap-2 text-sm text-[var(--ink-700)] sm:flex-row sm:flex-wrap sm:gap-x-5 sm:gap-y-2">
-              <li className="inline-flex items-center gap-2">
-                <Users className="h-4 w-4 text-[var(--brand-ai)]" aria-hidden />
-                {t('directory.benefitExperts')}
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-[var(--brand-ai)]" aria-hidden />
-                {t('directory.benefitCompare')}
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-[var(--brand-ai)]" aria-hidden />
-                {t('directory.benefitQuotes')}
-              </li>
-            </ul>
-            <p className="mt-3 text-xs text-[var(--ink-500)]">
-              {loading
-                ? t('professionals.loadingSimple')
-                : `${filteredProfessionals.length} ${
-                    isCompanyCatalog ? t('companies.countSuffix') : t('professionals.countSuffix')
-                  }`}
-              {' · '}
-              {!isCompanyCatalog ? (
-                <button type="button" onClick={() => navigateTo('/companies')} className="amazon-link font-medium">
-                  {t('companies.browseLink')}
-                </button>
-              ) : (
-                <button type="button" onClick={() => navigateTo('/professionals')} className="amazon-link font-medium">
-                  {t('professionals.browseLink')}
-                </button>
-              )}
-            </p>
-          </div>
-          <div className="flex flex-col items-start gap-1 sm:items-end">
+      {!isCompanyCatalog ? (
+        <CabinetCategoryBrowser
+          mode="professionals"
+          onSelectCategory={(slug) => {
+            setSelectedCategory(slug)
+            setSelectedWork('')
+          }}
+          onSelectService={(serviceSlug, categorySlug) => {
+            setSelectedCategory(categorySlug)
+            setSelectedWork(serviceSlug)
+          }}
+        />
+      ) : (
+        <section className="directory-hero mb-6 overflow-hidden border border-[#d5d9d9] bg-gradient-to-br from-[#f7fafc] via-white to-[#fff8ef]">
+          <div className="flex flex-col gap-5 p-5 md:flex-row md:items-end md:justify-between md:p-8">
+            <div className="max-w-2xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">
+                {t('header.findCompanies')}
+              </p>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-3xl">
+                {t('companies.simpleTitle')}
+              </h1>
+              <p className="mt-2 text-sm text-[var(--ink-600)] md:text-base">
+                {t('companies.catalogHint')}
+              </p>
+            </div>
             <button onClick={() => navigateTo('/create-ad')} type="button" className="btn-primary shrink-0 px-5 py-2.5 text-sm">
               {t('directory.requestQuote')}
             </button>
-            <p className="text-xs text-[var(--ink-500)]">{t('directory.quoteHint')}</p>
           </div>
+        </section>
+      )}
+
+      {!isCompanyCatalog && (selectedCategory || selectedWork) ? (
+        <div className="layout-page-gutter mb-4 flex flex-wrap items-center gap-2 text-sm">
+          <span style={{ color: 'var(--ink-600)' }}>
+            {t('professionals.filtersButton')}:
+          </span>
+          {selectedCategory ? (
+            <button
+              type="button"
+              className="dimarket-subcategory-chip dimarket-subcategory-chip--primary"
+              onClick={() => setSelectedCategory('')}
+            >
+              {selectedCategory} ×
+            </button>
+          ) : null}
+          {selectedWork ? (
+            <button
+              type="button"
+              className="dimarket-subcategory-chip dimarket-subcategory-chip--primary"
+              onClick={() => setSelectedWork('')}
+            >
+              {selectedWork} ×
+            </button>
+          ) : null}
+          <button type="button" className="amazon-link text-sm font-medium" onClick={resetFilters}>
+            {t('professionals.clearFiltersSimple')}
+          </button>
         </div>
-      </section>
+      ) : null}
 
       <button
         type="button"
