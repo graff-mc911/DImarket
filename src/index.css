@@ -4120,20 +4120,29 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .dimarket-category-card {
   overflow: visible;
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-card);
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: var(--card-shadow);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 0 !important;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(47, 42, 36, 0.08);
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.dimarket-category-card,
+.dimarket-category-card *,
+.dimarket-category-card__button,
+.dimarket-category-card__icon,
+.dimarket-search__input,
+.dimarket-search__location,
+.dimarket-subcategory-chip {
+  border-radius: 0 !important;
 }
 
 .dimarket-category-card:hover,
 .dimarket-category-card:focus-within {
   transform: translateY(-4px);
   border-color: var(--dimarket-primary);
-  box-shadow: var(--card-shadow);
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(47, 42, 36, 0.12);
 }
 
 .dimarket-category-card__button {
@@ -4145,7 +4154,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   background: transparent;
   padding: 1.15rem;
   text-align: left;
-  border-radius: var(--radius-card);
+  border-radius: 0;
 }
 
 .dimarket-category-card__icon {
