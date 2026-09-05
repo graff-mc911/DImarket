@@ -84,7 +84,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
   if (!doc) {
     return (
       <div className="layout-page-content py-16 text-center">
-        <p className="text-sm text-[#6e6e73]">{t('docs.notFound')}</p>
+        <p className="text-sm text-[#6f665d]">{t('docs.notFound')}</p>
         <button
           type="button"
           className="mt-4 text-sm font-semibold text-[#007185]"
@@ -152,16 +152,16 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
         </button>
 
         <header className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#86868b]">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#8a8178]">
             {tStored(`docs.type.${doc.documentType}`)} · {tStored(`docs.status.${doc.status}`)}
           </p>
-          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#1d1d1f]">
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
             {documentDisplayTitle(doc, language.code, t)}
           </h1>
-          <p className="mt-2 text-sm leading-6 text-[#6e6e73]">
+          <p className="mt-2 text-sm leading-6 text-[#6f665d]">
             {documentDisplayDescription(doc, language.code, t)}
           </p>
-          <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-[#6e6e73]">
+          <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-[#6f665d]">
             <MapPin className="h-3.5 w-3.5" aria-hidden />
             {doc.jurisdiction}
             {locationLabel ? ` · ${t('docs.location.headerIs')} ${locationLabel}` : ''}
@@ -169,13 +169,13 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
         </header>
 
         {doc.templateNeedsLegalReview ? (
-          <div className="mb-4 rounded-xl border border-[#f5c26b] bg-[#fff8eb] px-4 py-3 text-sm text-[#1d1d1f]">
+          <div className="mb-4 rounded-xl border border-[#f5c26b] bg-[#fff8eb] px-4 py-3 text-sm text-[#2f2a24]">
             {doc.officialForm ? (
               <>
                 <p className="font-semibold">{doc.officialForm.modelName}</p>
-                <p className="mt-1 text-[#6e6e73]">{doc.officialForm.noticeLocal}</p>
+                <p className="mt-1 text-[#6f665d]">{doc.officialForm.noticeLocal}</p>
                 {language.code === 'en' || language.code === 'uk' ? (
-                  <p className="mt-1 text-xs text-[#86868b]">{doc.officialForm.noticeEn}</p>
+                  <p className="mt-1 text-xs text-[#8a8178]">{doc.officialForm.noticeEn}</p>
                 ) : null}
               </>
             ) : (
@@ -196,8 +196,8 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
 
         {doc.relatedPortals?.length ? (
           <section className="mb-6 rounded-2xl border-2 border-[#007185]/40 bg-[#f0fafb] p-4">
-            <h2 className="text-base font-bold text-[#1d1d1f]">{t('docs.vehicleCheck.title')}</h2>
-            <p className="mt-1 text-xs text-[#6e6e73]">{t('docs.vehicleCheck.hint')}</p>
+            <h2 className="text-base font-bold text-[#2f2a24]">{t('docs.vehicleCheck.title')}</h2>
+            <p className="mt-1 text-xs text-[#6f665d]">{t('docs.vehicleCheck.hint')}</p>
             <div className="mt-3 flex flex-col gap-2">
               {doc.relatedPortals.map((p) => (
                 <a
@@ -220,7 +220,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
           </section>
         ) : null}
 
-        <section className="mb-6 space-y-2 rounded-2xl border border-[#e8e8ed] bg-white p-4 text-sm">
+        <section className="mb-6 space-y-2 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4 text-sm">
           <MetaRow label={t('docs.meta.country')} value={doc.countryCode} />
           {doc.region ? <MetaRow label={t('docs.meta.region')} value={doc.region} /> : null}
           {doc.city ? <MetaRow label={t('docs.meta.city')} value={doc.city} /> : null}
@@ -241,8 +241,8 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
 
         {doc.requirementsKeys.length > 0 ? (
           <section className="mb-6">
-            <h2 className="mb-2 text-base font-bold text-[#1d1d1f]">{t('docs.requirements')}</h2>
-            <ul className="list-disc space-y-1 pl-5 text-sm text-[#6e6e73]">
+            <h2 className="mb-2 text-base font-bold text-[#2f2a24]">{t('docs.requirements')}</h2>
+            <ul className="list-disc space-y-1 pl-5 text-sm text-[#6f665d]">
               {doc.requirementsKeys.map((key) => (
                 <li key={key}>{tStored(key)}</li>
               ))}
@@ -264,7 +264,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
             href={doc.source.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#1d1d1f] px-4 py-2.5 text-sm font-semibold text-white"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#2f2a24] px-4 py-2.5 text-sm font-semibold text-white"
           >
             <ExternalLink className="h-4 w-4" aria-hidden />
             {t('docs.openOfficial')}
@@ -273,7 +273,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
             <button
               type="button"
               onClick={() => setFilling((v) => !v)}
-              className="inline-flex items-center gap-2 rounded-xl border border-[#d2d2d7] bg-white px-4 py-2.5 text-sm font-semibold text-[#1d1d1f]"
+              className="inline-flex items-center gap-2 rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2.5 text-sm font-semibold text-[#2f2a24]"
             >
               <FileSignature className="h-4 w-4" aria-hidden />
               {filling ? t('docs.hideForm') : t('docs.fillOnline')}
@@ -296,9 +296,9 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
         ) : null}
 
         {signOpen ? (
-          <div className="mb-6 rounded-2xl border border-[#e8e8ed] bg-[#f5f5f7] p-4 text-sm text-[#1d1d1f]">
+          <div className="mb-6 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] p-4 text-sm text-[#2f2a24]">
             <p className="font-semibold">{t('docs.esign.title')}</p>
-            <p className="mt-1 text-[#6e6e73]">{t('docs.esign.body')}</p>
+            <p className="mt-1 text-[#6f665d]">{t('docs.esign.body')}</p>
             <button
               type="button"
               className="mt-3 text-sm font-semibold text-[#007185]"
@@ -311,14 +311,14 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
 
         {doc.specialists.length > 0 ? (
           <section className="mb-6">
-            <h2 className="mb-2 text-base font-bold text-[#1d1d1f]">{t('docs.findSpecialist')}</h2>
+            <h2 className="mb-2 text-base font-bold text-[#2f2a24]">{t('docs.findSpecialist')}</h2>
             <div className="flex flex-wrap gap-2">
               {doc.specialists.map((s) => (
                 <button
                   key={s.labelKey}
                   type="button"
                   onClick={() => findSpecialist(s.searchQuery, s.categorySlug)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-[#d2d2d7] bg-white px-3 py-2 text-sm font-semibold text-[#1d1d1f]"
+                  className="inline-flex items-center gap-2 rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2 text-sm font-semibold text-[#2f2a24]"
                 >
                   <UserSearch className="h-4 w-4" aria-hidden />
                   {tStored(s.labelKey)}
@@ -330,7 +330,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
 
         <div className="mt-2 space-y-3">
           <LegalContentDisclaimer />
-          <p className="text-xs leading-5 text-[#6e6e73]">{t('docs.disclaimer.short')}</p>
+          <p className="text-xs leading-5 text-[#6f665d]">{t('docs.disclaimer.short')}</p>
         </div>
       </div>
     </div>
@@ -340,8 +340,8 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-wrap gap-x-2 gap-y-0.5">
-      <span className="font-semibold text-[#1d1d1f]">{label}:</span>
-      <span className="text-[#6e6e73]">{value}</span>
+      <span className="font-semibold text-[#2f2a24]">{label}:</span>
+      <span className="text-[#6f665d]">{value}</span>
     </div>
   )
 }
@@ -362,23 +362,23 @@ function ProcedurePanel({
   const step = steps[stepIndex]
   if (!step) return null
   return (
-    <section className="mb-6 rounded-2xl border border-[#e8e8ed] bg-white p-4">
+    <section className="mb-6 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="text-base font-bold text-[#1d1d1f]">{t('docs.procedure.title')}</h2>
-        <span className="text-xs font-semibold text-[#86868b]">
+        <h2 className="text-base font-bold text-[#2f2a24]">{t('docs.procedure.title')}</h2>
+        <span className="text-xs font-semibold text-[#8a8178]">
           {t('docs.procedure.progress')
             .replace('{current}', String(stepIndex + 1))
             .replace('{total}', String(steps.length))}
         </span>
       </div>
-      <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-[#e8e8ed]">
+      <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-[rgba(148,163,184,0.22)]">
         <div
           className="h-full rounded-full bg-[#007185]"
           style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }}
         />
       </div>
-      <p className="font-semibold text-[#1d1d1f]">{tStored(step.titleKey)}</p>
-      <p className="mt-1 text-sm text-[#6e6e73]">{tStored(step.bodyKey)}</p>
+      <p className="font-semibold text-[#2f2a24]">{tStored(step.titleKey)}</p>
+      <p className="mt-1 text-sm text-[#6f665d]">{tStored(step.bodyKey)}</p>
       {step.whatIsKey ? (
         <p className="mt-2 text-sm">
           <strong>{t('docs.procedure.whatIs')}</strong> {tStored(step.whatIsKey)}
@@ -409,7 +409,7 @@ function ProcedurePanel({
           type="button"
           disabled={stepIndex === 0}
           onClick={() => setStepIndex(Math.max(0, stepIndex - 1))}
-          className="rounded-lg border border-[#d2d2d7] px-3 py-1.5 text-sm font-semibold disabled:opacity-40"
+          className="rounded-lg border border-[rgba(148,163,184,0.35)] px-3 py-1.5 text-sm font-semibold disabled:opacity-40"
         >
           {t('docs.procedure.prev')}
         </button>
@@ -417,7 +417,7 @@ function ProcedurePanel({
           type="button"
           disabled={stepIndex >= steps.length - 1}
           onClick={() => setStepIndex(Math.min(steps.length - 1, stepIndex + 1))}
-          className="rounded-lg bg-[#1d1d1f] px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
+          className="rounded-lg bg-[#2f2a24] px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
         >
           {t('docs.procedure.next')}
         </button>
@@ -451,13 +451,13 @@ function FillForm({
   const tStored = (key: string) => t(key as TranslationKey)
   let lastSection = ''
   return (
-    <section className="mb-6 rounded-2xl border border-[#e8e8ed] bg-white p-4">
-      <h2 className="mb-1 text-base font-bold text-[#1d1d1f]">{t('docs.form.title')}</h2>
+    <section className="mb-6 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4">
+      <h2 className="mb-1 text-base font-bold text-[#2f2a24]">{t('docs.form.title')}</h2>
       {modelName ? <p className="mb-2 text-xs font-semibold text-[#007185]">{modelName}</p> : null}
-      <p className="mb-3 text-xs text-[#6e6e73]">{t('docs.form.autofillHint')}</p>
+      <p className="mb-3 text-xs text-[#6f665d]">{t('docs.form.autofillHint')}</p>
       {checkPortals?.length ? (
         <div className="mb-4 rounded-xl border border-[#007185]/25 bg-[#f0fafb] p-3">
-          <p className="text-xs font-bold text-[#1d1d1f]">{t('docs.vehicleCheck.title')}</p>
+          <p className="text-xs font-bold text-[#2f2a24]">{t('docs.vehicleCheck.title')}</p>
           <div className="mt-2 flex flex-col gap-1.5">
             {checkPortals.map((p) => (
               <a
@@ -468,7 +468,7 @@ function FillForm({
                 className="text-xs font-semibold text-[#007185] underline-offset-2 hover:underline"
               >
                 {p.name}
-                <span className="ml-1 font-normal text-[#6e6e73]">
+                <span className="ml-1 font-normal text-[#6f665d]">
                   — {langCode === 'uk' ? p.purposeUk : p.purposeEn}
                 </span>
               </a>
@@ -484,12 +484,12 @@ function FillForm({
           return (
             <div key={field.id}>
               {showSection ? (
-                <p className="mb-2 mt-3 text-xs font-bold uppercase tracking-wide text-[#86868b]">
+                <p className="mb-2 mt-3 text-xs font-bold uppercase tracking-wide text-[#8a8178]">
                   {section}
                 </p>
               ) : null}
               <label className="block text-sm">
-                <span className="mb-1 block font-semibold text-[#1d1d1f]">
+                <span className="mb-1 block font-semibold text-[#2f2a24]">
                   {fieldDisplayLabel(field, t)}
                   {field.required ? ' *' : ''}
                 </span>
@@ -499,13 +499,13 @@ function FillForm({
                     onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
                     rows={3}
                     placeholder={field.placeholder}
-                    className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-[rgba(148,163,184,0.35)] px-3 py-2 text-sm"
                   />
                 ) : field.type === 'select' ? (
                   <select
                     value={values[field.id] ?? ''}
                     onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
-                    className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-[rgba(148,163,184,0.35)] px-3 py-2 text-sm"
                   >
                     <option value="">—</option>
                     {(field.options ?? []).map((opt) => (
@@ -530,7 +530,7 @@ function FillForm({
                     value={values[field.id] ?? ''}
                     onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
                     placeholder={field.placeholder}
-                    className="w-full rounded-lg border border-[#d2d2d7] px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-[rgba(148,163,184,0.35)] px-3 py-2 text-sm"
                   />
                 )}
               </label>
@@ -557,7 +557,7 @@ function FillForm({
         <button
           type="button"
           onClick={onSign}
-          className="inline-flex items-center gap-2 rounded-xl border border-[#d2d2d7] px-4 py-2.5 text-sm font-semibold text-[#1d1d1f]"
+          className="inline-flex items-center gap-2 rounded-xl border border-[rgba(148,163,184,0.35)] px-4 py-2.5 text-sm font-semibold text-[#2f2a24]"
         >
           <Send className="h-4 w-4" aria-hidden />
           {t('docs.sendForSignature')}

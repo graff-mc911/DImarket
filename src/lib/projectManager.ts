@@ -473,7 +473,7 @@ export function openDocumentPrint(doc: ProjectDocument) {
   const w = window.open('', '_blank')
   if (!w) return
   w.document.write(
-    `<!doctype html><html><head><title>${doc.title}</title><style>body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 16px;color:#1d1d1f} h1{font-size:22px}</style></head><body>${doc.body_html || ''}<script>window.print()</script></body></html>`,
+    `<!doctype html><html><head><title>${doc.title}</title><style>body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 16px;color:#2f2a24} h1{font-size:22px}</style></head><body>${doc.body_html || ''}<script>window.print()</script></body></html>`,
   )
   w.document.close()
 }

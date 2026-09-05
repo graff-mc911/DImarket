@@ -93,7 +93,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
             <button
               type="button"
               onClick={() => navigateTo(`/project/${listingId}/matches`)}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#1d1d1f] px-3.5 py-2 text-xs font-semibold text-white"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#2f2a24] px-3.5 py-2 text-xs font-semibold text-white"
             >
               {t('pipeline.viewMatches' as never) || 'View matches'}
             </button>

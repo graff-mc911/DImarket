@@ -203,16 +203,16 @@ export function ProjectWizard() {
 
   if (!user) {
     return (
-      <div className="create-project-page flex min-h-[60vh] flex-col items-center justify-center bg-[#f5f5f7] px-4 text-center">
-        <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-[#1d1d1f]">
+      <div className="create-project-page flex min-h-[60vh] flex-col items-center justify-center bg-[#f3f0ea] px-4 text-center">
+        <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-[#2f2a24]">
           {tw(t, 'project.wizard.loginTitle', 'Sign in to create a project')}
         </h1>
-        <p className="mt-2 max-w-sm text-[15px] text-[#6e6e73]">
+        <p className="mt-2 max-w-sm text-[15px] text-[#6f665d]">
           Free to post. Matched with verified professionals near you.
         </p>
         <button
           type="button"
-          className="mt-6 rounded-full bg-[#1d1d1f] px-7 py-3 text-[15px] font-semibold text-white"
+          className="mt-6 rounded-full bg-[#2f2a24] px-7 py-3 text-[15px] font-semibold text-white"
           onClick={() => navigateTo('/login')}
         >
           {tw(t, 'header.signIn', 'Sign in')}

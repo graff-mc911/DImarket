@@ -41,21 +41,21 @@ export function WizardShell({
   const pct = Math.round((step / WIZARD_STEP_COUNT) * 100)
 
   return (
-    <div className="create-project-page min-h-[calc(100vh-4rem)] bg-[#f5f5f7] px-4 py-8 pb-28 sm:px-6 lg:px-8">
+    <div className="create-project-page min-h-[calc(100vh-4rem)] bg-[#f3f0ea] px-4 py-8 pb-28 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-[720px]">
-        <p className="mb-2 text-center text-[13px] font-medium tracking-wide text-[#86868b]">
+        <p className="mb-2 text-center text-[13px] font-medium tracking-wide text-[#8a8178]">
           DiMarket · Project
         </p>
         <div className="mb-6">
-          <div className="mb-3 flex items-center justify-between text-[12px] text-[#86868b]">
+          <div className="mb-3 flex items-center justify-between text-[12px] text-[#8a8178]">
             <span>
               Step {step} of {WIZARD_STEP_COUNT}
             </span>
             <span className="font-medium tabular-nums">{pct}%</span>
           </div>
-          <div className="h-1 overflow-hidden rounded-full bg-[#d2d2d7]">
+          <div className="h-1 overflow-hidden rounded-full bg-[rgba(148,163,184,0.35)]">
             <div
-              className="h-full rounded-full bg-[#1d1d1f] transition-all duration-500 ease-out"
+              className="h-full rounded-full bg-[#2f2a24] transition-all duration-500 ease-out"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -65,7 +65,7 @@ export function WizardShell({
                 key={label}
                 className={
                   'flex-1 truncate text-center text-[10px] font-medium ' +
-                  (i + 1 === step ? 'text-[#1d1d1f]' : i + 1 < step ? 'text-[#6e6e73]' : 'text-[#aeaeb2]')
+                  (i + 1 === step ? 'text-[#2f2a24]' : i + 1 < step ? 'text-[#6f665d]' : 'text-[#aeaeb2]')
                 }
               >
                 {label}
@@ -75,11 +75,11 @@ export function WizardShell({
         </div>
 
         <div className="overflow-hidden rounded-[28px] border border-black/[0.04] bg-white/90 p-6 shadow-[0_8px_40px_rgba(0,0,0,0.06)] backdrop-blur-xl sm:p-10">
-          <h1 className="text-center text-[28px] font-semibold leading-tight tracking-[-0.03em] text-[#1d1d1f] sm:text-[34px]">
+          <h1 className="text-center text-[28px] font-semibold leading-tight tracking-[-0.03em] text-[#2f2a24] sm:text-[34px]">
             {title}
           </h1>
           {subtitle ? (
-            <p className="mx-auto mt-3 max-w-md text-center text-[15px] leading-6 text-[#6e6e73]">
+            <p className="mx-auto mt-3 max-w-md text-center text-[15px] leading-6 text-[#6f665d]">
               {subtitle}
             </p>
           ) : null}
@@ -97,7 +97,7 @@ export function WizardShell({
               <button
                 type="button"
                 onClick={onBack}
-                className="rounded-full px-5 py-3 text-[15px] font-medium text-[#1d1d1f] transition hover:bg-[#f5f5f7]"
+                className="rounded-full px-5 py-3 text-[15px] font-medium text-[#2f2a24] transition hover:bg-[#f3f0ea]"
               >
                 {backLabel}
               </button>
@@ -109,7 +109,7 @@ export function WizardShell({
                 type="button"
                 onClick={onNext}
                 disabled={nextDisabled || busy}
-                className="rounded-full bg-[#1d1d1f] px-7 py-3 text-[15px] font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-full bg-[#2f2a24] px-7 py-3 text-[15px] font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {busy ? 'Publishing…' : nextLabel}
               </button>

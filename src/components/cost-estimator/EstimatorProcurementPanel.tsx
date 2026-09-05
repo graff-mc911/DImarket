@@ -45,11 +45,11 @@ export function EstimatorProcurementPanel({
   }, [materials, city, lat, lng])
 
   if (loading) {
-    return <p className="text-[13px] text-[#86868b]">AI Procurement is comparing suppliers…</p>
+    return <p className="text-[13px] text-[#8a8178]">AI Procurement is comparing suppliers…</p>
   }
   if (!plan?.lines.length) {
     return (
-      <p className="text-[13px] text-[#86868b]">
+      <p className="text-[13px] text-[#8a8178]">
         No marketplace offers found yet — publish more sell-rent listings to power procurement.
       </p>
     )
@@ -57,7 +57,7 @@ export function EstimatorProcurementPanel({
 
   return (
     <div className="space-y-4">
-      <p className="text-[13px] text-[#6e6e73]">
+      <p className="text-[13px] text-[#6f665d]">
         Estimated materials {formatEuro(plan.totalEstimated)} · {plan.supplierCount} live offers
         compared by price fit and distance.
       </p>
@@ -65,13 +65,13 @@ export function EstimatorProcurementPanel({
       {plan.lines.map((line) => (
         <div key={line.materialId} className="rounded-2xl border border-[#f0f0f2] p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <p className="text-[14px] font-semibold text-[#1d1d1f]">
+            <p className="text-[14px] font-semibold text-[#2f2a24]">
               {line.name}{' '}
-              <span className="text-[12px] font-medium text-[#86868b]">
+              <span className="text-[12px] font-medium text-[#8a8178]">
                 {line.quantity} {line.unit}
               </span>
             </p>
-            <p className="text-[12px] tabular-nums text-[#6e6e73]">
+            <p className="text-[12px] tabular-nums text-[#6f665d]">
               est. {formatEuro(line.estimatedUnitCost * line.quantity)}
             </p>
           </div>
@@ -79,15 +79,15 @@ export function EstimatorProcurementPanel({
             {line.suppliers.map((s) => (
               <li
                 key={s.listingId}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#f5f5f7] px-3 py-2"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#f3f0ea] px-3 py-2"
               >
                 <button
                   type="button"
-                  className="text-left text-[13px] font-medium text-[#1d1d1f] hover:underline"
+                  className="text-left text-[13px] font-medium text-[#2f2a24] hover:underline"
                   onClick={() => navigateTo(`/listing/${s.listingId}`)}
                 >
                   {s.title}
-                  <span className="mt-0.5 block text-[11px] text-[#86868b]">
+                  <span className="mt-0.5 block text-[11px] text-[#8a8178]">
                     {s.city || '—'}
                     {s.distanceKm != null ? ` · ${s.distanceKm.toFixed(1)} km` : ''}
                     {s.reasons.length ? ` · ${s.reasons[0].replace(/_/g, ' ')}` : ''}
@@ -102,7 +102,7 @@ export function EstimatorProcurementPanel({
                   </span>
                   <button
                     type="button"
-                    className="rounded-full bg-[#1d1d1f] px-3 py-1 text-[11px] font-semibold text-white"
+                    className="rounded-full bg-[#2f2a24] px-3 py-1 text-[11px] font-semibold text-white"
                     onClick={() =>
                       void approveProcurementItem({
                         listingId: listingId ?? null,
@@ -127,7 +127,7 @@ export function EstimatorProcurementPanel({
               </li>
             ))}
             {!line.suppliers.length ? (
-              <li className="text-[12px] text-[#86868b]">
+              <li className="text-[12px] text-[#8a8178]">
                 <button
                   type="button"
                   className="font-semibold text-[#0066cc]"

@@ -16,8 +16,8 @@ export function MatchScoreBadge({
     pct >= 92
       ? 'bg-[#248a3d] text-white'
       : pct >= 80
-        ? 'bg-[#ff9900] text-[#0f1111]'
-        : 'bg-[#e7e9ec] text-[#0f1111]'
+        ? 'bg-[#ff9900] text-[#2f2a24]'
+        : 'bg-[#e7e9ec] text-[#2f2a24]'
 
   return (
     <span

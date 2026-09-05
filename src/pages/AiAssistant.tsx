@@ -15,7 +15,7 @@ import {
 import { saveEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 
 const inputClass =
-  'w-full rounded-xl border border-[#d2d2d7] bg-white px-3 py-2.5 text-[13px] text-[#1d1d1f] outline-none transition focus:border-[#1d1d1f] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
+  'w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
 
 export function AiAssistant() {
   const { user, profile, language, t } = useApp()
@@ -142,14 +142,14 @@ export function AiAssistant() {
     <div className="py-8 pb-24 lg:pb-10">
       <div className="mx-auto max-w-5xl space-y-6 px-4 sm:px-6">
         <header className="space-y-3">
-          <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">
+          <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a8178]">
             <Bot className="h-4 w-4" />
             AI Assistant
           </p>
-          <h1 className="text-[32px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[36px]">
+          <h1 className="text-[32px] font-semibold tracking-tight text-[#2f2a24] sm:text-[36px]">
             Customer & professional AI tools
           </h1>
-          <p className="max-w-2xl text-[15px] leading-relaxed text-[#6e6e73]">
+          <p className="max-w-2xl text-[15px] leading-relaxed text-[#6f665d]">
             Create projects, estimate budgets, choose categories — or generate quotes, invoices,
             proposals, contracts, chat summaries, and stronger profiles.
           </p>
@@ -163,7 +163,7 @@ export function AiAssistant() {
               setToolId(null)
             }}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              audience === 'customer' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+              audience === 'customer' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
             }`}
           >
             Customer
@@ -175,7 +175,7 @@ export function AiAssistant() {
               setToolId(null)
             }}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              audience === 'professional' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+              audience === 'professional' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
             }`}
           >
             Professional
@@ -183,14 +183,14 @@ export function AiAssistant() {
           <button
             type="button"
             onClick={() => navigateTo('/assistant/job')}
-            className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold"
+            className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold"
           >
             Job request chat
           </button>
           <button
             type="button"
             onClick={() => navigateTo('/cost-estimator')}
-            className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold"
+            className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold"
           >
             Full cost estimator
           </button>
@@ -205,13 +205,13 @@ export function AiAssistant() {
                   key={tool.id}
                   type="button"
                   onClick={() => selectTool(tool)}
-                  className="rounded-[22px] border border-[#e8e8ed] bg-white p-5 text-left shadow-sm transition hover:border-[#1d1d1f]"
+                  className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 text-left shadow-sm transition hover:border-[#2f2a24]"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f5f5f7] text-[#1d1d1f]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f0ea] text-[#2f2a24]">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h2 className="mt-3 text-[16px] font-semibold text-[#1d1d1f]">{tool.title}</h2>
-                  <p className="mt-1 text-[13px] leading-relaxed text-[#6e6e73]">{tool.description}</p>
+                  <h2 className="mt-3 text-[16px] font-semibold text-[#2f2a24]">{tool.title}</h2>
+                  <p className="mt-1 text-[13px] leading-relaxed text-[#6f665d]">{tool.description}</p>
                 </button>
               )
             })}
@@ -224,16 +224,16 @@ export function AiAssistant() {
                 setToolId(null)
                 window.history.replaceState({}, '', '/assistant')
               }}
-              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#6e6e73]"
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#6f665d]"
             >
               <ArrowLeft className="h-4 w-4" />
               All tools
             </button>
 
-            <div className="rounded-[24px] border border-[#e8e8ed] bg-white p-5 shadow-sm sm:p-6">
+            <div className="rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm sm:p-6">
               <div className="flex items-start gap-3">
                 {activeTool ? (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f5f5f7]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f0ea]">
                     {(() => {
                       const Icon = activeTool.icon
                       return <Icon className="h-5 w-5" />
@@ -241,8 +241,8 @@ export function AiAssistant() {
                   </div>
                 ) : null}
                 <div>
-                  <h2 className="text-[20px] font-semibold text-[#1d1d1f]">{activeTool?.title}</h2>
-                  <p className="mt-1 text-[13px] text-[#6e6e73]">{activeTool?.description}</p>
+                  <h2 className="text-[20px] font-semibold text-[#2f2a24]">{activeTool?.title}</h2>
+                  <p className="mt-1 text-[13px] text-[#6f665d]">{activeTool?.description}</p>
                 </div>
               </div>
 
@@ -360,7 +360,7 @@ export function AiAssistant() {
                 )}
 
                 {toolId === 'improve_profile' && (
-                  <div className="sm:col-span-2 rounded-xl bg-[#f5f5f7] px-4 py-3 text-[13px] text-[#3a3a3c]">
+                  <div className="sm:col-span-2 rounded-xl bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#3a3a3c]">
                     Uses your current profile ({profile?.full_name || 'guest'}). Sign in for best
                     results. You can also add notes below.
                     <textarea
@@ -390,7 +390,7 @@ export function AiAssistant() {
                   type="button"
                   disabled={loading}
                   onClick={() => void run()}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#1d1d1f] px-4 py-2.5 text-[13px] font-semibold text-white disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#2f2a24] px-4 py-2.5 text-[13px] font-semibold text-white disabled:opacity-50"
                 >
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                   {loading ? 'Generating…' : 'Generate'}
@@ -399,7 +399,7 @@ export function AiAssistant() {
                   <button
                     type="button"
                     onClick={() => navigateTo('/create-project')}
-                    className="rounded-full border border-[#d2d2d7] px-4 py-2.5 text-[13px] font-semibold"
+                    className="rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2.5 text-[13px] font-semibold"
                   >
                     Continue to create project
                   </button>
@@ -424,7 +424,7 @@ export function AiAssistant() {
                       }
                       navigateTo('/cost-estimator')
                     }}
-                    className="rounded-full border border-[#d2d2d7] px-4 py-2.5 text-[13px] font-semibold"
+                    className="rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2.5 text-[13px] font-semibold"
                   >
                     Open full estimator
                   </button>
@@ -432,21 +432,21 @@ export function AiAssistant() {
               </div>
 
               {result ? (
-                <div className="mt-5 rounded-[18px] border border-[#e8e8ed] bg-[#fbfbfd] p-4">
+                <div className="mt-5 rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-4">
                   <div className="mb-2 flex items-center justify-between gap-2">
-                    <p className="text-[12px] font-semibold uppercase tracking-wide text-[#86868b]">
+                    <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8a8178]">
                       Result {fallback ? '· offline fallback' : ''}
                     </p>
                     <button
                       type="button"
                       onClick={() => void copy()}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-3 py-1 text-[12px] font-semibold"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-3 py-1 text-[12px] font-semibold"
                     >
                       {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                       {copied ? 'Copied' : 'Copy'}
                     </button>
                   </div>
-                  <pre className="whitespace-pre-wrap font-sans text-[13px] leading-relaxed text-[#1d1d1f]">
+                  <pre className="whitespace-pre-wrap font-sans text-[13px] leading-relaxed text-[#2f2a24]">
                     {result}
                   </pre>
                 </div>

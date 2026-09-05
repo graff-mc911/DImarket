@@ -49,23 +49,23 @@ export function DeadlineStep({
               className={
                 'flex items-center justify-between rounded-[20px] border px-5 py-4 text-left transition ' +
                 (active
-                  ? 'border-[#1d1d1f] bg-[#1d1d1f] text-white'
-                  : 'border-[#e8e8ed] bg-[#fafafa] text-[#1d1d1f] hover:bg-white')
+                  ? 'border-[#2f2a24] bg-[#2f2a24] text-white'
+                  : 'border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-[#2f2a24] hover:bg-white')
               }
             >
               <span>
                 <span className="block text-[16px] font-semibold">{o.label}</span>
-                <span className={'text-[13px] ' + (active ? 'text-white/70' : 'text-[#86868b]')}>
+                <span className={'text-[13px] ' + (active ? 'text-white/70' : 'text-[#8a8178]')}>
                   {o.hint}
                 </span>
               </span>
               <span
                 className={
                   'flex h-5 w-5 items-center justify-center rounded-full border-2 ' +
-                  (active ? 'border-white bg-white' : 'border-[#d2d2d7]')
+                  (active ? 'border-white bg-white' : 'border-[rgba(148,163,184,0.35)]')
                 }
               >
-                {active ? <span className="h-2 w-2 rounded-full bg-[#1d1d1f]" /> : null}
+                {active ? <span className="h-2 w-2 rounded-full bg-[#2f2a24]" /> : null}
               </span>
             </button>
           )
@@ -74,14 +74,14 @@ export function DeadlineStep({
 
       {deadlineType === 'date' && (
         <div>
-          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
             {labels.pickDate}
           </label>
           <input
             type="date"
             value={deadlineAt}
             onChange={(e) => onChange({ deadlineAt: e.target.value })}
-            className="w-full max-w-xs rounded-[14px] border border-[#e8e8ed] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#1d1d1f] focus:bg-white"
+            className="w-full max-w-xs rounded-[14px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#2f2a24] focus:bg-white"
           />
         </div>
       )}

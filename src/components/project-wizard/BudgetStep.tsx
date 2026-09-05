@@ -15,10 +15,10 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
 
   return (
     <div className="space-y-6">
-      <p className="text-center text-[15px] text-[#6e6e73]">{labels.range}</p>
+      <p className="text-center text-[15px] text-[#6f665d]">{labels.range}</p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
             {labels.min}
           </label>
           <input
@@ -31,13 +31,13 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
             }}
             className={
               'w-full rounded-[14px] border bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:bg-white ' +
-              (errors.budgetMin ? 'border-[#c41e3a]' : 'border-[#e8e8ed] focus:border-[#1d1d1f]')
+              (errors.budgetMin ? 'border-[#c41e3a]' : 'border-[rgba(148,163,184,0.22)] focus:border-[#2f2a24]')
             }
           />
           {errors.budgetMin ? <p className="mt-1 text-[12px] text-[#c41e3a]">{errors.budgetMin}</p> : null}
         </div>
         <div>
-          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
             {labels.max}
           </label>
           <input
@@ -50,16 +50,16 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
             }}
             className={
               'w-full rounded-[14px] border bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:bg-white ' +
-              (errors.budgetMax ? 'border-[#c41e3a]' : 'border-[#e8e8ed] focus:border-[#1d1d1f]')
+              (errors.budgetMax ? 'border-[#c41e3a]' : 'border-[rgba(148,163,184,0.22)] focus:border-[#2f2a24]')
             }
           />
           {errors.budgetMax ? <p className="mt-1 text-[12px] text-[#c41e3a]">{errors.budgetMax}</p> : null}
         </div>
       </div>
 
-      <div className="space-y-4 rounded-[20px] bg-[#f5f5f7] px-5 py-6">
+      <div className="space-y-4 rounded-[20px] bg-[#f3f0ea] px-5 py-6">
         <div>
-          <p className="mb-2 text-[12px] font-medium text-[#86868b]">{labels.min}</p>
+          <p className="mb-2 text-[12px] font-medium text-[#8a8178]">{labels.min}</p>
           <input
             type="range"
             min={SLIDER_MIN}
@@ -70,11 +70,11 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
               const min = Number(e.target.value)
               onChange(min, Math.max(min, budgetMax))
             }}
-            className="w-full accent-[#1d1d1f]"
+            className="w-full accent-[#2f2a24]"
           />
         </div>
         <div>
-          <p className="mb-2 text-[12px] font-medium text-[#86868b]">{labels.max}</p>
+          <p className="mb-2 text-[12px] font-medium text-[#8a8178]">{labels.max}</p>
           <input
             type="range"
             min={SLIDER_MIN}
@@ -85,10 +85,10 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
               const max = Number(e.target.value)
               onChange(Math.min(budgetMin, max), max)
             }}
-            className="w-full accent-[#1d1d1f]"
+            className="w-full accent-[#2f2a24]"
           />
         </div>
-        <p className="text-center text-[28px] font-semibold tracking-[-0.03em] text-[#1d1d1f]">
+        <p className="text-center text-[28px] font-semibold tracking-[-0.03em] text-[#2f2a24]">
           €{budgetMin.toLocaleString()} – €{budgetMax.toLocaleString()}
         </p>
       </div>

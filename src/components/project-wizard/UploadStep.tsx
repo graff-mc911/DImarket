@@ -71,15 +71,15 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
         className={
           'flex cursor-pointer flex-col items-center justify-center rounded-[24px] border-2 border-dashed px-4 py-12 text-center transition ' +
           (dragOver
-            ? 'border-[#1d1d1f] bg-[#f5f5f7]'
-            : 'border-[#d2d2d7] bg-[#fafafa] hover:border-[#aeaeb2]')
+            ? 'border-[#2f2a24] bg-[#f3f0ea]'
+            : 'border-[rgba(148,163,184,0.35)] bg-[#fafafa] hover:border-[#aeaeb2]')
         }
       >
         <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm">
-          <Upload className="h-6 w-6 text-[#1d1d1f]" />
+          <Upload className="h-6 w-6 text-[#2f2a24]" />
         </div>
-        <p className="text-[15px] font-semibold text-[#1d1d1f]">{dropLabel}</p>
-        <p className="mt-1 max-w-xs text-[13px] text-[#86868b]">{help}</p>
+        <p className="text-[15px] font-semibold text-[#2f2a24]">{dropLabel}</p>
+        <p className="mt-1 max-w-xs text-[13px] text-[#8a8178]">{help}</p>
         <input
           ref={inputRef}
           type="file"
@@ -97,14 +97,14 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
           {files.map((f, i) => (
             <li
               key={f.previewUrl}
-              className="relative overflow-hidden rounded-[18px] border border-[#e8e8ed] bg-[#fafafa]"
+              className="relative overflow-hidden rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa]"
             >
               {f.kind === 'photo' ? (
                 <img src={f.previewUrl} alt="" className="aspect-square w-full object-cover" />
               ) : (
                 <div className="flex aspect-square flex-col items-center justify-center gap-2 p-3 text-center">
-                  <FileText className="h-7 w-7 text-[#6e6e73]" />
-                  <span className="line-clamp-2 text-[11px] font-medium text-[#1d1d1f]">{f.file.name}</span>
+                  <FileText className="h-7 w-7 text-[#6f665d]" />
+                  <span className="line-clamp-2 text-[11px] font-medium text-[#2f2a24]">{f.file.name}</span>
                 </div>
               )}
               <button

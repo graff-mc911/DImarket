@@ -171,8 +171,8 @@ export function ProDashboard() {
   if (!user) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="text-2xl font-semibold text-[#1d1d1f]">Professional Dashboard</h1>
-        <p className="mt-2 text-[#86868b]">Sign in to view your workspace.</p>
+        <h1 className="text-2xl font-semibold text-[#2f2a24]">Professional Dashboard</h1>
+        <p className="mt-2 text-[#8a8178]">Sign in to view your workspace.</p>
         <button type="button" className="btn-primary mt-6" onClick={() => navigateTo('/login')}>
           Sign in
         </button>
@@ -183,8 +183,8 @@ export function ProDashboard() {
   if (!isPro) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="text-2xl font-semibold text-[#1d1d1f]">Professionals only</h1>
-        <p className="mt-2 text-[#86868b]">This dashboard is for professional accounts.</p>
+        <h1 className="text-2xl font-semibold text-[#2f2a24]">Professionals only</h1>
+        <p className="mt-2 text-[#8a8178]">This dashboard is for professional accounts.</p>
         <button
           type="button"
           className="btn-secondary mt-6"
@@ -198,17 +198,17 @@ export function ProDashboard() {
 
   const card = dark
     ? 'rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_1px_0_rgba(255,255,255,0.04)]'
-    : 'rounded-2xl border border-[#e8e8ed] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
-  const muted = dark ? 'text-white/50' : 'text-[#86868b]'
-  const ink = dark ? 'text-white' : 'text-[#1d1d1f]'
-  const soft = dark ? 'text-white/70' : 'text-[#6e6e73]'
-  const chip = dark ? 'bg-white/10 text-white/80' : 'bg-[#f5f5f7] text-[#6e6e73]'
+    : 'rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+  const muted = dark ? 'text-white/50' : 'text-[#8a8178]'
+  const ink = dark ? 'text-white' : 'text-[#2f2a24]'
+  const soft = dark ? 'text-white/70' : 'text-[#6f665d]'
+  const chip = dark ? 'bg-white/10 text-white/80' : 'bg-[#f3f0ea] text-[#6f665d]'
   const btnGhost = dark
     ? 'border-white/15 bg-white/5 text-white hover:bg-white/10'
-    : 'border-[#d2d2d7] bg-white text-[#1d1d1f] hover:bg-[#f5f5f7]'
+    : 'border-[rgba(148,163,184,0.35)] bg-white text-[#2f2a24] hover:bg-[#f3f0ea]'
   const btnPrimary = dark
     ? 'bg-blue-500 text-white hover:bg-blue-400'
-    : 'bg-[#1d1d1f] text-white hover:bg-black'
+    : 'bg-[#2f2a24] text-white hover:bg-black'
 
   const name = profile?.full_name?.split(' ')[0] || 'Pro'
 
@@ -217,20 +217,20 @@ export function ProDashboard() {
       className={`min-h-[80vh] pb-24 transition-colors ${
         dark
           ? 'bg-[#0b0b0f] text-white'
-          : 'bg-[#f5f5f7] text-[#1d1d1f]'
+          : 'bg-[#f3f0ea] text-[#2f2a24]'
       }`}
     >
       {/* Header */}
       <div
         className={`sticky top-0 z-20 border-b backdrop-blur-xl ${
-          dark ? 'border-white/10 bg-[#0b0b0f]/85' : 'border-[#e8e8ed] bg-white/85'
+          dark ? 'border-white/10 bg-[#0b0b0f]/85' : 'border-[rgba(148,163,184,0.22)] bg-white/85'
         }`}
       >
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 md:px-6">
           <div className="flex items-center gap-3">
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-                dark ? 'bg-blue-500/20 text-blue-400' : 'bg-[#1d1d1f] text-white'
+                dark ? 'bg-blue-500/20 text-blue-400' : 'bg-[#2f2a24] text-white'
               }`}
             >
               <LayoutDashboard className="h-5 w-5" />
@@ -246,7 +246,7 @@ export function ProDashboard() {
                       ? 'bg-emerald-500/15 text-emerald-400'
                       : dark
                         ? 'bg-white/10 text-white/40'
-                        : 'bg-[#f5f5f7] text-[#86868b]'
+                        : 'bg-[#f3f0ea] text-[#8a8178]'
                   }`}
                 >
                   <Radio className="h-3 w-3" />
@@ -376,7 +376,7 @@ export function ProDashboard() {
                     type="button"
                     onClick={() => navigateTo('/analytics')}
                     className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
-                      dark ? 'bg-white/10 text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+                      dark ? 'bg-white/10 text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
                     }`}
                   >
                     Full analytics
@@ -389,7 +389,7 @@ export function ProDashboard() {
                     color={dark ? '#60a5fa' : '#2563eb'}
                   />
                 </div>
-                <div className="mt-6 border-t border-dashed pt-4" style={{ borderColor: dark ? 'rgba(255,255,255,0.08)' : '#e8e8ed' }}>
+                <div className="mt-6 border-t border-dashed pt-4" style={{ borderColor: dark ? 'rgba(255,255,255,0.08)' : 'rgba(148,163,184,0.22)' }}>
                   <p className={`mb-2 text-[13px] font-semibold ${ink}`}>Accepted revenue trend</p>
                   <div className={ink}>
                     <AreaSparkline
@@ -420,7 +420,7 @@ export function ProDashboard() {
                   <DonutProgress
                     percent={stats.profileCompletion}
                     color={dark ? '#60a5fa' : '#2563eb'}
-                    track={dark ? '#fff' : '#1d1d1f'}
+                    track={dark ? '#fff' : '#2f2a24'}
                   />
                   <div className="min-w-0 flex-1 space-y-2">
                     {stats.profileSteps.map((s) => (
@@ -457,7 +457,7 @@ export function ProDashboard() {
                       <button
                         type="button"
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition ${
-                          dark ? 'hover:bg-white/5' : 'hover:bg-[#f5f5f7]'
+                          dark ? 'hover:bg-white/5' : 'hover:bg-[#f3f0ea]'
                         }`}
                         onClick={() => navigateTo(`/project/${j.listingId}/manage`)}
                       >
@@ -489,7 +489,7 @@ export function ProDashboard() {
                       <button
                         type="button"
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition ${
-                          dark ? 'hover:bg-white/5' : 'hover:bg-[#f5f5f7]'
+                          dark ? 'hover:bg-white/5' : 'hover:bg-[#f3f0ea]'
                         }`}
                         onClick={() =>
                           navigateTo(
@@ -522,7 +522,7 @@ export function ProDashboard() {
                   {stats.recentReviews.map((r) => (
                     <li
                       key={r.id}
-                      className={`rounded-xl px-3 py-2.5 ${dark ? 'bg-white/5' : 'bg-[#f5f5f7]'}`}
+                      className={`rounded-xl px-3 py-2.5 ${dark ? 'bg-white/5' : 'bg-[#f3f0ea]'}`}
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span className={`text-[13px] font-semibold ${ink}`}>
@@ -611,7 +611,7 @@ export function ProDashboard() {
                             : dark
                               ? 'bg-blue-500/10'
                               : 'bg-blue-50'
-                        } ${dark ? 'hover:bg-white/5' : 'hover:bg-[#f5f5f7]'}`}
+                        } ${dark ? 'hover:bg-white/5' : 'hover:bg-[#f3f0ea]'}`}
                         onClick={async () => {
                           if (!n.is_read) await markNotificationRead(n.id)
                           if (n.link_path) navigateTo(n.link_path)

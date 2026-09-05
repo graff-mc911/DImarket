@@ -52,10 +52,10 @@ export function buildFilledDocumentPdfHtml(input: FilledDocumentPdfInput): strin
 <meta charset="utf-8"/>
 <title>${escapeHtml(input.title)}</title>
 <style>
-  body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color:#1d1d1f; margin:24px; line-height:1.45; }
+  body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color:#2f2a24; margin:24px; line-height:1.45; }
   h1 { font-size:22px; margin:0 0 8px; }
   table { width:100%; border-collapse:collapse; margin-top:16px; }
-  .muted { color:#6e6e73; font-size:12px; }
+  .muted { color:#6f665d; font-size:12px; }
   @media print { body { margin:12mm; } }
 </style>
 </head>
@@ -64,8 +64,8 @@ export function buildFilledDocumentPdfHtml(input: FilledDocumentPdfInput): strin
   <p class="muted">${escapeHtml(input.jurisdiction)}</p>
   ${reviewBanner}
   <table>${rows || `<tr><td class="muted">—</td></tr>`}</table>
-  <p style="margin-top:20px;font-size:12px;color:#6e6e73">${escapeHtml(input.disclaimerAccuracy)}</p>
-  <p style="font-size:12px;color:#6e6e73">${escapeHtml(input.disclaimerNotAdvice)}</p>
+  <p style="margin-top:20px;font-size:12px;color:#6f665d">${escapeHtml(input.disclaimerAccuracy)}</p>
+  <p style="font-size:12px;color:#6f665d">${escapeHtml(input.disclaimerNotAdvice)}</p>
   ${generatedDocumentFooterHtml(meta)}
   <script>window.onload=function(){try{window.print()}catch(e){}}</script>
 </body>

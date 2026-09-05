@@ -107,28 +107,28 @@ export function CostEstimatorHistory() {
   }
 
   return (
-    <div className="min-h-[70vh] bg-[#f5f5f7] px-4 py-10 pb-24">
+    <div className="min-h-[70vh] bg-[#f3f0ea] px-4 py-10 pb-24">
       <div className="mx-auto max-w-3xl">
         <button
           type="button"
-          className="mb-4 text-[13px] font-medium text-[#6e6e73] hover:text-[#1d1d1f]"
+          className="mb-4 text-[13px] font-medium text-[#6f665d] hover:text-[#2f2a24]"
           onClick={() => navigateTo('/cost-estimator')}
         >
           ← {t('costEstimator.title')}
         </button>
-        <h1 className="text-[28px] font-semibold tracking-tight text-[#1d1d1f]">
+        <h1 className="text-[28px] font-semibold tracking-tight text-[#2f2a24]">
           {t('costEstimator.history')}
         </h1>
-        <p className="mt-2 text-[14px] text-[#6e6e73]">{t('costEstimator.disclaimer')}</p>
+        <p className="mt-2 text-[14px] text-[#6f665d]">{t('costEstimator.disclaimer')}</p>
 
         {compared.length >= 2 ? (
-          <div className="mt-6 overflow-x-auto rounded-[20px] border border-[#e8e8ed] bg-white p-4">
-            <p className="mb-3 text-[13px] font-semibold text-[#1d1d1f]">
+          <div className="mt-6 overflow-x-auto rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-4">
+            <p className="mb-3 text-[13px] font-semibold text-[#2f2a24]">
               {t('costEstimator.compare')} ({compared.length})
             </p>
             <table className="w-full text-left text-[12px]">
               <thead>
-                <tr className="text-[11px] uppercase tracking-wide text-[#86868b]">
+                <tr className="text-[11px] uppercase tracking-wide text-[#8a8178]">
                   <th className="pb-2">Estimate</th>
                   <th className="pb-2">Economy</th>
                   <th className="pb-2">Standard</th>
@@ -139,7 +139,7 @@ export function CostEstimatorHistory() {
               <tbody>
                 {compared.map((row) => (
                   <tr key={row.id} className="border-t border-[#f0f0f2]">
-                    <td className="py-2 font-medium text-[#1d1d1f]">{row.title}</td>
+                    <td className="py-2 font-medium text-[#2f2a24]">{row.title}</td>
                     <td className="py-2 tabular-nums">{formatEuro(Number(row.total_economy) || 0)}</td>
                     <td className="py-2 tabular-nums">{formatEuro(Number(row.total_standard) || 0)}</td>
                     <td className="py-2 tabular-nums">{formatEuro(Number(row.total_premium) || 0)}</td>
@@ -152,14 +152,14 @@ export function CostEstimatorHistory() {
         ) : null}
 
         {loading ? (
-          <p className="mt-8 text-[14px] text-[#86868b]">Loading…</p>
+          <p className="mt-8 text-[14px] text-[#8a8178]">Loading…</p>
         ) : rows.length === 0 ? (
-          <div className="mt-10 rounded-[24px] border border-dashed border-[#d2d2d7] bg-white/70 px-6 py-12 text-center">
-            <FileText className="mx-auto h-8 w-8 text-[#d2d2d7]" />
-            <p className="mt-3 text-[15px] font-semibold text-[#1d1d1f]">No saved estimates yet</p>
+          <div className="mt-10 rounded-[24px] border border-dashed border-[rgba(148,163,184,0.35)] bg-white/70 px-6 py-12 text-center">
+            <FileText className="mx-auto h-8 w-8 text-[rgba(148,163,184,0.35)]" />
+            <p className="mt-3 text-[15px] font-semibold text-[#2f2a24]">No saved estimates yet</p>
             <button
               type="button"
-              className="mt-4 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white"
+              className="mt-4 rounded-full bg-[#2f2a24] px-5 py-2.5 text-[13px] font-semibold text-white"
               onClick={() => navigateTo('/cost-estimator')}
             >
               Create estimate
@@ -170,29 +170,29 @@ export function CostEstimatorHistory() {
             {rows.map((row) => (
               <li
                 key={row.id}
-                className="rounded-[20px] border border-[#e8e8ed] bg-white px-5 py-4"
+                className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white px-5 py-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="text-[15px] font-semibold text-[#1d1d1f]">{row.title}</p>
-                    <p className="mt-1 text-[12px] text-[#86868b]">
+                    <p className="text-[15px] font-semibold text-[#2f2a24]">{row.title}</p>
+                    <p className="mt-1 text-[12px] text-[#8a8178]">
                       {row.location_label || '—'} · {row.area_sqm ?? '—'} m² ·{' '}
                       {new Date(row.created_at).toLocaleDateString()}
                     </p>
-                    <p className="mt-2 text-[14px] font-semibold tabular-nums text-[#1d1d1f]">
+                    <p className="mt-2 text-[14px] font-semibold tabular-nums text-[#2f2a24]">
                       {formatEuro(Number(row.total_standard) || 0)}
-                      <span className="ml-2 text-[12px] font-medium text-[#86868b]">
+                      <span className="ml-2 text-[12px] font-medium text-[#8a8178]">
                         ({formatEuro(Number(row.total_economy) || 0)} –{' '}
                         {formatEuro(Number(row.total_premium) || 0)})
                       </span>
                     </p>
                   </div>
-                  <label className="inline-flex items-center gap-2 text-[12px] text-[#6e6e73]">
+                  <label className="inline-flex items-center gap-2 text-[12px] text-[#6f665d]">
                     <input
                       type="checkbox"
                       checked={compareIds.includes(row.id)}
                       onChange={() => toggleCompare(row.id)}
-                      className="rounded border-[#d2d2d7]"
+                      className="rounded border-[rgba(148,163,184,0.35)]"
                     />
                     {t('costEstimator.compare')}
                   </label>
@@ -200,14 +200,14 @@ export function CostEstimatorHistory() {
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <button
                     type="button"
-                    className="rounded-full bg-[#1d1d1f] px-4 py-2 text-[12px] font-semibold text-white"
+                    className="rounded-full bg-[#2f2a24] px-4 py-2 text-[12px] font-semibold text-white"
                     onClick={() => navigateTo(`/cost-estimator?id=${encodeURIComponent(row.id)}`)}
                   >
                     {t('costEstimator.open')}
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] px-4 py-2 text-[12px] font-semibold text-[#1d1d1f]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
                     onClick={() =>
                       void duplicateCostEstimate(row.id, user?.id ?? null).then((r) => {
                         if (r) void reload()
@@ -219,7 +219,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] px-4 py-2 text-[12px] font-semibold text-[#1d1d1f]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
                     onClick={() => exportRow(row)}
                   >
                     <FileText className="h-3.5 w-3.5" />
@@ -227,7 +227,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] px-4 py-2 text-[12px] font-semibold text-[#1d1d1f]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
                     onClick={() => exportCsvRow(row)}
                   >
                     <FileSpreadsheet className="h-3.5 w-3.5" />
@@ -235,7 +235,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] px-4 py-2 text-[12px] font-semibold text-[#1d1d1f]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
                     onClick={() => void shareRow(row)}
                   >
                     <Share2 className="h-3.5 w-3.5" />
@@ -243,7 +243,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] px-4 py-2 text-[12px] font-semibold text-[#1d1d1f]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
                     onClick={() =>
                       void archiveCostEstimate(row.id, user?.id ?? null, true).then(() => reload())
                     }
@@ -253,7 +253,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="rounded-full p-2 text-[#86868b] hover:bg-[#f5f5f7] hover:text-[#c41e3a]"
+                    className="rounded-full p-2 text-[#8a8178] hover:bg-[#f3f0ea] hover:text-[#c41e3a]"
                     aria-label={t('costEstimator.delete')}
                     onClick={() =>
                       void deleteCostEstimate(row.id, user?.id ?? null).then(() => reload())

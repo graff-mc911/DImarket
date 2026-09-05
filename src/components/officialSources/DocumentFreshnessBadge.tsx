@@ -31,14 +31,14 @@ const toneClass: Record<string, string> = {
   ok: 'border-emerald-200 bg-emerald-50 text-emerald-900',
   warn: 'border-amber-200 bg-amber-50 text-amber-950',
   bad: 'border-rose-200 bg-rose-50 text-rose-950',
-  unknown: 'border-[#e8e8ed] bg-[#f5f5f7] text-[#1d1d1f]',
+  unknown: 'border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] text-[#2f2a24]',
 }
 
 const dotClass: Record<string, string> = {
   ok: 'bg-emerald-500',
   warn: 'bg-amber-500',
   bad: 'bg-rose-500',
-  unknown: 'bg-[#86868b]',
+  unknown: 'bg-[#8a8178]',
 }
 
 export function DocumentFreshnessBadge(props: Props) {
@@ -96,7 +96,7 @@ export function DocumentFreshnessBadge(props: Props) {
 export function LegalContentDisclaimer() {
   const { t } = useApp()
   return (
-    <div className="rounded-2xl border border-[#e8e8ed] bg-[#fafafa] px-3.5 py-3 text-xs leading-5 text-[#6e6e73]">
+    <div className="rounded-2xl border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-3.5 py-3 text-xs leading-5 text-[#6f665d]">
       <p>{t('osm.disclaimer.accuracy')}</p>
       <p className="mt-1.5">{t('osm.disclaimer.notAdvice')}</p>
     </div>

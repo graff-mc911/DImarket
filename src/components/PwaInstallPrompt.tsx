@@ -70,10 +70,10 @@ export function PwaInstallPrompt() {
 
   return (
     <div className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-3 right-3 z-[80] mx-auto max-w-md xl:bottom-6">
-      <div className="flex items-start gap-3 rounded-2xl border border-[#e8e8ed] bg-white p-3 shadow-[0_12px_40px_rgba(0,0,0,0.14)]">
+      <div className="flex items-start gap-3 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-3 shadow-[0_12px_40px_rgba(0,0,0,0.14)]">
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white ${
-            mode === 'already' ? 'bg-emerald-600' : 'bg-[#1d1d1f]'
+            mode === 'already' ? 'bg-emerald-600' : 'bg-[#2f2a24]'
           }`}
         >
           {mode === 'already' ? (
@@ -83,10 +83,10 @@ export function PwaInstallPrompt() {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-[#1d1d1f]">
+          <p className="text-sm font-semibold text-[#2f2a24]">
             {mode === 'already' ? t('pwa.alreadyTitle') : t('pwa.installTitle')}
           </p>
-          <p className="mt-0.5 text-xs leading-snug text-[#6e6e73]">
+          <p className="mt-0.5 text-xs leading-snug text-[#6f665d]">
             {mode === 'already' ? t('pwa.alreadyText') : t('pwa.installText')}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -94,7 +94,7 @@ export function PwaInstallPrompt() {
               <button
                 type="button"
                 onClick={() => void installNow()}
-                className="inline-flex items-center justify-center rounded-full bg-[#1d1d1f] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-black"
+                className="inline-flex items-center justify-center rounded-full bg-[#2f2a24] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-black"
               >
                 {t('pwa.saveAsApp')}
               </button>
@@ -108,7 +108,7 @@ export function PwaInstallPrompt() {
               <button
                 type="button"
                 onClick={dismiss}
-                className="inline-flex items-center justify-center rounded-full border border-[#d2d2d7] px-3.5 py-1.5 text-xs font-semibold text-[#6e6e73] hover:bg-[#f5f5f7]"
+                className="inline-flex items-center justify-center rounded-full border border-[rgba(148,163,184,0.35)] px-3.5 py-1.5 text-xs font-semibold text-[#6f665d] hover:bg-[#f3f0ea]"
               >
                 {t('pwa.installLater')}
               </button>
@@ -117,7 +117,7 @@ export function PwaInstallPrompt() {
               <button
                 type="button"
                 onClick={dismiss}
-                className="inline-flex items-center justify-center rounded-full border border-[#d2d2d7] px-3.5 py-1.5 text-xs font-semibold text-[#6e6e73] hover:bg-[#f5f5f7]"
+                className="inline-flex items-center justify-center rounded-full border border-[rgba(148,163,184,0.35)] px-3.5 py-1.5 text-xs font-semibold text-[#6f665d] hover:bg-[#f3f0ea]"
               >
                 {t('pwa.installLater')}
               </button>
@@ -127,7 +127,7 @@ export function PwaInstallPrompt() {
         <button
           type="button"
           onClick={dismiss}
-          className="shrink-0 rounded-full p-1 text-[#86868b] hover:bg-[#f5f5f7]"
+          className="shrink-0 rounded-full p-1 text-[#8a8178] hover:bg-[#f3f0ea]"
           aria-label={t('common.close')}
         >
           <X className="h-4 w-4" />

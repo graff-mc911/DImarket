@@ -30,7 +30,7 @@ function Stars({ rating }: { rating: number }) {
         <Star
           key={i}
           className={`h-3.5 w-3.5 ${
-            i < Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'text-[#d2d2d7]'
+            i < Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'text-[rgba(148,163,184,0.35)]'
           }`}
         />
       ))}
@@ -91,11 +91,11 @@ export function ReviewCard({
   const isOwnerReply = (authorId: string) => authorId === professionalId
 
   return (
-    <article className="rounded-[18px] border border-[#e8e8ed] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+    <article className="rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="truncate text-[14px] font-semibold text-[#1d1d1f]">
+            <p className="truncate text-[14px] font-semibold text-[#2f2a24]">
               {review.reviewer_name}
             </p>
             {review.is_verified_customer ? (
@@ -105,7 +105,7 @@ export function ReviewCard({
               </span>
             ) : null}
           </div>
-          <p className="mt-0.5 text-[12px] text-[#86868b]">
+          <p className="mt-0.5 text-[12px] text-[#8a8178]">
             {new Date(review.created_at).toLocaleDateString(undefined, {
               year: 'numeric',
               month: 'short',
@@ -137,7 +137,7 @@ export function ReviewCard({
                 <video src={m.url} className="h-full w-full object-cover" muted preload="metadata" />
                 <span className="absolute inset-0 flex items-center justify-center">
                   <span className="rounded-full bg-white/90 p-1.5">
-                    <Play className="h-3.5 w-3.5 text-[#1d1d1f]" />
+                    <Play className="h-3.5 w-3.5 text-[#2f2a24]" />
                   </span>
                 </span>
               </button>
@@ -163,7 +163,7 @@ export function ReviewCard({
           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition ${
             review.liked_by_me
               ? 'bg-[#fff1f0] text-[#c41e3a]'
-              : 'bg-[#f5f5f7] text-[#6e6e73] hover:bg-[#e8e8ed]'
+              : 'bg-[#f3f0ea] text-[#6f665d] hover:bg-[rgba(148,163,184,0.22)]'
           }`}
         >
           <Heart className={`h-3.5 w-3.5 ${review.liked_by_me ? 'fill-current' : ''}`} />
@@ -172,7 +172,7 @@ export function ReviewCard({
         <button
           type="button"
           onClick={() => setReplyOpen((v) => !v)}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[#f5f5f7] px-3 py-1.5 text-[12px] font-semibold text-[#6e6e73] hover:bg-[#e8e8ed]"
+          className="inline-flex items-center gap-1.5 rounded-full bg-[#f3f0ea] px-3 py-1.5 text-[12px] font-semibold text-[#6f665d] hover:bg-[rgba(148,163,184,0.22)]"
         >
           <MessageCircle className="h-3.5 w-3.5" />
           Reply
@@ -185,13 +185,13 @@ export function ReviewCard({
           {review.replies.map((r) => (
             <div key={r.id} className="rounded-xl bg-[#fafafa] px-3 py-2">
               <div className="flex items-center gap-2">
-                <p className="text-[12px] font-semibold text-[#1d1d1f]">{r.author_name}</p>
+                <p className="text-[12px] font-semibold text-[#2f2a24]">{r.author_name}</p>
                 {isOwnerReply(r.author_id) ? (
-                  <span className="rounded-full bg-[#1d1d1f] px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
+                  <span className="rounded-full bg-[#2f2a24] px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
                     Pro
                   </span>
                 ) : null}
-                <span className="text-[11px] text-[#86868b]">
+                <span className="text-[11px] text-[#8a8178]">
                   {new Date(r.created_at).toLocaleDateString()}
                 </span>
               </div>
@@ -207,7 +207,7 @@ export function ReviewCard({
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="Write a reply…"
-            className="flex-1 rounded-xl border border-[#d2d2d7] bg-[#fafafa] px-3 py-2 text-[13px] outline-none focus:border-[#1d1d1f] focus:bg-white"
+            className="flex-1 rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2 text-[13px] outline-none focus:border-[#2f2a24] focus:bg-white"
             onKeyDown={(e) => {
               if (e.key === 'Enter') void onReply()
             }}
@@ -216,7 +216,7 @@ export function ReviewCard({
             type="button"
             disabled={busy || !replyText.trim()}
             onClick={() => void onReply()}
-            className="inline-flex items-center gap-1 rounded-xl bg-[#1d1d1f] px-3 py-2 text-[12px] font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center gap-1 rounded-xl bg-[#2f2a24] px-3 py-2 text-[12px] font-semibold text-white disabled:opacity-50"
           >
             <Send className="h-3.5 w-3.5" />
             Send

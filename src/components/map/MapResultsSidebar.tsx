@@ -54,7 +54,7 @@ export function MapResultsSidebar({
 
   return (
     <div className="map-results-sidebar amazon-section-card flex max-h-[70vh] flex-col overflow-hidden p-0 lg:max-h-[calc(100vh-12rem)]">
-      <div className="border-b border-[var(--ink-100,#e8e8ed)] px-4 py-3">
+      <div className="border-b border-[var(--ink-100,rgba(148,163,184,0.22))] px-4 py-3">
         <h2 className="text-sm font-bold text-[var(--ink-900)]">
           {labels.title}{' '}
           <span className="font-medium text-[var(--ink-500)]">({markers.length})</span>
@@ -134,7 +134,7 @@ export function MapResultsSidebar({
         })}
       </ul>
       {selectedId ? (
-        <div className="border-t border-[var(--ink-100,#e8e8ed)] p-3">
+        <div className="border-t border-[var(--ink-100,rgba(148,163,184,0.22))] p-3">
           <button
             type="button"
             className="btn-primary w-full text-sm"
