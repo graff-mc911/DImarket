@@ -311,7 +311,7 @@ export function ProjectFeed() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
-        <div className="mb-6 rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] md:p-5">
+        <div className="mb-6 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] md:p-5">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <label className="block">
               <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#8a8178]">
@@ -453,12 +453,12 @@ export function ProjectFeed() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-44 animate-pulse rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white"
+                className="h-44 animate-pulse rounded-none border border-[rgba(148,163,184,0.22)] bg-white"
               />
             ))}
           </div>
         ) : items.length === 0 ? (
-          <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white px-6 py-16 text-center">
+          <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-6 py-16 text-center">
             <p className="text-[17px] font-semibold text-[#2f2a24]">No projects match</p>
             <p className="mt-1 text-[14px] text-[#8a8178]">Try widening filters or check back soon.</p>
           </div>
@@ -481,7 +481,7 @@ export function ProjectFeed() {
               return (
                 <li
                   key={project.id}
-                  className="overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
+                  className="overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
                 >
                   <div className="flex flex-col p-4 md:p-5">
                       <div className="flex flex-wrap items-start justify-between gap-3">

@@ -8,7 +8,7 @@ type Props = {
 export function ReviewStats({ stats }: Props) {
   if (!stats.count) {
     return (
-      <div className="rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-6 text-center">
+      <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-6 text-center">
         <p className="text-[14px] font-semibold text-[#2f2a24]">No reviews yet</p>
         <p className="mt-1 text-[13px] text-[#8a8178]">Be the first to leave feedback.</p>
       </div>
@@ -18,7 +18,7 @@ export function ReviewStats({ stats }: Props) {
   const maxBar = Math.max(1, ...Object.values(stats.distribution))
 
   return (
-    <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:p-5">
+    <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:p-5">
       <div className="flex flex-wrap items-end gap-6">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">

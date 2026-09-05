@@ -20,7 +20,7 @@ export function OnboardingChecklist({ state, role }: OnboardingChecklistProps) {
         : 'onboarding.pro.title'
 
   return (
-    <section className="mb-6 rounded-[24px] border border-[rgba(99,102,241,0.22)] bg-[rgba(99,102,241,0.06)] p-5 md:p-6">
+    <section className="mb-6 rounded-none border border-[rgba(99,102,241,0.22)] bg-[rgba(99,102,241,0.06)] p-5 md:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#4338ca]">
@@ -50,7 +50,7 @@ export function OnboardingChecklist({ state, role }: OnboardingChecklistProps) {
         {state.steps.map((step) => (
           <li
             key={step.id}
-            className="flex items-center gap-2.5 rounded-[14px] border border-white/60 bg-white/50 px-3 py-2.5 text-sm"
+            className="flex items-center gap-2.5 rounded-none border border-white/60 bg-white/50 px-3 py-2.5 text-sm"
           >
             {step.done ? (
               <CheckCircle2 className="h-4 w-4 shrink-0 text-[#16a34a]" />

@@ -427,7 +427,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
             <Loader2 className="h-6 w-6 animate-spin text-[#8a8178]" />
           </div>
         ) : !hired ? (
-          <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
+          <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
             <p className="text-[15px] text-[#8a8178]">
               {t('pipeline.manageEmpty' as never) ||
                 'No professional hired yet. Compare ranked offers and hire to unlock milestones, photos and documents.'}
@@ -443,7 +443,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
         ) : (
           <>
             {completed && isOwner && hiredId && !reviewDone ? (
-              <section className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
+              <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
                 <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                   <Star className="h-3.5 w-3.5" />
                   {t('pipeline.leaveReview' as never) || 'Leave a review'}
@@ -469,7 +469,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
             ) : null}
 
             {/* Work calendar */}
-            <section className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
+            <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
               <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                 <CalendarDays className="h-3.5 w-3.5" />
                 {t('pipeline.workCalendar' as never) || 'Work calendar'}
@@ -502,7 +502,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
               {milestones.map((m, i) => (
                 <li
                   key={m.id}
-                  className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                  className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
@@ -544,7 +544,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                 </li>
               ))}
               {!milestones.length ? (
-                <p className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white px-5 py-8 text-center text-[13px] text-[#8a8178]">
+                <p className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-5 py-8 text-center text-[13px] text-[#8a8178]">
                   {t('pipeline.noMilestones' as never) ||
                     'Milestones will appear after hire from the cost estimate work stages.'}
                 </p>
@@ -552,7 +552,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
             </ol>
 
             {/* Phase photos */}
-            <section className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
+            <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
               <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                 <Camera className="h-3.5 w-3.5" />
                 {t('pipeline.phasePhotos' as never) || 'Before / during / after'}
@@ -620,7 +620,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
             </section>
 
             {/* Documents & payments */}
-            <section className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
+            <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                   <FileText className="h-3.5 w-3.5" />

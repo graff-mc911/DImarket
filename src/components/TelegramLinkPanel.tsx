@@ -52,7 +52,7 @@ export function TelegramLinkPanel({
   }
 
   return (
-    <div className="mt-6 rounded-[16px] border border-[rgba(99,102,241,0.2)] bg-[rgba(99,102,241,0.05)] p-4">
+    <div className="mt-6 rounded-none border border-[rgba(99,102,241,0.2)] bg-[rgba(99,102,241,0.05)] p-4">
       <div className="flex items-center gap-2">
         <MessageCircle className="h-5 w-5 text-[#4338ca]" />
         <span className="font-semibold text-[#2f2a24]">{t('settings.telegramTitle')}</span>

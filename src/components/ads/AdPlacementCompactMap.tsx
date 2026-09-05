@@ -62,7 +62,7 @@ function PageWireframeBlock({
   const count = selectedSlots.filter((id) => id.startsWith(`${meta.adPageKey}_`)).length
 
   return (
-    <div className="relative isolate min-w-0 overflow-hidden rounded-[14px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-2.5">
+    <div className="relative isolate min-w-0 overflow-hidden rounded-none border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-2.5">
       <div className="mb-2 flex items-baseline justify-between gap-2">
         <p className="text-[11px] font-extrabold text-[#2f2a24]">
           {t(meta.labelKey)}

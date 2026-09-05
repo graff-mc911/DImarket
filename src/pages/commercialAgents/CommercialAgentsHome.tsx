@@ -94,16 +94,15 @@ export function CommercialAgentsHome() {
           </div>
         </div>
       ) : null}
-      <section className="relative overflow-hidden border-b border-[var(--line-200)] bg-gradient-to-br from-[#1b2430] via-[#232f3e] to-[#3d2a1a]">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,153,0,0.22),transparent_55%)]" />
+      <section className="relative overflow-hidden border-b border-[rgba(148,163,184,0.22)] bg-white">
         <div className="layout-page-gutter relative py-14 md:py-20">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#ff9900]">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c96d2c]">
             {t('commercialAgents.eyebrow')}
           </p>
-          <h1 className="mt-3 max-w-3xl text-3xl font-extrabold tracking-tight text-white md:text-5xl">
+          <h1 className="mt-3 max-w-3xl text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-5xl">
             {t('commercialAgents.heroTitle')}
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-white/80 md:text-lg">
+          <p className="mt-4 max-w-2xl text-base leading-7 text-[#6f665d] md:text-lg">
             {t('commercialAgents.heroSubtitle')}
           </p>
 
@@ -112,7 +111,7 @@ export function CommercialAgentsHome() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && runSearch()}
-              className="w-full flex-1 rounded-full border-0 bg-white px-5 py-3.5 text-sm text-[var(--ink-900)] shadow-lg outline-none"
+              className="w-full flex-1 rounded-full border border-[rgba(148,163,184,0.22)] bg-white px-5 py-3.5 text-sm text-[var(--ink-900)] outline-none"
               placeholder={t('commercialAgents.searchPlaceholder')}
             />
             <button type="button" onClick={runSearch} className="btn-primary rounded-full px-6 py-3 text-sm font-bold">
@@ -133,7 +132,7 @@ export function CommercialAgentsHome() {
             <button
               type="button"
               onClick={() => navigateTo('/commercial-agents/manufacturers')}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#232f3e] hover:bg-white/90"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(148,163,184,0.22)] bg-white px-5 py-3 text-sm font-bold text-[#2f2a24] hover:bg-[#f7f5f2]"
             >
               <Building2 className="h-4 w-4" />
               {t('commercialAgents.ctaFindManufacturer')}
@@ -144,7 +143,7 @@ export function CommercialAgentsHome() {
             <button
               type="button"
               onClick={() => navigateTo('/commercial-agents/dashboard?role=manufacturer&tab=opportunities')}
-              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/25 backdrop-blur hover:bg-white/15"
+              className="inline-flex items-center gap-2 rounded-full border border-[rgba(148,163,184,0.22)] bg-white px-4 py-2 text-sm font-semibold text-[#2f2a24] hover:bg-[#f7f5f2]"
             >
               <PlusCircle className="h-4 w-4" />
               {t('commercialAgents.ctaPostOpportunity')}
@@ -152,7 +151,7 @@ export function CommercialAgentsHome() {
             <button
               type="button"
               onClick={() => navigateTo('/commercial-agents/dashboard?role=agent&tab=profile')}
-              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/25 backdrop-blur hover:bg-white/15"
+              className="inline-flex items-center gap-2 rounded-full border border-[rgba(148,163,184,0.22)] bg-white px-4 py-2 text-sm font-semibold text-[#2f2a24] hover:bg-[#f7f5f2]"
             >
               <UserPlus className="h-4 w-4" />
               {t('commercialAgents.ctaCreateAgentProfile')}

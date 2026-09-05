@@ -274,7 +274,7 @@ export function ProCalendar() {
           </p>
         ) : null}
 
-        <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5">
+        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-4 flex items-center justify-between">
             <button
               type="button"
@@ -370,7 +370,7 @@ export function ProCalendar() {
         </section>
 
         <div className="space-y-4">
-          <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
+          <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
             <h3 className="text-[15px] font-semibold text-[#2f2a24]">
               Pending requests ({pending.length})
             </h3>
@@ -417,7 +417,7 @@ export function ProCalendar() {
             </div>
           </section>
 
-          <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
+          <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
             <h3 className="text-[15px] font-semibold text-[#2f2a24]">Appointments</h3>
             <div className="mt-3 max-h-[420px] space-y-2 overflow-y-auto">
               {upcoming.length === 0 ? (

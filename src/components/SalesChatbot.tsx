@@ -49,7 +49,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
 
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.55)] shadow-[0_8px_32px_rgba(67,44,26,0.08)] ${compact ? 'max-h-[32rem]' : 'min-h-[28rem]'} ${className}`}
+      className={`flex flex-col overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.55)] shadow-[0_8px_32px_rgba(67,44,26,0.08)] ${compact ? 'max-h-[32rem]' : 'min-h-[28rem]'} ${className}`}
     >
       <div className="flex items-center justify-between gap-2 border-b border-[rgba(148,163,184,0.15)] px-4 py-3">
         <p className="text-sm font-semibold text-[#2f2a24]">{t('salesBot.cardMessage')}</p>
@@ -69,7 +69,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[88%] whitespace-pre-wrap rounded-[16px] px-3 py-2 text-sm leading-relaxed ${
+              className={`max-w-[88%] whitespace-pre-wrap rounded-none px-3 py-2 text-sm leading-relaxed ${
                 msg.role === 'user'
                   ? 'bg-[#6366f1] text-white'
                   : 'border border-[rgba(148,163,184,0.2)] bg-white/80 text-[#2f2a24]'

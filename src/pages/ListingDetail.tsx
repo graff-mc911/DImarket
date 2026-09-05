@@ -358,7 +358,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
             {listing.listing_type === 'service_request' &&
               (user?.id === listing.author_id ||
                 user?.id === listing.hired_professional_id) && (
-              <div className="mt-4 rounded-[16px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-4">
+              <div className="mt-4 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-4">
                 {(() => {
                   const isOwner = user?.id === listing.author_id
                   const next = isOwner

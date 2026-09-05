@@ -25,7 +25,7 @@ type LocationStepProps = {
 }
 
 const fieldClass = (hasError?: string) =>
-  'w-full rounded-[14px] border bg-[#fafafa] px-4 py-3 text-[15px] text-[#2f2a24] outline-none transition focus:bg-white ' +
+  'w-full rounded-none border bg-[#fafafa] px-4 py-3 text-[15px] text-[#2f2a24] outline-none transition focus:bg-white ' +
   (hasError
     ? 'border-[#c41e3a]'
     : 'border-[rgba(148,163,184,0.22)] focus:border-[#2f2a24] focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]')
@@ -78,7 +78,7 @@ export function LocationStep({
           <p className="mt-1 text-[12px] text-[#8a8178]">Searching…</p>
         )}
         {suggestions.length > 0 && (
-          <ul className="absolute z-20 mt-1 max-h-52 w-full overflow-auto rounded-[16px] border border-[rgba(148,163,184,0.22)] bg-white py-1 shadow-xl">
+          <ul className="absolute z-20 mt-1 max-h-52 w-full overflow-auto rounded-none border border-[rgba(148,163,184,0.22)] bg-white py-1 shadow-xl">
             {suggestions.map((s) => (
               <li key={s.placeId || s.displayName}>
                 <button

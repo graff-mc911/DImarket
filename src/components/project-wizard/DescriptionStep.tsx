@@ -16,7 +16,7 @@ export function DescriptionStep({ value, onChange, placeholder, hint, error }: D
         rows={9}
         placeholder={placeholder}
         className={
-          'w-full resize-y rounded-[20px] border bg-[#fafafa] px-4 py-4 text-[16px] leading-7 text-[#2f2a24] outline-none transition placeholder:text-[#aeaeb2] focus:bg-white ' +
+          'w-full resize-y rounded-none border bg-[#fafafa] px-4 py-4 text-[16px] leading-7 text-[#2f2a24] outline-none transition placeholder:text-[#aeaeb2] focus:bg-white ' +
           (error
             ? 'border-[#c41e3a]'
             : 'border-[rgba(148,163,184,0.22)] focus:border-[#2f2a24] focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]')

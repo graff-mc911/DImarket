@@ -117,7 +117,7 @@ export function Billing() {
           </div>
         ) : null}
 
-        <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
+        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="text-[18px] font-semibold text-[#2f2a24]">
@@ -172,7 +172,7 @@ export function Billing() {
           </div>
         </section>
 
-        <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
+        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
           <h2 className="text-[16px] font-semibold text-[#2f2a24]">Credit history</h2>
           <div className="mt-3 space-y-2">
             {ledger.map((row) => (
@@ -198,7 +198,7 @@ export function Billing() {
           </div>
         </section>
 
-        <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
+        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-[#2f2a24]" />
             <h2 className="text-[16px] font-semibold text-[#2f2a24]">Google Ads</h2>

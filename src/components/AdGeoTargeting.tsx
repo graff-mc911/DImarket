@@ -34,12 +34,12 @@ function CheckboxGrid({
   }
 
   return (
-    <div className="max-h-64 overflow-y-auto rounded-[18px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.55)] p-2">
+    <div className="max-h-64 overflow-y-auto rounded-none border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.55)] p-2">
       <div className="grid gap-1 sm:grid-cols-2">
         {options.map((option) => (
           <label
             key={option}
-            className="flex cursor-pointer items-center gap-2.5 rounded-[14px] px-3 py-2 text-sm text-[#2f2a24] hover:bg-[rgba(99,102,241,0.08)]"
+            className="flex cursor-pointer items-center gap-2.5 rounded-none px-3 py-2 text-sm text-[#2f2a24] hover:bg-[rgba(99,102,241,0.08)]"
           >
             <input
               type="checkbox"

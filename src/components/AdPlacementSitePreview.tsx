@@ -352,7 +352,7 @@ function DesktopWireframe({
   return (
     <div
       className={
-        'rounded-[18px] border border-white/45 bg-[rgba(248,250,252,0.65)] ' +
+        'rounded-none border border-white/45 bg-[rgba(248,250,252,0.65)] ' +
         (compact ? (purchaseLayout ? 'p-2 sm:p-3 md:p-4' : 'p-4') : 'p-3')
       }
     >
@@ -428,7 +428,7 @@ function MobileWireframe({
   const isActive = (id: string) => selected.includes(id)
 
   return (
-    <div className="mx-auto w-full max-w-[280px] rounded-[22px] border-2 border-[#2f2a24] bg-[#faf8f5] p-2.5 shadow-lg">
+    <div className="mx-auto w-full max-w-[280px] rounded-none border-2 border-[#2f2a24] bg-[#faf8f5] p-2.5 shadow-lg">
       <p className="mb-2 text-center text-[9px] font-bold uppercase tracking-wide text-[#9a8776]">
         {t('advertising.catalog.mobileWire')} · {editorLabel}
       </p>
@@ -662,8 +662,8 @@ export function AdPlacementSitePreview({
       <div
         className={
           compact
-            ? 'rounded-[12px] border border-white/35 bg-white/25 px-2.5 py-2 text-[10px] leading-relaxed text-[#5f5a54]'
-            : 'rounded-[14px] border border-white/35 bg-white/25 px-3 py-2.5 text-[11px] leading-relaxed text-[#5f5a54]'
+            ? 'rounded-none border border-white/35 bg-white/25 px-2.5 py-2 text-[10px] leading-relaxed text-[#5f5a54]'
+            : 'rounded-none border border-white/35 bg-white/25 px-3 py-2.5 text-[11px] leading-relaxed text-[#5f5a54]'
         }
       >
         <p className="font-bold text-[#2f2a24]">{t('advertising.catalog.sizesLegendTitle')}</p>
@@ -712,7 +712,7 @@ export function AdPlacementSitePreview({
       </div>
 
       {!compact && selectedOnPage.length > 0 ? (
-        <details className="rounded-[14px] border border-white/35 bg-white/25 px-3 py-2 text-xs text-[#5f5a54]">
+        <details className="rounded-none border border-white/35 bg-white/25 px-3 py-2 text-xs text-[#5f5a54]">
           <summary className="cursor-pointer font-semibold text-[#2f2a24]">
             {t('advertising.catalog.selectedOnPage')}: {selectedOnPage.length}
           </summary>

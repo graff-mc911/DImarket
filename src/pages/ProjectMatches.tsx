@@ -340,7 +340,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
 
       <div className="mx-auto max-w-3xl space-y-5 px-4 py-6 md:px-6">
         {error ? (
-          <p className="rounded-[14px] border border-[#fecaca] bg-[#fef2f2] px-4 py-3 text-[13px] text-[#b91c1c]">
+          <p className="rounded-none border border-[#fecaca] bg-[#fef2f2] px-4 py-3 text-[13px] text-[#b91c1c]">
             {error}
           </p>
         ) : null}
@@ -348,11 +348,11 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 animate-pulse rounded-[20px] bg-white" />
+              <div key={i} className="h-32 animate-pulse rounded-none bg-white" />
             ))}
           </div>
         ) : rows.length === 0 ? (
-          <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
+          <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
             <p className="text-[15px] text-[#8a8178]">
               {t('project.matches.empty' as never) ||
                 'No matches yet. Send a match package after pros are ranked, or refresh.'}
@@ -377,7 +377,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
         ) : (
           <>
             {/* Match package composer */}
-            <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
+            <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-[#2f2a24]">
@@ -408,7 +408,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
               </div>
 
               {pkg ? (
-                <div className="mt-4 rounded-[14px] bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#6f665d]">
+                <div className="mt-4 rounded-none bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#6f665d]">
                   <p className="font-semibold text-[#2f2a24]">{pkg.title}</p>
                   <p className="mt-1">
                     {[pkg.addressLabel || pkg.city, pkg.estimateSummary]
@@ -461,7 +461,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
             </div>
 
             {/* Response inbox */}
-            <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
+            <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="text-[15px] font-semibold text-[#2f2a24]">
@@ -550,7 +550,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
             </div>
 
             {/* Tender comparison board */}
-            <div className="overflow-x-auto rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-4">
+            <div className="overflow-x-auto rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
               <p className="text-[15px] font-semibold text-[#2f2a24]">
                 {t('costEstimator.tenderBoard')}
               </p>
@@ -684,7 +684,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                 return (
                   <li
                     key={p.id}
-                    className={`rounded-[20px] border bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:p-5 ${
+                    className={`rounded-none border bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:p-5 ${
                       checked ? 'border-[#2f2a24]' : 'border-[rgba(148,163,184,0.22)]'
                     }`}
                   >

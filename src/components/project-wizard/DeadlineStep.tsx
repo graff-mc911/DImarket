@@ -47,7 +47,7 @@ export function DeadlineStep({
                 })
               }
               className={
-                'flex items-center justify-between rounded-[20px] border px-5 py-4 text-left transition ' +
+                'flex items-center justify-between rounded-none border px-5 py-4 text-left transition ' +
                 (active
                   ? 'border-[#2f2a24] bg-[#2f2a24] text-white'
                   : 'border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-[#2f2a24] hover:bg-white')
@@ -81,7 +81,7 @@ export function DeadlineStep({
             type="date"
             value={deadlineAt}
             onChange={(e) => onChange({ deadlineAt: e.target.value })}
-            className="w-full max-w-xs rounded-[14px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#2f2a24] focus:bg-white"
+            className="w-full max-w-xs rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#2f2a24] focus:bg-white"
           />
         </div>
       )}

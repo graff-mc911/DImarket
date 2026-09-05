@@ -114,11 +114,11 @@ export function AdImageAdaptPanel({ userId, campaignId, onVariantsReady }: AdIma
   }
 
   return (
-    <div className="rounded-[20px] border border-[rgba(99,102,241,0.2)] bg-[rgba(99,102,241,0.04)] p-4">
+    <div className="rounded-none border border-[rgba(99,102,241,0.2)] bg-[rgba(99,102,241,0.04)] p-4">
       <p className="text-sm font-bold text-[#2f2a24]">{t('ai.adImage.title')}</p>
       <p className="mt-1 text-[11px] text-[#6f665d]">{t('ai.adImage.desc')}</p>
 
-      <label className="mt-3 flex cursor-pointer flex-col items-center justify-center rounded-[16px] border border-dashed border-[rgba(99,102,241,0.35)] py-8">
+      <label className="mt-3 flex cursor-pointer flex-col items-center justify-center rounded-none border border-dashed border-[rgba(99,102,241,0.35)] py-8">
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"

@@ -172,7 +172,7 @@ export function NotificationCenter({ compact = true }: Props) {
       className={
         compact
           ? 'absolute right-0 z-[70] mt-2 w-[min(400px,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white shadow-xl'
-          : 'mx-auto max-w-2xl overflow-hidden rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white shadow-sm'
+          : 'mx-auto max-w-2xl overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-sm'
       }
     >
       <div className="flex items-center justify-between gap-2 border-b border-[#f0f0f2] px-4 py-3">

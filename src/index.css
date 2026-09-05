@@ -8,14 +8,14 @@
     --font-sans: "Inter", "Amazon Ember", "Segoe UI", Arial, sans-serif;
     --font-logo: "Libre Bodoni", "Didot", "Bodoni MT", Georgia, serif;
     --font-display: "Inter", "Amazon Ember", "Segoe UI", Arial, sans-serif;
-    /* Soft-glass canvas (owner cabinet language) */
+    /* Owner cabinet canvas: warm background, opaque white surfaces */
     --bg-canvas: #ebe8e3;
-    --bg-soft: rgba(255, 255, 255, 0.72);
-    --bg-glass-top: rgba(255, 255, 255, 0.78);
-    --bg-glass-bottom: rgba(248, 250, 252, 0.62);
-    --glass-bg: rgba(255, 255, 255, 0.55);
-    --panel: rgba(255, 255, 255, 0.58);
-    --panel-strong: rgba(255, 255, 255, 0.82);
+    --bg-soft: #ffffff;
+    --bg-glass-top: #ffffff;
+    --bg-glass-bottom: #ffffff;
+    --glass-bg: #ffffff;
+    --panel: #ffffff;
+    --panel-strong: #ffffff;
     --line: rgba(148, 163, 184, 0.28);
     --line-strong: rgba(148, 163, 184, 0.42);
     --glass-border: rgba(148, 163, 184, 0.22);
@@ -878,8 +878,6 @@
     margin-inline: auto;
     overflow: visible;
     background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
     border: 1px solid var(--line);
     border-radius: var(--radius-card);
     color: inherit;
@@ -1933,8 +1931,6 @@
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-card);
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
   }
 
   .glass-panel {
@@ -1944,8 +1940,6 @@
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-panel);
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
   }
 
   .glass-panel::before {
@@ -1964,8 +1958,6 @@
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-panel);
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
   }
 
   .soft-card {
@@ -1973,8 +1965,6 @@
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-card);
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
   }
 
   .trust-card {
@@ -1982,8 +1972,6 @@
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-card);
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
   }
 
   .logo-letter-d {
@@ -2335,8 +2323,6 @@
     border-color: var(--glass-border);
     background: var(--panel-strong);
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
   }
 
   .amazon-filter-sidebar {
@@ -2344,8 +2330,6 @@
     border-color: var(--glass-border);
     background: var(--panel-strong);
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
   }
 
   .amazon-filter-sidebar h2 {
@@ -2369,8 +2353,6 @@
     border-color: var(--glass-border);
     background: var(--panel-strong);
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
   }
 
   .amazon-buy-box--sticky {
@@ -2570,8 +2552,6 @@
     border-radius: var(--radius-card);
     border: none;
     background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
     padding: 1.25rem 1.25rem 1rem;
     box-shadow: var(--card-shadow);
   }
@@ -3035,19 +3015,15 @@
 
   .eyebrow {
     @apply inline-flex items-center gap-2 rounded-none px-4 py-2 text-[13px] font-semibold;
-    background: rgba(255, 252, 248, 0.42);
+    background: #ffffff;
     color: var(--accent-700);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--glass-border);
   }
 
   .stat-chip {
     @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[13px] font-semibold;
-    background: rgba(255, 255, 255, 0.38);
+    background: #ffffff;
     color: var(--ink-700);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--glass-border);
   }
 
@@ -3374,8 +3350,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   overflow: visible;
   border-radius: var(--radius-card);
   background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.1);
   box-shadow: var(--card-shadow);
   transition:
@@ -3689,8 +3663,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   padding: 1.05rem 1.1rem;
   border-radius: var(--radius-card);
   background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
   text-align: left;
@@ -3789,8 +3761,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   padding: 1.1rem 1.15rem;
   border-radius: var(--radius-card);
   background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
   text-align: left;
@@ -4334,8 +4304,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   overflow: visible;
   border-radius: var(--radius-card);
   background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.1);
   box-shadow: var(--card-shadow);
   transition:
@@ -4520,25 +4488,13 @@ select.select-glass.geo-filter-select::-ms-expand {
   overflow: hidden;
   /* Top −20% vs previous 2.25rem; bottom unchanged */
   padding: 1.8rem 0 1.65rem;
-  color: #fff;
+  color: var(--ink-900);
 }
 
 .home-hero__bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(255, 153, 0, 0.28), transparent 55%),
-    linear-gradient(135deg, #1a2330 0%, #2a3648 45%, #1c2836 100%);
-}
-
-.home-hero__bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  background: var(--bg-canvas);
 }
 
 .home-hero__shell {
@@ -4617,7 +4573,8 @@ select.select-glass.geo-filter-select::-ms-expand {
   min-height: 12.5rem;
   width: 100%;
   background: #232f3e;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--card-shadow);
 }
 
 @media (min-width: 640px) {
@@ -4773,7 +4730,8 @@ select.select-glass.geo-filter-select::-ms-expand {
   padding: 0.35rem 0.35rem 0.35rem 0.9rem;
   border-radius: var(--radius-pill);
   background: #fff;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--card-shadow);
 }
 
 .home-hero__search-icon {
@@ -4850,26 +4808,26 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .home-btn--ghost {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: #ffffff;
+  color: var(--ink-900);
+  border: 1px solid var(--glass-border);
 }
 
 .home-btn--ghost:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: #f7f5f2;
 }
 
 .home-stat__value {
   font-size: clamp(1.25rem, 2.4vw, 1.55rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: #fff;
+  color: var(--ink-900);
 }
 
 .home-stat__label {
   margin-top: 0.15rem;
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--ink-700);
 }
 
 .home-section {
@@ -4964,8 +4922,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   overflow: visible;
   border-radius: var(--radius-card);
   background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
@@ -5200,8 +5156,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   padding: 1.15rem;
   border-radius: var(--radius-card);
   background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
 }
@@ -5397,8 +5351,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   padding: 1.5rem 1.35rem;
   border-radius: var(--radius-card);
   background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
 }
@@ -5451,8 +5403,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   padding: 1.4rem 1.3rem 1.25rem;
   border-radius: var(--radius-card);
   background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
 }
@@ -5545,8 +5495,6 @@ select.select-glass.geo-filter-select::-ms-expand {
   padding: 1rem 1.05rem;
   border-radius: var(--radius-card);
   background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.14);
   box-shadow: var(--card-shadow);
   opacity: 0;
@@ -6876,9 +6824,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   --adv-surface: #fffdf9;
   --adv-panel: #f6f1ea;
   padding-bottom: 3.5rem;
-  background:
-    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(196, 138, 74, 0.14), transparent 55%),
-    linear-gradient(180deg, #faf6f1 0%, #fff 40%, #faf6f1 100%);
+  background: var(--bg-canvas);
 }
 
 .adv-search__hero {

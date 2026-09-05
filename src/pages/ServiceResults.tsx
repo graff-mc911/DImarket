@@ -418,7 +418,7 @@ function ServiceResultsView({
         ]}
       />
 
-      <section className="directory-hero mb-6 overflow-hidden rounded-xl border border-[#d5d9d9] bg-gradient-to-br from-[#f7fafc] via-white to-[#fff8ef]">
+      <section className="directory-hero mb-6 overflow-hidden border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_8px_24px_rgba(47,42,36,0.08)]">
         <div className="flex flex-col gap-5 p-5 md:flex-row md:items-end md:justify-between md:p-8">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">

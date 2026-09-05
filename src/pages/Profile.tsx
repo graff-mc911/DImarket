@@ -204,11 +204,11 @@ export function Profile() {
     <div className="layout-page-content py-8 pb-24 lg:pb-8">
       <div className="mx-auto max-w-4xl space-y-5">
         <div className="glass-panel fade-rise overflow-hidden">
-          <div className="relative h-32 rounded-t-[26px] bg-gradient-to-br from-[#8d5636] via-[#a96942] to-[#c78a60]">
+          <div className="relative h-32 border-b border-[rgba(148,163,184,0.22)] bg-[#f3f0ea]">
             <button
               type="button"
               onClick={() => navigateTo('/settings')}
-              className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-white/30 bg-white/20 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/30"
+              className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.22)] bg-white px-3 py-1.5 text-sm font-semibold text-[#2f2a24] transition hover:bg-[#f7f5f2]"
             >
               <Edit3 className="h-3.5 w-3.5" />
               {t('profile.editProfile')}
@@ -221,11 +221,11 @@ export function Profile() {
                 <img
                   src={profile.profile_photo || profile.avatar_url || ''}
                   alt={profile.full_name || 'Profile'}
-                  className="h-24 w-24 rounded-[22px] border-4 border-white object-cover shadow-lg"
+                  className="h-24 w-24 rounded-none border-4 border-white object-cover shadow-lg"
                 />
               ) : (
                 <div
-                  className="flex h-24 w-24 items-center justify-center rounded-[22px] border-4 border-white bg-[rgba(255,248,241,0.9)] text-xl font-bold shadow-lg"
+                  className="flex h-24 w-24 items-center justify-center rounded-none border-4 border-white bg-[rgba(255,248,241,0.9)] text-xl font-bold shadow-lg"
                   style={{ color: 'var(--accent-700)' }}
                 >
                   {initials}
