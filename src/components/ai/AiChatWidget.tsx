@@ -129,7 +129,7 @@ export function AiChatWidget() {
           role="dialog"
           aria-modal="true"
           aria-label={t('ai.widget.open')}
-          className="pointer-events-auto fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] left-3 right-3 flex max-h-[min(32rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom,0px)))] flex-col overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.25)] bg-white shadow-2xl sm:left-auto sm:right-4 sm:w-[min(100vw-2rem,24rem)]"
+          className="pointer-events-auto fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] left-3 right-3 flex max-h-[min(32rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom,0px)))] flex-col overflow-hidden rounded-none border border-[rgba(148,163,184,0.25)] bg-white shadow-2xl sm:left-auto sm:right-4 sm:w-[min(100vw-2rem,24rem)]"
           onClick={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
         >
@@ -149,9 +149,9 @@ export function AiChatWidget() {
                 closePanel()
                 navigateTo('/assistant/job')
               }}
-              className="mb-1 flex w-full items-start gap-3 rounded-xl bg-[#eef2ff] px-3 py-2.5 text-left transition hover:bg-[#e0e7ff]"
+              className="mb-1 flex w-full items-start gap-3 rounded-none bg-[#eef2ff] px-3 py-2.5 text-left transition hover:bg-[#e0e7ff]"
             >
-              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white text-[#4338ca]">
+              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-white text-[#4338ca]">
                 <Bot className="h-4 w-4" />
               </span>
               <span>
@@ -170,9 +170,9 @@ export function AiChatWidget() {
                   key={tool.id}
                   type="button"
                   onClick={() => openTool(tool)}
-                  className="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-[#f3f0ea]"
+                  className="flex w-full items-start gap-3 rounded-none px-3 py-2.5 text-left transition hover:bg-[#f3f0ea]"
                 >
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#f3f0ea] text-[#2f2a24]">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-[#f3f0ea] text-[#2f2a24]">
                     <Icon className="h-4 w-4" />
                   </span>
                   <span>
@@ -192,7 +192,7 @@ export function AiChatWidget() {
                 closePanel()
                 navigateTo('/assistant/job')
               }}
-              className="w-full rounded-full bg-[#2f2a24] py-2.5 text-[13px] font-semibold text-white"
+              className="w-full rounded-none bg-[#2f2a24] py-2.5 text-[13px] font-semibold text-white"
             >
               Open AI guide
             </button>
@@ -205,7 +205,7 @@ export function AiChatWidget() {
         onClick={handleFabClick}
         aria-expanded={open}
         aria-haspopup="dialog"
-        className="pointer-events-auto fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))] flex h-14 w-14 touch-manipulation items-center justify-center rounded-full bg-[var(--brand-ai)] text-white shadow-lg transition hover:scale-105 active:scale-95"
+        className="pointer-events-auto fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))] flex h-14 w-14 touch-manipulation items-center justify-center rounded-none bg-[var(--brand-ai)] text-white shadow-lg transition hover:scale-105 active:scale-95"
         aria-label={t('ai.widget.open')}
       >
         {open ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
