@@ -59,7 +59,7 @@ export function ReviewFeed({
       <ReviewStats stats={stats} />
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[13px] font-semibold text-[#1d1d1f]">
+        <p className="text-[13px] font-semibold text-[#2f2a24]">
           {loading ? 'Loading reviews…' : `${items.length} review${items.length === 1 ? '' : 's'}`}
         </p>
         <div className="flex flex-wrap gap-1.5">
@@ -70,8 +70,8 @@ export function ReviewFeed({
               onClick={() => setSort(s.id)}
               className={`rounded-full px-3 py-1.5 text-[12px] font-semibold transition ${
                 sort === s.id
-                  ? 'bg-[#1d1d1f] text-white'
-                  : 'bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed]'
+                  ? 'bg-[#2f2a24] text-white'
+                  : 'bg-[#f3f0ea] text-[#2f2a24] hover:bg-[rgba(148,163,184,0.22)]'
               }`}
             >
               {s.label}
@@ -81,7 +81,7 @@ export function ReviewFeed({
       </div>
 
       {!loading && items.length === 0 ? (
-        <p className="py-6 text-center text-[13px] text-[#86868b]">No reviews yet.</p>
+        <p className="py-6 text-center text-[13px] text-[#8a8178]">No reviews yet.</p>
       ) : (
         <div className="space-y-3">
           {items.map((review) => (

@@ -17,8 +17,8 @@ function renderMarkdown(md: string): string {
     .replace(/^## (.+)$/gm, '<h3 class="text-lg font-bold mt-3 mb-2">$1</h3>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/^- (.+)$/gm, '<p class="ml-3 text-sm leading-6">• $1</p>')
-    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[#d2d2d7] pl-3 text-sm text-[#6e6e73]">$1</blockquote>')
-    .replace(/\n\n/g, '</p><p class="mt-3 text-sm leading-6 text-[#1d1d1f]">')
+    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[rgba(148,163,184,0.35)] pl-3 text-sm text-[#6f665d]">$1</blockquote>')
+    .replace(/\n\n/g, '</p><p class="mt-3 text-sm leading-6 text-[#2f2a24]">')
 }
 
 function staticDocAsPublished(docKey: string, lang: string): PublishedLegalDocument | null {
@@ -95,7 +95,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
   if (loading) {
     return (
       <div className="layout-page-content flex justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-[#86868b]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#8a8178]" />
       </div>
     )
   }
@@ -103,7 +103,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
   if (!doc) {
     return (
       <div className="layout-page-content py-16 text-center">
-        <p className="text-sm text-[#6e6e73]">{t('osm.public.notFound')}</p>
+        <p className="text-sm text-[#6f665d]">{t('osm.public.notFound')}</p>
         <button
           type="button"
           onClick={() => navigateTo('/documents')}
@@ -151,8 +151,8 @@ export function LegalDocumentDetail({ docKey }: Props) {
         </button>
 
         <header className="mb-4">
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#1d1d1f]">{doc.title}</h1>
-          <p className="mt-1 text-sm text-[#6e6e73]">
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24]">{doc.title}</h1>
+          <p className="mt-1 text-sm text-[#6f665d]">
             {doc.country_code}
             {doc.jurisdiction ? ` · ${doc.jurisdiction}` : ''}
             {version?.version_number ? ` · v${version.version_number}` : ''}
@@ -176,9 +176,9 @@ export function LegalDocumentDetail({ docKey }: Props) {
 
         {body ? (
           <article
-            className="prose-like mt-6 rounded-2xl border border-[#e8e8ed] bg-white p-5"
+            className="prose-like mt-6 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-5"
             dangerouslySetInnerHTML={{
-              __html: `<p class="text-sm leading-6 text-[#1d1d1f]">${renderMarkdown(body)}</p>`,
+              __html: `<p class="text-sm leading-6 text-[#2f2a24]">${renderMarkdown(body)}</p>`,
             }}
           />
         ) : null}
@@ -188,7 +188,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
             href={sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#1d1d1f] px-4 py-2 text-sm font-semibold text-white hover:bg-black"
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#2f2a24] px-4 py-2 text-sm font-semibold text-white hover:bg-black"
           >
             <ExternalLink className="h-4 w-4" />
             {t('osm.freshness.openSource')}
@@ -199,7 +199,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
           <button
             type="button"
             onClick={downloadPdf}
-            className="mt-4 ml-0 inline-flex items-center gap-2 rounded-full border border-[#d2d2d7] px-4 py-2 text-sm font-semibold hover:bg-[#f5f5f7] sm:ml-3"
+            className="mt-4 ml-0 inline-flex items-center gap-2 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-sm font-semibold hover:bg-[#f3f0ea] sm:ml-3"
           >
             <Download className="h-4 w-4" />
             {t('osm.public.downloadPdf')}

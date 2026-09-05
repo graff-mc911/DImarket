@@ -88,14 +88,14 @@ export function Analytics() {
       <div className="mx-auto max-w-6xl space-y-5 px-4 sm:px-6">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">
+            <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a8178]">
               <BarChart3 className="h-4 w-4" />
               {t('analytics.eyebrow')}
             </p>
-            <h1 className="mt-2 text-[28px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[32px]">
+            <h1 className="mt-2 text-[28px] font-semibold tracking-tight text-[#2f2a24] sm:text-[32px]">
               {mode === 'platform' ? t('analytics.title.platform') : t('analytics.title.pro')}
             </h1>
-            <p className="mt-1 text-[14px] text-[#6e6e73]">{t('analytics.subtitle')}</p>
+            <p className="mt-1 text-[14px] text-[#6f665d]">{t('analytics.subtitle')}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {owner && isPro ? (
@@ -104,7 +104,7 @@ export function Analytics() {
                   type="button"
                   onClick={() => setMode('platform')}
                   className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
-                    mode === 'platform' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+                    mode === 'platform' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
                   }`}
                 >
                   {t('analytics.mode.platform')}
@@ -113,7 +113,7 @@ export function Analytics() {
                   type="button"
                   onClick={() => setMode('pro')}
                   className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
-                    mode === 'pro' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+                    mode === 'pro' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
                   }`}
                 >
                   {t('analytics.mode.pro')}
@@ -126,7 +126,7 @@ export function Analytics() {
                 type="button"
                 onClick={() => setDays(d)}
                 className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
-                  days === d ? 'bg-[#1d1d1f] text-white' : 'border border-[#d2d2d7] bg-white'
+                  days === d ? 'bg-[#2f2a24] text-white' : 'border border-[rgba(148,163,184,0.35)] bg-white'
                 }`}
               >
                 {t('analytics.rangeDays').replace('{n}', String(d))}
@@ -135,7 +135,7 @@ export function Analytics() {
             <button
               type="button"
               onClick={() => void load()}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-3 py-1.5 text-[12px] font-semibold"
             >
               <RefreshCw className="h-3.5 w-3.5" />
               {t('analytics.refresh')}
@@ -151,7 +151,7 @@ export function Analytics() {
 
         {loading && !data ? (
           <div className="flex min-h-[40vh] items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-[#86868b]" />
+            <Loader2 className="h-6 w-6 animate-spin text-[#8a8178]" />
           </div>
         ) : (
           <>
@@ -248,7 +248,7 @@ export function Analytics() {
                 <BarChart
                   values={data?.projects || []}
                   labels={sparseLabels}
-                  color="#1d1d1f"
+                  color="#2f2a24"
                 />
               </ChartCard>
               <ChartCard
@@ -302,9 +302,9 @@ export function Analytics() {
                     },
                   ]}
                 />
-                <p className="mt-3 text-[12px] text-[#86868b]">
+                <p className="mt-3 text-[12px] text-[#8a8178]">
                   {t('analytics.funnel.rate')}{' '}
-                  <strong className="text-[#1d1d1f]">{data?.conversionPct ?? 0}%</strong>
+                  <strong className="text-[#2f2a24]">{data?.conversionPct ?? 0}%</strong>
                 </p>
               </ChartCard>
 
@@ -318,32 +318,32 @@ export function Analytics() {
                   subtitle={t('analytics.quality.subtitle')}
                 >
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-xl bg-[#f5f5f7] p-4">
-                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">
+                    <div className="rounded-xl bg-[#f3f0ea] p-4">
+                      <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
                         {t('analytics.quality.responseTime')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
                         {formatHours(k.response_hours)}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[#f5f5f7] p-4">
-                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">
+                    <div className="rounded-xl bg-[#f3f0ea] p-4">
+                      <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
                         {t('analytics.quality.responseRate')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
                         {k.response_rate != null ? `${k.response_rate}%` : '—'}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[#f5f5f7] p-4">
-                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">
+                    <div className="rounded-xl bg-[#f3f0ea] p-4">
+                      <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
                         {t('analytics.quality.recommend')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
                         {k.recommend_pct != null ? `${k.recommend_pct}%` : '—'}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[#f5f5f7] p-4">
-                      <p className="text-[11px] font-semibold uppercase text-[#86868b]">
+                    <div className="rounded-xl bg-[#f3f0ea] p-4">
+                      <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
                         {t('analytics.quality.rating')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
@@ -373,7 +373,7 @@ export function AnalyticsEmbed({ days = 14 }: { days?: number }) {
   if (!data) {
     return (
       <div className="flex justify-center py-10">
-        <Loader2 className="h-5 w-5 animate-spin text-[#86868b]" />
+        <Loader2 className="h-5 w-5 animate-spin text-[#8a8178]" />
       </div>
     )
   }

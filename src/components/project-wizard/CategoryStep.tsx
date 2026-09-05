@@ -23,8 +23,8 @@ export function CategoryStep({ selectedId, onSelect, t, error }: CategoryStepPro
               className={
                 'group flex flex-col items-center gap-3 rounded-[22px] border px-3 py-5 text-center transition duration-200 ' +
                 (active
-                  ? 'border-[#1d1d1f] bg-[#1d1d1f] text-white shadow-lg shadow-black/10'
-                  : 'border-[#e8e8ed] bg-[#fafafa] text-[#1d1d1f] hover:border-[#d2d2d7] hover:bg-white hover:shadow-sm')
+                  ? 'border-[#2f2a24] bg-[#2f2a24] text-white shadow-lg shadow-black/10'
+                  : 'border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-[#2f2a24] hover:border-[rgba(148,163,184,0.35)] hover:bg-white hover:shadow-sm')
               }
             >
               <span
@@ -33,7 +33,7 @@ export function CategoryStep({ selectedId, onSelect, t, error }: CategoryStepPro
                   (active ? 'bg-white/15' : 'bg-white shadow-sm')
                 }
               >
-                <Icon className={'h-6 w-6 ' + (active ? 'text-white' : 'text-[#1d1d1f]')} />
+                <Icon className={'h-6 w-6 ' + (active ? 'text-white' : 'text-[#2f2a24]')} />
               </span>
               <span className="text-[13px] font-semibold leading-snug tracking-[-0.01em]">
                 {t(trade.labelKey)}

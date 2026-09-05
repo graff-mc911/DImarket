@@ -128,7 +128,7 @@ export function ReviewFormV2({ professionalId, listingId, onSuccess }: Props) {
       <div>
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm font-semibold text-slate-700">Photos & videos</p>
-          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#1d1d1f] px-3 py-1.5 text-[12px] font-semibold text-white">
+          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#2f2a24] px-3 py-1.5 text-[12px] font-semibold text-white">
             <ImagePlus className="h-3.5 w-3.5" />
             {uploading ? 'Uploading…' : 'Add media'}
             <input

@@ -76,11 +76,11 @@ export function ConnectPayoutPanel({
   if (variant === 'banner') {
     if (loading || status?.ready) return null
     return (
-      <div className="mb-4 rounded-2xl border border-[#e8e8ed] bg-white px-4 py-3">
-        <p className="text-[13px] font-semibold text-[#1d1d1f]">
+      <div className="mb-4 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3">
+        <p className="text-[13px] font-semibold text-[#2f2a24]">
           {t('connect.bannerTitle' as never) || 'Enable payouts to receive escrow'}
         </p>
-        <p className="mt-1 text-[12px] text-[#6e6e73]">
+        <p className="mt-1 text-[12px] text-[#6f665d]">
           {t('connect.bannerSub' as never) ||
             'Connect Stripe Express so project funds transfer to you after completion.'}
         </p>
@@ -88,7 +88,7 @@ export function ConnectPayoutPanel({
         <button
           type="button"
           disabled={busy}
-          className="mt-2 rounded-full bg-[#1d1d1f] px-4 py-2 text-[12px] font-semibold text-white disabled:opacity-40"
+          className="mt-2 rounded-full bg-[#2f2a24] px-4 py-2 text-[12px] font-semibold text-white disabled:opacity-40"
           onClick={() => void onOnboard()}
         >
           {busy ? '…' : t('connect.enableCta' as never) || 'Connect payouts'}

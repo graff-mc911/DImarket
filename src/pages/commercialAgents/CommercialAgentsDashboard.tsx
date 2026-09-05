@@ -44,7 +44,7 @@ type Tab =
   | 'recommended'
 
 const input =
-  'w-full rounded-xl border border-[#d2d2d7] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1d1d1f]'
+  'w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#2f2a24]'
 
 export function CommercialAgentsDashboard() {
   const { t, user, profile, authReady, language } = useApp()
@@ -383,7 +383,7 @@ export function CommercialAgentsDashboard() {
               onClick={() => setTab(tabItem.id)}
               className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold ${
                 tab === tabItem.id
-                  ? 'bg-[#ff9900] text-[#0f1111]'
+                  ? 'bg-[#ff9900] text-[#2f2a24]'
                   : 'border border-[var(--line-200)] bg-white text-[var(--ink-700)]'
               }`}
             >

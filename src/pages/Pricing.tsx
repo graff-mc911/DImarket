@@ -104,13 +104,13 @@ export function Pricing() {
     <div className="py-8 pb-24 lg:pb-10">
       <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6">
         <header className="space-y-3">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a8178]">
             {t('pricing.eyebrow')}
           </p>
-          <h1 className="text-[34px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[40px]">
+          <h1 className="text-[34px] font-semibold tracking-tight text-[#2f2a24] sm:text-[40px]">
             {t('pricing.title')}
           </h1>
-          <p className="max-w-2xl text-[15px] leading-relaxed text-[#6e6e73]">
+          <p className="max-w-2xl text-[15px] leading-relaxed text-[#6f665d]">
             {t('pricing.subtitle')}
           </p>
           {user ? (
@@ -118,12 +118,12 @@ export function Pricing() {
               <button
                 type="button"
                 onClick={() => navigateTo('/billing')}
-                className="inline-flex items-center gap-2 rounded-full bg-[#1d1d1f] px-4 py-2 text-[13px] font-semibold text-white"
+                className="inline-flex items-center gap-2 rounded-full bg-[#2f2a24] px-4 py-2 text-[13px] font-semibold text-white"
               >
                 <CreditCard className="h-4 w-4" />
                 {t('pricing.manageBilling')}
               </button>
-              <span className="inline-flex items-center rounded-full border border-[#e8e8ed] bg-white px-3 py-2 text-[12px] text-[#6e6e73]">
+              <span className="inline-flex items-center rounded-full border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2 text-[12px] text-[#6f665d]">
                 {t('pricing.currentBadge')
                   .replace('{plan}', planName(currentPlan.id))
                   .replace('{support}', supportLabel(currentPlan.supportTier))
@@ -144,7 +144,7 @@ export function Pricing() {
             type="button"
             onClick={() => setInterval('month')}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              interval === 'month' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+              interval === 'month' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
             }`}
           >
             {t('pricing.monthly')}
@@ -153,7 +153,7 @@ export function Pricing() {
             type="button"
             onClick={() => setInterval('year')}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              interval === 'year' ? 'bg-[#1d1d1f] text-white' : 'bg-[#f5f5f7] text-[#1d1d1f]'
+              interval === 'year' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
             }`}
           >
             {t('pricing.yearly')}
@@ -169,25 +169,25 @@ export function Pricing() {
               <article
                 key={plan.id}
                 className={`relative flex flex-col rounded-[24px] border bg-white p-5 shadow-sm ${
-                  plan.popular ? 'border-[#1d1d1f]' : 'border-[#e8e8ed]'
+                  plan.popular ? 'border-[#2f2a24]' : 'border-[rgba(148,163,184,0.22)]'
                 }`}
               >
                 {plan.popular ? (
-                  <span className="absolute -top-3 left-5 rounded-full bg-[#1d1d1f] px-3 py-1 text-[11px] font-semibold text-white">
+                  <span className="absolute -top-3 left-5 rounded-full bg-[#2f2a24] px-3 py-1 text-[11px] font-semibold text-white">
                     {t('pricing.mostPopular')}
                   </span>
                 ) : null}
-                <h2 className="text-[20px] font-semibold text-[#1d1d1f]">
+                <h2 className="text-[20px] font-semibold text-[#2f2a24]">
                   {planName(plan.id)}
                 </h2>
-                <p className="mt-1 text-[13px] text-[#86868b]">
+                <p className="mt-1 text-[13px] text-[#8a8178]">
                   {t(`pricing.plan.${plan.id}.tagline` as TranslationKey)}
                 </p>
                 <p className="mt-4">
-                  <span className="text-[32px] font-semibold tracking-tight text-[#1d1d1f]">
+                  <span className="text-[32px] font-semibold tracking-tight text-[#2f2a24]">
                     €{price}
                   </span>
-                  <span className="text-[13px] text-[#86868b]">
+                  <span className="text-[13px] text-[#8a8178]">
                     {interval === 'year' ? t('pricing.perYear') : t('pricing.perMonth')}
                   </span>
                 </p>
@@ -212,8 +212,8 @@ export function Pricing() {
                   onClick={() => onPlan(plan.id)}
                   className={`mt-5 inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-semibold transition disabled:opacity-50 ${
                     plan.popular
-                      ? 'bg-[#1d1d1f] text-white'
-                      : 'border border-[#d2d2d7] bg-white text-[#1d1d1f]'
+                      ? 'bg-[#2f2a24] text-white'
+                      : 'border border-[rgba(148,163,184,0.35)] bg-white text-[#2f2a24]'
                   }`}
                 >
                   {isCurrent
@@ -230,8 +230,8 @@ export function Pricing() {
 
         <section className="space-y-4">
           <div>
-            <h2 className="text-[22px] font-semibold text-[#1d1d1f]">{t('pricing.addonsTitle')}</h2>
-            <p className="mt-1 text-[14px] text-[#6e6e73]">{t('pricing.addonsSub')}</p>
+            <h2 className="text-[22px] font-semibold text-[#2f2a24]">{t('pricing.addonsTitle')}</h2>
+            <p className="mt-1 text-[14px] text-[#6f665d]">{t('pricing.addonsSub')}</p>
           </div>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {ADDONS.map((addon) => {
@@ -250,17 +250,17 @@ export function Pricing() {
               return (
                 <div
                   key={addon.id}
-                  className="rounded-[22px] border border-[#e8e8ed] bg-white p-5 shadow-sm"
+                  className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f5f5f7] text-[#1d1d1f]">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f0ea] text-[#2f2a24]">
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-[15px] font-semibold text-[#1d1d1f]">{t(nameKey)}</h3>
-                      <p className="mt-1 text-[13px] text-[#6e6e73]">{t(descKey)}</p>
+                      <h3 className="text-[15px] font-semibold text-[#2f2a24]">{t(nameKey)}</h3>
+                      <p className="mt-1 text-[13px] text-[#6f665d]">{t(descKey)}</p>
                       <div className="mt-3 flex items-center justify-between gap-2">
-                        <span className="text-[16px] font-semibold text-[#1d1d1f]">
+                        <span className="text-[16px] font-semibold text-[#2f2a24]">
                           {addon.href
                             ? t('pricing.fromPriceWeek').replace('{price}', String(addon.priceEur))
                             : t('pricing.priceEur').replace('{price}', String(addon.priceEur))}
@@ -273,7 +273,7 @@ export function Pricing() {
                               startAddonCheckout({ userId: user?.id || '', addonId: addon.id }),
                             )
                           }
-                          className="rounded-full bg-[#1d1d1f] px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50"
+                          className="rounded-full bg-[#2f2a24] px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50"
                         >
                           {loading === addon.id
                             ? '…'
@@ -291,8 +291,8 @@ export function Pricing() {
         </section>
 
         <section className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-[22px] border border-[#e8e8ed] bg-[#fbfbfd] p-5">
-            <div className="flex items-center gap-2 text-[#1d1d1f]">
+          <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-5">
+            <div className="flex items-center gap-2 text-[#2f2a24]">
               <LifeBuoy className="h-5 w-5" />
               <h2 className="text-[16px] font-semibold">{t('pricing.supportByPlan')}</h2>
             </div>
@@ -309,13 +309,13 @@ export function Pricing() {
             <button
               type="button"
               onClick={() => navigateTo('/contact')}
-              className="mt-4 text-[13px] font-semibold text-[#1d1d1f] underline-offset-2 hover:underline"
+              className="mt-4 text-[13px] font-semibold text-[#2f2a24] underline-offset-2 hover:underline"
             >
               {t('pricing.contactSupport')}
             </button>
           </div>
-          <div className="rounded-[22px] border border-[#e8e8ed] bg-[#fbfbfd] p-5">
-            <div className="flex items-center gap-2 text-[#1d1d1f]">
+          <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-5">
+            <div className="flex items-center gap-2 text-[#2f2a24]">
               <Megaphone className="h-5 w-5" />
               <h2 className="text-[16px] font-semibold">{t('pricing.adsSection')}</h2>
             </div>
@@ -326,14 +326,14 @@ export function Pricing() {
               <button
                 type="button"
                 onClick={() => navigateTo('/advertise')}
-                className="rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold"
+                className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-3 py-1.5 text-[12px] font-semibold"
               >
                 {t('pricing.bannerAds')}
               </button>
               <button
                 type="button"
                 onClick={() => navigateTo('/boost')}
-                className="rounded-full border border-[#d2d2d7] bg-white px-3 py-1.5 text-[12px] font-semibold"
+                className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-3 py-1.5 text-[12px] font-semibold"
               >
                 {t('pricing.profileBoost')}
               </button>

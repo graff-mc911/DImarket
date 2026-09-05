@@ -130,7 +130,7 @@ export function MapExplore() {
             <p className="mt-2 max-w-2xl text-sm text-[var(--ink-600)]">{t('mapExplore.subtitle')}</p>
           </div>
           <div className="flex flex-col items-stretch gap-2 sm:items-end">
-            <div className="inline-flex rounded-full border border-[var(--ink-200,#d2d2d7)] bg-white p-1">
+            <div className="inline-flex rounded-full border border-[var(--ink-200,rgba(148,163,184,0.35))] bg-white p-1">
               {(
                 [
                   { id: 'map' as const, icon: MapIcon, label: t('mapExplore.viewMap') },
@@ -146,7 +146,7 @@ export function MapExplore() {
                     className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition ${
                       viewMode === v.id
                         ? 'bg-[#1a2330] text-white'
-                        : 'text-[var(--ink-700)] hover:bg-[#f5f5f7]'
+                        : 'text-[var(--ink-700)] hover:bg-[#f3f0ea]'
                     }`}
                     onClick={() => setViewMode(v.id)}
                   >

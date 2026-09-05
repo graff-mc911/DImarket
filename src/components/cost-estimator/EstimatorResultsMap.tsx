@@ -49,16 +49,16 @@ export function EstimatorResultsMap({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[13px] text-[#6e6e73]">{t('costEstimator.mapHint')}</p>
+        <p className="text-[13px] text-[#6f665d]">{t('costEstimator.mapHint')}</p>
         <button
           type="button"
-          className="rounded-full bg-[#f5f5f7] px-3 py-1.5 text-[12px] font-semibold text-[#1d1d1f] hover:bg-[#ebebed]"
+          className="rounded-full bg-[#f3f0ea] px-3 py-1.5 text-[12px] font-semibold text-[#2f2a24] hover:bg-[#ebebed]"
           onClick={() => navigateTo('/map')}
         >
           {t('costEstimator.openFullMap')}
         </button>
       </div>
-      <div className={`overflow-hidden rounded-[22px] border border-[#e8e8ed] ${heightClassName}`}>
+      <div className={`overflow-hidden rounded-[22px] border border-[rgba(148,163,184,0.22)] ${heightClassName}`}>
         <EuropeMarketplaceMap
           markers={markers}
           geo={location}

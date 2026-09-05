@@ -44,7 +44,7 @@ function sectionHtml(title: string, lines: QuoteLineItem[], currency: string): s
     .map(
       (l) => `
       <tr>
-        <td style="padding:10px 0;border-bottom:1px solid #eee;color:#1d1d1f;font-size:14px">${escapeHtml(l.label || '—')}</td>
+        <td style="padding:10px 0;border-bottom:1px solid #eee;color:#2f2a24;font-size:14px">${escapeHtml(l.label || '—')}</td>
         <td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">${money(Number(l.amount) || 0, currency)}</td>
       </tr>`,
     )
@@ -52,7 +52,7 @@ function sectionHtml(title: string, lines: QuoteLineItem[], currency: string): s
   if (!rows) return ''
   return `
     <div style="margin-top:28px">
-      <h3 style="margin:0 0 8px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#86868b;font-weight:700">${title}</h3>
+      <h3 style="margin:0 0 8px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8a8178;font-weight:700">${title}</h3>
       <table style="width:100%;border-collapse:collapse">${rows}</table>
     </div>`
 }
@@ -86,33 +86,33 @@ export function buildQuotePdfHtml(draft: QuoteDraft, meta: QuotePdfMeta): string
 <title>Quote ${escapeHtml(meta.quoteNumber)} — ${escapeHtml(meta.projectTitle)}</title>
 <style>
   @page { margin: 18mm; }
-  body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; color:#1d1d1f; background:#fff; }
+  body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; color:#2f2a24; background:#fff; }
   .sheet { max-width:720px; margin:0 auto; padding:40px 32px; }
   @media print { .sheet { padding:0; } .no-print { display:none !important; } }
 </style>
 </head>
 <body>
   <div class="sheet">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;border-bottom:2px solid #1d1d1f;padding-bottom:20px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;border-bottom:2px solid #2f2a24;padding-bottom:20px">
       <div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#86868b">DImarket Quote</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8a8178">DImarket Quote</div>
         <h1 style="margin:6px 0 0;font-size:28px;letter-spacing:-0.03em">${escapeHtml(meta.projectTitle)}</h1>
-        <p style="margin:8px 0 0;font-size:13px;color:#86868b">${escapeHtml(meta.quoteNumber)} · ${escapeHtml(issued)}</p>
+        <p style="margin:8px 0 0;font-size:13px;color:#8a8178">${escapeHtml(meta.quoteNumber)} · ${escapeHtml(issued)}</p>
       </div>
       <div style="text-align:right">
         <div style="font-size:15px;font-weight:700">${escapeHtml(meta.professionalName)}</div>
-        ${meta.professionalLocation ? `<div style="font-size:12px;color:#86868b;margin-top:4px">${escapeHtml(meta.professionalLocation)}</div>` : ''}
-        ${meta.professionalEmail ? `<div style="font-size:12px;color:#86868b">${escapeHtml(meta.professionalEmail)}</div>` : ''}
-        ${meta.professionalPhone ? `<div style="font-size:12px;color:#86868b">${escapeHtml(meta.professionalPhone)}</div>` : ''}
+        ${meta.professionalLocation ? `<div style="font-size:12px;color:#8a8178;margin-top:4px">${escapeHtml(meta.professionalLocation)}</div>` : ''}
+        ${meta.professionalEmail ? `<div style="font-size:12px;color:#8a8178">${escapeHtml(meta.professionalEmail)}</div>` : ''}
+        ${meta.professionalPhone ? `<div style="font-size:12px;color:#8a8178">${escapeHtml(meta.professionalPhone)}</div>` : ''}
       </div>
     </div>
 
     <div style="display:flex;gap:32px;margin-top:24px;flex-wrap:wrap">
       <div style="min-width:200px">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#86868b">Bill to</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8a8178">Bill to</div>
         <div style="margin-top:6px;font-size:14px;font-weight:600">${escapeHtml(meta.customerName || 'Customer')}</div>
-        ${meta.customerEmail ? `<div style="font-size:12px;color:#6e6e73">${escapeHtml(meta.customerEmail)}</div>` : ''}
-        ${meta.customerPhone ? `<div style="font-size:12px;color:#6e6e73">${escapeHtml(meta.customerPhone)}</div>` : ''}
+        ${meta.customerEmail ? `<div style="font-size:12px;color:#6f665d">${escapeHtml(meta.customerEmail)}</div>` : ''}
+        ${meta.customerPhone ? `<div style="font-size:12px;color:#6f665d">${escapeHtml(meta.customerPhone)}</div>` : ''}
       </div>
     </div>
 
@@ -121,30 +121,30 @@ export function buildQuotePdfHtml(draft: QuoteDraft, meta: QuotePdfMeta): string
     ${sectionHtml('Equipment', draft.equipment || [], meta.currency)}
 
     <div style="margin-top:32px;margin-left:auto;max-width:280px">
-      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6e6e73">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6f665d">
         <span>Materials</span><span>${money(matSum, meta.currency)}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6e6e73">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6f665d">
         <span>Labor</span><span>${money(labSum, meta.currency)}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6e6e73">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6f665d">
         <span>Equipment</span><span>${money(eqSum, meta.currency)}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6e6e73">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6f665d">
         <span>Subtotal</span><span>${money(totals.subtotal, meta.currency)}</span>
       </div>
-      ${draft.discount > 0 ? `<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6e6e73"><span>Discount</span><span>−${money(Number(draft.discount) || 0, meta.currency)}</span></div>` : ''}
-      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6e6e73">
+      ${draft.discount > 0 ? `<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6f665d"><span>Discount</span><span>−${money(Number(draft.discount) || 0, meta.currency)}</span></div>` : ''}
+      <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6f665d">
         <span>VAT (${Number(draft.vatPercent) || 0}%)</span><span>${money(vat, meta.currency)}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:14px 0 0;margin-top:8px;border-top:2px solid #1d1d1f;font-size:20px;font-weight:700;letter-spacing:-0.02em">
+      <div style="display:flex;justify-content:space-between;padding:14px 0 0;margin-top:8px;border-top:2px solid #2f2a24;font-size:20px;font-weight:700;letter-spacing:-0.02em">
         <span>Total</span><span>${money(totals.total, meta.currency)}</span>
       </div>
     </div>
 
-    ${meta.notes ? `<div style="margin-top:36px;padding:16px;border-radius:16px;background:#f5f5f7"><div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#86868b">Notes</div><p style="margin:8px 0 0;font-size:13px;line-height:1.5;color:#1d1d1f;white-space:pre-wrap">${escapeHtml(meta.notes)}</p></div>` : ''}
+    ${meta.notes ? `<div style="margin-top:36px;padding:16px;border-radius:16px;background:#f3f0ea"><div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8a8178">Notes</div><p style="margin:8px 0 0;font-size:13px;line-height:1.5;color:#2f2a24;white-space:pre-wrap">${escapeHtml(meta.notes)}</p></div>` : ''}
 
-    <p style="margin-top:40px;font-size:11px;color:#86868b;text-align:center">Generated with DImarket · dimarket.app</p>
+    <p style="margin-top:40px;font-size:11px;color:#8a8178;text-align:center">Generated with DImarket · dimarket.app</p>
   </div>
   <script class="no-print">window.onload=function(){setTimeout(function(){window.print()},300)}</script>
 </body>

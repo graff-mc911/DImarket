@@ -62,10 +62,10 @@ export function ScbLightPanel({
             <Calculator className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-[13px] font-semibold text-[#1d1d1f]">{t('scbLight.title')}</p>
-            <p className="mt-0.5 text-[12px] leading-snug text-[#6e6e73]">{t('scbLight.subtitle')}</p>
-            <p className="mt-1 text-[11px] text-[#86868b]">{t('scbLight.pipeline')}</p>
-            <p className="mt-1 text-[11px] text-[#86868b]">{statusLine()}</p>
+            <p className="text-[13px] font-semibold text-[#2f2a24]">{t('scbLight.title')}</p>
+            <p className="mt-0.5 text-[12px] leading-snug text-[#6f665d]">{t('scbLight.subtitle')}</p>
+            <p className="mt-1 text-[11px] text-[#8a8178]">{t('scbLight.pipeline')}</p>
+            <p className="mt-1 text-[11px] text-[#8a8178]">{statusLine()}</p>
           </div>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
@@ -100,8 +100,8 @@ export function ScbLightPanel({
         <span className="font-semibold text-[#2f2a24]">{t('scbLight.title')}</span>
       </div>
       <p className="mt-2 text-sm text-[#6f665d]">{t('scbLight.subtitle')}</p>
-      <p className="mt-1 text-xs text-[#86868b]">{t('scbLight.pipeline')}</p>
-      <p className="mt-2 text-xs text-[#86868b]">
+      <p className="mt-1 text-xs text-[#8a8178]">{t('scbLight.pipeline')}</p>
+      <p className="mt-2 text-xs text-[#8a8178]">
         {loading ? (
           <span className="inline-flex items-center gap-1">
             <Loader2 className="h-3 w-3 animate-spin" />
@@ -111,7 +111,7 @@ export function ScbLightPanel({
           statusLine()
         )}
       </p>
-      <p className="mt-1 text-xs text-[#86868b]">{t('scbLight.sameCredentials')}</p>
+      <p className="mt-1 text-xs text-[#8a8178]">{t('scbLight.sameCredentials')}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {showCreate ? (
           <button

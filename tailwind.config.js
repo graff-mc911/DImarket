@@ -26,31 +26,32 @@ export default {
         },
 
         ink: {
-          DEFAULT: '#1F2937',
-          soft: '#6B7280',
+          DEFAULT: '#2f2a24',
+          soft: '#6f665d',
         },
       },
 
       boxShadow: {
-        glass: '0 18px 45px rgba(15, 23, 42, 0.08)',
-        soft: '0 10px 30px rgba(15, 23, 42, 0.06)',
+        glass: '0 18px 45px rgba(47, 42, 36, 0.08)',
+        soft: '0 10px 30px rgba(47, 42, 36, 0.06)',
       },
 
       borderRadius: {
-        glass: '0px',
+        glass: '22px',
       },
     },
 
+    /* Soft-glass radii (owner cabinet language) — header/footer locked in CSS */
     borderRadius: {
       none: '0px',
-      sm: '0px',
-      DEFAULT: '0px',
-      md: '0px',
-      lg: '0px',
-      xl: '0px',
-      '2xl': '0px',
-      '3xl': '0px',
-      full: '0px',
+      sm: '10px',
+      DEFAULT: '14px',
+      md: '16px',
+      lg: '18px',
+      xl: '20px',
+      '2xl': '22px',
+      '3xl': '26px',
+      full: '9999px',
     },
   },
 

@@ -40,7 +40,7 @@ type ListingInfo = {
 }
 
 const field =
-  'w-full rounded-xl border border-[#d2d2d7] bg-[#fafafa] px-3 py-2.5 text-[14px] text-[#1d1d1f] outline-none transition focus:border-[#1d1d1f] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
+  'w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-[14px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
 
 export function QuoteBuilder({ applicationId }: { applicationId: string }) {
   const { user, profile } = useApp()
@@ -287,24 +287,24 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
   }
 
   return (
-    <div className="min-h-[70vh] bg-[#f5f5f7] pb-28">
-      <div className="border-b border-[#e8e8ed] bg-white/80 backdrop-blur-xl">
+    <div className="min-h-[70vh] bg-[#f3f0ea] pb-28">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-4xl flex-wrap items-end justify-between gap-3 px-4 py-6 md:px-6">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
               Generate Quote
             </p>
-            <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[#1d1d1f]">
+            <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[#2f2a24]">
               Quote Builder
             </h1>
-            <p className="mt-1 text-[14px] text-[#86868b]">
+            <p className="mt-1 text-[14px] text-[#8a8178]">
               {listing?.title || 'Loading project…'}
               {listing?.city_name ? ` · ${listing.city_name}` : ''}
             </p>
           </div>
           <button
             type="button"
-            className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold text-[#1d1d1f]"
+            className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#2f2a24]"
             onClick={() => navigateTo('/projects')}
           >
             Back to projects
@@ -360,10 +360,10 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
             }
           />
 
-          <div className="rounded-[22px] border border-[#e8e8ed] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block">
-                <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+                <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                   Discount (€)
                 </span>
                 <input
@@ -377,7 +377,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
                 />
               </label>
               <label className="block">
-                <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+                <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                   VAT (%)
                 </span>
                 <input
@@ -392,25 +392,25 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
               </label>
             </div>
 
-            <div className="mt-5 rounded-2xl bg-[#f5f5f7] p-4">
+            <div className="mt-5 rounded-2xl bg-[#f3f0ea] p-4">
               <Row label="Materials" value={totals.materials} />
               <Row label="Labor" value={totals.labor} />
               <Row label="Equipment" value={totals.equipment} />
               <Row label="Subtotal" value={totals.subtotal} />
               {totals.discount > 0 ? <Row label="Discount" value={-totals.discount} /> : null}
               <Row label={`VAT (${draft.vatPercent}%)`} value={totals.vat} />
-              <div className="mt-3 flex items-center justify-between border-t border-[#e8e8ed] pt-3">
-                <span className="text-[15px] font-semibold text-[#1d1d1f]">Total</span>
-                <span className="text-[24px] font-semibold tabular-nums tracking-tight text-[#1d1d1f]">
+              <div className="mt-3 flex items-center justify-between border-t border-[rgba(148,163,184,0.22)] pt-3">
+                <span className="text-[15px] font-semibold text-[#2f2a24]">Total</span>
+                <span className="text-[24px] font-semibold tabular-nums tracking-tight text-[#2f2a24]">
                   €{totals.total.toFixed(2)}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="rounded-[22px] border border-[#e8e8ed] bg-white p-5">
+          <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
             <label className="block">
-              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                 Notes
               </span>
               <textarea
@@ -422,7 +422,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
               />
             </label>
             <label className="mt-4 block">
-              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                 Customer email
               </span>
               <input
@@ -436,11 +436,11 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
           </div>
         </div>
 
-        <div className="sticky bottom-4 z-10 mt-6 flex flex-wrap gap-2 rounded-[20px] border border-[#e8e8ed] bg-white/95 p-3 shadow-lg backdrop-blur">
+        <div className="sticky bottom-4 z-10 mt-6 flex flex-wrap gap-2 rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white/95 p-3 shadow-lg backdrop-blur">
           <button
             type="button"
             disabled={busy}
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#d2d2d7] px-4 py-2.5 text-[13px] font-semibold text-[#1d1d1f] disabled:opacity-50 sm:flex-none"
+            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2.5 text-[13px] font-semibold text-[#2f2a24] disabled:opacity-50 sm:flex-none"
             onClick={() => void onSaveDraft()}
           >
             <Save className="h-3.5 w-3.5" />
@@ -449,7 +449,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
           <button
             type="button"
             disabled={busy}
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#d2d2d7] px-4 py-2.5 text-[13px] font-semibold text-[#1d1d1f] disabled:opacity-50 sm:flex-none"
+            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2.5 text-[13px] font-semibold text-[#2f2a24] disabled:opacity-50 sm:flex-none"
             onClick={() => void onGeneratePdf()}
           >
             <FileDown className="h-3.5 w-3.5" />
@@ -458,7 +458,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
           <button
             type="button"
             disabled={busy}
-            className="inline-flex flex-[2] items-center justify-center gap-1.5 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white hover:bg-black disabled:opacity-50"
+            className="inline-flex flex-[2] items-center justify-center gap-1.5 rounded-full bg-[#2f2a24] px-5 py-2.5 text-[13px] font-semibold text-white hover:bg-black disabled:opacity-50"
             onClick={() => void onSendInApp()}
             title="Save as sent and notify customer in-app"
           >
@@ -468,7 +468,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
           <button
             type="button"
             disabled={busy}
-            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2.5 text-[13px] font-semibold text-[#1d1d1f] disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2.5 text-[13px] font-semibold text-[#2f2a24] disabled:opacity-50"
             onClick={() => void onSendEmail()}
             title="Save as sent and email PDF"
           >
@@ -484,8 +484,8 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
 function Row({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center justify-between py-1 text-[13px]">
-      <span className="text-[#6e6e73]">{label}</span>
-      <span className="font-semibold tabular-nums text-[#1d1d1f]">
+      <span className="text-[#6f665d]">{label}</span>
+      <span className="font-semibold tabular-nums text-[#2f2a24]">
         {value < 0 ? '−' : ''}€{Math.abs(value).toFixed(2)}
       </span>
     </div>
@@ -506,13 +506,13 @@ function SectionCard({
   onRemove: (id: string) => void
 }) {
   return (
-    <div className="rounded-[22px] border border-[#e8e8ed] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+    <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-[15px] font-semibold text-[#1d1d1f]">{title}</h2>
+        <h2 className="text-[15px] font-semibold text-[#2f2a24]">{title}</h2>
         <button
           type="button"
           onClick={onAdd}
-          className="inline-flex items-center gap-1 rounded-full bg-[#f5f5f7] px-3 py-1.5 text-[12px] font-semibold text-[#1d1d1f] hover:bg-[#e8e8ed]"
+          className="inline-flex items-center gap-1 rounded-full bg-[#f3f0ea] px-3 py-1.5 text-[12px] font-semibold text-[#2f2a24] hover:bg-[rgba(148,163,184,0.22)]"
         >
           <Plus className="h-3.5 w-3.5" />
           Add
@@ -537,7 +537,7 @@ function SectionCard({
             <button
               type="button"
               onClick={() => onRemove(line.id)}
-              className="rounded-xl p-2.5 text-[#86868b] hover:bg-[#f5f5f7] hover:text-[#1d1d1f]"
+              className="rounded-xl p-2.5 text-[#8a8178] hover:bg-[#f3f0ea] hover:text-[#2f2a24]"
               aria-label="Remove line"
             >
               <Trash2 className="h-4 w-4" />

@@ -34,21 +34,21 @@ export function DocumentsHub({ subcategory = null }: Props) {
     <div className="layout-page-content py-8 pb-24 lg:pb-8">
       <div className="mx-auto max-w-4xl">
         <header className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#86868b]">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#8a8178]">
             {t('docs.categoryEyebrow')}
           </p>
-          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#1d1d1f]">
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
             {subMeta ? tStored(t, subMeta.titleKey) : t('docs.hub.title')}
           </h1>
-          <p className="mt-2 text-sm leading-6 text-[#6e6e73]">
+          <p className="mt-2 text-sm leading-6 text-[#6f665d]">
             {subMeta ? tStored(t, subMeta.descriptionKey) : t('docs.hub.subtitle')}
           </p>
-          <p className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#f5f5f7] px-3 py-1.5 text-xs text-[#1d1d1f]">
-            <MapPin className="h-3.5 w-3.5 text-[#86868b]" aria-hidden />
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#f3f0ea] px-3 py-1.5 text-xs text-[#2f2a24]">
+            <MapPin className="h-3.5 w-3.5 text-[#8a8178]" aria-hidden />
             {t('docs.location.context')}: <strong>{locationLabel}</strong>
           </p>
           {jurisdiction.countryCode ? null : (
-            <p className="mt-2 text-xs text-[#6e6e73]">{t('docs.location.pickHint')}</p>
+            <p className="mt-2 text-xs text-[#6f665d]">{t('docs.location.pickHint')}</p>
           )}
         </header>
 
@@ -61,16 +61,16 @@ export function DocumentsHub({ subcategory = null }: Props) {
                   onClick={() =>
                     navigateTo(appendLocationToPath(`/documents/${sub.slug}`, location))
                   }
-                  className="flex w-full items-center gap-3 rounded-2xl border border-[#e8e8ed] bg-white px-4 py-3 text-left transition hover:border-[#007185]/40"
+                  className="flex w-full items-center gap-3 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3 text-left transition hover:border-[#007185]/40"
                 >
                   <span className="text-xl" aria-hidden>
                     {sub.icon}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-semibold text-[#1d1d1f]">{tStored(t, sub.titleKey)}</span>
-                    <span className="block text-xs text-[#6e6e73]">{tStored(t, sub.descriptionKey)}</span>
+                    <span className="block font-semibold text-[#2f2a24]">{tStored(t, sub.titleKey)}</span>
+                    <span className="block text-xs text-[#6f665d]">{tStored(t, sub.descriptionKey)}</span>
                   </span>
-                  <ChevronRight className="h-4 w-4 shrink-0 text-[#86868b]" aria-hidden />
+                  <ChevronRight className="h-4 w-4 shrink-0 text-[#8a8178]" aria-hidden />
                 </button>
               </li>
             ))}
@@ -85,12 +85,12 @@ export function DocumentsHub({ subcategory = null }: Props) {
           </button>
         )}
 
-        <h2 className="mb-3 text-lg font-bold text-[#1d1d1f]">
+        <h2 className="mb-3 text-lg font-bold text-[#2f2a24]">
           {subcategory ? t('docs.list.title') : t('docs.list.featured')}
         </h2>
 
         {docs.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-[#d2d2d7] px-4 py-8 text-center text-sm text-[#86868b]">
+          <p className="rounded-2xl border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-8 text-center text-sm text-[#8a8178]">
             {jurisdiction.countryCode
               ? t('docs.list.emptyForCountry')
               : t('docs.list.empty')}
@@ -102,18 +102,18 @@ export function DocumentsHub({ subcategory = null }: Props) {
                 <button
                   type="button"
                   onClick={() => navigateTo(appendLocationToPath(documentSeoPath(doc), location))}
-                  className="w-full rounded-2xl border border-[#e8e8ed] bg-white p-4 text-left transition hover:border-[#007185]/40 hover:shadow-sm"
+                  className="w-full rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4 text-left transition hover:border-[#007185]/40 hover:shadow-sm"
                 >
                   <div className="flex items-start gap-3">
-                    <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[#1d1d1f]" aria-hidden />
+                    <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[#2f2a24]" aria-hidden />
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-[#1d1d1f]">
+                      <p className="font-semibold text-[#2f2a24]">
                         {documentDisplayTitle(doc, language.code, t)}
                       </p>
-                      <p className="mt-0.5 text-xs text-[#6e6e73]">
+                      <p className="mt-0.5 text-xs text-[#6f665d]">
                         {doc.jurisdiction} · {t(`docs.status.${doc.status}`)}
                       </p>
-                      <p className="mt-1 text-sm text-[#6e6e73] line-clamp-2">
+                      <p className="mt-1 text-sm text-[#6f665d] line-clamp-2">
                         {documentDisplayDescription(doc, language.code, t)}
                       </p>
                       {doc.relatedPortals?.length ? (
@@ -122,7 +122,7 @@ export function DocumentsHub({ subcategory = null }: Props) {
                         </p>
                       ) : null}
                     </div>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-[#86868b]" aria-hidden />
+                    <ChevronRight className="h-4 w-4 shrink-0 text-[#8a8178]" aria-hidden />
                   </div>
                 </button>
               </li>
@@ -130,7 +130,7 @@ export function DocumentsHub({ subcategory = null }: Props) {
           </ul>
         )}
 
-        <p className="mt-6 text-xs leading-5 text-[#6e6e73]">{t('docs.disclaimer.short')}</p>
+        <p className="mt-6 text-xs leading-5 text-[#6f665d]">{t('docs.disclaimer.short')}</p>
       </div>
     </div>
   )

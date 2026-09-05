@@ -71,13 +71,13 @@ export function openEstimatePdfPrint(
   const totals = estimate.totals[tier]
   const html = `<!doctype html><html><head><meta charset="utf-8"/><title>DImarket Cost Estimate</title>
   <style>
-    body{font-family:system-ui,sans-serif;color:#1d1d1f;padding:32px;max-width:800px;margin:0 auto}
-    h1{font-size:22px;margin:0 0 8px} .muted{color:#6e6e73;font-size:13px}
+    body{font-family:system-ui,sans-serif;color:#2f2a24;padding:32px;max-width:800px;margin:0 auto}
+    h1{font-size:22px;margin:0 0 8px} .muted{color:#6f665d;font-size:13px}
     table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
-    th,td{border-bottom:1px solid #e8e8ed;padding:8px;text-align:left}
-    th{color:#86868b;font-size:11px;text-transform:uppercase}
+    th,td{border-bottom:1px solid rgba(148,163,184,0.22);padding:8px;text-align:left}
+    th{color:#8a8178;font-size:11px;text-transform:uppercase}
     .total{font-size:20px;font-weight:700}
-    .badge{display:inline-block;background:#f5f5f7;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600}
+    .badge{display:inline-block;background:#f3f0ea;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600}
   </style></head><body>
   <p class="badge">DImarket · Reference estimate</p>
   <h1>${escapeHtml(estimate.tradeLabel)} — ${escapeHtml(state.location.city || 'Project')}</h1>

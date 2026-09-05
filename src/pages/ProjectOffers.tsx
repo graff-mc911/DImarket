@@ -151,38 +151,38 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
   }
 
   return (
-    <div className="min-h-[70vh] bg-[#f5f5f7] pb-24">
-      <div className="border-b border-[#e8e8ed] bg-white">
+    <div className="min-h-[70vh] bg-[#f3f0ea] pb-24">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white">
         <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
             AI Ranking
           </p>
-          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[#1d1d1f]">
+          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[#2f2a24]">
             {t('pipeline.offersTitle' as never) || 'Ranked offers'}
           </h1>
-          <p className="mt-2 text-[15px] text-[#6e6e73]">{title}</p>
-          <p className="mt-1 text-[13px] text-[#86868b]">
+          <p className="mt-2 text-[15px] text-[#6f665d]">{title}</p>
+          <p className="mt-1 text-[13px] text-[#8a8178]">
             {t('pipeline.offersSub' as never) ||
               'Compare binding quotes by price, rating, experience and match fit — then hire.'}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
-              className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold"
               onClick={() => navigateTo(`/project/${listingId}/matches`)}
             >
               {t('pipeline.backToMatches' as never) || 'Matches'}
             </button>
             <button
               type="button"
-              className="rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold"
               onClick={() => navigateTo(`/project/${listingId}/manage`)}
             >
               {t('pipeline.manageTitle' as never) || 'Project manager'}
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-semibold"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold"
               onClick={() => void reload()}
             >
               <RefreshCw className="h-3.5 w-3.5" />
@@ -208,7 +208,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
           </p>
         ) : null}
         {user && authorId && !isOwner ? (
-          <p className="rounded-2xl bg-[#f5f5f7] px-4 py-3 text-[13px] text-[#6e6e73]">
+          <p className="rounded-2xl bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#6f665d]">
             {t('pipeline.viewOnlyOffers' as never) ||
               'Viewing ranked offers. Only the project owner can hire.'}
           </p>
@@ -221,14 +221,14 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
             ))}
           </div>
         ) : offers.length === 0 ? (
-          <div className="rounded-[20px] border border-[#e8e8ed] bg-white px-6 py-14 text-center">
-            <p className="text-[15px] text-[#86868b]">
+          <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
+            <p className="text-[15px] text-[#8a8178]">
               {t('pipeline.offersEmpty' as never) ||
                 'No quotes yet. Pros respond Ready / Need inspection / Decline, then send offers.'}
             </p>
             <button
               type="button"
-              className="mt-5 rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white"
+              className="mt-5 rounded-full bg-[#2f2a24] px-5 py-2.5 text-[13px] font-semibold text-white"
               onClick={() => navigateTo(`/project/${listingId}/matches`)}
             >
               {t('pipeline.backToMatches' as never) || 'Back to matches'}
@@ -243,26 +243,26 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                 <li
                   key={o.quoteId}
                   className={`rounded-[20px] border bg-white p-4 md:p-5 ${
-                    i === 0 && !hired ? 'border-[#1d1d1f]' : 'border-[#e8e8ed]'
+                    i === 0 && !hired ? 'border-[#2f2a24]' : 'border-[rgba(148,163,184,0.22)]'
                   }`}
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex min-w-0 items-start gap-3">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1d1d1f] text-[12px] font-bold text-white">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2f2a24] text-[12px] font-bold text-white">
                         {i + 1}
                       </span>
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#f5f5f7]">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#f3f0ea]">
                         {o.photo ? (
                           <img src={o.photo} alt="" className="h-full w-full object-cover" />
                         ) : (
-                          <User className="h-5 w-5 text-[#86868b]" />
+                          <User className="h-5 w-5 text-[#8a8178]" />
                         )}
                       </div>
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <button
                             type="button"
-                            className="truncate text-left text-[16px] font-semibold text-[#1d1d1f] hover:underline"
+                            className="truncate text-left text-[16px] font-semibold text-[#2f2a24] hover:underline"
                             onClick={() => navigateTo(`/professional/${o.professionalId}`)}
                           >
                             {o.professionalName}
@@ -273,7 +273,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                             </span>
                           ) : null}
                         </div>
-                        <p className="mt-1 inline-flex items-center gap-1 text-[13px] text-[#6e6e73]">
+                        <p className="mt-1 inline-flex items-center gap-1 text-[13px] text-[#6f665d]">
                           <Star className="h-3.5 w-3.5 fill-[#ff9900] text-[#ff9900]" />
                           {o.rating.toFixed(1)} · {o.reviews} reviews · {o.completedJobs} jobs
                           {o.verification ? ` · ${o.verification}` : ''}
@@ -283,7 +283,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                             {o.reasons.slice(0, 4).map((r) => (
                               <span
                                 key={r}
-                                className="rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[11px] font-medium text-[#6e6e73]"
+                                className="rounded-full bg-[#f3f0ea] px-2.5 py-1 text-[11px] font-medium text-[#6f665d]"
                               >
                                 {reasonLabel(r)}
                               </span>
@@ -291,14 +291,14 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                           </div>
                         ) : null}
                         {o.notes ? (
-                          <p className="mt-2 line-clamp-2 text-[13px] text-[#86868b]">{o.notes}</p>
+                          <p className="mt-2 line-clamp-2 text-[13px] text-[#8a8178]">{o.notes}</p>
                         ) : null}
                       </div>
                     </div>
 
                     <div className="flex shrink-0 flex-row items-center justify-between gap-3 sm:flex-col sm:items-end">
                       <div className="text-left sm:text-right">
-                        <p className="text-[22px] font-semibold tabular-nums tracking-tight text-[#1d1d1f]">
+                        <p className="text-[22px] font-semibold tabular-nums tracking-tight text-[#2f2a24]">
                           {formatEuro(o.total)}
                         </p>
                         <span className="mt-1 inline-flex rounded-full bg-[#ecfdf5] px-2.5 py-1 text-[12px] font-bold text-[#047857]">
@@ -315,7 +315,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                         <button
                           type="button"
                           disabled={hired || busyId === o.quoteId || (Boolean(user) && !isOwner)}
-                          className="rounded-full bg-[#1d1d1f] px-5 py-2.5 text-[13px] font-semibold text-white hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
+                          className="rounded-full bg-[#2f2a24] px-5 py-2.5 text-[13px] font-semibold text-white hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
                           onClick={() => void hire(o)}
                         >
                           {busyId === o.quoteId

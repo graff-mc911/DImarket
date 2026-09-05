@@ -13,8 +13,8 @@ export function LineDiffView({ oldText, newText, hint }: Props) {
 
   return (
     <div>
-      {hint ? <p className="mb-2 text-xs text-[#6e6e73]">{hint}</p> : null}
-      <p className="mb-2 text-xs font-semibold text-[#86868b]">
+      {hint ? <p className="mb-2 text-xs text-[#6f665d]">{hint}</p> : null}
+      <p className="mb-2 text-xs font-semibold text-[#8a8178]">
         +{summary.added} / −{summary.removed} / ={summary.unchanged}
       </p>
       <div className="grid max-h-96 gap-2 overflow-auto md:grid-cols-2">

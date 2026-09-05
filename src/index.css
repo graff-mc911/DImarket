@@ -8,39 +8,44 @@
     --font-sans: "Inter", "Amazon Ember", "Segoe UI", Arial, sans-serif;
     --font-logo: "Libre Bodoni", "Didot", "Bodoni MT", Georgia, serif;
     --font-display: "Inter", "Amazon Ember", "Segoe UI", Arial, sans-serif;
-    --bg-canvas: #eaeded;
-    --bg-soft: #ffffff;
-    --bg-glass-top: #ffffff;
-    --bg-glass-bottom: #f7fafa;
-    --glass-bg: #ffffff;
-    --panel: #ffffff;
-    --panel-strong: #ffffff;
-    --line: #d5d9d9;
-    --line-strong: #bbb;
-    --glass-border: #d5d9d9;
-    --glass-border-strong: #bbb;
-    --glass-highlight: rgba(255, 255, 255, 0.9);
-    --ink-900: #0f1111;
-    --ink-800: #1a1a1a;
-    --ink-700: #565959;
-    --ink-600: #6f7373;
-    --ink-500: #888c8c;
-    --ink-400: #a2a6a6;
+    /* Soft-glass canvas (owner cabinet language) */
+    --bg-canvas: #ebe8e3;
+    --bg-soft: rgba(255, 255, 255, 0.72);
+    --bg-glass-top: rgba(255, 255, 255, 0.78);
+    --bg-glass-bottom: rgba(248, 250, 252, 0.62);
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --panel: rgba(255, 255, 255, 0.58);
+    --panel-strong: rgba(255, 255, 255, 0.82);
+    --line: rgba(148, 163, 184, 0.28);
+    --line-strong: rgba(148, 163, 184, 0.42);
+    --glass-border: rgba(148, 163, 184, 0.22);
+    --glass-border-strong: rgba(148, 163, 184, 0.38);
+    --glass-highlight: rgba(255, 255, 255, 0.72);
+    --ink-900: #2f2a24;
+    --ink-800: #3a342e;
+    --ink-700: #6f665d;
+    --ink-600: #7a7168;
+    --ink-500: #8a8178;
+    --ink-400: #a39a90;
     --header-bg: #232f3e;
     --header-nav-bg: #37475a;
     --brand-primary: #ff9900;
     --brand-primary-hover: #e88b00;
     --brand-cta: #ffd814;
     --brand-cta-hover: #f7ca00;
-    --brand-copper: #b87333;
-    --brand-copper-light: #cd7f32;
+    --brand-copper: #c96d2c;
+    --brand-copper-light: #c78a60;
     --brand-ai: #007185;
     --brand-verified: #067d62;
     --accent-700: #c7511f;
     --accent-600: #007185;
     --accent-500: #ff9900;
-    --accent-soft: rgba(255, 153, 0, 0.1);
-    --mint-soft: rgba(6, 125, 98, 0.1);
+    --accent-soft: rgba(201, 109, 44, 0.12);
+    --mint-soft: rgba(61, 122, 82, 0.12);
+    --radius-panel: 22px;
+    --radius-card: 20px;
+    --radius-control: 16px;
+    --radius-pill: 9999px;
     /* бокові реклами: 276 / 298 / 348px; gutter = відступ від краю екрана = між колонками */
     --ad-side-rail-width: 17.25rem;
     --layout-side-rail-inset: min(var(--ad-side-rail-width), 16.8vw);
@@ -53,8 +58,8 @@
     --layout-side-ads-min: 80rem;
     /* відступ під фіксовану шапку (синхрон з Header spacer) */
     --header-offset: 8rem;
-    /* Тінь карток — як на .ad-story під хедером */
-    --card-shadow: 0 0 22px 4px rgba(15, 17, 17, 0.16);
+    /* Soft card shadow — owner cabinet */
+    --card-shadow: 0 10px 28px rgba(47, 42, 36, 0.08), 0 1px 0 rgba(255, 255, 255, 0.55) inset;
   }
 
   @media (min-width: 1024px) {
@@ -541,7 +546,7 @@
   }
 
   .product-card {
-    @apply flex h-full flex-col rounded-md border border-[#d5d9d9] bg-white p-3 transition-shadow duration-200;
+    @apply flex h-full flex-col rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white/80 p-3 transition-shadow duration-200;
     box-shadow: var(--card-shadow);
   }
 
@@ -872,9 +877,11 @@
     max-width: min(72rem, 100%);
     margin-inline: auto;
     overflow: visible;
-    background: #fff;
+    background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
     border: 1px solid var(--line);
-    border-radius: 0;
+    border-radius: var(--radius-card);
     color: inherit;
     text-decoration: none;
     box-shadow: var(--card-shadow);
@@ -1761,7 +1768,7 @@
   .pro-card--compact .pro-card__avatar {
     height: 2.75rem;
     width: 2.75rem;
-    border-radius: 0;
+    border-radius: 9999px;
     font-size: 0.75rem;
   }
 
@@ -1924,17 +1931,21 @@
   .glass-card {
     background: var(--panel);
     border: 1px solid var(--glass-border);
-    border-radius: 0;
+    border-radius: var(--radius-card);
     box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
   }
 
   .glass-panel {
     position: relative;
     overflow: visible;
-    background: var(--panel);
+    background: var(--panel-strong);
     border: 1px solid var(--glass-border);
-    border-radius: 0;
+    border-radius: var(--radius-panel);
     box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
   }
 
   .glass-panel::before {
@@ -1949,24 +1960,30 @@
   .hero-glass {
     position: relative;
     overflow: visible;
-    background: var(--panel);
+    background: var(--panel-strong);
     border: 1px solid var(--glass-border);
-    border-radius: 0;
+    border-radius: var(--radius-panel);
     box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
   }
 
   .soft-card {
     background: var(--panel);
     border: 1px solid var(--glass-border);
-    border-radius: 0;
+    border-radius: var(--radius-card);
     box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 
   .trust-card {
     background: var(--panel);
     border: 1px solid var(--glass-border);
-    border-radius: 0;
+    border-radius: var(--radius-card);
     box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 
   .logo-letter-d {
@@ -2013,66 +2030,66 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
     background: linear-gradient(180deg, #f7dfa5 0%, #f0c14b 100%);
-    color: #0f1111;
+    color: #2f2a24;
     border: 1px solid #a88734;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
   }
 
   .btn-primary:hover {
     background: linear-gradient(180deg, #f5d78e 0%, #e7b731 100%);
-    color: #0f1111;
+    color: #2f2a24;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
     text-shadow: none;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
-    background: #ffffff;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
+    background: rgba(255, 255, 255, 0.72);
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
   }
 
   .btn-secondary:hover {
-    background: #f7fafa;
+    background: rgba(248, 250, 252, 0.92);
     color: var(--ink-900);
     border-color: var(--line-strong);
     text-shadow: none;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
-    background: #ffffff;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
+    background: rgba(255, 255, 255, 0.45);
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
     box-shadow: none;
   }
 
   .btn-outline:hover {
-    background: #f7fafa;
+    background: rgba(248, 250, 252, 0.85);
     color: var(--ink-900);
     text-shadow: none;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200;
     color: var(--ink-700);
     background: transparent;
     box-shadow: none;
   }
 
   .btn-ghost:hover {
-    background: rgba(15, 17, 17, 0.04);
-    color: var(--accent-600);
+    background: rgba(148, 163, 184, 0.14);
+    color: var(--brand-copper);
     text-shadow: none;
   }
 
   .input-glass,
   .select-glass {
-    @apply w-full rounded-md px-4 py-3 outline-none transition-all duration-200;
-    background: #ffffff;
+    @apply w-full rounded-2xl px-4 py-3 outline-none transition-all duration-200;
+    background: rgba(255, 255, 255, 0.72);
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
     box-shadow: none;
@@ -2084,13 +2101,13 @@
 
   .input-glass:focus,
   .select-glass:focus {
-    border-color: #e77600;
-    box-shadow: 0 0 0 3px rgba(231, 118, 0, 0.2);
+    border-color: rgba(201, 109, 44, 0.55);
+    box-shadow: 0 0 0 3px rgba(201, 109, 44, 0.16);
   }
 
   .input-hero {
-    @apply w-full rounded-md px-4 py-3 outline-none transition-all duration-200;
-    background: #ffffff;
+    @apply w-full rounded-2xl px-4 py-3 outline-none transition-all duration-200;
+    background: rgba(255, 255, 255, 0.82);
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
   }
@@ -2100,8 +2117,27 @@
   }
 
   .input-hero:focus {
-    border-color: #e77600;
-    box-shadow: 0 0 0 3px rgba(231, 118, 0, 0.2);
+    border-color: rgba(201, 109, 44, 0.55);
+    box-shadow: 0 0 0 3px rgba(201, 109, 44, 0.16);
+  }
+
+
+  /* Header + footer stay Amazon-flat (do not inherit soft-glass radii) */
+  .site-header-fixed,
+  .site-header-fixed *,
+  .site-header-shell,
+  .site-header-shell *,
+  .site-header-subnav,
+  .site-header-subnav *,
+  .amazon-footer-back,
+  .amazon-footer-back *,
+  .amazon-footer-main,
+  .amazon-footer-main *,
+  .amazon-footer-bottom,
+  .amazon-footer-bottom *,
+  .premium-footer,
+  .premium-footer * {
+    border-radius: 0 !important;
   }
 
   .site-header-fixed {
@@ -2295,13 +2331,21 @@
   }
 
   .amazon-section-card {
-    @apply rounded-md border border-[#d5d9d9] bg-white p-4;
+    @apply rounded-2xl border p-4;
+    border-color: var(--glass-border);
+    background: var(--panel-strong);
     box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
   }
 
   .amazon-filter-sidebar {
-    @apply rounded-md border border-[#d5d9d9] bg-white p-4;
+    @apply rounded-2xl border p-4;
+    border-color: var(--glass-border);
+    background: var(--panel-strong);
     box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
   }
 
   .amazon-filter-sidebar h2 {
@@ -2312,7 +2356,8 @@
   }
 
   .amazon-filter-group {
-    @apply border-b border-[#e7e7e7] py-3 last:border-b-0;
+    @apply border-b py-3 last:border-b-0;
+    border-color: var(--glass-border);
   }
 
   .amazon-filter-group label {
@@ -2320,8 +2365,12 @@
   }
 
   .amazon-buy-box {
-    @apply rounded-md border border-[#d5d9d9] bg-white p-4;
+    @apply rounded-2xl border p-4;
+    border-color: var(--glass-border);
+    background: var(--panel-strong);
     box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
   }
 
   .amazon-buy-box--sticky {
@@ -2331,11 +2380,13 @@
   }
 
   .amazon-pdp-image {
-    @apply overflow-hidden rounded-md border border-[#d5d9d9] bg-white;
+    @apply overflow-hidden rounded-2xl border bg-white;
+    border-color: var(--glass-border);
   }
 
   .amazon-pdp-divider {
-    @apply my-4 border-t border-[#e7e7e7];
+    @apply my-4 border-t;
+    border-color: var(--glass-border);
   }
 
   .amazon-link {
@@ -2452,7 +2503,7 @@
     justify-content: center;
     border: none;
     background: rgba(255, 255, 255, 0.55);
-    color: #0f1111;
+    color: #2f2a24;
     font-size: 1.75rem;
     line-height: 1;
     transition: background 0.15s;
@@ -2516,9 +2567,11 @@
     flex-direction: column;
     overflow: visible;
     isolation: isolate;
-    border-radius: 0;
+    border-radius: var(--radius-card);
     border: none;
-    background: #ffffff;
+    background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
     padding: 1.25rem 1.25rem 1rem;
     box-shadow: var(--card-shadow);
   }
@@ -2609,13 +2662,13 @@
   }
 
   .amazon-promo-card__cta {
-    border-radius: 0;
+    border-radius: var(--radius-card);
     border: 1px solid #fcd200;
     background: #ffd814;
     padding: 0.5rem 1.25rem;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: #0f1111;
+    color: #2f2a24;
     box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
   }
 
@@ -2772,7 +2825,7 @@
     width: min(18.5rem, calc(100vw - 1.5rem));
     max-height: 20rem;
     overflow-y: auto;
-    border: 1px solid #d5d9d9;
+    border: 1px solid var(--glass-border);
     border-radius: 0;
     background: #fff;
     padding: 0.35rem;
@@ -2808,7 +2861,7 @@
     border-radius: 0;
     background: transparent;
     padding: 0.45rem 0.6rem;
-    color: #0f1111;
+    color: #2f2a24;
     text-align: left;
     cursor: pointer;
   }
@@ -2919,7 +2972,7 @@
     padding: 0.625rem 4rem;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: #0f1111;
+    color: #2f2a24;
   }
 
   .amazon-footer-signin__btn:hover {
@@ -3027,13 +3080,10 @@
   }
 
   @media (max-width: 768px) {
-    .glass-card {
-      border-radius: 0;
-    }
-
+    .glass-card,
     .glass-panel,
     .hero-glass {
-      border-radius: 0;
+      border-radius: max(16px, calc(var(--radius-card) - 4px));
     }
   }
 
@@ -3272,7 +3322,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.65rem;
   min-width: min(100%, 20rem);
   padding: 0.85rem 1rem;
-  border-radius: 0;
+  border-radius: var(--radius-panel);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.18);
   box-shadow: 0 8px 24px rgba(47, 42, 36, 0.05);
@@ -3322,8 +3372,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   display: flex;
   flex-direction: column;
   overflow: visible;
-  border-radius: 0;
-  background: #fff;
+  border-radius: var(--radius-card);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.1);
   box-shadow: var(--card-shadow);
   transition:
@@ -3357,7 +3409,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: center;
   width: 3.75rem;
   height: 3.75rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   margin-bottom: 0.15rem;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -3402,7 +3454,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .marketplace-category-card__dot {
   width: 3px;
   height: 3px;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #d4c4b4;
 }
 
@@ -3459,7 +3511,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: center;
   width: 4rem;
   height: 4rem;
-  border-radius: 0;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 153, 0, 0.45);
   color: #ffb84d;
@@ -3495,7 +3547,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.65rem;
   padding: 0.7rem 0.95rem;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(10px);
@@ -3538,7 +3590,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   flex: 1;
   min-width: min(100%, 16rem);
   padding: 0.85rem 1rem;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.16);
   box-shadow: 0 8px 24px rgba(47, 42, 36, 0.04);
@@ -3562,7 +3614,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .category-page__filters select {
-  border-radius: 0;
+  border-radius: var(--radius-control);
   border: 1px solid rgba(176, 126, 85, 0.18);
   background: #fff;
   padding: 0.55rem 0.75rem;
@@ -3635,8 +3687,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1.05rem 1.1rem;
-  border-radius: 0;
-  background: #fff;
+  border-radius: var(--radius-card);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
   text-align: left;
@@ -3672,7 +3726,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .category-ai-card {
   padding: 1.15rem 1.2rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: linear-gradient(160deg, #fff8f0 0%, #ffffff 70%);
   border: 1px solid rgba(255, 153, 0, 0.22);
   box-shadow: var(--card-shadow);
@@ -3733,8 +3787,10 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .category-project-tile {
   padding: 1.1rem 1.15rem;
-  border-radius: 0;
-  background: #fff;
+  border-radius: var(--radius-card);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
   text-align: left;
@@ -3782,9 +3838,9 @@ select.select-glass.geo-filter-select::-ms-expand {
   --dimarket-bg: transparent;
   --dimarket-primary: #c96d2c;
   --dimarket-accent: #c96d2c;
-  --dimarket-ink: #232f3e;
-  --dimarket-muted: #5c6570;
-  --dimarket-line: rgba(35, 47, 62, 0.12);
+  --dimarket-ink: #2f2a24;
+  --dimarket-muted: #6f665d;
+  --dimarket-line: rgba(148, 163, 184, 0.22);
   background: var(--dimarket-bg);
   color: var(--dimarket-ink);
   font-family: var(--font-sans);
@@ -3847,7 +3903,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.8rem;
   border: 1px solid var(--dimarket-line);
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #fff;
   box-shadow: 0 12px 34px rgba(17, 24, 39, 0.06);
   color: var(--dimarket-primary);
@@ -3902,7 +3958,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .dimarket-popular button {
   border: 1px solid rgba(27, 77, 62, 0.1) !important;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #fff;
   color: var(--dimarket-primary);
   font-size: 0.86rem;
@@ -4064,10 +4120,12 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .dimarket-category-card {
   overflow: visible;
-  border: 1px solid transparent;
-  border-radius: 0;
-  background: #fff;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.72);
   box-shadow: var(--card-shadow);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 }
 
@@ -4084,9 +4142,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 0.9rem;
   align-items: center;
-  background: #fff;
+  background: transparent;
   padding: 1.15rem;
   text-align: left;
+  border-radius: var(--radius-card);
 }
 
 .dimarket-category-card__icon {
@@ -4095,10 +4154,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 3.75rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: 18px;
   background:
-    radial-gradient(circle at 30% 20%, rgba(245, 158, 11, 0.32), transparent 48%),
-    rgba(27, 77, 62, 0.08);
+    radial-gradient(circle at 30% 20%, rgba(201, 109, 44, 0.28), transparent 48%),
+    rgba(148, 163, 184, 0.14);
   font-size: 2rem;
   transition: transform 200ms ease;
 }
@@ -4155,8 +4214,8 @@ select.select-glass.geo-filter-select::-ms-expand {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  border: 1px solid rgba(27, 77, 62, 0.08) !important;
-  border-radius: 0;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  border-radius: 9999px;
   background: #f2f5f4;
   color: var(--dimarket-ink);
   font-size: 0.82rem;
@@ -4181,7 +4240,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .dimarket-categories__empty {
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   color: var(--dimarket-muted);
   padding: 1.2rem;
@@ -4219,7 +4278,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.65rem;
   min-width: min(100%, 18rem);
   padding: 0.85rem 1rem;
-  border-radius: 0;
+  border-radius: var(--radius-panel);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.18);
   box-shadow: 0 8px 24px rgba(47, 42, 36, 0.05);
@@ -4264,8 +4323,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   display: flex;
   flex-direction: column;
   overflow: visible;
-  border-radius: 0;
-  background: #fff;
+  border-radius: var(--radius-card);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.1);
   box-shadow: var(--card-shadow);
   transition:
@@ -4310,7 +4371,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   position: static;
   width: 4.25rem;
   height: 4.25rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: var(--category-icon-bg, #fff4e8);
   color: var(--category-icon-fg, #c96d2c);
   border: 1px solid var(--category-icon-ring, #ffd7ad);
@@ -4352,7 +4413,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 3.5rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: rgba(255, 255, 255, 0.96);
   color: #c96d2c;
   border: 1px solid rgba(255, 153, 0, 0.32);
@@ -4417,7 +4478,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.4rem;
   margin-top: auto;
   padding: 0.75rem 1rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff4e8;
   color: #c96d2c;
   font-size: 0.9rem;
@@ -4543,7 +4604,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-hero-carousel {
   position: relative;
   overflow: hidden;
-  border-radius: 0;
+  border-radius: var(--radius-panel);
   min-height: 12.5rem;
   width: 100%;
   background: #232f3e;
@@ -4631,7 +4692,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   margin-top: 0.35rem;
   display: inline-flex;
   align-items: center;
-  border-radius: 0;
+  border-radius: var(--radius-panel);
   background: #ff9900;
   color: #1a1612;
   font-style: normal;
@@ -4652,7 +4713,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: center;
   border: 0;
   background: rgba(255, 255, 255, 0.72);
-  color: #0f1111;
+  color: #2f2a24;
   transition: background 0.15s ease;
 }
 
@@ -4662,12 +4723,12 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .home-hero-carousel__nav--prev {
   left: 0;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
 }
 
 .home-hero-carousel__nav--next {
   right: 0;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
 }
 
 
@@ -4701,7 +4762,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.65rem;
   max-width: 36rem;
   padding: 0.35rem 0.35rem 0.35rem 0.9rem;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #fff;
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
 }
@@ -4725,7 +4786,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .home-hero__search-btn {
   flex-shrink: 0;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #ff9900;
   color: #1a1612;
   font-weight: 700;
@@ -4755,7 +4816,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   font-weight: 700;
   font-size: 0.9rem;
   padding: 0.8rem 1.25rem;
@@ -4892,8 +4953,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   display: flex;
   flex-direction: column;
   overflow: visible;
-  border-radius: 0;
-  background: #fff;
+  border-radius: var(--radius-card);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
@@ -4946,7 +5009,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.85rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: rgba(255, 255, 255, 0.95);
   color: #c96d2c;
   border: 1px solid rgba(255, 153, 0, 0.3);
@@ -5126,8 +5189,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.65rem;
   min-height: 14rem;
   padding: 1.15rem;
-  border-radius: 0;
-  background: #fff;
+  border-radius: var(--radius-card);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
 }
@@ -5154,7 +5219,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 0.28rem 0.55rem;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #f3efe9;
   color: #6f665d;
 }
@@ -5206,7 +5271,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.4rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: var(--radius-panel);
   border: 1px solid rgba(176, 126, 85, 0.2);
   background: #fff;
   color: #2f2a24;
@@ -5222,7 +5287,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-pro-card__avatar {
   width: 4.25rem;
   height: 4.25rem;
-  border-radius: 0;
+  border-radius: 9999px;
   overflow: hidden;
   background: #efe8df;
   flex-shrink: 0;
@@ -5261,7 +5326,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   color: #067d62;
   background: rgba(6, 125, 98, 0.1);
   padding: 0.2rem 0.45rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
 }
 
 .home-pro-card__rating,
@@ -5321,8 +5386,10 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .home-why-card {
   padding: 1.5rem 1.35rem;
-  border-radius: 0;
-  background: #fff;
+  border-radius: var(--radius-card);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
 }
@@ -5333,7 +5400,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 3rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff4e8;
   color: #c96d2c;
   margin-bottom: 1rem;
@@ -5373,8 +5440,10 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-review-card {
   position: relative;
   padding: 1.4rem 1.3rem 1.25rem;
-  border-radius: 0;
-  background: #fff;
+  border-radius: var(--radius-card);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
 }
@@ -5418,7 +5487,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.4rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: 9999px;
   background: #fff4e8;
   color: #c96d2c;
   font-weight: 800;
@@ -5465,8 +5534,10 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.85rem;
   padding: 1rem 1.05rem;
-  border-radius: 0;
-  background: #fff;
+  border-radius: var(--radius-card);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(176, 126, 85, 0.14);
   box-shadow: var(--card-shadow);
   opacity: 0;
@@ -5488,7 +5559,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: 18px;
   background: #fff4e8;
   color: #c96d2c;
 }
@@ -5563,7 +5634,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-review-card__avatar-img {
   width: 2.4rem;
   height: 2.4rem;
-  border-radius: 0;
+  border-radius: 9999px;
   object-fit: cover;
 }
 
@@ -5604,7 +5675,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.4rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   border: 1px solid rgba(176, 126, 85, 0.2);
   background: #fff;
   color: #1a1612;
@@ -5626,7 +5697,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-carousel__dot {
   width: 0.5rem;
   height: 0.5rem;
-  border-radius: 0;
+  border-radius: 9999px;
   border: 0;
   background: #d9d0c5;
   cursor: pointer;
@@ -5663,7 +5734,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   display: block;
   min-height: 0;
   overflow: visible;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   text-decoration: none;
@@ -5694,7 +5765,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 /* Interactive map */
 .home-map {
   position: relative;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   /* Visible — overflow clip/hidden on this box (or ancestors) breaks Leaflet
      tiles and one-finger pan on iOS/Android WebKit. Radius lives on the canvas. */
   overflow: visible;
@@ -5725,7 +5796,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: min(72vh, 640px);
   min-height: 360px;
   width: 100%;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   overflow: hidden;
   touch-action: none;
   -webkit-user-select: none;
@@ -5777,7 +5848,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .dimarket-map-popup__photo {
   width: 56px;
   height: 56px;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   object-fit: cover;
   flex-shrink: 0;
   background: #f3eee7;
@@ -5806,7 +5877,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .dimarket-map-popup__badge {
   display: inline-flex;
   align-items: center;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.1rem 0.45rem;
   background: rgba(34, 197, 94, 0.12);
   color: #15803d;
@@ -5829,7 +5900,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.4rem 0.7rem;
   background: #c48a4a;
   color: #fff !important;
@@ -5873,7 +5944,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   top: 1rem;
   margin: 0;
   padding: 0.45rem 0.7rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: rgba(255, 255, 255, 0.92);
   font-size: 0.8rem;
   color: #6f665d;
@@ -5890,7 +5961,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  border-radius: 0;
+  border-radius: var(--radius-control);
   border: 1px solid rgba(176, 126, 85, 0.18);
   background: #fff;
   color: #6f665d;
@@ -5906,14 +5977,14 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .map-kind-filter {
-  border-color: color-mix(in srgb, var(--kind-color, #b07e55) 35%, #d2d2d7);
+  border-color: color-mix(in srgb, var(--kind-color, #b07e55) 35%, rgba(148,163,184,0.35));
 }
 
 .map-kind-filter__dot {
   display: inline-block;
   width: 0.55rem;
   height: 0.55rem;
-  border-radius: 0;
+  border-radius: var(--radius-control);
   background: var(--kind-color, #ff9900);
   flex-shrink: 0;
 }
@@ -5949,7 +6020,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: var(--pin, #ff9900);
   color: #fff;
   font-size: 0.72rem;
@@ -5972,7 +6043,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   margin-left: 0.35rem;
   padding: 0.1rem 0.4rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #dcfce7;
   color: #15803d;
   font-size: 0.65rem;
@@ -6004,7 +6075,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .home-faq__item {
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   overflow: visible;
@@ -6121,7 +6192,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: center;
   width: 4.1rem;
   height: 4.1rem;
-  border-radius: 0;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 153, 0, 0.45);
   color: #ffb84d;
@@ -6157,7 +6228,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.65rem;
   padding: 0.7rem 0.95rem;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(10px);
@@ -6183,7 +6254,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   flex: 1;
   min-width: min(100%, 16rem);
   padding: 0.85rem 1rem;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.16);
   box-shadow: 0 8px 24px rgba(47, 42, 36, 0.04);
@@ -6207,7 +6278,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .cat-toolbar__filters select {
-  border-radius: 0;
+  border-radius: var(--radius-control);
   border: 1px solid rgba(176, 126, 85, 0.18);
   background: #fff;
   padding: 0.55rem 0.75rem;
@@ -6275,7 +6346,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1.05rem 1.1rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
@@ -6298,7 +6369,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .cat-ai-card {
   padding: 1.15rem 1.2rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: linear-gradient(160deg, #fff8f0 0%, #ffffff 70%);
   border: 1px solid rgba(255, 153, 0, 0.22);
   box-shadow: var(--card-shadow);
@@ -6337,7 +6408,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .cat-project-tile {
   padding: 1.1rem 1.15rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
@@ -6380,7 +6451,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .cat-review-card {
   position: relative;
   padding: 1.35rem 1.25rem 1.2rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
@@ -6416,7 +6487,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.35rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff4e8;
   color: #c96d2c;
   font-weight: 800;
@@ -6434,7 +6505,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .cat-faq { display: flex; flex-direction: column; gap: 0.65rem; }
 .cat-faq__item {
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   overflow: hidden;
@@ -6515,7 +6586,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: auto;
   box-shadow: none;
   animation: none;
-  border-radius: 0;
+  border-radius: var(--radius-panel);
   overflow: hidden;
 }
 
@@ -6578,7 +6649,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.55rem;
   padding: 0.7rem 0.9rem;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #f6f2ed;
   border: 1px solid rgba(176, 126, 85, 0.16);
 }
@@ -6598,7 +6669,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.5rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #f6f2ed;
   color: #2f2a24;
 }
@@ -6655,7 +6726,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.7rem;
   padding: 0.7rem 0.75rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   text-align: left;
   color: #2f2a24;
   transition: background 160ms ease, transform 160ms ease;
@@ -6676,7 +6747,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 2.4rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: 18px;
   flex-shrink: 0;
 }
 
@@ -6735,7 +6806,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: space-between;
   gap: 0.5rem;
   padding: 0.85rem 0.95rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   text-align: left;
   font-size: 0.88rem;
   font-weight: 650;
@@ -6852,7 +6923,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   width: 100%;
   height: 3rem;
   border: 1px solid var(--adv-line);
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0 0.85rem;
   background: #fff;
   color: var(--adv-ink);
@@ -6861,7 +6932,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .adv-search__dual-submit {
   height: 3rem;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0 1.25rem;
   background: var(--adv-accent);
   color: #fff;
@@ -6886,7 +6957,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.5rem;
   min-height: 3rem;
   border: 1px solid var(--adv-line);
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #fff;
   padding: 0 0.65rem 0 0.85rem;
 }
@@ -6912,7 +6983,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   padding: 0.4rem 0.4rem 0.4rem 0.9rem;
   background: var(--adv-surface);
   border: 1px solid var(--adv-line);
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   box-shadow: 0 10px 30px rgba(42, 36, 28, 0.06);
 }
 
@@ -6946,7 +7017,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   width: 2.25rem;
   height: 2.25rem;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--adv-muted);
   cursor: pointer;
@@ -6960,7 +7031,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .adv-search__submit {
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.65rem 1.15rem;
   background: var(--adv-ink);
   color: #fff;
@@ -6980,7 +7051,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   top: calc(100% + 0.45rem);
   background: #fff;
   border: 1px solid var(--adv-line);
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   box-shadow: 0 18px 40px rgba(42, 36, 28, 0.12);
   padding: 0.75rem;
   max-height: min(70vh, 420px);
@@ -7013,7 +7084,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   text-align: left;
   border: 0;
   background: transparent;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.55rem 0.6rem;
   cursor: pointer;
   color: var(--adv-ink);
@@ -7059,7 +7130,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border: 1px solid var(--adv-line);
   background: var(--adv-panel);
   color: var(--adv-ink);
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.35rem 0.75rem;
   font-size: 0.85rem;
   cursor: pointer;
@@ -7094,7 +7165,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   top: 5.5rem;
   background: var(--adv-surface);
   border: 1px solid var(--adv-line);
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 1rem;
 }
 
@@ -7123,7 +7194,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .adv-search__field input,
 .adv-search__field select {
   border: 1px solid var(--adv-line);
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.5rem 0.65rem;
   background: #fff;
   color: var(--adv-ink);
@@ -7145,7 +7216,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border: 1px dashed rgba(196, 138, 74, 0.45);
   background: rgba(196, 138, 74, 0.08);
   color: #8a5a28;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.5rem 0.65rem;
   cursor: pointer;
   font-size: 0.85rem;
@@ -7193,7 +7264,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .adv-search__apply,
 .adv-search__reset {
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.6rem 0.75rem;
   cursor: pointer;
   font-weight: 600;
@@ -7225,7 +7296,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   border: 1px solid var(--adv-line);
   background: #fff;
   color: var(--adv-muted);
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.4rem 0.8rem;
   cursor: pointer;
   font-size: 0.88rem;
@@ -7287,7 +7358,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   text-align: left;
   border: 1px solid var(--adv-line);
   background: #fff;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   padding: 0.75rem 0.9rem;
   cursor: pointer;
   color: var(--adv-ink);
@@ -7338,7 +7409,7 @@ select.select-glass.geo-filter-select::-ms-expand {
     justify-content: center;
     border: 1px solid var(--adv-line);
     background: #fff;
-    border-radius: 0;
+    border-radius: var(--radius-pill);
     padding: 0.5rem 0.9rem;
     margin-bottom: 0.75rem;
     cursor: pointer;
@@ -7358,7 +7429,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   }
 
   .adv-search__bar {
-    border-radius: 0;
+    border-radius: var(--radius-pill);
     flex-wrap: wrap;
   }
 
@@ -7377,8 +7448,8 @@ select.select-glass.geo-filter-select::-ms-expand {
   grid-template-columns: 132px minmax(0, 1fr);
   gap: 1rem 1.25rem;
   padding: 1rem 1.15rem;
-  border: 1px solid #d5d9d9;
-  border-radius: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
   background: #fff;
   box-shadow: var(--card-shadow);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
@@ -7395,7 +7466,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 132px;
   padding: 0;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   overflow: hidden;
   background: #f3f4f4;
   cursor: pointer;
@@ -7594,7 +7665,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   min-height: 2.4rem;
   padding: 0.45rem 1rem;
   border: 1px solid #888c8c;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: #fff;
   color: var(--ink-900);
   font-size: 0.875rem;
@@ -7614,8 +7685,8 @@ select.select-glass.geo-filter-select::-ms-expand {
   justify-content: center;
   width: 2.4rem;
   height: 2.4rem;
-  border: 1px solid #d5d9d9;
-  border-radius: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
   background: #fff;
   color: var(--ink-500);
   cursor: pointer;
@@ -7721,7 +7792,7 @@ body,
 .estimator-page--intake .estimator-page__card {
   overflow: visible;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: transparent;
   padding: 0;
   box-shadow: none;
@@ -7809,7 +7880,7 @@ body,
   width: 100%;
   border: none;
   border-bottom: 2px solid var(--quote-accent);
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: transparent;
   box-shadow: none;
   padding: 0;
@@ -7866,7 +7937,7 @@ body,
   height: 80px;
   padding: 0 4px;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   font-size: 10px;
   font-weight: 700;
@@ -7879,7 +7950,7 @@ body,
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   box-shadow: var(--card-shadow);
 }
 .bz-needs-help__tile:hover,
@@ -7906,7 +7977,7 @@ body,
   height: 46px;
   padding: 0 22px;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   background: var(--quote-accent);
   color: #fff;
   font-size: 16px;
@@ -7941,7 +8012,7 @@ body,
   padding: 0 0 36px;
   background: #fff;
   border: 1px solid var(--quote-line);
-  border-radius: 0;
+  border-radius: var(--radius-card);
   box-shadow: 0 12px 40px rgba(15, 17, 17, 0.16);
   font-size: 14px;
   font-weight: 400;
@@ -8022,7 +8093,7 @@ body,
   width: 100%;
   height: 40px;
   border: 1px solid var(--quote-line);
-  border-radius: 0;
+  border-radius: var(--radius-control);
   background: #fff;
   padding: 8px 10px;
   font-size: 14px;
@@ -8044,7 +8115,7 @@ body,
   width: 100%;
   margin: 12px 0 0;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: var(--quote-accent);
   padding: 10px 18px;
   font-size: 14px;
@@ -8089,7 +8160,7 @@ body,
   width: 104.9px;
   height: 76.3px;
   padding: 8px 4px 10px;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   border: 1px solid var(--quote-line);
   background: #fff;
   color: var(--quote-ink);
@@ -8126,7 +8197,7 @@ body,
   display: block;
   width: 100%;
   border: 1px solid var(--quote-line);
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   padding: 12px 16px;
   font-size: 14px;
@@ -8320,7 +8391,7 @@ body,
   top: 0.7rem;
   width: 0.55rem;
   height: 0.55rem;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #e6ddd3;
 }
 .bz-quote__timeline li.is-active::before {
@@ -8424,7 +8495,7 @@ body,
 .estimator-calc__label select {
   width: 100%;
   border: 1px solid #e6ddd3;
-  border-radius: 0;
+  border-radius: var(--radius-control);
   background: #fff;
   padding: 0.7rem 0.8rem;
   font-size: 0.95rem;
@@ -8463,7 +8534,7 @@ body,
 }
 
 .estimator-calc__pill {
-  border-radius: 0;
+  border-radius: var(--radius-pill);
   border: 1px solid #e6ddd3;
   background: #fff;
   padding: 0.45rem 0.8rem;
@@ -8493,7 +8564,7 @@ body,
   gap: 0.55rem;
   width: 100%;
   border: 1px solid #efe8df;
-  border-radius: 0;
+  border-radius: var(--radius-card);
   background: #fff;
   padding: 0.55rem 0.65rem;
   font-size: 0.88rem;
@@ -8545,7 +8616,7 @@ body,
 
 .estimator-calc__remove {
   display: flex;
-  color: #86868b;
+  color: #8a8178;
 }
 
 .estimator-calc__total {

@@ -555,7 +555,7 @@ export function Settings() {
                 <button
                   type="button"
                   onClick={() => void handleSignOut()}
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-[#1d1d1f] bg-[#1d1d1f] px-6 py-3.5 text-base font-bold text-white shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition hover:bg-black sm:w-auto"
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-[#2f2a24] bg-[#2f2a24] px-6 py-3.5 text-base font-bold text-white shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition hover:bg-black sm:w-auto"
                 >
                   <LogOut className="h-5 w-5" />
                   {t('header.signOut')}
