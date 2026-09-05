@@ -74,7 +74,7 @@ export function WizardShell({
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-none border border-black/[0.04] bg-white p-6 shadow-[0_8px_40px_rgba(0,0,0,0.06)] backdrop-blur-xl sm:p-10">
+        <div className="overflow-hidden rounded-none border border-black/[0.04] bg-white p-6 shadow-[0_8px_40px_rgba(0,0,0,0.06)] sm:p-10">
           <h1 className="text-center text-[28px] font-semibold leading-tight tracking-[-0.03em] text-[#2f2a24] sm:text-[34px]">
             {title}
           </h1>

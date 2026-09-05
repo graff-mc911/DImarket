@@ -262,7 +262,7 @@ export function ProjectFeed() {
 
   return (
     <div className="min-h-[70vh] bg-[#f3f0ea] pb-24">
-      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white backdrop-blur-xl">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white">
         <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-4 px-4 py-6 md:px-6">
           <div>
             <div className="mb-1 flex items-center gap-2">

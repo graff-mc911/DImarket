@@ -221,7 +221,7 @@ export function ProCalendar() {
 
   return (
     <div className="min-h-screen bg-[#f3f0ea]">
-      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white backdrop-blur">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4">
           <div>
             <h1 className="text-[22px] font-semibold tracking-tight text-[#2f2a24]">

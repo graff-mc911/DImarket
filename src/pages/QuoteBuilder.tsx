@@ -288,7 +288,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
 
   return (
     <div className="min-h-[70vh] bg-[#f3f0ea] pb-28">
-      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white backdrop-blur-xl">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white">
         <div className="mx-auto flex max-w-4xl flex-wrap items-end justify-between gap-3 px-4 py-6 md:px-6">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
@@ -436,7 +436,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
           </div>
         </div>
 
-        <div className="sticky bottom-4 z-10 mt-6 flex flex-wrap gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3 shadow-lg backdrop-blur">
+        <div className="sticky bottom-4 z-10 mt-6 flex flex-wrap gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3 shadow-lg">
           <button
             type="button"
             disabled={busy}

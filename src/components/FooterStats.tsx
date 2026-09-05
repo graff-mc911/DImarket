@@ -248,7 +248,7 @@ export function FooterStats({ compact = false, standalone = false }: { compact?:
         {statCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-none border border-white/38 bg-white p-2.5 shadow-[0_6px_18px_rgba(15,23,42,0.04)] backdrop-blur-xl"
+            className="rounded-none border border-white/38 bg-white p-2.5 shadow-[0_6px_18px_rgba(15,23,42,0.04)]"
           >
             <div className="mb-1.5 flex items-center gap-2">
               <card.icon className={`h-3.5 w-3.5 ${card.color}`} />
@@ -262,7 +262,7 @@ export function FooterStats({ compact = false, standalone = false }: { compact?:
         ))}
       </div>
 
-      <div className="rounded-none border border-white/38 bg-white p-3 shadow-[0_6px_18px_rgba(15,23,42,0.04)] backdrop-blur-xl">
+      <div className="rounded-none border border-white/38 bg-white p-3 shadow-[0_6px_18px_rgba(15,23,42,0.04)]">
         <div className="mb-2 flex flex-col gap-1.5 md:flex-row md:items-center md:justify-between">
           <div>
             <h4 className="text-sm font-extrabold text-[#2f2a24]">

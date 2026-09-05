@@ -1415,7 +1415,7 @@ export function CostEstimator() {
             )}
           </Section>
 
-          <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3 shadow-[0_8px_40px_rgba(0,0,0,0.1)] backdrop-blur">
+          <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3 shadow-[0_8px_40px_rgba(0,0,0,0.1)]">
             <button
               type="button"
               onClick={requestQuotes}

@@ -156,7 +156,7 @@ export function BookProfessional({ profileId }: Props) {
 
   return (
     <div className="min-h-screen bg-[#f3f0ea]">
-      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white backdrop-blur">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white">
         <div className="mx-auto max-w-3xl px-4 py-4">
           <button
             type="button"
