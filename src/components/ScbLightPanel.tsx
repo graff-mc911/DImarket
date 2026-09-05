@@ -94,7 +94,7 @@ export function ScbLightPanel({
   }
 
   return (
-    <div className="rounded-none border border-[rgba(37,99,235,0.2)] bg-[rgba(37,99,235,0.05)] p-4">
+    <div className="rounded-[16px] border border-[rgba(37,99,235,0.2)] bg-[rgba(37,99,235,0.05)] p-4">
       <div className="flex items-center gap-2">
         <Calculator className="h-5 w-5 text-[#2563eb]" />
         <span className="font-semibold text-[#2f2a24]">{t('scbLight.title')}</span>
@@ -118,7 +118,7 @@ export function ScbLightPanel({
             type="button"
             disabled={provisioning}
             onClick={createAccount}
-            className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(37,99,235,0.35)] bg-white px-4 py-2 text-xs font-semibold text-[#2563eb] hover:bg-white disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(37,99,235,0.35)] bg-white/80 px-4 py-2 text-xs font-semibold text-[#2563eb] hover:bg-white disabled:opacity-60"
           >
             {provisioning ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
             {t('scbLight.createAccount')}

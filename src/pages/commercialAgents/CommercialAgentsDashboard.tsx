@@ -425,7 +425,7 @@ export function CommercialAgentsDashboard() {
           )}
 
           {tab === 'profile' && mode === 'manufacturer' && (
-            <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white p-5">
+            <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white/95 p-5">
               <Field label={t('commercialAgents.companyName')} value={mfrForm.company_name} onChange={(v) => setMfrForm({ ...mfrForm, company_name: v })} />
               <Field label={t('commercialAgents.description')} value={mfrForm.description} onChange={(v) => setMfrForm({ ...mfrForm, description: v })} area />
               <label className="block text-xs font-semibold uppercase text-[var(--ink-500)]">
@@ -460,7 +460,7 @@ export function CommercialAgentsDashboard() {
           )}
 
           {tab === 'profile' && mode === 'agent' && (
-            <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white p-5">
+            <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white/95 p-5">
               <Field label={t('commercialAgents.fullName')} value={agentForm.full_name} onChange={(v) => setAgentForm({ ...agentForm, full_name: v })} />
               <Field label={t('commercialAgents.companyName')} value={agentForm.company_name} onChange={(v) => setAgentForm({ ...agentForm, company_name: v })} />
               <Field label={t('commercialAgents.description')} value={agentForm.description} onChange={(v) => setAgentForm({ ...agentForm, description: v })} area />
@@ -498,7 +498,7 @@ export function CommercialAgentsDashboard() {
 
           {tab === 'products' && mode === 'manufacturer' && (
             <div className="space-y-6">
-              <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white p-5">
+              <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white/95 p-5">
                 <h2 className="text-lg font-bold">{t('commercialAgents.addProduct')}</h2>
                 <p className="text-sm text-[var(--ink-600)]">{t('commercialAgents.productsHint')}</p>
                 <Field label={t('commercialAgents.productName')} value={productForm.name} onChange={(v) => setProductForm({ ...productForm, name: v })} />
@@ -522,7 +522,7 @@ export function CommercialAgentsDashboard() {
                   <p className="text-sm text-[var(--ink-600)]">{t('commercialAgents.productsHint')}</p>
                 ) : (
                   products.map((p) => (
-                    <div key={p.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--line-200)] bg-white p-4">
+                    <div key={p.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--line-200)] bg-white/95 p-4">
                       <div>
                         <p className="font-bold text-[var(--ink-900)]">{p.name}</p>
                         <p className="text-xs text-[var(--ink-600)]">
@@ -545,7 +545,7 @@ export function CommercialAgentsDashboard() {
           )}
 
           {tab === 'advertising' && (
-            <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white p-5">
+            <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white/95 p-5">
               <h2 className="text-lg font-bold">{t('commercialAgents.tabAdvertising')}</h2>
               <p className="text-sm text-[var(--ink-600)]">{t('commercialAgents.adsLinkedHint')}</p>
               <button
@@ -574,7 +574,7 @@ export function CommercialAgentsDashboard() {
 
           {tab === 'opportunities' && mode === 'manufacturer' && (
             <div className="space-y-6">
-              <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white p-5">
+              <div className="max-w-xl space-y-3 rounded-2xl border border-[var(--line-200)] bg-white/95 p-5">
                 <h2 className="text-lg font-bold">{t('commercialAgents.createOpportunity')}</h2>
                 <Field label={t('commercialAgents.oppTitle')} value={oppForm.title} onChange={(v) => setOppForm({ ...oppForm, title: v })} />
                 <Field label={t('commercialAgents.description')} value={oppForm.description} onChange={(v) => setOppForm({ ...oppForm, description: v })} area />
@@ -746,7 +746,7 @@ function Field({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-[var(--line-200)] bg-white p-4">
+    <div className="rounded-2xl border border-[var(--line-200)] bg-white/95 p-4">
       <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-500)]">{label}</p>
       <p className="mt-2 text-2xl font-extrabold text-[var(--ink-900)]">{value}</p>
     </div>

@@ -162,7 +162,7 @@ export function MetricCard({
   accent?: string
 }) {
   return (
-    <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
+    <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">{label}</p>
       <p className="mt-2 text-[24px] font-semibold tracking-tight tabular-nums text-[#2f2a24]">
         {value}
@@ -189,7 +189,7 @@ export function ChartCard({
 }) {
   return (
     <section
-      className={`rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5 ${className}`}
+      className={`rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5 ${className}`}
     >
       <div className="mb-3">
         <h2 className="text-[15px] font-semibold text-[#2f2a24]">{title}</h2>

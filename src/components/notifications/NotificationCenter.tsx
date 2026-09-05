@@ -172,7 +172,7 @@ export function NotificationCenter({ compact = true }: Props) {
       className={
         compact
           ? 'absolute right-0 z-[70] mt-2 w-[min(400px,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white shadow-xl'
-          : 'mx-auto max-w-2xl overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-sm'
+          : 'mx-auto max-w-2xl overflow-hidden rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white shadow-sm'
       }
     >
       <div className="flex items-center justify-between gap-2 border-b border-[#f0f0f2] px-4 py-3">
@@ -185,7 +185,7 @@ export function NotificationCenter({ compact = true }: Props) {
         <div className="flex flex-wrap justify-end gap-2">
           <button
             type="button"
-            className="text-[11px] font-semibold text-[#c96d2c]"
+            className="text-[11px] font-semibold text-indigo-600"
             onClick={() => void enablePush()}
           >
             {pushOk ? t('notifications.pushOn') : t('notifications.enablePush')}
@@ -222,16 +222,16 @@ export function NotificationCenter({ compact = true }: Props) {
       </div>
 
       <ul className="max-h-[min(420px,60vh)] overflow-y-auto">
-        {loading && <li className="p-4 text-sm text-[#6f665d]">{t('common.loading')}</li>}
+        {loading && <li className="p-4 text-sm text-slate-500">{t('common.loading')}</li>}
         {!loading && items.length === 0 && (
-          <li className="p-8 text-center text-sm text-[#6f665d]">{t('notifications.empty')}</li>
+          <li className="p-8 text-center text-sm text-slate-500">{t('notifications.empty')}</li>
         )}
         {items.map((n) => (
           <li key={n.id}>
             <button
               type="button"
               className={`flex w-full gap-3 px-4 py-3 text-left hover:bg-[#fafafa] ${
-                !n.is_read ? 'bg-[rgba(201,109,44,0.07)]' : ''
+                !n.is_read ? 'bg-indigo-50/40' : ''
               }`}
               onClick={() => {
                 void markNotificationRead(n.id)
@@ -244,7 +244,7 @@ export function NotificationCenter({ compact = true }: Props) {
             >
               <span
                 className={`mt-0.5 flex h-8 w-8 items-center justify-center rounded-full ${
-                  !n.is_read ? 'bg-[rgba(201,109,44,0.14)] text-[#c96d2c]' : 'bg-[#f3f0ea] text-[#8a8178]'
+                  !n.is_read ? 'bg-indigo-100 text-indigo-700' : 'bg-[#f3f0ea] text-[#8a8178]'
                 }`}
               >
                 <TypeIcon type={n.type} />
@@ -255,7 +255,7 @@ export function NotificationCenter({ compact = true }: Props) {
                     {typeLabel(n.type, t)}
                   </span>
                   {!n.is_read ? (
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#c96d2c]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
                   ) : null}
                 </span>
                 <span className="mt-0.5 block text-[13px] font-semibold text-[#2f2a24]">

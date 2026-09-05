@@ -424,7 +424,7 @@ export function Register() {
                       <span
                         className={`flex h-10 w-10 items-center justify-center rounded-lg ${
                           selectedRole === option.role
-                            ? 'bg-[rgba(27,77,62,0.12)] text-[var(--brand-copper)]'
+                            ? 'bg-[rgba(27,77,62,0.12)] text-[var(--brand-primary)]'
                             : 'bg-[var(--bg-glass-bottom)] text-[var(--ink-600)]'
                         }`}
                       >
@@ -619,7 +619,7 @@ export function Register() {
                         setCity('')
                         setManualCity(false)
                       }}
-                      className="text-xs text-[var(--brand-copper)] underline"
+                      className="text-xs text-[var(--brand-primary)] underline"
                     >
                       {manualRegion ? t('register.selectRegion') : t('register.regionNotInList')}
                     </button>
@@ -666,7 +666,7 @@ export function Register() {
                         setManualCity((v) => !v)
                         setCity('')
                       }}
-                      className="text-xs text-[var(--brand-copper)] underline"
+                      className="text-xs text-[var(--brand-primary)] underline"
                     >
                       {manualCity ? t('register.selectCity') : t('register.cityNotInList')}
                     </button>
@@ -729,7 +729,7 @@ export function Register() {
               <button
                 onClick={() => navigateTo('/login')}
                 type="button"
-                className="font-semibold text-[var(--brand-copper)]"
+                className="font-semibold text-[var(--brand-primary)]"
               >
                 {t('footer.signIn')}
               </button>

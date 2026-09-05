@@ -89,7 +89,7 @@ export function AdBannerMediaForm({
         onDragLeave={() => setIsDragOver(false)}
         onDrop={handleDrop}
         className={
-          'relative rounded-none border-2 border-dashed transition ' +
+          'relative rounded-[22px] border-2 border-dashed transition ' +
           (isDragOver
             ? 'border-[#6366f1] bg-[rgba(99,102,241,0.05)]'
             : hasBannerMedia
@@ -101,7 +101,7 @@ export function AdBannerMediaForm({
       >
         {hasBannerMedia && uploadState.status !== 'uploading' ? (
           <div className="p-3">
-            <div className="relative overflow-hidden rounded-none">
+            <div className="relative overflow-hidden rounded-[16px]">
               <AdMediaDisplay
                 src={slideUrls[0] || mediaUrl}
                 mediaType={mediaType}
@@ -161,7 +161,7 @@ export function AdBannerMediaForm({
           >
             <div
               className={
-                'flex h-14 w-14 items-center justify-center rounded-none ' +
+                'flex h-14 w-14 items-center justify-center rounded-[20px] ' +
                 (uploadState.status === 'error'
                   ? 'bg-[rgba(239,68,68,0.10)] text-[#ef4444]'
                   : 'bg-[rgba(99,102,241,0.10)] text-[#6366f1]')

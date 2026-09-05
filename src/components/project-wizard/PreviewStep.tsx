@@ -36,7 +36,7 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
 
   return (
     <div className="space-y-5">
-      <div className="rounded-none bg-[#f3f0ea] p-5">
+      <div className="rounded-[22px] bg-[#f3f0ea] p-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
           {labels.category}
         </p>
@@ -50,7 +50,7 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
         </div>
       </div>
 
-      <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
+      <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] p-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
           {labels.description}
         </p>
@@ -60,7 +60,7 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
       </div>
 
       {state.files.length > 0 && (
-        <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
+        <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] p-5">
           <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
             {labels.media} · {state.files.length} {labels.files}
           </p>
@@ -87,7 +87,7 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
       )}
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
+        <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] p-5">
           <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
             {labels.location}
           </p>
@@ -95,7 +95,7 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
             {[state.city, state.postalCode, state.country].filter(Boolean).join(', ')}
           </p>
         </div>
-        <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
+        <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] p-5">
           <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
             {labels.budget}
           </p>
@@ -105,14 +105,14 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
         </div>
       </div>
 
-      <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
+      <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] p-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
           {labels.deadline}
         </p>
         <p className="mt-2 text-[15px] font-medium text-[#2f2a24]">{deadlineLabel}</p>
       </div>
 
-      <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
+      <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] p-5">
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
           {labels.contact}
         </p>
@@ -121,7 +121,7 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
             value={state.contactName}
             onChange={(e) => onChange({ contactName: e.target.value })}
             placeholder={labels.name}
-            className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#2f2a24]"
+            className="rounded-[14px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#2f2a24]"
           />
           {errors.contactName ? (
             <p className="text-[12px] text-[#c41e3a]">{errors.contactName}</p>
@@ -131,14 +131,14 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
               value={state.contactPhone}
               onChange={(e) => onChange({ contactPhone: e.target.value })}
               placeholder={labels.phone}
-              className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#2f2a24]"
+              className="rounded-[14px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#2f2a24]"
             />
             <input
               type="email"
               value={state.contactEmail}
               onChange={(e) => onChange({ contactEmail: e.target.value })}
               placeholder={labels.email}
-              className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#2f2a24]"
+              className="rounded-[14px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:border-[#2f2a24]"
             />
           </div>
           {errors.contactEmail ? (

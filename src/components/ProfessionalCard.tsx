@@ -133,12 +133,12 @@ export function ProfessionalCard({
     : 'glass-card flex h-full flex-col p-5'
 
   const avatarClass = compact
-    ? 'pro-card__avatar shrink-0 rounded-none object-cover'
-    : 'h-16 w-16 shrink-0 rounded-none object-cover'
+    ? 'pro-card__avatar shrink-0 rounded-[0.5rem] object-cover'
+    : 'h-16 w-16 shrink-0 rounded-[22px] object-cover'
 
   const avatarFallbackClass = compact
-    ? 'pro-card__avatar flex shrink-0 items-center justify-center rounded-none border border-[var(--glass-border)] bg-white font-bold text-[var(--accent-700)]'
-    : 'flex h-16 w-16 shrink-0 items-center justify-center rounded-none bg-[linear-gradient(135deg,rgba(255,244,234,0.95),rgba(244,186,134,0.72))] text-lg font-extrabold text-[#9a5525]'
+    ? 'pro-card__avatar flex shrink-0 items-center justify-center rounded-[0.5rem] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.42)] font-bold text-[var(--accent-700)]'
+    : 'flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-[linear-gradient(135deg,rgba(255,244,234,0.95),rgba(244,186,134,0.72))] text-lg font-extrabold text-[#9a5525]'
 
   return (
     <div className={rootClass}>
@@ -307,7 +307,7 @@ export function ProfessionalCard({
         </div>
 
         {compact && (
-          <div className="pro-card__rating inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[var(--glass-border)] bg-white font-semibold text-[#8c6728]">
+          <div className="pro-card__rating inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[var(--glass-border)] bg-[rgba(255,252,248,0.38)] font-semibold text-[#8c6728]">
             <Star className="pro-card__avatar-icon fill-current" />
             <span>{ratingLabel}</span>
           </div>

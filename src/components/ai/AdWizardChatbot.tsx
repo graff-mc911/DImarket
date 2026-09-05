@@ -57,7 +57,7 @@ export function AdWizardChatbot({ compact = false, className = '' }: Props) {
 
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_8px_32px_rgba(67,44,26,0.08)] ${compact ? 'max-h-[32rem]' : 'min-h-[28rem]'} ${className}`}
+      className={`flex flex-col overflow-hidden rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.55)] shadow-[0_8px_32px_rgba(67,44,26,0.08)] ${compact ? 'max-h-[32rem]' : 'min-h-[28rem]'} ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[rgba(148,163,184,0.15)] px-4 py-2">
@@ -80,10 +80,10 @@ export function AdWizardChatbot({ compact = false, className = '' }: Props) {
             <div className="flex max-w-[92%] flex-col gap-2">
               {/* Текст повідомлення */}
               <div
-                className={`whitespace-pre-wrap rounded-none px-3 py-2 text-sm leading-relaxed ${
+                className={`whitespace-pre-wrap rounded-[14px] px-3 py-2 text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-[#6366f1] text-white'
-                    : 'border border-[rgba(148,163,184,0.2)] bg-white text-[#2f2a24]'
+                    : 'border border-[rgba(148,163,184,0.2)] bg-white/80 text-[#2f2a24]'
                 }`}
               >
                 {msg.content}
@@ -91,7 +91,7 @@ export function AdWizardChatbot({ compact = false, className = '' }: Props) {
 
               {/* Схема слотів */}
               {msg.showSlotMap && (
-                <div className="rounded-none border border-[rgba(148,163,184,0.2)] bg-white p-2">
+                <div className="rounded-[12px] border border-[rgba(148,163,184,0.2)] bg-white/60 p-2">
                   <AdPlacementSitePreview
                     compact
                     selected={selectedSlots}
@@ -102,7 +102,7 @@ export function AdWizardChatbot({ compact = false, className = '' }: Props) {
 
               {/* Live preview банера */}
               {msg.previewImageUrl && (
-                <div className="overflow-hidden rounded-none border border-[rgba(99,102,241,0.25)]">
+                <div className="overflow-hidden rounded-[12px] border border-[rgba(99,102,241,0.25)]">
                   <p className="bg-[rgba(99,102,241,0.08)] px-2 py-1 text-[10px] font-semibold text-[#6366f1]">
                     Превʼю банера
                   </p>

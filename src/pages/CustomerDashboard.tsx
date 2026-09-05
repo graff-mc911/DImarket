@@ -153,8 +153,8 @@ export function CustomerDashboard() {
   }
 
   const card = dark
-    ? 'rounded-none border border-white/[0.08] bg-white/[0.04]'
-    : 'rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+    ? 'rounded-[22px] border border-white/[0.08] bg-white/[0.04]'
+    : 'rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
   const ink = dark ? 'text-white' : 'text-[#2f2a24]'
   const muted = dark ? 'text-white/45' : 'text-[#8a8178]'
   const soft = dark ? 'text-white/70' : 'text-[#6f665d]'

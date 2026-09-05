@@ -92,7 +92,7 @@ export function AudienceLandingPage({ config }: AudienceLandingPageProps) {
           {LAUNCH_MARKETS.map((market) => (
             <div
               key={market.id}
-              className="rounded-none border border-[var(--glass-border)] bg-white p-4"
+              className="rounded-[18px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.5)] p-4"
             >
               <div className="flex items-center gap-1.5 text-sm font-extrabold text-[var(--ink-900)]">
                 <MapPin className="h-4 w-4 text-[var(--accent-600)]" />
@@ -106,7 +106,7 @@ export function AudienceLandingPage({ config }: AudienceLandingPageProps) {
         </div>
       </section>
 
-      <section className="mt-6 rounded-none border border-[rgba(99,102,241,0.22)] bg-[rgba(99,102,241,0.06)] p-6 text-center md:p-8">
+      <section className="mt-6 rounded-[24px] border border-[rgba(99,102,241,0.22)] bg-[rgba(99,102,241,0.06)] p-6 text-center md:p-8">
         <h2 className="text-2xl font-extrabold text-[var(--ink-900)]">
           {t('landing.finalCtaTitle')}
         </h2>

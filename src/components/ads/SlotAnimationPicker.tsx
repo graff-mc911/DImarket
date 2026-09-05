@@ -51,7 +51,7 @@ export function SlotAnimationPicker({
               className={`rounded-full px-2 py-0.5 text-[9px] font-semibold disabled:opacity-40 ${
                 mode === m
                   ? 'bg-[#6366f1] text-white'
-                  : 'border border-[rgba(99,102,241,0.22)] bg-white text-[#5f5a54]'
+                  : 'border border-[rgba(99,102,241,0.22)] bg-white/70 text-[#5f5a54]'
               }`}
             >
               {t(`advertising.mediaEditor.mode.${m}`)}

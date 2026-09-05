@@ -100,7 +100,7 @@ export function Contact() {
     <div className="py-8 pb-24 lg:pb-8">
         {/* Верхній інформаційний блок сторінки. */}
         <section className="glass-panel p-6 md:p-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-white px-4 py-2 text-sm font-semibold text-[#64748b]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[#64748b]">
             <LifeBuoy className="h-4 w-4" />
             <span>{t('contact.eyebrow')}</span>
           </div>
@@ -160,7 +160,7 @@ export function Contact() {
 
             {feedback && (
               <div
-                className={`mt-5 rounded-none px-4 py-3 text-sm ${
+                className={`mt-5 rounded-[20px] px-4 py-3 text-sm ${
                   feedback.type === 'error'
                     ? 'border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a]'
                     : 'border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] text-[#3d7a52]'

@@ -172,7 +172,7 @@ export function ReviewFormV2({ professionalId, listingId, onSuccess }: Props) {
       <button
         type="submit"
         disabled={submitting || uploading}
-        className="w-full rounded-full bg-[#2f2a24] py-3 text-sm font-bold text-white disabled:opacity-60"
+        className="w-full rounded-full bg-indigo-600 py-3 text-sm font-bold text-white disabled:opacity-60"
       >
         {submitting ? t('common.loading') : t('reviews.submit')}
       </button>

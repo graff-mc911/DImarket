@@ -71,7 +71,7 @@ export function BoostProfile() {
             </div>
 
             {error && (
-              <div className="rounded-none border p-4 text-sm font-semibold"
+              <div className="rounded-[20px] border p-4 text-sm font-semibold"
                 style={{ background: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.3)', color: '#b91c1c' }}>
                 {error}
               </div>
@@ -80,7 +80,7 @@ export function BoostProfile() {
             {/* Преміум профіль */}
             <div className="glass-card p-6">
               <div className="flex items-center gap-3 mb-5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-none"
+                <div className="flex h-10 w-10 items-center justify-center rounded-[14px]"
                   style={{ background: 'rgba(199,138,96,0.14)', color: 'var(--accent-700)' }}>
                   <Star className="h-5 w-5 fill-current" />
                 </div>
@@ -117,7 +117,7 @@ export function BoostProfile() {
                   const alreadyHas = profile?.is_premium && !isExpired
 
                   return (
-                    <div key={pkg.id} className="rounded-none border p-5"
+                    <div key={pkg.id} className="rounded-[22px] border p-5"
                       style={{ borderColor: 'var(--glass-border)', background: 'rgba(255,255,255,0.4)' }}>
                       <div className="text-lg font-extrabold" style={{ color: 'var(--ink-900)' }}>
                         {pkg.price_eur}€
@@ -155,7 +155,7 @@ export function BoostProfile() {
             {verifiedPackage && (
               <div className="glass-card p-6">
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-none"
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[14px]"
                     style={{ background: 'rgba(34,197,94,0.12)', color: '#15803d' }}>
                     <ShieldCheck className="h-5 w-5" />
                   </div>

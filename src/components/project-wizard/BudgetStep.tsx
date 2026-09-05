@@ -30,7 +30,7 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
               onChange(min, Math.max(min, budgetMax))
             }}
             className={
-              'w-full rounded-none border bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:bg-white ' +
+              'w-full rounded-[14px] border bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:bg-white ' +
               (errors.budgetMin ? 'border-[#c41e3a]' : 'border-[rgba(148,163,184,0.22)] focus:border-[#2f2a24]')
             }
           />
@@ -49,7 +49,7 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
               onChange(Math.min(budgetMin, max), max)
             }}
             className={
-              'w-full rounded-none border bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:bg-white ' +
+              'w-full rounded-[14px] border bg-[#fafafa] px-4 py-3 text-[15px] outline-none focus:bg-white ' +
               (errors.budgetMax ? 'border-[#c41e3a]' : 'border-[rgba(148,163,184,0.22)] focus:border-[#2f2a24]')
             }
           />
@@ -57,7 +57,7 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
         </div>
       </div>
 
-      <div className="space-y-4 rounded-none bg-[#f3f0ea] px-5 py-6">
+      <div className="space-y-4 rounded-[20px] bg-[#f3f0ea] px-5 py-6">
         <div>
           <p className="mb-2 text-[12px] font-medium text-[#8a8178]">{labels.min}</p>
           <input

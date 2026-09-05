@@ -191,7 +191,7 @@ export function Favorites() {
       <div className="py-10">
         <div className="mx-auto max-w-2xl">
           <div className="glass-panel p-8 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-none bg-[rgba(242,171,116,0.18)]" style={{ color: 'var(--accent-700)' }}>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[rgba(242,171,116,0.18)]" style={{ color: 'var(--accent-700)' }}>
               <Bookmark className="h-8 w-8" />
             </div>
             <h1 className="mt-5 text-2xl font-extrabold" style={{ color: 'var(--ink-900)' }}>
@@ -200,11 +200,11 @@ export function Favorites() {
             <p className="muted-text mx-auto mt-4 max-w-md text-sm leading-7">
               Функція збережених потребує таблицю <code className="rounded bg-[rgba(0,0,0,0.06)] px-1.5 py-0.5 text-xs">saved_items</code> у вашій базі Supabase.
             </p>
-            <div className="mt-6 rounded-none border border-[var(--glass-border)] bg-white p-5 text-left">
+            <div className="mt-6 rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.4)] p-5 text-left">
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--ink-500)' }}>
                 SQL для створення таблиці
               </p>
-              <pre className="mt-3 overflow-x-auto rounded-none bg-[rgba(0,0,0,0.05)] p-4 text-xs leading-relaxed" style={{ color: 'var(--ink-900)' }}>
+              <pre className="mt-3 overflow-x-auto rounded-[14px] bg-[rgba(0,0,0,0.05)] p-4 text-xs leading-relaxed" style={{ color: 'var(--ink-900)' }}>
 {`CREATE TABLE saved_items (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
@@ -419,11 +419,11 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                                   <img
                                     src={profile.profile_photo || profile.avatar_url || ''}
                                     alt={profile.full_name || ''}
-                                    className="h-12 w-12 shrink-0 rounded-none object-cover"
+                                    className="h-12 w-12 shrink-0 rounded-[14px] object-cover"
                                   />
                                 ) : (
                                   <div
-                                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-none text-sm font-bold"
+                                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] text-sm font-bold"
                                     style={{ background: 'rgba(199,138,96,0.15)', color: 'var(--accent-700)' }}
                                   >
                                     {initials}

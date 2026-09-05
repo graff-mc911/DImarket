@@ -156,7 +156,7 @@ export function BookProfessional({ profileId }: Props) {
 
   return (
     <div className="min-h-screen bg-[#f3f0ea]">
-      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white/80 backdrop-blur">
         <div className="mx-auto max-w-3xl px-4 py-4">
           <button
             type="button"
@@ -175,7 +175,7 @@ export function BookProfessional({ profileId }: Props) {
       </div>
 
       <div className="mx-auto max-w-3xl space-y-4 px-4 py-6">
-        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5">
+        <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-4 flex items-center justify-between">
             <button
               type="button"
@@ -234,7 +234,7 @@ export function BookProfessional({ profileId }: Props) {
           )}
         </section>
 
-        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5">
+        <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5">
           <h3 className="text-[15px] font-semibold text-[#2f2a24]">Time</h3>
           {!selectedDate ? (
             <p className="mt-2 text-[13px] text-[#8a8178]">Select a date first</p>

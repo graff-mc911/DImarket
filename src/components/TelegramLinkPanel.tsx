@@ -52,7 +52,7 @@ export function TelegramLinkPanel({
   }
 
   return (
-    <div className="mt-6 rounded-none border border-[rgba(99,102,241,0.2)] bg-[rgba(99,102,241,0.05)] p-4">
+    <div className="mt-6 rounded-[16px] border border-[rgba(99,102,241,0.2)] bg-[rgba(99,102,241,0.05)] p-4">
       <div className="flex items-center gap-2">
         <MessageCircle className="h-5 w-5 text-[#4338ca]" />
         <span className="font-semibold text-[#2f2a24]">{t('settings.telegramTitle')}</span>
@@ -65,13 +65,13 @@ export function TelegramLinkPanel({
         <p className="mt-3 text-sm text-[#6f665d]">{t('common.loading')}</p>
       ) : (
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <code className="rounded-lg bg-white px-3 py-1.5 text-sm font-mono text-[#4338ca]">
+          <code className="rounded-lg bg-white/80 px-3 py-1.5 text-sm font-mono text-[#4338ca]">
             {linkCommand}
           </code>
           <button
             type="button"
             onClick={() => void copyCommand()}
-            className="inline-flex items-center gap-1 rounded-full border border-[rgba(99,102,241,0.3)] bg-white px-3 py-1.5 text-xs font-semibold text-[#4338ca]"
+            className="inline-flex items-center gap-1 rounded-full border border-[rgba(99,102,241,0.3)] bg-white/70 px-3 py-1.5 text-xs font-semibold text-[#4338ca]"
           >
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             {copied ? t('referral.copied') : t('settings.telegramCopy')}

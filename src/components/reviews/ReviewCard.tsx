@@ -91,7 +91,7 @@ export function ReviewCard({
   const isOwnerReply = (authorId: string) => authorId === professionalId
 
   return (
-    <article className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+    <article className="rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -136,7 +136,7 @@ export function ReviewCard({
               >
                 <video src={m.url} className="h-full w-full object-cover" muted preload="metadata" />
                 <span className="absolute inset-0 flex items-center justify-center">
-                  <span className="rounded-full bg-white p-1.5">
+                  <span className="rounded-full bg-white/90 p-1.5">
                     <Play className="h-3.5 w-3.5 text-[#2f2a24]" />
                   </span>
                 </span>

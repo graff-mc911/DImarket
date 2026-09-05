@@ -110,7 +110,7 @@ export function ReviewFeed({
       ) : null}
 
       {showForm && formDone ? (
-        <div className="rounded-none border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] font-medium text-emerald-800">
+        <div className="rounded-[18px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] font-medium text-emerald-800">
           Thanks! Your review was saved.
         </div>
       ) : null}

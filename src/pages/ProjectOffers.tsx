@@ -217,11 +217,11 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-28 animate-pulse rounded-none bg-white" />
+              <div key={i} className="h-28 animate-pulse rounded-[20px] bg-white" />
             ))}
           </div>
         ) : offers.length === 0 ? (
-          <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
+          <div className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
             <p className="text-[15px] text-[#8a8178]">
               {t('pipeline.offersEmpty' as never) ||
                 'No quotes yet. Pros respond Ready / Need inspection / Decline, then send offers.'}
@@ -242,7 +242,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
               return (
                 <li
                   key={o.quoteId}
-                  className={`rounded-none border bg-white p-4 md:p-5 ${
+                  className={`rounded-[20px] border bg-white p-4 md:p-5 ${
                     i === 0 && !hired ? 'border-[#2f2a24]' : 'border-[rgba(148,163,184,0.22)]'
                   }`}
                 >

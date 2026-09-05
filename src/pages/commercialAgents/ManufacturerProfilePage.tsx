@@ -137,7 +137,7 @@ export function ManufacturerProfilePage({ slug }: { slug: string }) {
               {item.description || t('commercialAgents.noDescription')}
             </p>
 
-            <section className="mt-8 rounded-2xl border border-[var(--line-200)] bg-white p-5">
+            <section className="mt-8 rounded-2xl border border-[var(--line-200)] bg-white/90 p-5">
               <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('commercialAgents.representationBlock')}</h2>
               <dl className="mt-4 grid gap-3 sm:grid-cols-2">
                 <Fact label={t('commercialAgents.countriesAvailable')} value={item.countries_available.join(', ') || item.country} />
@@ -220,7 +220,7 @@ export function ManufacturerProfilePage({ slug }: { slug: string }) {
 
           <aside className="space-y-4">
             {matchPanel ? <MatchScorePanel match={matchPanel} t={t} /> : null}
-            <div className="rounded-2xl border border-[var(--line-200)] bg-white p-4">
+            <div className="rounded-2xl border border-[var(--line-200)] bg-white/95 p-4">
               <button
                 type="button"
                 onClick={() => navigateTo(findAgentsPath)}

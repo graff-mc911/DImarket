@@ -41,20 +41,20 @@ function Receipt({ mine, status, isRead }: { mine: boolean; status?: string | nu
   const delivered = read || status === 'delivered'
   if (read) {
     return (
-      <span className="ml-1 inline-flex items-center gap-0.5 text-white/70" title="Read">
+      <span className="ml-1 inline-flex items-center gap-0.5 text-indigo-200" title="Read">
         <CheckCheck className="h-3 w-3" />
       </span>
     )
   }
   if (delivered) {
     return (
-      <span className="ml-1 inline-flex items-center gap-0.5 text-white/70" title="Delivered">
+      <span className="ml-1 inline-flex items-center gap-0.5 text-indigo-200" title="Delivered">
         <CheckCheck className="h-3 w-3 opacity-70" />
       </span>
     )
   }
   return (
-    <span className="ml-1 inline-flex items-center gap-0.5 text-white/70" title="Sent">
+    <span className="ml-1 inline-flex items-center gap-0.5 text-indigo-200" title="Sent">
       <Check className="h-3 w-3" />
     </span>
   )
@@ -104,7 +104,7 @@ function AttachmentBlock({
             href={a.public_url}
             target="_blank"
             rel="noreferrer"
-            className={`mb-2 flex items-center gap-2 underline ${mine ? 'text-white/85' : ''}`}
+            className={`mb-2 flex items-center gap-2 underline ${mine ? 'text-indigo-100' : ''}`}
           >
             <Paperclip className="h-4 w-4" />
             {a.file_name || (a.attachment_type === 'pdf' ? 'PDF' : 'File')}
@@ -249,10 +249,10 @@ export function ChatMessenger({ bootstrap }: Props) {
         {t('header.messages')}
       </h1>
 
-      <div className="glass-panel overflow-hidden rounded-none border border-[var(--glass-border)] shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+      <div className="glass-panel overflow-hidden rounded-[28px] border border-[var(--glass-border)] shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
         <div className="flex min-h-[520px] md:min-h-[600px]">
           <aside
-            className={`w-full shrink-0 border-r border-[var(--glass-border)] bg-white md:w-[320px] lg:w-[360px] ${
+            className={`w-full shrink-0 border-r border-[var(--glass-border)] bg-[rgba(255,255,255,0.35)] md:w-[320px] lg:w-[360px] ${
               showChat ? 'hidden md:block' : 'block'
             }`}
           >
@@ -284,12 +284,12 @@ export function ChatMessenger({ bootstrap }: Props) {
                           </span>
                         </div>
                         {conv.listing_title && (
-                          <p className="mt-0.5 truncate text-xs text-[#c96d2c]">{conv.listing_title}</p>
+                          <p className="mt-0.5 truncate text-xs text-indigo-600">{conv.listing_title}</p>
                         )}
                         <p className="mt-1 truncate text-sm text-slate-600">{conv.last_message}</p>
                       </div>
                       {conv.unread_count > 0 && (
-                        <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-[#2f2a24] px-1.5 text-xs font-bold text-white">
+                        <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-indigo-600 px-1.5 text-xs font-bold text-white">
                           {conv.unread_count > 9 ? '9+' : conv.unread_count}
                         </span>
                       )}
@@ -301,7 +301,7 @@ export function ChatMessenger({ bootstrap }: Props) {
           </aside>
 
           <section
-            className={`flex min-w-0 flex-1 flex-col bg-white ${
+            className={`flex min-w-0 flex-1 flex-col bg-[rgba(255,255,255,0.5)] ${
               showChat ? 'flex' : 'hidden md:flex'
             }`}
           >
@@ -323,7 +323,7 @@ export function ChatMessenger({ bootstrap }: Props) {
                   <div className="min-w-0 flex-1">
                     <p className="font-bold text-[var(--ink-900)]">{chat.active.other_user_name}</p>
                     {chat.active.listing_title && (
-                      <p className="truncate text-xs text-[#c96d2c]">{chat.active.listing_title}</p>
+                      <p className="truncate text-xs text-indigo-600">{chat.active.listing_title}</p>
                     )}
                     {chat.active.typing_user_id && chat.active.typing_user_id !== user.id ? (
                       <p className="animate-pulse text-xs text-emerald-600">{t('messages.typing')}</p>
@@ -359,7 +359,7 @@ export function ChatMessenger({ bootstrap }: Props) {
                           <div
                             className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${
                               mine
-                                ? 'bg-[#2f2a24] text-white'
+                                ? 'bg-indigo-600 text-white'
                                 : 'border border-slate-200 bg-white text-slate-800'
                             }`}
                           >
@@ -369,7 +369,7 @@ export function ChatMessenger({ bootstrap }: Props) {
                             ) : null}
                             <p
                               className={`mt-1 flex items-center text-[10px] ${
-                                mine ? 'text-white/70' : 'text-slate-400'
+                                mine ? 'text-indigo-200' : 'text-slate-400'
                               }`}
                             >
                               {formatTime(msg.created_at)}
@@ -436,13 +436,13 @@ export function ChatMessenger({ bootstrap }: Props) {
                       }}
                       rows={1}
                       placeholder={t('messages.placeholder')}
-                      className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[rgba(201,109,44,0.55)]"
+                      className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-400"
                     />
                     <button
                       type="button"
                       disabled={chat.sending || !newMessage.trim()}
                       onClick={() => void handleSend()}
-                      className="rounded-2xl bg-[#2f2a24] p-3 text-white disabled:opacity-50"
+                      className="rounded-2xl bg-indigo-600 p-3 text-white disabled:opacity-50"
                     >
                       <Send className="h-5 w-5" />
                     </button>

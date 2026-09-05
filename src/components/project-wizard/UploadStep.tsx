@@ -69,7 +69,7 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
         }}
         onClick={() => inputRef.current?.click()}
         className={
-          'flex cursor-pointer flex-col items-center justify-center rounded-none border-2 border-dashed px-4 py-12 text-center transition ' +
+          'flex cursor-pointer flex-col items-center justify-center rounded-[24px] border-2 border-dashed px-4 py-12 text-center transition ' +
           (dragOver
             ? 'border-[#2f2a24] bg-[#f3f0ea]'
             : 'border-[rgba(148,163,184,0.35)] bg-[#fafafa] hover:border-[#aeaeb2]')
@@ -97,7 +97,7 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
           {files.map((f, i) => (
             <li
               key={f.previewUrl}
-              className="relative overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa]"
+              className="relative overflow-hidden rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa]"
             >
               {f.kind === 'photo' ? (
                 <img src={f.previewUrl} alt="" className="aspect-square w-full object-cover" />

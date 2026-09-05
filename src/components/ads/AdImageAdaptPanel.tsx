@@ -114,11 +114,11 @@ export function AdImageAdaptPanel({ userId, campaignId, onVariantsReady }: AdIma
   }
 
   return (
-    <div className="rounded-none border border-[rgba(99,102,241,0.2)] bg-[rgba(99,102,241,0.04)] p-4">
+    <div className="rounded-[20px] border border-[rgba(99,102,241,0.2)] bg-[rgba(99,102,241,0.04)] p-4">
       <p className="text-sm font-bold text-[#2f2a24]">{t('ai.adImage.title')}</p>
       <p className="mt-1 text-[11px] text-[#6f665d]">{t('ai.adImage.desc')}</p>
 
-      <label className="mt-3 flex cursor-pointer flex-col items-center justify-center rounded-none border border-dashed border-[rgba(99,102,241,0.35)] py-8">
+      <label className="mt-3 flex cursor-pointer flex-col items-center justify-center rounded-[16px] border border-dashed border-[rgba(99,102,241,0.35)] py-8">
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
@@ -162,7 +162,7 @@ export function AdImageAdaptPanel({ userId, campaignId, onVariantsReady }: AdIma
         <div className="mt-4 grid grid-cols-2 gap-2">
           {AD_IMAGE_VARIANTS.map((spec) => (
             <div key={spec.key} className="overflow-hidden rounded-lg border border-[rgba(148,163,184,0.2)]">
-              <p className="bg-white px-2 py-0.5 text-[9px] font-semibold">{t(spec.labelKey as TranslationKey)}</p>
+              <p className="bg-white/80 px-2 py-0.5 text-[9px] font-semibold">{t(spec.labelKey as TranslationKey)}</p>
               {previews[spec.key] ? (
                 <img src={previews[spec.key]} alt="" className="h-20 w-full object-cover" />
               ) : (

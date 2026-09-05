@@ -112,7 +112,7 @@ export function AdMediaEditor({
 
   const shellClass = compact
     ? 'space-y-3'
-    : 'space-y-4 rounded-none border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-4'
+    : 'space-y-4 rounded-[20px] border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-4'
 
   return (
     <div className={shellClass}>
@@ -143,7 +143,7 @@ export function AdMediaEditor({
           {t('advertising.mediaEditor.autoFitHint')}
         </p>
         <div
-          className={`relative mt-3 w-full overflow-hidden rounded-none border border-[rgba(99,102,241,0.25)] ${previewAspectClass}`}
+          className={`relative mt-3 w-full overflow-hidden rounded-[16px] border border-[rgba(99,102,241,0.25)] ${previewAspectClass}`}
         >
           {hasMedia ? (
             <AdMediaDisplay
@@ -259,7 +259,7 @@ export function AdMediaEditor({
               return (
                 <div
                   key={lk}
-                  className="rounded-none border border-[rgba(148,163,184,0.18)] bg-white/40 p-3"
+                  className="rounded-[14px] border border-[rgba(148,163,184,0.18)] bg-white/40 p-3"
                 >
                   {!compact && (
                   <div className="flex flex-wrap items-center justify-between gap-2">

@@ -58,7 +58,7 @@ export function EstimatorResultsMap({
           {t('costEstimator.openFullMap')}
         </button>
       </div>
-      <div className={`overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] ${heightClassName}`}>
+      <div className={`overflow-hidden rounded-[22px] border border-[rgba(148,163,184,0.22)] ${heightClassName}`}>
         <EuropeMarketplaceMap
           markers={markers}
           geo={location}

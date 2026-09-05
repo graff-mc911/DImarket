@@ -205,7 +205,7 @@ export function AiAssistant() {
                   key={tool.id}
                   type="button"
                   onClick={() => selectTool(tool)}
-                  className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 text-left shadow-sm transition hover:border-[#2f2a24]"
+                  className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 text-left shadow-sm transition hover:border-[#2f2a24]"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f0ea] text-[#2f2a24]">
                     <Icon className="h-5 w-5" />
@@ -230,7 +230,7 @@ export function AiAssistant() {
               All tools
             </button>
 
-            <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm sm:p-6">
+            <div className="rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm sm:p-6">
               <div className="flex items-start gap-3">
                 {activeTool ? (
                   <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f0ea]">
@@ -432,7 +432,7 @@ export function AiAssistant() {
               </div>
 
               {result ? (
-                <div className="mt-5 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-4">
+                <div className="mt-5 rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-4">
                   <div className="mb-2 flex items-center justify-between gap-2">
                     <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8a8178]">
                       Result {fallback ? '· offline fallback' : ''}

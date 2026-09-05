@@ -176,7 +176,7 @@ export function PortfolioManager({
       ) : null}
 
       {openForm && editable ? (
-        <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
+        <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
           <h3 className="text-[16px] font-semibold text-[#2f2a24]">
             {editingId ? 'Edit project' : 'New portfolio project'}
           </h3>

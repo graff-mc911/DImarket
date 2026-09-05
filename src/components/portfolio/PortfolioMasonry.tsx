@@ -84,7 +84,7 @@ export function PortfolioMasonry({
 
   if (!filtered.length) {
     return (
-      <div className="rounded-none border border-dashed border-[rgba(148,163,184,0.35)] bg-white/60 px-6 py-14 text-center">
+      <div className="rounded-[20px] border border-dashed border-[rgba(148,163,184,0.35)] bg-white/60 px-6 py-14 text-center">
         <Images className="mx-auto h-10 w-10 text-[rgba(148,163,184,0.35)]" />
         <p className="mt-3 text-[14px] font-semibold text-[#2f2a24]">No portfolio items yet</p>
         <p className="mt-1 text-[13px] text-[#8a8178]">
@@ -108,7 +108,7 @@ export function PortfolioMasonry({
           return (
             <article
               key={item.id}
-              className="mb-3 break-inside-avoid overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+              className="mb-3 break-inside-avoid overflow-hidden rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
             >
               <button
                 type="button"
@@ -238,7 +238,7 @@ export function PortfolioMasonry({
           onClick={() => setLightbox(null)}
         >
           <div
-            className="relative max-h-[90vh] w-full max-w-3xl overflow-auto rounded-none bg-white p-4 shadow-2xl"
+            className="relative max-h-[90vh] w-full max-w-3xl overflow-auto rounded-[24px] bg-white p-4 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button

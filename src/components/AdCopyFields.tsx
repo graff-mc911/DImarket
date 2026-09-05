@@ -17,7 +17,7 @@ export function AdCopyField({ icon, label, hint, required, children }: AdCopyFie
   return (
     <div className="glass-card p-4">
       <div className="mb-3 flex items-start gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-none border border-[var(--glass-border)] bg-white text-[var(--accent-700)]">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] text-[var(--accent-700)]">
           {icon}
         </div>
         <div className="min-w-0 flex-1">

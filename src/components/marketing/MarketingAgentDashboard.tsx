@@ -327,7 +327,7 @@ export function MarketingAgentDashboard() {
                 {posts.map((post) => (
                   <li
                     key={post.id}
-                    className="rounded-none border border-[#e7ddd3] bg-white p-3 text-sm"
+                    className="rounded-[12px] border border-[#e7ddd3] bg-white/60 p-3 text-sm"
                   >
                     <div className="mb-1 flex flex-wrap gap-2 text-xs font-semibold uppercase text-[#9a8776]">
                       <span>{post.platform}</span>

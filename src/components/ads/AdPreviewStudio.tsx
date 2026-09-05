@@ -214,7 +214,7 @@ export function AdPreviewStudio({
       </div>
 
       {editable && mediaReady && canMulti && onMediaStyleChange && (
-        <div className="mt-4 space-y-3 rounded-none border border-[rgba(148,163,184,0.2)] bg-white/35 p-3">
+        <div className="mt-4 space-y-3 rounded-[16px] border border-[rgba(148,163,184,0.2)] bg-white/35 p-3">
           <p className="text-xs font-bold text-[#2f2a24]">{t('advertising.previewStudio.imagesTitle')}</p>
           <p className="text-[10px] leading-snug text-[#9a8776]">{t('advertising.previewStudio.imagesHint')}</p>
           <div className="flex flex-wrap gap-2">
@@ -264,7 +264,7 @@ export function AdPreviewStudio({
       )}
 
       {editable && mediaReady && onMediaStyleChange && (
-        <div className="mt-3 space-y-3 rounded-none border border-[rgba(148,163,184,0.2)] bg-white/35 p-3">
+        <div className="mt-3 space-y-3 rounded-[16px] border border-[rgba(148,163,184,0.2)] bg-white/35 p-3">
           <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
             {t('advertising.previewStudio.displayTitle')}
           </p>

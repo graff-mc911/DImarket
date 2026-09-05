@@ -321,13 +321,13 @@ export function AdPerSlotMediaEditor({
       )}
 
       {(slotHint || slotUpload.lastError) && (
-        <p className="rounded-none border border-[rgba(245,158,11,0.35)] bg-[rgba(255,251,235,0.95)] px-3 py-2 text-xs font-semibold text-[#b45309]">
+        <p className="rounded-[12px] border border-[rgba(245,158,11,0.35)] bg-[rgba(255,251,235,0.95)] px-3 py-2 text-xs font-semibold text-[#b45309]">
           {slotHint || slotUpload.lastError}
         </p>
       )}
 
       {selectedSlots.length === 0 && (
-        <p className="rounded-none border border-[rgba(245,158,11,0.35)] bg-[rgba(255,251,235,0.95)] px-3 py-2 text-sm font-semibold text-[#b45309]">
+        <p className="rounded-[12px] border border-[rgba(245,158,11,0.35)] bg-[rgba(255,251,235,0.95)] px-3 py-2 text-sm font-semibold text-[#b45309]">
           {t('advertising.slotMedia.selectSlotsFirst')}
         </p>
       )}
@@ -336,7 +336,7 @@ export function AdPerSlotMediaEditor({
         <>
         <AdPlacementCompactMap {...mapProps} />
         {focusedSlotId && onSelectedSlotsChange && (
-          <div className="flex flex-wrap items-center gap-2 rounded-none border border-white/40 bg-white/30 px-3 py-2">
+          <div className="flex flex-wrap items-center gap-2 rounded-[14px] border border-white/40 bg-white/30 px-3 py-2">
             <span className="text-xs font-semibold text-[#2f2a24]">
               {formatSlotLabel(focusedSlotId, t)}
             </span>
@@ -375,7 +375,7 @@ export function AdPerSlotMediaEditor({
           </div>
         )}
         {slotsWithMediaOnPage.length > 0 ? (
-          <div className="rounded-none border border-[rgba(148,163,184,0.18)] bg-white/35 p-2.5">
+          <div className="rounded-[12px] border border-[rgba(148,163,184,0.18)] bg-white/35 p-2.5">
             <p className="text-[10px] font-bold uppercase tracking-wide text-[#6f665d]">
               {t('advertising.slotStudio.animationTitle')}
             </p>
@@ -385,7 +385,7 @@ export function AdPerSlotMediaEditor({
                 return (
                   <div
                     key={slotId}
-                    className="rounded-none border border-[rgba(148,163,184,0.15)] bg-white/50 p-2"
+                    className="rounded-[10px] border border-[rgba(148,163,184,0.15)] bg-white/50 p-2"
                   >
                     <p className="text-[10px] font-semibold text-[#2f2a24]">
                       {formatSlotLabel(slotId, t)}
@@ -409,7 +409,7 @@ export function AdPerSlotMediaEditor({
       ) : (
         <>
       <div className="grid gap-3 lg:grid-cols-[minmax(0,220px)_1fr]">
-        <aside className="order-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.45)] p-3 lg:order-1">
+        <aside className="order-2 rounded-[16px] border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.45)] p-3 lg:order-1">
           <p className="text-[10px] font-bold uppercase tracking-wide text-[#6f665d]">
             {t('advertising.slotStudio.animationTitle')}
           </p>
@@ -454,7 +454,7 @@ export function AdPerSlotMediaEditor({
       </div>
 
       {focusedSlotId && (
-        <div className="flex flex-wrap items-center gap-2 rounded-none border border-white/40 bg-white/30 px-3 py-2">
+        <div className="flex flex-wrap items-center gap-2 rounded-[14px] border border-white/40 bg-white/30 px-3 py-2">
           <span className="text-xs font-semibold text-[#2f2a24]">
             {formatSlotLabel(focusedSlotId, t)}
           </span>
@@ -494,7 +494,7 @@ export function AdPerSlotMediaEditor({
       )}
 
       {slotsWithMediaOnPage.length > 0 ? (
-        <div className="rounded-none border border-[rgba(148,163,184,0.18)] bg-white/35 p-2.5">
+        <div className="rounded-[12px] border border-[rgba(148,163,184,0.18)] bg-white/35 p-2.5">
           <p className="text-[10px] font-bold uppercase tracking-wide text-[#6f665d]">
             {t('advertising.slotStudio.animationTitle')}
           </p>
@@ -504,7 +504,7 @@ export function AdPerSlotMediaEditor({
               return (
                 <div
                   key={slotId}
-                  className="rounded-none border border-[rgba(148,163,184,0.15)] bg-white/50 p-2"
+                  className="rounded-[10px] border border-[rgba(148,163,184,0.15)] bg-white/50 p-2"
                 >
                   <p className="text-[10px] font-semibold text-[#2f2a24]">
                     {formatSlotLabel(slotId, t)}

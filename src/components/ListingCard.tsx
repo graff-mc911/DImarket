@@ -212,7 +212,7 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
             onClick={toggleSave}
             disabled={savingInProgress}
             title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
-            className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-white text-[var(--ink-500)] shadow-sm transition hover:bg-white disabled:opacity-50"
+            className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[var(--ink-500)] shadow-sm transition hover:bg-white disabled:opacity-50"
             style={isSaved ? { color: '#ef4444' } : undefined}
           >
             <Heart

@@ -108,7 +108,7 @@ const EstimatorResultsMap = lazyWithRetry(() =>
 )
 
 const field =
-  'w-full rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:bg-white focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]'
+  'w-full rounded-[14px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-4 py-3 text-[15px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:bg-white focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]'
 
 const PREFILL_KEY = ESTIMATOR_PREFILL_KEY
 
@@ -1087,7 +1087,7 @@ export function CostEstimator() {
                 key={id}
                 type="button"
                 onClick={() => setTier(id)}
-                className={`rounded-none border p-5 text-left transition ${
+                className={`rounded-[22px] border p-5 text-left transition ${
                   tier === id
                     ? 'border-[#2f2a24] bg-[#2f2a24] text-white shadow-[0_8px_30px_rgba(0,0,0,0.12)]'
                     : 'border-[rgba(148,163,184,0.22)] bg-white text-[#2f2a24] hover:border-[rgba(148,163,184,0.35)]'
@@ -1113,7 +1113,7 @@ export function CostEstimator() {
           </div>
 
           {/* Metrics */}
-          <div className="grid gap-3 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 sm:grid-cols-4">
+          <div className="grid gap-3 rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-white p-5 sm:grid-cols-4">
             <Metric icon={<Hammer className="h-4 w-4" />} label={t('costEstimator.labor')} value={formatEuro(totals.labor)} />
             <Metric icon={<Package className="h-4 w-4" />} label={t('costEstimator.materials')} value={formatEuro(totals.materials)} />
             <Metric icon={<Wallet className="h-4 w-4" />} label={t('costEstimator.equipment')} value={formatEuro(totals.equipment)} />
@@ -1415,7 +1415,7 @@ export function CostEstimator() {
             )}
           </Section>
 
-          <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3 shadow-[0_8px_40px_rgba(0,0,0,0.1)]">
+          <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-white/95 p-3 shadow-[0_8px_40px_rgba(0,0,0,0.1)] backdrop-blur">
             <button
               type="button"
               onClick={requestQuotes}
@@ -1587,7 +1587,7 @@ export function CostEstimator() {
       {state.step === 3 && (
         <div>
           <div
-            className="rounded-none border-2 border-dashed border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-4 py-10 text-center"
+            className="rounded-[18px] border-2 border-dashed border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-4 py-10 text-center"
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault()
@@ -1792,7 +1792,7 @@ export function CostEstimator() {
             const analyst = buildAnalystQuestions(state, state.clarifications || {})
             if (!analyst.missing.length && !analyst.workHints.length) return null
             return (
-              <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-4">
+              <div className="rounded-[18px] border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-4">
                 <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8a8178]">
                   AI Analyst
                 </p>
@@ -1895,7 +1895,7 @@ function NumField({
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+    <section className="rounded-[24px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
       <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
         {title}
       </h2>
@@ -1993,7 +1993,7 @@ function MatchPickCard({
   const asProfile = profile as unknown as Profile
   return (
     <div
-      className={`relative rounded-none border p-2 transition ${
+      className={`relative rounded-[20px] border p-2 transition ${
         selected ? 'border-[#2f2a24] ring-2 ring-[#2f2a24]/ring-offset-2' : 'border-[rgba(148,163,184,0.22)]'
       }`}
     >
