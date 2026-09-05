@@ -710,7 +710,7 @@ export function Settings() {
                     </div>
 
                     {isProfessional && (
-                      <div className="rounded-none border border-[rgba(99,102,241,0.12)] bg-white/30 p-4">
+                      <div className="rounded-none border border-[rgba(99,102,241,0.12)] bg-white p-4">
                         <p className="text-sm font-bold text-[#2f2a24]">
                           {t('settings.workSubcategoriesTitle')}
                         </p>
@@ -776,7 +776,7 @@ export function Settings() {
                           onChange={(event) =>
                             setPreferredLanguage(event.target.value as LanguageOption['code'])
                           }
-                          className="select-glass bg-white/80"
+                          className="select-glass bg-white"
                         >
                           {LANGUAGES.map((item) => (
                             <option key={item.code} value={item.code}>
@@ -797,7 +797,7 @@ export function Settings() {
                           onChange={(event) =>
                             setPreferredCurrency(event.target.value as CurrencyOption['code'])
                           }
-                          className="select-glass bg-white/80"
+                          className="select-glass bg-white"
                         >
                           {CURRENCIES.map((item) => (
                             <option key={item.code} value={item.code}>
@@ -835,7 +835,7 @@ export function Settings() {
                     </div>
 
                     {notificationsEnabled ? (
-                      <div className="mt-5 space-y-4 rounded-2xl border border-[rgba(190,168,150,0.28)] bg-white/50 p-4">
+                      <div className="mt-5 space-y-4 rounded-2xl border border-[rgba(190,168,150,0.28)] bg-white p-4">
                         <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
                           {t('settings.notifChannels')}
                         </p>

@@ -50,7 +50,7 @@ export function LaunchCitiesBanner() {
                 key={market.id}
                 type="button"
                 onClick={() => navigateTo(`/listings?search=${encodeURIComponent(market.city)}`)}
-                className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--ink-700)] transition hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--ink-700)] transition hover:border-[var(--brand-primary)] hover:text-[var(--brand-copper)]"
               >
                 <span>{market.city}</span>
                 {loading ? (
@@ -68,7 +68,7 @@ export function LaunchCitiesBanner() {
               key={link.path}
               type="button"
               onClick={() => navigateTo(link.path)}
-              className="rounded-full border border-dashed border-[var(--glass-border)] px-2.5 py-1 text-[10px] font-semibold text-[var(--ink-500)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]"
+              className="rounded-full border border-dashed border-[var(--glass-border)] px-2.5 py-1 text-[10px] font-semibold text-[var(--ink-500)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-copper)]"
             >
               {link.city} · {tStored(t, link.labelKey)}
             </button>

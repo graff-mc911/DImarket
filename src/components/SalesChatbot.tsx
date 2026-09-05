@@ -49,7 +49,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
 
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.55)] shadow-[0_8px_32px_rgba(67,44,26,0.08)] ${compact ? 'max-h-[32rem]' : 'min-h-[28rem]'} ${className}`}
+      className={`flex flex-col overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_8px_32px_rgba(67,44,26,0.08)] ${compact ? 'max-h-[32rem]' : 'min-h-[28rem]'} ${className}`}
     >
       <div className="flex items-center justify-between gap-2 border-b border-[rgba(148,163,184,0.15)] px-4 py-3">
         <p className="text-sm font-semibold text-[#2f2a24]">{t('salesBot.cardMessage')}</p>
@@ -72,7 +72,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
               className={`max-w-[88%] whitespace-pre-wrap rounded-none px-3 py-2 text-sm leading-relaxed ${
                 msg.role === 'user'
                   ? 'bg-[#6366f1] text-white'
-                  : 'border border-[rgba(148,163,184,0.2)] bg-white/80 text-[#2f2a24]'
+                  : 'border border-[rgba(148,163,184,0.2)] bg-white text-[#2f2a24]'
               }`}
             >
               {messageDisplayContent(msg, t)}
@@ -100,7 +100,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
             <button
               type="button"
               onClick={() => openCostEstimate()}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(99,102,241,0.35)] bg-white/90 px-3.5 py-2 text-xs font-semibold text-[#4338ca]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(99,102,241,0.35)] bg-white px-3.5 py-2 text-xs font-semibold text-[#4338ca]"
             >
               <Calculator className="h-3.5 w-3.5" aria-hidden />
               {t('salesBot.ctaEstimate')}
@@ -108,7 +108,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
             <button
               type="button"
               onClick={() => navigateTo(`/listing/${listingId}`)}
-              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#6f665d]"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-3 py-1.5 text-xs font-semibold text-[#6f665d]"
             >
               {t('salesBot.ctaOpenListing')}
             </button>
@@ -139,7 +139,7 @@ export function SalesChatbot({ compact = false, className = '' }: SalesChatbotPr
                   }
                   void sendMessage(q)
                 }}
-                className="rounded-full border border-[rgba(99,102,241,0.35)] bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#4338ca] transition hover:bg-[rgba(99,102,241,0.08)]"
+                className="rounded-full border border-[rgba(99,102,241,0.35)] bg-white px-3 py-1.5 text-xs font-semibold text-[#4338ca] transition hover:bg-[rgba(99,102,241,0.08)]"
               >
                 {q === 'yes' || q === 'Так, опублікувати' || q === 'Так, опублікувати заявку'
                   ? t('salesBot.quickYes')

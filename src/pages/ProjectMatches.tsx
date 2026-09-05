@@ -284,7 +284,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
 
   return (
     <div className="min-h-[70vh] bg-[#f3f0ea] pb-24">
-      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white/80 backdrop-blur-xl">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white backdrop-blur-xl">
         <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
             AI Match

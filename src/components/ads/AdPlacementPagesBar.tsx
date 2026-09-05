@@ -25,7 +25,7 @@ export function AdPlacementPagesBar({
     : PLACEMENT_EDITOR_PAGES
 
   return (
-    <div className="rounded-none border border-white/40 bg-white/25 p-3">
+    <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3">
       <p className="text-[10px] font-bold uppercase tracking-wide text-[#6f665d]">
         {t('advertising.places.pagesLabel')}
       </p>
@@ -44,13 +44,13 @@ export function AdPlacementPagesBar({
                 'min-w-[6.5rem] rounded-none border px-2.5 py-1.5 text-left transition ' +
                 (active
                   ? 'border-[rgba(201,109,44,0.45)] bg-[rgba(201,109,44,0.12)] shadow-sm'
-                  : 'border-[rgba(148,163,184,0.25)] bg-white/50 hover:border-[rgba(99,102,241,0.35)]')
+                  : 'border-[rgba(148,163,184,0.25)] bg-white hover:border-[rgba(201,109,44,0.35)]')
               }
             >
               <span className="block text-[11px] font-extrabold leading-tight text-[#2f2a24]">
                 {t(page.labelKey)}
                 {count > 0 ? (
-                  <span className="ml-1 font-bold text-[#6366f1]">({count})</span>
+                  <span className="ml-1 font-bold text-[#c96d2c]">({count})</span>
                 ) : null}
               </span>
               <span className="mt-0.5 block font-mono text-[9px] leading-snug text-[#7a7168]">

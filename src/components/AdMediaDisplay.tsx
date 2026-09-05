@@ -217,7 +217,7 @@ export function AdMediaDisplay({
         {slides.map((_, i) => (
           <span
             key={i}
-            className={`h-1.5 w-1.5 rounded-full ${i === slideIndex ? 'bg-white' : 'bg-white/40'}`}
+            className={`h-1.5 w-1.5 rounded-full ${i === slideIndex ? 'bg-white' : 'bg-white'}`}
           />
         ))}
       </div>

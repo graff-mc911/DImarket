@@ -154,7 +154,7 @@ export function CostEstimatorHistory() {
         {loading ? (
           <p className="mt-8 text-[14px] text-[#8a8178]">Loading…</p>
         ) : rows.length === 0 ? (
-          <div className="mt-10 rounded-none border border-dashed border-[rgba(148,163,184,0.35)] bg-white/70 px-6 py-12 text-center">
+          <div className="mt-10 rounded-none border border-dashed border-[rgba(148,163,184,0.35)] bg-white px-6 py-12 text-center">
             <FileText className="mx-auto h-8 w-8 text-[rgba(148,163,184,0.35)]" />
             <p className="mt-3 text-[15px] font-semibold text-[#2f2a24]">No saved estimates yet</p>
             <button

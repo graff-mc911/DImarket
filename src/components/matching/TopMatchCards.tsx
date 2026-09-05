@@ -45,7 +45,7 @@ export function TopMatchCards({ matches, listingId, compact = false }: TopMatchC
           return (
             <li
               key={c.id}
-              className="flex items-center justify-between gap-2 rounded-xl border border-white/70 bg-white/70 px-3 py-2"
+              className="flex items-center justify-between gap-2 rounded-xl border border-white/70 bg-white px-3 py-2"
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-1.5">

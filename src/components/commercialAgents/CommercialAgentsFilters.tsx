@@ -154,7 +154,7 @@ export function CommercialAgentsFilters({
 
   return (
     <>
-      <div className="hidden rounded-2xl border border-[var(--line-200)] bg-white/90 p-4 md:block">{panel}</div>
+      <div className="hidden rounded-2xl border border-[var(--line-200)] bg-white p-4 md:block">{panel}</div>
 
       <div className="md:hidden">
         <button

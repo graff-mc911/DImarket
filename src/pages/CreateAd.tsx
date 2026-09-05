@@ -305,7 +305,7 @@ export function CreateAd() {
                     </div>
                   </div>
 
-                  <div className="space-y-5 rounded-none border border-white/70 bg-white/45 p-5">
+                  <div className="space-y-5 rounded-none border border-white/70 bg-white p-5">
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
                         {t('createAd.categoryLabel')}
@@ -317,7 +317,7 @@ export function CreateAd() {
                           setCategoryId(id)
                           setCategoryPicker(syncPickerWithCategoryId(categories, id, emptyPickerValue()))
                         }}
-                        className="select-glass bg-white/80"
+                        className="select-glass bg-white"
                       >
                         <option value="">{t('createAd.selectCategory')}</option>
                         {categories.map((category) => (
@@ -368,7 +368,7 @@ export function CreateAd() {
                       <select
                         value={duration}
                         onChange={(event) => setDuration(Number(event.target.value))}
-                        className="select-glass bg-white/80"
+                        className="select-glass bg-white"
                       >
                         <option value={14}>{durationLabel(14)}</option>
                         <option value={30}>{durationLabel(30)}</option>
@@ -408,13 +408,13 @@ export function CreateAd() {
                           />
 
                           {showSuggestions && locationSuggestions.length > 0 && (
-                            <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-none border border-white/70 bg-[rgba(255,250,246,0.96)] p-2 shadow-[0_20px_50px_rgba(89,63,48,0.12)]">
+                            <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-none border border-white/70 bg-white p-2 shadow-[0_20px_50px_rgba(89,63,48,0.12)]">
                               {locationSuggestions.map((suggestion, index) => (
                                 <button
                                   key={`${suggestion.name}-${index}`}
                                   type="button"
                                   onClick={() => selectLocationSuggestion(suggestion)}
-                                  className="block w-full rounded-none px-4 py-3 text-left transition hover:bg-white/80"
+                                  className="block w-full rounded-none px-4 py-3 text-left transition hover:bg-white"
                                 >
                                   <div className="font-semibold text-[#2f2a24]">
                                     {suggestion.name}
@@ -432,7 +432,7 @@ export function CreateAd() {
                           type="button"
                           onClick={handleGetCurrentLocation}
                           disabled={loadingLocation}
-                          className="flex h-12 w-full items-center justify-center rounded-none border border-white/70 bg-white/70 px-4 text-[#5f5a54] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-12 sm:px-0"
+                          className="flex h-12 w-full items-center justify-center rounded-none border border-white/70 bg-white px-4 text-[#5f5a54] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-12 sm:px-0"
                           title={t('createAd.currentLocation')}
                         >
                           {loadingLocation ? (
@@ -449,7 +449,7 @@ export function CreateAd() {
                     </div>
                   </div>
 
-                  <div className="space-y-5 rounded-none border border-white/70 bg-white/45 p-5">
+                  <div className="space-y-5 rounded-none border border-white/70 bg-white p-5">
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
                         {t('createAd.visibilityRadius')}
@@ -459,7 +459,7 @@ export function CreateAd() {
                         onChange={(event) =>
                           setVisibilityRadius(event.target.value as VisibilityRadius)
                         }
-                        className="select-glass bg-white/80"
+                        className="select-glass bg-white"
                       >
                         <option value="city">{t('createAd.radius.city')}</option>
                         <option value="district">{t('createAd.radius.district')}</option>

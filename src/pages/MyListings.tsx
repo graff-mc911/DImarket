@@ -19,8 +19,8 @@ interface MyListing {
   is_premium: boolean
 }
 
-const btnPrimary = 'flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-900 hover:bg-blue-800 transition-all duration-300'
-const btnPrimaryFull = 'inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-900 hover:bg-blue-800 transition-all'
+const btnPrimary = 'flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#2f2a24] hover:bg-[#3a342e] transition-all duration-300'
+const btnPrimaryFull = 'inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#2f2a24] hover:bg-[#3a342e] transition-all'
 
 export function MyListings() {
   const { user, currency, t } = useApp()
@@ -131,7 +131,7 @@ export function MyListings() {
                   key={f.value}
                   onClick={() => setStatusFilter(f.value)}
                   className={statusFilter === f.value
-                    ? 'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap bg-blue-900 text-white shadow-sm'
+                    ? 'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap bg-[#2f2a24] text-white shadow-sm'
                     : 'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}
                 >
                   {f.label}

@@ -225,7 +225,7 @@ export function Profile() {
                 />
               ) : (
                 <div
-                  className="flex h-24 w-24 items-center justify-center rounded-none border-4 border-white bg-[rgba(255,248,241,0.9)] text-xl font-bold shadow-lg"
+                  className="flex h-24 w-24 items-center justify-center rounded-none border-4 border-white bg-white text-xl font-bold shadow-lg"
                   style={{ color: 'var(--accent-700)' }}
                 >
                   {initials}
@@ -417,7 +417,7 @@ export function Profile() {
               <Star className="h-4 w-4" />
               {t('profile.reviews')}
               {(profile?.total_reviews ?? 0) > 0 && (
-                <span className="rounded-full border border-[var(--glass-border)] bg-[rgba(255,252,248,0.6)] px-2 py-0.5 text-xs">
+                <span className="rounded-full border border-[var(--glass-border)] bg-white px-2 py-0.5 text-xs">
                   {profile?.total_reviews}
                 </span>
               )}

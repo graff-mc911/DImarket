@@ -1152,7 +1152,7 @@ export function Advertising() {
               </p>
 
               {!user ? (
-                <div className="mt-5 rounded-none border border-[rgba(148,163,184,0.18)] bg-[rgba(255,255,255,0.30)] p-5">
+                <div className="mt-5 rounded-none border border-[rgba(148,163,184,0.18)] bg-white p-5">
                   <p className="text-sm leading-6 text-[#6f665d]">{t('advertising.form.loginRequired')}</p>
                   <button onClick={() => navigateTo('/login')} type="button" className="btn-primary mt-5 rounded-full">
                     {t('advertising.form.loginBtn')}
@@ -1231,7 +1231,7 @@ export function Advertising() {
                         <button key={mode} type="button" onClick={() => handleGeoModeChange(mode)}
                           className={'rounded-none border px-4 py-3 text-sm font-bold transition ' + (geoMode === mode
                             ? 'border-[#6366f1] bg-[rgba(99,102,241,0.12)] text-[#6366f1]'
-                            : 'border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.45)] text-[#6f665d]')}>
+                            : 'border-[rgba(148,163,184,0.2)] bg-white text-[#6f665d]')}>
                           {t(('advertising.geo.' + mode) as TranslationKey)}
                         </button>
                       ))}
@@ -1273,7 +1273,7 @@ export function Advertising() {
                     )}
 
                     {/* Розрахунок ціни */}
-                    <div id="ad-price-block" className={`mt-5 rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.50)] p-4 ${guideClass('price')}`}>
+                    <div id="ad-price-block" className={`mt-5 rounded-none border border-[rgba(148,163,184,0.16)] bg-white p-4 ${guideClass('price')}`}>
                       <div className="text-sm font-bold text-[#2f2a24]">{t('advertising.price.title')}</div>
                       <div className="mt-3 space-y-1 text-sm text-[#6f665d]">
                         <div>{t('advertising.price.geo')}: <b>{geoSummary}</b></div>
@@ -1588,7 +1588,7 @@ function CampaignCard({ campaign, formatter, t, onEdit, onPay, paying }: {
 
 function PreviewRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-3 rounded-none border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] px-3 py-2">
+    <div className="flex items-start justify-between gap-3 rounded-none border border-[var(--glass-border)] bg-white px-3 py-2">
       <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--ink-500)]">{label}</span>
       <span className="truncate text-right text-xs font-semibold text-[var(--ink-900)]">{value}</span>
     </div>

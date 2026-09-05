@@ -34,7 +34,7 @@ function CheckboxGrid({
   }
 
   return (
-    <div className="max-h-64 overflow-y-auto rounded-none border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.55)] p-2">
+    <div className="max-h-64 overflow-y-auto rounded-none border border-[rgba(148,163,184,0.2)] bg-white p-2">
       <div className="grid gap-1 sm:grid-cols-2">
         {options.map((option) => (
           <label

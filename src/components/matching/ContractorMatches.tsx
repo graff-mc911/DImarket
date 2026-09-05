@@ -43,7 +43,7 @@ export function ContractorMatches({ listingId }: Props) {
   return (
     <section className="glass-panel mt-8 rounded-2xl p-5">
       <div className="mb-4 flex items-center gap-2">
-        <Sparkles className="h-5 w-5 text-indigo-600" />
+        <Sparkles className="h-5 w-5 text-[#c96d2c]" />
         <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('matching.suggested')}</h2>
       </div>
       <ul className="space-y-3">
@@ -53,7 +53,7 @@ export function ContractorMatches({ listingId }: Props) {
           return (
             <li
               key={c.id}
-              className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-white/60 px-4 py-3"
+              className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3"
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-1.5">
@@ -72,11 +72,11 @@ export function ContractorMatches({ listingId }: Props) {
                 </div>
               </div>
               <div className="shrink-0 text-right">
-                <p className="text-sm font-bold text-indigo-600">{Math.round(row.score)}</p>
+                <p className="text-sm font-bold text-[#c96d2c]">{Math.round(row.score)}</p>
                 <button
                   type="button"
                   onClick={() => navigateTo(`/professional/${c.id}`)}
-                  className="mt-1 text-xs font-semibold text-indigo-600 underline"
+                  className="mt-1 text-xs font-semibold text-[#c96d2c] underline"
                 >
                   {t('matching.viewProfile')}
                 </button>

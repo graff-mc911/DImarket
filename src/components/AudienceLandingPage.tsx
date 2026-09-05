@@ -92,7 +92,7 @@ export function AudienceLandingPage({ config }: AudienceLandingPageProps) {
           {LAUNCH_MARKETS.map((market) => (
             <div
               key={market.id}
-              className="rounded-none border border-[var(--glass-border)] bg-[rgba(255,255,255,0.5)] p-4"
+              className="rounded-none border border-[var(--glass-border)] bg-white p-4"
             >
               <div className="flex items-center gap-1.5 text-sm font-extrabold text-[var(--ink-900)]">
                 <MapPin className="h-4 w-4 text-[var(--accent-600)]" />

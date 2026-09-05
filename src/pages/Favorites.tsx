@@ -200,7 +200,7 @@ export function Favorites() {
             <p className="muted-text mx-auto mt-4 max-w-md text-sm leading-7">
               Функція збережених потребує таблицю <code className="rounded bg-[rgba(0,0,0,0.06)] px-1.5 py-0.5 text-xs">saved_items</code> у вашій базі Supabase.
             </p>
-            <div className="mt-6 rounded-none border border-[var(--glass-border)] bg-[rgba(255,255,255,0.4)] p-5 text-left">
+            <div className="mt-6 rounded-none border border-[var(--glass-border)] bg-white p-5 text-left">
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--ink-500)' }}>
                 SQL для створення таблиці
               </p>

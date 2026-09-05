@@ -107,7 +107,7 @@ export function CategorySubcategoryPicker({
           <select
             value={value.categorySlug}
             onChange={(e) => setCategory(e.target.value)}
-            className="select-glass mt-1.5 w-full bg-white/80"
+            className="select-glass mt-1.5 w-full bg-white"
             required={required && !value.categorySlug}
           >
             <option value="">{t('categoryPicker.selectMain')}</option>
@@ -139,7 +139,7 @@ export function CategorySubcategoryPicker({
             <select
               value={value.subcategorySlugs[0] ?? ''}
               onChange={(e) => setSingleSub(e.target.value)}
-              className="select-glass mt-2 w-full bg-white/80"
+              className="select-glass mt-2 w-full bg-white"
               required={required}
             >
               <option value="">{t('categoryPicker.selectSub')}</option>
@@ -154,7 +154,7 @@ export function CategorySubcategoryPicker({
               ))}
             </select>
           ) : (
-            <div className="mt-2 max-h-72 space-y-3 overflow-y-auto rounded-none border border-[rgba(148,163,184,0.2)] bg-white/40 p-3">
+            <div className="mt-2 max-h-72 space-y-3 overflow-y-auto rounded-none border border-[rgba(148,163,184,0.2)] bg-white p-3">
               {groups.map((group) => (
                 <div key={group.slug}>
                   <p className="mb-1 text-xs font-bold uppercase tracking-wide text-[#6366f1]">
@@ -222,7 +222,7 @@ function pickerModeClass(active: boolean): string {
   return `rounded-full px-3 py-1 text-xs font-semibold transition ${
     active
       ? 'bg-[#6366f1] text-white'
-      : 'border border-[rgba(99,102,241,0.25)] bg-white/60 text-[#5f5a54]'
+      : 'border border-[rgba(99,102,241,0.25)] bg-white text-[#5f5a54]'
   }`
 }
 

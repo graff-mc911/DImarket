@@ -52,7 +52,7 @@ export function ReferralPanel({ userId, role }: ReferralPanelProps) {
   if (loading) return null
 
   return (
-    <section className="mb-6 rounded-none border border-[rgba(199,138,96,0.28)] bg-[rgba(255,248,241,0.55)] p-5 md:p-6">
+    <section className="mb-6 rounded-none border border-[rgba(199,138,96,0.28)] bg-white p-5 md:p-6">
       <div className="flex items-start gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-[rgba(199,138,96,0.16)] text-[var(--accent-700)]">
           <Gift className="h-5 w-5" />

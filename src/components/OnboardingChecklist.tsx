@@ -50,7 +50,7 @@ export function OnboardingChecklist({ state, role }: OnboardingChecklistProps) {
         {state.steps.map((step) => (
           <li
             key={step.id}
-            className="flex items-center gap-2.5 rounded-none border border-white/60 bg-white/50 px-3 py-2.5 text-sm"
+            className="flex items-center gap-2.5 rounded-none border border-white/60 bg-white px-3 py-2.5 text-sm"
           >
             {step.done ? (
               <CheckCircle2 className="h-4 w-4 shrink-0 text-[#16a34a]" />

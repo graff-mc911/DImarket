@@ -215,7 +215,7 @@ export function SeoMarketLanding({ parts }: SeoMarketLandingProps) {
           {fill(t('seo.jobsTitle'))}
         </h2>
         {loading ? null : jobs.length > 0 ? (
-          <div className="listing-feed overflow-hidden rounded-none border border-[var(--glass-border)] bg-[rgba(255,255,255,0.42)]">
+          <div className="listing-feed overflow-hidden rounded-none border border-[var(--glass-border)] bg-white">
             {jobs.map((job, index) => (
               <ListingCard key={job.id} listing={job} isLast={index === jobs.length - 1} />
             ))}

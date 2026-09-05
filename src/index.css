@@ -2034,14 +2034,14 @@
 
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
-    background: rgba(255, 255, 255, 0.72);
+    background: #ffffff;
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+    box-shadow: none;
   }
 
   .btn-secondary:hover {
-    background: rgba(248, 250, 252, 0.92);
+    background: #f7f5f2;
     color: var(--ink-900);
     border-color: var(--line-strong);
     text-shadow: none;
@@ -2049,14 +2049,14 @@
 
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-sm font-semibold transition-all duration-200 active:scale-[0.985];
-    background: rgba(255, 255, 255, 0.45);
+    background: #ffffff;
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
     box-shadow: none;
   }
 
   .btn-outline:hover {
-    background: rgba(248, 250, 252, 0.85);
+    background: #f7f5f2;
     color: var(--ink-900);
     text-shadow: none;
   }
@@ -2077,7 +2077,7 @@
   .input-glass,
   .select-glass {
     @apply w-full rounded-none px-4 py-3 outline-none transition-all duration-200;
-    background: rgba(255, 255, 255, 0.72);
+    background: #ffffff;
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
     box-shadow: none;
@@ -2095,7 +2095,7 @@
 
   .input-hero {
     @apply w-full rounded-none px-4 py-3 outline-none transition-all duration-200;
-    background: rgba(255, 255, 255, 0.82);
+    background: #ffffff;
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
   }
@@ -7942,7 +7942,7 @@ body,
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--quote-accent);
-  color: #fff;
+  color: #1a1612;
   font-size: 16px;
   font-weight: 700;
   text-transform: none;

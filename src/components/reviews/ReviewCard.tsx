@@ -136,7 +136,7 @@ export function ReviewCard({
               >
                 <video src={m.url} className="h-full w-full object-cover" muted preload="metadata" />
                 <span className="absolute inset-0 flex items-center justify-center">
-                  <span className="rounded-full bg-white/90 p-1.5">
+                  <span className="rounded-full bg-white p-1.5">
                     <Play className="h-3.5 w-3.5 text-[#2f2a24]" />
                   </span>
                 </span>

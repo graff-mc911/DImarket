@@ -142,7 +142,7 @@ export function Verification() {
 
   return (
     <div className="min-h-[70vh] bg-[#f3f0ea] pb-24">
-      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white/80 backdrop-blur-xl">
+      <div className="border-b border-[rgba(148,163,184,0.22)] bg-white backdrop-blur-xl">
         <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
           <div className="flex flex-wrap items-start gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2f2a24] text-white">
