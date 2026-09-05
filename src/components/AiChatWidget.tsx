@@ -147,7 +147,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
                   background: m.sender === 'user' ? '#2563eb' : '#e2e8f0',
                   color: m.sender === 'user' ? '#fff' : '#1e293b',
                   padding: '8px 12px',
-                  borderRadius: '8px',
+                  borderRadius: '0',
                   maxWidth: '80%',
                   fontSize: '14px',
                   whiteSpace: 'pre-line'
@@ -158,7 +158,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
             ))}
             {loading && <div style={{ alignSelf: 'flex-start', color: '#64748b', fontSize: '13px' }}>Друкує відповідь...</div>}
             {lastError && (
-              <div style={{ alignSelf: 'stretch', padding: '8px 12px', background: '#fff7ed', color: '#92400e', fontSize: 13, borderRadius: 8 }}>
+              <div style={{ alignSelf: 'stretch', padding: '8px 12px', background: '#fff7ed', color: '#92400e', fontSize: 13, borderRadius: 0 }}>
                 Помилка: {String(lastError)}
               </div>
             )}
@@ -170,9 +170,9 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Напишіть запит..."
-              style={{ flex: 1, border: '1px solid #cbd5e1', borderRadius: '6px', padding: '8px', outline: 'none', fontSize: '14px' }}
+              style={{ flex: 1, border: '1px solid #cbd5e1', borderRadius: '0', padding: '8px', outline: 'none', fontSize: '14px' }}
             />
-            <button type="submit" disabled={loading} style={{ background: '#FFD700', border: 'none', padding: '8px 14px', marginLeft: '6px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>➤</button>
+            <button type="submit" disabled={loading} style={{ background: '#FFD700', border: 'none', padding: '8px 14px', marginLeft: '6px', borderRadius: '0', fontWeight: 'bold', cursor: 'pointer' }}>➤</button>
           </form>
         </div>
       )}
