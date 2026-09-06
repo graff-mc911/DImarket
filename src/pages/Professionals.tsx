@@ -152,7 +152,11 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
       const { filterPublicProfiles, sortProfilesForPublicDiscovery } = await import(
         '../lib/publicProfileVisibility'
       )
-      const publicRows = filterPublicProfiles((data as ProfessionalWithCategories[] | null) ?? [])
+      // Match homepage Top Masters: Spain (and other) directory masters often have
+      // location but no phone/website yet. Requiring reachability emptied "see all".
+      const publicRows = filterPublicProfiles((data as ProfessionalWithCategories[] | null) ?? [], {
+        requireReachability: isCompanyCatalog,
+      })
       const catalogRows = isCompanyCatalog
         ? publicRows.filter((p) => p.user_role === 'company' || isBusinessNamedProfessional(p))
         : publicRows.filter((p) => !isBusinessNamedProfessional(p))

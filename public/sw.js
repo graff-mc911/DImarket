@@ -5,7 +5,7 @@
    causes "Failed to fetch dynamically imported module" and a reload loop
    (especially on lazy routes like /cost-estimator). */
 
-const CACHE = 'dimarket-shell-v17'
+const CACHE = 'dimarket-shell-v18'
 const PRECACHE = ['/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
 
 self.addEventListener('install', (event) => {
