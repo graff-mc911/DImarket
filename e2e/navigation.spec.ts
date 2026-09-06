@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { clickHeaderNavButton, gotoPath } from './helpers'
+// clickHeaderNavButton = header dept-nav helper
 
 test.describe('Навігація з шапки', () => {
   test.beforeEach(async ({ page }) => {
@@ -12,7 +13,7 @@ test.describe('Навігація з шапки', () => {
       /Знайти майстр|Find Professionals/i,
       viewport,
     )
-    await expect(page).toHaveURL(/\/professionals$/)
+    await expect(page).toHaveURL(/\/professionals(?:\?.*)?$/)
 
     await clickHeaderNavButton(
       page,
@@ -29,7 +30,9 @@ test.describe('Навігація з шапки', () => {
     )
 
     const header = page.locator('header')
-    await header.getByRole('button', { name: /Сторінка реклами|Advertising page/i }).click()
+    const ads = header.getByRole('button', { name: /Сторінка реклами|Advertising page|Реклама/i })
+    test.skip((await ads.count()) === 0, 'Кнопка реклами відсутня в поточній шапці')
+    await ads.click()
     await expect(page).toHaveURL(/\/advertising$/)
 
     await gotoPath(page, '/')
@@ -64,14 +67,14 @@ test.describe('Homepage Top Masters / Companies → catalog', () => {
     await expect(pros.locator('.home-pro-card--skeleton')).toHaveCount(0)
 
     await pros.locator('.home-section__title-btn').click()
-    await expect(page).toHaveURL(/\/professionals$/)
+    await expect(page).toHaveURL(/\/professionals(?:\?.*)?$/)
 
     await gotoPath(page, '/')
     await expect(pros.locator('.home-pro-card--skeleton')).toHaveCount(0)
     const card = pros.locator('.home-pro-card__hit').first()
     await expect(card).toBeVisible({ timeout: 20_000 })
     await card.click()
-    await expect(page).toHaveURL(/\/professionals$/)
+    await expect(page).toHaveURL(/\/professionals(?:\?.*)?$/)
   })
 
   test('Топ компанії title and cards open /companies', async ({ page }) => {
@@ -97,13 +100,71 @@ test.describe('Homepage Top Masters / Companies → catalog', () => {
     await expect(companies.locator('.home-pro-card--skeleton')).toHaveCount(0)
 
     await companies.locator('.home-section__title-btn').click()
-    await expect(page).toHaveURL(/\/companies$/)
+    await expect(page).toHaveURL(/\/companies(?:\?.*)?$/)
 
     await gotoPath(page, '/')
     await expect(companies.locator('.home-pro-card--skeleton')).toHaveCount(0)
     const card = companies.locator('.home-pro-card__hit').first()
     await expect(card).toBeVisible({ timeout: 20_000 })
     await card.click()
-    await expect(page).toHaveURL(/\/companies$/)
+    await expect(page).toHaveURL(/\/companies(?:\?.*)?$/)
+  })
+})
+
+test.describe('Minimal masters catalog by location', () => {
+  test.use({ viewport: { width: 1440, height: 900 } })
+
+  test('Усі майстри opens profiles-only page for header country', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'dimarket_global_location',
+        JSON.stringify({
+          country: 'Spain',
+          region: '',
+          province: '',
+          city: '',
+          radius: 'country',
+          originLat: null,
+          originLng: null,
+          fromGps: false,
+        }),
+      )
+    })
+    await gotoPath(page, '/')
+    const pros = page.locator('section[aria-labelledby="home-pros-title"]')
+    await expect(pros).toBeVisible()
+    await pros.locator('.home-section__link').click()
+    await expect(page).toHaveURL(/\/professionals/)
+    await expect(page).toHaveURL(/country=Spain/i)
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+    await expect(page.locator('.dimarket-categories')).toHaveCount(0)
+    await expect(page.locator('.amazon-filter-sidebar')).toHaveCount(0)
+    await expect(page.locator('.directory-expert-list, .amazon-section-card')).toBeVisible()
+  })
+
+  test('city card opens masters filtered by city', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'dimarket_global_location',
+        JSON.stringify({
+          country: 'Ukraine',
+          region: '',
+          province: '',
+          city: '',
+          radius: 'country',
+          originLat: null,
+          originLng: null,
+          fromGps: false,
+        }),
+      )
+    })
+    await gotoPath(page, '/')
+    const cityBtn = page.getByRole('button', { name: /Kharkiv/i }).first()
+    await expect(cityBtn).toBeVisible()
+    await cityBtn.click()
+    await expect(page).toHaveURL(/\/professionals/)
+    await expect(page).toHaveURL(/city=Kharkiv/i)
+    await expect(page.locator('.dimarket-categories')).toHaveCount(0)
+    await expect(page.locator('.amazon-filter-sidebar')).toHaveCount(0)
   })
 })

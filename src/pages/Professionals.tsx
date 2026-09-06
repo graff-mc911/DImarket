@@ -19,6 +19,7 @@ import {
   matchProfileGeo,
   sortByDistanceAsc,
 } from '../lib/geoSearch'
+import { formatGlobalLocationLabel } from '../lib/globalLocation'
 
 interface ProfessionalCategoryLink {
   category_id: string
@@ -59,7 +60,16 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
     if (work) setSelectedWork(work)
     const fromQuery = geoSearchFromQuery(params)
     if (fromQuery.country || fromQuery.city || fromQuery.region || fromQuery.fromGps) {
-      setLocation({ ...EMPTY_GEO_SEARCH, ...location, ...fromQuery })
+      setLocation({
+        ...EMPTY_GEO_SEARCH,
+        ...location,
+        ...fromQuery,
+        radius:
+          fromQuery.radius ||
+          (fromQuery.country && !fromQuery.city && !fromQuery.region && !fromQuery.province
+            ? 'country'
+            : location.radius),
+      })
     } else {
       const locParam = params.get('location')
       if (locParam) {
@@ -69,10 +79,19 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
           france: 'France',
           italy: 'Italy',
           poland: 'Poland',
+          ukraine: 'Ukraine',
         }
         const country = map[locParam.toLowerCase()]
-        if (country) setLocation({ ...location, country })
-        else setLocation({ ...location, city: locParam })
+        if (country) {
+          setLocation({ ...EMPTY_GEO_SEARCH, country, radius: 'country' })
+        } else {
+          setLocation({
+            ...EMPTY_GEO_SEARCH,
+            country: location.country || '',
+            city: locParam,
+            radius: '25',
+          })
+        }
       }
     }
     const q = params.get('q')
@@ -254,6 +273,74 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
       .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
       .slice(0, 14)
   }, [categories, filteredProfessionals, t])
+
+  const locationLabel = formatGlobalLocationLabel(location, t('dimarket.loc.all-europe'))
+
+  // Masters catalog: header/footer (app shell) + ad banner + geo-filtered profiles only.
+  if (!isCompanyCatalog) {
+    return (
+      <div className="directory-page layout-page-gutter pb-24 lg:pb-8">
+        <header className="mb-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">
+            {t('professionals.eyebrow')}
+          </p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-3xl">
+            {t('professionals.simpleTitle')}
+          </h1>
+          <p className="mt-2 text-sm text-[var(--ink-600)]">
+            {locationLabel}
+            {loading ? null : ` · ${filteredProfessionals.length}`}
+          </p>
+        </header>
+
+        <PageContentAds page={adPage} outerClassName="mb-4" />
+
+        {loading ? (
+          <div className="space-y-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="h-44 animate-pulse rounded-none bg-[#f3f4f4]" />
+            ))}
+          </div>
+        ) : filteredProfessionals.length > 0 ? (
+          <div className="directory-expert-list flex flex-col gap-4">
+            {filteredProfessionals.map((professional, index) => (
+              <div key={professional.id}>
+                <DirectoryExpertCard
+                  professional={professional}
+                  distanceKm={
+                    'distanceKm' in professional
+                      ? (professional as { distanceKm?: number | null }).distanceKm
+                      : null
+                  }
+                />
+                {(index + 1) % 8 === 0 && index < filteredProfessionals.length - 1 && (
+                  <MobileAdBanner
+                    variant="inline"
+                    page={adPage}
+                    inlineIndex={2}
+                    outerClassName="mt-4"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="amazon-section-card p-10 text-center">
+            <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('professionals.emptyTitle')}</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--ink-600)]">{t('professionals.emptyText')}</p>
+            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <button onClick={resetFilters} type="button" className="btn-secondary text-sm">
+                {t('professionals.clearFiltersSimple')}
+              </button>
+              <button onClick={() => navigateTo('/register')} type="button" className="btn-primary text-sm">
+                {t('professionals.registerAsProfessional')}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="directory-page pb-24 lg:pb-8">

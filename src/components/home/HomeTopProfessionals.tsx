@@ -4,6 +4,8 @@ import type { HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
 import { resolveProfileAvatarUrl } from '../../lib/directoryAvatars'
 import { navigateTo } from '../../lib/navigation'
+import { appendLocationToPath } from '../../lib/globalLocation'
+import type { GeoSearchState } from '../../lib/geoSearch'
 import { ProfileAvatar } from './HomeRailAvatar'
 
 interface HomeTopProfessionalsProps {
@@ -12,7 +14,16 @@ interface HomeTopProfessionalsProps {
 }
 
 export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessionalsProps) {
-  const { t } = useApp()
+  const { t, location, setLocation } = useApp()
+
+  const openMastersCatalog = () => {
+    let geo: GeoSearchState = location
+    if (location.country && !location.city && !location.region && !location.province) {
+      geo = { ...location, radius: 'country' }
+      setLocation(geo)
+    }
+    navigateTo(appendLocationToPath('/professionals', geo))
+  }
 
   return (
     <section className="home-section layout-page-gutter" aria-labelledby="home-pros-title">
@@ -22,7 +33,7 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
             <button
               type="button"
               className="home-section__title-btn"
-              onClick={() => navigateTo('/professionals')}
+              onClick={openMastersCatalog}
             >
               {t('homePremium.prosTitle')}
             </button>
@@ -31,7 +42,7 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
           <button
             type="button"
             className="home-section__link"
-            onClick={() => navigateTo('/professionals')}
+            onClick={openMastersCatalog}
           >
             {t('homePremium.seeAllPros')}
           </button>
@@ -59,7 +70,7 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
                 <button
                   type="button"
                   className="home-pro-card__hit"
-                  onClick={() => navigateTo('/professionals')}
+                  onClick={openMastersCatalog}
                 >
                   <div className="home-pro-card__avatar">
                     <ProfileAvatar

@@ -1,6 +1,8 @@
 import { MapPin } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
+import { appendLocationToPath } from '../../lib/globalLocation'
+import { EMPTY_GEO_SEARCH } from '../../lib/geoSearch'
 import { canonicalCountryName } from '../../lib/geoAliases'
 
 // Top cities by real professional/company count in the DImarket database,
@@ -32,7 +34,27 @@ const DEFAULT_CITIES = [
 
 /** Homepage "find contractor" city grid — same square cabinet cards as owner UI. */
 export function HomeFindContractor() {
-  const { t, location } = useApp()
+  const { t, location, setLocation } = useApp()
+
+  const openCityMasters = (city: string) => {
+    let country = location.country || ''
+    if (!country) {
+      for (const [c, cities] of Object.entries(CITIES_BY_COUNTRY)) {
+        if (cities.includes(city)) {
+          country = c
+          break
+        }
+      }
+    }
+    const next = {
+      ...EMPTY_GEO_SEARCH,
+      country,
+      city,
+      radius: '25' as const,
+    }
+    setLocation(next)
+    navigateTo(appendLocationToPath('/professionals', next))
+  }
 
   const cities = (() => {
     const country = canonicalCountryName(location.country || '')
@@ -61,7 +83,7 @@ export function HomeFindContractor() {
             <button
               type="button"
               className="dimarket-category-card__button"
-              onClick={() => navigateTo(`/professionals?location=${encodeURIComponent(city)}`)}
+              onClick={() => openCityMasters(city)}
               aria-label={`${t('header.findProfessionals')}: ${city}`}
             >
               <span className="dimarket-category-card__icon" aria-hidden>

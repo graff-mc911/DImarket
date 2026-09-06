@@ -144,10 +144,10 @@ test.describe('Header location selector — native select glyphs', () => {
 
 test.describe('Location filters — mobile native selects', () => {
   for (const viewport of MOBILE_VIEWPORTS) {
-    test(`professionals geo selects at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+    test(`companies geo selects at ${viewport.width}x${viewport.height}`, async ({ page }) => {
       await page.setViewportSize(viewport)
       await useUkrainian(page)
-      await gotoPath(page, '/professionals')
+      await gotoPath(page, '/companies')
       const bottomNav = page.locator('.mobile-bottom-nav')
       if ((await bottomNav.count()) > 0) {
         await bottomNav.evaluate((el) => {
