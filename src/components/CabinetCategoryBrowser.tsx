@@ -20,14 +20,17 @@ interface CabinetCategoryBrowserProps {
   onSelectService?: (serviceSlug: string, categorySlug: string) => void
   onSelectCategory?: (categorySlug: string) => void
   className?: string
+  /** Home embeds this under an existing page H1 — use h2 there. */
+  headingAs?: 'h1' | 'h2'
 }
 
-/** Owner-cabinet category cards: white rounded tiles with icon / title / chevron. */
+/** Owner-cabinet category cards: white square tiles with icon / title / chevron. */
 export function CabinetCategoryBrowser({
   mode,
   onSelectService,
   onSelectCategory,
   className = '',
+  headingAs = 'h1',
 }: CabinetCategoryBrowserProps) {
   const { language, t } = useApp()
   const [mains, setMains] = useState<MarketplaceCategory[]>([])
@@ -128,9 +131,15 @@ export function CabinetCategoryBrowser({
         <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
           {mode === 'professionals' ? t('professionals.eyebrow') : t('marketplace.mainCategories')}
         </p>
-        <h1 className="dimarket-categories__title" style={{ textAlign: 'left' }}>
-          {title}
-        </h1>
+        {headingAs === 'h2' ? (
+          <h2 className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+            {title}
+          </h2>
+        ) : (
+          <h1 className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+            {title}
+          </h1>
+        )}
         <p className="mt-2 max-w-2xl text-sm leading-6 md:text-base">{subtitle}</p>
       </div>
 

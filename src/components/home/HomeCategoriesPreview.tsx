@@ -1,21 +1,16 @@
-import { MainCategoriesSection } from '../MainCategoriesSection'
-import { useApp } from '../../contexts/AppContext'
-import type { MarketplaceCategory } from '../../lib/marketplaceCategories'
+import { CabinetCategoryBrowser } from '../CabinetCategoryBrowser'
 
 interface HomeCategoriesPreviewProps {
-  categories: MarketplaceCategory[]
+  /** Kept for Home.tsx call-site compatibility; browser loads its own data. */
+  categories?: unknown
   loading?: boolean
 }
 
-export function HomeCategoriesPreview({ categories, loading }: HomeCategoriesPreviewProps) {
-  const { t } = useApp()
+/** Home "Категорії" block — same square cabinet cards as /categories. */
+export function HomeCategoriesPreview(_props: HomeCategoriesPreviewProps) {
   return (
-    <MainCategoriesSection
-      id="choose-category"
-      title={t('header.categories')}
-      categories={categories}
-      loading={loading}
-      showSearch={false}
-    />
+    <div id="choose-category">
+      <CabinetCategoryBrowser mode="categories" headingAs="h2" />
+    </div>
   )
 }

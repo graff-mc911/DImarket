@@ -1,18 +1,16 @@
-import { MainCategoriesSection } from './MainCategoriesSection'
+import { CabinetCategoryBrowser } from './CabinetCategoryBrowser'
 
-/** Standalone searchable main-categories block (Supabase-driven). */
+/** Standalone searchable categories block — owner-cabinet card grid. */
 export function ChooseCategorySection({
   id = 'choose-category',
-  compact = false,
 }: {
   id?: string
+  /** Kept for call-site compatibility; compact layout is unused with cabinet cards. */
   compact?: boolean
 }) {
   return (
-    <MainCategoriesSection
-      id={id}
-      showSearch
-      className={compact ? 'main-categories-section--compact' : ''}
-    />
+    <div id={id}>
+      <CabinetCategoryBrowser mode="categories" />
+    </div>
   )
 }
