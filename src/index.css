@@ -3903,7 +3903,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.8rem;
   border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 0 !important;
+  border-radius: 22px;
   background: #ffffff;
   box-shadow: 0 8px 24px rgba(47, 42, 36, 0.08);
   color: var(--dimarket-primary);
@@ -4121,20 +4121,11 @@ select.select-glass.geo-filter-select::-ms-expand {
 .dimarket-category-card {
   overflow: visible;
   border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 0 !important;
+  /* Match owner-cabinet filter cards (OwnerProfilesManager screenshot). */
+  border-radius: 22px;
   background: #ffffff;
   box-shadow: 0 8px 24px rgba(47, 42, 36, 0.08);
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
-}
-
-.dimarket-category-card,
-.dimarket-category-card *,
-.dimarket-category-card__button,
-.dimarket-category-card__icon,
-.dimarket-search__input,
-.dimarket-search__location,
-.dimarket-subcategory-chip {
-  border-radius: 0 !important;
 }
 
 .dimarket-category-card:hover,
@@ -4154,7 +4145,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   background: transparent;
   padding: 1.15rem;
   text-align: left;
-  border-radius: 0;
+  border-radius: 22px;
 }
 
 .dimarket-category-card__icon {
@@ -4163,7 +4154,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 3.75rem;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: 16px;
   background:
     radial-gradient(circle at 30% 20%, rgba(201, 109, 44, 0.28), transparent 48%),
     rgba(148, 163, 184, 0.14);
@@ -4224,7 +4215,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.35rem;
   border: 1px solid rgba(148, 163, 184, 0.22) !important;
-  border-radius: 0;
+  border-radius: 14px;
   background: #f2f5f4;
   color: var(--dimarket-ink);
   font-size: 0.82rem;

@@ -22,7 +22,7 @@ interface CabinetCategoryBrowserProps {
   className?: string
 }
 
-/** Owner-cabinet category cards: sharp glass tiles with icon / title / chevron. */
+/** Owner-cabinet category cards: white rounded tiles with icon / title / chevron. */
 export function CabinetCategoryBrowser({
   mode,
   onSelectService,
