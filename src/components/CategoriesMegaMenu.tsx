@@ -214,7 +214,7 @@ export function CategoriesMegaMenu({
             <p className="mega-menu__col-label">{t('marketplace.mainCategories')}</p>
             <ul className="mega-menu__mains">
               {filteredMains.map((cat) => {
-                const Icon = resolveCategoryIcon(cat.icon_key)
+                const Icon = resolveCategoryIcon(cat.icon_key || cat.slug)
                 const colors = resolveCategoryIconColor(cat.slug)
                 const label = marketplaceCategoryLabel(cat, language.code)
                 const isActive = active?.id === cat.id

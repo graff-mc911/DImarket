@@ -6,6 +6,12 @@ import { getTranslation, type LanguageCode, type TranslationKey } from './i18n'
 import { findServiceBySlug, servicesPath } from './serviceTaxonomy'
 import { matchesWorkPrefix } from './categoryMatching'
 import { filterPublicProfiles } from './publicProfileVisibility'
+import {
+  SITE_CATEGORY_CONFIG,
+  SITE_CATEGORY_SLUGS,
+  categoryPagePath,
+  type SiteCategorySlug,
+} from './siteCategories'
 
 export type MarketplaceCategory = Category & {
   cover_image_url?: string | null
@@ -104,6 +110,11 @@ export function marketplaceCategoryLabel(
   category: Pick<MarketplaceCategory, 'name' | 'name_i18n' | 'slug'>,
   lang: string,
 ): string {
+  // Platform site categories: prefer product copy (uk/en dictionaries) over stale DB names.
+  if (category.slug && (SITE_CATEGORY_SLUGS as readonly string[]).includes(category.slug)) {
+    const fromSite = labelFromStaticMaps(category.slug, lang)
+    if (fromSite) return fromSite
+  }
   const map = asI18nMap(category.name_i18n)
   return (
     pickLocalized(map, lang, category.slug) ||
@@ -126,7 +137,57 @@ export function marketplaceCategoryDescription(
 }
 
 export function marketplaceCategoryPath(slug: string): string {
+  if ((SITE_CATEGORY_SLUGS as readonly string[]).includes(slug)) {
+    return categoryPagePath(slug)
+  }
   return `/category/${encodeURIComponent(slug)}`
+}
+
+/** Ensure platform categories (handyman, accounting, vacancies, sell-rent, …) always appear. */
+function synthesizeSiteCategory(slug: SiteCategorySlug): MarketplaceCategory {
+  const cfg = SITE_CATEGORY_CONFIG[slug]
+  return {
+    id: `site-${slug}`,
+    name: slug,
+    slug,
+    parent_id: null,
+    icon: cfg.icon,
+    description: null,
+    created_at: new Date(0).toISOString(),
+    cover_image_url: null,
+    sort_order: SITE_CATEGORY_SLUGS.indexOf(slug),
+    is_main: true,
+    is_service: false,
+    icon_key: slug,
+    name_i18n: {},
+    description_i18n: {},
+    services_count: 0,
+    professionals_count: 0,
+    avg_rating: null,
+    completed_projects_count: 0,
+    updated_at: new Date(0).toISOString(),
+  }
+}
+
+function mergeSiteCategoriesIntoMains(mains: MarketplaceCategory[]): MarketplaceCategory[] {
+  const bySlug = new Map<string, MarketplaceCategory>()
+  for (const row of mains) {
+    if (row.slug) bySlug.set(row.slug, row)
+  }
+
+  const siteFirst: MarketplaceCategory[] = SITE_CATEGORY_SLUGS.map((slug) => {
+    const existing = bySlug.get(slug)
+    if (existing) {
+      bySlug.delete(slug)
+      return { ...existing, is_main: true }
+    }
+    return synthesizeSiteCategory(slug)
+  })
+
+  const rest = [...bySlug.values()].sort(
+    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.name.localeCompare(b.name),
+  )
+  return [...siteFirst, ...rest]
 }
 
 export function marketplaceServiceProsPath(serviceSlug: string, categorySlug?: string): string {
@@ -140,61 +201,81 @@ export function marketplaceServiceProsPath(serviceSlug: string, categorySlug?: s
 }
 
 export async function fetchMainMarketplaceCategories(): Promise<MarketplaceCategory[]> {
-  const { data: rpcData, error: rpcError } = await supabase.rpc(
-    'get_marketplace_main_categories' as never,
-  )
+  const loadMains = async (): Promise<MarketplaceCategory[]> => {
+    const { data: rpcData, error: rpcError } = await supabase.rpc(
+      'get_marketplace_main_categories' as never,
+    )
 
-  if (!rpcError && rpcData) {
-    const list = Array.isArray(rpcData) ? rpcData : []
-    if (list.length > 0) return list as MarketplaceCategory[]
-  }
+    if (!rpcError && rpcData) {
+      const list = Array.isArray(rpcData) ? rpcData : []
+      if (list.length > 0) return list as MarketplaceCategory[]
+    }
 
-  const { data, error } = await supabase
-    .from('categories')
-    .select(MAIN_SELECT)
-    .eq('is_main', true)
-    .order('sort_order', { ascending: true })
-
-  if (!error && data?.length) return data as MarketplaceCategory[]
-
-  // Column may be missing before migration — retry without completed_projects_count
-  if (error) {
-    const { data: fallback } = await supabase
+    const { data, error } = await supabase
       .from('categories')
-      .select(
-        'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, parent_id, is_main, is_service',
-      )
+      .select(MAIN_SELECT)
       .eq('is_main', true)
       .order('sort_order', { ascending: true })
 
-    if (fallback?.length) {
-      return (fallback as MarketplaceCategory[]).map((c) => ({
-        ...c,
-        completed_projects_count: c.completed_projects_count ?? 0,
-      }))
+    if (!error && data?.length) return data as MarketplaceCategory[]
+
+    // Column may be missing before migration — retry without completed_projects_count
+    if (error) {
+      const { data: fallback } = await supabase
+        .from('categories')
+        .select(
+          'id, name, slug, icon, icon_key, cover_image_url, description, name_i18n, description_i18n, sort_order, services_count, professionals_count, avg_rating, parent_id, is_main, is_service',
+        )
+        .eq('is_main', true)
+        .order('sort_order', { ascending: true })
+
+      if (fallback?.length) {
+        return (fallback as MarketplaceCategory[]).map((c) => ({
+          ...c,
+          completed_projects_count: c.completed_projects_count ?? 0,
+        }))
+      }
+    }
+
+    // Soft fallback: construction children that look like trade groups
+    const { data: construction } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('slug', 'construction')
+      .maybeSingle()
+
+    if (construction && typeof construction === 'object' && 'id' in construction) {
+      const parentId = String((construction as { id: string }).id)
+      const { data: children } = await supabase
+        .from('categories')
+        .select(MAIN_SELECT)
+        .eq('parent_id', parentId)
+        .order('sort_order', { ascending: true })
+        .order('name', { ascending: true })
+
+      if (children?.length) return children as MarketplaceCategory[]
+    }
+
+    return []
+  }
+
+  const mains = await loadMains()
+
+  // Also pull site platform categories even when is_main=false in DB
+  const { data: siteRows } = await supabase
+    .from('categories')
+    .select(MAIN_SELECT)
+    .in('slug', [...SITE_CATEGORY_SLUGS])
+
+  const combined = [...mains]
+  if (siteRows?.length) {
+    const seen = new Set(mains.map((r) => r.slug))
+    for (const row of siteRows as MarketplaceCategory[]) {
+      if (!seen.has(row.slug)) combined.push(row)
     }
   }
 
-  // Soft fallback: construction children that look like trade groups
-  const { data: construction } = await supabase
-    .from('categories')
-    .select('id')
-    .eq('slug', 'construction')
-    .maybeSingle()
-
-  if (construction && typeof construction === 'object' && 'id' in construction) {
-    const parentId = String((construction as { id: string }).id)
-    const { data: children } = await supabase
-      .from('categories')
-      .select(MAIN_SELECT)
-      .eq('parent_id', parentId)
-      .order('sort_order', { ascending: true })
-      .order('name', { ascending: true })
-
-    if (children?.length) return children as MarketplaceCategory[]
-  }
-
-  return []
+  return mergeSiteCategoriesIntoMains(combined)
 }
 
 export async function fetchCategoryServices(

@@ -163,7 +163,7 @@ export function CabinetCategoryBrowser({
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filteredMains.map((cat) => {
-            const Icon = resolveCategoryIcon(cat.icon_key)
+            const Icon = resolveCategoryIcon(cat.icon_key || cat.slug)
             const label = marketplaceCategoryLabel(cat, language.code)
             const isOpen = expandedId === cat.id
             const services = servicesByParent[cat.id] ?? []

@@ -5408,9 +5408,9 @@ export const CATEGORY_LABEL_I18N: Record<string, CategoryLabelMap> = {
     ja: '屋根防水',
   },
   'sell-rent': {
-    en: 'For sale / Rent',
-    uk: 'Продам / Оренда',
-    ru: 'Продам / Аренда',
+    en: 'Rent / Sell',
+    uk: 'Здам / Продам',
+    ru: 'Сдам / Продам',
     pl: 'Sprzedaż / Wynajem',
     de: 'Verkauf / Miete',
     fr: 'Vente / Location',

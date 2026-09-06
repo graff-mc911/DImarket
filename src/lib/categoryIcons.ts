@@ -1,9 +1,12 @@
 import type { LucideIcon } from 'lucide-react'
 import {
   Aperture,
+  Armchair,
   Boxes,
+  Briefcase,
   BrickWall,
   Building2,
+  Calculator,
   Cpu,
   Droplets,
   Fence,
@@ -18,11 +21,15 @@ import {
   PaintBucket,
   PanelsTopLeft,
   Ruler,
+  Scale,
+  ShoppingBag,
   Shovel,
+  Sparkles,
   Square,
   Sun,
   Thermometer,
   Trees,
+  Truck,
   Waves,
   Wind,
   Wrench,
@@ -59,6 +66,17 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'grid-3x3': Grid3x3,
   wind: Wind,
   thermometer: Thermometer,
+  // Platform site categories
+  cleaning: Sparkles,
+  construction: Building2,
+  electrical: Zap,
+  tools: Truck,
+  handyman: Wrench,
+  furniture: Armchair,
+  'legal-notary': Scale,
+  'accounting-finance': Calculator,
+  vacancies: Briefcase,
+  'sell-rent': ShoppingBag,
 }
 
 /** Soft tinted backgrounds + stronger icon accents per trade */
@@ -90,6 +108,16 @@ const COLOR_BY_SLUG: Record<string, { bg: string; fg: string; ring: string }> = 
   solar: { bg: '#fff8e1', fg: '#d4a017', ring: '#ffe9a0' },
   'smart-home': { bg: '#f0eefb', fg: '#6c5ce7', ring: '#d2ccf5' },
   'design-engineering': { bg: '#f4f0ea', fg: '#7f5539', ring: '#dfcfc0' },
+  cleaning: { bg: '#eef8f4', fg: '#1e8449', ring: '#b9e2cd' },
+  construction: { bg: '#eef2f7', fg: '#3d5a80', ring: '#c9d6e8' },
+  electrical: { bg: '#fff8e6', fg: '#f39c12', ring: '#ffe2a3' },
+  tools: { bg: '#eef1f5', fg: '#566573', ring: '#c8d0da' },
+  handyman: { bg: '#fff4e8', fg: '#c96d2c', ring: '#ffd7ad' },
+  furniture: { bg: '#f6efe6', fg: '#a04000', ring: '#e2c9ad' },
+  'legal-notary': { bg: '#f0eefb', fg: '#6c5ce7', ring: '#d2ccf5' },
+  'accounting-finance': { bg: '#eef5ff', fg: '#2471a3', ring: '#bdd4f0' },
+  vacancies: { bg: '#eaf6fb', fg: '#1e6f9f', ring: '#b9d9ee' },
+  'sell-rent': { bg: '#fdf0f5', fg: '#c2185b', ring: '#f3c2d4' },
 }
 
 const DEFAULT_COLOR = { bg: '#fff4e8', fg: '#c96d2c', ring: '#ffd7ad' }
