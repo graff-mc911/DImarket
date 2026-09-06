@@ -70,9 +70,9 @@ export function PwaInstallPrompt() {
 
   return (
     <div className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-3 right-3 z-[80] mx-auto max-w-md xl:bottom-6">
-      <div className="flex items-start gap-3 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-3 shadow-[0_12px_40px_rgba(0,0,0,0.14)]">
+      <div className="flex items-start gap-3 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3 shadow-[0_12px_40px_rgba(0,0,0,0.14)]">
         <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white ${
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-none text-white ${
             mode === 'already' ? 'bg-emerald-600' : 'bg-[#2f2a24]'
           }`}
         >

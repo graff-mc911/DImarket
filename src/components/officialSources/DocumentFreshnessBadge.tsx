@@ -62,7 +62,7 @@ export function DocumentFreshnessBadge(props: Props) {
 
   return (
     <aside
-      className={`rounded-2xl border px-3.5 py-3 text-sm ${toneClass[freshness.tone]}`}
+      className={`rounded-none border px-3.5 py-3 text-sm ${toneClass[freshness.tone]}`}
       aria-label={t('osm.freshness.aria')}
     >
       <div className="flex items-center gap-2 font-semibold">
@@ -96,7 +96,7 @@ export function DocumentFreshnessBadge(props: Props) {
 export function LegalContentDisclaimer() {
   const { t } = useApp()
   return (
-    <div className="rounded-2xl border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-3.5 py-3 text-xs leading-5 text-[#6f665d]">
+    <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-3.5 py-3 text-xs leading-5 text-[#6f665d]">
       <p>{t('osm.disclaimer.accuracy')}</p>
       <p className="mt-1.5">{t('osm.disclaimer.notAdvice')}</p>
     </div>

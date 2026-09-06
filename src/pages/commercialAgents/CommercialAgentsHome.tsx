@@ -86,7 +86,7 @@ export function CommercialAgentsHome() {
       {schemaState === 'missing_schema' ? (
         <div className="layout-page-gutter pt-4">
           <div
-            className="rounded-2xl border border-[#f0c14b] bg-[#fff8e8] px-4 py-3 text-sm text-[#5c4030]"
+            className="rounded-none border border-[#f0c14b] bg-[#fff8e8] px-4 py-3 text-sm text-[#5c4030]"
             role="status"
           >
             <p className="font-semibold">{t('commercialAgents.schemaMissingTitle')}</p>
@@ -184,7 +184,7 @@ export function CommercialAgentsHome() {
               key={card.path}
               type="button"
               onClick={() => navigateTo(card.path)}
-              className="rounded-2xl border border-[var(--line-200)] bg-white/95 p-5 text-left transition hover:border-[rgba(255,153,0,0.4)]"
+              className="rounded-none border border-[var(--line-200)] bg-white/95 p-5 text-left transition hover:border-[rgba(255,153,0,0.4)]"
             >
               <p className="text-base font-bold text-[var(--ink-900)]">{card.label}</p>
               <p className="mt-1 text-sm text-[var(--ink-600)]">{card.desc}</p>
@@ -212,7 +212,7 @@ export function CommercialAgentsHome() {
           {loading ? (
             <p className="text-sm text-[var(--ink-500)]">{t('commercialAgents.loading')}</p>
           ) : opportunities.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-[var(--line-200)] bg-white/60 p-6 text-sm text-[var(--ink-600)]">
+            <p className="rounded-none border border-dashed border-[var(--line-200)] bg-white/60 p-6 text-sm text-[var(--ink-600)]">
               {t('commercialAgents.emptyOpportunities')}
             </p>
           ) : (

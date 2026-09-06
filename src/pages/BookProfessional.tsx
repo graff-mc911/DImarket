@@ -216,7 +216,7 @@ export function BookProfessional({ profileId }: Props) {
                     type="button"
                     disabled={disabled}
                     onClick={() => setSelectedDate(key)}
-                    className={`min-h-[48px] rounded-xl border text-[13px] font-semibold transition ${
+                    className={`min-h-[48px] rounded-none border text-[13px] font-semibold transition ${
                       disabled
                         ? 'border-transparent text-[rgba(148,163,184,0.35)]'
                         : selectedDate === key
@@ -264,7 +264,7 @@ export function BookProfessional({ profileId }: Props) {
               Notes (optional)
             </span>
             <textarea
-              className="mt-1 w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-[14px] outline-none focus:border-[#2f2a24] focus:bg-white"
+              className="mt-1 w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-[14px] outline-none focus:border-[#2f2a24] focus:bg-white"
               rows={3}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}

@@ -144,7 +144,7 @@ function SlotBox({
   )
 
   const baseClass =
-    'group relative flex min-h-[28px] w-full items-center justify-center overflow-hidden rounded-md border px-0.5 py-1 text-center text-[9px] font-bold leading-tight transition ' +
+    'group relative flex min-h-[28px] w-full items-center justify-center overflow-hidden rounded-none border px-0.5 py-1 text-center text-[9px] font-bold leading-tight transition ' +
     (focused
       ? 'border-[#6366f1] ring-2 ring-[rgba(99,102,241,0.45)] shadow-md'
       : unavailable
@@ -368,7 +368,7 @@ function DesktopWireframe({
           </div>
         ) : null}
         <div className={'flex flex-col ' + (compact ? 'min-h-[184px] gap-3' : 'min-h-[159px] gap-2.5')}>
-          <div className="rounded-md border border-dashed border-[rgba(148,163,184,0.45)] bg-white/50 px-2 py-3 text-center text-[10px] font-semibold text-[#6f665d]">
+          <div className="rounded-none border border-dashed border-[rgba(148,163,184,0.45)] bg-white/50 px-2 py-3 text-center text-[10px] font-semibold text-[#6f665d]">
             {t('advertising.catalog.contentArea')}
           </div>
           {group.desktop.center && (

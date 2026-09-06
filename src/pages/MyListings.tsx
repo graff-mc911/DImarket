@@ -19,8 +19,8 @@ interface MyListing {
   is_premium: boolean
 }
 
-const btnPrimary = 'flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-900 hover:bg-blue-800 transition-all duration-300'
-const btnPrimaryFull = 'inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-900 hover:bg-blue-800 transition-all'
+const btnPrimary = 'flex items-center gap-2 px-4 py-2.5 rounded-none text-sm font-semibold text-white bg-blue-900 hover:bg-blue-800 transition-all duration-300'
+const btnPrimaryFull = 'inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-none text-sm font-semibold text-white bg-blue-900 hover:bg-blue-800 transition-all'
 
 export function MyListings() {
   const { user, currency, t } = useApp()
@@ -131,8 +131,8 @@ export function MyListings() {
                   key={f.value}
                   onClick={() => setStatusFilter(f.value)}
                   className={statusFilter === f.value
-                    ? 'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap bg-blue-900 text-white shadow-sm'
-                    : 'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}
+                    ? 'px-4 py-2 rounded-none text-sm font-medium whitespace-nowrap bg-blue-900 text-white shadow-sm'
+                    : 'px-4 py-2 rounded-none text-sm font-medium whitespace-nowrap bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}
                 >
                   {f.label}
                 </button>
@@ -147,7 +147,7 @@ export function MyListings() {
             )}
 
             {!loading && listings.length === 0 && (
-              <div className="text-center py-16 bg-white rounded-xl border border-gray-100 shadow-sm">
+              <div className="text-center py-16 bg-white rounded-none border border-gray-100 shadow-sm">
                 <FileText className="w-14 h-14 text-gray-200 mx-auto mb-4" />
                 <p className="text-gray-400 font-medium">{t('myListings.noListings')}</p>
                 <a href="/create-ad" className={btnPrimaryFull}>
@@ -163,8 +163,8 @@ export function MyListings() {
                   const badge = getStatusBadge(listing.status)
                   const daysLeft = getDaysLeft(listing.expires_at)
                   const cardClass = listing.is_premium
-                    ? 'bg-white rounded-xl border border-orange-200 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden'
-                    : 'bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden'
+                    ? 'bg-white rounded-none border border-orange-200 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden'
+                    : 'bg-white rounded-none border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden'
 
                   return (
                     <div key={listing.id} className={cardClass}>
@@ -212,14 +212,14 @@ export function MyListings() {
                           <div className="flex flex-col gap-2 flex-shrink-0">
                             <a
                               href={'/listing/' + listing.id}
-                              className="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600 text-xs font-medium transition text-center"
+                              className="px-3 py-1.5 rounded-none border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600 text-xs font-medium transition text-center"
                             >
                               Переглянути
                             </a>
                             {listing.status === 'active' && (
                               <button
                                 onClick={() => markAsSold(listing.id)}
-                                className="px-3 py-1.5 rounded-lg border border-green-200 text-green-600 hover:bg-green-50 text-xs font-medium transition"
+                                className="px-3 py-1.5 rounded-none border border-green-200 text-green-600 hover:bg-green-50 text-xs font-medium transition"
                               >
                                 Продано
                               </button>
@@ -227,7 +227,7 @@ export function MyListings() {
                             {(listing.status === 'active' || listing.status === 'expired') && (
                               <button
                                 onClick={() => deleteListing(listing.id)}
-                                className="px-3 py-1.5 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 text-xs font-medium transition flex items-center gap-1 justify-center"
+                                className="px-3 py-1.5 rounded-none border border-red-200 text-red-500 hover:bg-red-50 text-xs font-medium transition flex items-center gap-1 justify-center"
                               >
                                 <Trash2 className="w-3 h-3" />
                                 Видалити

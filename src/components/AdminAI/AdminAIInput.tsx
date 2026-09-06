@@ -68,13 +68,13 @@ export function AdminAIInput({
           disabled={loading || listening}
           rows={2}
           placeholder="Команда або запит… (/stats)"
-          className="min-h-[48px] flex-1 resize-none rounded-xl border-2 border-[rgba(201,109,44,0.45)] bg-white px-3 py-2.5 text-sm text-[#18181b] placeholder:text-[#78716c] focus:border-[#c96d2c] focus:outline-none focus:ring-2 focus:ring-[rgba(201,109,44,0.25)]"
+          className="min-h-[48px] flex-1 resize-none rounded-none border-2 border-[rgba(201,109,44,0.45)] bg-white px-3 py-2.5 text-sm text-[#18181b] placeholder:text-[#78716c] focus:border-[#c96d2c] focus:outline-none focus:ring-2 focus:ring-[rgba(201,109,44,0.25)]"
         />
         <div className="flex shrink-0 items-center gap-1">
           <button
             type="button"
             onClick={onToggleVoiceOut}
-            className={`rounded-lg p-2.5 ${voiceOut ? 'bg-[#c96d2c] text-white' : 'bg-[#3f3f46] text-[#e7e5e4] hover:bg-[#52525b]'}`}
+            className={`rounded-none p-2.5 ${voiceOut ? 'bg-[#c96d2c] text-white' : 'bg-[#3f3f46] text-[#e7e5e4] hover:bg-[#52525b]'}`}
             title="Озвучити відповіді"
             aria-label="Озвучити відповіді"
           >
@@ -84,7 +84,7 @@ export function AdminAIInput({
             type="button"
             onClick={listening ? stop : start}
             disabled={loading || !supported}
-            className={`rounded-lg p-2.5 ${
+            className={`rounded-none p-2.5 ${
               listening
                 ? 'animate-pulse bg-[#ef4444] text-white'
                 : 'bg-[#3f3f46] text-[#e7e5e4] hover:bg-[#52525b] disabled:opacity-40'
@@ -98,7 +98,7 @@ export function AdminAIInput({
             type="button"
             onClick={submit}
             disabled={loading || (!(listening ? interim : text).trim())}
-            className="rounded-lg bg-[#c96d2c] p-2.5 text-white disabled:opacity-40"
+            className="rounded-none bg-[#c96d2c] p-2.5 text-white disabled:opacity-40"
             aria-label="Надіслати"
           >
             <Send className="h-5 w-5" />

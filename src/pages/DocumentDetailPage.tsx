@@ -169,7 +169,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
         </header>
 
         {doc.templateNeedsLegalReview ? (
-          <div className="mb-4 rounded-xl border border-[#f5c26b] bg-[#fff8eb] px-4 py-3 text-sm text-[#2f2a24]">
+          <div className="mb-4 rounded-none border border-[#f5c26b] bg-[#fff8eb] px-4 py-3 text-sm text-[#2f2a24]">
             {doc.officialForm ? (
               <>
                 <p className="font-semibold">{doc.officialForm.modelName}</p>
@@ -195,7 +195,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
         </div>
 
         {doc.relatedPortals?.length ? (
-          <section className="mb-6 rounded-2xl border-2 border-[#007185]/40 bg-[#f0fafb] p-4">
+          <section className="mb-6 rounded-none border-2 border-[#007185]/40 bg-[#f0fafb] p-4">
             <h2 className="text-base font-bold text-[#2f2a24]">{t('docs.vehicleCheck.title')}</h2>
             <p className="mt-1 text-xs text-[#6f665d]">{t('docs.vehicleCheck.hint')}</p>
             <div className="mt-3 flex flex-col gap-2">
@@ -205,7 +205,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
                   href={p.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-start gap-2 rounded-xl bg-[#007185] px-4 py-3 text-sm font-semibold text-white hover:bg-[#005f6b]"
+                  className="inline-flex items-start gap-2 rounded-none bg-[#007185] px-4 py-3 text-sm font-semibold text-white hover:bg-[#005f6b]"
                 >
                   <ExternalLink className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
                   <span>
@@ -220,7 +220,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
           </section>
         ) : null}
 
-        <section className="mb-6 space-y-2 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4 text-sm">
+        <section className="mb-6 space-y-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 text-sm">
           <MetaRow label={t('docs.meta.country')} value={doc.countryCode} />
           {doc.region ? <MetaRow label={t('docs.meta.region')} value={doc.region} /> : null}
           {doc.city ? <MetaRow label={t('docs.meta.city')} value={doc.city} /> : null}
@@ -264,7 +264,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
             href={doc.source.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#2f2a24] px-4 py-2.5 text-sm font-semibold text-white"
+            className="inline-flex items-center gap-2 rounded-none bg-[#2f2a24] px-4 py-2.5 text-sm font-semibold text-white"
           >
             <ExternalLink className="h-4 w-4" aria-hidden />
             {t('docs.openOfficial')}
@@ -273,7 +273,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
             <button
               type="button"
               onClick={() => setFilling((v) => !v)}
-              className="inline-flex items-center gap-2 rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2.5 text-sm font-semibold text-[#2f2a24]"
+              className="inline-flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2.5 text-sm font-semibold text-[#2f2a24]"
             >
               <FileSignature className="h-4 w-4" aria-hidden />
               {filling ? t('docs.hideForm') : t('docs.fillOnline')}
@@ -296,7 +296,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
         ) : null}
 
         {signOpen ? (
-          <div className="mb-6 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] p-4 text-sm text-[#2f2a24]">
+          <div className="mb-6 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] p-4 text-sm text-[#2f2a24]">
             <p className="font-semibold">{t('docs.esign.title')}</p>
             <p className="mt-1 text-[#6f665d]">{t('docs.esign.body')}</p>
             <button
@@ -318,7 +318,7 @@ export function DocumentDetailPage({ countrySlug, cityOrSlug, slug }: Props) {
                   key={s.labelKey}
                   type="button"
                   onClick={() => findSpecialist(s.searchQuery, s.categorySlug)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2 text-sm font-semibold text-[#2f2a24]"
+                  className="inline-flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2 text-sm font-semibold text-[#2f2a24]"
                 >
                   <UserSearch className="h-4 w-4" aria-hidden />
                   {tStored(s.labelKey)}
@@ -362,7 +362,7 @@ function ProcedurePanel({
   const step = steps[stepIndex]
   if (!step) return null
   return (
-    <section className="mb-6 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4">
+    <section className="mb-6 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="text-base font-bold text-[#2f2a24]">{t('docs.procedure.title')}</h2>
         <span className="text-xs font-semibold text-[#8a8178]">
@@ -409,7 +409,7 @@ function ProcedurePanel({
           type="button"
           disabled={stepIndex === 0}
           onClick={() => setStepIndex(Math.max(0, stepIndex - 1))}
-          className="rounded-lg border border-[rgba(148,163,184,0.35)] px-3 py-1.5 text-sm font-semibold disabled:opacity-40"
+          className="rounded-none border border-[rgba(148,163,184,0.35)] px-3 py-1.5 text-sm font-semibold disabled:opacity-40"
         >
           {t('docs.procedure.prev')}
         </button>
@@ -417,7 +417,7 @@ function ProcedurePanel({
           type="button"
           disabled={stepIndex >= steps.length - 1}
           onClick={() => setStepIndex(Math.min(steps.length - 1, stepIndex + 1))}
-          className="rounded-lg bg-[#2f2a24] px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
+          className="rounded-none bg-[#2f2a24] px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
         >
           {t('docs.procedure.next')}
         </button>
@@ -451,12 +451,12 @@ function FillForm({
   const tStored = (key: string) => t(key as TranslationKey)
   let lastSection = ''
   return (
-    <section className="mb-6 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4">
+    <section className="mb-6 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
       <h2 className="mb-1 text-base font-bold text-[#2f2a24]">{t('docs.form.title')}</h2>
       {modelName ? <p className="mb-2 text-xs font-semibold text-[#007185]">{modelName}</p> : null}
       <p className="mb-3 text-xs text-[#6f665d]">{t('docs.form.autofillHint')}</p>
       {checkPortals?.length ? (
-        <div className="mb-4 rounded-xl border border-[#007185]/25 bg-[#f0fafb] p-3">
+        <div className="mb-4 rounded-none border border-[#007185]/25 bg-[#f0fafb] p-3">
           <p className="text-xs font-bold text-[#2f2a24]">{t('docs.vehicleCheck.title')}</p>
           <div className="mt-2 flex flex-col gap-1.5">
             {checkPortals.map((p) => (
@@ -499,13 +499,13 @@ function FillForm({
                     onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
                     rows={3}
                     placeholder={field.placeholder}
-                    className="w-full rounded-lg border border-[rgba(148,163,184,0.35)] px-3 py-2 text-sm"
+                    className="w-full rounded-none border border-[rgba(148,163,184,0.35)] px-3 py-2 text-sm"
                   />
                 ) : field.type === 'select' ? (
                   <select
                     value={values[field.id] ?? ''}
                     onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
-                    className="w-full rounded-lg border border-[rgba(148,163,184,0.35)] px-3 py-2 text-sm"
+                    className="w-full rounded-none border border-[rgba(148,163,184,0.35)] px-3 py-2 text-sm"
                   >
                     <option value="">—</option>
                     {(field.options ?? []).map((opt) => (
@@ -530,7 +530,7 @@ function FillForm({
                     value={values[field.id] ?? ''}
                     onChange={(e) => setValues({ ...values, [field.id]: e.target.value })}
                     placeholder={field.placeholder}
-                    className="w-full rounded-lg border border-[rgba(148,163,184,0.35)] px-3 py-2 text-sm"
+                    className="w-full rounded-none border border-[rgba(148,163,184,0.35)] px-3 py-2 text-sm"
                   />
                 )}
               </label>
@@ -549,7 +549,7 @@ function FillForm({
               setBusy(false)
             }
           }}
-          className="inline-flex items-center gap-2 rounded-xl bg-[#007185] px-4 py-2.5 text-sm font-semibold text-white"
+          className="inline-flex items-center gap-2 rounded-none bg-[#007185] px-4 py-2.5 text-sm font-semibold text-white"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
           {t('docs.downloadPdf')}
@@ -557,7 +557,7 @@ function FillForm({
         <button
           type="button"
           onClick={onSign}
-          className="inline-flex items-center gap-2 rounded-xl border border-[rgba(148,163,184,0.35)] px-4 py-2.5 text-sm font-semibold text-[#2f2a24]"
+          className="inline-flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.35)] px-4 py-2.5 text-sm font-semibold text-[#2f2a24]"
         >
           <Send className="h-4 w-4" aria-hidden />
           {t('docs.sendForSignature')}

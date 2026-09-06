@@ -290,7 +290,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
             </>
           ) : null}
           {PROJECT_PAYMENTS_ENABLED && hired && escrow ? (
-            <div className="mt-4 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] px-4 py-3">
+            <div className="mt-4 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] px-4 py-3">
               <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                 {t('pipeline.escrowTitle' as never) || 'Project escrow'}
               </p>
@@ -359,7 +359,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
           !escrow &&
           acceptedQuoteId &&
           quoteTotal ? (
-            <div className="mt-4 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] px-4 py-3">
+            <div className="mt-4 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] px-4 py-3">
               <p className="text-[14px] font-semibold text-[#2f2a24]">
                 {t('pipeline.escrowTitle' as never) || 'Project escrow'}
               </p>
@@ -414,10 +414,10 @@ export function ProjectManage({ listingId }: { listingId: string }) {
 
       <div className="mx-auto max-w-3xl space-y-5 px-4 py-6 md:px-6">
         {error ? (
-          <p className="rounded-2xl bg-[#fef2f2] px-4 py-3 text-[13px] text-[#b91c1c]">{error}</p>
+          <p className="rounded-none bg-[#fef2f2] px-4 py-3 text-[13px] text-[#b91c1c]">{error}</p>
         ) : null}
         {notice ? (
-          <p className="rounded-2xl bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
+          <p className="rounded-none bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
             {notice}
           </p>
         ) : null}
@@ -463,7 +463,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
               </section>
             ) : null}
             {completed && reviewDone ? (
-              <p className="rounded-2xl bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
+              <p className="rounded-none bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
                 {t('pipeline.reviewThanks' as never) || 'Thanks — review saved.'}
               </p>
             ) : null}
@@ -478,7 +478,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                 {calendar.map((c) => (
                   <li
                     key={c.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-[#f3f0ea] px-4 py-3"
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-none bg-[#f3f0ea] px-4 py-3"
                   >
                     <div>
                       <p className="text-[14px] font-semibold text-[#2f2a24]">{c.title}</p>
@@ -602,7 +602,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                     href={m.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="relative aspect-square overflow-hidden rounded-xl bg-[#f3f0ea]"
+                    className="relative aspect-square overflow-hidden rounded-none bg-[#f3f0ea]"
                   >
                     <img src={m.url} alt="" className="h-full w-full object-cover" />
                     <span className="absolute bottom-1 left-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold uppercase text-white">
@@ -647,7 +647,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                 {docs.map((d) => (
                   <li
                     key={d.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-[#f3f0ea] px-4 py-3"
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-none bg-[#f3f0ea] px-4 py-3"
                   >
                     <div>
                       <p className="text-[14px] font-semibold text-[#2f2a24]">{d.title}</p>

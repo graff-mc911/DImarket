@@ -269,7 +269,7 @@ export function ProCalendar() {
 
       <div className="mx-auto grid max-w-6xl gap-4 px-4 py-6 lg:grid-cols-[1.4fr_1fr]">
         {message ? (
-          <p className="rounded-xl bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800 lg:col-span-2">
+          <p className="rounded-none bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800 lg:col-span-2">
             {message}
           </p>
         ) : null}
@@ -316,7 +316,7 @@ export function ProCalendar() {
                     type="button"
                     disabled={!inMonth}
                     onClick={() => setSelected(key)}
-                    className={`min-h-[64px] rounded-xl border p-1.5 text-left transition ${
+                    className={`min-h-[64px] rounded-none border p-1.5 text-left transition ${
                       !inMonth
                         ? 'border-transparent opacity-30'
                         : isBlocked
@@ -351,7 +351,7 @@ export function ProCalendar() {
             Select a day, then block it below. Amber = pending, green = accepted.
           </p>
           {selected ? (
-            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-[#fafafa] p-3">
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-none bg-[#fafafa] p-3">
               <span className="text-[13px] font-semibold text-[#2f2a24]">{selected}</span>
               <button
                 type="button"
@@ -379,7 +379,7 @@ export function ProCalendar() {
                 <p className="text-[13px] text-[#8a8178]">No pending requests</p>
               ) : (
                 pending.map((b) => (
-                  <div key={b.id} className="rounded-xl border border-[#f0f0f2] p-3">
+                  <div key={b.id} className="rounded-none border border-[#f0f0f2] p-3">
                     <p className="text-[14px] font-semibold text-[#2f2a24]">{b.customer_name}</p>
                     <p className="mt-0.5 text-[12px] text-[#8a8178]">
                       {new Date(b.starts_at).toLocaleString()} –{' '}
@@ -424,7 +424,7 @@ export function ProCalendar() {
                 <p className="text-[13px] text-[#8a8178]">No upcoming appointments</p>
               ) : (
                 upcoming.map((b) => (
-                  <div key={b.id} className="rounded-xl border border-[#f0f0f2] p-3">
+                  <div key={b.id} className="rounded-none border border-[#f0f0f2] p-3">
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="text-[14px] font-semibold text-[#2f2a24]">

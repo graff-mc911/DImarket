@@ -149,7 +149,7 @@ export function AgentProfilePage({ slug }: { slug: string }) {
               {item.description || t('commercialAgents.noDescription')}
             </p>
 
-            <section className="mt-8 rounded-2xl border border-[var(--line-200)] bg-white/90 p-5">
+            <section className="mt-8 rounded-none border border-[var(--line-200)] bg-white/90 p-5">
               <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('commercialAgents.representationBlock')}</h2>
               <dl className="mt-4 grid gap-3 sm:grid-cols-2">
                 <AgentFact
@@ -215,7 +215,7 @@ export function AgentProfilePage({ slug }: { slug: string }) {
 
           <aside className="space-y-4">
             {matchPanel ? <MatchScorePanel match={matchPanel} t={t} /> : null}
-            <div className="rounded-2xl border border-[var(--line-200)] bg-white/95 p-4">
+            <div className="rounded-none border border-[var(--line-200)] bg-white/95 p-4">
               <button
                 type="button"
                 onClick={() =>
@@ -248,7 +248,7 @@ export function AgentProfilePage({ slug }: { slug: string }) {
                 {t('commercialAgents.invite')}
               </label>
               <textarea
-                className="mt-1.5 w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white p-3 text-sm outline-none"
+                className="mt-1.5 w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-white p-3 text-sm outline-none"
                 rows={3}
                 value={inviteMsg}
                 onChange={(e) => setInviteMsg(e.target.value)}
@@ -301,7 +301,7 @@ function ChipBlock({
 function AgentFact({ label, value }: { label: string; value: string | null | undefined }) {
   if (!value) return null
   return (
-    <div className="rounded-xl bg-[#f7f8fa] px-3 py-2.5">
+    <div className="rounded-none bg-[#f7f8fa] px-3 py-2.5">
       <dt className="text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-500)]">{label}</dt>
       <dd className="mt-0.5 text-sm font-medium text-[var(--ink-800)]">{value}</dd>
     </div>

@@ -42,7 +42,7 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
         </p>
         <div className="mt-2 flex items-center gap-3">
           {Icon ? (
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
+            <span className="flex h-10 w-10 items-center justify-center rounded-none bg-white shadow-sm">
               <Icon className="h-5 w-5" />
             </span>
           ) : null}
@@ -71,12 +71,12 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
                   key={f.previewUrl}
                   src={f.previewUrl}
                   alt=""
-                  className="h-16 w-16 shrink-0 rounded-xl object-cover"
+                  className="h-16 w-16 shrink-0 rounded-none object-cover"
                 />
               ) : (
                 <div
                   key={f.previewUrl}
-                  className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-[#f3f0ea] text-[10px] font-medium"
+                  className="flex h-16 w-16 shrink-0 items-center justify-center rounded-none bg-[#f3f0ea] text-[10px] font-medium"
                 >
                   {f.kind.toUpperCase()}
                 </div>

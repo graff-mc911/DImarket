@@ -144,7 +144,7 @@ export function Analytics() {
         </header>
 
         {error ? (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+          <div className="rounded-none border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
             {error}
           </div>
         ) : null}
@@ -318,7 +318,7 @@ export function Analytics() {
                   subtitle={t('analytics.quality.subtitle')}
                 >
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-xl bg-[#f3f0ea] p-4">
+                    <div className="rounded-none bg-[#f3f0ea] p-4">
                       <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
                         {t('analytics.quality.responseTime')}
                       </p>
@@ -326,7 +326,7 @@ export function Analytics() {
                         {formatHours(k.response_hours)}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[#f3f0ea] p-4">
+                    <div className="rounded-none bg-[#f3f0ea] p-4">
                       <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
                         {t('analytics.quality.responseRate')}
                       </p>
@@ -334,7 +334,7 @@ export function Analytics() {
                         {k.response_rate != null ? `${k.response_rate}%` : '—'}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[#f3f0ea] p-4">
+                    <div className="rounded-none bg-[#f3f0ea] p-4">
                       <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
                         {t('analytics.quality.recommend')}
                       </p>
@@ -342,7 +342,7 @@ export function Analytics() {
                         {k.recommend_pct != null ? `${k.recommend_pct}%` : '—'}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[#f3f0ea] p-4">
+                    <div className="rounded-none bg-[#f3f0ea] p-4">
                       <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
                         {t('analytics.quality.rating')}
                       </p>

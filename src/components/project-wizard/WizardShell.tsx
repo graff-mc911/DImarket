@@ -85,7 +85,7 @@ export function WizardShell({
           ) : null}
 
           {error ? (
-            <p className="mt-5 rounded-2xl bg-[#fff2f2] px-4 py-3 text-center text-[13px] font-medium text-[#c41e3a]">
+            <p className="mt-5 rounded-none bg-[#fff2f2] px-4 py-3 text-center text-[13px] font-medium text-[#c41e3a]">
               {error}
             </p>
           ) : null}

@@ -236,7 +236,7 @@ export function OwnerProfilesManager() {
       </div>
 
       <div
-        className={`mt-4 rounded-xl border px-3 py-3 text-sm ${
+        className={`mt-4 rounded-none border px-3 py-3 text-sm ${
           consistent
             ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
             : syncTarget != null && rows.length < syncTarget
@@ -270,7 +270,7 @@ export function OwnerProfilesManager() {
               }
             }}
             placeholder="Імʼя, email, телефон, profile_id, роль…"
-            className="w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white py-2.5 pl-10 pr-3 text-sm"
+            className="w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-white py-2.5 pl-10 pr-3 text-sm"
           />
         </div>
         <button
@@ -281,7 +281,7 @@ export function OwnerProfilesManager() {
             autoGeoKey.current = ''
             void load(query, filter)
           }}
-          className="rounded-xl bg-[#2f2a24] px-4 py-2.5 text-sm font-bold text-white"
+          className="rounded-none bg-[#2f2a24] px-4 py-2.5 text-sm font-bold text-white"
         >
           Шукати
         </button>
@@ -392,18 +392,18 @@ export function OwnerProfilesManager() {
       </div>
 
       {migrationHint && (
-        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+        <div className="mt-4 rounded-none border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
           Немає доступу до модерації профілів. Оновіть сторінку або перевірте, що ви залогінені як owner.
         </div>
       )}
 
       {error && (
-        <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="mt-3 rounded-none border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
         </div>
       )}
       {notice && (
-        <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+        <div className="mt-3 rounded-none border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
           {notice}
         </div>
       )}
@@ -471,7 +471,7 @@ function ProfileModerationCard({
   const deleted = Boolean(row.deleted_at || row.is_deleted)
 
   return (
-    <div className="rounded-xl border border-[rgba(148,163,184,0.28)] bg-white p-4">
+    <div className="rounded-none border border-[rgba(148,163,184,0.28)] bg-white p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-bold text-[#2f2a24]">{row.full_name || '(без імені)'}</p>

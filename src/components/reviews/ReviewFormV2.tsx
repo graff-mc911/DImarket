@@ -106,7 +106,7 @@ export function ReviewFormV2({ professionalId, listingId, onSuccess }: Props) {
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="glass-panel space-y-4 rounded-2xl p-5">
+    <form onSubmit={(e) => void handleSubmit(e)} className="glass-panel space-y-4 rounded-none p-5">
       <h3 className="text-lg font-bold text-[var(--ink-900)]">{t('reviews.writeTitle')}</h3>
       <StarRow label={t('reviews.overall')} value={rating} onChange={setRating} />
       <StarRow label={t('reviews.workQuality')} value={workQuality} onChange={setWorkQuality} />
@@ -122,7 +122,7 @@ export function ReviewFormV2({ professionalId, listingId, onSuccess }: Props) {
         onChange={(e) => setComment(e.target.value)}
         rows={4}
         placeholder={t('reviews.commentPlaceholder')}
-        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+        className="w-full rounded-none border border-slate-200 px-3 py-2 text-sm"
       />
 
       <div>
@@ -147,7 +147,7 @@ export function ReviewFormV2({ professionalId, listingId, onSuccess }: Props) {
         {media.length > 0 ? (
           <div className="mt-2 flex flex-wrap gap-2">
             {media.map((m) => (
-              <div key={m.url} className="relative h-16 w-16 overflow-hidden rounded-xl">
+              <div key={m.url} className="relative h-16 w-16 overflow-hidden rounded-none">
                 {m.type === 'video' ? (
                   <video src={m.url} className="h-full w-full object-cover" muted />
                 ) : (

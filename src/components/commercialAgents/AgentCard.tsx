@@ -18,7 +18,7 @@ export function AgentCard({
     <button
       type="button"
       onClick={() => navigateTo(`/commercial-agents/representatives/${item.slug}`)}
-      className="group flex w-full flex-col rounded-2xl border border-[var(--line-200)] bg-white/95 p-5 text-left shadow-[0_10px_30px_rgba(15,17,17,0.04)] transition hover:border-[rgba(255,153,0,0.45)] hover:shadow-[0_16px_40px_rgba(15,17,17,0.08)]"
+      className="group flex w-full flex-col rounded-none border border-[var(--line-200)] bg-white/95 p-5 text-left shadow-[0_10px_30px_rgba(15,17,17,0.04)] transition hover:border-[rgba(255,153,0,0.45)] hover:shadow-[0_16px_40px_rgba(15,17,17,0.08)]"
     >
       <div className="flex items-start gap-3">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#232f3e] text-lg font-bold text-white">

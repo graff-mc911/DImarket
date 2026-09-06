@@ -76,7 +76,7 @@ function AttachmentBlock({
               <img
                 src={a.public_url}
                 alt=""
-                className="mb-2 max-h-56 rounded-xl object-cover"
+                className="mb-2 max-h-56 rounded-none object-cover"
                 loading="lazy"
               />
             </a>
@@ -89,7 +89,7 @@ function AttachmentBlock({
               src={a.public_url}
               controls
               playsInline
-              className="mb-2 max-h-56 w-full rounded-xl bg-black"
+              className="mb-2 max-h-56 w-full rounded-none bg-black"
             />
           )
         }
@@ -271,7 +271,7 @@ export function ChatMessenger({ bootstrap }: Props) {
                         chat.active?.id === conv.id ? 'bg-[rgba(99,102,241,0.08)]' : ''
                       }`}
                     >
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[rgba(148,163,184,0.15)]">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-none bg-[rgba(148,163,184,0.15)]">
                         <User className="h-5 w-5 text-slate-600" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -357,7 +357,7 @@ export function ChatMessenger({ bootstrap }: Props) {
                           className={`flex ${mine ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${
+                            className={`max-w-[85%] rounded-none px-4 py-2.5 text-sm shadow-sm ${
                               mine
                                 ? 'bg-indigo-600 text-white'
                                 : 'border border-slate-200 bg-white text-slate-800'
@@ -405,7 +405,7 @@ export function ChatMessenger({ bootstrap }: Props) {
                     <button
                       type="button"
                       onClick={() => fileRef.current?.click()}
-                      className="rounded-2xl border border-slate-200 p-3 text-slate-600 hover:bg-slate-50"
+                      className="rounded-none border border-slate-200 p-3 text-slate-600 hover:bg-slate-50"
                       title={t('messages.attach')}
                     >
                       <ImagePlus className="h-5 w-5" />
@@ -413,7 +413,7 @@ export function ChatMessenger({ bootstrap }: Props) {
                     <button
                       type="button"
                       onClick={() => (recording ? stopRecording() : void startRecording())}
-                      className={`rounded-2xl border p-3 ${
+                      className={`rounded-none border p-3 ${
                         recording
                           ? 'border-red-300 bg-red-50 text-red-600'
                           : 'border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -436,13 +436,13 @@ export function ChatMessenger({ bootstrap }: Props) {
                       }}
                       rows={1}
                       placeholder={t('messages.placeholder')}
-                      className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-400"
+                      className="max-h-32 min-h-[44px] flex-1 resize-none rounded-none border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-400"
                     />
                     <button
                       type="button"
                       disabled={chat.sending || !newMessage.trim()}
                       onClick={() => void handleSend()}
-                      className="rounded-2xl bg-indigo-600 p-3 text-white disabled:opacity-50"
+                      className="rounded-none bg-indigo-600 p-3 text-white disabled:opacity-50"
                     >
                       <Send className="h-5 w-5" />
                     </button>

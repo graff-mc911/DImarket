@@ -43,7 +43,7 @@ export function MiniCalendar({
       <div className="mb-3 flex items-center justify-between">
         <button
           type="button"
-          className={`rounded-lg p-1.5 ${cell}`}
+          className={`rounded-none p-1.5 ${cell}`}
           onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
           aria-label="Previous month"
         >
@@ -52,7 +52,7 @@ export function MiniCalendar({
         <p className="text-[13px] font-semibold capitalize">{monthLabel}</p>
         <button
           type="button"
-          className={`rounded-lg p-1.5 ${cell}`}
+          className={`rounded-none p-1.5 ${cell}`}
           onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
           aria-label="Next month"
         >
@@ -73,7 +73,7 @@ export function MiniCalendar({
             <div
               key={c.iso}
               title={count ? `${count} events` : undefined}
-              className={`flex h-8 items-center justify-center rounded-lg text-[12px] font-medium ${
+              className={`flex h-8 items-center justify-center rounded-none text-[12px] font-medium ${
                 isToday ? todayCls : count ? markCls : cell
               }`}
             >

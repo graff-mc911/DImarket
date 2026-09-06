@@ -112,7 +112,7 @@ export function Billing() {
         </header>
 
         {error ? (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+          <div className="rounded-none border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
             {error}
           </div>
         ) : null}
@@ -178,7 +178,7 @@ export function Billing() {
             {ledger.map((row) => (
               <div
                 key={row.id}
-                className="flex items-center justify-between rounded-xl border border-[#f0f0f2] px-3 py-2 text-[13px]"
+                className="flex items-center justify-between rounded-none border border-[#f0f0f2] px-3 py-2 text-[13px]"
               >
                 <div>
                   <p className="font-medium text-[#2f2a24]">{row.reason.replace(/_/g, ' ')}</p>
@@ -213,13 +213,13 @@ export function Billing() {
               value={gAds.businessName}
               onChange={(e) => setGAds((s) => ({ ...s, businessName: e.target.value }))}
               placeholder="Business name"
-              className="w-full rounded-xl border border-[rgba(148,163,184,0.35)] px-3 py-2.5 text-[13px] outline-none focus:border-[#2f2a24]"
+              className="w-full rounded-none border border-[rgba(148,163,184,0.35)] px-3 py-2.5 text-[13px] outline-none focus:border-[#2f2a24]"
             />
             <input
               value={gAds.websiteUrl}
               onChange={(e) => setGAds((s) => ({ ...s, websiteUrl: e.target.value }))}
               placeholder="Website URL"
-              className="w-full rounded-xl border border-[rgba(148,163,184,0.35)] px-3 py-2.5 text-[13px] outline-none focus:border-[#2f2a24]"
+              className="w-full rounded-none border border-[rgba(148,163,184,0.35)] px-3 py-2.5 text-[13px] outline-none focus:border-[#2f2a24]"
             />
             <input
               value={gAds.monthlyBudgetEur}
@@ -227,14 +227,14 @@ export function Billing() {
               placeholder="Monthly budget (EUR)"
               type="number"
               min={0}
-              className="w-full rounded-xl border border-[rgba(148,163,184,0.35)] px-3 py-2.5 text-[13px] outline-none focus:border-[#2f2a24]"
+              className="w-full rounded-none border border-[rgba(148,163,184,0.35)] px-3 py-2.5 text-[13px] outline-none focus:border-[#2f2a24]"
             />
             <textarea
               value={gAds.goals}
               onChange={(e) => setGAds((s) => ({ ...s, goals: e.target.value }))}
               placeholder="Goals (leads, calls, brand…)"
               rows={3}
-              className="w-full rounded-xl border border-[rgba(148,163,184,0.35)] px-3 py-2.5 text-[13px] outline-none focus:border-[#2f2a24]"
+              className="w-full rounded-none border border-[rgba(148,163,184,0.35)] px-3 py-2.5 text-[13px] outline-none focus:border-[#2f2a24]"
             />
             <button
               type="submit"
@@ -260,7 +260,7 @@ function Stat({
   icon?: typeof Wallet
 }) {
   return (
-    <div className="rounded-xl bg-[#f3f0ea] px-3 py-3">
+    <div className="rounded-none bg-[#f3f0ea] px-3 py-3">
       <p className="text-[11px] font-medium uppercase tracking-wide text-[#8a8178]">{label}</p>
       <p className="mt-1 flex items-center gap-1.5 text-[16px] font-semibold text-[#2f2a24]">
         {Icon ? <Icon className="h-4 w-4" /> : null}

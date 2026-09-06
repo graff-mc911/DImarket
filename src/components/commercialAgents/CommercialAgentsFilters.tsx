@@ -9,7 +9,7 @@ import type { TranslateFn } from '../../lib/i18n'
 import { useApp } from '../../contexts/AppContext'
 
 const inputClass =
-  'w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
+  'w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
 
 export function CommercialAgentsFilters({
   value,
@@ -154,7 +154,7 @@ export function CommercialAgentsFilters({
 
   return (
     <>
-      <div className="hidden rounded-2xl border border-[var(--line-200)] bg-white/90 p-4 md:block">{panel}</div>
+      <div className="hidden rounded-none border border-[var(--line-200)] bg-white/90 p-4 md:block">{panel}</div>
 
       <div className="md:hidden">
         <button
@@ -167,7 +167,7 @@ export function CommercialAgentsFilters({
         </button>
         {open ? (
           <div className="fixed inset-0 z-[80] flex flex-col bg-black/40" role="dialog" aria-modal>
-            <div className="mt-auto max-h-[85vh] overflow-y-auto rounded-t-3xl bg-[#fffaf6] p-5 pb-28">
+            <div className="mt-auto max-h-[85vh] overflow-y-auto rounded-t-none bg-[#fffaf6] p-5 pb-28">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('commercialAgents.filters')}</h2>
                 <button type="button" onClick={() => onOpenChange(false)} aria-label="Close">

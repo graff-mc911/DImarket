@@ -37,7 +37,7 @@ import { PROJECT_TRADES } from '../lib/projectWizard'
 import type { ProjectApplication } from '../lib/types'
 
 const filterInput =
-  'w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
+  'w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
 
 export function ProjectFeed() {
   const { user, profile, t } = useApp()

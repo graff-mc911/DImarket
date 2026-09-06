@@ -171,7 +171,7 @@ export function NotificationCenter({ compact = true }: Props) {
     <div
       className={
         compact
-          ? 'absolute right-0 z-[70] mt-2 w-[min(400px,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white shadow-xl'
+          ? 'absolute right-0 z-[70] mt-2 w-[min(400px,calc(100vw-1.5rem))] overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-xl'
           : 'mx-auto max-w-2xl overflow-hidden rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-sm'
       }
     >

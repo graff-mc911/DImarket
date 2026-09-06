@@ -220,7 +220,7 @@ export function FooterStats({ compact = false, standalone = false }: { compact?:
           {statCards.map((card) => (
             <div
               key={card.label}
-              className="flex w-full max-w-[11rem] flex-col items-center gap-1.5 rounded-md border border-[#3a4553] bg-[#37475a] px-3 py-3"
+              className="flex w-full max-w-[11rem] flex-col items-center gap-1.5 rounded-none border border-[#3a4553] bg-[#37475a] px-3 py-3"
             >
               <card.icon className={`h-5 w-5 shrink-0 ${card.color}`} />
               <span className="text-center text-[11px] font-medium leading-snug text-[#cccccc] sm:text-xs">

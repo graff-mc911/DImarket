@@ -22,7 +22,7 @@ import { PROJECT_TRADES } from '../../lib/projectWizard'
 import { useApp } from '../../contexts/AppContext'
 
 const field =
-  'w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-[14px] text-[#2f2a24] outline-none focus:border-[#2f2a24] focus:bg-white'
+  'w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-[14px] text-[#2f2a24] outline-none focus:border-[#2f2a24] focus:bg-white'
 
 type Props = {
   profileId: string
@@ -172,7 +172,7 @@ export function PortfolioManager({
       </div>
 
       {message ? (
-        <p className="rounded-xl bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800">{message}</p>
+        <p className="rounded-none bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800">{message}</p>
       ) : null}
 
       {openForm && editable ? (
@@ -331,7 +331,7 @@ function UploadRow({
   onFile: (file: File) => void
 }) {
   return (
-    <div className="rounded-2xl border border-[#f0f0f2] bg-[#fafafa] p-3">
+    <div className="rounded-none border border-[#f0f0f2] bg-[#fafafa] p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <p className="text-[12px] font-semibold text-[#2f2a24]">{label}</p>
@@ -358,7 +358,7 @@ function UploadRow({
         </label>
       </div>
       {url && (url.match(/\.(jpg|jpeg|png|webp|gif)/i) || url.includes('image')) ? (
-        <img src={url} alt="" className="mt-2 h-24 rounded-xl object-cover" />
+        <img src={url} alt="" className="mt-2 h-24 rounded-none object-cover" />
       ) : null}
     </div>
   )

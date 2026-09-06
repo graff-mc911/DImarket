@@ -182,7 +182,7 @@ export function AdMediaEditor({
             {slideUrls.map((url, i) => (
               <div
                 key={`${url}-${i}`}
-                className="relative h-14 w-20 overflow-hidden rounded-lg border border-[rgba(148,163,184,0.3)]"
+                className="relative h-14 w-20 overflow-hidden rounded-none border border-[rgba(148,163,184,0.3)]"
               >
                 <img src={url} alt="" className="h-full w-full object-cover" />
                 <button
@@ -199,7 +199,7 @@ export function AdMediaEditor({
                 type="button"
                 disabled={isUploading}
                 onClick={() => extraInputRef.current?.click()}
-                className="flex h-14 w-20 flex-col items-center justify-center rounded-lg border border-dashed border-[rgba(99,102,241,0.35)] text-[#6366f1] disabled:opacity-50"
+                className="flex h-14 w-20 flex-col items-center justify-center rounded-none border border-dashed border-[rgba(99,102,241,0.35)] text-[#6366f1] disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
                 <span className="mt-0.5 text-[9px] font-semibold">

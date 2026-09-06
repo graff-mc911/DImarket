@@ -115,7 +115,7 @@ export function ManufacturerProfilePage({ slug }: { slug: string }) {
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
           <div>
             <div className="flex flex-wrap items-start gap-4">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-[#232f3e] text-2xl font-bold text-white">
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-none bg-[#232f3e] text-2xl font-bold text-white">
                 {item.logo_url ? (
                   <img src={item.logo_url} alt="" className="h-full w-full object-cover" />
                 ) : (
@@ -137,7 +137,7 @@ export function ManufacturerProfilePage({ slug }: { slug: string }) {
               {item.description || t('commercialAgents.noDescription')}
             </p>
 
-            <section className="mt-8 rounded-2xl border border-[var(--line-200)] bg-white/90 p-5">
+            <section className="mt-8 rounded-none border border-[var(--line-200)] bg-white/90 p-5">
               <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('commercialAgents.representationBlock')}</h2>
               <dl className="mt-4 grid gap-3 sm:grid-cols-2">
                 <Fact label={t('commercialAgents.countriesAvailable')} value={item.countries_available.join(', ') || item.country} />
@@ -220,7 +220,7 @@ export function ManufacturerProfilePage({ slug }: { slug: string }) {
 
           <aside className="space-y-4">
             {matchPanel ? <MatchScorePanel match={matchPanel} t={t} /> : null}
-            <div className="rounded-2xl border border-[var(--line-200)] bg-white/95 p-4">
+            <div className="rounded-none border border-[var(--line-200)] bg-white/95 p-4">
               <button
                 type="button"
                 onClick={() => navigateTo(findAgentsPath)}
@@ -263,7 +263,7 @@ export function ManufacturerProfilePage({ slug }: { slug: string }) {
 function Fact({ label, value }: { label: string; value: string | null | undefined }) {
   if (!value) return null
   return (
-    <div className="rounded-xl bg-[#f7f8fa] px-3 py-2.5">
+    <div className="rounded-none bg-[#f7f8fa] px-3 py-2.5">
       <dt className="text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-500)]">{label}</dt>
       <dd className="mt-0.5 text-sm font-medium text-[var(--ink-800)]">{value}</dd>
     </div>

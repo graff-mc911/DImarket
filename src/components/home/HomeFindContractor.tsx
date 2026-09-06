@@ -1,12 +1,11 @@
+import { MapPin } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { navigateTo } from '../../lib/navigation'
 import { canonicalCountryName } from '../../lib/geoAliases'
 
 // Top cities by real professional/company count in the DImarket database,
 // grouped by country so the block matches whatever location the visitor
-// has selected (mixing countries together looked chaotic). Kept as a
-// static list rather than a live query since this is a low-churn
-// SEO/browse block — update periodically if the served regions change.
+// has selected. Static list — low-churn SEO/browse block.
 const CITIES_BY_COUNTRY: Record<string, string[]> = {
   Spain: [
     'Madrid', 'Barcelona', 'Alicante', 'Valencia', 'Málaga', 'Bilbao',
@@ -25,14 +24,13 @@ const CITIES_BY_COUNTRY: Record<string, string[]> = {
   Ukraine: ['Kyiv', 'Lviv', 'Kharkiv', 'Odesa', 'Dnipro'],
 }
 
-// Fallback shown when no country is selected yet, or the selected country
-// has too little coverage of its own — a mixed overview across countries.
 const DEFAULT_CITIES = [
   'Madrid', 'Barcelona', 'Alicante', 'Darmstadt', 'Valencia', 'Kyiv',
   'Lviv', 'Munich', 'Wrocław', 'Cologne', 'Málaga', 'Berlin',
   'Bilbao', 'Düsseldorf', 'Kharkiv', 'Łódź',
 ]
 
+/** Homepage "find contractor" city grid — same square cabinet cards as owner UI. */
 export function HomeFindContractor() {
   const { t, location } = useApp()
 
@@ -43,23 +41,41 @@ export function HomeFindContractor() {
   })()
 
   return (
-    <section className="home-find-contractor layout-page-gutter" aria-labelledby="home-find-contractor-title">
-      <h2 id="home-find-contractor-title" className="home-find-contractor__title">
-        {t('homePremium.findContractorPrefix')} <strong>{t('homePremium.findContractorHighlight')}</strong>
-      </h2>
+    <section
+      className="dimarket-categories layout-page-gutter py-6"
+      aria-labelledby="home-find-contractor-title"
+    >
+      <div className="dimarket-categories__head mb-5" style={{ textAlign: 'left' }}>
+        <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
+          {t('header.findProfessionals')}
+        </p>
+        <h2 id="home-find-contractor-title" className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+          {t('homePremium.findContractorPrefix')}{' '}
+          <strong>{t('homePremium.findContractorHighlight')}</strong>
+        </h2>
+      </div>
 
-      <div className="home-find-contractor__grid">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {cities.map((city) => (
-          <a
-            key={city}
-            href={`/professionals?location=${encodeURIComponent(city)}`}
-            onClick={(e) => {
-              e.preventDefault()
-              navigateTo(`/professionals?location=${encodeURIComponent(city)}`)
-            }}
-          >
-            {city}
-          </a>
+          <article key={city} className="dimarket-category-card">
+            <button
+              type="button"
+              className="dimarket-category-card__button"
+              onClick={() => navigateTo(`/professionals?location=${encodeURIComponent(city)}`)}
+              aria-label={`${t('header.findProfessionals')}: ${city}`}
+            >
+              <span className="dimarket-category-card__icon" aria-hidden>
+                <MapPin className="h-8 w-8 text-[#1b4d3e]" />
+              </span>
+              <span className="dimarket-category-card__body">
+                <strong>{city}</strong>
+                <span>{t('header.findProfessionals')}</span>
+              </span>
+              <span className="dimarket-category-card__chevron" aria-hidden>
+                ›
+              </span>
+            </button>
+          </article>
         ))}
       </div>
     </section>

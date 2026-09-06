@@ -546,7 +546,7 @@
   }
 
   .product-card {
-    @apply flex h-full flex-col rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white/80 p-3 transition-shadow duration-200;
+    @apply flex h-full flex-col rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3 transition-shadow duration-200;
     box-shadow: var(--card-shadow);
   }
 
@@ -2079,7 +2079,7 @@
   .input-glass,
   .select-glass {
     @apply w-full rounded-none px-4 py-3 outline-none transition-all duration-200;
-    background: rgba(255, 255, 255, 0.72);
+    background: #ffffff;
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
     box-shadow: none;
@@ -2097,7 +2097,7 @@
 
   .input-hero {
     @apply w-full rounded-none px-4 py-3 outline-none transition-all duration-200;
-    background: rgba(255, 255, 255, 0.82);
+    background: #ffffff;
     color: var(--ink-900);
     border: 1px solid var(--glass-border);
   }
@@ -2321,14 +2321,14 @@
   }
 
   .amazon-section-card {
-    @apply rounded-2xl border p-4;
+    @apply rounded-none border p-4;
     border-color: var(--glass-border);
     background: #ffffff;
     box-shadow: var(--card-shadow);
   }
 
   .amazon-filter-sidebar {
-    @apply rounded-2xl border p-4;
+    @apply rounded-none border p-4;
     border-color: var(--glass-border);
     background: #ffffff;
     box-shadow: var(--card-shadow);
@@ -4130,9 +4130,9 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   justify-content: center;
   border-radius: 0;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(201, 109, 44, 0.28), transparent 48%),
-    rgba(148, 163, 184, 0.14);
+  /* Owner cabinet: cream well + dark-green icons */
+  background: #f3efe8;
+  color: #1b4d3e;
   font-size: 2rem;
   transition: transform 200ms ease;
 }
@@ -4471,7 +4471,7 @@ select.select-glass.geo-filter-select::-ms-expand {
    ============================================================ */
 
 .home-premium {
-  background: #f6f4f1;
+  background: #ebe8e3;
   color: #1a1612;
 }
 
@@ -5368,8 +5368,8 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-card);
-  background: #fff4e8;
-  color: #c96d2c;
+  background: #f3efe8;
+  color: #1b4d3e;
   margin-bottom: 1rem;
 }
 
@@ -8686,4 +8686,63 @@ body,
   font-size: 0.88rem;
   line-height: 1.5;
   color: #6f665d;
+}
+
+
+/* ============================================================
+   Owner-cabinet surface lock (whole app content, square corners)
+   Header/footer keep their own chrome rules above.
+   ============================================================ */
+.directory-hero,
+.directory-hero.amazon-section-card {
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: 0 8px 24px rgba(47, 42, 36, 0.08) !important;
+  background-image: none !important;
+}
+
+.glass-card,
+.glass-panel,
+.soft-card,
+.hero-glass,
+.amazon-section-card,
+.amazon-filter-sidebar,
+.product-card,
+.home-project-card,
+.home-pro-card,
+.home-why-card,
+.home-review-card,
+.cat-ai-card,
+.amazon-buy-box,
+.amazon-deal-card {
+  border-radius: 0 !important;
+}
+
+/* Squash leftover Tailwind radius utilities in page content.
+   Do not touch header/footer — they are outside these roots. */
+.directory-page [class*='rounded-'],
+.layout-page-content [class*='rounded-'],
+.layout-page-gutter [class*='rounded-'],
+.home-premium [class*='rounded-'],
+.dimarket-categories [class*='rounded-'] {
+  border-radius: 0 !important;
+}
+
+/* Keep true circles (avatars, dots, spinners) */
+.directory-page .rounded-full,
+.layout-page-content .rounded-full,
+.layout-page-gutter .rounded-full,
+.home-premium .rounded-full,
+.dimarket-categories .rounded-full,
+.directory-page [class~='rounded-full'],
+.layout-page-content [class~='rounded-full'],
+.layout-page-gutter [class~='rounded-full'],
+.home-premium [class~='rounded-full'],
+.dimarket-categories [class~='rounded-full'] {
+  border-radius: 9999px !important;
+}
+
+.home-find-contractor__grid {
+  display: none; /* replaced by cabinet cards in TSX */
 }

@@ -97,7 +97,7 @@ export function PortfolioMasonry({
   return (
     <>
       {shareNotice ? (
-        <p className="mb-3 rounded-xl bg-emerald-50 px-3 py-2 text-[12px] font-medium text-emerald-800">
+        <p className="mb-3 rounded-none bg-emerald-50 px-3 py-2 text-[12px] font-medium text-emerald-800">
           {shareNotice}
         </p>
       ) : null}
@@ -253,17 +253,17 @@ export function PortfolioMasonry({
               <div className="grid gap-2 sm:grid-cols-2">
                 <div>
                   <p className="mb-1 text-[11px] font-bold uppercase text-[#8a8178]">Before</p>
-                  <img src={lightbox.before_url} alt="Before" className="w-full rounded-2xl object-cover" />
+                  <img src={lightbox.before_url} alt="Before" className="w-full rounded-none object-cover" />
                 </div>
                 <div>
                   <p className="mb-1 text-[11px] font-bold uppercase text-[#8a8178]">After</p>
-                  <img src={lightbox.after_url} alt="After" className="w-full rounded-2xl object-cover" />
+                  <img src={lightbox.after_url} alt="After" className="w-full rounded-none object-cover" />
                 </div>
               </div>
             ) : lightbox.media_type === 'video' && lightbox.video_url ? (
-              <video src={lightbox.video_url} controls className="w-full rounded-2xl bg-black" playsInline />
+              <video src={lightbox.video_url} controls className="w-full rounded-none bg-black" playsInline />
             ) : coverUrl(lightbox) ? (
-              <img src={coverUrl(lightbox)!} alt={lightbox.title} className="w-full rounded-2xl object-contain" />
+              <img src={coverUrl(lightbox)!} alt={lightbox.title} className="w-full rounded-none object-contain" />
             ) : null}
 
             <div className="mt-4">

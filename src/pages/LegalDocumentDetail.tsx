@@ -169,14 +169,14 @@ export function LegalDocumentDetail({ docKey }: Props) {
         />
 
         {error && !body ? (
-          <p className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+          <p className="mt-4 rounded-none border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
             {error}
           </p>
         ) : null}
 
         {body ? (
           <article
-            className="prose-like mt-6 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-5"
+            className="prose-like mt-6 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5"
             dangerouslySetInnerHTML={{
               __html: `<p class="text-sm leading-6 text-[#2f2a24]">${renderMarkdown(body)}</p>`,
             }}

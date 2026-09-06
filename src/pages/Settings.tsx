@@ -835,7 +835,7 @@ export function Settings() {
                     </div>
 
                     {notificationsEnabled ? (
-                      <div className="mt-5 space-y-4 rounded-2xl border border-[rgba(190,168,150,0.28)] bg-white/50 p-4">
+                      <div className="mt-5 space-y-4 rounded-none border border-[rgba(190,168,150,0.28)] bg-white/50 p-4">
                         <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
                           {t('settings.notifChannels')}
                         </p>

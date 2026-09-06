@@ -161,7 +161,7 @@ export function AdImageAdaptPanel({ userId, campaignId, onVariantsReady }: AdIma
       {Object.keys(previews).length > 0 && (
         <div className="mt-4 grid grid-cols-2 gap-2">
           {AD_IMAGE_VARIANTS.map((spec) => (
-            <div key={spec.key} className="overflow-hidden rounded-lg border border-[rgba(148,163,184,0.2)]">
+            <div key={spec.key} className="overflow-hidden rounded-none border border-[rgba(148,163,184,0.2)]">
               <p className="bg-white/80 px-2 py-0.5 text-[9px] font-semibold">{t(spec.labelKey as TranslationKey)}</p>
               {previews[spec.key] ? (
                 <img src={previews[spec.key]} alt="" className="h-20 w-full object-cover" />

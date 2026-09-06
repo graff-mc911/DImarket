@@ -43,7 +43,7 @@ export function DocumentsHub({ subcategory = null }: Props) {
           <p className="mt-2 text-sm leading-6 text-[#6f665d]">
             {subMeta ? tStored(t, subMeta.descriptionKey) : t('docs.hub.subtitle')}
           </p>
-          <p className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#f3f0ea] px-3 py-1.5 text-xs text-[#2f2a24]">
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-none bg-[#f3f0ea] px-3 py-1.5 text-xs text-[#2f2a24]">
             <MapPin className="h-3.5 w-3.5 text-[#8a8178]" aria-hidden />
             {t('docs.location.context')}: <strong>{locationLabel}</strong>
           </p>
@@ -61,7 +61,7 @@ export function DocumentsHub({ subcategory = null }: Props) {
                   onClick={() =>
                     navigateTo(appendLocationToPath(`/documents/${sub.slug}`, location))
                   }
-                  className="flex w-full items-center gap-3 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3 text-left transition hover:border-[#007185]/40"
+                  className="flex w-full items-center gap-3 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3 text-left transition hover:border-[#007185]/40"
                 >
                   <span className="text-xl" aria-hidden>
                     {sub.icon}
@@ -90,7 +90,7 @@ export function DocumentsHub({ subcategory = null }: Props) {
         </h2>
 
         {docs.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-8 text-center text-sm text-[#8a8178]">
+          <p className="rounded-none border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-8 text-center text-sm text-[#8a8178]">
             {jurisdiction.countryCode
               ? t('docs.list.emptyForCountry')
               : t('docs.list.empty')}
@@ -102,7 +102,7 @@ export function DocumentsHub({ subcategory = null }: Props) {
                 <button
                   type="button"
                   onClick={() => navigateTo(appendLocationToPath(documentSeoPath(doc), location))}
-                  className="w-full rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4 text-left transition hover:border-[#007185]/40 hover:shadow-sm"
+                  className="w-full rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 text-left transition hover:border-[#007185]/40 hover:shadow-sm"
                 >
                   <div className="flex items-start gap-3">
                     <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[#2f2a24]" aria-hidden />

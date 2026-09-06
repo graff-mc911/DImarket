@@ -56,9 +56,9 @@ export function ScbLightPanel({
 
   if (variant === 'banner') {
     return (
-      <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-[#dbeafe] bg-[linear-gradient(135deg,rgba(219,234,254,0.55),rgba(255,255,255,0.95))] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-4 flex flex-col gap-3 rounded-none border border-[#dbeafe] bg-[linear-gradient(135deg,rgba(219,234,254,0.55),rgba(255,255,255,0.95))] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2563eb] text-white">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-[#2563eb] text-white">
             <Calculator className="h-5 w-5" />
           </div>
           <div>

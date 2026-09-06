@@ -84,7 +84,7 @@ export function LegalMarkdownEditor({
     .replace(/\n\n/g, '<br/><br/>')
 
   return (
-    <div className="rounded-xl border border-[rgba(148,163,184,0.35)] bg-white">
+    <div className="rounded-none border border-[rgba(148,163,184,0.35)] bg-white">
       <div className="flex flex-wrap items-center gap-1 border-b border-[rgba(148,163,184,0.22)] px-2 py-1.5">
         <button
           type="button"
@@ -183,7 +183,7 @@ export function LegalMarkdownEditor({
           onChange={(e) => onChange(e.target.value)}
           rows={rows}
           placeholder={placeholder}
-          className="w-full resize-y rounded-b-xl border-0 px-3 py-2 font-mono text-xs focus:outline-none focus:ring-0"
+          className="w-full resize-y rounded-b-none border-0 px-3 py-2 font-mono text-xs focus:outline-none focus:ring-0"
         />
       )}
     </div>

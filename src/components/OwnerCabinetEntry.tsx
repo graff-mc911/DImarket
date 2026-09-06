@@ -22,7 +22,7 @@ export function OwnerCabinetEntry({ variant = 'card', className = '' }: Props) {
   if (variant === 'banner') {
     return (
       <div
-        className={`mb-4 flex flex-col gap-3 rounded-2xl border border-[rgba(148,163,184,0.35)] bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between ${className}`}
+        className={`mb-4 flex flex-col gap-3 rounded-none border border-[rgba(148,163,184,0.35)] bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between ${className}`}
         role="region"
         aria-label={t('ownerDash.controlTitle')}
       >
@@ -48,7 +48,7 @@ export function OwnerCabinetEntry({ variant = 'card', className = '' }: Props) {
 
   return (
     <section
-      className={`rounded-2xl border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-4 ${className}`}
+      className={`rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-4 ${className}`}
       aria-label={t('ownerDash.controlTitle')}
     >
       <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#6f665d]">
@@ -62,7 +62,7 @@ export function OwnerCabinetEntry({ variant = 'card', className = '' }: Props) {
         <button
           type="button"
           onClick={() => go('/dashboard')}
-          className="flex items-center gap-2 rounded-xl border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[#2f2a24]"
+          className="flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[#2f2a24]"
         >
           <LayoutDashboard className="h-4 w-4 shrink-0" aria-hidden />
           {t('header.dashboard')}
@@ -70,7 +70,7 @@ export function OwnerCabinetEntry({ variant = 'card', className = '' }: Props) {
         <button
           type="button"
           onClick={() => go('/admin/ai')}
-          className="flex items-center gap-2 rounded-xl border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[#2f2a24]"
+          className="flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[#2f2a24]"
         >
           <Bot className="h-4 w-4 shrink-0" aria-hidden />
           {t('ai.admin.title')}
@@ -78,7 +78,7 @@ export function OwnerCabinetEntry({ variant = 'card', className = '' }: Props) {
         <button
           type="button"
           onClick={() => go('/admin/marketing-agent')}
-          className="flex items-center gap-2 rounded-xl border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[#2f2a24]"
+          className="flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[#2f2a24]"
         >
           <Megaphone className="h-4 w-4 shrink-0" aria-hidden />
           {t('header.marketingAgent')}

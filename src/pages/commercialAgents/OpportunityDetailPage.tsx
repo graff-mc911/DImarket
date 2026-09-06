@@ -150,12 +150,12 @@ export function OpportunityDetailPage({ id }: { id: string }) {
 
           <aside className="space-y-4">
             {match ? <MatchScorePanel match={match} t={t} /> : null}
-            <div className="rounded-2xl border border-[var(--line-200)] bg-white/95 p-4">
+            <div className="rounded-none border border-[var(--line-200)] bg-white/95 p-4">
               <label className="block text-xs font-semibold uppercase tracking-wide text-[var(--ink-500)]">
                 {t('commercialAgents.apply')}
               </label>
               <textarea
-                className="mt-1.5 w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white p-3 text-sm outline-none"
+                className="mt-1.5 w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-white p-3 text-sm outline-none"
                 rows={4}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -222,7 +222,7 @@ export function OpportunityDetailPage({ id }: { id: string }) {
 function Fact({ label, value }: { label: string; value: string | null | undefined }) {
   if (!value) return null
   return (
-    <div className="rounded-xl border border-[var(--line-200)] bg-white/80 px-3 py-2.5">
+    <div className="rounded-none border border-[var(--line-200)] bg-white/80 px-3 py-2.5">
       <dt className="text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-500)]">{label}</dt>
       <dd className="mt-0.5 text-sm font-medium text-[var(--ink-800)]">{value}</dd>
     </div>

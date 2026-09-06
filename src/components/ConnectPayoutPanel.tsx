@@ -76,7 +76,7 @@ export function ConnectPayoutPanel({
   if (variant === 'banner') {
     if (loading || status?.ready) return null
     return (
-      <div className="mb-4 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3">
+      <div className="mb-4 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3">
         <p className="text-[13px] font-semibold text-[#2f2a24]">
           {t('connect.bannerTitle' as never) || 'Enable payouts to receive escrow'}
         </p>

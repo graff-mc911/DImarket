@@ -132,7 +132,7 @@ export function ReviewCard({
                 key={m.url}
                 type="button"
                 onClick={() => setLightbox(m.url)}
-                className="relative h-20 w-28 overflow-hidden rounded-xl bg-[#0b0b0f]"
+                className="relative h-20 w-28 overflow-hidden rounded-none bg-[#0b0b0f]"
               >
                 <video src={m.url} className="h-full w-full object-cover" muted preload="metadata" />
                 <span className="absolute inset-0 flex items-center justify-center">
@@ -146,7 +146,7 @@ export function ReviewCard({
                 key={m.url}
                 type="button"
                 onClick={() => setLightbox(m.url)}
-                className="h-20 w-20 overflow-hidden rounded-xl"
+                className="h-20 w-20 overflow-hidden rounded-none"
               >
                 <img src={m.url} alt="" className="h-full w-full object-cover" loading="lazy" />
               </button>
@@ -183,7 +183,7 @@ export function ReviewCard({
       {review.replies.length > 0 ? (
         <div className="mt-3 space-y-2 border-t border-[#f0f0f2] pt-3">
           {review.replies.map((r) => (
-            <div key={r.id} className="rounded-xl bg-[#fafafa] px-3 py-2">
+            <div key={r.id} className="rounded-none bg-[#fafafa] px-3 py-2">
               <div className="flex items-center gap-2">
                 <p className="text-[12px] font-semibold text-[#2f2a24]">{r.author_name}</p>
                 {isOwnerReply(r.author_id) ? (
@@ -207,7 +207,7 @@ export function ReviewCard({
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="Write a reply…"
-            className="flex-1 rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2 text-[13px] outline-none focus:border-[#2f2a24] focus:bg-white"
+            className="flex-1 rounded-none border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2 text-[13px] outline-none focus:border-[#2f2a24] focus:bg-white"
             onKeyDown={(e) => {
               if (e.key === 'Enter') void onReply()
             }}
@@ -216,7 +216,7 @@ export function ReviewCard({
             type="button"
             disabled={busy || !replyText.trim()}
             onClick={() => void onReply()}
-            className="inline-flex items-center gap-1 rounded-xl bg-[#2f2a24] px-3 py-2 text-[12px] font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center gap-1 rounded-none bg-[#2f2a24] px-3 py-2 text-[12px] font-semibold text-white disabled:opacity-50"
           >
             <Send className="h-3.5 w-3.5" />
             Send
@@ -231,9 +231,9 @@ export function ReviewCard({
         >
           <div className="max-h-[90vh] max-w-3xl" onClick={(e) => e.stopPropagation()}>
             {/\.(mp4|webm|mov)(\?|$)/i.test(lightbox) ? (
-              <video src={lightbox} controls autoPlay className="max-h-[85vh] w-full rounded-2xl" />
+              <video src={lightbox} controls autoPlay className="max-h-[85vh] w-full rounded-none" />
             ) : (
-              <img src={lightbox} alt="" className="max-h-[85vh] w-full rounded-2xl object-contain" />
+              <img src={lightbox} alt="" className="max-h-[85vh] w-full rounded-none object-contain" />
             )}
           </div>
         </div>

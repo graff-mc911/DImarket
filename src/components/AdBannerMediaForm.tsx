@@ -125,7 +125,7 @@ export function AdBannerMediaForm({
                 {slideUrls.map((url, i) => (
                   <div
                     key={`${url}-${i}`}
-                    className="relative h-12 w-16 overflow-hidden rounded-lg border border-[rgba(148,163,184,0.35)]"
+                    className="relative h-12 w-16 overflow-hidden rounded-none border border-[rgba(148,163,184,0.35)]"
                   >
                     <img src={url} alt="" className="h-full w-full object-cover" />
                   </div>

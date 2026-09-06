@@ -724,7 +724,7 @@ function CampaignRow({
     <div className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         {thumb && (
-          <img src={thumb} alt="" className="h-20 w-32 shrink-0 rounded-xl object-cover" />
+          <img src={thumb} alt="" className="h-20 w-32 shrink-0 rounded-none object-cover" />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">

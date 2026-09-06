@@ -148,14 +148,14 @@ function CreateDraftVersionForm({
   }
 
   return (
-    <div className="mt-3 space-y-2 rounded-xl border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-3">
+    <div className="mt-3 space-y-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-3">
       <p className="text-xs font-semibold text-[#2f2a24]">{t('osm.admin.createDraftTitle')}</p>
       <input
         type="text"
         value={versionNumber}
         onChange={(e) => setVersionNumber(e.target.value)}
         placeholder={t('osm.admin.versionNumberPlaceholder')}
-        className="w-full rounded-lg border border-[rgba(148,163,184,0.35)] px-2 py-1.5 text-xs"
+        className="w-full rounded-none border border-[rgba(148,163,184,0.35)] px-2 py-1.5 text-xs"
       />
       <LegalMarkdownEditor
         value={bodyMarkdown}
@@ -215,7 +215,7 @@ function EditDraftVersionPanel({
   }
 
   return (
-    <div className="mt-2 w-full space-y-2 rounded-xl border border-[rgba(148,163,184,0.22)] bg-white p-3">
+    <div className="mt-2 w-full space-y-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3">
       <p className="text-xs font-semibold text-[#2f2a24]">{t('osm.admin.editDraftTitle')}</p>
       <LegalMarkdownEditor value={bodyMarkdown} onChange={setBodyMarkdown} rows={10} />
       <div className="flex gap-2">
@@ -288,7 +288,7 @@ function DocumentVersionsPanel({
         return (
           <li
             key={v.id}
-            className="flex flex-col gap-2 rounded-xl bg-[#fafafa] px-3 py-2 text-xs"
+            className="flex flex-col gap-2 rounded-none bg-[#fafafa] px-3 py-2 text-xs"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
@@ -492,13 +492,13 @@ export function OfficialSourcesHealthDashboard() {
       </header>
 
       {error ? (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+        <div className="rounded-none border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
           {error}
         </div>
       ) : null}
 
       {reviewCount > 0 ? (
-        <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+        <div className="flex items-start gap-3 rounded-none border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold">{t('osm.admin.alertTitle')}</p>
@@ -513,7 +513,7 @@ export function OfficialSourcesHealthDashboard() {
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-[#8a8178]">
           {t('osm.admin.sources')}
         </h2>
-        <div className="overflow-x-auto rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white">
+        <div className="overflow-x-auto rounded-none border border-[rgba(148,163,184,0.22)] bg-white">
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-xs uppercase text-[#8a8178]">
               <tr>
@@ -565,14 +565,14 @@ export function OfficialSourcesHealthDashboard() {
         </h2>
         <ul className="space-y-2">
           {changes.length === 0 ? (
-            <li className="rounded-2xl border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-6 text-center text-sm text-[#8a8178]">
+            <li className="rounded-none border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-6 text-center text-sm text-[#8a8178]">
               {t('osm.admin.noChanges')}
             </li>
           ) : (
             changes.map((c) => (
               <li
                 key={c.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3"
               >
                 <div className="min-w-0">
                   <p className="font-semibold text-[#2f2a24]">
@@ -622,7 +622,7 @@ export function OfficialSourcesHealthDashboard() {
       </section>
 
       {selectedChange ? (
-        <section className="rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4">
+        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h3 className="font-bold text-[#2f2a24]">{t('osm.admin.diffTitle')}</h3>
             <button
@@ -649,7 +649,7 @@ export function OfficialSourcesHealthDashboard() {
           <select
             value={docKindFilter}
             onChange={(e) => setDocKindFilter(e.target.value)}
-            className="rounded-lg border border-[rgba(148,163,184,0.35)] px-2 py-1 text-xs"
+            className="rounded-none border border-[rgba(148,163,184,0.35)] px-2 py-1 text-xs"
           >
             <option value="">{t('osm.admin.filterAllKinds')}</option>
             <option value="informational">{t('osm.admin.filterInformational')}</option>
@@ -659,7 +659,7 @@ export function OfficialSourcesHealthDashboard() {
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {filteredDocs.map((doc) => (
-            <article key={doc.id} className="rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4">
+            <article key={doc.id} className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
               <div className="mb-2 flex items-start gap-2">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#2f2a24]" />
                 <div className="min-w-0 flex-1">

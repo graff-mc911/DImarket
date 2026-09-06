@@ -194,21 +194,21 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
 
       <div className="mx-auto max-w-3xl space-y-4 px-4 py-6 md:px-6">
         {error ? (
-          <p className="rounded-2xl bg-[#fef2f2] px-4 py-3 text-[13px] text-[#b91c1c]">{error}</p>
+          <p className="rounded-none bg-[#fef2f2] px-4 py-3 text-[13px] text-[#b91c1c]">{error}</p>
         ) : null}
         {notice ? (
-          <p className="rounded-2xl bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
+          <p className="rounded-none bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
             {notice}
           </p>
         ) : null}
         {hired ? (
-          <p className="rounded-2xl bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
+          <p className="rounded-none bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
             {t('pipeline.hiredBanner' as never) ||
               'Professional selected — open Project Manager to track milestones.'}
           </p>
         ) : null}
         {user && authorId && !isOwner ? (
-          <p className="rounded-2xl bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#6f665d]">
+          <p className="rounded-none bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#6f665d]">
             {t('pipeline.viewOnlyOffers' as never) ||
               'Viewing ranked offers. Only the project owner can hire.'}
           </p>
@@ -251,7 +251,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2f2a24] text-[12px] font-bold text-white">
                         {i + 1}
                       </span>
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#f3f0ea]">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-none bg-[#f3f0ea]">
                         {o.photo ? (
                           <img src={o.photo} alt="" className="h-full w-full object-cover" />
                         ) : (

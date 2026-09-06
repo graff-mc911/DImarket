@@ -1,6 +1,12 @@
 /**
- * Squash leftover arbitrary Tailwind radii in page content.
+ * Squash leftover Tailwind radii in page content.
  * Header/Footer stay untouched — they keep their own chrome.
+ *
+ * Covers:
+ * - arbitrary: rounded-[22px], sm:rounded-t-[20px], …
+ * - named: rounded-xl / 2xl / 3xl / lg / md (+ directional)
+ *
+ * Keeps rounded-full (avatars/dots) and rounded-none / rounded-sm.
  *
  * Run: node scripts/square-cabinet-radii.mjs
  */
@@ -25,6 +31,10 @@ const walk = (dir, out = []) => {
 const ARBITRARY =
   /(?<=^|["'`\s])((?:[a-z-]+:)*)rounded(-(?:t|b|l|r|tl|tr|bl|br|s|e|ss|se|ee|es))?-\[([^\]]+)\]/g
 
+/** rounded-xl / 2xl / 3xl / lg / md (+ sides), with optional variants */
+const NAMED =
+  /(?<=^|["'`\s])((?:[a-z-]+:)*)rounded(-(?:t|b|l|r|tl|tr|bl|br|s|e|ss|se|ee|es))?-(xl|2xl|3xl|lg|md)(?=$|["'`\s])/g
+
 let files = 0
 let hits = 0
 
@@ -35,7 +45,11 @@ for (const file of walk(join(root, 'src'))) {
   if (rel === join('src', 'index.css')) continue
 
   const before = readFileSync(file, 'utf8')
-  const after = before.replace(ARBITRARY, (_m, variants, side) => {
+  let after = before.replace(ARBITRARY, (_m, variants, side) => {
+    hits += 1
+    return `${variants}rounded${side || ''}-none`
+  })
+  after = after.replace(NAMED, (_m, variants, side) => {
     hits += 1
     return `${variants}rounded${side || ''}-none`
   })
@@ -45,4 +59,4 @@ for (const file of walk(join(root, 'src'))) {
   }
 }
 
-console.log(`squared ${hits} arbitrary radii across ${files} files`)
+console.log(`squared ${hits} radii across ${files} files`)

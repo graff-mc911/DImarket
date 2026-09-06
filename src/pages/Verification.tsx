@@ -145,7 +145,7 @@ export function Verification() {
       <div className="border-b border-[rgba(148,163,184,0.22)] bg-white/80 backdrop-blur-xl">
         <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
           <div className="flex flex-wrap items-start gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2f2a24] text-white">
+            <div className="flex h-14 w-14 items-center justify-center rounded-none bg-[#2f2a24] text-white">
               <ShieldCheck className="h-7 w-7" />
             </div>
             <div className="min-w-0 flex-1">
@@ -173,7 +173,7 @@ export function Verification() {
               return (
                 <div
                   key={tier.id}
-                  className={`rounded-2xl border px-3 py-3 ${
+                  className={`rounded-none border px-3 py-3 ${
                     active
                       ? 'border-[#2f2a24] bg-[#2f2a24] text-white'
                       : unlocked
@@ -194,7 +194,7 @@ export function Verification() {
 
       <div className="mx-auto max-w-3xl space-y-4 px-4 py-6 md:px-6">
         {message ? (
-          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800">
+          <p className="rounded-none border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800">
             {message}
           </p>
         ) : null}
@@ -209,7 +209,7 @@ export function Verification() {
             {checks.map((c) => (
               <li
                 key={c.id}
-                className="flex items-center justify-between gap-3 rounded-2xl bg-[#f3f0ea] px-3 py-3"
+                className="flex items-center justify-between gap-3 rounded-none bg-[#f3f0ea] px-3 py-3"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   {c.done ? (
@@ -261,7 +261,7 @@ export function Verification() {
               <input
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-sm outline-none focus:border-[#2f2a24]"
+                className="mt-1 w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-sm outline-none focus:border-[#2f2a24]"
                 disabled={ver.status === 'verified'}
               />
             </label>
@@ -272,7 +272,7 @@ export function Verification() {
               <input
                 value={vat}
                 onChange={(e) => setVat(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-sm outline-none focus:border-[#2f2a24]"
+                className="mt-1 w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-sm outline-none focus:border-[#2f2a24]"
                 disabled={ver.status === 'verified'}
               />
             </label>
@@ -294,7 +294,7 @@ export function Verification() {
               return (
                 <li
                   key={doc.key}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#f0f0f2] px-3 py-3"
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-none border border-[#f0f0f2] px-3 py-3"
                 >
                   <div className="flex items-center gap-2">
                     <Icon className="h-4 w-4 text-[#8a8178]" />

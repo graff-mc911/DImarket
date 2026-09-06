@@ -134,7 +134,7 @@ export function Pricing() {
         </header>
 
         {error ? (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+          <div className="rounded-none border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
             {error}
           </div>
         ) : null}
@@ -253,7 +253,7 @@ export function Pricing() {
                   className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f0ea] text-[#2f2a24]">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-none bg-[#f3f0ea] text-[#2f2a24]">
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">

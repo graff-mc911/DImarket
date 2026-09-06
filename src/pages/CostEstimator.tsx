@@ -1160,7 +1160,7 @@ export function CostEstimator() {
             </p>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {estimate.timeline.map((ph) => (
-                <div key={ph.id} className="rounded-2xl bg-[#f3f0ea] px-4 py-3">
+                <div key={ph.id} className="rounded-none bg-[#f3f0ea] px-4 py-3">
                   <p className="text-[12px] font-semibold text-[#8a8178]">{ph.label}</p>
                   <p className="mt-1 text-[16px] font-semibold text-[#2f2a24]">
                     {ph.daysMin}–{ph.daysMax} days
@@ -1178,7 +1178,7 @@ export function CostEstimator() {
                 .map((stage, i) => (
                   <li
                     key={stage.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#f0f0f2] px-4 py-3"
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-none border border-[#f0f0f2] px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
                       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2f2a24] text-[12px] font-bold text-white">
@@ -1216,7 +1216,7 @@ export function CostEstimator() {
                 return (
                   <li
                     key={sp.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#f0f0f2] px-4 py-3"
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-none border border-[#f0f0f2] px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
                       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f3f0ea] text-[12px] font-bold text-[#2f2a24]">
@@ -1294,7 +1294,7 @@ export function CostEstimator() {
                     key={l.id}
                     type="button"
                     onClick={() => navigateTo(`/listing/${l.id}`)}
-                    className="flex w-full items-center justify-between rounded-2xl border border-[#f0f0f2] px-4 py-3 text-left hover:bg-[#fafafa]"
+                    className="flex w-full items-center justify-between rounded-none border border-[#f0f0f2] px-4 py-3 text-left hover:bg-[#fafafa]"
                   >
                     <span className="text-[14px] font-medium text-[#2f2a24]">{l.title}</span>
                     <span className="text-[13px] text-[#6f665d]">
@@ -1323,7 +1323,7 @@ export function CostEstimator() {
               {estimate.insights.map((ins) => (
                 <li
                   key={ins.id}
-                  className="rounded-2xl bg-[#f3f0ea] px-4 py-3 text-[13px] leading-relaxed text-[#3a3a3c]"
+                  className="rounded-none bg-[#f3f0ea] px-4 py-3 text-[13px] leading-relaxed text-[#3a3a3c]"
                 >
                   <span className="mr-2 text-[11px] font-bold uppercase tracking-wide text-[#8a8178]">
                     {ins.kind}
@@ -1338,7 +1338,7 @@ export function CostEstimator() {
           <Section title={t('costEstimator.actualCostTitle')}>
             <p className="mb-3 text-[13px] text-[#6f665d]">{t('costEstimator.actualCostHint')}</p>
             {outcomeSaved ? (
-              <p className="rounded-2xl bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
+              <p className="rounded-none bg-[#ecfdf5] px-4 py-3 text-[13px] font-medium text-[#047857]">
                 {t('costEstimator.actualCostThanks')}
               </p>
             ) : (
@@ -1914,7 +1914,7 @@ function Metric({
   value: string
 }) {
   return (
-    <div className="rounded-2xl bg-[#f3f0ea] px-3 py-3">
+    <div className="rounded-none bg-[#f3f0ea] px-3 py-3">
       <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
         {icon}
         {label}
@@ -1958,7 +1958,7 @@ function ActionBtn({
 
 function FileThumb({ file, onRemove }: { file: EstimatorDraftFile; onRemove: () => void }) {
   return (
-    <li className="relative aspect-square overflow-hidden rounded-xl bg-[#f3f0ea]">
+    <li className="relative aspect-square overflow-hidden rounded-none bg-[#f3f0ea]">
       {file.previewUrl ? (
         <img src={file.previewUrl} alt="" className="h-full w-full object-cover" />
       ) : (

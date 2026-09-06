@@ -63,7 +63,7 @@ export function EstimatorProcurementPanel({
       </p>
       {msg ? <p className="text-[12px] font-medium text-[#047857]">{msg}</p> : null}
       {plan.lines.map((line) => (
-        <div key={line.materialId} className="rounded-2xl border border-[#f0f0f2] p-4">
+        <div key={line.materialId} className="rounded-none border border-[#f0f0f2] p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p className="text-[14px] font-semibold text-[#2f2a24]">
               {line.name}{' '}
@@ -79,7 +79,7 @@ export function EstimatorProcurementPanel({
             {line.suppliers.map((s) => (
               <li
                 key={s.listingId}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#f3f0ea] px-3 py-2"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-none bg-[#f3f0ea] px-3 py-2"
               >
                 <button
                   type="button"

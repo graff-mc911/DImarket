@@ -197,8 +197,8 @@ export function ProDashboard() {
   }
 
   const card = dark
-    ? 'rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_1px_0_rgba(255,255,255,0.04)]'
-    : 'rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+    ? 'rounded-none border border-white/10 bg-white/[0.04] shadow-[0_1px_0_rgba(255,255,255,0.04)]'
+    : 'rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
   const muted = dark ? 'text-white/50' : 'text-[#8a8178]'
   const ink = dark ? 'text-white' : 'text-[#2f2a24]'
   const soft = dark ? 'text-white/70' : 'text-[#6f665d]'
@@ -229,7 +229,7 @@ export function ProDashboard() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 md:px-6">
           <div className="flex items-center gap-3">
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+              className={`flex h-10 w-10 items-center justify-center rounded-none ${
                 dark ? 'bg-blue-500/20 text-blue-400' : 'bg-[#2f2a24] text-white'
               }`}
             >
@@ -456,7 +456,7 @@ export function ProDashboard() {
                     <li key={j.listingId}>
                       <button
                         type="button"
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition ${
+                        className={`flex w-full items-center justify-between rounded-none px-3 py-2.5 text-left transition ${
                           dark ? 'hover:bg-white/5' : 'hover:bg-[#f3f0ea]'
                         }`}
                         onClick={() => navigateTo(`/project/${j.listingId}/manage`)}
@@ -488,7 +488,7 @@ export function ProDashboard() {
                     <li key={q.id}>
                       <button
                         type="button"
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition ${
+                        className={`flex w-full items-center justify-between rounded-none px-3 py-2.5 text-left transition ${
                           dark ? 'hover:bg-white/5' : 'hover:bg-[#f3f0ea]'
                         }`}
                         onClick={() =>
@@ -522,7 +522,7 @@ export function ProDashboard() {
                   {stats.recentReviews.map((r) => (
                     <li
                       key={r.id}
-                      className={`rounded-xl px-3 py-2.5 ${dark ? 'bg-white/5' : 'bg-[#f3f0ea]'}`}
+                      className={`rounded-none px-3 py-2.5 ${dark ? 'bg-white/5' : 'bg-[#f3f0ea]'}`}
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span className={`text-[13px] font-semibold ${ink}`}>
@@ -603,7 +603,7 @@ export function ProDashboard() {
                     <li key={n.id}>
                       <button
                         type="button"
-                        className={`w-full rounded-xl px-3 py-2.5 text-left transition ${
+                        className={`w-full rounded-none px-3 py-2.5 text-left transition ${
                           n.is_read
                             ? dark
                               ? 'opacity-60'

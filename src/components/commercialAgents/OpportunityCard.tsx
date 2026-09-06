@@ -17,7 +17,7 @@ export function OpportunityCard({
     <button
       type="button"
       onClick={() => navigateTo(`/commercial-agents/opportunities/${item.id}`)}
-      className="group flex w-full flex-col rounded-2xl border border-[var(--line-200)] bg-white/95 p-5 text-left shadow-[0_10px_30px_rgba(15,17,17,0.04)] transition hover:border-[rgba(255,153,0,0.45)] hover:shadow-[0_16px_40px_rgba(15,17,17,0.08)]"
+      className="group flex w-full flex-col rounded-none border border-[var(--line-200)] bg-white/95 p-5 text-left shadow-[0_10px_30px_rgba(15,17,17,0.04)] transition hover:border-[rgba(255,153,0,0.45)] hover:shadow-[0_16px_40px_rgba(15,17,17,0.08)]"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">

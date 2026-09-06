@@ -138,7 +138,7 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
         ].join(' ')}
       >
         {showPhoto && (
-          <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-md bg-[#f7fafa] sm:h-[96px] sm:w-[96px]">
+          <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-none bg-[#f7fafa] sm:h-[96px] sm:w-[96px]">
             <img
               src={primaryImage}
               alt=""

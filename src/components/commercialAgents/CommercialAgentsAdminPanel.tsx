@@ -277,7 +277,7 @@ export function CommercialAgentsAdminPanel() {
         renderRow={(row) => (
           <div
             key={`${row.kind}-${row.id}`}
-            className="rounded-xl border border-[rgba(148,163,184,0.28)] bg-white p-4"
+            className="rounded-none border border-[rgba(148,163,184,0.28)] bg-white p-4"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
@@ -349,7 +349,7 @@ export function CommercialAgentsAdminPanel() {
                 {reports.map((r) => (
                   <div
                     key={r.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[rgba(148,163,184,0.28)] bg-white px-3 py-2.5"
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-none border border-[rgba(148,163,184,0.28)] bg-white px-3 py-2.5"
                   >
                     <p className="text-sm text-[#2f2a24]">
                       {r.entity_type} · {r.reason}
@@ -372,7 +372,7 @@ export function CommercialAgentsAdminPanel() {
 
       {confirm ? (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
+          <div className="w-full max-w-md rounded-none bg-white p-5 shadow-xl">
             <h3 className="text-lg font-bold text-[var(--ink-900)]">
               Delete {confirm.row.kind === 'agent' ? 'Commercial Agent' : 'Manufacturer'}?
             </h3>

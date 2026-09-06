@@ -65,7 +65,7 @@ export function PwaInstallButton({ variant }: { variant: PwaInstallButtonVariant
   return (
     <section className="mb-6 rounded-none border border-[rgba(233,202,177,0.7)] bg-[rgba(255,247,239,0.88)] p-4 md:p-5">
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2f2a24] text-white">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-[#2f2a24] text-white">
           <Download className="h-5 w-5" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">

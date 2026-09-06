@@ -82,7 +82,7 @@ export function VerificationAdminPanel() {
       renderRow={(row) => (
         <div
           key={row.id}
-          className="rounded-xl border border-[rgba(148,163,184,0.28)] bg-white p-4"
+          className="rounded-none border border-[rgba(148,163,184,0.28)] bg-white p-4"
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">

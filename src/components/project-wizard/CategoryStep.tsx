@@ -29,7 +29,7 @@ export function CategoryStep({ selectedId, onSelect, t, error }: CategoryStepPro
             >
               <span
                 className={
-                  'flex h-12 w-12 items-center justify-center rounded-2xl ' +
+                  'flex h-12 w-12 items-center justify-center rounded-none ' +
                   (active ? 'bg-white/15' : 'bg-white shadow-sm')
                 }
               >

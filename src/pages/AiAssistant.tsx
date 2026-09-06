@@ -15,7 +15,7 @@ import {
 import { saveEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 
 const inputClass =
-  'w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
+  'w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
 
 export function AiAssistant() {
   const { user, profile, language, t } = useApp()
@@ -207,7 +207,7 @@ export function AiAssistant() {
                   onClick={() => selectTool(tool)}
                   className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 text-left shadow-sm transition hover:border-[#2f2a24]"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f0ea] text-[#2f2a24]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-none bg-[#f3f0ea] text-[#2f2a24]">
                     <Icon className="h-5 w-5" />
                   </div>
                   <h2 className="mt-3 text-[16px] font-semibold text-[#2f2a24]">{tool.title}</h2>
@@ -233,7 +233,7 @@ export function AiAssistant() {
             <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm sm:p-6">
               <div className="flex items-start gap-3">
                 {activeTool ? (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f0ea]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-none bg-[#f3f0ea]">
                     {(() => {
                       const Icon = activeTool.icon
                       return <Icon className="h-5 w-5" />
@@ -360,7 +360,7 @@ export function AiAssistant() {
                 )}
 
                 {toolId === 'improve_profile' && (
-                  <div className="sm:col-span-2 rounded-xl bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#3a3a3c]">
+                  <div className="sm:col-span-2 rounded-none bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#3a3a3c]">
                     Uses your current profile ({profile?.full_name || 'guest'}). Sign in for best
                     results. You can also add notes below.
                     <textarea
@@ -380,7 +380,7 @@ export function AiAssistant() {
               </div>
 
               {error ? (
-                <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[13px] text-red-700">
+                <p className="mt-4 rounded-none border border-red-200 bg-red-50 px-3 py-2 text-[13px] text-red-700">
                   {error}
                 </p>
               ) : null}

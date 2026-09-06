@@ -113,7 +113,7 @@ export function LegalDocuments() {
                   <select
                     value={countryFilter}
                     onChange={(e) => setCountryFilter(e.target.value)}
-                    className="rounded-lg border border-[rgba(148,163,184,0.35)] px-2 py-1 text-sm"
+                    className="rounded-none border border-[rgba(148,163,184,0.35)] px-2 py-1 text-sm"
                   >
                     <option value="">{t('osm.public.filterAll')}</option>
                     {countries.map((code) => (
@@ -130,7 +130,7 @@ export function LegalDocuments() {
                   <select
                     value={kindFilter}
                     onChange={(e) => setKindFilter(e.target.value)}
-                    className="rounded-lg border border-[rgba(148,163,184,0.35)] px-2 py-1 text-sm"
+                    className="rounded-none border border-[rgba(148,163,184,0.35)] px-2 py-1 text-sm"
                   >
                     <option value="">{t('osm.public.filterAllKinds')}</option>
                     {kinds.map((kind) => (
@@ -146,14 +146,14 @@ export function LegalDocuments() {
         </header>
 
         {error && !fromStatic ? (
-          <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+          <p className="rounded-none border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
             {error}
           </p>
         ) : null}
 
         <ul className="space-y-3">
           {filtered.length === 0 ? (
-            <li className="rounded-2xl border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-8 text-center text-sm text-[#8a8178]">
+            <li className="rounded-none border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-8 text-center text-sm text-[#8a8178]">
               {t('osm.public.empty')}
             </li>
           ) : (
@@ -162,7 +162,7 @@ export function LegalDocuments() {
                 <button
                   type="button"
                   onClick={() => navigateTo(`/legal-documents/${doc.doc_key}`)}
-                  className="w-full rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white p-4 text-left transition hover:border-[#007185]/40 hover:shadow-sm"
+                  className="w-full rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 text-left transition hover:border-[#007185]/40 hover:shadow-sm"
                 >
                   <div className="flex items-start gap-3">
                     <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[#2f2a24]" />

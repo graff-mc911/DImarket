@@ -52,7 +52,7 @@ export function AdminAIAssistantBody({
           <button
             type="button"
             onClick={onCollapse}
-            className="rounded-lg p-1.5 text-[#a8a29e] hover:bg-[rgba(63,63,70,0.8)]"
+            className="rounded-none p-1.5 text-[#a8a29e] hover:bg-[rgba(63,63,70,0.8)]"
             aria-label="Згорнути"
           >
             <ChevronDown className="h-4 w-4" />

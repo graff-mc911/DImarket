@@ -157,7 +157,7 @@ export function CommercialAgentsDirectory({
 
 function Empty({ t }: { t: TranslateFn }) {
   return (
-    <p className="rounded-2xl border border-dashed border-[var(--line-200)] bg-white/70 p-8 text-sm text-[var(--ink-600)]">
+    <p className="rounded-none border border-dashed border-[var(--line-200)] bg-white/70 p-8 text-sm text-[var(--ink-600)]">
       {t('commercialAgents.emptyResults')}
     </p>
   )

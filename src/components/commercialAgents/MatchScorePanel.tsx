@@ -41,7 +41,7 @@ export function MatchScorePanel({
   ]
 
   return (
-    <div className="rounded-2xl border border-[var(--line-200)] bg-white/90 p-4 shadow-[0_8px_24px_rgba(15,17,17,0.04)]">
+    <div className="rounded-none border border-[var(--line-200)] bg-white/90 p-4 shadow-[0_8px_24px_rgba(15,17,17,0.04)]">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">

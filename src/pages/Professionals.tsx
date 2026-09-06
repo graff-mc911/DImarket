@@ -270,7 +270,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
           }}
         />
       ) : (
-        <section className="directory-hero mb-6 overflow-hidden border border-[#d5d9d9] bg-gradient-to-br from-[#f7fafc] via-white to-[#fff8ef]">
+        <section className="directory-hero mb-6 overflow-hidden border border-[rgba(148,163,184,0.22)] bg-white">
           <div className="flex flex-col gap-5 p-5 md:flex-row md:items-end md:justify-between md:p-8">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">
@@ -409,7 +409,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
           {loading ? (
             <div className="space-y-4">
               {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="h-44 animate-pulse rounded-xl bg-[#f3f4f4]" />
+                <div key={index} className="h-44 animate-pulse rounded-none bg-[#f3f4f4]" />
               ))}
             </div>
           ) : filteredProfessionals.length > 0 ? (
@@ -452,7 +452,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
         </main>
 
         <aside className="directory-services-sidebar hidden w-full shrink-0 xl:block xl:w-[240px]">
-          <div className="sticky top-24 rounded-xl border border-[#d5d9d9] bg-white p-4">
+          <div className="sticky top-24 rounded-none border border-[#d5d9d9] bg-white p-4">
             <h2 className="text-base font-bold text-[var(--ink-900)]">{t('directory.servicesSidebar')}</h2>
             {sidebarCategories.length === 0 ? (
               <p className="mt-3 text-sm text-[var(--ink-500)]">{t('professionals.emptyText')}</p>
@@ -465,7 +465,7 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
                       onClick={() =>
                         setSelectedCategory(selectedCategory === item.slug ? '' : item.slug)
                       }
-                      className={`flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-[#f3f4f4] ${
+                      className={`flex w-full items-center gap-2 rounded-none px-2 py-2 text-left text-sm transition-colors hover:bg-[#f3f4f4] ${
                         selectedCategory === item.slug
                           ? 'bg-[#f3f4f4] font-semibold text-[var(--ink-900)]'
                           : 'text-[var(--ink-700)]'

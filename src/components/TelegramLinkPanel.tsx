@@ -65,7 +65,7 @@ export function TelegramLinkPanel({
         <p className="mt-3 text-sm text-[#6f665d]">{t('common.loading')}</p>
       ) : (
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <code className="rounded-lg bg-white/80 px-3 py-1.5 text-sm font-mono text-[#4338ca]">
+          <code className="rounded-none bg-white/80 px-3 py-1.5 text-sm font-mono text-[#4338ca]">
             {linkCommand}
           </code>
           <button

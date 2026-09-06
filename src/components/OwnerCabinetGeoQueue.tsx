@@ -220,12 +220,12 @@ export function OwnerCabinetGeoQueue<T, Id extends string>({
       </div>
 
       {error ? (
-        <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="mt-3 rounded-none border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
         </div>
       ) : null}
       {notice ? (
-        <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+        <div className="mt-3 rounded-none border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
           {notice}
         </div>
       ) : null}

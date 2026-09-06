@@ -395,12 +395,12 @@ export function Register() {
           </div>
 
           {error && (
-            <div className="mt-5 rounded-xl border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
+            <div className="mt-5 rounded-none border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
               {error}
             </div>
           )}
           {success && (
-            <div className="mt-5 rounded-xl border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
+            <div className="mt-5 rounded-none border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
               {confirmEmail ? t('register.confirmEmail') : t('register.success')}
             </div>
           )}
@@ -415,14 +415,14 @@ export function Register() {
                       type="button"
                       data-testid={`register-role-${option.role}`}
                       onClick={() => setSelectedRole(option.role)}
-                      className={`flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition ${
+                      className={`flex flex-col items-start gap-2 rounded-none border p-4 text-left transition ${
                         selectedRole === option.role
                           ? 'border-[var(--brand-primary)] bg-[var(--accent-soft)]'
                           : 'border-[var(--glass-border)] bg-white hover:border-[var(--line-strong)]'
                       }`}
                     >
                       <span
-                        className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                        className={`flex h-10 w-10 items-center justify-center rounded-none ${
                           selectedRole === option.role
                             ? 'bg-[rgba(27,77,62,0.12)] text-[var(--brand-primary)]'
                             : 'bg-[var(--bg-glass-bottom)] text-[var(--ink-600)]'
@@ -437,7 +437,7 @@ export function Register() {
                 </div>
 
                 {(selectedRole === 'professional' || selectedRole === 'company') && (
-                  <div className="rounded-xl border border-[rgba(45,106,79,0.2)] bg-[rgba(45,106,79,0.08)] px-4 py-3 text-xs leading-5 text-[var(--brand-verified)]">
+                  <div className="rounded-none border border-[rgba(45,106,79,0.2)] bg-[rgba(45,106,79,0.08)] px-4 py-3 text-xs leading-5 text-[var(--brand-verified)]">
                     {t('register.proBanner')}
                   </div>
                 )}
@@ -467,7 +467,7 @@ export function Register() {
                 )}
 
                 {(selectedRole === 'manufacturer' || selectedRole === 'commercial_agent' || selectedRole === 'advertiser') && (
-                  <div className="rounded-xl border border-[rgba(45,106,79,0.2)] bg-[rgba(45,106,79,0.08)] px-4 py-3 text-xs leading-5 text-[var(--brand-verified)]">
+                  <div className="rounded-none border border-[rgba(45,106,79,0.2)] bg-[rgba(45,106,79,0.08)] px-4 py-3 text-xs leading-5 text-[var(--brand-verified)]">
                     {hintIcon()} {hintText()}
                   </div>
                 )}
@@ -688,7 +688,7 @@ export function Register() {
                   </div>
                 )}
 
-                <div className="rounded-xl bg-[var(--accent-soft)] p-3 text-xs leading-relaxed text-[var(--ink-600)]">
+                <div className="rounded-none bg-[var(--accent-soft)] p-3 text-xs leading-relaxed text-[var(--ink-600)]">
                   {hintIcon()} {hintText()}
                 </div>
 

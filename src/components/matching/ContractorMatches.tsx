@@ -41,7 +41,7 @@ export function ContractorMatches({ listingId }: Props) {
   if (loading || rows.length === 0) return null
 
   return (
-    <section className="glass-panel mt-8 rounded-2xl p-5">
+    <section className="glass-panel mt-8 rounded-none p-5">
       <div className="mb-4 flex items-center gap-2">
         <Sparkles className="h-5 w-5 text-indigo-600" />
         <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('matching.suggested')}</h2>
@@ -53,7 +53,7 @@ export function ContractorMatches({ listingId }: Props) {
           return (
             <li
               key={c.id}
-              className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-white/60 px-4 py-3"
+              className="flex items-center justify-between gap-3 rounded-none border border-slate-100 bg-white/60 px-4 py-3"
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-1.5">

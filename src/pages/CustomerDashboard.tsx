@@ -345,7 +345,7 @@ export function CustomerDashboard() {
                 </div>
                 {pendingReviews.length > 0 ? (
                   <div
-                    className={`mb-4 rounded-2xl px-3 py-3 ${
+                    className={`mb-4 rounded-none px-3 py-3 ${
                       dark ? 'bg-amber-500/15' : 'bg-amber-50'
                     }`}
                   >
@@ -381,7 +381,7 @@ export function CustomerDashboard() {
                     <li key={p.id}>
                       <button
                         type="button"
-                        className={`flex w-full items-center justify-between gap-3 rounded-2xl px-3 py-3 text-left transition ${hoverRow}`}
+                        className={`flex w-full items-center justify-between gap-3 rounded-none px-3 py-3 text-left transition ${hoverRow}`}
                         onClick={() => navigateTo(next.path)}
                       >
                         <div className="min-w-0">
@@ -466,7 +466,7 @@ export function CustomerDashboard() {
                       <li key={q.id}>
                         <button
                           type="button"
-                          className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition ${hoverRow} ${dark ? 'bg-white/[0.03]' : 'bg-[#fafafa]'}`}
+                          className={`flex w-full items-center gap-3 rounded-none px-3 py-2.5 text-left transition ${hoverRow} ${dark ? 'bg-white/[0.03]' : 'bg-[#fafafa]'}`}
                           onClick={() =>
                             navigateTo(
                               q.listing_id
@@ -475,7 +475,7 @@ export function CustomerDashboard() {
                             )
                           }
                         >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[rgba(148,163,184,0.22)]">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-none bg-[rgba(148,163,184,0.22)]">
                             {photo ? (
                               <img src={photo} alt="" className="h-full w-full object-cover" />
                             ) : (
@@ -515,7 +515,7 @@ export function CustomerDashboard() {
                   {stats.invoices.slice(0, 6).map((inv) => (
                     <li
                       key={inv.id}
-                      className={`flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5 ${hoverRow}`}
+                      className={`flex items-center justify-between gap-3 rounded-none px-3 py-2.5 ${hoverRow}`}
                     >
                       <div className="min-w-0">
                         <p className={`truncate text-[13px] font-semibold ${ink}`}>
@@ -575,12 +575,12 @@ export function CustomerDashboard() {
                         <button
                           key={f.savedId}
                           type="button"
-                          className={`flex items-center gap-3 rounded-2xl border px-3 py-3 text-left transition ${
+                          className={`flex items-center gap-3 rounded-none border px-3 py-3 text-left transition ${
                             dark ? 'border-white/10 hover:bg-white/5' : 'border-[#f0f0f2] hover:bg-[#fafafa]'
                           }`}
                           onClick={() => navigateTo(`/professional/${p.id}`)}
                         >
-                          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[rgba(148,163,184,0.22)]">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-none bg-[rgba(148,163,184,0.22)]">
                             {photo ? (
                               <img src={photo} alt="" className="h-full w-full object-cover" />
                             ) : (
@@ -643,7 +643,7 @@ export function CustomerDashboard() {
                     <li key={n.id}>
                       <button
                         type="button"
-                        className={`w-full rounded-2xl px-3 py-2.5 text-left transition ${
+                        className={`w-full rounded-none px-3 py-2.5 text-left transition ${
                           n.is_read
                             ? 'opacity-65'
                             : dark

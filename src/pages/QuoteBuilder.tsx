@@ -40,7 +40,7 @@ type ListingInfo = {
 }
 
 const field =
-  'w-full rounded-xl border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-[14px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
+  'w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-[14px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
 
 export function QuoteBuilder({ applicationId }: { applicationId: string }) {
   const { user, profile } = useApp()
@@ -314,7 +314,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
 
       <div className="mx-auto max-w-4xl px-4 py-6 md:px-6">
         {notice ? (
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-none border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800">
             <p>{notice}</p>
             <button
               type="button"
@@ -326,7 +326,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
           </div>
         ) : null}
         {error ? (
-          <p className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+          <p className="mb-4 rounded-none border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
             {error}
           </p>
         ) : null}
@@ -392,7 +392,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
               </label>
             </div>
 
-            <div className="mt-5 rounded-2xl bg-[#f3f0ea] p-4">
+            <div className="mt-5 rounded-none bg-[#f3f0ea] p-4">
               <Row label="Materials" value={totals.materials} />
               <Row label="Labor" value={totals.labor} />
               <Row label="Equipment" value={totals.equipment} />
@@ -537,7 +537,7 @@ function SectionCard({
             <button
               type="button"
               onClick={() => onRemove(line.id)}
-              className="rounded-xl p-2.5 text-[#8a8178] hover:bg-[#f3f0ea] hover:text-[#2f2a24]"
+              className="rounded-none p-2.5 text-[#8a8178] hover:bg-[#f3f0ea] hover:text-[#2f2a24]"
               aria-label="Remove line"
             >
               <Trash2 className="h-4 w-4" />
