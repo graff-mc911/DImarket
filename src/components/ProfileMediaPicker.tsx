@@ -142,7 +142,7 @@ export function ProfileMediaPicker({
             url ? (
               <div
                 key={`${url}-${index}`}
-                className="group relative aspect-square overflow-hidden rounded-[18px] bg-[rgba(255,248,241,0.4)]"
+                className="group relative aspect-square overflow-hidden rounded-none bg-[rgba(255,248,241,0.4)]"
               >
                 <img src={url} alt="" className="h-full w-full object-cover" />
                 {onPortfolioChange && (
@@ -163,7 +163,7 @@ export function ProfileMediaPicker({
       )}
 
       {!single && !portfolioUrls.some(Boolean) && (
-        <div className="mt-4 flex flex-col items-center rounded-[18px] border border-dashed border-[rgba(148,163,184,0.35)] bg-white/25 py-8">
+        <div className="mt-4 flex flex-col items-center rounded-none border border-dashed border-[rgba(148,163,184,0.35)] bg-white/25 py-8">
           <ImagePlus className="h-10 w-10 text-[#9a8776]" />
           <p className="mt-2 text-xs text-[#7a7168]">{t('settings.portfolioEmptyHint')}</p>
         </div>

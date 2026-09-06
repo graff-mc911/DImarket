@@ -168,7 +168,7 @@ export function Pricing() {
             return (
               <article
                 key={plan.id}
-                className={`relative flex flex-col rounded-[24px] border bg-white p-5 shadow-sm ${
+                className={`relative flex flex-col rounded-none border bg-white p-5 shadow-sm ${
                   plan.popular ? 'border-[#2f2a24]' : 'border-[rgba(148,163,184,0.22)]'
                 }`}
               >
@@ -250,7 +250,7 @@ export function Pricing() {
               return (
                 <div
                   key={addon.id}
-                  className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm"
+                  className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm"
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f0ea] text-[#2f2a24]">
@@ -291,7 +291,7 @@ export function Pricing() {
         </section>
 
         <section className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-5">
+          <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-5">
             <div className="flex items-center gap-2 text-[#2f2a24]">
               <LifeBuoy className="h-5 w-5" />
               <h2 className="text-[16px] font-semibold">{t('pricing.supportByPlan')}</h2>
@@ -314,7 +314,7 @@ export function Pricing() {
               {t('pricing.contactSupport')}
             </button>
           </div>
-          <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-5">
+          <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-5">
             <div className="flex items-center gap-2 text-[#2f2a24]">
               <Megaphone className="h-5 w-5" />
               <h2 className="text-[16px] font-semibold">{t('pricing.adsSection')}</h2>

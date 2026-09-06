@@ -32,7 +32,7 @@ export function TopMatchCards({ matches, listingId, compact = false }: TopMatchC
 
   return (
     <div
-      className={`rounded-[16px] border border-[rgba(99,102,241,0.22)] bg-[rgba(99,102,241,0.06)] ${
+      className={`rounded-none border border-[rgba(99,102,241,0.22)] bg-[rgba(99,102,241,0.06)] ${
         compact ? 'p-3' : 'p-4'
       }`}
     >

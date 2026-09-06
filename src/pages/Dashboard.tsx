@@ -444,7 +444,7 @@ export function Dashboard() {
         <div className="mx-auto max-w-3xl">
           <div className="glass-panel p-8 text-center md:p-10">
             {/* Цей блок показуємо всім, хто зайшов на /dashboard без owner-ролі. */}
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[rgba(239,68,68,0.12)] text-[#b91c1c]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-none bg-[rgba(239,68,68,0.12)] text-[#b91c1c]">
               <AlertTriangle className="h-8 w-8" />
             </div>
 
@@ -527,13 +527,13 @@ export function Dashboard() {
               </div>
 
               {error && (
-                <div className="mb-6 rounded-[22px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
+                <div className="mb-6 rounded-none border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
                   {error}
                 </div>
               )}
 
               {notice && (
-                <div className="mb-6 rounded-[22px] border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
+                <div className="mb-6 rounded-none border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
                   {notice}
                 </div>
               )}
@@ -559,7 +559,7 @@ export function Dashboard() {
                     key={card.title}
                     className="glass-card p-5"
                   >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-[rgba(148,163,184,0.14)] text-[#64748b]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-none bg-[rgba(148,163,184,0.14)] text-[#64748b]">
                       <card.icon className="h-6 w-6" />
                     </div>
 
@@ -609,7 +609,7 @@ export function Dashboard() {
                         return (
                           <div
                             key={listing.id}
-                            className="rounded-[22px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4"
+                            className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4"
                           >
                             <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                               <div className="min-w-0 flex-1">
@@ -709,7 +709,7 @@ export function Dashboard() {
                       return (
                         <div
                           key={message.id}
-                          className="rounded-[24px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4"
+                          className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4"
                         >
                           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                             <div className="min-w-0 flex-1">
@@ -739,7 +739,7 @@ export function Dashboard() {
                                 </p>
                               )}
 
-                              <div className="mt-4 rounded-[18px] bg-[rgba(255,255,255,0.34)] p-4 text-sm leading-6 text-[#2f2a24]">
+                              <div className="mt-4 rounded-none bg-[rgba(255,255,255,0.34)] p-4 text-sm leading-6 text-[#2f2a24]">
                                 {message.message}
                               </div>
 
@@ -785,7 +785,7 @@ export function Dashboard() {
                       )
                     })
                   ) : (
-                    <div className="rounded-[22px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.24)] p-5 text-sm text-[#7a7168]">
+                    <div className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.24)] p-5 text-sm text-[#7a7168]">
                       Поки що немає повідомлень із форми зворотного зв'язку.
                     </div>
                   )}
@@ -817,7 +817,7 @@ export function Dashboard() {
                       return (
                         <div
                           key={message.id}
-                          className="rounded-[24px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4"
+                          className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4"
                         >
                           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                             <div className="min-w-0 flex-1">
@@ -838,7 +838,7 @@ export function Dashboard() {
                                 )}
                               </div>
 
-                              <div className="mt-4 rounded-[18px] bg-[rgba(255,255,255,0.34)] p-4 text-sm leading-6 text-[#2f2a24]">
+                              <div className="mt-4 rounded-none bg-[rgba(255,255,255,0.34)] p-4 text-sm leading-6 text-[#2f2a24]">
                                 {message.content}
                               </div>
 
@@ -886,7 +886,7 @@ export function Dashboard() {
                       )
                     })
                   ) : (
-                    <div className="rounded-[22px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.24)] p-5 text-sm text-[#7a7168]">
+                    <div className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.24)] p-5 text-sm text-[#7a7168]">
                       Поки що немає внутрішніх повідомлень.
                     </div>
                   )}
@@ -1035,18 +1035,18 @@ function AnnouncementsManager() {
       </div>
 
       {notice && (
-        <div className="mb-4 rounded-[18px] border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
+        <div className="mb-4 rounded-none border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
           {notice}
         </div>
       )}
 
       {/* Підказка якщо таблиця не існує */}
       {error === 'sql_missing' ? (
-        <div className="rounded-[20px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.4)] p-5">
+        <div className="rounded-none border border-[var(--glass-border)] bg-[rgba(255,255,255,0.4)] p-5">
           <p className="text-sm font-semibold text-[#2f2a24] mb-3">
             Для роботи банерів створіть таблицю в Supabase:
           </p>
-          <pre className="overflow-x-auto rounded-[14px] bg-[rgba(0,0,0,0.05)] p-4 text-xs leading-relaxed text-[#2f2a24]">
+          <pre className="overflow-x-auto rounded-none bg-[rgba(0,0,0,0.05)] p-4 text-xs leading-relaxed text-[#2f2a24]">
 {`CREATE TABLE announcements (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   message TEXT NOT NULL,
@@ -1062,7 +1062,7 @@ function AnnouncementsManager() {
       ) : (
         <>
           {/* Форма створення нового банера */}
-          <form onSubmit={createAnnouncement} className="rounded-[22px] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.3)] p-5 mb-5">
+          <form onSubmit={createAnnouncement} className="rounded-none border border-[var(--glass-border)] bg-[rgba(255,255,255,0.3)] p-5 mb-5">
             <h3 className="text-base font-extrabold text-[#2f2a24] mb-4 flex items-center gap-2">
               <Plus className="h-4 w-4 text-[#c96d2c]" />
               Новий банер
@@ -1096,7 +1096,7 @@ function AnnouncementsManager() {
                     key={key}
                     type="button"
                     onClick={() => setType(key)}
-                    className="rounded-[16px] border px-3 py-2 text-xs font-semibold transition"
+                    className="rounded-none border px-3 py-2 text-xs font-semibold transition"
                     style={{
                       background:   type === key ? style.bg   : 'rgba(255,255,255,0.4)',
                       borderColor:  type === key ? style.color : 'rgba(148,163,184,0.2)',
@@ -1112,7 +1112,7 @@ function AnnouncementsManager() {
             {/* Попередній перегляд */}
             {message.trim() && (
               <div
-                className="mb-4 flex items-center gap-2 rounded-[16px] border px-4 py-2.5 text-sm font-semibold"
+                className="mb-4 flex items-center gap-2 rounded-none border px-4 py-2.5 text-sm font-semibold"
                 style={{
                   background:  typeStyles[type].bg,
                   borderColor: typeStyles[type].color + '50',
@@ -1151,7 +1151,7 @@ function AnnouncementsManager() {
                 return (
                   <div
                     key={ann.id}
-                    className="rounded-[22px] border p-4"
+                    className="rounded-none border p-4"
                     style={{
                       borderColor: ann.is_active ? style.color + '40' : 'rgba(148,163,184,0.2)',
                       background:  ann.is_active ? style.bg : 'rgba(255,255,255,0.25)',

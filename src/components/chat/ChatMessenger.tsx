@@ -249,7 +249,7 @@ export function ChatMessenger({ bootstrap }: Props) {
         {t('header.messages')}
       </h1>
 
-      <div className="glass-panel overflow-hidden rounded-[28px] border border-[var(--glass-border)] shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+      <div className="glass-panel overflow-hidden rounded-none border border-[var(--glass-border)] shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
         <div className="flex min-h-[520px] md:min-h-[600px]">
           <aside
             className={`w-full shrink-0 border-r border-[var(--glass-border)] bg-[rgba(255,255,255,0.35)] md:w-[320px] lg:w-[360px] ${

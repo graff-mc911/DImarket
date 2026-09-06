@@ -461,7 +461,7 @@ export function Advertising() {
 
   const guideClass = (key: AdGuideStep['key']) =>
     activeGuideStep?.key === key
-      ? 'ring-2 ring-[#6366f1] ring-offset-2 ring-offset-white/60 rounded-[14px]'
+      ? 'ring-2 ring-[#6366f1] ring-offset-2 ring-offset-white/60 rounded-none'
       : ''
 
   const targetCities = useMemo(
@@ -1106,7 +1106,7 @@ export function Advertising() {
           <p className="mt-1 text-xs leading-5 text-[#6f665d]">
             {t('advertising.placementsSection.desc')}
           </p>
-          <div className="mt-3 min-w-0 overflow-x-clip rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.18)] p-2.5 md:p-3">
+          <div className="mt-3 min-w-0 overflow-x-clip rounded-none border border-white/40 bg-[rgba(255,255,255,0.18)] p-2.5 md:p-3">
             <AdPerSlotMediaEditor
               hideHeader
               hidePagePicker
@@ -1152,7 +1152,7 @@ export function Advertising() {
               </p>
 
               {!user ? (
-                <div className="mt-5 rounded-[24px] border border-[rgba(148,163,184,0.18)] bg-[rgba(255,255,255,0.30)] p-5">
+                <div className="mt-5 rounded-none border border-[rgba(148,163,184,0.18)] bg-[rgba(255,255,255,0.30)] p-5">
                   <p className="text-sm leading-6 text-[#6f665d]">{t('advertising.form.loginRequired')}</p>
                   <button onClick={() => navigateTo('/login')} type="button" className="btn-primary mt-5 rounded-full">
                     {t('advertising.form.loginBtn')}
@@ -1162,7 +1162,7 @@ export function Advertising() {
                 <form onSubmit={handleCreateCampaign} className="mt-5 space-y-6">
 
                   {feedback && (
-                    <div className={'rounded-[20px] px-4 py-3 text-sm ' + (feedback.type === 'error'
+                    <div className={'rounded-none px-4 py-3 text-sm ' + (feedback.type === 'error'
                       ? 'border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a]'
                       : 'border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] text-[#3d7a52]')}>
                       {feedback.text}
@@ -1229,7 +1229,7 @@ export function Advertising() {
                     <div className="mt-4 grid gap-3 md:grid-cols-4">
                       {(['global','countries','regions','cities'] as GeoMode[]).map(mode => (
                         <button key={mode} type="button" onClick={() => handleGeoModeChange(mode)}
-                          className={'rounded-[18px] border px-4 py-3 text-sm font-bold transition ' + (geoMode === mode
+                          className={'rounded-none border px-4 py-3 text-sm font-bold transition ' + (geoMode === mode
                             ? 'border-[#6366f1] bg-[rgba(99,102,241,0.12)] text-[#6366f1]'
                             : 'border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.45)] text-[#6f665d]')}>
                           {t(('advertising.geo.' + mode) as TranslationKey)}
@@ -1273,7 +1273,7 @@ export function Advertising() {
                     )}
 
                     {/* Розрахунок ціни */}
-                    <div id="ad-price-block" className={`mt-5 rounded-[20px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.50)] p-4 ${guideClass('price')}`}>
+                    <div id="ad-price-block" className={`mt-5 rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.50)] p-4 ${guideClass('price')}`}>
                       <div className="text-sm font-bold text-[#2f2a24]">{t('advertising.price.title')}</div>
                       <div className="mt-3 space-y-1 text-sm text-[#6f665d]">
                         <div>{t('advertising.price.geo')}: <b>{geoSummary}</b></div>
@@ -1291,7 +1291,7 @@ export function Advertising() {
                         <option value={12}>{t('advertising.price.week12')}</option>
                       </select>
 
-                      <div className="mt-4 rounded-[18px] bg-[#6366f1] px-4 py-3 text-white">
+                      <div className="mt-4 rounded-none bg-[#6366f1] px-4 py-3 text-white">
                         <div className="text-xs font-semibold uppercase tracking-[0.18em] opacity-80">{t('advertising.price.total')}</div>
                         <div className="mt-1 text-3xl font-extrabold">{totalPrice}€</div>
                       </div>
@@ -1457,7 +1457,7 @@ export function Advertising() {
         </section>
 
         {adGuideActive && activeGuideStep && (
-          <div className="fixed bottom-4 right-4 z-[120] w-[min(92vw,380px)] rounded-[18px] border border-[rgba(99,102,241,0.3)] bg-white p-4 shadow-[0_10px_30px_rgba(67,44,26,0.18)]">
+          <div className="fixed bottom-4 right-4 z-[120] w-[min(92vw,380px)] rounded-none border border-[rgba(99,102,241,0.3)] bg-white p-4 shadow-[0_10px_30px_rgba(67,44,26,0.18)]">
             <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#6366f1]">
               AI гід · {adGuideStepIndex + 1}/{AD_GUIDE_STEPS.length}
             </p>
@@ -1588,7 +1588,7 @@ function CampaignCard({ campaign, formatter, t, onEdit, onPay, paying }: {
 
 function PreviewRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-3 rounded-[14px] border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] px-3 py-2">
+    <div className="flex items-start justify-between gap-3 rounded-none border border-[var(--glass-border)] bg-[rgba(255,248,241,0.34)] px-3 py-2">
       <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--ink-500)]">{label}</span>
       <span className="truncate text-right text-xs font-semibold text-[var(--ink-900)]">{value}</span>
     </div>

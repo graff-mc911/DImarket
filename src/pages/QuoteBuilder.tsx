@@ -360,7 +360,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
             }
           />
 
-          <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block">
                 <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
@@ -408,7 +408,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
             </div>
           </div>
 
-          <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
+          <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
             <label className="block">
               <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
                 Notes
@@ -436,7 +436,7 @@ export function QuoteBuilder({ applicationId }: { applicationId: string }) {
           </div>
         </div>
 
-        <div className="sticky bottom-4 z-10 mt-6 flex flex-wrap gap-2 rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white/95 p-3 shadow-lg backdrop-blur">
+        <div className="sticky bottom-4 z-10 mt-6 flex flex-wrap gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white/95 p-3 shadow-lg backdrop-blur">
           <button
             type="button"
             disabled={busy}
@@ -506,7 +506,7 @@ function SectionCard({
   onRemove: (id: string) => void
 }) {
   return (
-    <div className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+    <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-[15px] font-semibold text-[#2f2a24]">{title}</h2>
         <button

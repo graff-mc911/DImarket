@@ -76,7 +76,7 @@ export function Login() {
             </div>
 
             <div className="text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[linear-gradient(135deg,rgba(201,109,44,0.92),rgba(154,85,37,0.92))] text-white shadow-[0_18px_35px_rgba(15,23,42,0.18)]">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-none bg-[linear-gradient(135deg,rgba(201,109,44,0.92),rgba(154,85,37,0.92))] text-white shadow-[0_18px_35px_rgba(15,23,42,0.18)]">
                 <LogIn className="h-8 w-8" />
               </div>
               <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
@@ -85,7 +85,7 @@ export function Login() {
             </div>
 
             {error && (
-              <div className="mt-5 rounded-[20px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
+              <div className="mt-5 rounded-none border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
                 {error}
               </div>
             )}

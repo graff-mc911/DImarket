@@ -23,7 +23,7 @@ export function OwnerMarketHealth() {
   )
 
   return (
-    <section className="mb-8 rounded-[26px] border border-white/70 bg-white/45 p-5 md:p-6">
+    <section className="mb-8 rounded-none border border-white/70 bg-white/45 p-5 md:p-6">
       <div className="mb-5">
         <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[#64748b]">
           <MapPin className="h-4 w-4" />
@@ -78,7 +78,7 @@ function MarketHealthCard({ row }: { row: MarketHealthRow }) {
   const targets = market.seedTargets
 
   return (
-    <div className="rounded-[20px] border border-white/80 bg-[rgba(255,255,255,0.72)] p-4">
+    <div className="rounded-none border border-white/80 bg-[rgba(255,255,255,0.72)] p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="text-base font-extrabold text-[#2f2a24]">{market.city}</p>

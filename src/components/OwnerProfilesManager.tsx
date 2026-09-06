@@ -225,7 +225,7 @@ export function OwnerProfilesManager() {
           : `${selectedCountry} · ${selectedRegion}`
 
   return (
-    <div className="rounded-[22px] border border-[var(--glass-border)] bg-white/50 p-5">
+    <div className="rounded-none border border-[var(--glass-border)] bg-white/50 p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-extrabold text-[#2f2a24]">Профілі</h2>

@@ -8,14 +8,14 @@
     --font-sans: "Inter", "Amazon Ember", "Segoe UI", Arial, sans-serif;
     --font-logo: "Libre Bodoni", "Didot", "Bodoni MT", Georgia, serif;
     --font-display: "Inter", "Amazon Ember", "Segoe UI", Arial, sans-serif;
-    /* Soft-glass canvas (owner cabinet language) */
+    /* Owner cabinet surfaces: warm canvas + opaque white tiles, square corners */
     --bg-canvas: #ebe8e3;
-    --bg-soft: rgba(255, 255, 255, 0.72);
-    --bg-glass-top: rgba(255, 255, 255, 0.78);
-    --bg-glass-bottom: rgba(248, 250, 252, 0.62);
-    --glass-bg: rgba(255, 255, 255, 0.55);
-    --panel: rgba(255, 255, 255, 0.58);
-    --panel-strong: rgba(255, 255, 255, 0.82);
+    --bg-soft: #ffffff;
+    --bg-glass-top: #ffffff;
+    --bg-glass-bottom: #ffffff;
+    --glass-bg: #ffffff;
+    --panel: #ffffff;
+    --panel-strong: #ffffff;
     --line: rgba(148, 163, 184, 0.28);
     --line-strong: rgba(148, 163, 184, 0.42);
     --glass-border: rgba(148, 163, 184, 0.22);
@@ -1929,23 +1929,19 @@
   /** Мобільне меню шапки — видалено: єдина навігація = MobileBottomNav + More */
 
   .glass-card {
-    background: var(--panel);
+    background: #ffffff;
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-card);
+    border-radius: 0;
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
   }
 
   .glass-panel {
     position: relative;
     overflow: visible;
-    background: var(--panel-strong);
+    background: #ffffff;
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-panel);
+    border-radius: 0;
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
   }
 
   .glass-panel::before {
@@ -1960,30 +1956,24 @@
   .hero-glass {
     position: relative;
     overflow: visible;
-    background: var(--panel-strong);
+    background: #ffffff;
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-panel);
+    border-radius: 0;
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
   }
 
   .soft-card {
-    background: var(--panel);
+    background: #ffffff;
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-card);
+    border-radius: 0;
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
   }
 
   .trust-card {
-    background: var(--panel);
+    background: #ffffff;
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-card);
+    border-radius: 0;
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
   }
 
   .logo-letter-d {
@@ -2333,19 +2323,15 @@
   .amazon-section-card {
     @apply rounded-2xl border p-4;
     border-color: var(--glass-border);
-    background: var(--panel-strong);
+    background: #ffffff;
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
   }
 
   .amazon-filter-sidebar {
     @apply rounded-2xl border p-4;
     border-color: var(--glass-border);
-    background: var(--panel-strong);
+    background: #ffffff;
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
   }
 
   .amazon-filter-sidebar h2 {
@@ -2367,10 +2353,8 @@
   .amazon-buy-box {
     @apply rounded-2xl border p-4;
     border-color: var(--glass-border);
-    background: var(--panel-strong);
+    background: #ffffff;
     box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
   }
 
   .amazon-buy-box--sticky {
@@ -2569,9 +2553,7 @@
     isolation: isolate;
     border-radius: var(--radius-card);
     border: none;
-    background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+    background: #ffffff;
     padding: 1.25rem 1.25rem 1rem;
     box-shadow: var(--card-shadow);
   }
@@ -3373,9 +3355,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   flex-direction: column;
   overflow: visible;
   border-radius: var(--radius-card);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(176, 126, 85, 0.1);
   box-shadow: var(--card-shadow);
   transition:
@@ -3688,9 +3668,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.75rem;
   padding: 1.05rem 1.1rem;
   border-radius: var(--radius-card);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
   text-align: left;
@@ -3788,9 +3766,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .category-project-tile {
   padding: 1.1rem 1.15rem;
   border-radius: var(--radius-card);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
   text-align: left;
@@ -3903,7 +3879,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.8rem;
   border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 22px;
+  border-radius: 0;
   background: #ffffff;
   box-shadow: 0 8px 24px rgba(47, 42, 36, 0.08);
   color: var(--dimarket-primary);
@@ -4121,8 +4097,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .dimarket-category-card {
   overflow: visible;
   border: 1px solid rgba(148, 163, 184, 0.22);
-  /* Match owner-cabinet filter cards (OwnerProfilesManager screenshot). */
-  border-radius: 22px;
+  border-radius: 0;
   background: #ffffff;
   box-shadow: 0 8px 24px rgba(47, 42, 36, 0.08);
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
@@ -4145,7 +4120,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   background: transparent;
   padding: 1.15rem;
   text-align: left;
-  border-radius: 22px;
+  border-radius: 0;
 }
 
 .dimarket-category-card__icon {
@@ -4154,7 +4129,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   height: 3.75rem;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
+  border-radius: 0;
   background:
     radial-gradient(circle at 30% 20%, rgba(201, 109, 44, 0.28), transparent 48%),
     rgba(148, 163, 184, 0.14);
@@ -4215,7 +4190,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   align-items: center;
   gap: 0.35rem;
   border: 1px solid rgba(148, 163, 184, 0.22) !important;
-  border-radius: 14px;
+  border-radius: 0;
   background: #f2f5f4;
   color: var(--dimarket-ink);
   font-size: 0.82rem;
@@ -4324,9 +4299,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   flex-direction: column;
   overflow: visible;
   border-radius: var(--radius-card);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(176, 126, 85, 0.1);
   box-shadow: var(--card-shadow);
   transition:
@@ -4954,9 +4927,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   flex-direction: column;
   overflow: visible;
   border-radius: var(--radius-card);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
@@ -5190,9 +5161,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   min-height: 14rem;
   padding: 1.15rem;
   border-radius: var(--radius-card);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
 }
@@ -5387,9 +5356,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-why-card {
   padding: 1.5rem 1.35rem;
   border-radius: var(--radius-card);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
 }
@@ -5441,9 +5408,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   position: relative;
   padding: 1.4rem 1.3rem 1.25rem;
   border-radius: var(--radius-card);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(176, 126, 85, 0.12);
   box-shadow: var(--card-shadow);
 }
@@ -5535,9 +5500,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.85rem;
   padding: 1rem 1.05rem;
   border-radius: var(--radius-card);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(176, 126, 85, 0.14);
   box-shadow: var(--card-shadow);
   opacity: 0;

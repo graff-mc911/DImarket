@@ -160,7 +160,7 @@ export function Contact() {
 
             {feedback && (
               <div
-                className={`mt-5 rounded-[20px] px-4 py-3 text-sm ${
+                className={`mt-5 rounded-none px-4 py-3 text-sm ${
                   feedback.type === 'error'
                     ? 'border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a]'
                     : 'border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] text-[#3d7a52]'

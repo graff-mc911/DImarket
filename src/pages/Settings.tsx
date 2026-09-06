@@ -564,7 +564,7 @@ export function Settings() {
 
               {feedback && (
                 <div
-                  className={`mb-6 rounded-[22px] px-4 py-3 text-sm ${
+                  className={`mb-6 rounded-none px-4 py-3 text-sm ${
                     feedback.type === 'error'
                       ? 'border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a]'
                       : 'border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] text-[#3d7a52]'
@@ -710,7 +710,7 @@ export function Settings() {
                     </div>
 
                     {isProfessional && (
-                      <div className="rounded-[20px] border border-[rgba(99,102,241,0.12)] bg-white/30 p-4">
+                      <div className="rounded-none border border-[rgba(99,102,241,0.12)] bg-white/30 p-4">
                         <p className="text-sm font-bold text-[#2f2a24]">
                           {t('settings.workSubcategoriesTitle')}
                         </p>
@@ -924,7 +924,7 @@ export function Settings() {
                     </p>
 
                     {passwordNeedsNonce && (
-                      <p className="mt-3 rounded-[14px] border border-[rgba(99,102,241,0.25)] bg-[rgba(99,102,241,0.08)] px-3 py-2 text-xs text-[#4338ca]">
+                      <p className="mt-3 rounded-none border border-[rgba(99,102,241,0.25)] bg-[rgba(99,102,241,0.08)] px-3 py-2 text-xs text-[#4338ca]">
                         {t('settings.reauthEmailSent')}
                       </p>
                     )}

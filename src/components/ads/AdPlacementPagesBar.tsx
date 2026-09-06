@@ -25,7 +25,7 @@ export function AdPlacementPagesBar({
     : PLACEMENT_EDITOR_PAGES
 
   return (
-    <div className="rounded-[14px] border border-white/40 bg-white/25 p-3">
+    <div className="rounded-none border border-white/40 bg-white/25 p-3">
       <p className="text-[10px] font-bold uppercase tracking-wide text-[#6f665d]">
         {t('advertising.places.pagesLabel')}
       </p>
@@ -41,7 +41,7 @@ export function AdPlacementPagesBar({
               data-active={active ? 'true' : 'false'}
               onClick={() => onPageChange(page.id)}
               className={
-                'min-w-[6.5rem] rounded-[12px] border px-2.5 py-1.5 text-left transition ' +
+                'min-w-[6.5rem] rounded-none border px-2.5 py-1.5 text-left transition ' +
                 (active
                   ? 'border-[rgba(201,109,44,0.45)] bg-[rgba(201,109,44,0.12)] shadow-sm'
                   : 'border-[rgba(148,163,184,0.25)] bg-white/50 hover:border-[rgba(99,102,241,0.35)]')

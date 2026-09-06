@@ -254,13 +254,13 @@ export function CreateAd() {
               </h1>
 
               {error && (
-                <div className="mt-6 rounded-[22px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
+                <div className="mt-6 rounded-none border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] px-4 py-3 text-sm text-[#a44a3a]">
                   {error}
                 </div>
               )}
 
               {success && (
-                <div className="mt-6 rounded-[22px] border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
+                <div className="mt-6 rounded-none border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] px-4 py-3 text-sm text-[#3d7a52]">
                   {t('createAd.success')}
                 </div>
               )}
@@ -305,7 +305,7 @@ export function CreateAd() {
                     </div>
                   </div>
 
-                  <div className="space-y-5 rounded-[28px] border border-white/70 bg-white/45 p-5">
+                  <div className="space-y-5 rounded-none border border-white/70 bg-white/45 p-5">
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
                         {t('createAd.categoryLabel')}
@@ -408,13 +408,13 @@ export function CreateAd() {
                           />
 
                           {showSuggestions && locationSuggestions.length > 0 && (
-                            <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-[22px] border border-white/70 bg-[rgba(255,250,246,0.96)] p-2 shadow-[0_20px_50px_rgba(89,63,48,0.12)]">
+                            <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-none border border-white/70 bg-[rgba(255,250,246,0.96)] p-2 shadow-[0_20px_50px_rgba(89,63,48,0.12)]">
                               {locationSuggestions.map((suggestion, index) => (
                                 <button
                                   key={`${suggestion.name}-${index}`}
                                   type="button"
                                   onClick={() => selectLocationSuggestion(suggestion)}
-                                  className="block w-full rounded-[18px] px-4 py-3 text-left transition hover:bg-white/80"
+                                  className="block w-full rounded-none px-4 py-3 text-left transition hover:bg-white/80"
                                 >
                                   <div className="font-semibold text-[#2f2a24]">
                                     {suggestion.name}
@@ -432,7 +432,7 @@ export function CreateAd() {
                           type="button"
                           onClick={handleGetCurrentLocation}
                           disabled={loadingLocation}
-                          className="flex h-12 w-full items-center justify-center rounded-[18px] border border-white/70 bg-white/70 px-4 text-[#5f5a54] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-12 sm:px-0"
+                          className="flex h-12 w-full items-center justify-center rounded-none border border-white/70 bg-white/70 px-4 text-[#5f5a54] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-12 sm:px-0"
                           title={t('createAd.currentLocation')}
                         >
                           {loadingLocation ? (
@@ -449,7 +449,7 @@ export function CreateAd() {
                     </div>
                   </div>
 
-                  <div className="space-y-5 rounded-[28px] border border-white/70 bg-white/45 p-5">
+                  <div className="space-y-5 rounded-none border border-white/70 bg-white/45 p-5">
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">
                         {t('createAd.visibilityRadius')}
@@ -553,7 +553,7 @@ export function CreateAd() {
                           <button
                             type="button"
                             onClick={() => removeImageField(index)}
-                            className="flex h-12 w-full items-center justify-center rounded-[18px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a] transition hover:bg-[rgba(255,230,223,0.96)] sm:w-12"
+                            className="flex h-12 w-full items-center justify-center rounded-none border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a] transition hover:bg-[rgba(255,230,223,0.96)] sm:w-12"
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -576,7 +576,7 @@ export function CreateAd() {
                 <button
                   type="submit"
                   disabled={loading || success}
-                  className="btn-primary w-full justify-center rounded-[24px] py-4 text-base disabled:cursor-not-allowed disabled:opacity-70"
+                  className="btn-primary w-full justify-center rounded-none py-4 text-base disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {loading ? t('createAd.creating') : t('createAd.createButton')}
                 </button>

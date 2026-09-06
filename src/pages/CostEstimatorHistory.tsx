@@ -122,7 +122,7 @@ export function CostEstimatorHistory() {
         <p className="mt-2 text-[14px] text-[#6f665d]">{t('costEstimator.disclaimer')}</p>
 
         {compared.length >= 2 ? (
-          <div className="mt-6 overflow-x-auto rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white p-4">
+          <div className="mt-6 overflow-x-auto rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
             <p className="mb-3 text-[13px] font-semibold text-[#2f2a24]">
               {t('costEstimator.compare')} ({compared.length})
             </p>
@@ -154,7 +154,7 @@ export function CostEstimatorHistory() {
         {loading ? (
           <p className="mt-8 text-[14px] text-[#8a8178]">Loading…</p>
         ) : rows.length === 0 ? (
-          <div className="mt-10 rounded-[24px] border border-dashed border-[rgba(148,163,184,0.35)] bg-white/70 px-6 py-12 text-center">
+          <div className="mt-10 rounded-none border border-dashed border-[rgba(148,163,184,0.35)] bg-white/70 px-6 py-12 text-center">
             <FileText className="mx-auto h-8 w-8 text-[rgba(148,163,184,0.35)]" />
             <p className="mt-3 text-[15px] font-semibold text-[#2f2a24]">No saved estimates yet</p>
             <button
@@ -170,7 +170,7 @@ export function CostEstimatorHistory() {
             {rows.map((row) => (
               <li
                 key={row.id}
-                className="rounded-[20px] border border-[rgba(148,163,184,0.22)] bg-white px-5 py-4"
+                className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-5 py-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>

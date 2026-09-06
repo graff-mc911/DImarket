@@ -200,7 +200,7 @@ export function Verification() {
         ) : null}
 
         {/* Checks checklist */}
-        <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h2 className="text-[17px] font-semibold text-[#2f2a24]">Verification checks</h2>
           <p className="mt-1 text-[13px] text-[#8a8178]">
             Email · Phone · Identity · Company · Insurance · License · Background Check
@@ -251,7 +251,7 @@ export function Verification() {
         </section>
 
         {/* Business fields */}
-        <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
+        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
           <h2 className="text-[17px] font-semibold text-[#2f2a24]">Business details</h2>
           <div className="mt-4 space-y-3">
             <label className="block">
@@ -280,7 +280,7 @@ export function Verification() {
         </section>
 
         {/* Document uploads */}
-        <section className="rounded-[22px] border border-[rgba(148,163,184,0.22)] bg-white p-5">
+        <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
           <h2 className="text-[17px] font-semibold text-[#2f2a24]">Documents</h2>
           <p className="mt-1 text-[13px] text-[#8a8178]">
             Upload proof for each check. Admins review before Gold / Platinum unlock.

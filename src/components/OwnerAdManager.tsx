@@ -427,7 +427,7 @@ export function OwnerAdManager({
 
       {formFeedback && !formOpen && (
         <div
-          className={`mt-4 rounded-[18px] px-4 py-3 text-sm ${
+          className={`mt-4 rounded-none px-4 py-3 text-sm ${
             formFeedback.type === 'error'
               ? 'border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a]'
               : 'border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] text-[#3d7a52]'
@@ -440,7 +440,7 @@ export function OwnerAdManager({
       {formOpen && (
         <form
           onSubmit={handleSave}
-          className="mt-5 rounded-[24px] border border-[rgba(99,102,241,0.22)] bg-[rgba(255,255,255,0.35)] p-5 md:p-6"
+          className="mt-5 rounded-none border border-[rgba(99,102,241,0.22)] bg-[rgba(255,255,255,0.35)] p-5 md:p-6"
         >
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-lg font-extrabold text-[#2f2a24]">
@@ -457,7 +457,7 @@ export function OwnerAdManager({
 
           {formFeedback && (
             <div
-              className={`mt-4 rounded-[18px] px-4 py-3 text-sm ${
+              className={`mt-4 rounded-none px-4 py-3 text-sm ${
                 formFeedback.type === 'error'
                   ? 'border border-[rgba(221,138,120,0.35)] bg-[rgba(255,237,232,0.92)] text-[#a44a3a]'
                   : 'border border-[rgba(120,181,140,0.35)] bg-[rgba(236,250,240,0.92)] text-[#3d7a52]'
@@ -542,7 +542,7 @@ export function OwnerAdManager({
             </label>
           </div>
 
-          <div className="mt-5 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.2)] p-3 md:p-4">
+          <div className="mt-5 rounded-none border border-white/40 bg-[rgba(255,255,255,0.2)] p-3 md:p-4">
             <p className="text-sm font-semibold text-[#2f2a24]">Географія показу</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {(['global', 'countries', 'regions', 'cities'] as GeoMode[]).map((mode) => (
@@ -616,7 +616,7 @@ export function OwnerAdManager({
             </select>
           </label>
 
-          <div className="mt-5 rounded-[18px] border border-white/40 bg-[rgba(255,255,255,0.2)] p-3 md:p-4">
+          <div className="mt-5 rounded-none border border-white/40 bg-[rgba(255,255,255,0.2)] p-3 md:p-4">
             <AdPerSlotMediaEditor
               cardTitle={t('advertising.placementsSection.title')}
               selectedSlots={form.selectedSlots}
@@ -721,7 +721,7 @@ function CampaignRow({
   const geoLabel = getOwnerCampaignGeoLabel(campaign)
 
   return (
-    <div className="rounded-[24px] border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4">
+    <div className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.30)] p-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         {thumb && (
           <img src={thumb} alt="" className="h-20 w-32 shrink-0 rounded-xl object-cover" />

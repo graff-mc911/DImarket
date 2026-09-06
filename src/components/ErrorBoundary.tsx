@@ -95,7 +95,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="layout-page-content flex min-h-[50vh] items-center justify-center py-12">
         <div
-          className="mx-auto max-w-md rounded-[24px] border border-[rgba(221,138,120,0.35)] bg-[rgba(255,250,246,0.96)] p-8 text-center shadow-[0_20px_50px_rgba(89,63,48,0.08)]"
+          className="mx-auto max-w-md rounded-none border border-[rgba(221,138,120,0.35)] bg-[rgba(255,250,246,0.96)] p-8 text-center shadow-[0_20px_50px_rgba(89,63,48,0.08)]"
           role="alert"
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-[#a44a3a]">Error</p>

@@ -154,7 +154,7 @@ export function CategorySubcategoryPicker({
               ))}
             </select>
           ) : (
-            <div className="mt-2 max-h-72 space-y-3 overflow-y-auto rounded-[16px] border border-[rgba(148,163,184,0.2)] bg-white/40 p-3">
+            <div className="mt-2 max-h-72 space-y-3 overflow-y-auto rounded-none border border-[rgba(148,163,184,0.2)] bg-white/40 p-3">
               {groups.map((group) => (
                 <div key={group.slug}>
                   <p className="mb-1 text-xs font-bold uppercase tracking-wide text-[#6366f1]">

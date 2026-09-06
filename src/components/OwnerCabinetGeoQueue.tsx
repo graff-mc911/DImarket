@@ -111,7 +111,7 @@ export function OwnerCabinetGeoQueue<T, Id extends string>({
           : `${selectedCountry} · ${selectedRegion}`
 
   return (
-    <div className="rounded-[22px] border border-[var(--glass-border)] bg-white/50 p-5">
+    <div className="rounded-none border border-[var(--glass-border)] bg-white/50 p-5">
       <div>
         <h2 className="text-lg font-extrabold text-[#2f2a24]">{title}</h2>
         <p className="mt-1 text-sm text-[#6f665d]">{subtitle}</p>

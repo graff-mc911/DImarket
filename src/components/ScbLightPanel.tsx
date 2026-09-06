@@ -94,7 +94,7 @@ export function ScbLightPanel({
   }
 
   return (
-    <div className="rounded-[16px] border border-[rgba(37,99,235,0.2)] bg-[rgba(37,99,235,0.05)] p-4">
+    <div className="rounded-none border border-[rgba(37,99,235,0.2)] bg-[rgba(37,99,235,0.05)] p-4">
       <div className="flex items-center gap-2">
         <Calculator className="h-5 w-5 text-[#2563eb]" />
         <span className="font-semibold text-[#2f2a24]">{t('scbLight.title')}</span>
