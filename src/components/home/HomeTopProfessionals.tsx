@@ -19,7 +19,13 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
       <div className="home-section__head home-section__head--center">
         <div>
           <h2 id="home-pros-title" className="home-section__title home-section__title--sm">
-            {t('homePremium.prosTitle')}
+            <button
+              type="button"
+              className="home-section__title-btn"
+              onClick={() => navigateTo('/professionals')}
+            >
+              {t('homePremium.prosTitle')}
+            </button>
           </h2>
           <p className="home-section__subtitle">{t('homePremium.prosSubtitle')}</p>
           <button
@@ -53,7 +59,7 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
                 <button
                   type="button"
                   className="home-pro-card__hit"
-                  onClick={() => navigateTo(`/professional/${pro.id}`)}
+                  onClick={() => navigateTo('/professionals')}
                 >
                   <div className="home-pro-card__avatar">
                     <ProfileAvatar

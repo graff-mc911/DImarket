@@ -4873,6 +4873,31 @@ select.select-glass.geo-filter-select::-ms-expand {
   line-height: 1.15;
 }
 
+.home-section__title-btn {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+.home-section__title-btn:hover,
+.home-section__title-btn:focus-visible {
+  color: #c96d2c;
+}
+
+.home-section__title-btn:focus-visible {
+  outline: 2px solid #c96d2c;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 .home-section__subtitle {
   margin-top: 0.45rem;
   max-width: 34rem;

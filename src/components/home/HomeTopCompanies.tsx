@@ -20,7 +20,13 @@ export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) 
         <div>
           <p className="home-section__eyebrow">{t('homePremium.topCompaniesEyebrow')}</p>
           <h2 id="home-companies-rail-title" className="home-section__title home-section__title--sm">
-            {t('homePremium.topCompaniesTitle')}
+            <button
+              type="button"
+              className="home-section__title-btn"
+              onClick={() => navigateTo('/companies')}
+            >
+              {t('homePremium.topCompaniesTitle')}
+            </button>
           </h2>
           <p className="home-section__subtitle">{t('homePremium.topCompaniesSubtitle')}</p>
           <button
@@ -54,7 +60,7 @@ export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) 
                 <button
                   type="button"
                   className="home-pro-card__hit"
-                  onClick={() => navigateTo(`/professional/${company.id}`)}
+                  onClick={() => navigateTo('/companies')}
                 >
                   <div className="home-pro-card__avatar">
                     <ProfileAvatar
