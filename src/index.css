@@ -5153,8 +5153,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 
-.home-project-card,
-.home-pro-card {
+.home-project-card {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
@@ -5166,9 +5165,28 @@ select.select-glass.geo-filter-select::-ms-expand {
   box-shadow: var(--card-shadow);
 }
 
-.home-project-card--skeleton,
-.home-pro-card--skeleton {
+/* Top masters / top companies — compact tiles (no CTA button) */
+.home-pro-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 0;
+  padding: 0.7rem 0.8rem;
+  border-radius: var(--radius-card);
+  background: #ffffff;
+  border: 1px solid rgba(176, 126, 85, 0.12);
+  box-shadow: var(--card-shadow);
+}
+
+.home-project-card--skeleton {
   min-height: 14rem;
+  background: linear-gradient(110deg, #ebe6df 20%, #f8f4ef 40%, #ebe6df 60%);
+  background-size: 200% 100%;
+  animation: marketplace-shimmer 1.2s linear infinite;
+}
+
+.home-pro-card--skeleton {
+  min-height: 6.5rem;
   background: linear-gradient(110deg, #ebe6df 20%, #f8f4ef 40%, #ebe6df 60%);
   background-size: 200% 100%;
   animation: marketplace-shimmer 1.2s linear infinite;
@@ -5248,14 +5266,15 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 .home-pro-card__hit {
   display: flex;
-  gap: 0.9rem;
+  gap: 0.65rem;
   text-align: left;
   width: 100%;
+  align-items: flex-start;
 }
 
 .home-pro-card__avatar {
-  width: 4.25rem;
-  height: 4.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 0;
   overflow: hidden;
   background: #efe8df;
@@ -5263,7 +5282,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: #c96d2c;
 }
@@ -5282,8 +5301,9 @@ select.select-glass.geo-filter-select::-ms-expand {
 }
 
 .home-pro-card__name-row h3 {
-  font-size: 1.05rem;
+  font-size: 0.92rem;
   font-weight: 800;
+  line-height: 1.2;
 }
 
 .home-pro-card__verified {
@@ -5303,16 +5323,19 @@ select.select-glass.geo-filter-select::-ms-expand {
 .home-pro-card__response {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  margin-top: 0.35rem;
-  font-size: 0.8rem;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+  font-size: 0.74rem;
+  line-height: 1.25;
   color: #6f665d;
 }
 
+.home-pro-card__response {
+  display: none; /* keep cards short — response time is secondary */
+}
+
 .home-pro-card__contacts {
-  display: grid;
-  gap: 0.25rem;
-  margin: 0.45rem 0.85rem 0;
+  display: none; /* contacts live on the profile page */
 }
 
 .home-pro-card__contacts a {
