@@ -13,6 +13,7 @@ import { AdMediaDisplay } from './AdMediaDisplay'
 import { ProjectStoryBanner, type ProjectStoryRow } from './ProjectStoryBanner'
 import { useApp } from '../contexts/AppContext'
 import { AD_TEXT_PANEL_CLASS, adSlotTailwind } from '../lib/adSlotLayout'
+import { resolvePublicAdMediaUrl } from '../lib/adMediaStorage'
 import {
   adSlotImageStyle,
   adSlotShellStyle,
@@ -142,10 +143,11 @@ function AdCampaignMedia({
         maxHeight: 'none',
       }
     : imageStyle
-  const imageSrc =
+  const imageSrc = resolvePublicAdMediaUrl(
     slotState.slideUrls[0] ||
-    slotState.mediaUrl ||
-    (slotId ? '' : getPublicBannerImageUrl(resolved))
+      slotState.mediaUrl ||
+      (slotId ? '' : getPublicBannerImageUrl(resolved)),
+  )
   const mediaStyle = slotState.mediaStyle
   const layoutKey = layoutKeyFromOverlayVariant(variant)
   const mediaType =

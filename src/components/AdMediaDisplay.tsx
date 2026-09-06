@@ -12,6 +12,7 @@ import {
   slideshowLayerClass,
   type AdMediaStyle,
 } from '../lib/adMediaStyle'
+import { resolvePublicAdMediaUrl } from '../lib/adMediaStorage'
 
 type AdMediaDisplayProps = {
   src: string
@@ -56,6 +57,7 @@ function AdMediaImageFill({
   const naturalHeight =
     !frameStyle &&
     (!layoutKey || layoutKey === 'center' || layoutKey === 'leaderboard' || layoutKey === 'mobile')
+  const resolvedSrc = resolvePublicAdMediaUrl(src)
 
   return (
     <div
@@ -64,7 +66,7 @@ function AdMediaImageFill({
       } ${className}`}
     >
       <img
-        src={src}
+        src={resolvedSrc}
         alt={alt}
         style={
           naturalHeight
@@ -83,9 +85,21 @@ function AdMediaImageFill({
             : 'h-full w-full max-h-full max-w-full'
         }
         loading="lazy"
+        data-ad-media-retry="0"
         onError={(e) => {
+          const img = e.currentTarget
+          // One retry: legacy ad-media URLs → media bucket / orphan remap.
+          if (img.dataset.adMediaRetry === '0') {
+            img.dataset.adMediaRetry = '1'
+            const next = resolvePublicAdMediaUrl(img.src)
+            if (next && next !== img.src) {
+              img.style.visibility = 'visible'
+              img.src = next
+              return
+            }
+          }
           // Never swap in a hardcoded stock photo as a fake ad.
-          e.currentTarget.style.visibility = 'hidden'
+          img.style.visibility = 'hidden'
         }}
       />
     </div>

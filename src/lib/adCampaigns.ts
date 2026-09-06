@@ -9,6 +9,7 @@ import {
 import { isDemoAdCampaign } from './demoAdCampaigns'
 import { isOwnerCancelledReviewNote } from './adCampaignVisibility'
 import { isYoutubeMediaUrl, parseYoutubeVideoId, youtubePosterUrl } from './youtubeMedia'
+import { resolvePublicAdMediaUrl } from './adMediaStorage'
 import type { AdCampaign } from './types'
 import { isGranularSlotId } from './adPlacementCatalog'
 import { getSlotLegacyTags } from './adPlacementSlots'
@@ -281,22 +282,22 @@ export function getCampaignPosterUrl(
 
     if (slotId) {
       const pick = slotMediaEntryUrl(map[slotId])
-      if (pick) return pick
+      if (pick) return resolvePublicAdMediaUrl(pick)
       if (granularKeys.length > 0) return ''
     } else {
       for (const val of Object.values(map)) {
         const pick = slotMediaEntryUrl(val)
-        if (pick) return pick
+        if (pick) return resolvePublicAdMediaUrl(pick)
       }
     }
   }
 
-  if (campaign.image_url?.trim()) return campaign.image_url.trim()
+  if (campaign.image_url?.trim()) return resolvePublicAdMediaUrl(campaign.image_url)
   const mediaUrl = campaign.media_url || ''
   const ytId = parseYoutubeVideoId(mediaUrl)
   if (ytId) return youtubePosterUrl(ytId)
   if (mediaUrl && !mediaUrl.includes('youtube') && !/\.(mp4|webm)(\?|$)/i.test(mediaUrl)) {
-    return mediaUrl
+    return resolvePublicAdMediaUrl(mediaUrl)
   }
   // No hardcoded stock-photo fallback — missing media must not render a fake ad.
   return ''
@@ -313,12 +314,12 @@ export function getPublicBannerImageUrl(
 export function getCampaignMediaUrl(campaign: AdCampaign): string {
   const type = getCampaignMediaType(campaign)
   if (type === 'video') {
-    return campaign.media_url || campaign.image_url || AD_MEDIA_FALLBACK
+    return resolvePublicAdMediaUrl(campaign.media_url || campaign.image_url || AD_MEDIA_FALLBACK)
   }
   if (type === 'gif') {
-    return campaign.media_url || campaign.image_url || AD_MEDIA_FALLBACK
+    return resolvePublicAdMediaUrl(campaign.media_url || campaign.image_url || AD_MEDIA_FALLBACK)
   }
-  return campaign.image_url || campaign.media_url || AD_MEDIA_FALLBACK
+  return resolvePublicAdMediaUrl(campaign.image_url || campaign.media_url || AD_MEDIA_FALLBACK)
 }
 
 export function isVideoCampaign(campaign: AdCampaign): boolean {

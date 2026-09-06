@@ -3,11 +3,50 @@ import { formatSupabaseError } from './supabaseErrors'
 import type { AdMediaStyle } from './adMediaStyle'
 
 const BUCKET = 'media'
+const LEGACY_BUCKET = 'ad-media'
 const MAX_FILE_MB = 20
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024
 
 export const AD_MEDIA_ACCEPT =
   'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm'
+
+/**
+ * After the ad-media → media bucket rename, some creatives kept DB URLs on the
+ * old bucket and/or orphaned storage.objects rows (listable, not downloadable).
+ * Map those known dead paths to working public media URLs.
+ */
+const ORPHANED_AD_MEDIA_PATHS: Record<string, string> = {
+  'campaigns/1787247240530-9i74gvnws88.png':
+    'https://wjlfvajloxkevggwjgtk.supabase.co/storage/v1/object/public/media/campaigns/lisanov-restored-9017a15d28.jpg',
+}
+
+/** Rewrite legacy / blocked `ad-media` public URLs onto the live `media` bucket. */
+export function resolvePublicAdMediaUrl(url: string | null | undefined): string {
+  const raw = (url ?? '').trim()
+  if (!raw) return ''
+
+  let next = raw
+  if (next.includes(`/object/public/${LEGACY_BUCKET}/`)) {
+    next = next.replace(`/object/public/${LEGACY_BUCKET}/`, `/object/public/${BUCKET}/`)
+  } else if (next.includes(`/object/sign/${LEGACY_BUCKET}/`)) {
+    next = next.replace(`/object/sign/${LEGACY_BUCKET}/`, `/object/sign/${BUCKET}/`)
+  }
+
+  try {
+    const path = new URL(next).pathname
+    const marker = `/object/public/${BUCKET}/`
+    const i = path.indexOf(marker)
+    if (i >= 0) {
+      const objectPath = decodeURIComponent(path.slice(i + marker.length))
+      const replacement = ORPHANED_AD_MEDIA_PATHS[objectPath]
+      if (replacement) return replacement
+    }
+  } catch {
+    /* keep rewritten URL */
+  }
+
+  return next
+}
 
 const ACCEPTED_MIME = AD_MEDIA_ACCEPT.split(',')
 
@@ -52,14 +91,16 @@ export async function uploadAdMediaFileSafe(
 
 /** Шлях у bucket з публічного URL Supabase Storage */
 export function storagePathFromPublicUrl(url: string): string | null {
-  const raw = url?.trim()
+  const raw = resolvePublicAdMediaUrl(url)
   if (!raw) return null
   try {
     const u = new URL(raw)
-    const marker = `/${BUCKET}/`
-    const i = u.pathname.indexOf(marker)
-    if (i < 0) return null
-    return decodeURIComponent(u.pathname.slice(i + marker.length))
+    for (const bucket of [BUCKET, LEGACY_BUCKET]) {
+      const marker = `/${bucket}/`
+      const i = u.pathname.indexOf(marker)
+      if (i >= 0) return decodeURIComponent(u.pathname.slice(i + marker.length))
+    }
+    return null
   } catch {
     return null
   }

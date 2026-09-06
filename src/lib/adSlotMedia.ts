@@ -14,6 +14,7 @@ import {
   parseAdMediaStyle,
   type AdMediaStyle,
 } from './adMediaStyle'
+import { resolvePublicAdMediaUrl } from './adMediaStorage'
 import { formatSlotLabel, type AdPageKey } from './adPlacementSlots'
 
 export type SlotMediaEntry = {
@@ -36,7 +37,7 @@ export function emptySlotMediaEntry(): SlotMediaEntry {
 
 /** Один файл на слот — без накладання слайдів */
 export function normalizeSlotMediaEntry(entry: SlotMediaEntry): SlotMediaEntry {
-  const url = (entry.slideUrls.find(Boolean) || entry.mediaUrl || '').trim()
+  const url = resolvePublicAdMediaUrl(entry.slideUrls.find(Boolean) || entry.mediaUrl || '')
   if (!url) return emptySlotMediaEntry()
   return {
     mediaUrl: url,
