@@ -1,7 +1,7 @@
 import { ChevronRight, Search } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../contexts/AppContext'
-import { resolveCategoryIcon, resolveCategoryIconColor } from '../lib/categoryIcons'
+import { resolveCategoryIcon } from '../lib/categoryIcons'
 import {
   fetchCategoryServices,
   fetchMainMarketplaceCategories,
@@ -155,7 +155,6 @@ export function CabinetCategoryBrowser({
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filteredMains.map((cat) => {
             const Icon = resolveCategoryIcon(cat.icon_key)
-            const colors = resolveCategoryIconColor(cat.slug)
             const label = marketplaceCategoryLabel(cat, language.code)
             const isOpen = expandedId === cat.id
             const services = servicesByParent[cat.id] ?? []
@@ -186,16 +185,8 @@ export function CabinetCategoryBrowser({
                   aria-expanded={isOpen}
                   aria-label={`${isOpen ? 'Згорнути' : 'Відкрити'}: ${label}`}
                 >
-                  <span
-                    className="dimarket-category-card__icon"
-                    style={{
-                      background: `radial-gradient(circle at 30% 20%, ${colors.bg}, transparent 48%), ${colors.bg}`,
-                      color: colors.fg,
-                      boxShadow: `inset 0 0 0 1px ${colors.ring}`,
-                    }}
-                    aria-hidden
-                  >
-                    <Icon className="h-8 w-8" strokeWidth={1.75} />
+                  <span className="dimarket-category-card__icon" aria-hidden>
+                    <Icon className="h-8 w-8 text-[#1b4d3e]" />
                   </span>
                   <span className="dimarket-category-card__body">
                     <strong>{label}</strong>
