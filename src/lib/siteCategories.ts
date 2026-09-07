@@ -17,6 +17,22 @@ export const SITE_CATEGORY_SLUGS = [
 
 export type SiteCategorySlug = (typeof SITE_CATEGORY_SLUGS)[number]
 
+/**
+ * Platform hubs that must appear in the marketplace catalog even when
+ * `is_main=false` in DB. Do NOT include cleaning/construction/electrical/…
+ * here — those either have no service children or duplicate the trade tree
+ * returned by `get_marketplace_main_categories`.
+ */
+export const PLATFORM_CATALOG_EXTRA_SLUGS = [
+  'handyman',
+  'legal-notary',
+  'accounting-finance',
+  'vacancies',
+  'sell-rent',
+] as const satisfies readonly SiteCategorySlug[]
+
+export type PlatformCatalogExtraSlug = (typeof PLATFORM_CATALOG_EXTRA_SLUGS)[number]
+
 type SiteCategoryConfig = {
   icon: string
   /** Окремий маршрут замість /listings?category= */
