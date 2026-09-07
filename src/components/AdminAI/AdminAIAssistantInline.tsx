@@ -17,10 +17,10 @@ export function AdminAIAssistantInline() {
             <Bot className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-base font-extrabold text-[#2f2a24] sm:text-lg">
+            <h2 className="text-base font-extrabold text-[color:var(--ink-900)] sm:text-lg">
               {t('ai.admin.assistantTitle')}
             </h2>
-            <p className="mt-0.5 text-xs text-[#6f665d] sm:mt-1 sm:text-sm">{t('ai.admin.assistantHint')}</p>
+            <p className="mt-0.5 text-xs text-[color:var(--label-ink)] sm:mt-1 sm:text-sm">{t('ai.admin.assistantHint')}</p>
           </div>
         </div>
       </div>

@@ -111,24 +111,24 @@ export function CostEstimatorHistory() {
       <div className="mx-auto max-w-3xl">
         <button
           type="button"
-          className="mb-4 text-[13px] font-medium text-[#6f665d] hover:text-[#2f2a24]"
+          className="mb-4 text-[13px] font-medium text-[color:var(--label-ink)] hover:text-[color:var(--ink-900)]"
           onClick={() => navigateTo('/cost-estimator')}
         >
           ← {t('costEstimator.title')}
         </button>
-        <h1 className="text-[28px] font-semibold tracking-tight text-[#2f2a24]">
+        <h1 className="text-[28px] font-semibold tracking-tight text-[color:var(--ink-900)]">
           {t('costEstimator.history')}
         </h1>
-        <p className="mt-2 text-[14px] text-[#6f665d]">{t('costEstimator.disclaimer')}</p>
+        <p className="mt-2 text-[14px] text-[color:var(--label-ink)]">{t('costEstimator.disclaimer')}</p>
 
         {compared.length >= 2 ? (
           <div className="mt-6 overflow-x-auto rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
-            <p className="mb-3 text-[13px] font-semibold text-[#2f2a24]">
+            <p className="mb-3 text-[13px] font-semibold text-[color:var(--ink-900)]">
               {t('costEstimator.compare')} ({compared.length})
             </p>
             <table className="w-full text-left text-[12px]">
               <thead>
-                <tr className="text-[11px] uppercase tracking-wide text-[#8a8178]">
+                <tr className="text-[11px] uppercase tracking-wide text-[color:var(--label-ink)]">
                   <th className="pb-2">Estimate</th>
                   <th className="pb-2">Economy</th>
                   <th className="pb-2">Standard</th>
@@ -139,7 +139,7 @@ export function CostEstimatorHistory() {
               <tbody>
                 {compared.map((row) => (
                   <tr key={row.id} className="border-t border-[#f0f0f2]">
-                    <td className="py-2 font-medium text-[#2f2a24]">{row.title}</td>
+                    <td className="py-2 font-medium text-[color:var(--ink-900)]">{row.title}</td>
                     <td className="py-2 tabular-nums">{formatEuro(Number(row.total_economy) || 0)}</td>
                     <td className="py-2 tabular-nums">{formatEuro(Number(row.total_standard) || 0)}</td>
                     <td className="py-2 tabular-nums">{formatEuro(Number(row.total_premium) || 0)}</td>
@@ -152,11 +152,11 @@ export function CostEstimatorHistory() {
         ) : null}
 
         {loading ? (
-          <p className="mt-8 text-[14px] text-[#8a8178]">Loading…</p>
+          <p className="mt-8 text-[14px] text-[color:var(--label-ink)]">Loading…</p>
         ) : rows.length === 0 ? (
           <div className="mt-10 rounded-none border border-dashed border-[rgba(148,163,184,0.35)] bg-white/70 px-6 py-12 text-center">
             <FileText className="mx-auto h-8 w-8 text-[rgba(148,163,184,0.35)]" />
-            <p className="mt-3 text-[15px] font-semibold text-[#2f2a24]">No saved estimates yet</p>
+            <p className="mt-3 text-[15px] font-semibold text-[color:var(--ink-900)]">No saved estimates yet</p>
             <button
               type="button"
               className="mt-4 rounded-full bg-[#2f2a24] px-5 py-2.5 text-[13px] font-semibold text-white"
@@ -174,20 +174,20 @@ export function CostEstimatorHistory() {
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="text-[15px] font-semibold text-[#2f2a24]">{row.title}</p>
-                    <p className="mt-1 text-[12px] text-[#8a8178]">
+                    <p className="text-[15px] font-semibold text-[color:var(--ink-900)]">{row.title}</p>
+                    <p className="mt-1 text-[12px] text-[color:var(--label-ink)]">
                       {row.location_label || '—'} · {row.area_sqm ?? '—'} m² ·{' '}
                       {new Date(row.created_at).toLocaleDateString()}
                     </p>
-                    <p className="mt-2 text-[14px] font-semibold tabular-nums text-[#2f2a24]">
+                    <p className="mt-2 text-[14px] font-semibold tabular-nums text-[color:var(--ink-900)]">
                       {formatEuro(Number(row.total_standard) || 0)}
-                      <span className="ml-2 text-[12px] font-medium text-[#8a8178]">
+                      <span className="ml-2 text-[12px] font-medium text-[color:var(--label-ink)]">
                         ({formatEuro(Number(row.total_economy) || 0)} –{' '}
                         {formatEuro(Number(row.total_premium) || 0)})
                       </span>
                     </p>
                   </div>
-                  <label className="inline-flex items-center gap-2 text-[12px] text-[#6f665d]">
+                  <label className="inline-flex items-center gap-2 text-[12px] text-[color:var(--label-ink)]">
                     <input
                       type="checkbox"
                       checked={compareIds.includes(row.id)}
@@ -207,7 +207,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[color:var(--ink-900)]"
                     onClick={() =>
                       void duplicateCostEstimate(row.id, user?.id ?? null).then((r) => {
                         if (r) void reload()
@@ -219,7 +219,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[color:var(--ink-900)]"
                     onClick={() => exportRow(row)}
                   >
                     <FileText className="h-3.5 w-3.5" />
@@ -227,7 +227,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[color:var(--ink-900)]"
                     onClick={() => exportCsvRow(row)}
                   >
                     <FileSpreadsheet className="h-3.5 w-3.5" />
@@ -235,7 +235,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[color:var(--ink-900)]"
                     onClick={() => void shareRow(row)}
                   >
                     <Share2 className="h-3.5 w-3.5" />
@@ -243,7 +243,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[color:var(--ink-900)]"
                     onClick={() =>
                       void archiveCostEstimate(row.id, user?.id ?? null, true).then(() => reload())
                     }
@@ -253,7 +253,7 @@ export function CostEstimatorHistory() {
                   </button>
                   <button
                     type="button"
-                    className="rounded-full p-2 text-[#8a8178] hover:bg-[#f3f0ea] hover:text-[#c41e3a]"
+                    className="rounded-full p-2 text-[color:var(--label-ink)] hover:bg-[#f3f0ea] hover:text-[#c41e3a]"
                     aria-label={t('costEstimator.delete')}
                     onClick={() =>
                       void deleteCostEstimate(row.id, user?.id ?? null).then(() => reload())

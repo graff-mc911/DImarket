@@ -39,7 +39,7 @@ function CheckboxGrid({
         {options.map((option) => (
           <label
             key={option}
-            className="flex cursor-pointer items-center gap-2.5 rounded-none px-3 py-2 text-sm text-[#2f2a24] hover:bg-[rgba(99,102,241,0.08)]"
+            className="flex cursor-pointer items-center gap-2.5 rounded-none px-3 py-2 text-sm text-[color:var(--ink-900)] hover:bg-[rgba(99,102,241,0.08)]"
           >
             <input
               type="checkbox"
@@ -184,7 +184,7 @@ export function AdGeoTargeting({
   if (geoMode === 'countries') {
     return (
       <div className="space-y-3">
-        <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.geo.countriesHint')}</p>
+        <p className="text-xs leading-5 text-[color:var(--label-ink)]">{t('advertising.geo.countriesHint')}</p>
         <CheckboxGrid
           options={countries}
           selected={selectedCountries}
@@ -203,9 +203,9 @@ export function AdGeoTargeting({
   if (geoMode === 'regions') {
     return (
       <div className="space-y-4">
-        <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.geo.regionsHint')}</p>
+        <p className="text-xs leading-5 text-[color:var(--label-ink)]">{t('advertising.geo.regionsHint')}</p>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-[#6f665d]">{t('register.selectCountry')}</label>
+          <label className="mb-1.5 block text-xs font-semibold text-[color:var(--label-ink)]">{t('register.selectCountry')}</label>
           <select
             value={activeCountry}
             onChange={(e) => handleCountryFocus(e.target.value)}
@@ -224,7 +224,7 @@ export function AdGeoTargeting({
         )}
         {activeCountry && regionNames.length > 0 && (
           <>
-            <p className="text-xs font-semibold text-[#6f665d]">
+            <p className="text-xs font-semibold text-[color:var(--label-ink)]">
               {t('advertising.geo.selectRegions')} — {activeCountry}
               {` (${regionNames.length})`}
             </p>
@@ -247,10 +247,10 @@ export function AdGeoTargeting({
 
   return (
     <div className="space-y-4">
-      <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.geo.citiesHint')}</p>
+      <p className="text-xs leading-5 text-[color:var(--label-ink)]">{t('advertising.geo.citiesHint')}</p>
       <div className="grid gap-3 md:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-[#6f665d]">{t('register.selectCountry')}</label>
+          <label className="mb-1.5 block text-xs font-semibold text-[color:var(--label-ink)]">{t('register.selectCountry')}</label>
           <select
             value={activeCountry}
             onChange={(e) => handleCountryFocus(e.target.value)}
@@ -268,7 +268,7 @@ export function AdGeoTargeting({
           </select>
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-[#6f665d]">{t('register.selectRegion')}</label>
+          <label className="mb-1.5 block text-xs font-semibold text-[color:var(--label-ink)]">{t('register.selectRegion')}</label>
           <select
             value={activeRegion}
             onChange={(e) => {
@@ -289,7 +289,7 @@ export function AdGeoTargeting({
       </div>
       {activeCountry && activeRegion && (
         <>
-          <p className="text-xs font-semibold text-[#6f665d]">
+          <p className="text-xs font-semibold text-[color:var(--label-ink)]">
             {t('advertising.geo.selectCities')} — {activeRegion}
           </p>
           <CheckboxGrid

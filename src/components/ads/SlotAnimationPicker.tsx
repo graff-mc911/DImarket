@@ -59,7 +59,7 @@ export function SlotAnimationPicker({
           )
         })}
       </div>
-      <label className="block text-[9px] font-semibold text-[#6f665d]">
+      <label className="block text-[9px] font-semibold text-[color:var(--label-ink)]">
         {t('advertising.mediaEditor.transition')}
         <select
           value={transition}

@@ -121,7 +121,7 @@ export function CategorySubcategoryPicker({
       )}
 
       {fixedCategorySlug && (
-        <p className="text-sm font-semibold text-[#2f2a24]">
+        <p className="text-sm font-semibold text-[color:var(--ink-900)]">
           {t('categoryPicker.mainCategory')}: {categoryLabel(fixedCategorySlug, locale)}
         </p>
       )}
@@ -213,7 +213,7 @@ function SubcategoryCheckbox({
         onChange={onToggle}
         className="h-4 w-4 rounded border-[rgba(148,163,184,0.4)]"
       />
-      <span className="text-sm text-[#2f2a24]">{labelFor(sub.label, locale, sub.slug)}</span>
+      <span className="text-sm text-[color:var(--ink-900)]">{labelFor(sub.label, locale, sub.slug)}</span>
     </label>
   )
 }

@@ -204,10 +204,10 @@ export function ProjectWizard() {
   if (!user) {
     return (
       <div className="create-project-page flex min-h-[60vh] flex-col items-center justify-center bg-[#f3f0ea] px-4 text-center">
-        <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-[#2f2a24]">
+        <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-[color:var(--ink-900)]">
           {tw(t, 'project.wizard.loginTitle', 'Sign in to create a project')}
         </h1>
-        <p className="mt-2 max-w-sm text-[15px] text-[#6f665d]">
+        <p className="mt-2 max-w-sm text-[15px] text-[color:var(--label-ink)]">
           Free to post. Matched with verified professionals near you.
         </p>
         <button

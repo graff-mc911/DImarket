@@ -383,7 +383,7 @@ export function CommercialAgentsDashboard() {
               onClick={() => setTab(tabItem.id)}
               className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold ${
                 tab === tabItem.id
-                  ? 'bg-[#ff9900] text-[#2f2a24]'
+                  ? 'bg-[#ff9900] text-[color:var(--ink-900)]'
                   : 'border border-[var(--line-200)] bg-white text-[var(--ink-700)]'
               }`}
             >

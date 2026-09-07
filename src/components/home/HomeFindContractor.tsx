@@ -87,7 +87,7 @@ export function HomeFindContractor() {
               aria-label={`${t('header.findProfessionals')}: ${city}`}
             >
               <span className="dimarket-category-card__icon" aria-hidden>
-                <MapPin className="h-8 w-8 text-[#1b4d3e]" />
+                <MapPin className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
               </span>
               <span className="dimarket-category-card__body">
                 <strong>{city}</strong>

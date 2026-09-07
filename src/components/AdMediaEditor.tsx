@@ -118,7 +118,7 @@ export function AdMediaEditor({
     <div className={shellClass}>
       {!compact && (
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#6f665d]">
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[color:var(--label-ink)]">
           {t('advertising.mediaEditor.previewFrame')}
         </p>
         {!fixedLayoutKey && (
@@ -228,7 +228,7 @@ export function AdMediaEditor({
         <div className={compact ? 'space-y-2' : 'border-t border-[rgba(148,163,184,0.15)] pt-4'}>
           {!compact && (
           <>
-          <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#6f665d]">
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-[color:var(--label-ink)]">
             {t('advertising.mediaEditor.perLayoutTitle')}
           </p>
           <p className="mt-1 text-[11px] leading-snug text-[#9a8776]">
@@ -263,7 +263,7 @@ export function AdMediaEditor({
                 >
                   {!compact && (
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-[#2f2a24]">
+                    <span className="text-xs font-bold text-[color:var(--ink-900)]">
                       {layoutLabel(lk)}
                       {layoutHasPrefs(style, lk) && (
                         <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-[#f59e0b]" />
@@ -302,7 +302,7 @@ export function AdMediaEditor({
                     })}
                   </div>
 
-                  <label className="mt-2 block text-[10px] font-semibold text-[#6f665d]">
+                  <label className="mt-2 block text-[10px] font-semibold text-[color:var(--label-ink)]">
                     {t('advertising.mediaEditor.effectForLayout')}
                     <select
                       value={transition}
@@ -332,7 +332,7 @@ export function AdMediaEditor({
           </div>
 
           {anyRotate && slideCount >= 2 && (
-            <label className="mt-4 block text-xs font-semibold text-[#6f665d]">
+            <label className="mt-4 block text-xs font-semibold text-[color:var(--label-ink)]">
               {t('advertising.mediaEditor.interval')} ({(style.slideshow?.intervalMs ?? 3500) / 1000}s)
               <input
                 type="range"

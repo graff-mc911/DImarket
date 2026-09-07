@@ -76,10 +76,10 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
         }
       >
         <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm">
-          <Upload className="h-6 w-6 text-[#2f2a24]" />
+          <Upload className="h-6 w-6 text-[color:var(--ink-900)]" />
         </div>
-        <p className="text-[15px] font-semibold text-[#2f2a24]">{dropLabel}</p>
-        <p className="mt-1 max-w-xs text-[13px] text-[#8a8178]">{help}</p>
+        <p className="text-[15px] font-semibold text-[color:var(--ink-900)]">{dropLabel}</p>
+        <p className="mt-1 max-w-xs text-[13px] text-[color:var(--label-ink)]">{help}</p>
         <input
           ref={inputRef}
           type="file"
@@ -103,8 +103,8 @@ export function UploadStep({ files, onChange, dropLabel, help }: UploadStepProps
                 <img src={f.previewUrl} alt="" className="aspect-square w-full object-cover" />
               ) : (
                 <div className="flex aspect-square flex-col items-center justify-center gap-2 p-3 text-center">
-                  <FileText className="h-7 w-7 text-[#6f665d]" />
-                  <span className="line-clamp-2 text-[11px] font-medium text-[#2f2a24]">{f.file.name}</span>
+                  <FileText className="h-7 w-7 text-[color:var(--label-ink)]" />
+                  <span className="line-clamp-2 text-[11px] font-medium text-[color:var(--ink-900)]">{f.file.name}</span>
                 </div>
               )}
               <button

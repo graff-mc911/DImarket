@@ -79,7 +79,7 @@ export function LegalMarkdownEditor({
     .replace(/^# (.+)$/gm, '<h1 class="text-lg font-bold mt-3 mb-1">$1</h1>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/^- (.+)$/gm, '<p class="ml-3">• $1</p>')
-    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[rgba(148,163,184,0.35)] pl-2 text-[#6f665d]">$1</blockquote>')
+    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[rgba(148,163,184,0.35)] pl-2 text-[color:var(--label-ink)]">$1</blockquote>')
     .replace(/`([^`]+)`/g, '<code class="rounded bg-[#f3f0ea] px-1">$1</code>')
     .replace(/\n\n/g, '<br/><br/>')
 
@@ -171,9 +171,9 @@ export function LegalMarkdownEditor({
       </div>
       {preview ? (
         <div
-          className="min-h-[120px] px-3 py-2 text-xs leading-5 text-[#2f2a24]"
+          className="min-h-[120px] px-3 py-2 text-xs leading-5 text-[color:var(--ink-900)]"
           dangerouslySetInnerHTML={{
-            __html: previewHtml || `<p class="text-[#8a8178]">${placeholder ?? ''}</p>`,
+            __html: previewHtml || `<p class="text-[color:var(--label-ink)]">${placeholder ?? ''}</p>`,
           }}
         />
       ) : (

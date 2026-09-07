@@ -249,7 +249,7 @@ export function CreateAd() {
     <div className="py-8 pb-24 lg:pb-8">
             <PageContentAds page="default" outerClassName="mt-0 mb-4" />
             <section className="glass-panel p-5 md:p-6 xl:p-8">
-              <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
+              <h1 className="text-3xl font-extrabold tracking-tight text-[color:var(--ink-900)] md:text-4xl">
                 {t('createAd.heroTitle')}
               </h1>
 
@@ -269,10 +269,10 @@ export function CreateAd() {
                 <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
                   <div className="space-y-5">
                     <div>
-                      <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                      <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                         {t('createAd.detailsTitle')}
                       </h2>
-                      <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                      <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
                         {t('createAd.detailsText')}
                       </p>
                     </div>
@@ -382,10 +382,10 @@ export function CreateAd() {
                 <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
                   <div className="space-y-5">
                     <div>
-                      <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                      <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                         {t('createAd.locationTitle')}
                       </h2>
-                      <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                      <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
                         {t('createAd.locationText')}
                       </p>
                     </div>
@@ -416,10 +416,10 @@ export function CreateAd() {
                                   onClick={() => selectLocationSuggestion(suggestion)}
                                   className="block w-full rounded-none px-4 py-3 text-left transition hover:bg-white/80"
                                 >
-                                  <div className="font-semibold text-[#2f2a24]">
+                                  <div className="font-semibold text-[color:var(--ink-900)]">
                                     {suggestion.name}
                                   </div>
-                                  <div className="text-xs text-[#7a7168]">
+                                  <div className="text-xs text-[color:var(--label-ink)]">
                                     {suggestion.displayName}
                                   </div>
                                 </button>
@@ -443,7 +443,7 @@ export function CreateAd() {
                         </button>
                       </div>
 
-                      <p className="mt-2 text-xs text-[#7a7168]">
+                      <p className="mt-2 text-xs text-[color:var(--label-ink)]">
                         {t('createAd.locationHelp')}
                       </p>
                     </div>
@@ -469,7 +469,7 @@ export function CreateAd() {
                         <option value="land">{t('createAd.radius.land')}</option>
                         <option value="global">{t('createAd.radius.global')}</option>
                       </select>
-                      <p className="mt-2 text-xs text-[#7a7168]">
+                      <p className="mt-2 text-xs text-[color:var(--label-ink)]">
                         {t('createAd.visibilityRadiusDesc')}
                       </p>
                     </div>
@@ -478,10 +478,10 @@ export function CreateAd() {
 
                 <section className="space-y-5">
                   <div>
-                    <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                    <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                       {t('createAd.contactTitle')}
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                    <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
                       {t('createAd.contactText')}
                     </p>
                   </div>
@@ -524,16 +524,16 @@ export function CreateAd() {
                     </div>
                   </div>
 
-                  <p className="text-sm text-[#7a7168]">{t('createAd.contactRule')}</p>
+                  <p className="text-sm text-[color:var(--label-ink)]">{t('createAd.contactRule')}</p>
                 </section>
 
                 <section className="space-y-5">
                   <div>
-                    <h2 className="flex items-center gap-2 text-xl font-extrabold text-[#2f2a24]">
+                    <h2 className="flex items-center gap-2 text-xl font-extrabold text-[color:var(--ink-900)]">
                       <Upload className="h-5 w-5 text-[#c96d2c]" />
                       {t('createAd.imagesTitle')}
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                    <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
                       {t('createAd.imagesText')}
                     </p>
                   </div>
@@ -570,7 +570,7 @@ export function CreateAd() {
                     </button>
                   </div>
 
-                  <p className="text-xs text-[#7a7168]">{t('createAd.imageHelp')}</p>
+                  <p className="text-xs text-[color:var(--label-ink)]">{t('createAd.imageHelp')}</p>
                 </section>
 
                 <button

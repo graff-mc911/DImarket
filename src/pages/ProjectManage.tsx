@@ -261,11 +261,11 @@ export function ProjectManage({ listingId }: { listingId: string }) {
     <div className="min-h-[70vh] bg-[#f3f0ea] pb-24">
       <div className="border-b border-[rgba(148,163,184,0.22)] bg-white">
         <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
             {t('pipeline.manageTitle' as never) || 'AI Project Manager'}
           </p>
-          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[#2f2a24]">{title}</h1>
-          <p className="mt-2 text-[15px] text-[#6f665d]">
+          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[color:var(--ink-900)]">{title}</h1>
+          <p className="mt-2 text-[15px] text-[color:var(--label-ink)]">
             {hiredName
               ? `${t('pipeline.hiredLabel' as never) || 'Hired'}: ${hiredName} · ${t('pipeline.stageLabel' as never) || 'Stage'}: ${stage.replace(/_/g, ' ')}`
               : t('pipeline.managePreHire' as never) ||
@@ -284,22 +284,22 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="mt-1.5 text-[12px] font-semibold text-[#8a8178]">
+              <p className="mt-1.5 text-[12px] font-semibold text-[color:var(--label-ink)]">
                 {progress}% {t('pipeline.completePct' as never) || 'complete'}
               </p>
             </>
           ) : null}
           {PROJECT_PAYMENTS_ENABLED && hired && escrow ? (
             <div className="mt-4 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] px-4 py-3">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
                 {t('pipeline.escrowTitle' as never) || 'Project escrow'}
               </p>
-              <p className="mt-1 text-[14px] font-semibold text-[#2f2a24]">
+              <p className="mt-1 text-[14px] font-semibold text-[color:var(--ink-900)]">
                 {escrowStatusLabel(escrow.status)}
                 {escrow.amount > 0 ? ` · ${formatEuro(Number(escrow.amount))}` : ''}
               </p>
               {escrow.status === 'captured' && escrow.payout_status ? (
-                <p className="mt-1 text-[13px] font-medium text-[#2f2a24]">
+                <p className="mt-1 text-[13px] font-medium text-[color:var(--ink-900)]">
                   {escrowPayoutLabel(escrow.payout_status)}
                   {escrow.transfer_amount != null
                     ? ` · ${formatEuro(Number(escrow.transfer_amount))}`
@@ -309,7 +309,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                     : ''}
                 </p>
               ) : null}
-              <p className="mt-1 text-[12px] text-[#6f665d]">
+              <p className="mt-1 text-[12px] text-[color:var(--label-ink)]">
                 {escrow.status === 'authorized'
                   ? t('pipeline.escrowHeldHint' as never) ||
                     'Card authorized. Funds capture when you complete the project.'
@@ -360,10 +360,10 @@ export function ProjectManage({ listingId }: { listingId: string }) {
           acceptedQuoteId &&
           quoteTotal ? (
             <div className="mt-4 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] px-4 py-3">
-              <p className="text-[14px] font-semibold text-[#2f2a24]">
+              <p className="text-[14px] font-semibold text-[color:var(--ink-900)]">
                 {t('pipeline.escrowTitle' as never) || 'Project escrow'}
               </p>
-              <p className="mt-1 text-[12px] text-[#6f665d]">
+              <p className="mt-1 text-[12px] text-[color:var(--label-ink)]">
                 {t('pipeline.escrowPendingHint' as never) ||
                   'Authorize the quote total to hold funds securely until completion.'}{' '}
                 ({formatEuro(quoteTotal)})
@@ -424,11 +424,11 @@ export function ProjectManage({ listingId }: { listingId: string }) {
 
         {loading ? (
           <div className="flex justify-center py-16">
-            <Loader2 className="h-6 w-6 animate-spin text-[#8a8178]" />
+            <Loader2 className="h-6 w-6 animate-spin text-[color:var(--label-ink)]" />
           </div>
         ) : !hired ? (
           <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
-            <p className="text-[15px] text-[#8a8178]">
+            <p className="text-[15px] text-[color:var(--label-ink)]">
               {t('pipeline.manageEmpty' as never) ||
                 'No professional hired yet. Compare ranked offers and hire to unlock milestones, photos and documents.'}
             </p>
@@ -444,11 +444,11 @@ export function ProjectManage({ listingId }: { listingId: string }) {
           <>
             {completed && isOwner && hiredId && !reviewDone ? (
               <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
-                <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+                <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
                   <Star className="h-3.5 w-3.5" />
                   {t('pipeline.leaveReview' as never) || 'Leave a review'}
                 </h2>
-                <p className="mb-4 text-[13px] text-[#6f665d]">
+                <p className="mb-4 text-[13px] text-[color:var(--label-ink)]">
                   {t('pipeline.leaveReviewSub' as never) ||
                     `How was the work with ${hiredName || 'the professional'}?`}
                 </p>
@@ -470,7 +470,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
 
             {/* Work calendar */}
             <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
-              <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+              <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
                 <CalendarDays className="h-3.5 w-3.5" />
                 {t('pipeline.workCalendar' as never) || 'Work calendar'}
               </h2>
@@ -481,8 +481,8 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                     className="flex flex-wrap items-center justify-between gap-2 rounded-none bg-[#f3f0ea] px-4 py-3"
                   >
                     <div>
-                      <p className="text-[14px] font-semibold text-[#2f2a24]">{c.title}</p>
-                      <p className="text-[12px] capitalize text-[#8a8178]">
+                      <p className="text-[14px] font-semibold text-[color:var(--ink-900)]">{c.title}</p>
+                      <p className="text-[12px] capitalize text-[color:var(--label-ink)]">
                         Due {new Date(c.dueAt).toLocaleDateString()} · {c.status.replace(/_/g, ' ')}
                         {c.laborHours != null ? ` · ~${c.laborHours} h` : ''}
                       </p>
@@ -490,7 +490,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                   </li>
                 ))}
                 {!calendar.length ? (
-                  <p className="text-[13px] text-[#8a8178]">
+                  <p className="text-[13px] text-[color:var(--label-ink)]">
                     {t('pipeline.noDueDates' as never) || 'No due dates yet.'}
                   </p>
                 ) : null}
@@ -506,12 +506,12 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f3f0ea] text-[13px] font-bold text-[#2f2a24]">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f3f0ea] text-[13px] font-bold text-[color:var(--ink-900)]">
                         {i + 1}
                       </span>
                       <div>
-                        <p className="text-[16px] font-semibold text-[#2f2a24]">{m.label}</p>
-                        <p className="mt-0.5 text-[12px] capitalize text-[#8a8178]">
+                        <p className="text-[16px] font-semibold text-[color:var(--ink-900)]">{m.label}</p>
+                        <p className="mt-0.5 text-[12px] capitalize text-[color:var(--label-ink)]">
                           {m.status.replace(/_/g, ' ')}
                           {m.due_at ? ` · due ${new Date(m.due_at).toLocaleDateString()}` : ''}
                           {m.labor_hours != null ? ` · ~${m.labor_hours} h` : ''}
@@ -544,7 +544,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                 </li>
               ))}
               {!milestones.length ? (
-                <p className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-5 py-8 text-center text-[13px] text-[#8a8178]">
+                <p className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-5 py-8 text-center text-[13px] text-[color:var(--label-ink)]">
                   {t('pipeline.noMilestones' as never) ||
                     'Milestones will appear after hire from the cost estimate work stages.'}
                 </p>
@@ -553,7 +553,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
 
             {/* Phase photos */}
             <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
-              <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+              <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
                 <Camera className="h-3.5 w-3.5" />
                 {t('pipeline.phasePhotos' as never) || 'Before / during / after'}
               </h2>
@@ -567,7 +567,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                       className={`rounded-full px-3 py-1.5 text-[12px] font-semibold capitalize ${
                         phase === p
                           ? 'bg-[#2f2a24] text-white'
-                          : 'bg-[#f3f0ea] text-[#2f2a24]'
+                          : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'
                       }`}
                     >
                       {p}
@@ -611,7 +611,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                   </a>
                 ))}
                 {!media.length ? (
-                  <p className="col-span-full text-[13px] text-[#8a8178]">
+                  <p className="col-span-full text-[13px] text-[color:var(--label-ink)]">
                     {t('pipeline.noPhotos' as never) ||
                       'No photos yet — document the site before, during and after works.'}
                   </p>
@@ -622,7 +622,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
             {/* Documents & payments */}
             <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+                <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
                   <FileText className="h-3.5 w-3.5" />
                   {t('pipeline.documents' as never) || 'Acts · invoices · warranty · payments'}
                 </h2>
@@ -650,8 +650,8 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                     className="flex flex-wrap items-center justify-between gap-2 rounded-none bg-[#f3f0ea] px-4 py-3"
                   >
                     <div>
-                      <p className="text-[14px] font-semibold text-[#2f2a24]">{d.title}</p>
-                      <p className="text-[12px] capitalize text-[#8a8178]">
+                      <p className="text-[14px] font-semibold text-[color:var(--ink-900)]">{d.title}</p>
+                      <p className="text-[12px] capitalize text-[color:var(--label-ink)]">
                         {d.doc_type.replace(/_/g, ' ')} · {d.status}
                         {d.amount != null ? ` · ${formatEuro(Number(d.amount))}` : ''}
                       </p>
@@ -666,7 +666,7 @@ export function ProjectManage({ listingId }: { listingId: string }) {
                   </li>
                 ))}
                 {!docs.length ? (
-                  <p className="text-[13px] text-[#8a8178]">
+                  <p className="text-[13px] text-[color:var(--label-ink)]">
                     {t('pipeline.noDocs' as never) ||
                       'Generate acceptance act, invoice, warranty and payment checklist when ready.'}
                   </p>
@@ -716,7 +716,7 @@ function StatusBtn({
       className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-semibold ${
         active
           ? 'bg-[#2f2a24] text-white'
-          : 'border border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-[#2f2a24] hover:bg-[#f3f0ea]'
+          : 'border border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-[color:var(--ink-900)] hover:bg-[#f3f0ea]'
       }`}
     >
       {icon}

@@ -37,7 +37,7 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
   return (
     <div className="space-y-5">
       <div className="rounded-none bg-[#f3f0ea] p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
           {labels.category}
         </p>
         <div className="mt-2 flex items-center gap-3">
@@ -46,22 +46,22 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
               <Icon className="h-5 w-5" />
             </span>
           ) : null}
-          <p className="text-[18px] font-semibold text-[#2f2a24]">{tradeLabel}</p>
+          <p className="text-[18px] font-semibold text-[color:var(--ink-900)]">{tradeLabel}</p>
         </div>
       </div>
 
       <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
           {labels.description}
         </p>
-        <p className="mt-2 whitespace-pre-wrap text-[15px] leading-6 text-[#2f2a24]">
+        <p className="mt-2 whitespace-pre-wrap text-[15px] leading-6 text-[color:var(--ink-900)]">
           {state.description}
         </p>
       </div>
 
       {state.files.length > 0 && (
         <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
             {labels.media} · {state.files.length} {labels.files}
           </p>
           <div className="mt-3 flex gap-2 overflow-x-auto">
@@ -88,32 +88,32 @@ export function PreviewStep({ state, tradeLabel, onChange, errors = {}, labels }
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
             {labels.location}
           </p>
-          <p className="mt-2 text-[15px] font-medium text-[#2f2a24]">
+          <p className="mt-2 text-[15px] font-medium text-[color:var(--ink-900)]">
             {[state.city, state.postalCode, state.country].filter(Boolean).join(', ')}
           </p>
         </div>
         <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
             {labels.budget}
           </p>
-          <p className="mt-2 text-[15px] font-medium text-[#2f2a24]">
+          <p className="mt-2 text-[15px] font-medium text-[color:var(--ink-900)]">
             €{state.budgetMin.toLocaleString()} – €{state.budgetMax.toLocaleString()}
           </p>
         </div>
       </div>
 
       <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
           {labels.deadline}
         </p>
-        <p className="mt-2 text-[15px] font-medium text-[#2f2a24]">{deadlineLabel}</p>
+        <p className="mt-2 text-[15px] font-medium text-[color:var(--ink-900)]">{deadlineLabel}</p>
       </div>
 
       <div className="rounded-none border border-[rgba(148,163,184,0.22)] p-5">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
           {labels.contact}
         </p>
         <div className="grid gap-3">

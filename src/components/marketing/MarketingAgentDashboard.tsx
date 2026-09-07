@@ -151,8 +151,8 @@ export function MarketingAgentDashboard() {
           <div className="flex items-start gap-3">
             <Megaphone className="h-7 w-7 shrink-0 text-[#6366f1] sm:h-8 sm:w-8" />
             <div className="min-w-0">
-              <h1 className="text-lg font-extrabold text-[#2f2a24] sm:text-2xl">{t('marketing.admin.title')}</h1>
-              <p className="text-xs text-[#6f665d] sm:text-sm">{t('marketing.admin.subtitle')}</p>
+              <h1 className="text-lg font-extrabold text-[color:var(--ink-900)] sm:text-2xl">{t('marketing.admin.title')}</h1>
+              <p className="text-xs text-[color:var(--label-ink)] sm:text-sm">{t('marketing.admin.subtitle')}</p>
               <p className="mt-1 hidden text-xs text-[#9a8776] sm:block">{t('marketing.admin.blogHint')}</p>
             </div>
           </div>
@@ -206,7 +206,7 @@ export function MarketingAgentDashboard() {
             type="button"
             onClick={() => setTab(id)}
             className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold sm:px-4 sm:text-sm ${
-              tab === id ? 'bg-[#6366f1] text-white' : 'text-[#6f665d] hover:bg-[#f5f0eb]'
+              tab === id ? 'bg-[#6366f1] text-white' : 'text-[color:var(--label-ink)] hover:bg-[#f5f0eb]'
             }`}
           >
             {t(`marketing.admin.tab.${id}`)}
@@ -217,7 +217,7 @@ export function MarketingAgentDashboard() {
       {tab === 'control' && config && (
         <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
           <div className="glass-card space-y-3 p-4 sm:space-y-4 sm:p-6">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-[#2f2a24]">
+            <h2 className="flex items-center gap-2 text-lg font-bold text-[color:var(--ink-900)]">
               <Globe className="h-5 w-5 text-[#6366f1]" />
               {t('marketing.admin.markets')}
             </h2>
@@ -230,7 +230,7 @@ export function MarketingAgentDashboard() {
                     type="button"
                     onClick={() => toggleMarket(m)}
                     className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                      on ? 'bg-[#6366f1] text-white' : 'border border-[#e7ddd3] text-[#6f665d]'
+                      on ? 'bg-[#6366f1] text-white' : 'border border-[#e7ddd3] text-[color:var(--label-ink)]'
                     }`}
                   >
                     {m.label}
@@ -279,7 +279,7 @@ export function MarketingAgentDashboard() {
           </div>
 
           <div className="glass-card space-y-3 p-4 sm:space-y-4 sm:p-6">
-            <h2 className="text-base font-bold text-[#2f2a24] sm:text-lg">{t('marketing.admin.platforms')}</h2>
+            <h2 className="text-base font-bold text-[color:var(--ink-900)] sm:text-lg">{t('marketing.admin.platforms')}</h2>
             <div className="flex flex-wrap gap-2">
               {ALL_PLATFORMS.map((p) => (
                 <button
@@ -289,7 +289,7 @@ export function MarketingAgentDashboard() {
                   className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${
                     config.platforms.includes(p)
                       ? 'bg-[#10b981] text-white'
-                      : 'border border-[#e7ddd3] text-[#6f665d]'
+                      : 'border border-[#e7ddd3] text-[color:var(--label-ink)]'
                   }`}
                 >
                   {p}
@@ -312,7 +312,7 @@ export function MarketingAgentDashboard() {
         <div className="space-y-4">
           {preview && (
             <div className="glass-card p-6">
-              <p className="whitespace-pre-wrap text-sm text-[#2f2a24]">{preview.body}</p>
+              <p className="whitespace-pre-wrap text-sm text-[color:var(--ink-900)]">{preview.body}</p>
               <p className="mt-2 text-xs text-[#6366f1]">
                 {preview.hashtags.map((h) => `#${h.replace(/^#/, '')}`).join(' ')}
               </p>
@@ -321,7 +321,7 @@ export function MarketingAgentDashboard() {
           <div className="glass-card p-6">
             <h2 className="mb-4 text-lg font-bold">{t('marketing.admin.queue')}</h2>
             {posts.length === 0 ? (
-              <p className="text-sm text-[#6f665d]">{t('marketing.admin.noPosts')}</p>
+              <p className="text-sm text-[color:var(--label-ink)]">{t('marketing.admin.noPosts')}</p>
             ) : (
               <ul className="space-y-3">
                 {posts.map((post) => (
@@ -335,7 +335,7 @@ export function MarketingAgentDashboard() {
                       <span>{post.language_code}</span>
                       <span className="rounded-full bg-[#eef2ff] px-2 text-[#4338ca]">{post.status}</span>
                     </div>
-                    <p className="line-clamp-3 text-[#2f2a24]">{post.body}</p>
+                    <p className="line-clamp-3 text-[color:var(--ink-900)]">{post.body}</p>
                     {post.status === 'pending_review' && (
                       <div className="mt-2 flex gap-2">
                         <button
@@ -389,15 +389,15 @@ export function MarketingAgentDashboard() {
           <div className="glass-card p-4">
             <BarChart3 className="mb-2 h-6 w-6 text-[#6366f1]" />
             <p className="text-2xl font-bold">{analytics.postsPublished}</p>
-            <p className="text-xs text-[#6f665d]">{t('marketing.admin.published')}</p>
+            <p className="text-xs text-[color:var(--label-ink)]">{t('marketing.admin.published')}</p>
           </div>
           <div className="glass-card p-4">
             <p className="text-2xl font-bold">{analytics.pendingReview}</p>
-            <p className="text-xs text-[#6f665d]">{t('marketing.admin.pending')}</p>
+            <p className="text-xs text-[color:var(--label-ink)]">{t('marketing.admin.pending')}</p>
           </div>
           <div className="glass-card p-4">
             <p className="text-2xl font-bold">{analytics.attributedRegistrations}</p>
-            <p className="text-xs text-[#6f665d]">{t('marketing.admin.registrations')}</p>
+            <p className="text-xs text-[color:var(--label-ink)]">{t('marketing.admin.registrations')}</p>
           </div>
         </div>
       )}

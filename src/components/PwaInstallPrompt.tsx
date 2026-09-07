@@ -83,10 +83,10 @@ export function PwaInstallPrompt() {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-[#2f2a24]">
+          <p className="text-sm font-semibold text-[color:var(--ink-900)]">
             {mode === 'already' ? t('pwa.alreadyTitle') : t('pwa.installTitle')}
           </p>
-          <p className="mt-0.5 text-xs leading-snug text-[#6f665d]">
+          <p className="mt-0.5 text-xs leading-snug text-[color:var(--label-ink)]">
             {mode === 'already' ? t('pwa.alreadyText') : t('pwa.installText')}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -108,7 +108,7 @@ export function PwaInstallPrompt() {
               <button
                 type="button"
                 onClick={dismiss}
-                className="inline-flex items-center justify-center rounded-full border border-[rgba(148,163,184,0.35)] px-3.5 py-1.5 text-xs font-semibold text-[#6f665d] hover:bg-[#f3f0ea]"
+                className="inline-flex items-center justify-center rounded-full border border-[rgba(148,163,184,0.35)] px-3.5 py-1.5 text-xs font-semibold text-[color:var(--label-ink)] hover:bg-[#f3f0ea]"
               >
                 {t('pwa.installLater')}
               </button>
@@ -117,7 +117,7 @@ export function PwaInstallPrompt() {
               <button
                 type="button"
                 onClick={dismiss}
-                className="inline-flex items-center justify-center rounded-full border border-[rgba(148,163,184,0.35)] px-3.5 py-1.5 text-xs font-semibold text-[#6f665d] hover:bg-[#f3f0ea]"
+                className="inline-flex items-center justify-center rounded-full border border-[rgba(148,163,184,0.35)] px-3.5 py-1.5 text-xs font-semibold text-[color:var(--label-ink)] hover:bg-[#f3f0ea]"
               >
                 {t('pwa.installLater')}
               </button>
@@ -127,7 +127,7 @@ export function PwaInstallPrompt() {
         <button
           type="button"
           onClick={dismiss}
-          className="shrink-0 rounded-full p-1 text-[#8a8178] hover:bg-[#f3f0ea]"
+          className="shrink-0 rounded-full p-1 text-[color:var(--label-ink)] hover:bg-[#f3f0ea]"
           aria-label={t('common.close')}
         >
           <X className="h-4 w-4" />

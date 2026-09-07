@@ -93,7 +93,7 @@ export function ProfileMediaPicker({
   return (
     <div>
       <label className="mb-2 block text-sm font-semibold text-[#5f5a54]">{label}</label>
-      {hint && <p className="mb-2 text-xs text-[#7a7168]">{hint}</p>}
+      {hint && <p className="mb-2 text-xs text-[color:var(--label-ink)]">{hint}</p>}
 
       <input
         ref={inputRef}
@@ -111,7 +111,7 @@ export function ProfileMediaPicker({
           type="button"
           disabled={!userId || uploading}
           onClick={pickFiles}
-          className="inline-flex items-center gap-2 rounded-full border border-[rgba(148,163,184,0.35)] bg-white/50 px-4 py-2 text-sm font-semibold text-[#2f2a24] transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-full border border-[rgba(148,163,184,0.35)] bg-white/50 px-4 py-2 text-sm font-semibold text-[color:var(--ink-900)] transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {uploading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -165,7 +165,7 @@ export function ProfileMediaPicker({
       {!single && !portfolioUrls.some(Boolean) && (
         <div className="mt-4 flex flex-col items-center rounded-none border border-dashed border-[rgba(148,163,184,0.35)] bg-white/25 py-8">
           <ImagePlus className="h-10 w-10 text-[#9a8776]" />
-          <p className="mt-2 text-xs text-[#7a7168]">{t('settings.portfolioEmptyHint')}</p>
+          <p className="mt-2 text-xs text-[color:var(--label-ink)]">{t('settings.portfolioEmptyHint')}</p>
         </div>
       )}
 

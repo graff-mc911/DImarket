@@ -171,8 +171,8 @@ export function ProDashboard() {
   if (!user) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="text-2xl font-semibold text-[#2f2a24]">Professional Dashboard</h1>
-        <p className="mt-2 text-[#8a8178]">Sign in to view your workspace.</p>
+        <h1 className="text-2xl font-semibold text-[color:var(--ink-900)]">Professional Dashboard</h1>
+        <p className="mt-2 text-[color:var(--label-ink)]">Sign in to view your workspace.</p>
         <button type="button" className="btn-primary mt-6" onClick={() => navigateTo('/login')}>
           Sign in
         </button>
@@ -183,8 +183,8 @@ export function ProDashboard() {
   if (!isPro) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="text-2xl font-semibold text-[#2f2a24]">Professionals only</h1>
-        <p className="mt-2 text-[#8a8178]">This dashboard is for professional accounts.</p>
+        <h1 className="text-2xl font-semibold text-[color:var(--ink-900)]">Professionals only</h1>
+        <p className="mt-2 text-[color:var(--label-ink)]">This dashboard is for professional accounts.</p>
         <button
           type="button"
           className="btn-secondary mt-6"
@@ -199,13 +199,13 @@ export function ProDashboard() {
   const card = dark
     ? 'rounded-none border border-white/10 bg-white/[0.04] shadow-[0_1px_0_rgba(255,255,255,0.04)]'
     : 'rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
-  const muted = dark ? 'text-white/50' : 'text-[#8a8178]'
-  const ink = dark ? 'text-white' : 'text-[#2f2a24]'
-  const soft = dark ? 'text-white/70' : 'text-[#6f665d]'
-  const chip = dark ? 'bg-white/10 text-white/80' : 'bg-[#f3f0ea] text-[#6f665d]'
+  const muted = dark ? 'text-white/50' : 'text-[color:var(--label-ink)]'
+  const ink = dark ? 'text-white' : 'text-[color:var(--ink-900)]'
+  const soft = dark ? 'text-white/70' : 'text-[color:var(--label-ink)]'
+  const chip = dark ? 'bg-white/10 text-white/80' : 'bg-[#f3f0ea] text-[color:var(--label-ink)]'
   const btnGhost = dark
     ? 'border-white/15 bg-white/5 text-white hover:bg-white/10'
-    : 'border-[rgba(148,163,184,0.35)] bg-white text-[#2f2a24] hover:bg-[#f3f0ea]'
+    : 'border-[rgba(148,163,184,0.35)] bg-white text-[color:var(--ink-900)] hover:bg-[#f3f0ea]'
   const btnPrimary = dark
     ? 'bg-blue-500 text-white hover:bg-blue-400'
     : 'bg-[#2f2a24] text-white hover:bg-black'
@@ -217,7 +217,7 @@ export function ProDashboard() {
       className={`min-h-[80vh] pb-24 transition-colors ${
         dark
           ? 'bg-[#0b0b0f] text-white'
-          : 'bg-[#f3f0ea] text-[#2f2a24]'
+          : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'
       }`}
     >
       {/* Header */}
@@ -246,7 +246,7 @@ export function ProDashboard() {
                       ? 'bg-emerald-500/15 text-emerald-400'
                       : dark
                         ? 'bg-white/10 text-white/40'
-                        : 'bg-[#f3f0ea] text-[#8a8178]'
+                        : 'bg-[#f3f0ea] text-[color:var(--label-ink)]'
                   }`}
                 >
                   <Radio className="h-3 w-3" />
@@ -376,7 +376,7 @@ export function ProDashboard() {
                     type="button"
                     onClick={() => navigateTo('/analytics')}
                     className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
-                      dark ? 'bg-white/10 text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
+                      dark ? 'bg-white/10 text-white' : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'
                     }`}
                   >
                     Full analytics

@@ -50,12 +50,12 @@ export function DeadlineStep({
                 'flex items-center justify-between rounded-none border px-5 py-4 text-left transition ' +
                 (active
                   ? 'border-[#2f2a24] bg-[#2f2a24] text-white'
-                  : 'border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-[#2f2a24] hover:bg-white')
+                  : 'border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-[color:var(--ink-900)] hover:bg-white')
               }
             >
               <span>
                 <span className="block text-[16px] font-semibold">{o.label}</span>
-                <span className={'text-[13px] ' + (active ? 'text-white/70' : 'text-[#8a8178]')}>
+                <span className={'text-[13px] ' + (active ? 'text-white/70' : 'text-[color:var(--label-ink)]')}>
                   {o.hint}
                 </span>
               </span>
@@ -74,7 +74,7 @@ export function DeadlineStep({
 
       {deadlineType === 'date' && (
         <div>
-          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
             {labels.pickDate}
           </label>
           <input

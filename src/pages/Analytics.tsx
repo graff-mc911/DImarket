@@ -88,14 +88,14 @@ export function Analytics() {
       <div className="mx-auto max-w-6xl space-y-5 px-4 sm:px-6">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a8178]">
+            <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[color:var(--label-ink)]">
               <BarChart3 className="h-4 w-4" />
               {t('analytics.eyebrow')}
             </p>
-            <h1 className="mt-2 text-[28px] font-semibold tracking-tight text-[#2f2a24] sm:text-[32px]">
+            <h1 className="mt-2 text-[28px] font-semibold tracking-tight text-[color:var(--ink-900)] sm:text-[32px]">
               {mode === 'platform' ? t('analytics.title.platform') : t('analytics.title.pro')}
             </h1>
-            <p className="mt-1 text-[14px] text-[#6f665d]">{t('analytics.subtitle')}</p>
+            <p className="mt-1 text-[14px] text-[color:var(--label-ink)]">{t('analytics.subtitle')}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {owner && isPro ? (
@@ -104,7 +104,7 @@ export function Analytics() {
                   type="button"
                   onClick={() => setMode('platform')}
                   className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
-                    mode === 'platform' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
+                    mode === 'platform' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'
                   }`}
                 >
                   {t('analytics.mode.platform')}
@@ -113,7 +113,7 @@ export function Analytics() {
                   type="button"
                   onClick={() => setMode('pro')}
                   className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
-                    mode === 'pro' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
+                    mode === 'pro' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'
                   }`}
                 >
                   {t('analytics.mode.pro')}
@@ -151,7 +151,7 @@ export function Analytics() {
 
         {loading && !data ? (
           <div className="flex min-h-[40vh] items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-[#8a8178]" />
+            <Loader2 className="h-6 w-6 animate-spin text-[color:var(--label-ink)]" />
           </div>
         ) : (
           <>
@@ -302,9 +302,9 @@ export function Analytics() {
                     },
                   ]}
                 />
-                <p className="mt-3 text-[12px] text-[#8a8178]">
+                <p className="mt-3 text-[12px] text-[color:var(--label-ink)]">
                   {t('analytics.funnel.rate')}{' '}
-                  <strong className="text-[#2f2a24]">{data?.conversionPct ?? 0}%</strong>
+                  <strong className="text-[color:var(--ink-900)]">{data?.conversionPct ?? 0}%</strong>
                 </p>
               </ChartCard>
 
@@ -319,7 +319,7 @@ export function Analytics() {
                 >
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-none bg-[#f3f0ea] p-4">
-                      <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
+                      <p className="text-[11px] font-semibold uppercase text-[color:var(--label-ink)]">
                         {t('analytics.quality.responseTime')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
@@ -327,7 +327,7 @@ export function Analytics() {
                       </p>
                     </div>
                     <div className="rounded-none bg-[#f3f0ea] p-4">
-                      <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
+                      <p className="text-[11px] font-semibold uppercase text-[color:var(--label-ink)]">
                         {t('analytics.quality.responseRate')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
@@ -335,7 +335,7 @@ export function Analytics() {
                       </p>
                     </div>
                     <div className="rounded-none bg-[#f3f0ea] p-4">
-                      <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
+                      <p className="text-[11px] font-semibold uppercase text-[color:var(--label-ink)]">
                         {t('analytics.quality.recommend')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
@@ -343,7 +343,7 @@ export function Analytics() {
                       </p>
                     </div>
                     <div className="rounded-none bg-[#f3f0ea] p-4">
-                      <p className="text-[11px] font-semibold uppercase text-[#8a8178]">
+                      <p className="text-[11px] font-semibold uppercase text-[color:var(--label-ink)]">
                         {t('analytics.quality.rating')}
                       </p>
                       <p className="mt-2 text-[22px] font-semibold tabular-nums">
@@ -373,7 +373,7 @@ export function AnalyticsEmbed({ days = 14 }: { days?: number }) {
   if (!data) {
     return (
       <div className="flex justify-center py-10">
-        <Loader2 className="h-5 w-5 animate-spin text-[#8a8178]" />
+        <Loader2 className="h-5 w-5 animate-spin text-[color:var(--label-ink)]" />
       </div>
     )
   }

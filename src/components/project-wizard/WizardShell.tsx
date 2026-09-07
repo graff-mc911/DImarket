@@ -43,11 +43,11 @@ export function WizardShell({
   return (
     <div className="create-project-page min-h-[calc(100vh-4rem)] bg-[#f3f0ea] px-4 py-8 pb-28 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-[720px]">
-        <p className="mb-2 text-center text-[13px] font-medium tracking-wide text-[#8a8178]">
+        <p className="mb-2 text-center text-[13px] font-medium tracking-wide text-[color:var(--label-ink)]">
           DiMarket · Project
         </p>
         <div className="mb-6">
-          <div className="mb-3 flex items-center justify-between text-[12px] text-[#8a8178]">
+          <div className="mb-3 flex items-center justify-between text-[12px] text-[color:var(--label-ink)]">
             <span>
               Step {step} of {WIZARD_STEP_COUNT}
             </span>
@@ -65,7 +65,7 @@ export function WizardShell({
                 key={label}
                 className={
                   'flex-1 truncate text-center text-[10px] font-medium ' +
-                  (i + 1 === step ? 'text-[#2f2a24]' : i + 1 < step ? 'text-[#6f665d]' : 'text-[#aeaeb2]')
+                  (i + 1 === step ? 'text-[color:var(--ink-900)]' : i + 1 < step ? 'text-[color:var(--label-ink)]' : 'text-[#aeaeb2]')
                 }
               >
                 {label}
@@ -75,11 +75,11 @@ export function WizardShell({
         </div>
 
         <div className="overflow-hidden rounded-none border border-black/[0.04] bg-white/90 p-6 shadow-[0_8px_40px_rgba(0,0,0,0.06)] backdrop-blur-xl sm:p-10">
-          <h1 className="text-center text-[28px] font-semibold leading-tight tracking-[-0.03em] text-[#2f2a24] sm:text-[34px]">
+          <h1 className="text-center text-[28px] font-semibold leading-tight tracking-[-0.03em] text-[color:var(--ink-900)] sm:text-[34px]">
             {title}
           </h1>
           {subtitle ? (
-            <p className="mx-auto mt-3 max-w-md text-center text-[15px] leading-6 text-[#6f665d]">
+            <p className="mx-auto mt-3 max-w-md text-center text-[15px] leading-6 text-[color:var(--label-ink)]">
               {subtitle}
             </p>
           ) : null}
@@ -97,7 +97,7 @@ export function WizardShell({
               <button
                 type="button"
                 onClick={onBack}
-                className="rounded-full px-5 py-3 text-[15px] font-medium text-[#2f2a24] transition hover:bg-[#f3f0ea]"
+                className="rounded-full px-5 py-3 text-[15px] font-medium text-[color:var(--ink-900)] transition hover:bg-[#f3f0ea]"
               >
                 {backLabel}
               </button>

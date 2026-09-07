@@ -1071,7 +1071,7 @@ export function Advertising() {
                 <span>{t('advertising.selfService.eyebrow')}</span>
               </div>
 
-              <h1 className="mt-2 max-w-4xl text-2xl font-extrabold tracking-tight text-[#2f2a24] md:text-3xl">
+              <h1 className="mt-2 max-w-4xl text-2xl font-extrabold tracking-tight text-[color:var(--ink-900)] md:text-3xl">
                 {t('advertising.selfService.title')}
               </h1>
 
@@ -1100,10 +1100,10 @@ export function Advertising() {
         </section>
 
         <section id="ad-placements" className={`glass-card mt-6 min-w-0 p-4 md:p-5 ${guideClass('placements')}`}>
-          <h2 className="text-lg font-extrabold text-[#2f2a24] md:text-xl">
+          <h2 className="text-lg font-extrabold text-[color:var(--ink-900)] md:text-xl">
             {t('advertising.placementsSection.title')}
           </h2>
-          <p className="mt-1 text-xs leading-5 text-[#6f665d]">
+          <p className="mt-1 text-xs leading-5 text-[color:var(--label-ink)]">
             {t('advertising.placementsSection.desc')}
           </p>
           <div className="mt-3 min-w-0 overflow-x-clip rounded-none border border-white/40 bg-[rgba(255,255,255,0.18)] p-2.5 md:p-3">
@@ -1125,7 +1125,7 @@ export function Advertising() {
               onFallbackMediaStyle={setMediaStyle}
             />
             {!user && (
-              <p className="mt-3 text-sm text-[#6f665d]">
+              <p className="mt-3 text-sm text-[color:var(--label-ink)]">
                 {t('advertising.form.loginRequired')}{' '}
                 <button
                   type="button"
@@ -1144,16 +1144,16 @@ export function Advertising() {
 
             {/* ===== Форма нової кампанії ===== */}
             <div id="ad-form" className="glass-card p-6">
-              <h2 className="text-2xl font-extrabold text-[#2f2a24]">
+              <h2 className="text-2xl font-extrabold text-[color:var(--ink-900)]">
                 {editingCampaignId ? t('advertising.form.editTitle') : t('advertising.form.title')}
               </h2>
-              <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+              <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
                 {editingCampaignId ? t('advertising.form.editDesc') : t('advertising.form.desc')}
               </p>
 
               {!user ? (
                 <div className="mt-5 rounded-none border border-[rgba(148,163,184,0.18)] bg-[rgba(255,255,255,0.30)] p-5">
-                  <p className="text-sm leading-6 text-[#6f665d]">{t('advertising.form.loginRequired')}</p>
+                  <p className="text-sm leading-6 text-[color:var(--label-ink)]">{t('advertising.form.loginRequired')}</p>
                   <button onClick={() => navigateTo('/login')} type="button" className="btn-primary mt-5 rounded-full">
                     {t('advertising.form.loginBtn')}
                   </button>
@@ -1231,14 +1231,14 @@ export function Advertising() {
                         <button key={mode} type="button" onClick={() => handleGeoModeChange(mode)}
                           className={'rounded-none border px-4 py-3 text-sm font-bold transition ' + (geoMode === mode
                             ? 'border-[#6366f1] bg-[rgba(99,102,241,0.12)] text-[#6366f1]'
-                            : 'border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.45)] text-[#6f665d]')}>
+                            : 'border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.45)] text-[color:var(--label-ink)]')}>
                           {t(('advertising.geo.' + mode) as TranslationKey)}
                         </button>
                       ))}
                     </div>
 
                     {geoLoading ? (
-                      <p className="mt-3 text-sm text-[#6f665d]">{t('advertising.geo.loading')}</p>
+                      <p className="mt-3 text-sm text-[color:var(--label-ink)]">{t('advertising.geo.loading')}</p>
                     ) : geoData.length === 0 ? (
                       <p className="mt-3 text-sm text-[#b45309]">{t('advertising.geo.loadFailed')}</p>
                     ) : (
@@ -1248,7 +1248,7 @@ export function Advertising() {
                     )}
 
                     {geoMode === 'global' && !geoLoading && geoData.length > 0 && (
-                      <p className="mt-3 text-sm text-[#6f665d]">{t('advertising.geo.globalHint')}</p>
+                      <p className="mt-3 text-sm text-[color:var(--label-ink)]">{t('advertising.geo.globalHint')}</p>
                     )}
 
                     {geoMode !== 'global' && (
@@ -1274,8 +1274,8 @@ export function Advertising() {
 
                     {/* Розрахунок ціни */}
                     <div id="ad-price-block" className={`mt-5 rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.50)] p-4 ${guideClass('price')}`}>
-                      <div className="text-sm font-bold text-[#2f2a24]">{t('advertising.price.title')}</div>
-                      <div className="mt-3 space-y-1 text-sm text-[#6f665d]">
+                      <div className="text-sm font-bold text-[color:var(--ink-900)]">{t('advertising.price.title')}</div>
+                      <div className="mt-3 space-y-1 text-sm text-[color:var(--label-ink)]">
                         <div>{t('advertising.price.geo')}: <b>{geoSummary}</b></div>
                         <div>{t('advertising.price.cities')}: <b>{billingUnits}</b></div>
                         <div>{t('advertising.price.positions')}: <b>{selectedSlots.length}</b></div>
@@ -1307,11 +1307,11 @@ export function Advertising() {
                     </label>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
-                        <label className="mb-2 block text-sm font-medium text-[#6f665d]">{t('advertising.dates.startLabel')}</label>
+                        <label className="mb-2 block text-sm font-medium text-[color:var(--label-ink)]">{t('advertising.dates.startLabel')}</label>
                         <input type="datetime-local" value={startsAt} onChange={e => setStartsAt(e.target.value)} className="input-glass" />
                       </div>
                       <div>
-                        <label className="mb-2 block text-sm font-medium text-[#6f665d]">{t('advertising.dates.endLabel')}</label>
+                        <label className="mb-2 block text-sm font-medium text-[color:var(--label-ink)]">{t('advertising.dates.endLabel')}</label>
                         <input type="datetime-local" value={endsAt} onChange={e => setEndsAt(e.target.value)} className="input-glass" />
                       </div>
                     </div>
@@ -1370,8 +1370,8 @@ export function Advertising() {
 
             {/* Превью */}
             <div id="ad-preview-block" className={`glass-card p-6 ${guideClass('preview')}`}>
-              <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.preview.title')}</h2>
-              <p className="mt-2 text-sm leading-6 text-[#6f665d]">{t('advertising.preview.desc')}</p>
+              <h2 className="text-2xl font-extrabold text-[color:var(--ink-900)]">{t('advertising.preview.title')}</h2>
+              <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">{t('advertising.preview.desc')}</p>
 
               <div className="mt-5 flex flex-col items-center gap-4">
                 {user && (mediaType === 'image' || mediaType === 'gif') && (
@@ -1425,12 +1425,12 @@ export function Advertising() {
 
             {/* Мої кампанії */}
             <div className="glass-card p-6">
-              <h2 className="text-2xl font-extrabold text-[#2f2a24]">{t('advertising.myCampaigns.title')}</h2>
+              <h2 className="text-2xl font-extrabold text-[color:var(--ink-900)]">{t('advertising.myCampaigns.title')}</h2>
 
               {!user ? (
-                <p className="mt-4 text-sm leading-6 text-[#6f665d]">{t('advertising.myCampaigns.loginMsg')}</p>
+                <p className="mt-4 text-sm leading-6 text-[color:var(--label-ink)]">{t('advertising.myCampaigns.loginMsg')}</p>
               ) : loadingCampaigns ? (
-                <div className="mt-4 flex items-center gap-2 text-sm text-[#6f665d]">
+                <div className="mt-4 flex items-center gap-2 text-sm text-[color:var(--label-ink)]">
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-[rgba(148,163,184,0.3)] border-t-[#64748b]" />
                   {t('advertising.myCampaigns.loading')}
                 </div>
@@ -1449,7 +1449,7 @@ export function Advertising() {
                   ))}
                 </div>
               ) : (
-                <p className="mt-4 text-sm leading-6 text-[#6f665d]">{t('advertising.myCampaigns.empty')}</p>
+                <p className="mt-4 text-sm leading-6 text-[color:var(--label-ink)]">{t('advertising.myCampaigns.empty')}</p>
               )}
             </div>
 
@@ -1461,8 +1461,8 @@ export function Advertising() {
             <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#6366f1]">
               AI гід · {adGuideStepIndex + 1}/{AD_GUIDE_STEPS.length}
             </p>
-            <p className="mt-1 text-sm font-bold text-[#2f2a24]">{activeGuideStep.title}</p>
-            <p className="mt-1 text-xs leading-5 text-[#6f665d]">{activeGuideStep.text}</p>
+            <p className="mt-1 text-sm font-bold text-[color:var(--ink-900)]">{activeGuideStep.title}</p>
+            <p className="mt-1 text-xs leading-5 text-[color:var(--label-ink)]">{activeGuideStep.text}</p>
             <div className="mt-3 flex gap-2">
               <button
                 type="button"
@@ -1535,12 +1535,12 @@ function CampaignCard({ campaign, formatter, t, onEdit, onPay, paying }: {
           )}
           <div className="mt-1 flex flex-wrap gap-1">
             {displayPlacements.slice(0, 6).map((p: string) => (
-              <span key={p} className="rounded-full bg-[rgba(148,163,184,0.12)] px-2 py-0.5 text-xs text-[#64748b]">
+              <span key={p} className="rounded-full bg-[rgba(148,163,184,0.12)] px-2 py-0.5 text-xs text-[color:var(--label-ink)]">
                 {formatSlotLabel(p, t)}
               </span>
             ))}
             {displayPlacements.length > 6 && (
-              <span className="rounded-full bg-[rgba(148,163,184,0.12)] px-2 py-0.5 text-xs text-[#64748b]">
+              <span className="rounded-full bg-[rgba(148,163,184,0.12)] px-2 py-0.5 text-xs text-[color:var(--label-ink)]">
                 +{displayPlacements.length - 6}
               </span>
             )}
@@ -1571,7 +1571,7 @@ function CampaignCard({ campaign, formatter, t, onEdit, onPay, paying }: {
           </button>
         </div>
       </div>
-      <div className="mt-3 space-y-1.5 text-sm text-[#6f665d]">
+      <div className="mt-3 space-y-1.5 text-sm text-[color:var(--label-ink)]">
         <p><span className="font-medium text-[#5f5a54]">{t('advertising.myCampaigns.geo')}: </span>
           {getGeoSummary((data.geo_scope ?? 'global') as GeoMode, countries, regions, cities, undefined, t)}
         </p>
@@ -1604,8 +1604,8 @@ function StatusBadge({ status, t }: { status: string | null | undefined; t: (k: 
     active:          'bg-[rgba(34,197,94,0.14)] text-[#15803d]',
     paused:          'bg-[rgba(100,116,139,0.14)] text-[#475569]',
     rejected:        'bg-[rgba(239,68,68,0.14)] text-[#b91c1c]',
-    expired:         'bg-[rgba(148,163,184,0.14)] text-[#64748b]',
-    deleted:         'bg-[rgba(148,163,184,0.14)] text-[#64748b]',
+    expired:         'bg-[rgba(148,163,184,0.14)] text-[color:var(--label-ink)]',
+    deleted:         'bg-[rgba(148,163,184,0.14)] text-[color:var(--label-ink)]',
   }
   return (
     <span className={'inline-flex self-start rounded-full px-3 py-1 text-xs font-semibold ' + (styles[s] ?? styles.draft)}>

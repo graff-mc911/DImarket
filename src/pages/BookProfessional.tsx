@@ -128,15 +128,15 @@ export function BookProfessional({ profileId }: Props) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
         <CalendarDays className="mx-auto h-10 w-10 text-emerald-600" />
-        <h1 className="mt-4 text-[22px] font-semibold text-[#2f2a24]">Request sent</h1>
-        <p className="mt-2 text-[14px] text-[#6f665d]">
+        <h1 className="mt-4 text-[22px] font-semibold text-[color:var(--ink-900)]">Request sent</h1>
+        <p className="mt-2 text-[14px] text-[color:var(--label-ink)]">
           {proName} will confirm {new Date(created.starts_at).toLocaleString()}.
         </p>
         <a
           href={googleCalendarAddUrl(created, `Booking with ${proName}`)}
           target="_blank"
           rel="noreferrer"
-          className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[13px] font-semibold text-[#2f2a24]"
+          className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[13px] font-semibold text-[color:var(--ink-900)]"
         >
           <ExternalLink className="h-3.5 w-3.5" />
           Add to Google Calendar
@@ -165,10 +165,10 @@ export function BookProfessional({ profileId }: Props) {
           >
             ← Back
           </button>
-          <h1 className="mt-2 text-[22px] font-semibold tracking-tight text-[#2f2a24]">
+          <h1 className="mt-2 text-[22px] font-semibold tracking-tight text-[color:var(--ink-900)]">
             Book {proName}
           </h1>
-          <p className="text-[13px] text-[#8a8178]">
+          <p className="text-[13px] text-[color:var(--label-ink)]">
             Pick a date and time · {DEFAULT_DURATION_HOURS}h appointment
           </p>
         </div>
@@ -194,14 +194,14 @@ export function BookProfessional({ profileId }: Props) {
             </button>
           </div>
 
-          <div className="mb-2 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase text-[#8a8178]">
+          <div className="mb-2 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase text-[color:var(--label-ink)]">
             {WEEKDAYS.map((d) => (
               <div key={d}>{d}</div>
             ))}
           </div>
 
           {loading ? (
-            <p className="py-8 text-center text-[13px] text-[#8a8178]">Loading…</p>
+            <p className="py-8 text-center text-[13px] text-[color:var(--label-ink)]">Loading…</p>
           ) : (
             <div className="grid grid-cols-7 gap-1">
               {cells.map((d) => {
@@ -223,7 +223,7 @@ export function BookProfessional({ profileId }: Props) {
                           ? 'border-[#2f2a24] bg-[#2f2a24] text-white'
                           : isBlocked
                             ? 'border-red-100 bg-red-50 text-red-300'
-                            : 'border-[#f0f0f2] text-[#2f2a24] hover:border-[rgba(148,163,184,0.35)]'
+                            : 'border-[#f0f0f2] text-[color:var(--ink-900)] hover:border-[rgba(148,163,184,0.35)]'
                     }`}
                   >
                     {d.getDate()}
@@ -235,11 +235,11 @@ export function BookProfessional({ profileId }: Props) {
         </section>
 
         <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5">
-          <h3 className="text-[15px] font-semibold text-[#2f2a24]">Time</h3>
+          <h3 className="text-[15px] font-semibold text-[color:var(--ink-900)]">Time</h3>
           {!selectedDate ? (
-            <p className="mt-2 text-[13px] text-[#8a8178]">Select a date first</p>
+            <p className="mt-2 text-[13px] text-[color:var(--label-ink)]">Select a date first</p>
           ) : openHours.length === 0 ? (
-            <p className="mt-2 text-[13px] text-[#8a8178]">No open slots this day</p>
+            <p className="mt-2 text-[13px] text-[color:var(--label-ink)]">No open slots this day</p>
           ) : (
             <div className="mt-3 flex flex-wrap gap-2">
               {openHours.map((h) => (
@@ -250,7 +250,7 @@ export function BookProfessional({ profileId }: Props) {
                   className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
                     hour === h
                       ? 'bg-[#2f2a24] text-white'
-                      : 'bg-[#f3f0ea] text-[#2f2a24] hover:bg-[rgba(148,163,184,0.22)]'
+                      : 'bg-[#f3f0ea] text-[color:var(--ink-900)] hover:bg-[rgba(148,163,184,0.22)]'
                   }`}
                 >
                   {String(h).padStart(2, '0')}:00
@@ -260,7 +260,7 @@ export function BookProfessional({ profileId }: Props) {
           )}
 
           <label className="mt-4 block">
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
               Notes (optional)
             </span>
             <textarea

@@ -61,7 +61,7 @@ export function AdWizardChatbot({ compact = false, className = '' }: Props) {
     >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[rgba(148,163,184,0.15)] px-4 py-2">
-        <p className="text-sm font-semibold text-[#2f2a24]">AI помічник гід по сайту</p>
+        <p className="text-sm font-semibold text-[color:var(--ink-900)]">AI помічник гід по сайту</p>
         <button
           type="button"
           onClick={resetWizard}
@@ -83,7 +83,7 @@ export function AdWizardChatbot({ compact = false, className = '' }: Props) {
                 className={`whitespace-pre-wrap rounded-none px-3 py-2 text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-[#6366f1] text-white'
-                    : 'border border-[rgba(148,163,184,0.2)] bg-white/80 text-[#2f2a24]'
+                    : 'border border-[rgba(148,163,184,0.2)] bg-white/80 text-[color:var(--ink-900)]'
                 }`}
               >
                 {msg.content}
@@ -122,7 +122,7 @@ export function AdWizardChatbot({ compact = false, className = '' }: Props) {
         ))}
 
         {loading && (
-          <div className="flex items-center gap-2 text-xs text-[#6f665d]">
+          <div className="flex items-center gap-2 text-xs text-[color:var(--label-ink)]">
             <Loader2 className="h-4 w-4 animate-spin" />
             Обробляю…
           </div>

@@ -151,7 +151,7 @@ function SlotBox({
         ? 'border-[rgba(249,115,22,0.6)] bg-[rgba(251,146,60,0.22)] text-[#9a3412] shadow-[0_0_0_1px_rgba(249,115,22,0.2)]'
       : active
         ? 'border-[rgba(99,102,241,0.55)] bg-[rgba(99,102,241,0.22)] text-[#312e81] shadow-[0_0_0_1px_rgba(99,102,241,0.2)]'
-        : 'border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.45)] text-[#7a7168]') +
+        : 'border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.45)] text-[color:var(--label-ink)]') +
     (interactive
       ? unavailable
         ? ' cursor-not-allowed'
@@ -368,7 +368,7 @@ function DesktopWireframe({
           </div>
         ) : null}
         <div className={'flex flex-col ' + (compact ? 'min-h-[184px] gap-3' : 'min-h-[159px] gap-2.5')}>
-          <div className="rounded-none border border-dashed border-[rgba(148,163,184,0.45)] bg-white/50 px-2 py-3 text-center text-[10px] font-semibold text-[#6f665d]">
+          <div className="rounded-none border border-dashed border-[rgba(148,163,184,0.45)] bg-white/50 px-2 py-3 text-center text-[10px] font-semibold text-[color:var(--label-ink)]">
             {t('advertising.catalog.contentArea')}
           </div>
           {group.desktop.center && (
@@ -391,7 +391,7 @@ function DesktopWireframe({
           </div>
         ) : null}
       </div>
-      <p className="mt-2 text-[10px] leading-snug text-[#7a7168]">{t('advertising.catalog.desktopNote')}</p>
+      <p className="mt-2 text-[10px] leading-snug text-[color:var(--label-ink)]">{t('advertising.catalog.desktopNote')}</p>
     </div>
   )
 }
@@ -433,7 +433,7 @@ function MobileWireframe({
         {t('advertising.catalog.mobileWire')} · {editorLabel}
       </p>
       <div className="space-y-1">
-        <div className="rounded bg-[rgba(148,163,184,0.2)] px-2 py-2 text-center text-[9px] font-semibold text-[#6f665d]">
+        <div className="rounded bg-[rgba(148,163,184,0.2)] px-2 py-2 text-center text-[9px] font-semibold text-[color:var(--label-ink)]">
           {t('advertising.catalog.mobileHero')}
         </div>
         {group.mobile.inline.map((id, i) => {
@@ -583,7 +583,7 @@ export function AdPlacementSitePreview({
       )}
 
       {interactive && (
-        <p className="text-xs leading-5 text-[#6f665d]">{t('advertising.catalog.tapToSelect')}</p>
+        <p className="text-xs leading-5 text-[color:var(--label-ink)]">{t('advertising.catalog.tapToSelect')}</p>
       )}
 
       <div
@@ -666,7 +666,7 @@ export function AdPlacementSitePreview({
             : 'rounded-none border border-white/35 bg-white/25 px-3 py-2.5 text-[11px] leading-relaxed text-[#5f5a54]'
         }
       >
-        <p className="font-bold text-[#2f2a24]">{t('advertising.catalog.sizesLegendTitle')}</p>
+        <p className="font-bold text-[color:var(--ink-900)]">{t('advertising.catalog.sizesLegendTitle')}</p>
         <ul className="mt-1.5 list-inside list-disc space-y-1">
           <li>
             {interpolateTranslation(t('advertising.catalog.sizesLegendSide'), {
@@ -713,7 +713,7 @@ export function AdPlacementSitePreview({
 
       {!compact && selectedOnPage.length > 0 ? (
         <details className="rounded-none border border-white/35 bg-white/25 px-3 py-2 text-xs text-[#5f5a54]">
-          <summary className="cursor-pointer font-semibold text-[#2f2a24]">
+          <summary className="cursor-pointer font-semibold text-[color:var(--ink-900)]">
             {t('advertising.catalog.selectedOnPage')}: {selectedOnPage.length}
           </summary>
           <ul className="mt-2 space-y-0.5">
@@ -723,7 +723,7 @@ export function AdPlacementSitePreview({
           </ul>
         </details>
       ) : !compact ? (
-        <p className="text-xs text-[#7a7168]">{t('advertising.catalog.noneOnPage')}</p>
+        <p className="text-xs text-[color:var(--label-ink)]">{t('advertising.catalog.noneOnPage')}</p>
       ) : null}
     </div>
   )

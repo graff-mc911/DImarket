@@ -239,7 +239,7 @@ export function FooterStats({ compact = false, standalone = false }: { compact?:
   return (
     <section className="mt-4 border-t border-[rgba(148,163,184,0.18)] pt-3">
       <div className="mb-3">
-        <h3 className="text-sm font-extrabold text-[#2f2a24]">
+        <h3 className="text-sm font-extrabold text-[color:var(--ink-900)]">
           {t('footerStats.title')}
         </h3>
       </div>
@@ -252,10 +252,10 @@ export function FooterStats({ compact = false, standalone = false }: { compact?:
           >
             <div className="mb-1.5 flex items-center gap-2">
               <card.icon className={`h-3.5 w-3.5 ${card.color}`} />
-              <span className="text-[11px] font-medium text-[#6f665d]">{card.label}</span>
+              <span className="text-[11px] font-medium text-[color:var(--label-ink)]">{card.label}</span>
             </div>
 
-            <div className="text-lg font-extrabold text-[#2f2a24]">
+            <div className="text-lg font-extrabold text-[color:var(--ink-900)]">
               {loading ? '...' : formatNumber(card.value)}
             </div>
           </div>
@@ -265,17 +265,17 @@ export function FooterStats({ compact = false, standalone = false }: { compact?:
       <div className="rounded-none border border-white/38 bg-[rgba(255,255,255,0.30)] p-3 shadow-[0_6px_18px_rgba(15,23,42,0.04)] backdrop-blur-xl">
         <div className="mb-2 flex flex-col gap-1.5 md:flex-row md:items-center md:justify-between">
           <div>
-            <h4 className="text-sm font-extrabold text-[#2f2a24]">
+            <h4 className="text-sm font-extrabold text-[color:var(--ink-900)]">
               {t('footerStats.rankingTitle')}
             </h4>
-            <p className="mt-0.5 text-xs leading-5 text-[#6f665d]">
+            <p className="mt-0.5 text-xs leading-5 text-[color:var(--label-ink)]">
               {t('footerStats.rankingSubtitle')}
             </p>
           </div>
 
           {/* Показуємо дату оновлення тільки якщо вона є і статистика вже завантажилась */}
           {stats.updated_at && !loading && (
-            <span className="text-xs text-[#7a7168]">
+            <span className="text-xs text-[color:var(--label-ink)]">
               {t('footerStats.updatedPrefix')}{' '}
               {new Date(stats.updated_at).toLocaleString(locale)}
             </span>
@@ -284,10 +284,10 @@ export function FooterStats({ compact = false, standalone = false }: { compact?:
 
         {/* Loading-стан блоку рейтингу */}
         {loading ? (
-          <div className="text-sm text-[#7a7168]">{t('footerStats.loading')}</div>
+          <div className="text-sm text-[color:var(--label-ink)]">{t('footerStats.loading')}</div>
         ) : stats.country_ranking.length === 0 ? (
           // Якщо даних немає — показуємо зрозуміле повідомлення замість порожнього контейнера.
-          <div className="text-sm text-[#7a7168]">{t('footerStats.empty')}</div>
+          <div className="text-sm text-[color:var(--label-ink)]">{t('footerStats.empty')}</div>
         ) : (
           <div className="space-y-1.5">
             {stats.country_ranking.map((item, index) => (
@@ -301,10 +301,10 @@ export function FooterStats({ compact = false, standalone = false }: { compact?:
                   </div>
 
                   <div className="min-w-0">
-                    <div className="truncate text-xs font-semibold text-[#2f2a24]">
+                    <div className="truncate text-xs font-semibold text-[color:var(--ink-900)]">
                       {item.country}
                     </div>
-                    <div className="text-[10px] text-[#7a7168]">
+                    <div className="text-[10px] text-[color:var(--label-ink)]">
                       {t('footerStats.score')}: {formatNumber(item.score)}
                     </div>
                   </div>
@@ -348,8 +348,8 @@ function RankingMetric({
   return (
     // Маленький переиспользовуваний блок однієї метрики в рейтингу.
     <div>
-      <div className="text-[#7a7168]">{label}</div>
-      <div className="font-semibold text-[#2f2a24]">
+      <div className="text-[color:var(--label-ink)]">{label}</div>
+      <div className="font-semibold text-[color:var(--ink-900)]">
         {new Intl.NumberFormat(locale).format(value || 0)}
       </div>
     </div>

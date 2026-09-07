@@ -195,7 +195,7 @@ export function CabinetCategoryBrowser({
                   aria-label={`${isOpen ? 'Згорнути' : 'Відкрити'}: ${label}`}
                 >
                   <span className="dimarket-category-card__icon" aria-hidden>
-                    <Icon className="h-8 w-8 text-[#1b4d3e]" />
+                    <Icon className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
                   </span>
                   <span className="dimarket-category-card__body">
                     <strong>{label}</strong>

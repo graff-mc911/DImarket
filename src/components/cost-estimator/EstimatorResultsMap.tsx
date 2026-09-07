@@ -49,10 +49,10 @@ export function EstimatorResultsMap({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[13px] text-[#6f665d]">{t('costEstimator.mapHint')}</p>
+        <p className="text-[13px] text-[color:var(--label-ink)]">{t('costEstimator.mapHint')}</p>
         <button
           type="button"
-          className="rounded-full bg-[#f3f0ea] px-3 py-1.5 text-[12px] font-semibold text-[#2f2a24] hover:bg-[#ebebed]"
+          className="rounded-full bg-[#f3f0ea] px-3 py-1.5 text-[12px] font-semibold text-[color:var(--ink-900)] hover:bg-[#ebebed]"
           onClick={() => navigateTo('/map')}
         >
           {t('costEstimator.openFullMap')}

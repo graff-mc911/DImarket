@@ -24,13 +24,13 @@ export function verificationLevelClass(
     case 'platinum':
       return 'bg-gradient-to-r from-[#1e1b4b] to-[#4c1d95] text-white border-[#7c3aed]'
     case 'gold':
-      return 'bg-[#ffd814] text-[#2f2a24] border-[#f0c14b]'
+      return 'bg-[#ffd814] text-[color:var(--ink-900)] border-[#f0c14b]'
     case 'silver':
-      return 'bg-[#e7e9ec] text-[#2f2a24] border-[#d5d9d9]'
+      return 'bg-[#e7e9ec] text-[color:var(--ink-900)] border-[#d5d9d9]'
     case 'bronze':
       return 'bg-[#f3e8d8] text-[#5c4033] border-[#d4a574]'
     default:
-      return 'bg-[#f0f2f2] text-[#6f665d] border-[#d5d9d9]'
+      return 'bg-[#f0f2f2] text-[color:var(--label-ink)] border-[#d5d9d9]'
   }
 }
 

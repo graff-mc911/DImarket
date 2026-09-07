@@ -79,7 +79,7 @@ export function Login() {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-none bg-[linear-gradient(135deg,rgba(201,109,44,0.92),rgba(154,85,37,0.92))] text-white shadow-[0_18px_35px_rgba(15,23,42,0.18)]">
                 <LogIn className="h-8 w-8" />
               </div>
-              <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
+              <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[color:var(--ink-900)]">
                 {t('login.title')}
               </h1>
             </div>
@@ -126,17 +126,17 @@ export function Login() {
             </form>
 
             <div className="mt-6 space-y-3 text-center">
-              <p className="text-sm text-[#6f665d]">
+              <p className="text-sm text-[color:var(--label-ink)]">
                 {t('login.noAccount')}{' '}
                 <button
                   onClick={() => navigateTo('/register')}
                   type="button"
-                  className="font-semibold text-[#2f2a24] transition hover:text-[#9a5525]"
+                  className="font-semibold text-[color:var(--ink-900)] transition hover:text-[#9a5525]"
                 >
                   {t('login.registerLink')}
                 </button>
               </p>
-              <p className="text-sm text-[#6f665d]">
+              <p className="text-sm text-[color:var(--label-ink)]">
                 {t('login.lookingToPost')}{' '}
                 <button
                   onClick={() => navigateTo('/create-ad')}

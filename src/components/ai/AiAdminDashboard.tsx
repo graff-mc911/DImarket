@@ -53,8 +53,8 @@ export function AiAdminDashboard() {
         <div className="flex items-center gap-3">
           <Shield className="h-8 w-8 text-[#6366f1]" />
           <div>
-            <h1 className="text-2xl font-extrabold text-[#2f2a24]">{t('ai.admin.title')}</h1>
-            <p className="text-sm text-[#6f665d]">{t('ai.admin.subtitle')}</p>
+            <h1 className="text-2xl font-extrabold text-[color:var(--ink-900)]">{t('ai.admin.title')}</h1>
+            <p className="text-sm text-[color:var(--label-ink)]">{t('ai.admin.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@ export function AiAdminDashboard() {
         </div>
         <div className="glass-card p-4">
           <p className="text-xs font-bold uppercase text-[#9a8776]">{t('ai.admin.messaging')}</p>
-          <ul className="mt-2 space-y-1 text-xs text-[#6f665d]">
+          <ul className="mt-2 space-y-1 text-xs text-[color:var(--label-ink)]">
             {channels.map((c) => (
               <li key={c.channel}>
                 {c.channel}: {c.configured ? 'OK' : t('ai.admin.notConfigured')}
@@ -81,7 +81,7 @@ export function AiAdminDashboard() {
 
       <div className="glass-card p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-[#2f2a24]">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-[color:var(--ink-900)]">
             <AlertTriangle className="h-5 w-5 text-[#f59e0b]" />
             {t('ai.admin.fraudQueue')}
           </h2>
@@ -93,7 +93,7 @@ export function AiAdminDashboard() {
         {loading ? (
           <Loader2 className="mx-auto h-8 w-8 animate-spin text-[#6366f1]" />
         ) : reports.length === 0 ? (
-          <p className="text-sm text-[#6f665d]">{t('ai.admin.noReports')}</p>
+          <p className="text-sm text-[color:var(--label-ink)]">{t('ai.admin.noReports')}</p>
         ) : (
           <div className="space-y-2">
             {reports.map((r) => (

@@ -102,10 +102,10 @@ function ScoreRing({ score }: { score: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-[22px] font-semibold tabular-nums leading-none text-[#2f2a24]">
+        <span className="text-[22px] font-semibold tabular-nums leading-none text-[color:var(--ink-900)]">
           {pct}%
         </span>
-        <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#8a8178]">
+        <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
           match
         </span>
       </div>
@@ -120,11 +120,11 @@ function responseTone(key: string): string {
     case 'needs_inspection':
       return 'bg-[#fff7ed] text-[#c2410c]'
     case 'declined':
-      return 'bg-[#f3f0ea] text-[#8a8178]'
+      return 'bg-[#f3f0ea] text-[color:var(--label-ink)]'
     case 'applied':
       return 'bg-[#eff6ff] text-[#1d4ed8]'
     default:
-      return 'bg-[#f3f0ea] text-[#6f665d]'
+      return 'bg-[#f3f0ea] text-[color:var(--label-ink)]'
   }
 }
 
@@ -286,20 +286,20 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
     <div className="min-h-[70vh] bg-[#f3f0ea] pb-24">
       <div className="border-b border-[rgba(148,163,184,0.22)] bg-white/80 backdrop-blur-xl">
         <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
             AI Match
           </p>
-          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[#2f2a24] md:text-[34px]">
+          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[color:var(--ink-900)] md:text-[34px]">
             {t('project.matches.title' as never) || 'Top matched professionals'}
           </h1>
-          <p className="mt-2 max-w-xl text-[15px] text-[#8a8178]">
+          <p className="mt-2 max-w-xl text-[15px] text-[color:var(--label-ink)]">
             {t('project.matches.sub' as never) ||
               'Ranked by distance, specialization, rating, jobs, languages, availability, verification & portfolio'}
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
             <button
               type="button"
-              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#2f2a24]"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[color:var(--ink-900)]"
               onClick={() => navigateTo(`/project/${listingId}/offers`)}
             >
               {t('project.matches.rankedOffers' as never) || 'Ranked offers'}
@@ -307,28 +307,28 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
             </button>
             <button
               type="button"
-              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#2f2a24]"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[color:var(--ink-900)]"
               onClick={() => navigateTo(`/project/${listingId}/manage`)}
             >
               Project manager
             </button>
             <button
               type="button"
-              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#2f2a24]"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[color:var(--ink-900)]"
               onClick={() => navigateTo(`/listing/${listingId}`)}
             >
               {t('project.matches.viewProject' as never) || 'View project'}
             </button>
             <button
               type="button"
-              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#2f2a24]"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[color:var(--ink-900)]"
               onClick={() => navigateTo('/my-projects')}
             >
               {t('project.matches.myProjects' as never) || 'My projects'}
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#2f2a24]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[color:var(--ink-900)]"
               onClick={() => void load()}
             >
               <RefreshCw className="h-3.5 w-3.5" />
@@ -353,7 +353,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
           </div>
         ) : rows.length === 0 ? (
           <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
-            <p className="text-[15px] text-[#8a8178]">
+            <p className="text-[15px] text-[color:var(--label-ink)]">
               {t('project.matches.empty' as never) ||
                 'No matches yet. Send a match package after pros are ranked, or refresh.'}
             </p>
@@ -367,7 +367,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
               </button>
               <button
                 type="button"
-                className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-5 py-2.5 text-[13px] font-semibold text-[#2f2a24]"
+                className="rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-5 py-2.5 text-[13px] font-semibold text-[color:var(--ink-900)]"
                 onClick={() => navigateTo('/my-projects')}
               >
                 {t('project.matches.myProjects' as never) || 'My projects'}
@@ -380,11 +380,11 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
             <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-[#2f2a24]">
+                  <p className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-[color:var(--ink-900)]">
                     <Package className="h-4 w-4" />
                     {t('project.matches.packageTitle' as never) || 'Match package'}
                   </p>
-                  <p className="mt-1 text-[13px] text-[#6f665d]">
+                  <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">
                     {t('project.matches.packageSub' as never) ||
                       'Select professionals, preview the package, then invite them to respond: Ready · Need inspection · Decline.'}
                   </p>
@@ -392,14 +392,14 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    className="rounded-full border border-[rgba(148,163,184,0.35)] px-3 py-1.5 text-[12px] font-semibold text-[#2f2a24]"
+                    className="rounded-full border border-[rgba(148,163,184,0.35)] px-3 py-1.5 text-[12px] font-semibold text-[color:var(--ink-900)]"
                     onClick={selectRecommended}
                   >
                     {t('project.matches.selectRecommended' as never) || 'Recommended'}
                   </button>
                   <button
                     type="button"
-                    className="rounded-full border border-[rgba(148,163,184,0.35)] px-3 py-1.5 text-[12px] font-semibold text-[#2f2a24]"
+                    className="rounded-full border border-[rgba(148,163,184,0.35)] px-3 py-1.5 text-[12px] font-semibold text-[color:var(--ink-900)]"
                     onClick={selectAll}
                   >
                     {t('project.matches.selectAll' as never) || 'Select all'}
@@ -408,8 +408,8 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
               </div>
 
               {pkg ? (
-                <div className="mt-4 rounded-none bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#6f665d]">
-                  <p className="font-semibold text-[#2f2a24]">{pkg.title}</p>
+                <div className="mt-4 rounded-none bg-[#f3f0ea] px-4 py-3 text-[13px] text-[color:var(--label-ink)]">
+                  <p className="font-semibold text-[color:var(--ink-900)]">{pkg.title}</p>
                   <p className="mt-1">
                     {[pkg.addressLabel || pkg.city, pkg.estimateSummary]
                       .filter(Boolean)
@@ -444,7 +444,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                       ? `${t('project.matches.resendPackage' as never) || 'Send again'} (${selected.size})`
                       : `${t('project.matches.sendPackage' as never) || 'Send match package'} (${selected.size})`}
                 </button>
-                <span className="text-[12px] text-[#8a8178]">
+                <span className="text-[12px] text-[color:var(--label-ink)]">
                   {selected.size} / {rows.length}{' '}
                   {t('project.matches.selected' as never) || 'selected'}
                 </span>
@@ -464,10 +464,10 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
             <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="text-[15px] font-semibold text-[#2f2a24]">
+                  <p className="text-[15px] font-semibold text-[color:var(--ink-900)]">
                     {t('project.matches.responsesTitle' as never) || 'Professional responses'}
                   </p>
-                  <p className="mt-1 text-[13px] text-[#6f665d]">
+                  <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">
                     {t('project.matches.responsesSub' as never) ||
                       'Ready · Need inspection · Decline — then compare quotes.'}
                   </p>
@@ -504,7 +504,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
               </div>
 
               {applications.length === 0 ? (
-                <p className="mt-4 text-[13px] text-[#8a8178]">
+                <p className="mt-4 text-[13px] text-[color:var(--label-ink)]">
                   {packageSent
                     ? t('project.matches.noResponsesYet' as never) ||
                       'No responses yet. Pros will answer from their Leads feed.'
@@ -528,13 +528,13 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                         <div className="min-w-0">
                           <button
                             type="button"
-                            className="truncate text-left text-[14px] font-semibold text-[#2f2a24] hover:underline"
+                            className="truncate text-left text-[14px] font-semibold text-[color:var(--ink-900)] hover:underline"
                             onClick={() => navigateTo(`/professional/${a.professional_id}`)}
                           >
                             {name}
                           </button>
                           {a.message ? (
-                            <p className="mt-0.5 truncate text-[12px] text-[#8a8178]">{a.message}</p>
+                            <p className="mt-0.5 truncate text-[12px] text-[color:var(--label-ink)]">{a.message}</p>
                           ) : null}
                         </div>
                         <span
@@ -551,10 +551,10 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
 
             {/* Tender comparison board */}
             <div className="overflow-x-auto rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
-              <p className="text-[15px] font-semibold text-[#2f2a24]">
+              <p className="text-[15px] font-semibold text-[color:var(--ink-900)]">
                 {t('costEstimator.tenderBoard')}
               </p>
-              <p className="mt-1 text-[13px] text-[#6f665d]">
+              <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">
                 {offers.length
                   ? 'Binding offers ranked by AI (price, rating, experience, match fit).'
                   : t('costEstimator.tenderBoardSub')}
@@ -562,7 +562,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
               {offers.length > 0 ? (
                 <table className="mt-4 w-full min-w-[720px] text-left text-[12px]">
                   <thead>
-                    <tr className="text-[10px] uppercase tracking-wide text-[#8a8178]">
+                    <tr className="text-[10px] uppercase tracking-wide text-[color:var(--label-ink)]">
                       <th className="pb-2 pr-2 font-semibold">Professional</th>
                       <th className="pb-2 pr-2 font-semibold">Price</th>
                       <th className="pb-2 pr-2 font-semibold">AI score</th>
@@ -578,7 +578,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                         <td className="py-2.5 pr-2">
                           <button
                             type="button"
-                            className="font-semibold text-[#2f2a24] hover:underline"
+                            className="font-semibold text-[color:var(--ink-900)] hover:underline"
                             onClick={() => navigateTo(`/professional/${o.professionalId}`)}
                           >
                             {o.professionalName}
@@ -599,7 +599,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
               ) : (
                 <table className="mt-4 w-full min-w-[640px] text-left text-[12px]">
                   <thead>
-                    <tr className="text-[10px] uppercase tracking-wide text-[#8a8178]">
+                    <tr className="text-[10px] uppercase tracking-wide text-[color:var(--label-ink)]">
                       <th className="pb-2 pr-2 font-semibold">Professional</th>
                       <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colPrice')}</th>
                       <th className="pb-2 pr-2 font-semibold">{t('costEstimator.colTimeline')}</th>
@@ -623,7 +623,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                           <td className="py-2.5 pr-2">
                             <button
                               type="button"
-                              className="font-semibold text-[#2f2a24] hover:underline"
+                              className="font-semibold text-[color:var(--ink-900)] hover:underline"
                               onClick={() => navigateTo(`/professional/${p.id}`)}
                             >
                               {p.full_name || 'Professional'}
@@ -632,7 +632,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                           <td className="py-2.5 pr-2 tabular-nums font-semibold text-[#248a3d]">
                             {Math.round(Number(row.score))}% fit
                           </td>
-                          <td className="py-2.5 pr-2 capitalize text-[#6f665d]">{statusLabel}</td>
+                          <td className="py-2.5 pr-2 capitalize text-[color:var(--label-ink)]">{statusLabel}</td>
                           <td className="py-2.5 pr-2 tabular-nums">
                             {(p.rating ?? 0).toFixed(1)}
                           </td>
@@ -654,11 +654,11 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
             </div>
 
             <div className="mb-4 flex items-baseline justify-between gap-2">
-              <p className="text-[13px] font-semibold text-[#8a8178]">
+              <p className="text-[13px] font-semibold text-[color:var(--label-ink)]">
                 Top {rows.length} of {TOP_MATCH_LIMIT}
               </p>
               {rows[0] ? (
-                <p className="text-[13px] text-[#8a8178]">
+                <p className="text-[13px] text-[color:var(--label-ink)]">
                   Best match{' '}
                   <span className="font-semibold text-[#248a3d]">
                     {Math.round(Number(rows[0].score))}%
@@ -709,14 +709,14 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                             {photo ? (
                               <img src={photo} alt="" className="h-full w-full object-cover" />
                             ) : (
-                              <User className="h-6 w-6 text-[#8a8178]" />
+                              <User className="h-6 w-6 text-[color:var(--label-ink)]" />
                             )}
                           </div>
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
                               <button
                                 type="button"
-                                className="truncate text-left text-[17px] font-semibold text-[#2f2a24] hover:underline"
+                                className="truncate text-left text-[17px] font-semibold text-[color:var(--ink-900)] hover:underline"
                                 onClick={() => navigateTo(`/professional/${p.id}`)}
                               >
                                 {p.full_name || 'Professional'}
@@ -737,11 +737,11 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                                 </span>
                               ) : null}
                             </div>
-                            <p className="mt-0.5 flex items-center gap-1 truncate text-[13px] text-[#8a8178]">
+                            <p className="mt-0.5 flex items-center gap-1 truncate text-[13px] text-[color:var(--label-ink)]">
                               <MapPin className="h-3.5 w-3.5 shrink-0" />
                               {p.location || 'Location TBD'}
                             </p>
-                            <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-[#6f665d]">
+                            <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-[color:var(--label-ink)]">
                               <span className="inline-flex items-center gap-1">
                                 <Star className="h-3.5 w-3.5 fill-[#ff9900] text-[#ff9900]" />
                                 {(p.rating ?? 0).toFixed(1)} · {p.total_reviews ?? 0} reviews
@@ -779,7 +779,7 @@ export function ProjectMatches({ listingId }: { listingId: string }) {
                         {reasons.map((label) => (
                           <span
                             key={label}
-                            className="rounded-full bg-[#f3f0ea] px-2.5 py-1 text-[11px] font-medium text-[#6f665d]"
+                            className="rounded-full bg-[#f3f0ea] px-2.5 py-1 text-[11px] font-medium text-[color:var(--label-ink)]"
                           >
                             {label}
                           </span>

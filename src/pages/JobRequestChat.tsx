@@ -7,7 +7,7 @@ export function JobRequestChat() {
 
   return (
     <div className="layout-page-content mx-auto max-w-3xl px-4 py-8 md:py-10">
-      <h1 className="mb-5 text-center text-2xl font-extrabold text-[#2f2a24] md:text-3xl">
+      <h1 className="mb-5 text-center text-2xl font-extrabold text-[color:var(--ink-900)] md:text-3xl">
         {t('salesBot.pageTitle')}
       </h1>
 

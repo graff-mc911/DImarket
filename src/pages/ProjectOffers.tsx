@@ -154,14 +154,14 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
     <div className="min-h-[70vh] bg-[#f3f0ea] pb-24">
       <div className="border-b border-[rgba(148,163,184,0.22)] bg-white">
         <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#8a8178]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
             AI Ranking
           </p>
-          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[#2f2a24]">
+          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-[color:var(--ink-900)]">
             {t('pipeline.offersTitle' as never) || 'Ranked offers'}
           </h1>
-          <p className="mt-2 text-[15px] text-[#6f665d]">{title}</p>
-          <p className="mt-1 text-[13px] text-[#8a8178]">
+          <p className="mt-2 text-[15px] text-[color:var(--label-ink)]">{title}</p>
+          <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">
             {t('pipeline.offersSub' as never) ||
               'Compare binding quotes by price, rating, experience and match fit — then hire.'}
           </p>
@@ -208,7 +208,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
           </p>
         ) : null}
         {user && authorId && !isOwner ? (
-          <p className="rounded-none bg-[#f3f0ea] px-4 py-3 text-[13px] text-[#6f665d]">
+          <p className="rounded-none bg-[#f3f0ea] px-4 py-3 text-[13px] text-[color:var(--label-ink)]">
             {t('pipeline.viewOnlyOffers' as never) ||
               'Viewing ranked offers. Only the project owner can hire.'}
           </p>
@@ -222,7 +222,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
           </div>
         ) : offers.length === 0 ? (
           <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-6 py-14 text-center">
-            <p className="text-[15px] text-[#8a8178]">
+            <p className="text-[15px] text-[color:var(--label-ink)]">
               {t('pipeline.offersEmpty' as never) ||
                 'No quotes yet. Pros respond Ready / Need inspection / Decline, then send offers.'}
             </p>
@@ -255,14 +255,14 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                         {o.photo ? (
                           <img src={o.photo} alt="" className="h-full w-full object-cover" />
                         ) : (
-                          <User className="h-5 w-5 text-[#8a8178]" />
+                          <User className="h-5 w-5 text-[color:var(--label-ink)]" />
                         )}
                       </div>
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <button
                             type="button"
-                            className="truncate text-left text-[16px] font-semibold text-[#2f2a24] hover:underline"
+                            className="truncate text-left text-[16px] font-semibold text-[color:var(--ink-900)] hover:underline"
                             onClick={() => navigateTo(`/professional/${o.professionalId}`)}
                           >
                             {o.professionalName}
@@ -273,7 +273,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                             </span>
                           ) : null}
                         </div>
-                        <p className="mt-1 inline-flex items-center gap-1 text-[13px] text-[#6f665d]">
+                        <p className="mt-1 inline-flex items-center gap-1 text-[13px] text-[color:var(--label-ink)]">
                           <Star className="h-3.5 w-3.5 fill-[#ff9900] text-[#ff9900]" />
                           {o.rating.toFixed(1)} · {o.reviews} reviews · {o.completedJobs} jobs
                           {o.verification ? ` · ${o.verification}` : ''}
@@ -283,7 +283,7 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                             {o.reasons.slice(0, 4).map((r) => (
                               <span
                                 key={r}
-                                className="rounded-full bg-[#f3f0ea] px-2.5 py-1 text-[11px] font-medium text-[#6f665d]"
+                                className="rounded-full bg-[#f3f0ea] px-2.5 py-1 text-[11px] font-medium text-[color:var(--label-ink)]"
                               >
                                 {reasonLabel(r)}
                               </span>
@@ -291,14 +291,14 @@ export function ProjectOffers({ listingId }: { listingId: string }) {
                           </div>
                         ) : null}
                         {o.notes ? (
-                          <p className="mt-2 line-clamp-2 text-[13px] text-[#8a8178]">{o.notes}</p>
+                          <p className="mt-2 line-clamp-2 text-[13px] text-[color:var(--label-ink)]">{o.notes}</p>
                         ) : null}
                       </div>
                     </div>
 
                     <div className="flex shrink-0 flex-row items-center justify-between gap-3 sm:flex-col sm:items-end">
                       <div className="text-left sm:text-right">
-                        <p className="text-[22px] font-semibold tabular-nums tracking-tight text-[#2f2a24]">
+                        <p className="text-[22px] font-semibold tabular-nums tracking-tight text-[color:var(--ink-900)]">
                           {formatEuro(o.total)}
                         </p>
                         <span className="mt-1 inline-flex rounded-full bg-[#ecfdf5] px-2.5 py-1 text-[12px] font-bold text-[#047857]">

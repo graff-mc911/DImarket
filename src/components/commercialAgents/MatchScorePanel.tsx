@@ -21,8 +21,8 @@ export function MatchScorePanel({
     match.score >= 85
       ? 'bg-[#248a3d] text-white'
       : match.score >= 65
-        ? 'bg-[#ff9900] text-[#2f2a24]'
-        : 'bg-[#e7e9ec] text-[#2f2a24]'
+        ? 'bg-[#ff9900] text-[color:var(--ink-900)]'
+        : 'bg-[#e7e9ec] text-[color:var(--ink-900)]'
 
   if (compact) {
     return (

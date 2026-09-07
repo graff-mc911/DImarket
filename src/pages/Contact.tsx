@@ -100,12 +100,12 @@ export function Contact() {
     <div className="py-8 pb-24 lg:pb-8">
         {/* Верхній інформаційний блок сторінки. */}
         <section className="glass-panel p-6 md:p-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[#64748b]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[color:var(--label-ink)]">
             <LifeBuoy className="h-4 w-4" />
             <span>{t('contact.eyebrow')}</span>
           </div>
 
-          <h1 className="mt-5 max-w-4xl text-4xl font-extrabold tracking-tight text-[#2f2a24] md:text-5xl">
+          <h1 className="mt-5 max-w-4xl text-4xl font-extrabold tracking-tight text-[color:var(--ink-900)] md:text-5xl">
             {t('contact.title')}
           </h1>
           {profile ? (
@@ -154,7 +154,7 @@ export function Contact() {
 
         <section className="mt-6">
           <div className="glass-card p-6">
-            <h2 className="text-2xl font-extrabold text-[#2f2a24]">
+            <h2 className="text-2xl font-extrabold text-[color:var(--ink-900)]">
               {t('contact.formTitle')}
             </h2>
 

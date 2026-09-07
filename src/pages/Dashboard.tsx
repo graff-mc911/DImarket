@@ -429,7 +429,7 @@ export function Dashboard() {
         <div className="mx-auto max-w-4xl">
           <div className="glass-panel p-10 text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[rgba(148,163,184,0.18)] border-t-[#64748b]" />
-            <p className="mt-4 text-sm text-[#6f665d]">
+            <p className="mt-4 text-sm text-[color:var(--label-ink)]">
               {t('ownerDash.loading')}
             </p>
           </div>
@@ -448,11 +448,11 @@ export function Dashboard() {
               <AlertTriangle className="h-8 w-8" />
             </div>
 
-            <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
+            <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-[color:var(--ink-900)]">
               {t('ownerDash.accessDenied')}
             </h1>
 
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#6f665d] md:text-base">
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[color:var(--label-ink)] md:text-base">
               {t('ownerDash.accessDeniedText')}
             </p>
 
@@ -511,16 +511,16 @@ export function Dashboard() {
             <section className="glass-panel p-5 md:p-6 xl:p-8">
               {/* Шапка owner-кабінету з коротким поясненням призначення сторінки. */}
               <div className="mb-6">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[#64748b]">
+                <div className="eyebrow">
                   <ShieldCheck className="h-4 w-4" />
                   <span>{t('ownerDash.eyebrow')}</span>
                 </div>
 
-                <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
+                <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[color:var(--ink-900)] md:text-4xl">
                   Вітаю, {profile.full_name || 'власнику сайту'}
                 </h1>
 
-                <p className="mt-3 max-w-3xl text-sm leading-7 text-[#6f665d] md:text-base">
+                <p className="mt-3 max-w-3xl text-sm leading-7 text-[color:var(--label-ink)] md:text-base">
                   Тут бачите тільки ви: загальні цифри сайту, оголошення, рекламу
                   та вхідні повідомлення.
                 </p>
@@ -559,19 +559,19 @@ export function Dashboard() {
                     key={card.title}
                     className="glass-card p-5"
                   >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-none bg-[rgba(148,163,184,0.14)] text-[#64748b]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-none bg-[rgba(148,163,184,0.14)] text-[color:var(--label-ink)]">
                       <card.icon className="h-6 w-6" />
                     </div>
 
-                    <div className="mt-4 text-3xl font-extrabold text-[#2f2a24]">
+                    <div className="mt-4 text-3xl font-extrabold text-[color:var(--ink-900)]">
                       {card.value.toLocaleString()}
                     </div>
 
-                    <h2 className="mt-2 text-lg font-extrabold text-[#2f2a24]">
+                    <h2 className="mt-2 text-lg font-extrabold text-[color:var(--ink-900)]">
                       {card.title}
                     </h2>
 
-                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                    <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
                       {card.text}
                     </p>
                   </div>
@@ -583,10 +583,10 @@ export function Dashboard() {
                 <section className="glass-card p-5 md:p-6">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                      <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                         Останні оголошення
                       </h2>
-                      <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                      <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
                         Найновіший контент на платформі для швидкої перевірки і видалення.
                       </p>
                     </div>
@@ -615,10 +615,10 @@ export function Dashboard() {
                               <div className="min-w-0 flex-1">
                                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                                   <div className="min-w-0">
-                                    <h3 className="truncate text-base font-bold text-[#2f2a24]">
+                                    <h3 className="truncate text-base font-bold text-[color:var(--ink-900)]">
                                       {listing.title}
                                     </h3>
-                                    <p className="mt-1 text-sm text-[#6f665d]">
+                                    <p className="mt-1 text-sm text-[color:var(--label-ink)]">
                                       {listing.location}
                                     </p>
                                   </div>
@@ -628,7 +628,7 @@ export function Dashboard() {
                                   </span>
                                 </div>
 
-                                <p className="mt-3 text-xs text-[#7a7168]">
+                                <p className="mt-3 text-xs text-[color:var(--label-ink)]">
                                   Створено: {new Date(listing.created_at).toLocaleString()}
                                 </p>
                               </div>
@@ -650,7 +650,7 @@ export function Dashboard() {
                         )
                       })
                     ) : (
-                      <p className="text-sm text-[#7a7168]">
+                      <p className="text-sm text-[color:var(--label-ink)]">
                         Поки що немає оголошень для відображення.
                       </p>
                     )}
@@ -659,11 +659,11 @@ export function Dashboard() {
 
                 {/* Правий блок підказує, що саме вже доступно власнику. */}
                 <section className="glass-card p-5 md:p-6">
-                  <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                  <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                     Що вже під контролем
                   </h2>
 
-                  <div className="mt-5 space-y-3 text-sm text-[#6f665d]">
+                  <div className="mt-5 space-y-3 text-sm text-[color:var(--label-ink)]">
                     <OwnerFeatureRow text="Тільки owner-профіль бачить цей кабінет." />
                     <OwnerFeatureRow text="Ви бачите загальний трафік сайту та кількість оголошень." />
                     <OwnerFeatureRow text="Ви можете прибирати оголошення зі статусом deleted." />
@@ -688,10 +688,10 @@ export function Dashboard() {
               <section className="glass-card mt-6 p-5 md:p-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                    <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                       Зворотний зв'язок
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                    <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
                       Тут відображаються всі повідомлення, які користувачі надсилають через форму зворотного зв'язку.
                     </p>
                   </div>
@@ -715,10 +715,10 @@ export function Dashboard() {
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                 <div className="min-w-0">
-                                  <h3 className="truncate text-lg font-extrabold text-[#2f2a24]">
+                                  <h3 className="truncate text-lg font-extrabold text-[color:var(--ink-900)]">
                                     {message.subject}
                                   </h3>
-                                  <p className="mt-1 text-sm text-[#6f665d]">
+                                  <p className="mt-1 text-sm text-[color:var(--label-ink)]">
                                     {message.name} • {message.email}
                                   </p>
                                 </div>
@@ -734,16 +734,16 @@ export function Dashboard() {
                               </div>
 
                               {message.phone && (
-                                <p className="mt-3 text-sm text-[#6f665d]">
+                                <p className="mt-3 text-sm text-[color:var(--label-ink)]">
                                   Телефон: {message.phone}
                                 </p>
                               )}
 
-                              <div className="mt-4 rounded-none bg-[rgba(255,255,255,0.34)] p-4 text-sm leading-6 text-[#2f2a24]">
+                              <div className="mt-4 rounded-none bg-[rgba(255,255,255,0.34)] p-4 text-sm leading-6 text-[color:var(--ink-900)]">
                                 {message.message}
                               </div>
 
-                              <div className="mt-3 text-xs text-[#7a7168]">
+                              <div className="mt-3 text-xs text-[color:var(--label-ink)]">
                                 Отримано: {message.created_at ? new Date(message.created_at).toLocaleString() : '—'}
                               </div>
                             </div>
@@ -785,7 +785,7 @@ export function Dashboard() {
                       )
                     })
                   ) : (
-                    <div className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.24)] p-5 text-sm text-[#7a7168]">
+                    <div className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.24)] p-5 text-sm text-[color:var(--label-ink)]">
                       Поки що немає повідомлень із форми зворотного зв'язку.
                     </div>
                   )}
@@ -796,10 +796,10 @@ export function Dashboard() {
               <section className="glass-card mt-6 p-5 md:p-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                    <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                       Внутрішні повідомлення
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+                    <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
                       Тут відображається листування, яке проходить усередині платформи.
                     </p>
                   </div>
@@ -823,10 +823,10 @@ export function Dashboard() {
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                 <div className="min-w-0">
-                                  <h3 className="truncate text-lg font-extrabold text-[#2f2a24]">
+                                  <h3 className="truncate text-lg font-extrabold text-[color:var(--ink-900)]">
                                     {getMessageSenderLabel(message)}
                                   </h3>
-                                  <p className="mt-1 text-sm text-[#6f665d]">
+                                  <p className="mt-1 text-sm text-[color:var(--label-ink)]">
                                     {message.sender_email || 'Email не вказано'}
                                   </p>
                                 </div>
@@ -838,11 +838,11 @@ export function Dashboard() {
                                 )}
                               </div>
 
-                              <div className="mt-4 rounded-none bg-[rgba(255,255,255,0.34)] p-4 text-sm leading-6 text-[#2f2a24]">
+                              <div className="mt-4 rounded-none bg-[rgba(255,255,255,0.34)] p-4 text-sm leading-6 text-[color:var(--ink-900)]">
                                 {message.content}
                               </div>
 
-                              <div className="mt-4 grid gap-2 text-xs text-[#7a7168] md:grid-cols-2">
+                              <div className="mt-4 grid gap-2 text-xs text-[color:var(--label-ink)] md:grid-cols-2">
                                 <div>
                                   Розмова: {message.conversation_id}
                                 </div>
@@ -886,7 +886,7 @@ export function Dashboard() {
                       )
                     })
                   ) : (
-                    <div className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.24)] p-5 text-sm text-[#7a7168]">
+                    <div className="rounded-none border border-[rgba(148,163,184,0.16)] bg-[rgba(255,255,255,0.24)] p-5 text-sm text-[color:var(--label-ink)]">
                       Поки що немає внутрішніх повідомлень.
                     </div>
                   )}
@@ -1025,10 +1025,10 @@ function AnnouncementsManager() {
       <div className="flex items-center gap-3 mb-5">
         <Bell className="h-6 w-6 text-[#c96d2c]" />
         <div>
-          <h2 className="text-xl font-extrabold text-[#2f2a24]">
+          <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
             Глобальні оголошення
           </h2>
-          <p className="text-sm text-[#6f665d] mt-1">
+          <p className="text-sm text-[color:var(--label-ink)] mt-1">
             Банери які показуються всім користувачам у шапці сайту
           </p>
         </div>
@@ -1043,10 +1043,10 @@ function AnnouncementsManager() {
       {/* Підказка якщо таблиця не існує */}
       {error === 'sql_missing' ? (
         <div className="rounded-none border border-[var(--glass-border)] bg-[rgba(255,255,255,0.4)] p-5">
-          <p className="text-sm font-semibold text-[#2f2a24] mb-3">
+          <p className="text-sm font-semibold text-[color:var(--ink-900)] mb-3">
             Для роботи банерів створіть таблицю в Supabase:
           </p>
-          <pre className="overflow-x-auto rounded-none bg-[rgba(0,0,0,0.05)] p-4 text-xs leading-relaxed text-[#2f2a24]">
+          <pre className="overflow-x-auto rounded-none bg-[rgba(0,0,0,0.05)] p-4 text-xs leading-relaxed text-[color:var(--ink-900)]">
 {`CREATE TABLE announcements (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   message TEXT NOT NULL,
@@ -1063,7 +1063,7 @@ function AnnouncementsManager() {
         <>
           {/* Форма створення нового банера */}
           <form onSubmit={createAnnouncement} className="rounded-none border border-[var(--glass-border)] bg-[rgba(255,255,255,0.3)] p-5 mb-5">
-            <h3 className="text-base font-extrabold text-[#2f2a24] mb-4 flex items-center gap-2">
+            <h3 className="text-base font-extrabold text-[color:var(--ink-900)] mb-4 flex items-center gap-2">
               <Plus className="h-4 w-4 text-[#c96d2c]" />
               Новий банер
             </h3>
@@ -1135,12 +1135,12 @@ function AnnouncementsManager() {
 
           {/* Список існуючих банерів */}
           {loading ? (
-            <div className="flex items-center gap-2 text-sm text-[#6f665d] py-4">
+            <div className="flex items-center gap-2 text-sm text-[color:var(--label-ink)] py-4">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-[rgba(148,163,184,0.3)] border-t-[#64748b]" />
               Завантаження...
             </div>
           ) : announcements.length === 0 ? (
-            <p className="text-sm text-[#7a7168] py-4">
+            <p className="text-sm text-[color:var(--label-ink)] py-4">
               Банерів ще немає. Створіть перший вище.
             </p>
           ) : (
@@ -1165,7 +1165,7 @@ function AnnouncementsManager() {
                           {ann.message}
                         </p>
                         {/* Метадані */}
-                        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#7a7168]">
+                        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[color:var(--label-ink)]">
                           <span
                             className="rounded-full px-2 py-0.5 text-xs font-semibold"
                             style={{ background: style.bg, color: style.color }}

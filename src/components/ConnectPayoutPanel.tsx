@@ -77,10 +77,10 @@ export function ConnectPayoutPanel({
     if (loading || status?.ready) return null
     return (
       <div className="mb-4 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3">
-        <p className="text-[13px] font-semibold text-[#2f2a24]">
+        <p className="text-[13px] font-semibold text-[color:var(--ink-900)]">
           {t('connect.bannerTitle' as never) || 'Enable payouts to receive escrow'}
         </p>
-        <p className="mt-1 text-[12px] text-[#6f665d]">
+        <p className="mt-1 text-[12px] text-[color:var(--label-ink)]">
           {t('connect.bannerSub' as never) ||
             'Connect Stripe Express so project funds transfer to you after completion.'}
         </p>
@@ -102,10 +102,10 @@ export function ConnectPayoutPanel({
       <div className="flex items-center gap-3">
         <CreditCard className="h-6 w-6 text-[#c96d2c]" />
         <div>
-          <h2 className="text-xl font-extrabold text-[#2f2a24]">
+          <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
             {t('connect.title' as never) || 'Project payouts'}
           </h2>
-          <p className="mt-1 text-sm text-[#6f665d]">
+          <p className="mt-1 text-sm text-[color:var(--label-ink)]">
             {t('connect.sub' as never) ||
               'Stripe Connect Express — receive escrow Transfers after the client completes the project (platform fee 5%).'}
           </p>
@@ -113,13 +113,13 @@ export function ConnectPayoutPanel({
       </div>
 
       {loading ? (
-        <div className="mt-4 flex items-center gap-2 text-sm text-[#7a7168]">
+        <div className="mt-4 flex items-center gap-2 text-sm text-[color:var(--label-ink)]">
           <Loader2 className="h-4 w-4 animate-spin" />
           {t('common.loading' as never) || 'Loading…'}
         </div>
       ) : (
         <div className="mt-4">
-          <p className="text-sm font-semibold text-[#2f2a24]">
+          <p className="text-sm font-semibold text-[color:var(--ink-900)]">
             {connectStatusLabel(status)}
             {status?.ready ? (
               <span className="ml-2 rounded-full bg-[rgba(236,250,240,0.92)] px-2 py-0.5 text-xs font-bold text-[#3d7a52]">
