@@ -1,16 +1,12 @@
-import { CabinetCategoryBrowser } from './CabinetCategoryBrowser'
+import { MainCategoriesSection } from './MainCategoriesSection'
 
-/** Standalone searchable categories block — owner-cabinet card grid. */
+/** Standalone searchable categories block — full static DImarket catalog. */
 export function ChooseCategorySection({
   id = 'choose-category',
 }: {
   id?: string
-  /** Kept for call-site compatibility; compact layout is unused with cabinet cards. */
+  /** Kept for call-site compatibility. */
   compact?: boolean
 }) {
-  return (
-    <div id={id}>
-      <CabinetCategoryBrowser mode="categories" />
-    </div>
-  )
+  return <MainCategoriesSection id={id} showSearch />
 }
