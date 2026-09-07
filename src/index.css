@@ -3831,7 +3831,15 @@ select.select-glass.geo-filter-select::-ms-expand {
   text-align: center;
 }
 
+.dimarket-categories__head-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .dimarket-categories__title,
+.dimarket-categories__head h1,
 .dimarket-categories__head h2 {
   text-align: center;
   color: #232f3e;

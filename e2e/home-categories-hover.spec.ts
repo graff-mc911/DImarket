@@ -4,6 +4,19 @@ import { gotoPath } from './helpers'
 test.describe('Homepage categories link grid', () => {
   test.use({ viewport: { width: 1440, height: 900 } })
 
+  test('shows full catalog and Усі категорії link to /categories', async ({ page }) => {
+    await gotoPath(page, '/')
+    const section = page.locator('#choose-category')
+    await expect(section).toBeVisible()
+    await expect(section.locator('.dimarket-cat-grid')).toBeVisible()
+    // Marketing hubs from serviceCategories (documents filtered out)
+    await expect(section.locator('.dimarket-cat-item')).toHaveCount(21)
+    const seeAll = section.getByRole('button', { name: /Усі категорії|Browse all|Все категории/i })
+    await expect(seeAll).toBeVisible()
+    await seeAll.click()
+    await expect(page).toHaveURL(/\/categories$/)
+  })
+
   test('opens subcategory menu on click and keeps it for picking a subcategory', async ({ page }) => {
     await gotoPath(page, '/')
     const section = page.locator('#choose-category')

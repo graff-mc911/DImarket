@@ -29,7 +29,11 @@ export interface MainCategoriesSectionProps {
   subtitle?: string
   eyebrow?: string
   showSearch?: boolean
-  /** Preloaded categories (skip internal fetch) */
+  /** When set, shows «Усі категорії» linking to this path (e.g. /categories). */
+  seeAllHref?: string
+  /** Page `/categories` needs h1; home embed uses h2. */
+  headingAs?: 'h1' | 'h2'
+  /** Preloaded categories (skip internal fetch) — kept for call-site compat. */
   categories?: MarketplaceCategory[]
   loading?: boolean
   className?: string
@@ -74,12 +78,15 @@ export function MainCategoriesSection({
   subtitle,
   eyebrow,
   showSearch = true,
+  seeAllHref,
+  headingAs = 'h2',
   className = '',
 }: MainCategoriesSectionProps) {
   const { language, t, location, setLocation } = useApp()
   const [query, setQuery] = useState('')
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const lang = language.code
+  const TitleTag = headingAs
 
   useEffect(() => {
     if (!expandedId) return
@@ -170,11 +177,24 @@ export function MainCategoriesSection({
       aria-labelledby={`${id}-title`}
     >
       <div className="dimarket-categories__head">
-        {showSearch ? <p className="dimarket-categories__eyebrow">{sectionEyebrow}</p> : null}
-        <h2 id={`${id}-title`} className="dimarket-categories__title">
-          {sectionTitle}
-        </h2>
-        {showSearch ? <p>{sectionSubtitle}</p> : null}
+        <div className="dimarket-categories__head-row">
+          <div>
+            {showSearch ? <p className="dimarket-categories__eyebrow">{sectionEyebrow}</p> : null}
+            <TitleTag id={`${id}-title`} className="dimarket-categories__title">
+              {sectionTitle}
+            </TitleTag>
+            {showSearch ? <p>{sectionSubtitle}</p> : null}
+          </div>
+          {seeAllHref ? (
+            <button
+              type="button"
+              className="home-section__link"
+              onClick={() => navigateTo(seeAllHref)}
+            >
+              {t('homePremium.seeAllCategories')}
+            </button>
+          ) : null}
+        </div>
       </div>
 
       {showSearch ? (

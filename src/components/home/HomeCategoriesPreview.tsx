@@ -1,16 +1,27 @@
-import { CabinetCategoryBrowser } from '../CabinetCategoryBrowser'
+import { useApp } from '../../contexts/AppContext'
+import type { MarketplaceCategory } from '../../lib/marketplaceCategories'
+import { MainCategoriesSection } from '../MainCategoriesSection'
 
 interface HomeCategoriesPreviewProps {
-  /** Kept for Home.tsx call-site compatibility; browser loads its own data. */
-  categories?: unknown
+  categories?: MarketplaceCategory[]
   loading?: boolean
 }
 
-/** Home "Категорії" block — same square cabinet cards as /categories. */
-export function HomeCategoriesPreview(_props: HomeCategoriesPreviewProps) {
+/**
+ * Home «Категорії» — full static catalog (`serviceCategories`) with
+ * «Усі категорії» → /categories. See docs/CATEGORIES_SOURCE_OF_TRUTH.md.
+ */
+export function HomeCategoriesPreview({ categories, loading }: HomeCategoriesPreviewProps) {
+  const { t } = useApp()
   return (
-    <div id="choose-category">
-      <CabinetCategoryBrowser mode="categories" headingAs="h2" />
-    </div>
+    <MainCategoriesSection
+      id="choose-category"
+      title={t('header.categories')}
+      categories={categories}
+      loading={loading}
+      showSearch={false}
+      seeAllHref="/categories"
+      headingAs="h2"
+    />
   )
 }
