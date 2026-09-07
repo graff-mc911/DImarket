@@ -91,7 +91,7 @@ export function Billing() {
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center">
-        <Loader className="h-6 w-6 animate-spin text-[#8a8178]" />
+        <Loader className="h-6 w-6 animate-spin text-[color:var(--label-ink)]" />
       </div>
     )
   }
@@ -100,13 +100,13 @@ export function Billing() {
     <div className="py-8 pb-24 lg:pb-10">
       <div className="mx-auto max-w-3xl space-y-6 px-4 sm:px-6">
         <header>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a8178]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[color:var(--label-ink)]">
             Billing
           </p>
-          <h1 className="mt-2 text-[28px] font-semibold tracking-tight text-[#2f2a24]">
+          <h1 className="mt-2 text-[28px] font-semibold tracking-tight text-[color:var(--ink-900)]">
             Subscription & credits
           </h1>
-          <p className="mt-2 text-[14px] text-[#6f665d]">
+          <p className="mt-2 text-[14px] text-[color:var(--label-ink)]">
             Manage your Stripe subscription, lead credits, and Google Ads requests.
           </p>
         </header>
@@ -120,13 +120,13 @@ export function Billing() {
         <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-[18px] font-semibold text-[#2f2a24]">
+              <h2 className="text-[18px] font-semibold text-[color:var(--ink-900)]">
                 {t('billing.planSuffix').replace(
                   '{plan}',
                   t(`pricing.plan.${plan.id}.name` as never),
                 )}
               </h2>
-              <p className="mt-1 text-[13px] text-[#6f665d]">
+              <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">
                 Status: {billing?.subscription_status || profile?.subscription_status || 'none'}
                 {billing?.subscription_period_end
                   ? ` · renews/ends ${new Date(billing.subscription_period_end).toLocaleDateString()}`
@@ -173,7 +173,7 @@ export function Billing() {
         </section>
 
         <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
-          <h2 className="text-[16px] font-semibold text-[#2f2a24]">Credit history</h2>
+          <h2 className="text-[16px] font-semibold text-[color:var(--ink-900)]">Credit history</h2>
           <div className="mt-3 space-y-2">
             {ledger.map((row) => (
               <div
@@ -181,8 +181,8 @@ export function Billing() {
                 className="flex items-center justify-between rounded-none border border-[#f0f0f2] px-3 py-2 text-[13px]"
               >
                 <div>
-                  <p className="font-medium text-[#2f2a24]">{row.reason.replace(/_/g, ' ')}</p>
-                  <p className="text-[11px] text-[#8a8178]">
+                  <p className="font-medium text-[color:var(--ink-900)]">{row.reason.replace(/_/g, ' ')}</p>
+                  <p className="text-[11px] text-[color:var(--label-ink)]">
                     {new Date(row.created_at).toLocaleString()}
                   </p>
                 </div>
@@ -193,17 +193,17 @@ export function Billing() {
               </div>
             ))}
             {!ledger.length ? (
-              <p className="text-[13px] text-[#8a8178]">No credit activity yet. Upgrade or buy a pack.</p>
+              <p className="text-[13px] text-[color:var(--label-ink)]">No credit activity yet. Upgrade or buy a pack.</p>
             ) : null}
           </div>
         </section>
 
         <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-[#2f2a24]" />
-            <h2 className="text-[16px] font-semibold text-[#2f2a24]">Google Ads</h2>
+            <Sparkles className="h-5 w-5 text-[color:var(--ink-900)]" />
+            <h2 className="text-[16px] font-semibold text-[color:var(--ink-900)]">Google Ads</h2>
           </div>
-          <p className="mt-2 text-[13px] text-[#6f665d]">
+          <p className="mt-2 text-[13px] text-[color:var(--label-ink)]">
             Request a managed Google Ads campaign. Enterprise includes management; others can buy
             setup as an add-on on Pricing.
           </p>
@@ -261,8 +261,8 @@ function Stat({
 }) {
   return (
     <div className="rounded-none bg-[#f3f0ea] px-3 py-3">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-[#8a8178]">{label}</p>
-      <p className="mt-1 flex items-center gap-1.5 text-[16px] font-semibold text-[#2f2a24]">
+      <p className="text-[11px] font-medium uppercase tracking-wide text-[color:var(--label-ink)]">{label}</p>
+      <p className="mt-1 flex items-center gap-1.5 text-[16px] font-semibold text-[color:var(--ink-900)]">
         {Icon ? <Icon className="h-4 w-4" /> : null}
         {value}
       </p>

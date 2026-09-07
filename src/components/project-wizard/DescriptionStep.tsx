@@ -16,15 +16,15 @@ export function DescriptionStep({ value, onChange, placeholder, hint, error }: D
         rows={9}
         placeholder={placeholder}
         className={
-          'w-full resize-y rounded-none border bg-[#fafafa] px-4 py-4 text-[16px] leading-7 text-[#2f2a24] outline-none transition placeholder:text-[#aeaeb2] focus:bg-white ' +
+          'w-full resize-y rounded-none border bg-[#fafafa] px-4 py-4 text-[16px] leading-7 text-[color:var(--ink-900)] outline-none transition placeholder:text-[#aeaeb2] focus:bg-white ' +
           (error
             ? 'border-[#c41e3a]'
             : 'border-[rgba(148,163,184,0.22)] focus:border-[#2f2a24] focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]')
         }
       />
       <div className="mt-2 flex items-center justify-between gap-3 text-[12px]">
-        <p className={error ? 'text-[#c41e3a]' : 'text-[#8a8178]'}>{error || hint}</p>
-        <p className={'tabular-nums ' + (len < 20 ? 'text-[#c41e3a]' : 'text-[#8a8178]')}>
+        <p className={error ? 'text-[#c41e3a]' : 'text-[color:var(--label-ink)]'}>{error || hint}</p>
+        <p className={'tabular-nums ' + (len < 20 ? 'text-[#c41e3a]' : 'text-[color:var(--label-ink)]')}>
           {len}/20+
         </p>
       </div>

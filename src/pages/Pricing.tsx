@@ -104,13 +104,13 @@ export function Pricing() {
     <div className="py-8 pb-24 lg:pb-10">
       <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6">
         <header className="space-y-3">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a8178]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[color:var(--label-ink)]">
             {t('pricing.eyebrow')}
           </p>
-          <h1 className="text-[34px] font-semibold tracking-tight text-[#2f2a24] sm:text-[40px]">
+          <h1 className="text-[34px] font-semibold tracking-tight text-[color:var(--ink-900)] sm:text-[40px]">
             {t('pricing.title')}
           </h1>
-          <p className="max-w-2xl text-[15px] leading-relaxed text-[#6f665d]">
+          <p className="max-w-2xl text-[15px] leading-relaxed text-[color:var(--label-ink)]">
             {t('pricing.subtitle')}
           </p>
           {user ? (
@@ -123,7 +123,7 @@ export function Pricing() {
                 <CreditCard className="h-4 w-4" />
                 {t('pricing.manageBilling')}
               </button>
-              <span className="inline-flex items-center rounded-full border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2 text-[12px] text-[#6f665d]">
+              <span className="inline-flex items-center rounded-full border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2 text-[12px] text-[color:var(--label-ink)]">
                 {t('pricing.currentBadge')
                   .replace('{plan}', planName(currentPlan.id))
                   .replace('{support}', supportLabel(currentPlan.supportTier))
@@ -144,7 +144,7 @@ export function Pricing() {
             type="button"
             onClick={() => setInterval('month')}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              interval === 'month' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
+              interval === 'month' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'
             }`}
           >
             {t('pricing.monthly')}
@@ -153,7 +153,7 @@ export function Pricing() {
             type="button"
             onClick={() => setInterval('year')}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              interval === 'year' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
+              interval === 'year' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'
             }`}
           >
             {t('pricing.yearly')}
@@ -177,17 +177,17 @@ export function Pricing() {
                     {t('pricing.mostPopular')}
                   </span>
                 ) : null}
-                <h2 className="text-[20px] font-semibold text-[#2f2a24]">
+                <h2 className="text-[20px] font-semibold text-[color:var(--ink-900)]">
                   {planName(plan.id)}
                 </h2>
-                <p className="mt-1 text-[13px] text-[#8a8178]">
+                <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">
                   {t(`pricing.plan.${plan.id}.tagline` as TranslationKey)}
                 </p>
                 <p className="mt-4">
-                  <span className="text-[32px] font-semibold tracking-tight text-[#2f2a24]">
+                  <span className="text-[32px] font-semibold tracking-tight text-[color:var(--ink-900)]">
                     €{price}
                   </span>
-                  <span className="text-[13px] text-[#8a8178]">
+                  <span className="text-[13px] text-[color:var(--label-ink)]">
                     {interval === 'year' ? t('pricing.perYear') : t('pricing.perMonth')}
                   </span>
                 </p>
@@ -213,7 +213,7 @@ export function Pricing() {
                   className={`mt-5 inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-semibold transition disabled:opacity-50 ${
                     plan.popular
                       ? 'bg-[#2f2a24] text-white'
-                      : 'border border-[rgba(148,163,184,0.35)] bg-white text-[#2f2a24]'
+                      : 'border border-[rgba(148,163,184,0.35)] bg-white text-[color:var(--ink-900)]'
                   }`}
                 >
                   {isCurrent
@@ -230,8 +230,8 @@ export function Pricing() {
 
         <section className="space-y-4">
           <div>
-            <h2 className="text-[22px] font-semibold text-[#2f2a24]">{t('pricing.addonsTitle')}</h2>
-            <p className="mt-1 text-[14px] text-[#6f665d]">{t('pricing.addonsSub')}</p>
+            <h2 className="text-[22px] font-semibold text-[color:var(--ink-900)]">{t('pricing.addonsTitle')}</h2>
+            <p className="mt-1 text-[14px] text-[color:var(--label-ink)]">{t('pricing.addonsSub')}</p>
           </div>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {ADDONS.map((addon) => {
@@ -253,14 +253,14 @@ export function Pricing() {
                   className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-none bg-[#f3f0ea] text-[#2f2a24]">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-none bg-[#f3f0ea] text-[color:var(--ink-900)]">
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-[15px] font-semibold text-[#2f2a24]">{t(nameKey)}</h3>
-                      <p className="mt-1 text-[13px] text-[#6f665d]">{t(descKey)}</p>
+                      <h3 className="text-[15px] font-semibold text-[color:var(--ink-900)]">{t(nameKey)}</h3>
+                      <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">{t(descKey)}</p>
                       <div className="mt-3 flex items-center justify-between gap-2">
-                        <span className="text-[16px] font-semibold text-[#2f2a24]">
+                        <span className="text-[16px] font-semibold text-[color:var(--ink-900)]">
                           {addon.href
                             ? t('pricing.fromPriceWeek').replace('{price}', String(addon.priceEur))
                             : t('pricing.priceEur').replace('{price}', String(addon.priceEur))}
@@ -292,7 +292,7 @@ export function Pricing() {
 
         <section className="grid gap-4 md:grid-cols-2">
           <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-5">
-            <div className="flex items-center gap-2 text-[#2f2a24]">
+            <div className="flex items-center gap-2 text-[color:var(--ink-900)]">
               <LifeBuoy className="h-5 w-5" />
               <h2 className="text-[16px] font-semibold">{t('pricing.supportByPlan')}</h2>
             </div>
@@ -309,13 +309,13 @@ export function Pricing() {
             <button
               type="button"
               onClick={() => navigateTo('/contact')}
-              className="mt-4 text-[13px] font-semibold text-[#2f2a24] underline-offset-2 hover:underline"
+              className="mt-4 text-[13px] font-semibold text-[color:var(--ink-900)] underline-offset-2 hover:underline"
             >
               {t('pricing.contactSupport')}
             </button>
           </div>
           <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-5">
-            <div className="flex items-center gap-2 text-[#2f2a24]">
+            <div className="flex items-center gap-2 text-[color:var(--ink-900)]">
               <Megaphone className="h-5 w-5" />
               <h2 className="text-[16px] font-semibold">{t('pricing.adsSection')}</h2>
             </div>

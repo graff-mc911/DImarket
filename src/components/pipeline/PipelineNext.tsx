@@ -14,7 +14,7 @@ export function PipelineStageChip({ action, t, className = '' }: ChipProps) {
       : action.stageLabelEn
   return (
     <span
-      className={`inline-flex rounded-full bg-[#f3f0ea] px-2.5 py-1 text-[11px] font-semibold capitalize text-[#6f665d] ${className}`}
+      className={`inline-flex rounded-full bg-[#f3f0ea] px-2.5 py-1 text-[11px] font-semibold capitalize text-[color:var(--label-ink)] ${className}`}
     >
       {label}
     </span>
@@ -42,7 +42,7 @@ export function PipelineNextCta({ action, t, onClick, primary = true, children }
       className={
         primary
           ? 'rounded-full bg-[#2f2a24] px-4 py-2 text-[13px] font-semibold text-white hover:bg-black'
-          : 'rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[#2f2a24]'
+          : 'rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-4 py-2 text-[13px] font-semibold text-[color:var(--ink-900)]'
       }
     >
       {label}

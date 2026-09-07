@@ -12,7 +12,7 @@ export function PageLoading() {
           className="h-9 w-9 animate-spin rounded-full border-2 border-[#e8ddd4] border-t-[#c45c3e]"
           aria-hidden
         />
-        <p className="text-sm text-[#6f665d]">Loading…</p>
+        <p className="text-sm text-[color:var(--label-ink)]">Loading…</p>
       </div>
     </div>
   )

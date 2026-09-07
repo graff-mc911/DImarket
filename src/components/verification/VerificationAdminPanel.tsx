@@ -86,16 +86,16 @@ export function VerificationAdminPanel() {
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="font-bold text-[#2f2a24]">
+              <p className="font-bold text-[color:var(--ink-900)]">
                 {row.profile?.full_name || row.business_name || row.profile_id}
               </p>
               {row.business_name ? (
-                <p className="mt-0.5 text-xs text-[#6f665d]">{row.business_name}</p>
+                <p className="mt-0.5 text-xs text-[color:var(--label-ink)]">{row.business_name}</p>
               ) : null}
               {row.profile?.location ? (
-                <p className="mt-0.5 text-xs text-[#6f665d]">{row.profile.location}</p>
+                <p className="mt-0.5 text-xs text-[color:var(--label-ink)]">{row.profile.location}</p>
               ) : null}
-              <p className="mt-0.5 text-xs text-[#6f665d]">
+              <p className="mt-0.5 text-xs text-[color:var(--label-ink)]">
                 {row.status}
                 {row.submitted_at ? ` · ${new Date(row.submitted_at).toLocaleDateString('uk')}` : ''}
               </p>

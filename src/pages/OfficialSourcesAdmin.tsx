@@ -10,7 +10,7 @@ export function OfficialSourcesAdmin() {
   if (!allowed) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <p className="text-sm text-[#6f665d]">{t('osm.admin.denied')}</p>
+        <p className="text-sm text-[color:var(--label-ink)]">{t('osm.admin.denied')}</p>
         <button
           type="button"
           onClick={() => navigateTo('/')}

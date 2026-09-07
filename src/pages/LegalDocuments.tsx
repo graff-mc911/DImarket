@@ -86,7 +86,7 @@ export function LegalDocuments() {
   if (loading) {
     return (
       <div className="layout-page-content flex justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-[#8a8178]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[color:var(--label-ink)]" />
       </div>
     )
   }
@@ -95,21 +95,21 @@ export function LegalDocuments() {
     <div className="layout-page-content py-8 pb-24 lg:pb-8">
       <div className="mx-auto max-w-4xl">
         <header className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#8a8178]">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
             {t('osm.public.categoryEyebrow')}
           </p>
-          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#2f2a24]">
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[color:var(--ink-900)]">
             {t('osm.public.title')}
           </h1>
-          <p className="mt-2 text-sm leading-6 text-[#6f665d]">{t('osm.public.subtitle')}</p>
+          <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">{t('osm.public.subtitle')}</p>
           {fromStatic ? (
-            <p className="mt-2 text-xs text-[#6f665d]">{t('osm.public.staticCatalogNote')}</p>
+            <p className="mt-2 text-xs text-[color:var(--label-ink)]">{t('osm.public.staticCatalogNote')}</p>
           ) : null}
           {countries.length > 1 || kinds.length > 1 ? (
             <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
               {countries.length > 1 ? (
                 <label className="inline-flex items-center gap-2">
-                  <span className="font-semibold text-[#2f2a24]">{t('osm.public.filterCountry')}</span>
+                  <span className="font-semibold text-[color:var(--ink-900)]">{t('osm.public.filterCountry')}</span>
                   <select
                     value={countryFilter}
                     onChange={(e) => setCountryFilter(e.target.value)}
@@ -126,7 +126,7 @@ export function LegalDocuments() {
               ) : null}
               {kinds.length > 1 ? (
                 <label className="inline-flex items-center gap-2">
-                  <span className="font-semibold text-[#2f2a24]">{t('osm.public.filterKind')}</span>
+                  <span className="font-semibold text-[color:var(--ink-900)]">{t('osm.public.filterKind')}</span>
                   <select
                     value={kindFilter}
                     onChange={(e) => setKindFilter(e.target.value)}
@@ -153,7 +153,7 @@ export function LegalDocuments() {
 
         <ul className="space-y-3">
           {filtered.length === 0 ? (
-            <li className="rounded-none border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-8 text-center text-sm text-[#8a8178]">
+            <li className="rounded-none border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-8 text-center text-sm text-[color:var(--label-ink)]">
               {t('osm.public.empty')}
             </li>
           ) : (
@@ -165,10 +165,10 @@ export function LegalDocuments() {
                   className="w-full rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 text-left transition hover:border-[#007185]/40 hover:shadow-sm"
                 >
                   <div className="flex items-start gap-3">
-                    <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[#2f2a24]" />
+                    <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--ink-900)]" />
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-[#2f2a24]">{doc.title}</p>
-                      <p className="mt-0.5 text-xs text-[#6f665d]">
+                      <p className="font-semibold text-[color:var(--ink-900)]">{doc.title}</p>
+                      <p className="mt-0.5 text-xs text-[color:var(--label-ink)]">
                         {doc.country_code}
                         {doc.region ? ` · ${doc.region}` : ''} · {doc.doc_kind}
                       </p>
@@ -181,7 +181,7 @@ export function LegalDocuments() {
                         />
                       </div>
                     </div>
-                    <ExternalLink className="h-4 w-4 shrink-0 text-[#8a8178]" aria-hidden />
+                    <ExternalLink className="h-4 w-4 shrink-0 text-[color:var(--label-ink)]" aria-hidden />
                   </div>
                 </button>
               </li>

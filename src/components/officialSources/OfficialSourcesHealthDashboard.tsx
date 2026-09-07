@@ -149,7 +149,7 @@ function CreateDraftVersionForm({
 
   return (
     <div className="mt-3 space-y-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-3">
-      <p className="text-xs font-semibold text-[#2f2a24]">{t('osm.admin.createDraftTitle')}</p>
+      <p className="text-xs font-semibold text-[color:var(--ink-900)]">{t('osm.admin.createDraftTitle')}</p>
       <input
         type="text"
         value={versionNumber}
@@ -216,7 +216,7 @@ function EditDraftVersionPanel({
 
   return (
     <div className="mt-2 w-full space-y-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-3">
-      <p className="text-xs font-semibold text-[#2f2a24]">{t('osm.admin.editDraftTitle')}</p>
+      <p className="text-xs font-semibold text-[color:var(--ink-900)]">{t('osm.admin.editDraftTitle')}</p>
       <LegalMarkdownEditor value={bodyMarkdown} onChange={setBodyMarkdown} rows={10} />
       <div className="flex gap-2">
         <button
@@ -270,7 +270,7 @@ function DocumentVersionsPanel({
   if (!versions.length) {
     return (
       <>
-        <p className="mt-2 text-xs text-[#8a8178]">{t('osm.admin.noVersions')}</p>
+        <p className="mt-2 text-xs text-[color:var(--label-ink)]">{t('osm.admin.noVersions')}</p>
         <CreateDraftVersionForm doc={doc} onRefresh={onRefresh} />
       </>
     )
@@ -292,8 +292,8 @@ function DocumentVersionsPanel({
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <span className="font-semibold text-[#2f2a24]">v{v.version_number}</span>
-              <span className="ml-2 text-[#8a8178]">{v.status}</span>
+              <span className="font-semibold text-[color:var(--ink-900)]">v{v.version_number}</span>
+              <span className="ml-2 text-[color:var(--label-ink)]">{v.status}</span>
               {isAutoDraftVersion(v.version_number) ? (
                 <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-900">
                   {t('osm.admin.autoDraftBadge')}
@@ -305,7 +305,7 @@ function DocumentVersionsPanel({
                 </span>
               ) : null}
               {v.effective_from ? (
-                <p className="mt-0.5 text-[#8a8178]">
+                <p className="mt-0.5 text-[color:var(--label-ink)]">
                   {t('osm.admin.effectiveFrom')}: {new Date(v.effective_from).toLocaleDateString()}
                 </p>
               ) : null}
@@ -459,7 +459,7 @@ export function OfficialSourcesHealthDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center gap-2 py-16 text-sm text-[#6f665d]">
+      <div className="flex items-center justify-center gap-2 py-16 text-sm text-[color:var(--label-ink)]">
         <Loader2 className="h-5 w-5 animate-spin" />
         {t('common.loading')}
       </div>
@@ -470,14 +470,14 @@ export function OfficialSourcesHealthDashboard() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#8a8178]">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
             {t('osm.admin.eyebrow')}
           </p>
-          <h1 className="mt-1 text-2xl font-bold text-[#2f2a24]">{t('osm.admin.title')}</h1>
-          <p className="mt-1 max-w-2xl text-sm text-[#6f665d]">{t('osm.admin.subtitle')}</p>
+          <h1 className="mt-1 text-2xl font-bold text-[color:var(--ink-900)]">{t('osm.admin.title')}</h1>
+          <p className="mt-1 max-w-2xl text-sm text-[color:var(--label-ink)]">{t('osm.admin.subtitle')}</p>
           <AlertChannelsStatus telegramOk={telegramOk} emailOk={emailOk} webhookOk={webhookOk} />
           {webhookOk === false ? (
-            <p className="mt-1 text-xs text-[#8a8178]">{t('osm.admin.webhookMissing')}</p>
+            <p className="mt-1 text-xs text-[color:var(--label-ink)]">{t('osm.admin.webhookMissing')}</p>
           ) : null}
         </div>
         <button
@@ -510,12 +510,12 @@ export function OfficialSourcesHealthDashboard() {
       ) : null}
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-[#8a8178]">
+        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-[color:var(--label-ink)]">
           {t('osm.admin.sources')}
         </h2>
         <div className="overflow-x-auto rounded-none border border-[rgba(148,163,184,0.22)] bg-white">
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-xs uppercase text-[#8a8178]">
+            <thead className="border-b border-[rgba(148,163,184,0.22)] bg-[#fafafa] text-xs uppercase text-[color:var(--label-ink)]">
               <tr>
                 <th className="px-3 py-2 font-semibold">{t('osm.admin.colSource')}</th>
                 <th className="px-3 py-2 font-semibold">{t('osm.admin.colCountry')}</th>
@@ -528,7 +528,7 @@ export function OfficialSourcesHealthDashboard() {
               {sources.map((s) => (
                 <tr key={s.id} className="border-b border-[#f0f0f2] last:border-0">
                   <td className="px-3 py-2.5">
-                    <div className="font-medium text-[#2f2a24]">{s.source_name}</div>
+                    <div className="font-medium text-[color:var(--ink-900)]">{s.source_name}</div>
                     <a
                       href={s.source_url}
                       target="_blank"
@@ -539,12 +539,12 @@ export function OfficialSourcesHealthDashboard() {
                       <ExternalLink className="h-3 w-3" />
                     </a>
                   </td>
-                  <td className="px-3 py-2.5 text-[#6f665d]">
+                  <td className="px-3 py-2.5 text-[color:var(--label-ink)]">
                     {s.country_code}
                     {s.region ? ` · ${s.region}` : ''}
                   </td>
-                  <td className="px-3 py-2.5 text-[#6f665d]">{fmt(s.last_checked_at)}</td>
-                  <td className="px-3 py-2.5 text-[#6f665d]">{s.http_status ?? '—'}</td>
+                  <td className="px-3 py-2.5 text-[color:var(--label-ink)]">{fmt(s.last_checked_at)}</td>
+                  <td className="px-3 py-2.5 text-[color:var(--label-ink)]">{s.http_status ?? '—'}</td>
                   <td className="px-3 py-2.5">
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold">
                       <span className={`h-2 w-2 rounded-full ${statusDot(s.verification_status)}`} />
@@ -559,13 +559,13 @@ export function OfficialSourcesHealthDashboard() {
       </section>
 
       <section>
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[#8a8178]">
+        <h2 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[color:var(--label-ink)]">
           <History className="h-4 w-4" />
           {t('osm.admin.changes')}
         </h2>
         <ul className="space-y-2">
           {changes.length === 0 ? (
-            <li className="rounded-none border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-6 text-center text-sm text-[#8a8178]">
+            <li className="rounded-none border border-dashed border-[rgba(148,163,184,0.35)] px-4 py-6 text-center text-sm text-[color:var(--label-ink)]">
               {t('osm.admin.noChanges')}
             </li>
           ) : (
@@ -575,16 +575,16 @@ export function OfficialSourcesHealthDashboard() {
                 className="flex flex-wrap items-center justify-between gap-3 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-4 py-3"
               >
                 <div className="min-w-0">
-                  <p className="font-semibold text-[#2f2a24]">
+                  <p className="font-semibold text-[color:var(--ink-900)]">
                     {c.official_sources?.source_name ?? c.source_id}
                   </p>
-                  <p className="text-xs text-[#6f665d]">
+                  <p className="text-xs text-[color:var(--label-ink)]">
                     {fmt(c.detected_at)} · {c.change_type} · {c.severity} · {c.status}
                     {c.alert_sent_at ? ` · ${t('osm.admin.alertSent')}` : ''}
                     {c.email_alert_sent_at ? ` · ${t('osm.admin.emailAlertSent')}` : ''}
                     {c.webhook_alert_sent_at ? ` · ${t('osm.admin.webhookAlertSent')}` : ''}
                   </p>
-                  <p className="mt-1 text-xs text-[#6f665d]">{c.change_summary}</p>
+                  <p className="mt-1 text-xs text-[color:var(--label-ink)]">{c.change_summary}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <button
@@ -624,11 +624,11 @@ export function OfficialSourcesHealthDashboard() {
       {selectedChange ? (
         <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
-            <h3 className="font-bold text-[#2f2a24]">{t('osm.admin.diffTitle')}</h3>
+            <h3 className="font-bold text-[color:var(--ink-900)]">{t('osm.admin.diffTitle')}</h3>
             <button
               type="button"
               onClick={() => setSelectedChange(null)}
-              className="text-xs font-semibold text-[#8a8178] hover:text-[#2f2a24]"
+              className="text-xs font-semibold text-[color:var(--label-ink)] hover:text-[color:var(--ink-900)]"
             >
               {t('common.close')}
             </button>
@@ -643,7 +643,7 @@ export function OfficialSourcesHealthDashboard() {
 
       <section>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-[#8a8178]">
+          <h2 className="text-sm font-bold uppercase tracking-wide text-[color:var(--label-ink)]">
             {t('osm.admin.documents')}
           </h2>
           <select
@@ -661,10 +661,10 @@ export function OfficialSourcesHealthDashboard() {
           {filteredDocs.map((doc) => (
             <article key={doc.id} className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4">
               <div className="mb-2 flex items-start gap-2">
-                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#2f2a24]" />
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--ink-900)]" />
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold text-[#2f2a24]">{doc.title}</h3>
-                  <p className="text-xs text-[#6f665d]">
+                  <h3 className="font-semibold text-[color:var(--ink-900)]">{doc.title}</h3>
+                  <p className="text-xs text-[color:var(--label-ink)]">
                     {doc.country_code}
                     {doc.region ? ` · ${doc.region}` : ''} · {doc.doc_kind}
                     {!doc.is_published ? ` · ${t('osm.admin.unpublished')}` : ''}

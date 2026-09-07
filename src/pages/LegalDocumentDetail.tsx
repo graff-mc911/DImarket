@@ -17,8 +17,8 @@ function renderMarkdown(md: string): string {
     .replace(/^## (.+)$/gm, '<h3 class="text-lg font-bold mt-3 mb-2">$1</h3>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/^- (.+)$/gm, '<p class="ml-3 text-sm leading-6">• $1</p>')
-    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[rgba(148,163,184,0.35)] pl-3 text-sm text-[#6f665d]">$1</blockquote>')
-    .replace(/\n\n/g, '</p><p class="mt-3 text-sm leading-6 text-[#2f2a24]">')
+    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[rgba(148,163,184,0.35)] pl-3 text-sm text-[color:var(--label-ink)]">$1</blockquote>')
+    .replace(/\n\n/g, '</p><p class="mt-3 text-sm leading-6 text-[color:var(--ink-900)]">')
 }
 
 function staticDocAsPublished(docKey: string, lang: string): PublishedLegalDocument | null {
@@ -95,7 +95,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
   if (loading) {
     return (
       <div className="layout-page-content flex justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-[#8a8178]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[color:var(--label-ink)]" />
       </div>
     )
   }
@@ -103,7 +103,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
   if (!doc) {
     return (
       <div className="layout-page-content py-16 text-center">
-        <p className="text-sm text-[#6f665d]">{t('osm.public.notFound')}</p>
+        <p className="text-sm text-[color:var(--label-ink)]">{t('osm.public.notFound')}</p>
         <button
           type="button"
           onClick={() => navigateTo('/documents')}
@@ -151,8 +151,8 @@ export function LegalDocumentDetail({ docKey }: Props) {
         </button>
 
         <header className="mb-4">
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#2f2a24]">{doc.title}</h1>
-          <p className="mt-1 text-sm text-[#6f665d]">
+          <h1 className="text-3xl font-extrabold tracking-tight text-[color:var(--ink-900)]">{doc.title}</h1>
+          <p className="mt-1 text-sm text-[color:var(--label-ink)]">
             {doc.country_code}
             {doc.jurisdiction ? ` · ${doc.jurisdiction}` : ''}
             {version?.version_number ? ` · v${version.version_number}` : ''}
@@ -178,7 +178,7 @@ export function LegalDocumentDetail({ docKey }: Props) {
           <article
             className="prose-like mt-6 rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5"
             dangerouslySetInnerHTML={{
-              __html: `<p class="text-sm leading-6 text-[#2f2a24]">${renderMarkdown(body)}</p>`,
+              __html: `<p class="text-sm leading-6 text-[color:var(--ink-900)]">${renderMarkdown(body)}</p>`,
             }}
           />
         ) : null}

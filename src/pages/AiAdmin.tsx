@@ -34,7 +34,7 @@ export function AiAdmin() {
     return (
       <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-20">
         <Loader2 className="h-10 w-10 animate-spin text-[#c96d2c]" />
-        <p className="mt-4 text-sm text-[#6f665d]">Завантаження…</p>
+        <p className="mt-4 text-sm text-[color:var(--label-ink)]">Завантаження…</p>
       </div>
     )
   }
@@ -44,7 +44,7 @@ export function AiAdmin() {
   if (!allowed) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <p className="text-sm text-[#6f665d]">{t('ai.admin.denied')}</p>
+        <p className="text-sm text-[color:var(--label-ink)]">{t('ai.admin.denied')}</p>
         <p className="mt-3 text-xs text-[#9a8776]">
           Увійдіть як власник сайту ({'ivan.sovban@gmail.com'}).
         </p>

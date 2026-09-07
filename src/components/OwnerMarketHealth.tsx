@@ -25,20 +25,20 @@ export function OwnerMarketHealth() {
   return (
     <section className="mb-8 rounded-none border border-white/70 bg-white/45 p-5 md:p-6">
       <div className="mb-5">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[#64748b]">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/42 bg-[rgba(248,250,252,0.70)] px-4 py-2 text-sm font-semibold text-[color:var(--label-ink)]">
           <MapPin className="h-4 w-4" />
           <span>{t('marketHealth.eyebrow')}</span>
         </div>
-        <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#2f2a24]">
+        <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[color:var(--ink-900)]">
           {t('marketHealth.title')}
         </h2>
-        <p className="mt-2 max-w-3xl text-sm leading-7 text-[#6f665d]">
+        <p className="mt-2 max-w-3xl text-sm leading-7 text-[color:var(--label-ink)]">
           {t('marketHealth.subtitle')}
         </p>
       </div>
 
       {loading ? (
-        <p className="text-sm text-[#7a7168]">{t('marketHealth.loading')}</p>
+        <p className="text-sm text-[color:var(--label-ink)]">{t('marketHealth.loading')}</p>
       ) : (
         <>
           <MarketGroup title={t('marketHealth.pilotGroup')} rows={launchRows} />
@@ -60,7 +60,7 @@ function MarketGroup({
 }) {
   return (
     <div className={className}>
-      <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-[#8a8178]">
+      <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-[color:var(--label-ink)]">
         {title}
       </h3>
       <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
@@ -81,8 +81,8 @@ function MarketHealthCard({ row }: { row: MarketHealthRow }) {
     <div className="rounded-none border border-white/80 bg-[rgba(255,255,255,0.72)] p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-base font-extrabold text-[#2f2a24]">{market.city}</p>
-          <p className="text-xs text-[#8a8178]">
+          <p className="text-base font-extrabold text-[color:var(--ink-900)]">{market.city}</p>
+          <p className="text-xs text-[color:var(--label-ink)]">
             {market.region}, {market.countryCode}
           </p>
         </div>
@@ -148,7 +148,7 @@ function MetricLine({
           <Icon className="h-3.5 w-3.5 text-[#b59a84]" />
           {label}
         </span>
-        <span className="font-bold text-[#2f2a24]">
+        <span className="font-bold text-[color:var(--ink-900)]">
           {value} / {target}
         </span>
       </div>

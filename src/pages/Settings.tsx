@@ -526,7 +526,7 @@ export function Settings() {
         <div className="mx-auto max-w-4xl">
           <div className="glass-panel p-10 text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[rgba(201,109,44,0.18)] border-t-[#c96d2c]" />
-            <p className="mt-4 text-sm text-[#6f665d]">{t('common.loading')}</p>
+            <p className="mt-4 text-sm text-[color:var(--label-ink)]">{t('common.loading')}</p>
           </div>
         </div>
       </div>
@@ -543,10 +543,10 @@ export function Settings() {
                   <span>{t('header.myProfile')}</span>
                 </div>
 
-                <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#2f2a24] md:text-4xl">
+                <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[color:var(--ink-900)] md:text-4xl">
                   {t('header.settings')}
                 </h1>
-                <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6f665d] md:text-base">
+                <p className="mt-3 max-w-3xl text-sm leading-6 text-[color:var(--label-ink)] md:text-base">
                   {t('settings.description')}
                 </p>
 
@@ -610,7 +610,7 @@ export function Settings() {
                 <form onSubmit={handleSaveProfile} className="glass-card p-5 md:p-6">
                   <div className="flex items-center gap-3">
                     <User className="h-6 w-6 text-[#c96d2c]" />
-                    <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                    <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                       {t('settings.profileInfoTitle')}
                     </h2>
                   </div>
@@ -642,7 +642,7 @@ export function Settings() {
                         className="input-glass min-h-[150px] resize-y"
                         placeholder={t('settings.bioPlaceholder')}
                       />
-                      <p className="mt-2 text-xs text-[#7a7168]">{bio.length}/500</p>
+                      <p className="mt-2 text-xs text-[color:var(--label-ink)]">{bio.length}/500</p>
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2">
@@ -691,7 +691,7 @@ export function Settings() {
                               </option>
                             ))}
                           </select>
-                          <p className="mt-1 text-xs text-[#6f665d]">{t('geo.serviceRadiusHint')}</p>
+                          <p className="mt-1 text-xs text-[color:var(--label-ink)]">{t('geo.serviceRadiusHint')}</p>
                         </div>
                       ) : null}
                     </div>
@@ -711,10 +711,10 @@ export function Settings() {
 
                     {isProfessional && (
                       <div className="rounded-none border border-[rgba(99,102,241,0.12)] bg-white/30 p-4">
-                        <p className="text-sm font-bold text-[#2f2a24]">
+                        <p className="text-sm font-bold text-[color:var(--ink-900)]">
                           {t('settings.workSubcategoriesTitle')}
                         </p>
-                        <p className="mt-1 text-xs text-[#6f665d]">
+                        <p className="mt-1 text-xs text-[color:var(--label-ink)]">
                           {t('settings.workSubcategoriesHint')}
                         </p>
                         <CategorySubcategoryPicker
@@ -739,11 +739,11 @@ export function Settings() {
                   <div className="mt-8 border-t border-[rgba(190,168,150,0.28)] pt-6">
                     <div className="flex items-center gap-3">
                       <Image className="h-6 w-6 text-[#c96d2c]" />
-                      <h3 className="text-lg font-extrabold text-[#2f2a24]">
+                      <h3 className="text-lg font-extrabold text-[color:var(--ink-900)]">
                         {t('settings.portfolioTitle')}
                       </h3>
                     </div>
-                    <p className="mt-2 text-sm text-[#6f665d]">
+                    <p className="mt-2 text-sm text-[color:var(--label-ink)]">
                       Unlimited photos, videos, certificates, before/after galleries, categories,
                       likes and share.
                     </p>
@@ -761,7 +761,7 @@ export function Settings() {
                   <div className="mt-8 border-t border-[rgba(190,168,150,0.28)] pt-6">
                     <div className="flex items-center gap-3">
                       <Globe className="h-6 w-6 text-[#c96d2c]" />
-                      <h3 className="text-lg font-extrabold text-[#2f2a24]">
+                      <h3 className="text-lg font-extrabold text-[color:var(--ink-900)]">
                         {t('settings.preferencesTitle')}
                       </h3>
                     </div>
@@ -813,12 +813,12 @@ export function Settings() {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <div className="flex items-center gap-2">
-                          <Bell className="h-5 w-5 text-[#6f665d]" />
-                          <span className="font-semibold text-[#2f2a24]">
+                          <Bell className="h-5 w-5 text-[color:var(--label-ink)]" />
+                          <span className="font-semibold text-[color:var(--ink-900)]">
                             {t('settings.notificationsTitle')}
                           </span>
                         </div>
-                        <p className="mt-2 text-sm text-[#6f665d]">
+                        <p className="mt-2 text-sm text-[color:var(--label-ink)]">
                           {t('settings.notificationsText')}
                         </p>
                       </div>
@@ -836,7 +836,7 @@ export function Settings() {
 
                     {notificationsEnabled ? (
                       <div className="mt-5 space-y-4 rounded-none border border-[rgba(190,168,150,0.28)] bg-white/50 p-4">
-                        <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
+                        <p className="text-xs font-bold uppercase tracking-wide text-[color:var(--label-ink)]">
                           {t('settings.notifChannels')}
                         </p>
                         <div className="flex flex-wrap gap-4">
@@ -847,7 +847,7 @@ export function Settings() {
                               ['email', 'settings.channel.email'],
                             ] as const
                           ).map(([key, labelKey]) => (
-                            <label key={key} className="inline-flex items-center gap-2 text-sm text-[#2f2a24]">
+                            <label key={key} className="inline-flex items-center gap-2 text-sm text-[color:var(--ink-900)]">
                               <input
                                 type="checkbox"
                                 checked={notificationPrefs[key]}
@@ -859,14 +859,14 @@ export function Settings() {
                             </label>
                           ))}
                         </div>
-                        <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
+                        <p className="text-xs font-bold uppercase tracking-wide text-[color:var(--label-ink)]">
                           {t('settings.notifCategories')}
                         </p>
                         <div className="grid gap-2 sm:grid-cols-2">
                           {NOTIFICATION_CATEGORIES.map((c) => (
                             <label
                               key={c.id}
-                              className="inline-flex items-center gap-2 text-sm text-[#2f2a24]"
+                              className="inline-flex items-center gap-2 text-sm text-[color:var(--ink-900)]"
                             >
                               <input
                                 type="checkbox"
@@ -914,12 +914,12 @@ export function Settings() {
                   <form onSubmit={handleChangePassword} className="glass-card p-5 md:p-6">
                     <div className="flex items-center gap-3">
                       <Lock className="h-6 w-6 text-[#c96d2c]" />
-                      <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                      <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                         {t('settings.changePasswordTitle')}
                       </h2>
                     </div>
 
-                    <p className="mt-2 text-xs leading-5 text-[#7a7168]">
+                    <p className="mt-2 text-xs leading-5 text-[color:var(--label-ink)]">
                       {t('settings.passwordHint')}
                     </p>
 
@@ -997,11 +997,11 @@ export function Settings() {
                   <div className="glass-card p-5 md:p-6">
                     <div className="flex items-center gap-3">
                       <Lock className="h-6 w-6 text-[#c96d2c]" />
-                      <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                      <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                         {t('settings.changePasswordTitle')}
                       </h2>
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-[#6f665d]">
+                    <p className="mt-3 text-sm leading-6 text-[color:var(--label-ink)]">
                       {t('settings.error.oauthPasswordOnly')}
                     </p>
                   </div>
@@ -1013,12 +1013,12 @@ export function Settings() {
                 >
                   <div className="flex items-center gap-3">
                     <Trash2 className="h-6 w-6 text-[#b14e37]" />
-                    <h2 className="text-xl font-extrabold text-[#2f2a24]">
+                    <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">
                       {t('settings.dangerTitle')}
                     </h2>
                   </div>
 
-                  <p className="mt-4 max-w-2xl text-sm leading-6 text-[#6f665d]">
+                  <p className="mt-4 max-w-2xl text-sm leading-6 text-[color:var(--label-ink)]">
                     {t('settings.dangerText')}
                   </p>
 

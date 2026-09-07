@@ -33,7 +33,7 @@ export function MiniCalendar({
     return { weeks, monthLabel, todayIso }
   }, [cursor])
 
-  const muted = dark ? 'text-white/40' : 'text-[#8a8178]'
+  const muted = dark ? 'text-white/40' : 'text-[color:var(--label-ink)]'
   const cell = dark ? 'hover:bg-white/10' : 'hover:bg-black/5'
   const todayCls = dark ? 'bg-blue-500 text-white' : 'bg-[#2f2a24] text-white'
   const markCls = dark ? 'bg-emerald-500/30 text-emerald-300' : 'bg-emerald-100 text-emerald-800'

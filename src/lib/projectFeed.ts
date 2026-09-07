@@ -225,7 +225,7 @@ export function urgencyTone(urgency: string | null | undefined): string {
     case 'high':
       return 'bg-[#fff7ed] text-[#c2410c] border-[#fed7aa]'
     case 'low':
-      return 'bg-[#f3f0ea] text-[#8a8178] border-[rgba(148,163,184,0.22)]'
+      return 'bg-[#f3f0ea] text-[color:var(--label-ink)] border-[rgba(148,163,184,0.22)]'
     default:
       return 'bg-[#f0f7ff] text-[#0066cc] border-[#cce0ff]'
   }

@@ -15,10 +15,10 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
 
   return (
     <div className="space-y-6">
-      <p className="text-center text-[15px] text-[#6f665d]">{labels.range}</p>
+      <p className="text-center text-[15px] text-[color:var(--label-ink)]">{labels.range}</p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
             {labels.min}
           </label>
           <input
@@ -37,7 +37,7 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
           {errors.budgetMin ? <p className="mt-1 text-[12px] text-[#c41e3a]">{errors.budgetMin}</p> : null}
         </div>
         <div>
-          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
             {labels.max}
           </label>
           <input
@@ -59,7 +59,7 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
 
       <div className="space-y-4 rounded-none bg-[#f3f0ea] px-5 py-6">
         <div>
-          <p className="mb-2 text-[12px] font-medium text-[#8a8178]">{labels.min}</p>
+          <p className="mb-2 text-[12px] font-medium text-[color:var(--label-ink)]">{labels.min}</p>
           <input
             type="range"
             min={SLIDER_MIN}
@@ -74,7 +74,7 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
           />
         </div>
         <div>
-          <p className="mb-2 text-[12px] font-medium text-[#8a8178]">{labels.max}</p>
+          <p className="mb-2 text-[12px] font-medium text-[color:var(--label-ink)]">{labels.max}</p>
           <input
             type="range"
             min={SLIDER_MIN}
@@ -88,7 +88,7 @@ export function BudgetStep({ budgetMin, budgetMax, onChange, labels, errors = {}
             className="w-full accent-[#2f2a24]"
           />
         </div>
-        <p className="text-center text-[28px] font-semibold tracking-[-0.03em] text-[#2f2a24]">
+        <p className="text-center text-[28px] font-semibold tracking-[-0.03em] text-[color:var(--ink-900)]">
           €{budgetMin.toLocaleString()} – €{budgetMax.toLocaleString()}
         </p>
       </div>

@@ -281,16 +281,16 @@ export function CommercialAgentsAdminPanel() {
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="font-bold text-[#2f2a24]">
+                <p className="font-bold text-[color:var(--ink-900)]">
                   {row.name}{' '}
-                  <span className="text-xs font-medium uppercase text-[#6f665d]">({row.kind})</span>
+                  <span className="text-xs font-medium uppercase text-[color:var(--label-ink)]">({row.kind})</span>
                 </p>
-                <p className="mt-0.5 text-xs text-[#6f665d]">
+                <p className="mt-0.5 text-xs text-[color:var(--label-ink)]">
                   {row.company || '—'} · {row.email || 'no public email'} · {row.country || '—'} ·{' '}
                   {row.verification_status}
                 </p>
                 {rowLocation(row) ? (
-                  <p className="mt-0.5 text-xs text-[#6f665d]">{rowLocation(row)}</p>
+                  <p className="mt-0.5 text-xs text-[color:var(--label-ink)]">{rowLocation(row)}</p>
                 ) : null}
               </div>
               <div className="flex flex-wrap gap-2">
@@ -341,9 +341,9 @@ export function CommercialAgentsAdminPanel() {
         )}
         extra={
           <div className="mt-6">
-            <h3 className="text-sm font-bold text-[#2f2a24]">Скарги</h3>
+            <h3 className="text-sm font-bold text-[color:var(--ink-900)]">Скарги</h3>
             {reports.length === 0 ? (
-              <p className="mt-2 text-sm text-[#6f665d]">Немає відкритих скарг.</p>
+              <p className="mt-2 text-sm text-[color:var(--label-ink)]">Немає відкритих скарг.</p>
             ) : (
               <div className="mt-2 space-y-2">
                 {reports.map((r) => (
@@ -351,7 +351,7 @@ export function CommercialAgentsAdminPanel() {
                     key={r.id}
                     className="flex flex-wrap items-center justify-between gap-3 rounded-none border border-[rgba(148,163,184,0.28)] bg-white px-3 py-2.5"
                   >
-                    <p className="text-sm text-[#2f2a24]">
+                    <p className="text-sm text-[color:var(--ink-900)]">
                       {r.entity_type} · {r.reason}
                       {r.details ? ` — ${r.details}` : ''}
                     </p>

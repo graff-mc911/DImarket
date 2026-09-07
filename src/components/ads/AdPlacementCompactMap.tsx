@@ -64,7 +64,7 @@ function PageWireframeBlock({
   return (
     <div className="relative isolate min-w-0 overflow-hidden rounded-none border border-[rgba(148,163,184,0.2)] bg-[rgba(255,255,255,0.35)] p-2.5">
       <div className="mb-2 flex items-baseline justify-between gap-2">
-        <p className="text-[11px] font-extrabold text-[#2f2a24]">
+        <p className="text-[11px] font-extrabold text-[color:var(--ink-900)]">
           {t(meta.labelKey)}
           {count > 0 ? (
             <span className="ml-1.5 font-bold text-[#6366f1]">({count})</span>

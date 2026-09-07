@@ -113,8 +113,8 @@ export function OwnerCabinetGeoQueue<T, Id extends string>({
   return (
     <div className="rounded-none border border-[var(--glass-border)] bg-white/50 p-5">
       <div>
-        <h2 className="text-lg font-extrabold text-[#2f2a24]">{title}</h2>
-        <p className="mt-1 text-sm text-[#6f665d]">{subtitle}</p>
+        <h2 className="text-lg font-extrabold text-[color:var(--ink-900)]">{title}</h2>
+        <p className="mt-1 text-sm text-[color:var(--label-ink)]">{subtitle}</p>
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -135,7 +135,7 @@ export function OwnerCabinetGeoQueue<T, Id extends string>({
                 aria-label={`${isOpen ? 'Згорнути' : 'Відкрити'}: ${f.label}`}
               >
                 <span className="dimarket-category-card__icon" aria-hidden>
-                  <Icon className="h-8 w-8 text-[#1b4d3e]" />
+                  <Icon className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
                 </span>
                 <span className="dimarket-category-card__body">
                   <strong>{f.label}</strong>
@@ -151,10 +151,10 @@ export function OwnerCabinetGeoQueue<T, Id extends string>({
                 <div className="dimarket-subcategories">
                   <div>
                     {loading && (
-                      <p className="px-1 py-1 text-sm text-[#6f665d]">Завантаження…</p>
+                      <p className="px-1 py-1 text-sm text-[color:var(--label-ink)]">Завантаження…</p>
                     )}
                     {!loading && geoTree.length === 0 && (
-                      <p className="px-1 py-1 text-sm text-[#6f665d]">{emptyText}</p>
+                      <p className="px-1 py-1 text-sm text-[color:var(--label-ink)]">{emptyText}</p>
                     )}
                     {!loading &&
                       geoTree.map((country) => (
@@ -176,7 +176,7 @@ export function OwnerCabinetGeoQueue<T, Id extends string>({
                   </div>
                   {countryGroup ? (
                     <div>
-                      <span className="w-full basis-full pt-1 text-[11px] font-bold uppercase tracking-wide text-[#6f665d]">
+                      <span className="w-full basis-full pt-1 text-[11px] font-bold uppercase tracking-wide text-[color:var(--label-ink)]">
                         Регіони · {countryGroup.country}
                       </span>
                       {countryGroup.regions.length > 1 ? (
@@ -232,7 +232,7 @@ export function OwnerCabinetGeoQueue<T, Id extends string>({
 
       <div className="mt-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-[#2f2a24]">
+          <p className="text-sm font-semibold text-[color:var(--ink-900)]">
             {activeLabel} · {geoHint}
             {selectedRegion ? ` · ${visibleRows.length}` : ''}
           </p>
@@ -252,12 +252,12 @@ export function OwnerCabinetGeoQueue<T, Id extends string>({
 
         <div className="space-y-3">
           {expanded && !loading && !selectedCountry && rows.length > 0 && (
-            <p className="text-sm text-[#6f665d]">
+            <p className="text-sm text-[color:var(--label-ink)]">
               Спочатку країна, потім регіон — інакше в довгому списку нічого не знайти.
             </p>
           )}
           {expanded && selectedCountry && !selectedRegion && (
-            <p className="text-sm text-[#6f665d]">Оберіть регіон або «Усі регіони».</p>
+            <p className="text-sm text-[color:var(--label-ink)]">Оберіть регіон або «Усі регіони».</p>
           )}
           {visibleRows.map((row) => renderRow(row))}
         </div>

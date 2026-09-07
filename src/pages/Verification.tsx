@@ -89,7 +89,7 @@ export function Verification() {
 
   if (!user || !ver) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-20 text-center text-sm text-[#8a8178]">
+      <div className="mx-auto max-w-lg px-4 py-20 text-center text-sm text-[color:var(--label-ink)]">
         Loading verification…
       </div>
     )
@@ -149,14 +149,14 @@ export function Verification() {
               <ShieldCheck className="h-7 w-7" />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-[28px] font-semibold tracking-tight text-[#2f2a24]">
+              <h1 className="text-[28px] font-semibold tracking-tight text-[color:var(--ink-900)]">
                 {t('verification.title')}
               </h1>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <StatusPill status={ver.status} label={t(`verification.status.${ver.status}`)} />
                 <VerificationBadge level={level} size="md" />
               </div>
-              <p className="mt-2 text-[14px] text-[#8a8178]">
+              <p className="mt-2 text-[14px] text-[color:var(--label-ink)]">
                 {doneCount}/{checks.length} checks complete · {hint}
               </p>
             </div>
@@ -177,8 +177,8 @@ export function Verification() {
                     active
                       ? 'border-[#2f2a24] bg-[#2f2a24] text-white'
                       : unlocked
-                        ? 'border-emerald-200 bg-emerald-50 text-[#2f2a24]'
-                        : 'border-[rgba(148,163,184,0.22)] bg-white text-[#8a8178]'
+                        ? 'border-emerald-200 bg-emerald-50 text-[color:var(--ink-900)]'
+                        : 'border-[rgba(148,163,184,0.22)] bg-white text-[color:var(--label-ink)]'
                   }`}
                 >
                   <p className="text-[11px] font-bold uppercase tracking-wide">{tier.label}</p>
@@ -201,8 +201,8 @@ export function Verification() {
 
         {/* Checks checklist */}
         <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h2 className="text-[17px] font-semibold text-[#2f2a24]">Verification checks</h2>
-          <p className="mt-1 text-[13px] text-[#8a8178]">
+          <h2 className="text-[17px] font-semibold text-[color:var(--ink-900)]">Verification checks</h2>
+          <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">
             Email · Phone · Identity · Company · Insurance · License · Background Check
           </p>
           <ul className="mt-4 space-y-2">
@@ -218,8 +218,8 @@ export function Verification() {
                     <Circle className="h-5 w-5 shrink-0 text-[rgba(148,163,184,0.35)]" />
                   )}
                   <div className="min-w-0">
-                    <p className="text-[14px] font-semibold text-[#2f2a24]">{c.label}</p>
-                    <p className="truncate text-[12px] text-[#8a8178]">{c.description}</p>
+                    <p className="text-[14px] font-semibold text-[color:var(--ink-900)]">{c.label}</p>
+                    <p className="truncate text-[12px] text-[color:var(--label-ink)]">{c.description}</p>
                   </div>
                 </div>
                 {!c.done && c.id === 'email' ? (
@@ -252,10 +252,10 @@ export function Verification() {
 
         {/* Business fields */}
         <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
-          <h2 className="text-[17px] font-semibold text-[#2f2a24]">Business details</h2>
+          <h2 className="text-[17px] font-semibold text-[color:var(--ink-900)]">Business details</h2>
           <div className="mt-4 space-y-3">
             <label className="block">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
                 {t('verification.businessName')}
               </span>
               <input
@@ -266,7 +266,7 @@ export function Verification() {
               />
             </label>
             <label className="block">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
                 {t('verification.vat')}
               </span>
               <input
@@ -281,8 +281,8 @@ export function Verification() {
 
         {/* Document uploads */}
         <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5">
-          <h2 className="text-[17px] font-semibold text-[#2f2a24]">Documents</h2>
-          <p className="mt-1 text-[13px] text-[#8a8178]">
+          <h2 className="text-[17px] font-semibold text-[color:var(--ink-900)]">Documents</h2>
+          <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">
             Upload proof for each check. Admins review before Gold / Platinum unlock.
           </p>
           <ul className="mt-4 space-y-2">
@@ -297,15 +297,15 @@ export function Verification() {
                   className="flex flex-wrap items-center justify-between gap-2 rounded-none border border-[#f0f0f2] px-3 py-3"
                 >
                   <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-[#8a8178]" />
-                    <span className="text-[14px] font-medium text-[#2f2a24]">{doc.label}</span>
+                    <Icon className="h-4 w-4 text-[color:var(--label-ink)]" />
+                    <span className="text-[14px] font-medium text-[color:var(--ink-900)]">{doc.label}</span>
                     {uploaded ? (
                       <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">
                         Uploaded
                       </span>
                     ) : null}
                   </div>
-                  <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-3 py-1.5 text-[12px] font-semibold text-[#2f2a24] hover:bg-[#f3f0ea]">
+                  <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[rgba(148,163,184,0.35)] bg-white px-3 py-1.5 text-[12px] font-semibold text-[color:var(--ink-900)] hover:bg-[#f3f0ea]">
                     <Upload className="h-3.5 w-3.5" />
                     {uploading === doc.key ? 'Uploading…' : 'Upload'}
                     <input

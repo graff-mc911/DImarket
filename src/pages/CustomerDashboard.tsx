@@ -143,8 +143,8 @@ export function CustomerDashboard() {
   if (!user) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-[#2f2a24]">Customer Dashboard</h1>
-        <p className="mt-2 text-[#8a8178]">Sign in to manage your projects and quotes.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-[color:var(--ink-900)]">Customer Dashboard</h1>
+        <p className="mt-2 text-[color:var(--label-ink)]">Sign in to manage your projects and quotes.</p>
         <button type="button" className="btn-primary mt-6" onClick={() => navigateTo('/login')}>
           Sign in
         </button>
@@ -155,13 +155,13 @@ export function CustomerDashboard() {
   const card = dark
     ? 'rounded-none border border-white/[0.08] bg-white/[0.04]'
     : 'rounded-none border border-[rgba(148,163,184,0.22)] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
-  const ink = dark ? 'text-white' : 'text-[#2f2a24]'
-  const muted = dark ? 'text-white/45' : 'text-[#8a8178]'
-  const soft = dark ? 'text-white/70' : 'text-[#6f665d]'
-  const chip = dark ? 'bg-white/10 text-white/75' : 'bg-[#f3f0ea] text-[#6f665d]'
+  const ink = dark ? 'text-white' : 'text-[color:var(--ink-900)]'
+  const muted = dark ? 'text-white/45' : 'text-[color:var(--label-ink)]'
+  const soft = dark ? 'text-white/70' : 'text-[color:var(--label-ink)]'
+  const chip = dark ? 'bg-white/10 text-white/75' : 'bg-[#f3f0ea] text-[color:var(--label-ink)]'
   const btnGhost = dark
     ? 'border-white/15 bg-white/5 text-white hover:bg-white/10'
-    : 'border-[rgba(148,163,184,0.35)] bg-white text-[#2f2a24] hover:bg-[#f3f0ea]'
+    : 'border-[rgba(148,163,184,0.35)] bg-white text-[color:var(--ink-900)] hover:bg-[#f3f0ea]'
   const btnPrimary = dark
     ? 'bg-white text-[#0b0b0f] hover:bg-white/90'
     : 'bg-[#2f2a24] text-white hover:bg-black'
@@ -170,7 +170,7 @@ export function CustomerDashboard() {
   const name = profile?.full_name?.split(' ')[0] || 'there'
 
   return (
-    <div className={`min-h-[80vh] pb-24 transition-colors ${dark ? 'bg-[#0a0a0c] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'}`}>
+    <div className={`min-h-[80vh] pb-24 transition-colors ${dark ? 'bg-[#0a0a0c] text-white' : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'}`}>
       <div
         className={`sticky top-0 z-20 border-b backdrop-blur-2xl ${
           dark ? 'border-white/10 bg-[#0a0a0c]/80' : 'border-[rgba(148,163,184,0.22)]/80 bg-white/80'
@@ -479,7 +479,7 @@ export function CustomerDashboard() {
                             {photo ? (
                               <img src={photo} alt="" className="h-full w-full object-cover" />
                             ) : (
-                              <User className="h-4 w-4 text-[#8a8178]" />
+                              <User className="h-4 w-4 text-[color:var(--label-ink)]" />
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -584,7 +584,7 @@ export function CustomerDashboard() {
                             {photo ? (
                               <img src={photo} alt="" className="h-full w-full object-cover" />
                             ) : (
-                              <User className="h-5 w-5 text-[#8a8178]" />
+                              <User className="h-5 w-5 text-[color:var(--label-ink)]" />
                             )}
                           </div>
                           <div className="min-w-0">

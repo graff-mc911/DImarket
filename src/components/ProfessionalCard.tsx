@@ -187,7 +187,7 @@ export function ProfessionalCard({
                       className={
                         compact
                           ? 'pro-card__name font-bold text-[var(--ink-900)]'
-                          : 'truncate text-xl font-extrabold text-[#2f2a24]'
+                          : 'truncate text-xl font-extrabold text-[color:var(--ink-900)]'
                       }
                       title={displayName}
                     >
@@ -254,7 +254,7 @@ export function ProfessionalCard({
                   className={
                     compact
                       ? 'pro-card__meta mt-0.5 flex items-center gap-1 text-[var(--ink-500)]'
-                      : 'mt-2 flex items-center gap-2 text-sm text-[#7a7168]'
+                      : 'mt-2 flex items-center gap-2 text-sm text-[color:var(--label-ink)]'
                   }
                 >
                   <MapPin className="pro-card__avatar-icon shrink-0 text-[var(--accent-700)]" />
@@ -350,7 +350,7 @@ export function ProfessionalCard({
       )}
 
       {!compact && (
-        <p className="mt-4 line-clamp-4 text-sm leading-6 text-[#6f665d]">
+        <p className="mt-4 line-clamp-4 text-sm leading-6 text-[color:var(--label-ink)]">
           {professional.bio ||
             emptyBioLabel ||
             t('professional.profileInProgress')}
@@ -368,7 +368,7 @@ export function ProfessionalCard({
           className={
             compact
               ? 'pro-card__footer-text flex items-center gap-1 text-[var(--ink-500)]'
-              : 'text-sm text-[#7a7168]'
+              : 'text-sm text-[color:var(--label-ink)]'
           }
         >
           {compact && <UserRound className="pro-card__avatar-icon text-[var(--accent-700)]" />}

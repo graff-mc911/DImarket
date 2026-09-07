@@ -22,7 +22,7 @@ import { PROJECT_TRADES } from '../../lib/projectWizard'
 import { useApp } from '../../contexts/AppContext'
 
 const field =
-  'w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-[14px] text-[#2f2a24] outline-none focus:border-[#2f2a24] focus:bg-white'
+  'w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-[#fafafa] px-3 py-2.5 text-[14px] text-[color:var(--ink-900)] outline-none focus:border-[#2f2a24] focus:bg-white'
 
 type Props = {
   profileId: string
@@ -148,7 +148,7 @@ export function PortfolioManager({
               className={`rounded-full px-3 py-1.5 text-[12px] font-semibold transition ${
                 filter === c.id
                   ? 'bg-[#2f2a24] text-white'
-                  : 'bg-[#f3f0ea] text-[#2f2a24] hover:bg-[rgba(148,163,184,0.22)]'
+                  : 'bg-[#f3f0ea] text-[color:var(--ink-900)] hover:bg-[rgba(148,163,184,0.22)]'
               }`}
             >
               {t(c.labelKey as never)}
@@ -177,13 +177,13 @@ export function PortfolioManager({
 
       {openForm && editable ? (
         <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 shadow-sm">
-          <h3 className="text-[16px] font-semibold text-[#2f2a24]">
+          <h3 className="text-[16px] font-semibold text-[color:var(--ink-900)]">
             {editingId ? 'Edit project' : 'New portfolio project'}
           </h3>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <label className="block sm:col-span-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
                 Title
               </span>
               <input
@@ -195,7 +195,7 @@ export function PortfolioManager({
             </label>
 
             <label className="block sm:col-span-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
                 Description
               </span>
               <textarea
@@ -208,7 +208,7 @@ export function PortfolioManager({
             </label>
 
             <label className="block">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
                 Type
               </span>
               <select
@@ -226,7 +226,7 @@ export function PortfolioManager({
             </label>
 
             <label className="block">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
                 Category
               </span>
               <select
@@ -292,7 +292,7 @@ export function PortfolioManager({
             <button
               type="button"
               onClick={resetForm}
-              className="rounded-full border border-[rgba(148,163,184,0.35)] px-5 py-2.5 text-[13px] font-semibold text-[#2f2a24]"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] px-5 py-2.5 text-[13px] font-semibold text-[color:var(--ink-900)]"
             >
               Cancel
             </button>
@@ -301,7 +301,7 @@ export function PortfolioManager({
       ) : null}
 
       {loading ? (
-        <p className="text-[13px] text-[#8a8178]">Loading portfolio…</p>
+        <p className="text-[13px] text-[color:var(--label-ink)]">Loading portfolio…</p>
       ) : (
         <PortfolioMasonry
           items={items}
@@ -334,11 +334,11 @@ function UploadRow({
     <div className="rounded-none border border-[#f0f0f2] bg-[#fafafa] p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-[12px] font-semibold text-[#2f2a24]">{label}</p>
+          <p className="text-[12px] font-semibold text-[color:var(--ink-900)]">{label}</p>
           {url ? (
-            <p className="mt-0.5 max-w-[240px] truncate text-[11px] text-[#8a8178]">{url}</p>
+            <p className="mt-0.5 max-w-[240px] truncate text-[11px] text-[color:var(--label-ink)]">{url}</p>
           ) : (
-            <p className="mt-0.5 text-[11px] text-[#8a8178]">No file yet</p>
+            <p className="mt-0.5 text-[11px] text-[color:var(--label-ink)]">No file yet</p>
           )}
         </div>
         <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#2f2a24] px-3 py-1.5 text-[12px] font-semibold text-white">

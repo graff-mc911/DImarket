@@ -132,7 +132,7 @@ export function FunnelChart({
           <div key={s.label}>
             <div className="mb-1 flex items-center justify-between text-[12px]">
               <span className="font-medium text-[#3a3a3c]">{s.label}</span>
-              <span className="tabular-nums text-[#8a8178]">{s.value}</span>
+              <span className="tabular-nums text-[color:var(--label-ink)]">{s.value}</span>
             </div>
             <div className="h-2.5 overflow-hidden rounded-full bg-[#f0f0f2]">
               <div
@@ -163,8 +163,8 @@ export function MetricCard({
 }) {
   return (
     <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">{label}</p>
-      <p className="mt-2 text-[24px] font-semibold tracking-tight tabular-nums text-[#2f2a24]">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">{label}</p>
+      <p className="mt-2 text-[24px] font-semibold tracking-tight tabular-nums text-[color:var(--ink-900)]">
         {value}
       </p>
       {hint ? (
@@ -192,8 +192,8 @@ export function ChartCard({
       className={`rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm sm:p-5 ${className}`}
     >
       <div className="mb-3">
-        <h2 className="text-[15px] font-semibold text-[#2f2a24]">{title}</h2>
-        {subtitle ? <p className="mt-0.5 text-[12px] text-[#8a8178]">{subtitle}</p> : null}
+        <h2 className="text-[15px] font-semibold text-[color:var(--ink-900)]">{title}</h2>
+        {subtitle ? <p className="mt-0.5 text-[12px] text-[color:var(--label-ink)]">{subtitle}</p> : null}
       </div>
       {children}
     </section>

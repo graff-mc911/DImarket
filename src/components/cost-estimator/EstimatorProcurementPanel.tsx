@@ -45,11 +45,11 @@ export function EstimatorProcurementPanel({
   }, [materials, city, lat, lng])
 
   if (loading) {
-    return <p className="text-[13px] text-[#8a8178]">AI Procurement is comparing suppliers…</p>
+    return <p className="text-[13px] text-[color:var(--label-ink)]">AI Procurement is comparing suppliers…</p>
   }
   if (!plan?.lines.length) {
     return (
-      <p className="text-[13px] text-[#8a8178]">
+      <p className="text-[13px] text-[color:var(--label-ink)]">
         No marketplace offers found yet — publish more sell-rent listings to power procurement.
       </p>
     )
@@ -57,7 +57,7 @@ export function EstimatorProcurementPanel({
 
   return (
     <div className="space-y-4">
-      <p className="text-[13px] text-[#6f665d]">
+      <p className="text-[13px] text-[color:var(--label-ink)]">
         Estimated materials {formatEuro(plan.totalEstimated)} · {plan.supplierCount} live offers
         compared by price fit and distance.
       </p>
@@ -65,13 +65,13 @@ export function EstimatorProcurementPanel({
       {plan.lines.map((line) => (
         <div key={line.materialId} className="rounded-none border border-[#f0f0f2] p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <p className="text-[14px] font-semibold text-[#2f2a24]">
+            <p className="text-[14px] font-semibold text-[color:var(--ink-900)]">
               {line.name}{' '}
-              <span className="text-[12px] font-medium text-[#8a8178]">
+              <span className="text-[12px] font-medium text-[color:var(--label-ink)]">
                 {line.quantity} {line.unit}
               </span>
             </p>
-            <p className="text-[12px] tabular-nums text-[#6f665d]">
+            <p className="text-[12px] tabular-nums text-[color:var(--label-ink)]">
               est. {formatEuro(line.estimatedUnitCost * line.quantity)}
             </p>
           </div>
@@ -83,11 +83,11 @@ export function EstimatorProcurementPanel({
               >
                 <button
                   type="button"
-                  className="text-left text-[13px] font-medium text-[#2f2a24] hover:underline"
+                  className="text-left text-[13px] font-medium text-[color:var(--ink-900)] hover:underline"
                   onClick={() => navigateTo(`/listing/${s.listingId}`)}
                 >
                   {s.title}
-                  <span className="mt-0.5 block text-[11px] text-[#8a8178]">
+                  <span className="mt-0.5 block text-[11px] text-[color:var(--label-ink)]">
                     {s.city || '—'}
                     {s.distanceKm != null ? ` · ${s.distanceKm.toFixed(1)} km` : ''}
                     {s.reasons.length ? ` · ${s.reasons[0].replace(/_/g, ' ')}` : ''}
@@ -127,7 +127,7 @@ export function EstimatorProcurementPanel({
               </li>
             ))}
             {!line.suppliers.length ? (
-              <li className="text-[12px] text-[#8a8178]">
+              <li className="text-[12px] text-[color:var(--label-ink)]">
                 <button
                   type="button"
                   className="font-semibold text-[#0066cc]"

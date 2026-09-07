@@ -31,7 +31,7 @@ const toneClass: Record<string, string> = {
   ok: 'border-emerald-200 bg-emerald-50 text-emerald-900',
   warn: 'border-amber-200 bg-amber-50 text-amber-950',
   bad: 'border-rose-200 bg-rose-50 text-rose-950',
-  unknown: 'border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] text-[#2f2a24]',
+  unknown: 'border-[rgba(148,163,184,0.22)] bg-[#f3f0ea] text-[color:var(--ink-900)]',
 }
 
 const dotClass: Record<string, string> = {
@@ -96,7 +96,7 @@ export function DocumentFreshnessBadge(props: Props) {
 export function LegalContentDisclaimer() {
   const { t } = useApp()
   return (
-    <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-3.5 py-3 text-xs leading-5 text-[#6f665d]">
+    <div className="rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] px-3.5 py-3 text-xs leading-5 text-[color:var(--label-ink)]">
       <p>{t('osm.disclaimer.accuracy')}</p>
       <p className="mt-1.5">{t('osm.disclaimer.notAdvice')}</p>
     </div>

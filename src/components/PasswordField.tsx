@@ -52,7 +52,7 @@ export function PasswordField({
           {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
         </button>
       </div>
-      {hint && <p className="mt-1.5 text-xs text-[#7a7168]">{hint}</p>}
+      {hint && <p className="mt-1.5 text-xs text-[color:var(--label-ink)]">{hint}</p>}
     </div>
   )
 }

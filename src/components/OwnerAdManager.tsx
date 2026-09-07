@@ -394,8 +394,8 @@ export function OwnerAdManager({
     <section className="glass-card mt-6 p-5 md:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-extrabold text-[#2f2a24]">Реклама на блоках і банерах</h2>
-          <p className="mt-2 text-sm leading-6 text-[#6f665d]">
+          <h2 className="text-xl font-extrabold text-[color:var(--ink-900)]">Реклама на блоках і банерах</h2>
+          <p className="mt-2 text-sm leading-6 text-[color:var(--label-ink)]">
             Додавайте, редагуйте та видаляйте банери для конкретних місць на сайті.
           </p>
         </div>
@@ -443,13 +443,13 @@ export function OwnerAdManager({
           className="mt-5 rounded-none border border-[rgba(99,102,241,0.22)] bg-[rgba(255,255,255,0.35)] p-5 md:p-6"
         >
           <div className="flex items-start justify-between gap-3">
-            <h3 className="text-lg font-extrabold text-[#2f2a24]">
+            <h3 className="text-lg font-extrabold text-[color:var(--ink-900)]">
               {editingId ? 'Редагування реклами' : 'Нова реклама'}
             </h3>
             <button
               type="button"
               onClick={() => closeForm()}
-              className="rounded-full p-1 text-[#6f665d] hover:bg-black/5"
+              className="rounded-full p-1 text-[color:var(--label-ink)] hover:bg-black/5"
             >
               <X className="h-5 w-5" />
             </button>
@@ -488,7 +488,7 @@ export function OwnerAdManager({
 
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             <label className="block text-sm">
-              <span className="font-semibold text-[#2f2a24]">Назва *</span>
+              <span className="font-semibold text-[color:var(--ink-900)]">Назва *</span>
               <input
                 className="input-glass mt-1.5 w-full"
                 value={form.title}
@@ -497,7 +497,7 @@ export function OwnerAdManager({
               />
             </label>
             <label className="block text-sm">
-              <span className="font-semibold text-[#2f2a24]">Посилання *</span>
+              <span className="font-semibold text-[color:var(--ink-900)]">Посилання *</span>
               <input
                 className="input-glass mt-1.5 w-full"
                 type="url"
@@ -510,7 +510,7 @@ export function OwnerAdManager({
           </div>
 
           <label className="mt-4 block text-sm">
-            <span className="font-semibold text-[#2f2a24]">Опис</span>
+            <span className="font-semibold text-[color:var(--ink-900)]">Опис</span>
             <textarea
               className="input-glass mt-1.5 min-h-[72px] w-full"
               value={form.description}
@@ -520,7 +520,7 @@ export function OwnerAdManager({
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <label className="block text-sm">
-              <span className="font-semibold text-[#2f2a24]">Початок показу</span>
+              <span className="font-semibold text-[color:var(--ink-900)]">Початок показу</span>
               <input
                 type="datetime-local"
                 className="input-glass mt-1.5 w-full"
@@ -529,21 +529,21 @@ export function OwnerAdManager({
               />
             </label>
             <label className="block text-sm">
-              <span className="font-semibold text-[#2f2a24]">Кінець показу</span>
+              <span className="font-semibold text-[color:var(--ink-900)]">Кінець показу</span>
               <input
                 type="datetime-local"
                 className="input-glass mt-1.5 w-full"
                 value={form.endsAt}
                 onChange={(e) => setForm((p) => ({ ...p, endsAt: e.target.value }))}
               />
-              <span className="mt-1 block text-xs text-[#7a7168]">
+              <span className="mt-1 block text-xs text-[color:var(--label-ink)]">
                 Залиште порожнім — показ до скасування власником
               </span>
             </label>
           </div>
 
           <div className="mt-5 rounded-none border border-white/40 bg-[rgba(255,255,255,0.2)] p-3 md:p-4">
-            <p className="text-sm font-semibold text-[#2f2a24]">Географія показу</p>
+            <p className="text-sm font-semibold text-[color:var(--ink-900)]">Географія показу</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {(['global', 'countries', 'regions', 'cities'] as GeoMode[]).map((mode) => (
                 <button
@@ -561,7 +561,7 @@ export function OwnerAdManager({
                   className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                     form.geoScope === mode
                       ? 'bg-[rgba(99,102,241,0.16)] text-[#4338ca]'
-                      : 'bg-[rgba(148,163,184,0.12)] text-[#64748b]'
+                      : 'bg-[rgba(148,163,184,0.12)] text-[color:var(--label-ink)]'
                   }`}
                 >
                   {mode === 'global'
@@ -575,9 +575,9 @@ export function OwnerAdManager({
               ))}
             </div>
             {geoLoading ? (
-              <p className="mt-3 text-sm text-[#7a7168]">Завантаження каталогу локацій…</p>
+              <p className="mt-3 text-sm text-[color:var(--label-ink)]">Завантаження каталогу локацій…</p>
             ) : form.geoScope === 'global' ? (
-              <p className="mt-3 text-sm text-[#7a7168]">Реклама показується відвідувачам з усіх регіонів.</p>
+              <p className="mt-3 text-sm text-[color:var(--label-ink)]">Реклама показується відвідувачам з усіх регіонів.</p>
             ) : (
               <div className="mt-3">
                 <AdGeoTargeting
@@ -597,7 +597,7 @@ export function OwnerAdManager({
           </div>
 
           <label className="mt-4 block text-sm md:max-w-xs">
-            <span className="font-semibold text-[#2f2a24]">Статус</span>
+            <span className="font-semibold text-[color:var(--ink-900)]">Статус</span>
             <select
               className="input-glass mt-1.5 w-full"
               value={form.status}
@@ -677,7 +677,7 @@ export function OwnerAdManager({
 
       <div className="mt-5 space-y-4">
         {ownerCampaigns.length === 0 ? (
-          <p className="text-sm text-[#7a7168]">Рекламних кампаній ще немає.</p>
+          <p className="text-sm text-[color:var(--label-ink)]">Рекламних кампаній ще немає.</p>
         ) : (
           ownerCampaigns.map((campaign) => (
             <CampaignRow
@@ -728,21 +728,21 @@ function CampaignRow({
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-lg font-extrabold text-[#2f2a24]">{campaign.title}</h3>
+            <h3 className="text-lg font-extrabold text-[color:var(--ink-900)]">{campaign.title}</h3>
             <StatusChip status={campaign.status} scheduleExpired={scheduleExpired} />
           </div>
           {campaign.description && (
-            <p className="mt-2 line-clamp-2 text-sm text-[#6f665d]">{campaign.description}</p>
+            <p className="mt-2 line-clamp-2 text-sm text-[color:var(--label-ink)]">{campaign.description}</p>
           )}
           <p
             className={`mt-2 text-xs font-medium ${
-              scheduleExpired ? 'text-[#b45309]' : 'text-[#7a7168]'
+              scheduleExpired ? 'text-[#b45309]' : 'text-[color:var(--label-ink)]'
             }`}
           >
             {scheduleLabel}
             {scheduleExpired && ' — не показується на сайті'}
           </p>
-          <p className="mt-1 text-xs text-[#7a7168]">Географія: {geoLabel}</p>
+          <p className="mt-1 text-xs text-[color:var(--label-ink)]">Географія: {geoLabel}</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {slots.length > 0 ? (
               slots.map((slot) => (
@@ -754,10 +754,10 @@ function CampaignRow({
                 </span>
               ))
             ) : (
-              <span className="text-xs text-[#7a7168]">Слоти не вказані</span>
+              <span className="text-xs text-[color:var(--label-ink)]">Слоти не вказані</span>
             )}
           </div>
-          <p className="mt-2 break-all text-xs text-[#7a7168]">{campaign.link_url}</p>
+          <p className="mt-2 break-all text-xs text-[color:var(--label-ink)]">{campaign.link_url}</p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
           <ActionBtn onClick={onEdit} disabled={busy} className="text-[#4338ca] bg-[rgba(99,102,241,0.12)]">
@@ -841,8 +841,8 @@ function StatusChip({
     paused: 'bg-[rgba(100,116,139,0.14)] text-[#475569]',
     rejected: 'bg-[rgba(239,68,68,0.14)] text-[#b91c1c]',
     draft: 'bg-[rgba(148,163,184,0.14)] text-[#475569]',
-    expired: 'bg-[rgba(148,163,184,0.14)] text-[#64748b]',
-    deleted: 'bg-[rgba(148,163,184,0.14)] text-[#64748b]',
+    expired: 'bg-[rgba(148,163,184,0.14)] text-[color:var(--label-ink)]',
+    deleted: 'bg-[rgba(148,163,184,0.14)] text-[color:var(--label-ink)]',
   }
   const labels: Record<string, string> = {
     active: 'Активна',

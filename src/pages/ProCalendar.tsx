@@ -189,8 +189,8 @@ export function ProCalendar() {
   if (!user) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <CalendarDays className="mx-auto h-10 w-10 text-[#8a8178]" />
-        <p className="mt-4 text-[15px] text-[#2f2a24]">Sign in to manage your calendar</p>
+        <CalendarDays className="mx-auto h-10 w-10 text-[color:var(--label-ink)]" />
+        <p className="mt-4 text-[15px] text-[color:var(--ink-900)]">Sign in to manage your calendar</p>
         <button
           type="button"
           className="mt-6 rounded-full bg-[#2f2a24] px-5 py-2.5 text-[13px] font-semibold text-white"
@@ -205,7 +205,7 @@ export function ProCalendar() {
   if (!isPro) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <p className="text-[15px] text-[#2f2a24]">Booking calendar is for professionals.</p>
+        <p className="text-[15px] text-[color:var(--ink-900)]">Booking calendar is for professionals.</p>
         <button
           type="button"
           className="mt-6 rounded-full border border-[rgba(148,163,184,0.35)] px-5 py-2.5 text-[13px] font-semibold"
@@ -224,10 +224,10 @@ export function ProCalendar() {
       <div className="border-b border-[rgba(148,163,184,0.22)] bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4">
           <div>
-            <h1 className="text-[22px] font-semibold tracking-tight text-[#2f2a24]">
+            <h1 className="text-[22px] font-semibold tracking-tight text-[color:var(--ink-900)]">
               Booking calendar
             </h1>
-            <p className="text-[13px] text-[#8a8178]">
+            <p className="text-[13px] text-[color:var(--label-ink)]">
               Block dates, accept requests, sync Google Calendar
             </p>
           </div>
@@ -235,7 +235,7 @@ export function ProCalendar() {
             <button
               type="button"
               onClick={() => navigateTo('/pro/dashboard')}
-              className="rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[#2f2a24]"
+              className="rounded-full border border-[rgba(148,163,184,0.35)] px-4 py-2 text-[12px] font-semibold text-[color:var(--ink-900)]"
             >
               Dashboard
             </button>
@@ -283,7 +283,7 @@ export function ProCalendar() {
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <h2 className="text-[16px] font-semibold text-[#2f2a24]">{monthLabel}</h2>
+            <h2 className="text-[16px] font-semibold text-[color:var(--ink-900)]">{monthLabel}</h2>
             <button
               type="button"
               className="rounded-full p-2 hover:bg-[#f3f0ea]"
@@ -293,14 +293,14 @@ export function ProCalendar() {
             </button>
           </div>
 
-          <div className="mb-2 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
+          <div className="mb-2 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
             {WEEKDAYS.map((d) => (
               <div key={d}>{d}</div>
             ))}
           </div>
 
           {loading ? (
-            <p className="py-10 text-center text-[13px] text-[#8a8178]">Loading…</p>
+            <p className="py-10 text-center text-[13px] text-[color:var(--label-ink)]">Loading…</p>
           ) : (
             <div className="grid grid-cols-7 gap-1">
               {cells.map((d) => {
@@ -328,7 +328,7 @@ export function ProCalendar() {
                     title={isBlocked ? 'Blocked' : 'Select day'}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[13px] font-semibold text-[#2f2a24]">
+                      <span className="text-[13px] font-semibold text-[color:var(--ink-900)]">
                         {d.getDate()}
                       </span>
                       {isBlocked ? <Lock className="h-3 w-3 text-red-500" /> : null}
@@ -347,12 +347,12 @@ export function ProCalendar() {
             </div>
           )}
 
-          <p className="mt-3 text-[12px] text-[#8a8178]">
+          <p className="mt-3 text-[12px] text-[color:var(--label-ink)]">
             Select a day, then block it below. Amber = pending, green = accepted.
           </p>
           {selected ? (
             <div className="mt-3 flex flex-wrap items-center gap-2 rounded-none bg-[#fafafa] p-3">
-              <span className="text-[13px] font-semibold text-[#2f2a24]">{selected}</span>
+              <span className="text-[13px] font-semibold text-[color:var(--ink-900)]">{selected}</span>
               <button
                 type="button"
                 disabled={busy}
@@ -371,17 +371,17 @@ export function ProCalendar() {
 
         <div className="space-y-4">
           <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
-            <h3 className="text-[15px] font-semibold text-[#2f2a24]">
+            <h3 className="text-[15px] font-semibold text-[color:var(--ink-900)]">
               Pending requests ({pending.length})
             </h3>
             <div className="mt-3 space-y-2">
               {pending.length === 0 ? (
-                <p className="text-[13px] text-[#8a8178]">No pending requests</p>
+                <p className="text-[13px] text-[color:var(--label-ink)]">No pending requests</p>
               ) : (
                 pending.map((b) => (
                   <div key={b.id} className="rounded-none border border-[#f0f0f2] p-3">
-                    <p className="text-[14px] font-semibold text-[#2f2a24]">{b.customer_name}</p>
-                    <p className="mt-0.5 text-[12px] text-[#8a8178]">
+                    <p className="text-[14px] font-semibold text-[color:var(--ink-900)]">{b.customer_name}</p>
+                    <p className="mt-0.5 text-[12px] text-[color:var(--label-ink)]">
                       {new Date(b.starts_at).toLocaleString()} –{' '}
                       {new Date(b.ends_at).toLocaleTimeString([], {
                         hour: '2-digit',
@@ -389,7 +389,7 @@ export function ProCalendar() {
                       })}
                     </p>
                     {b.notes ? (
-                      <p className="mt-1 text-[12px] text-[#6f665d]">{b.notes}</p>
+                      <p className="mt-1 text-[12px] text-[color:var(--label-ink)]">{b.notes}</p>
                     ) : null}
                     <div className="mt-2 flex gap-2">
                       <button
@@ -405,7 +405,7 @@ export function ProCalendar() {
                         type="button"
                         disabled={busy}
                         onClick={() => void onStatus(b.id, 'declined')}
-                        className="inline-flex items-center gap-1 rounded-full bg-[#f3f0ea] px-3 py-1.5 text-[12px] font-semibold text-[#2f2a24]"
+                        className="inline-flex items-center gap-1 rounded-full bg-[#f3f0ea] px-3 py-1.5 text-[12px] font-semibold text-[color:var(--ink-900)]"
                       >
                         <X className="h-3.5 w-3.5" />
                         Decline
@@ -418,19 +418,19 @@ export function ProCalendar() {
           </section>
 
           <section className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-4 shadow-sm">
-            <h3 className="text-[15px] font-semibold text-[#2f2a24]">Appointments</h3>
+            <h3 className="text-[15px] font-semibold text-[color:var(--ink-900)]">Appointments</h3>
             <div className="mt-3 max-h-[420px] space-y-2 overflow-y-auto">
               {upcoming.length === 0 ? (
-                <p className="text-[13px] text-[#8a8178]">No upcoming appointments</p>
+                <p className="text-[13px] text-[color:var(--label-ink)]">No upcoming appointments</p>
               ) : (
                 upcoming.map((b) => (
                   <div key={b.id} className="rounded-none border border-[#f0f0f2] p-3">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-[14px] font-semibold text-[#2f2a24]">
+                        <p className="text-[14px] font-semibold text-[color:var(--ink-900)]">
                           {b.customer_name}
                         </p>
-                        <p className="mt-0.5 text-[12px] text-[#8a8178]">
+                        <p className="mt-0.5 text-[12px] text-[color:var(--label-ink)]">
                           {new Date(b.starts_at).toLocaleString()}
                         </p>
                       </div>
@@ -440,7 +440,7 @@ export function ProCalendar() {
                             ? 'bg-emerald-50 text-emerald-700'
                             : b.status === 'pending'
                               ? 'bg-amber-50 text-amber-700'
-                              : 'bg-[#f3f0ea] text-[#8a8178]'
+                              : 'bg-[#f3f0ea] text-[color:var(--label-ink)]'
                         }`}
                       >
                         {b.status}

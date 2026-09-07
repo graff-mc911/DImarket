@@ -67,8 +67,8 @@ export function AdBannerMediaForm({
                 className={
                   'flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold transition ' +
                   (mediaType === type
-                    ? 'bg-white text-[#2f2a24] shadow-sm'
-                    : 'text-[#6f665d] hover:text-[#2f2a24]')
+                    ? 'bg-white text-[color:var(--ink-900)] shadow-sm'
+                    : 'text-[color:var(--label-ink)] hover:text-[color:var(--ink-900)]')
                 }
               >
                 {type === 'video' && <Film className="h-3 w-3" />}
@@ -149,7 +149,7 @@ export function AdBannerMediaForm({
         ) : uploadState.status === 'uploading' && !hasBannerMedia ? (
           <div className="flex flex-col items-center justify-center gap-3 p-10">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-[rgba(99,102,241,0.2)] border-t-[#6366f1]" />
-            <div className="text-sm font-semibold text-[#6f665d]">
+            <div className="text-sm font-semibold text-[color:var(--label-ink)]">
               {t('advertising.form.uploading')} {uploadState.progress}%
             </div>
           </div>
@@ -169,7 +169,7 @@ export function AdBannerMediaForm({
             >
               <Upload className="h-6 w-6" />
             </div>
-            <div className="text-center text-sm font-semibold text-[#2f2a24]">
+            <div className="text-center text-sm font-semibold text-[color:var(--ink-900)]">
               {t('advertising.form.mediaDrop')}
             </div>
             {canMultiImage && (
@@ -191,7 +191,7 @@ export function AdBannerMediaForm({
         className="hidden"
       />
 
-      <label className="block text-xs font-semibold text-[#6f665d]">
+      <label className="block text-xs font-semibold text-[color:var(--label-ink)]">
         {t('advertising.form.mediaUrlLabel')}
         <input
           type="url"

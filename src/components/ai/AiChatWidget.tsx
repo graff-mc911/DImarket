@@ -134,11 +134,11 @@ export function AiChatWidget() {
           onPointerDown={(e) => e.stopPropagation()}
         >
           <div className="border-b border-[#f0f0f2] px-4 py-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a8178]">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
               AI Assistant · {audience === 'professional' ? 'Professional' : 'Customer'}
             </p>
-            <h2 className="text-[16px] font-semibold text-[#2f2a24]">What do you need?</h2>
-            <p className="mt-1 text-[12px] leading-snug text-[#6f665d]">
+            <h2 className="text-[16px] font-semibold text-[color:var(--ink-900)]">What do you need?</h2>
+            <p className="mt-1 text-[12px] leading-snug text-[color:var(--label-ink)]">
               Describe the problem — we ask only what is missing.
             </p>
           </div>
@@ -155,10 +155,10 @@ export function AiChatWidget() {
                 <Bot className="h-4 w-4" />
               </span>
               <span>
-                <span className="block text-[13px] font-semibold text-[#2f2a24]">
+                <span className="block text-[13px] font-semibold text-[color:var(--ink-900)]">
                   Start guided chat
                 </span>
-                <span className="mt-0.5 block text-[12px] leading-snug text-[#6f665d]">
+                <span className="mt-0.5 block text-[12px] leading-snug text-[color:var(--label-ink)]">
                   No light, ads, pro profile, vacancy, sell/rent…
                 </span>
               </span>
@@ -172,12 +172,12 @@ export function AiChatWidget() {
                   onClick={() => openTool(tool)}
                   className="flex w-full items-start gap-3 rounded-none px-3 py-2.5 text-left transition hover:bg-[#f3f0ea]"
                 >
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-[#f3f0ea] text-[#2f2a24]">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-[#f3f0ea] text-[color:var(--ink-900)]">
                     <Icon className="h-4 w-4" />
                   </span>
                   <span>
-                    <span className="block text-[13px] font-semibold text-[#2f2a24]">{tool.title}</span>
-                    <span className="mt-0.5 block text-[12px] leading-snug text-[#6f665d]">
+                    <span className="block text-[13px] font-semibold text-[color:var(--ink-900)]">{tool.title}</span>
+                    <span className="mt-0.5 block text-[12px] leading-snug text-[color:var(--label-ink)]">
                       {tool.description}
                     </span>
                   </span>

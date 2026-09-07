@@ -27,10 +27,10 @@ export function OwnerCabinetEntry({ variant = 'card', className = '' }: Props) {
         aria-label={t('ownerDash.controlTitle')}
       >
         <div className="min-w-0">
-          <p className="text-[13px] font-semibold tracking-tight text-[#2f2a24]">
+          <p className="text-[13px] font-semibold tracking-tight text-[color:var(--ink-900)]">
             {t('ownerDash.controlTitle')}
           </p>
-          <p className="mt-0.5 text-[12px] text-[#6f665d]">{t('ownerDash.controlHint')}</p>
+          <p className="mt-0.5 text-[12px] text-[color:var(--label-ink)]">{t('ownerDash.controlHint')}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button
@@ -51,18 +51,18 @@ export function OwnerCabinetEntry({ variant = 'card', className = '' }: Props) {
       className={`rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fafafa] p-4 ${className}`}
       aria-label={t('ownerDash.controlTitle')}
     >
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#6f665d]">
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[color:var(--label-ink)]">
         {t('nav.ownerSection')}
       </p>
-      <h2 className="mt-1 text-base font-semibold tracking-tight text-[#2f2a24]">
+      <h2 className="mt-1 text-base font-semibold tracking-tight text-[color:var(--ink-900)]">
         {t('ownerDash.controlTitle')}
       </h2>
-      <p className="mt-1 text-sm text-[#6f665d]">{t('ownerDash.controlHint')}</p>
+      <p className="mt-1 text-sm text-[color:var(--label-ink)]">{t('ownerDash.controlHint')}</p>
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
         <button
           type="button"
           onClick={() => go('/dashboard')}
-          className="flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[#2f2a24]"
+          className="flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[color:var(--ink-900)]"
         >
           <LayoutDashboard className="h-4 w-4 shrink-0" aria-hidden />
           {t('header.dashboard')}
@@ -70,7 +70,7 @@ export function OwnerCabinetEntry({ variant = 'card', className = '' }: Props) {
         <button
           type="button"
           onClick={() => go('/admin/ai')}
-          className="flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[#2f2a24]"
+          className="flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[color:var(--ink-900)]"
         >
           <Bot className="h-4 w-4 shrink-0" aria-hidden />
           {t('ai.admin.title')}
@@ -78,7 +78,7 @@ export function OwnerCabinetEntry({ variant = 'card', className = '' }: Props) {
         <button
           type="button"
           onClick={() => go('/admin/marketing-agent')}
-          className="flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[#2f2a24]"
+          className="flex items-center gap-2 rounded-none border border-[rgba(148,163,184,0.22)] bg-white px-3 py-2.5 text-left text-sm font-semibold text-[color:var(--ink-900)]"
         >
           <Megaphone className="h-4 w-4 shrink-0" aria-hidden />
           {t('header.marketingAgent')}

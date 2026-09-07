@@ -15,7 +15,7 @@ import {
 import { saveEstimatorAiPrefill } from '../lib/ai/estimatorPrefill'
 
 const inputClass =
-  'w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[#2f2a24] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
+  'w-full rounded-none border border-[rgba(148,163,184,0.35)] bg-white px-3 py-2.5 text-[13px] text-[color:var(--ink-900)] outline-none transition focus:border-[#2f2a24] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.06)]'
 
 export function AiAssistant() {
   const { user, profile, language, t } = useApp()
@@ -142,14 +142,14 @@ export function AiAssistant() {
     <div className="py-8 pb-24 lg:pb-10">
       <div className="mx-auto max-w-5xl space-y-6 px-4 sm:px-6">
         <header className="space-y-3">
-          <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a8178]">
+          <p className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[color:var(--label-ink)]">
             <Bot className="h-4 w-4" />
             AI Assistant
           </p>
-          <h1 className="text-[32px] font-semibold tracking-tight text-[#2f2a24] sm:text-[36px]">
+          <h1 className="text-[32px] font-semibold tracking-tight text-[color:var(--ink-900)] sm:text-[36px]">
             Customer & professional AI tools
           </h1>
-          <p className="max-w-2xl text-[15px] leading-relaxed text-[#6f665d]">
+          <p className="max-w-2xl text-[15px] leading-relaxed text-[color:var(--label-ink)]">
             Create projects, estimate budgets, choose categories — or generate quotes, invoices,
             proposals, contracts, chat summaries, and stronger profiles.
           </p>
@@ -163,7 +163,7 @@ export function AiAssistant() {
               setToolId(null)
             }}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              audience === 'customer' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
+              audience === 'customer' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'
             }`}
           >
             Customer
@@ -175,7 +175,7 @@ export function AiAssistant() {
               setToolId(null)
             }}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              audience === 'professional' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[#2f2a24]'
+              audience === 'professional' ? 'bg-[#2f2a24] text-white' : 'bg-[#f3f0ea] text-[color:var(--ink-900)]'
             }`}
           >
             Professional
@@ -207,11 +207,11 @@ export function AiAssistant() {
                   onClick={() => selectTool(tool)}
                   className="rounded-none border border-[rgba(148,163,184,0.22)] bg-white p-5 text-left shadow-sm transition hover:border-[#2f2a24]"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-none bg-[#f3f0ea] text-[#2f2a24]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-none bg-[#f3f0ea] text-[color:var(--ink-900)]">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h2 className="mt-3 text-[16px] font-semibold text-[#2f2a24]">{tool.title}</h2>
-                  <p className="mt-1 text-[13px] leading-relaxed text-[#6f665d]">{tool.description}</p>
+                  <h2 className="mt-3 text-[16px] font-semibold text-[color:var(--ink-900)]">{tool.title}</h2>
+                  <p className="mt-1 text-[13px] leading-relaxed text-[color:var(--label-ink)]">{tool.description}</p>
                 </button>
               )
             })}
@@ -224,7 +224,7 @@ export function AiAssistant() {
                 setToolId(null)
                 window.history.replaceState({}, '', '/assistant')
               }}
-              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#6f665d]"
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[color:var(--label-ink)]"
             >
               <ArrowLeft className="h-4 w-4" />
               All tools
@@ -241,8 +241,8 @@ export function AiAssistant() {
                   </div>
                 ) : null}
                 <div>
-                  <h2 className="text-[20px] font-semibold text-[#2f2a24]">{activeTool?.title}</h2>
-                  <p className="mt-1 text-[13px] text-[#6f665d]">{activeTool?.description}</p>
+                  <h2 className="text-[20px] font-semibold text-[color:var(--ink-900)]">{activeTool?.title}</h2>
+                  <p className="mt-1 text-[13px] text-[color:var(--label-ink)]">{activeTool?.description}</p>
                 </div>
               </div>
 
@@ -434,7 +434,7 @@ export function AiAssistant() {
               {result ? (
                 <div className="mt-5 rounded-none border border-[rgba(148,163,184,0.22)] bg-[#fbfbfd] p-4">
                   <div className="mb-2 flex items-center justify-between gap-2">
-                    <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8a8178]">
+                    <p className="text-[12px] font-semibold uppercase tracking-wide text-[color:var(--label-ink)]">
                       Result {fallback ? '· offline fallback' : ''}
                     </p>
                     <button
@@ -446,7 +446,7 @@ export function AiAssistant() {
                       {copied ? 'Copied' : 'Copy'}
                     </button>
                   </div>
-                  <pre className="whitespace-pre-wrap font-sans text-[13px] leading-relaxed text-[#2f2a24]">
+                  <pre className="whitespace-pre-wrap font-sans text-[13px] leading-relaxed text-[color:var(--ink-900)]">
                     {result}
                   </pre>
                 </div>

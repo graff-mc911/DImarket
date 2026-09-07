@@ -20,7 +20,7 @@ export function PwaInstallButton({ variant }: { variant: PwaInstallButtonVariant
       <button
         type="button"
         onClick={onClick}
-        className={`${baseActionClass} hidden shrink-0 rounded-full bg-white px-3 py-1.5 text-xs text-[#2f2a24] shadow-sm ring-1 ring-[#d5d9d9] hover:bg-[#f7fafa] md:inline-flex`}
+        className={`${baseActionClass} hidden shrink-0 rounded-full bg-white px-3 py-1.5 text-xs text-[color:var(--ink-900)] shadow-sm ring-1 ring-[#d5d9d9] hover:bg-[#f7fafa] md:inline-flex`}
         aria-label={t('pwa.saveAsApp')}
       >
         <Download className="h-4 w-4 shrink-0" aria-hidden />
@@ -69,8 +69,8 @@ export function PwaInstallButton({ variant }: { variant: PwaInstallButtonVariant
           <Download className="h-5 w-5" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-base font-bold text-[#2f2a24]">{t('pwa.settingsTitle')}</h2>
-          <p className="mt-1 text-sm leading-6 text-[#6f665d]">{t('pwa.settingsText')}</p>
+          <h2 className="text-base font-bold text-[color:var(--ink-900)]">{t('pwa.settingsTitle')}</h2>
+          <p className="mt-1 text-sm leading-6 text-[color:var(--label-ink)]">{t('pwa.settingsText')}</p>
           <button
             type="button"
             onClick={onClick}

@@ -99,8 +99,8 @@ export class ErrorBoundary extends Component<Props, State> {
           role="alert"
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-[#a44a3a]">Error</p>
-          <h1 className="mt-2 text-xl font-bold text-[#2f2a24]">{title}</h1>
-          <p className="mt-3 text-sm leading-6 text-[#6f665d]">{message}</p>
+          <h1 className="mt-2 text-xl font-bold text-[color:var(--ink-900)]">{title}</h1>
+          <p className="mt-3 text-sm leading-6 text-[color:var(--label-ink)]">{message}</p>
           {detail ? (
             <pre className="mt-4 max-h-32 overflow-auto rounded-none bg-[#2f2a24] p-3 text-left text-[11px] text-[#ffd7c8]">
               {detail.slice(0, 500)}

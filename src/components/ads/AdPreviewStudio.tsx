@@ -188,7 +188,7 @@ export function AdPreviewStudio({
             className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
               previewLayout === key
                 ? 'bg-[#6366f1] text-white'
-                : 'border border-[rgba(99,102,241,0.2)] text-[#6f665d]'
+                : 'border border-[rgba(99,102,241,0.2)] text-[color:var(--label-ink)]'
             }`}
           >
             {layoutLabel(key)}
@@ -215,7 +215,7 @@ export function AdPreviewStudio({
 
       {editable && mediaReady && canMulti && onMediaStyleChange && (
         <div className="mt-4 space-y-3 rounded-none border border-[rgba(148,163,184,0.2)] bg-white/35 p-3">
-          <p className="text-xs font-bold text-[#2f2a24]">{t('advertising.previewStudio.imagesTitle')}</p>
+          <p className="text-xs font-bold text-[color:var(--ink-900)]">{t('advertising.previewStudio.imagesTitle')}</p>
           <p className="text-[10px] leading-snug text-[#9a8776]">{t('advertising.previewStudio.imagesHint')}</p>
           <div className="flex flex-wrap gap-2">
             {allSlides.map((url, i) => (
@@ -265,7 +265,7 @@ export function AdPreviewStudio({
 
       {editable && mediaReady && onMediaStyleChange && (
         <div className="mt-3 space-y-3 rounded-none border border-[rgba(148,163,184,0.2)] bg-white/35 p-3">
-          <p className="text-xs font-bold uppercase tracking-wide text-[#6f665d]">
+          <p className="text-xs font-bold uppercase tracking-wide text-[color:var(--label-ink)]">
             {t('advertising.previewStudio.displayTitle')}
           </p>
 
@@ -301,7 +301,7 @@ export function AdPreviewStudio({
           )}
 
           {displayMode === 'rotate' && slideCount >= 2 && (
-            <label className="block text-[10px] font-semibold text-[#6f665d]">
+            <label className="block text-[10px] font-semibold text-[color:var(--label-ink)]">
               {t('advertising.mediaEditor.transition')}
               <select
                 value={transition}
@@ -321,7 +321,7 @@ export function AdPreviewStudio({
 
           <div className="border-t border-[rgba(148,163,184,0.15)] pt-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-xs font-bold text-[#2f2a24]">{t('advertising.previewStudio.frameTitle')}</p>
+              <p className="text-xs font-bold text-[color:var(--ink-900)]">{t('advertising.previewStudio.frameTitle')}</p>
               {mediaStyle.byLayout?.[previewLayout]?.frame && (
                 <button
                   type="button"
@@ -352,7 +352,7 @@ export function AdPreviewStudio({
               ))}
             </div>
 
-            <label className="mt-2 block text-[10px] font-semibold text-[#6f665d]">
+            <label className="mt-2 block text-[10px] font-semibold text-[color:var(--label-ink)]">
               {t('advertising.previewStudio.scale')} ({Math.round((frame.scale ?? 1) * 100)}%)
               <input
                 type="range"
@@ -365,7 +365,7 @@ export function AdPreviewStudio({
               />
             </label>
 
-            <label className="mt-2 block text-[10px] font-semibold text-[#6f665d]">
+            <label className="mt-2 block text-[10px] font-semibold text-[color:var(--label-ink)]">
               {t('advertising.previewStudio.positionX')} ({frame.positionX}%)
               <input
                 type="range"
@@ -378,7 +378,7 @@ export function AdPreviewStudio({
               />
             </label>
 
-            <label className="mt-2 block text-[10px] font-semibold text-[#6f665d]">
+            <label className="mt-2 block text-[10px] font-semibold text-[color:var(--label-ink)]">
               {t('advertising.previewStudio.positionY')} ({frame.positionY}%)
               <input
                 type="range"
@@ -393,7 +393,7 @@ export function AdPreviewStudio({
           </div>
 
           <div className="border-t border-[rgba(148,163,184,0.15)] pt-3">
-            <p className="text-xs font-bold text-[#2f2a24]">{t('advertising.previewStudio.textTitle')}</p>
+            <p className="text-xs font-bold text-[color:var(--ink-900)]">{t('advertising.previewStudio.textTitle')}</p>
             <label className="mt-2 flex cursor-pointer items-start gap-2 text-[11px] text-[#5f5a54]">
               <input
                 type="checkbox"

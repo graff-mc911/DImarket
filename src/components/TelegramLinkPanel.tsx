@@ -55,14 +55,14 @@ export function TelegramLinkPanel({
     <div className="mt-6 rounded-none border border-[rgba(99,102,241,0.2)] bg-[rgba(99,102,241,0.05)] p-4">
       <div className="flex items-center gap-2">
         <MessageCircle className="h-5 w-5 text-[#4338ca]" />
-        <span className="font-semibold text-[#2f2a24]">{t('settings.telegramTitle')}</span>
+        <span className="font-semibold text-[color:var(--ink-900)]">{t('settings.telegramTitle')}</span>
       </div>
-      <p className="mt-2 text-sm text-[#6f665d]">{t('settings.telegramText')}</p>
+      <p className="mt-2 text-sm text-[color:var(--label-ink)]">{t('settings.telegramText')}</p>
 
       {telegramChatId ? (
         <p className="mt-3 text-sm font-semibold text-emerald-700">{t('settings.telegramLinked')}</p>
       ) : loading ? (
-        <p className="mt-3 text-sm text-[#6f665d]">{t('common.loading')}</p>
+        <p className="mt-3 text-sm text-[color:var(--label-ink)]">{t('common.loading')}</p>
       ) : (
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <code className="rounded-none bg-white/80 px-3 py-1.5 text-sm font-mono text-[#4338ca]">
@@ -89,8 +89,8 @@ export function TelegramLinkPanel({
 
       <div className="mt-4 flex items-center justify-between gap-4 border-t border-[rgba(99,102,241,0.15)] pt-4">
         <div>
-          <p className="text-sm font-semibold text-[#2f2a24]">{t('settings.digestTitle')}</p>
-          <p className="text-xs text-[#6f665d]">{t('settings.digestText')}</p>
+          <p className="text-sm font-semibold text-[color:var(--ink-900)]">{t('settings.digestTitle')}</p>
+          <p className="text-xs text-[color:var(--label-ink)]">{t('settings.digestText')}</p>
         </div>
         <label className="relative inline-flex cursor-pointer items-center">
           <input

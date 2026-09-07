@@ -104,7 +104,7 @@ export function AuthCallback() {
   return (
     <div className="layout-page-content flex flex-col items-center justify-center gap-4 py-24">
       <Loader className="h-8 w-8 animate-spin text-[var(--accent-700)]" />
-      <p className="text-sm text-[#6f665d]">{t('auth.oauthLoading')}</p>
+      <p className="text-sm text-[color:var(--label-ink)]">{t('auth.oauthLoading')}</p>
     </div>
   )
 }

@@ -95,7 +95,7 @@ export function ReviewCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="truncate text-[14px] font-semibold text-[#2f2a24]">
+            <p className="truncate text-[14px] font-semibold text-[color:var(--ink-900)]">
               {review.reviewer_name}
             </p>
             {review.is_verified_customer ? (
@@ -105,7 +105,7 @@ export function ReviewCard({
               </span>
             ) : null}
           </div>
-          <p className="mt-0.5 text-[12px] text-[#8a8178]">
+          <p className="mt-0.5 text-[12px] text-[color:var(--label-ink)]">
             {new Date(review.created_at).toLocaleDateString(undefined, {
               year: 'numeric',
               month: 'short',
@@ -137,7 +137,7 @@ export function ReviewCard({
                 <video src={m.url} className="h-full w-full object-cover" muted preload="metadata" />
                 <span className="absolute inset-0 flex items-center justify-center">
                   <span className="rounded-full bg-white/90 p-1.5">
-                    <Play className="h-3.5 w-3.5 text-[#2f2a24]" />
+                    <Play className="h-3.5 w-3.5 text-[color:var(--ink-900)]" />
                   </span>
                 </span>
               </button>
@@ -163,7 +163,7 @@ export function ReviewCard({
           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition ${
             review.liked_by_me
               ? 'bg-[#fff1f0] text-[#c41e3a]'
-              : 'bg-[#f3f0ea] text-[#6f665d] hover:bg-[rgba(148,163,184,0.22)]'
+              : 'bg-[#f3f0ea] text-[color:var(--label-ink)] hover:bg-[rgba(148,163,184,0.22)]'
           }`}
         >
           <Heart className={`h-3.5 w-3.5 ${review.liked_by_me ? 'fill-current' : ''}`} />
@@ -172,7 +172,7 @@ export function ReviewCard({
         <button
           type="button"
           onClick={() => setReplyOpen((v) => !v)}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[#f3f0ea] px-3 py-1.5 text-[12px] font-semibold text-[#6f665d] hover:bg-[rgba(148,163,184,0.22)]"
+          className="inline-flex items-center gap-1.5 rounded-full bg-[#f3f0ea] px-3 py-1.5 text-[12px] font-semibold text-[color:var(--label-ink)] hover:bg-[rgba(148,163,184,0.22)]"
         >
           <MessageCircle className="h-3.5 w-3.5" />
           Reply
@@ -185,13 +185,13 @@ export function ReviewCard({
           {review.replies.map((r) => (
             <div key={r.id} className="rounded-none bg-[#fafafa] px-3 py-2">
               <div className="flex items-center gap-2">
-                <p className="text-[12px] font-semibold text-[#2f2a24]">{r.author_name}</p>
+                <p className="text-[12px] font-semibold text-[color:var(--ink-900)]">{r.author_name}</p>
                 {isOwnerReply(r.author_id) ? (
                   <span className="rounded-full bg-[#2f2a24] px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
                     Pro
                   </span>
                 ) : null}
-                <span className="text-[11px] text-[#8a8178]">
+                <span className="text-[11px] text-[color:var(--label-ink)]">
                   {new Date(r.created_at).toLocaleDateString()}
                 </span>
               </div>

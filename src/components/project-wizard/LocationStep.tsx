@@ -25,7 +25,7 @@ type LocationStepProps = {
 }
 
 const fieldClass = (hasError?: string) =>
-  'w-full rounded-none border bg-[#fafafa] px-4 py-3 text-[15px] text-[#2f2a24] outline-none transition focus:bg-white ' +
+  'w-full rounded-none border bg-[#fafafa] px-4 py-3 text-[15px] text-[color:var(--ink-900)] outline-none transition focus:bg-white ' +
   (hasError
     ? 'border-[#c41e3a]'
     : 'border-[rgba(148,163,184,0.22)] focus:border-[#2f2a24] focus:shadow-[0_0_0_4px_rgba(0,0,0,0.06)]')
@@ -61,7 +61,7 @@ export function LocationStep({
   return (
     <div className="space-y-4">
       <div className="relative">
-        <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+        <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
           {labels.search}
         </label>
         <input
@@ -75,7 +75,7 @@ export function LocationStep({
           autoComplete="off"
         />
         {loading && (
-          <p className="mt-1 text-[12px] text-[#8a8178]">Searching…</p>
+          <p className="mt-1 text-[12px] text-[color:var(--label-ink)]">Searching…</p>
         )}
         {suggestions.length > 0 && (
           <ul className="absolute z-20 mt-1 max-h-52 w-full overflow-auto rounded-none border border-[rgba(148,163,184,0.22)] bg-white py-1 shadow-xl">
@@ -83,7 +83,7 @@ export function LocationStep({
               <li key={s.placeId || s.displayName}>
                 <button
                   type="button"
-                  className="w-full px-4 py-3 text-left text-[14px] text-[#2f2a24] hover:bg-[#f3f0ea]"
+                  className="w-full px-4 py-3 text-left text-[14px] text-[color:var(--ink-900)] hover:bg-[#f3f0ea]"
                   onClick={() => {
                     void resolveLocationDetails(s).then((detail) => {
                       setQuery(detail.displayName)
@@ -109,7 +109,7 @@ export function LocationStep({
 
       <div className="grid gap-3 sm:grid-cols-3">
         <div>
-          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
             {labels.country}
           </label>
           <input
@@ -120,7 +120,7 @@ export function LocationStep({
           {errors.country ? <p className="mt-1 text-[12px] text-[#c41e3a]">{errors.country}</p> : null}
         </div>
         <div>
-          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
             {labels.city}
           </label>
           <input
@@ -131,7 +131,7 @@ export function LocationStep({
           {errors.city ? <p className="mt-1 text-[12px] text-[#c41e3a]">{errors.city}</p> : null}
         </div>
         <div>
-          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[#8a8178]">
+          <label className="mb-1.5 block text-[12px] font-semibold uppercase tracking-[0.06em] text-[color:var(--label-ink)]">
             {labels.postal}
           </label>
           <input
