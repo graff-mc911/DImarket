@@ -164,10 +164,9 @@ test.describe('Categories is a page with site chrome', () => {
     await expect(page).toHaveURL(/\/categories$/)
     await expectAppShell(page)
     await expect(page.getByRole('heading', { level: 1, name: /Categories|Категорії/i })).toBeVisible()
-    // Categories page paints the full static catalog grid (not an overlay sheet).
+    // Categories page paints the full static catalog as cabinet cards.
     await expect(page.locator('.dimarket-categories')).toBeVisible()
-    await expect(page.locator('.dimarket-cat-grid')).toBeVisible()
-    await expect(page.locator('.dimarket-cat-item').first()).toBeVisible()
+    await expect(page.locator('.dimarket-category-card').first()).toBeVisible()
     await expect(page.getByRole('dialog')).toHaveCount(0)
     await expect(page.locator('.mega-menu--page')).toHaveCount(0)
   })
@@ -181,8 +180,7 @@ test.describe('Categories is a page with site chrome', () => {
     await expectAppShell(page)
     await expect(page.getByRole('heading', { level: 1, name: /Categories|Категорії/i })).toBeVisible()
     await expect(page.locator('.dimarket-categories')).toBeVisible()
-    await expect(page.locator('.dimarket-cat-grid')).toBeVisible()
-    await expect(page.locator('.dimarket-cat-item').first()).toBeVisible()
+    await expect(page.locator('.dimarket-category-card').first()).toBeVisible()
     await expect(page.getByRole('dialog')).toHaveCount(0)
     await expect(page.locator('.mega-menu--page')).toHaveCount(0)
   })
