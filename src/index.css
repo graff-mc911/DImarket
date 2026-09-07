@@ -3838,6 +3838,19 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.75rem;
 }
 
+.dimarket-categories__head-row--start {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+}
+
+.dimarket-categories__head-row--start .dimarket-categories__eyebrow,
+.dimarket-categories__head-row--start .dimarket-categories__title {
+  text-align: left;
+}
+
 .dimarket-categories__title,
 .dimarket-categories__head h1,
 .dimarket-categories__head h2 {
