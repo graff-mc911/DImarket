@@ -164,14 +164,11 @@ test.describe('Categories is a page with site chrome', () => {
     await expect(page).toHaveURL(/\/categories$/)
     await expectAppShell(page)
     await expect(page.getByRole('heading', { level: 1, name: /Categories|Категорії/i })).toBeVisible()
-    // Categories is a full page with the mega-menu page layout (not an overlay sheet).
-    await expect(page.locator('.mega-menu--page')).toBeVisible()
-    await expect(page.locator('.mega-menu__body')).toBeVisible()
-    await expect(page.locator('.mega-menu__close')).toHaveCount(0)
-    await expect(page.locator('.mega-menu__backdrop')).toHaveCount(0)
+    // Categories is a full page with cabinet category cards (not an overlay sheet).
+    await expect(page.locator('.dimarket-categories')).toBeVisible()
+    await expect(page.locator('.dimarket-category-card').first()).toBeVisible()
     await expect(page.getByRole('dialog')).toHaveCount(0)
-    await expect(page.locator('.mega-menu__chips')).toHaveCount(0)
-    await expect(page.locator('.mega-menu__chip')).toHaveCount(0)
+    await expect(page.locator('.mega-menu--page')).toHaveCount(0)
   })
 
   test('mobile Categories tab opens /categories with header and footer', async ({ page }) => {
@@ -182,11 +179,10 @@ test.describe('Categories is a page with site chrome', () => {
     await expect(page).toHaveURL(/\/categories$/)
     await expectAppShell(page)
     await expect(page.getByRole('heading', { level: 1, name: /Categories|Категорії/i })).toBeVisible()
-    await expect(page.locator('.mega-menu--page')).toBeVisible()
-    await expect(page.locator('.mega-menu__body')).toBeVisible()
-    await expect(page.locator('.mega-menu__close')).toHaveCount(0)
+    await expect(page.locator('.dimarket-categories')).toBeVisible()
+    await expect(page.locator('.dimarket-category-card').first()).toBeVisible()
     await expect(page.getByRole('dialog')).toHaveCount(0)
-    await expect(page.locator('.mega-menu__chips')).toHaveCount(0)
+    await expect(page.locator('.mega-menu--page')).toHaveCount(0)
   })
 
   test('chat FAB sits above the mobile tab bar', async ({ page }) => {

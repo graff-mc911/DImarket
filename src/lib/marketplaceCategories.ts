@@ -7,9 +7,11 @@ import { findServiceBySlug, servicesPath } from './serviceTaxonomy'
 import { matchesWorkPrefix } from './categoryMatching'
 import { filterPublicProfiles } from './publicProfileVisibility'
 import {
+  PLATFORM_CATALOG_EXTRA_SLUGS,
   SITE_CATEGORY_CONFIG,
   SITE_CATEGORY_SLUGS,
   categoryPagePath,
+  type PlatformCatalogExtraSlug,
   type SiteCategorySlug,
 } from './siteCategories'
 
@@ -143,9 +145,9 @@ export function marketplaceCategoryPath(slug: string): string {
   return `/category/${encodeURIComponent(slug)}`
 }
 
-/** Ensure platform categories (handyman, accounting, vacancies, sell-rent, …) always appear. */
-function synthesizeSiteCategory(slug: SiteCategorySlug): MarketplaceCategory {
-  const cfg = SITE_CATEGORY_CONFIG[slug]
+/** Synthesize a platform hub when the DB row is missing. */
+function synthesizeSiteCategory(slug: PlatformCatalogExtraSlug | SiteCategorySlug): MarketplaceCategory {
+  const cfg = SITE_CATEGORY_CONFIG[slug as SiteCategorySlug]
   return {
     id: `site-${slug}`,
     name: slug,
@@ -155,7 +157,7 @@ function synthesizeSiteCategory(slug: SiteCategorySlug): MarketplaceCategory {
     description: null,
     created_at: new Date(0).toISOString(),
     cover_image_url: null,
-    sort_order: SITE_CATEGORY_SLUGS.indexOf(slug),
+    sort_order: 10_000 + PLATFORM_CATALOG_EXTRA_SLUGS.indexOf(slug as PlatformCatalogExtraSlug),
     is_main: true,
     is_service: false,
     icon_key: slug,
@@ -169,25 +171,28 @@ function synthesizeSiteCategory(slug: SiteCategorySlug): MarketplaceCategory {
   }
 }
 
-function mergeSiteCategoriesIntoMains(mains: MarketplaceCategory[]): MarketplaceCategory[] {
+/**
+ * Keep RPC/DB main trade order intact; only append missing platform hubs
+ * (handyman, accountants, vacancies, sell-rent, …) at the end.
+ */
+function appendPlatformExtrasToMains(
+  mains: MarketplaceCategory[],
+  extrasFromDb: MarketplaceCategory[],
+): MarketplaceCategory[] {
+  const seen = new Set(mains.map((row) => row.slug).filter(Boolean))
   const bySlug = new Map<string, MarketplaceCategory>()
-  for (const row of mains) {
+  for (const row of extrasFromDb) {
     if (row.slug) bySlug.set(row.slug, row)
   }
 
-  const siteFirst: MarketplaceCategory[] = SITE_CATEGORY_SLUGS.map((slug) => {
+  const extras: MarketplaceCategory[] = []
+  for (const slug of PLATFORM_CATALOG_EXTRA_SLUGS) {
+    if (seen.has(slug)) continue
     const existing = bySlug.get(slug)
-    if (existing) {
-      bySlug.delete(slug)
-      return { ...existing, is_main: true }
-    }
-    return synthesizeSiteCategory(slug)
-  })
-
-  const rest = [...bySlug.values()].sort(
-    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.name.localeCompare(b.name),
-  )
-  return [...siteFirst, ...rest]
+    extras.push(existing ? { ...existing, is_main: true } : synthesizeSiteCategory(slug))
+    seen.add(slug)
+  }
+  return extras.length ? [...mains, ...extras] : mains
 }
 
 export function marketplaceServiceProsPath(serviceSlug: string, categorySlug?: string): string {
@@ -261,21 +266,13 @@ export async function fetchMainMarketplaceCategories(): Promise<MarketplaceCateg
 
   const mains = await loadMains()
 
-  // Also pull site platform categories even when is_main=false in DB
+  // Platform hubs (handyman, vacancies, …) may exist with is_main=false
   const { data: siteRows } = await supabase
     .from('categories')
     .select(MAIN_SELECT)
-    .in('slug', [...SITE_CATEGORY_SLUGS])
+    .in('slug', [...PLATFORM_CATALOG_EXTRA_SLUGS])
 
-  const combined = [...mains]
-  if (siteRows?.length) {
-    const seen = new Set(mains.map((r) => r.slug))
-    for (const row of siteRows as MarketplaceCategory[]) {
-      if (!seen.has(row.slug)) combined.push(row)
-    }
-  }
-
-  return mergeSiteCategoriesIntoMains(combined)
+  return appendPlatformExtrasToMains(mains, (siteRows as MarketplaceCategory[]) ?? [])
 }
 
 export async function fetchCategoryServices(
