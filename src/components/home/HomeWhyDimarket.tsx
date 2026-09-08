@@ -23,21 +23,23 @@ export function HomeWhyDimarket() {
   ]
 
   return (
-    <section className="home-section home-section--muted" aria-labelledby="home-why-title">
-      <div className="layout-page-gutter">
-        <div className="home-section__head home-section__head--center">
-          <div>
-            <p className="home-section__eyebrow">{t('homePremium.whyEyebrow')}</p>
-            <h2 id="home-why-title" className="home-section__title">
+    <section className="home-section home-section--muted layout-page-gutter" aria-labelledby="home-why-title">
+      <div className="cabinet-sheet">
+        <div className="cabinet-sheet__head">
+          <div className="dimarket-categories__head mb-0" style={{ textAlign: 'center' }}>
+            <p className="dimarket-categories__eyebrow">{t('homePremium.whyEyebrow')}</p>
+            <h2 id="home-why-title" className="dimarket-categories__title">
               {t('homePremium.whyTitle')}
             </h2>
-            <p className="home-section__subtitle">{t('homePremium.whySubtitle')}</p>
+            <p className="home-section__subtitle" style={{ marginTop: '0.35rem' }}>
+              {t('homePremium.whySubtitle')}
+            </p>
           </div>
         </div>
 
-        <div className="home-why-grid">
+        <div className="cabinet-sheet__grid" role="list">
           {cards.map((card) => (
-            <article key={card.title} className="home-why-card">
+            <article key={card.title} className="home-why-card" role="listitem">
               <span className="home-why-card__icon" aria-hidden>
                 <card.icon className="h-6 w-6" strokeWidth={1.75} />
               </span>

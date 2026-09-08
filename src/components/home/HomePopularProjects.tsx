@@ -1,4 +1,4 @@
-import { MapPin } from 'lucide-react'
+import { Briefcase, MapPin } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { formatHomeBudget } from '../../lib/homeMarketplace'
 import { listingCityLabel } from '../../lib/listingLocation'
@@ -21,27 +21,25 @@ export function HomePopularProjects({ projects, loading }: HomePopularProjectsPr
   const { language, t } = useApp()
 
   return (
-    <section className="home-section home-section--muted" aria-labelledby="home-projects-title">
-      <div className="layout-page-gutter">
-        <div className="home-section__head">
-          <div>
-            <p className="home-section__eyebrow">{t('homePremium.projectsEyebrow')}</p>
-            <h2 id="home-projects-title" className="home-section__title">
+    <section className="home-section home-section--muted layout-page-gutter" aria-labelledby="home-projects-title">
+      <div className="cabinet-sheet">
+        <div className="cabinet-sheet__head">
+          <div className="dimarket-categories__head mb-0" style={{ textAlign: 'left' }}>
+            <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
+              {t('homePremium.projectsEyebrow')}
+            </p>
+            <h2 id="home-projects-title" className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+              <Briefcase className="mr-2 inline h-6 w-6 align-text-bottom text-[color:var(--icon-well-ink)]" aria-hidden />
               {t('homePremium.projectsTitle')}
             </h2>
-            <p className="home-section__subtitle">{t('homePremium.projectsSubtitle')}</p>
+            <p className="home-section__subtitle" style={{ marginTop: '0.35rem' }}>
+              {t('homePremium.projectsSubtitle')}
+            </p>
           </div>
-          <button
-            type="button"
-            className="home-section__link"
-            onClick={() => navigateTo('/listings')}
-          >
-            {t('homePremium.seeAllProjects')}
-          </button>
         </div>
 
         {loading ? (
-          <div className="home-rail" aria-busy="true">
+          <div className="cabinet-sheet__grid cabinet-sheet__grid--pros" aria-busy="true">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="home-project-card home-project-card--skeleton" />
             ))}
@@ -49,8 +47,8 @@ export function HomePopularProjects({ projects, loading }: HomePopularProjectsPr
         ) : projects.length === 0 ? (
           <p className="home-section__empty">{t('homePremium.noProjects')}</p>
         ) : (
-          <div className="home-rail" role="list">
-            {projects.map((project) => {
+          <div className="cabinet-sheet__grid cabinet-sheet__grid--pros" role="list">
+            {projects.slice(0, 4).map((project) => {
               const city = listingCityLabel(project.city_name || project.location)
               const budget = formatHomeBudget(
                 project.budget_min,
@@ -89,6 +87,12 @@ export function HomePopularProjects({ projects, loading }: HomePopularProjectsPr
             })}
           </div>
         )}
+
+        <div className="mt-4 text-center">
+          <button type="button" className="home-section__link" onClick={() => navigateTo('/listings')}>
+            {t('homePremium.seeAllProjects')}
+          </button>
+        </div>
       </div>
     </section>
   )

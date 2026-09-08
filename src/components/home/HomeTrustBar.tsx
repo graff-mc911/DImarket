@@ -52,33 +52,35 @@ export function HomeTrustBar({ metrics }: HomeTrustBarProps) {
 
   return (
     <section className="home-trust layout-page-gutter" aria-label={t('homePremium.trustLabel')}>
-      <div className="home-trust__grid">
-        {items.map((item, index) => {
-          const Icon = item.icon
-          return (
-            <article
-              key={item.id}
-              className="home-trust__card"
-              style={{ animationDelay: `${index * 80}ms` }}
-            >
-              <span className="home-trust__icon" aria-hidden>
-                <Icon className="h-5 w-5" strokeWidth={1.75} />
-              </span>
-              <div className="home-trust__body">
-                {'prefix' in item && item.prefix ? (
-                  <p className="home-trust__stars" aria-hidden>
-                    {item.prefix.trim()}
-                  </p>
-                ) : null}
-                <AnimatedStat
-                  value={item.value}
-                  label={item.label}
-                  className="home-trust__stat"
-                />
-              </div>
-            </article>
-          )
-        })}
+      <div className="cabinet-sheet cabinet-sheet--trust">
+        <div className="cabinet-sheet__grid cabinet-sheet__grid--trust">
+          {items.map((item, index) => {
+            const Icon = item.icon
+            return (
+              <article
+                key={item.id}
+                className="home-trust__card"
+                style={{ animationDelay: `${index * 80}ms` }}
+              >
+                <span className="home-trust__icon" aria-hidden>
+                  <Icon className="h-5 w-5" strokeWidth={1.75} />
+                </span>
+                <div className="home-trust__body">
+                  {'prefix' in item && item.prefix ? (
+                    <p className="home-trust__stars" aria-hidden>
+                      {item.prefix.trim()}
+                    </p>
+                  ) : null}
+                  <AnimatedStat
+                    value={item.value}
+                    label={item.label}
+                    className="home-trust__stat"
+                  />
+                </div>
+              </article>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

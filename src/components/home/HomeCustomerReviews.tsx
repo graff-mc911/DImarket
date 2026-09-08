@@ -125,54 +125,60 @@ export function HomeCustomerReviews({ reviews }: HomeCustomerReviewsProps) {
 
   return (
     <section className="home-section home-section--tight layout-page-gutter" aria-labelledby="home-reviews-title">
-      <div className="home-section__head">
-        <div>
-          <p className="home-section__eyebrow">{t('homePremium.reviewsEyebrow')}</p>
-          <h2 id="home-reviews-title" className="home-section__title">
-            {t('homePremium.reviewsTitle')}
-          </h2>
-          <p className="home-section__subtitle">{t('homePremium.reviewsSubtitle')}</p>
-        </div>
-        <div className="home-carousel__controls">
-          <button
-            type="button"
-            className="home-carousel__btn"
-            aria-label={t('homePremium.carouselPrev')}
-            onClick={() => setIndex((i) => (i <= 0 ? maxIndex : i - 1))}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            className="home-carousel__btn"
-            aria-label={t('homePremium.carouselNext')}
-            onClick={() => setIndex((i) => (i >= maxIndex ? 0 : i + 1))}
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
-      </div>
-
-      <div className="home-reviews-carousel" ref={trackRef} tabIndex={0}>
-        {cards.map((review) => (
-          <div key={review.id} className="home-reviews-carousel__slide" data-review-slide>
-            <ReviewCard review={review} locale={language.code} />
+      <div className="cabinet-sheet">
+        <div className="cabinet-sheet__head">
+          <div className="home-section__head" style={{ marginBottom: 0 }}>
+            <div>
+              <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
+                {t('homePremium.reviewsEyebrow')}
+              </p>
+              <h2 id="home-reviews-title" className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+                {t('homePremium.reviewsTitle')}
+              </h2>
+              <p className="home-section__subtitle">{t('homePremium.reviewsSubtitle')}</p>
+            </div>
+            <div className="home-carousel__controls">
+              <button
+                type="button"
+                className="home-carousel__btn"
+                aria-label={t('homePremium.carouselPrev')}
+                onClick={() => setIndex((i) => (i <= 0 ? maxIndex : i - 1))}
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                className="home-carousel__btn"
+                aria-label={t('homePremium.carouselNext')}
+                onClick={() => setIndex((i) => (i >= maxIndex ? 0 : i + 1))}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="home-carousel__dots" role="tablist" aria-label={t('homePremium.reviewsTitle')}>
-        {cards.map((review, i) => (
-          <button
-            key={review.id}
-            type="button"
-            role="tab"
-            aria-selected={i === index}
-            className={`home-carousel__dot ${i === index ? 'is-active' : ''}`}
-            onClick={() => setIndex(i)}
-            aria-label={`${i + 1}`}
-          />
-        ))}
+        <div className="home-reviews-carousel" ref={trackRef} tabIndex={0}>
+          {cards.map((review) => (
+            <div key={review.id} className="home-reviews-carousel__slide" data-review-slide>
+              <ReviewCard review={review} locale={language.code} />
+            </div>
+          ))}
+        </div>
+
+        <div className="home-carousel__dots" role="tablist" aria-label={t('homePremium.reviewsTitle')}>
+          {cards.map((review, i) => (
+            <button
+              key={review.id}
+              type="button"
+              role="tab"
+              aria-selected={i === index}
+              className={`home-carousel__dot ${i === index ? 'is-active' : ''}`}
+              onClick={() => setIndex(i)}
+              aria-label={`${i + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   )

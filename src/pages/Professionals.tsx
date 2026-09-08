@@ -284,64 +284,68 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
   if (!isCompanyCatalog) {
     return (
       <div className="directory-page layout-page-gutter pb-24 lg:pb-8">
-        <header className="mb-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">
-            {t('professionals.eyebrow')}
-          </p>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-3xl">
-            {t('professionals.simpleTitle')}
-          </h1>
-          <p className="mt-2 text-sm text-[var(--ink-600)]">
-            {locationLabel}
-            {loading ? null : ` · ${filteredProfessionals.length}`}
-          </p>
-        </header>
-
         <PageContentAds page={adPage} outerClassName="mb-4" />
 
-        {loading ? (
-          <div className="space-y-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="h-44 animate-pulse rounded-none bg-[#f3f4f4]" />
-            ))}
+        <div className="cabinet-sheet">
+          <div className="cabinet-sheet__head">
+            <header>
+              <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
+                {t('professionals.eyebrow')}
+              </p>
+              <h1 className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+                {t('professionals.simpleTitle')}
+              </h1>
+              <p className="mt-2 text-sm text-[var(--ink-600)]">
+                {locationLabel}
+                {loading ? null : ` · ${filteredProfessionals.length}`}
+              </p>
+            </header>
           </div>
-        ) : filteredProfessionals.length > 0 ? (
-          <div className="directory-expert-list flex flex-col gap-4">
-            {filteredProfessionals.map((professional, index) => (
-              <div key={professional.id}>
-                <DirectoryExpertCard
-                  professional={professional}
-                  distanceKm={
-                    'distanceKm' in professional
-                      ? (professional as { distanceKm?: number | null }).distanceKm
-                      : null
-                  }
-                />
-                {(index + 1) % 8 === 0 && index < filteredProfessionals.length - 1 && (
-                  <MobileAdBanner
-                    variant="inline"
-                    page={adPage}
-                    inlineIndex={2}
-                    outerClassName="mt-4"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="amazon-section-card p-10 text-center">
-            <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('professionals.emptyTitle')}</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--ink-600)]">{t('professionals.emptyText')}</p>
-            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <button onClick={resetFilters} type="button" className="btn-secondary text-sm">
-                {t('professionals.clearFiltersSimple')}
-              </button>
-              <button onClick={() => navigateTo('/register')} type="button" className="btn-primary text-sm">
-                {t('professionals.registerAsProfessional')}
-              </button>
+
+          {loading ? (
+            <div className="cabinet-sheet__stack" aria-busy="true">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="h-44 animate-pulse border border-[color:var(--glass-border)] bg-[#f8fafc]" />
+              ))}
             </div>
-          </div>
-        )}
+          ) : filteredProfessionals.length > 0 ? (
+            <div className="directory-expert-list cabinet-sheet__stack">
+              {filteredProfessionals.map((professional, index) => (
+                <div key={professional.id}>
+                  <DirectoryExpertCard
+                    professional={professional}
+                    distanceKm={
+                      'distanceKm' in professional
+                        ? (professional as { distanceKm?: number | null }).distanceKm
+                        : null
+                    }
+                  />
+                  {(index + 1) % 8 === 0 && index < filteredProfessionals.length - 1 && (
+                    <MobileAdBanner
+                      variant="inline"
+                      page={adPage}
+                      inlineIndex={2}
+                      outerClassName="mt-3"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="border border-[color:var(--glass-border)] bg-white p-10 text-center">
+              <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('professionals.emptyTitle')}</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--ink-600)]">{t('professionals.emptyText')}</p>
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <button onClick={resetFilters} type="button" className="btn-secondary text-sm">
+                  {t('professionals.clearFiltersSimple')}
+                </button>
+                <button onClick={() => navigateTo('/register')} type="button" className="btn-primary text-sm">
+                  {t('professionals.registerAsProfessional')}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     )
   }
@@ -361,24 +365,26 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
           }}
         />
       ) : (
-        <section className="directory-hero mb-6 overflow-hidden border border-[rgba(148,163,184,0.22)] bg-white">
-          <div className="flex flex-col gap-5 p-5 md:flex-row md:items-end md:justify-between md:p-8">
-            <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-500)]">
-                {t('header.findCompanies')}
-              </p>
-              <h1 className="mt-2 text-2xl font-bold tracking-tight text-[var(--ink-900)] md:text-3xl">
-                {t('companies.simpleTitle')}
-              </h1>
-              <p className="mt-2 text-sm text-[var(--ink-600)] md:text-base">
-                {t('companies.catalogHint')}
-              </p>
+        <div className="layout-page-gutter mb-6">
+          <div className="cabinet-sheet">
+            <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-2xl">
+                <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
+                  {t('header.findCompanies')}
+                </p>
+                <h1 className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+                  {t('companies.simpleTitle')}
+                </h1>
+                <p className="mt-2 text-sm text-[var(--ink-600)] md:text-base">
+                  {t('companies.catalogHint')}
+                </p>
+              </div>
+              <button onClick={() => navigateTo('/create-ad')} type="button" className="btn-primary shrink-0 px-5 py-2.5 text-sm">
+                {t('directory.requestQuote')}
+              </button>
             </div>
-            <button onClick={() => navigateTo('/create-ad')} type="button" className="btn-primary shrink-0 px-5 py-2.5 text-sm">
-              {t('directory.requestQuote')}
-            </button>
           </div>
-        </section>
+        </div>
       )}
 
       {!isCompanyCatalog && (selectedCategory || selectedWork) ? (
@@ -497,49 +503,51 @@ export function Professionals({ catalog = 'masters' }: ProfessionalsProps) {
         <main className="min-w-0 flex-1">
           <PageContentAds page={adPage} outerClassName="mb-4" />
 
-          {loading ? (
-            <div className="space-y-4">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="h-44 animate-pulse rounded-none bg-[#f3f4f4]" />
-              ))}
-            </div>
-          ) : filteredProfessionals.length > 0 ? (
-            <div className="directory-expert-list flex flex-col gap-4">
-              {filteredProfessionals.map((professional, index) => (
-                <div key={professional.id}>
-                  <DirectoryExpertCard
-                    professional={professional}
-                    distanceKm={
-                      'distanceKm' in professional
-                        ? (professional as { distanceKm?: number | null }).distanceKm
-                        : null
-                    }
-                  />
-                  {(index + 1) % 8 === 0 && index < filteredProfessionals.length - 1 && (
-                    <MobileAdBanner
-                      variant="inline"
-                      page={adPage}
-                      inlineIndex={2}
-                      outerClassName="mt-4"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="amazon-section-card p-10 text-center">
-              <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('professionals.emptyTitle')}</h2>
-              <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--ink-600)]">{t('professionals.emptyText')}</p>
-              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <button onClick={resetFilters} type="button" className="btn-secondary text-sm">
-                  {t('professionals.clearFiltersSimple')}
-                </button>
-                <button onClick={() => navigateTo('/register')} type="button" className="btn-primary text-sm">
-                  {t('professionals.registerAsProfessional')}
-                </button>
+          <div className="cabinet-sheet">
+            {loading ? (
+              <div className="cabinet-sheet__stack" aria-busy="true">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} className="h-44 animate-pulse border border-[color:var(--glass-border)] bg-[#f8fafc]" />
+                ))}
               </div>
-            </div>
-          )}
+            ) : filteredProfessionals.length > 0 ? (
+              <div className="directory-expert-list cabinet-sheet__stack">
+                {filteredProfessionals.map((professional, index) => (
+                  <div key={professional.id}>
+                    <DirectoryExpertCard
+                      professional={professional}
+                      distanceKm={
+                        'distanceKm' in professional
+                          ? (professional as { distanceKm?: number | null }).distanceKm
+                          : null
+                      }
+                    />
+                    {(index + 1) % 8 === 0 && index < filteredProfessionals.length - 1 && (
+                      <MobileAdBanner
+                        variant="inline"
+                        page={adPage}
+                        inlineIndex={2}
+                        outerClassName="mt-3"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="border border-[color:var(--glass-border)] bg-white p-10 text-center">
+                <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('professionals.emptyTitle')}</h2>
+                <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--ink-600)]">{t('professionals.emptyText')}</p>
+                <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <button onClick={resetFilters} type="button" className="btn-secondary text-sm">
+                    {t('professionals.clearFiltersSimple')}
+                  </button>
+                  <button onClick={() => navigateTo('/register')} type="button" className="btn-primary text-sm">
+                    {t('professionals.registerAsProfessional')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </main>
 
         <aside className="directory-services-sidebar hidden w-full shrink-0 xl:block xl:w-[240px]">

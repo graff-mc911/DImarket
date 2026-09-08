@@ -48,45 +48,53 @@ export function HomeInteractiveMap({ loading: parentLoading }: HomeInteractiveMa
       className="home-section home-section--muted home-section--tight layout-page-gutter"
       aria-labelledby="home-map-title"
     >
-      <div className="home-section__head">
-        <div>
-          <p className="home-section__eyebrow">{t('homePremium.mapEyebrow')}</p>
-          <h2 id="home-map-title" className="home-section__title">
-            {t('homePremium.mapTitle')}
-          </h2>
-          <p className="home-section__subtitle">{t('homePremium.mapSubtitle')}</p>
+      <div className="cabinet-sheet">
+        <div className="cabinet-sheet__head">
+          <div className="home-section__head" style={{ marginBottom: 0 }}>
+            <div>
+              <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
+                {t('homePremium.mapEyebrow')}
+              </p>
+              <h2 id="home-map-title" className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+                {t('homePremium.mapTitle')}
+              </h2>
+              <p className="home-section__subtitle">{t('homePremium.mapSubtitle')}</p>
+            </div>
+            <div className="flex flex-col items-stretch gap-2 sm:items-end">
+              <MapKindFilters
+                value={filter}
+                onChange={setFilter}
+                counts={counts}
+                labels={{
+                  all: t('homePremium.mapAll'),
+                  professional: t('homePremium.mapPros'),
+                  company: t('homePremium.mapCompanies'),
+                  manufacturer: t('mapExplore.kindManufacturers'),
+                  agent: t('mapExplore.kindAgents'),
+                  project: t('homePremium.mapProjects'),
+                  marketplace: t('mapExplore.kindMarketplace'),
+                  job: t('mapExplore.kindJobs'),
+                  filtersAria: t('homePremium.mapFilters'),
+                }}
+              />
+              <button type="button" className="btn-secondary text-sm" onClick={() => navigateTo('/map')}>
+                {t('homePremium.mapOpenFull')}
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col items-stretch gap-2 sm:items-end">
-          <MapKindFilters
-            value={filter}
-            onChange={setFilter}
-            counts={counts}
-            labels={{
-              all: t('homePremium.mapAll'),
-              professional: t('homePremium.mapPros'),
-              company: t('homePremium.mapCompanies'),
-              manufacturer: t('mapExplore.kindManufacturers'),
-              agent: t('mapExplore.kindAgents'),
-              project: t('homePremium.mapProjects'),
-              marketplace: t('mapExplore.kindMarketplace'),
-              job: t('mapExplore.kindJobs'),
-              filtersAria: t('homePremium.mapFilters'),
-            }}
+
+        <div className="cabinet-sheet__map">
+          <EuropeMarketplaceMap
+            markers={visible}
+            geo={location}
+            loading={busy}
+            followLocation
+            scrollWheelZoom={false}
+            className="home-map--embedded"
           />
-          <button type="button" className="btn-secondary text-sm" onClick={() => navigateTo('/map')}>
-            {t('homePremium.mapOpenFull')}
-          </button>
         </div>
       </div>
-
-      <EuropeMarketplaceMap
-        markers={visible}
-        geo={location}
-        loading={busy}
-        followLocation
-        scrollWheelZoom={false}
-        className="home-map--embedded"
-      />
     </section>
   )
 }

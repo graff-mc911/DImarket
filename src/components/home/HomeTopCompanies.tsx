@@ -1,113 +1,172 @@
-import { Languages, MapPin, ShieldCheck, Star } from 'lucide-react'
+import { Building2, ChevronRight, Languages, MapPin, ShieldCheck, Star } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
-import type { HomeProfessional } from '../../lib/homeMarketplace'
+import type { HomeMetrics, HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
 import { resolveProfileAvatarUrl } from '../../lib/directoryAvatars'
 import { navigateTo } from '../../lib/navigation'
+import { appendLocationToPath } from '../../lib/globalLocation'
+import type { GeoSearchState } from '../../lib/geoSearch'
 import { ProfileAvatar } from './HomeRailAvatar'
+import { popularCategorySearches } from '../../config/categories'
+import { findServiceBySlug, servicesPath } from '../../lib/serviceTaxonomy'
+import { homeCategoryPath } from '../../lib/homeCategoryAdapter'
+import type { TranslationKey } from '../../lib/i18n'
 
 interface HomeTopCompaniesProps {
   companies: HomeProfessional[]
   loading?: boolean
+  metrics?: Pick<HomeMetrics, 'countries'>
 }
 
-export function HomeTopCompanies({ companies, loading }: HomeTopCompaniesProps) {
-  const { t } = useApp()
+/** Owner-cabinet style: outer sheet + inner framed feature + popular category chips. */
+export function HomeTopCompanies({ companies, loading, metrics }: HomeTopCompaniesProps) {
+  const { t, location, setLocation } = useApp()
+
+  const openCompaniesCatalog = () => {
+    let geo: GeoSearchState = location
+    if (location.country && !location.city && !location.region && !location.province) {
+      geo = { ...location, radius: 'country' }
+      setLocation(geo)
+    }
+    navigateTo(appendLocationToPath('/companies', geo))
+  }
+
+  const openPopular = (itemId: string) => {
+    if (itemId === 'buy-sell' || itemId === 'sellRent' || itemId === 'buySell') {
+      navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'buy-sell', href: '/sell-rent' }), location))
+      return
+    }
+    if (itemId === 'jobs') {
+      navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'jobs', href: '/vacancies' }), location))
+      return
+    }
+    const resolved = findServiceBySlug(itemId)
+    if (resolved) {
+      navigateTo(appendLocationToPath(servicesPath(resolved.subcategory.slug), location))
+      return
+    }
+    navigateTo(appendLocationToPath(`/companies?q=${encodeURIComponent(itemId)}`, location))
+  }
+
+  const companiesCount = companies.length
+  const countriesCount = metrics?.countries ?? 0
+  const metaLine = [
+    companiesCount > 0 ? `${companiesCount} комп.` : null,
+    countriesCount > 0 ? `${countriesCount} країн` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ')
 
   return (
-    <section className="home-section layout-page-gutter" aria-labelledby="home-companies-rail-title">
-      <div className="home-section__head home-section__head--center">
-        <div>
-          <p className="home-section__eyebrow">{t('homePremium.topCompaniesEyebrow')}</p>
-          <h2 id="home-companies-rail-title" className="home-section__title home-section__title--sm">
-            <button
-              type="button"
-              className="home-section__title-btn"
-              onClick={() => navigateTo('/companies')}
-            >
-              {t('homePremium.topCompaniesTitle')}
-            </button>
-          </h2>
-          <p className="home-section__subtitle">{t('homePremium.topCompaniesSubtitle')}</p>
+    <section className="home-section layout-page-gutter" aria-labelledby="home-companies-title">
+      <div className="cabinet-sheet">
+        <article className="cabinet-sheet__feature">
           <button
             type="button"
-            className="home-section__link"
-            onClick={() => navigateTo('/companies')}
+            className="cabinet-sheet__feature-head"
+            onClick={openCompaniesCatalog}
+            aria-label={t('homePremium.topCompaniesTitle')}
           >
+            <span className="dimarket-category-card__icon" aria-hidden>
+              <Building2 className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
+            </span>
+            <span className="dimarket-category-card__body">
+              <strong id="home-companies-title">{t('homePremium.topCompaniesTitle')}</strong>
+              <span>{metaLine || t('homePremium.topCompaniesSubtitle')}</span>
+            </span>
+            <ChevronRight className="dimarket-category-card__chevron h-5 w-5" aria-hidden />
+          </button>
+
+          <div className="cabinet-sheet__feature-chips" aria-label={t('dimarket.popularSearchesLabel')}>
+            {popularCategorySearches.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="cabinet-sheet__chip"
+                onClick={() => openPopular(item.id)}
+              >
+                {t(`dimarket.popular.${item.id}` as TranslationKey)}
+              </button>
+            ))}
+          </div>
+        </article>
+
+        {loading ? (
+          <div className="cabinet-sheet__grid cabinet-sheet__grid--pros" aria-busy="true">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="home-pro-card home-pro-card--skeleton" />
+            ))}
+          </div>
+        ) : companies.length === 0 ? (
+          <p className="home-section__empty">{t('home.noCompanies')}</p>
+        ) : (
+          <div className="cabinet-sheet__grid cabinet-sheet__grid--pros" role="list">
+            {companies.map((company) => {
+              const name = formatProfessionalCardTitle(company, t('professional.defaultName'))
+              const avatar = resolveProfileAvatarUrl(company)
+              const langs = (company.languages ?? []).slice(0, 3)
+              const place = (company.location || '').trim()
+
+              return (
+                <article key={company.id} className="home-pro-card" role="listitem">
+                  <button
+                    type="button"
+                    className="home-pro-card__hit"
+                    onClick={openCompaniesCatalog}
+                  >
+                    <div className="home-pro-card__avatar">
+                      <ProfileAvatar
+                        name={name}
+                        profileId={company.id}
+                        src={avatar}
+                        userRole={company.user_role || 'company'}
+                      />
+                    </div>
+                    <div className="home-pro-card__info">
+                      <div className="home-pro-card__name-row">
+                        <h3>{name}</h3>
+                        {company.is_verified ? (
+                          <span className="home-pro-card__verified">
+                            <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
+                            {t('homePremium.verified')}
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="home-pro-card__rating">
+                        <Star className="h-4 w-4 fill-[#ff9900] text-[#ff9900]" aria-hidden />
+                        {(company.rating ?? 0) > 0
+                          ? Number(company.rating).toFixed(1)
+                          : t('professional.new')}
+                        <span>
+                          · {company.completed_jobs ?? 0} {t('homePremium.completedProjects')}
+                        </span>
+                      </p>
+                      {place ? (
+                        <p className="home-pro-card__langs">
+                          <MapPin className="h-3.5 w-3.5" aria-hidden />
+                          {place}
+                        </p>
+                      ) : null}
+                      {langs.length > 0 ? (
+                        <p className="home-pro-card__langs">
+                          <Languages className="h-3.5 w-3.5" aria-hidden />
+                          {langs.join(', ')}
+                        </p>
+                      ) : null}
+                    </div>
+                  </button>
+                </article>
+              )
+            })}
+          </div>
+        )}
+
+        <div className="mt-4 text-center">
+          <button type="button" className="home-section__link" onClick={openCompaniesCatalog}>
             {t('homePremium.seeAllCompanies')}
           </button>
         </div>
       </div>
-
-      {loading ? (
-        <div className="home-rail home-rail--pros home-rail--grid4" aria-busy="true">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="home-pro-card home-pro-card--skeleton" />
-          ))}
-        </div>
-      ) : companies.length === 0 ? (
-        <p className="home-section__empty">{t('home.noCompanies')}</p>
-      ) : (
-        <div className="home-rail home-rail--pros home-rail--grid4" role="list">
-          {companies.map((company) => {
-            const name = formatProfessionalCardTitle(company, t('professional.defaultName'))
-            const avatar = resolveProfileAvatarUrl(company)
-            const langs = (company.languages ?? []).slice(0, 3)
-            const location = (company.location || '').trim()
-
-            return (
-              <article key={company.id} className="home-pro-card" role="listitem">
-                <button
-                  type="button"
-                  className="home-pro-card__hit"
-                  onClick={() => navigateTo('/companies')}
-                >
-                  <div className="home-pro-card__avatar">
-                    <ProfileAvatar
-                      name={name}
-                      profileId={company.id}
-                      src={avatar}
-                      userRole={company.user_role || 'company'}
-                    />
-                  </div>
-                  <div className="home-pro-card__info">
-                    <div className="home-pro-card__name-row">
-                      <h3>{name}</h3>
-                      {company.is_verified ? (
-                        <span className="home-pro-card__verified">
-                          <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-                          {t('homePremium.verified')}
-                        </span>
-                      ) : null}
-                    </div>
-                    <p className="home-pro-card__rating">
-                      <Star className="h-4 w-4 fill-[#ff9900] text-[#ff9900]" aria-hidden />
-                      {(company.rating ?? 0) > 0
-                        ? Number(company.rating).toFixed(1)
-                        : t('professional.new')}
-                      <span>
-                        · {company.completed_jobs ?? 0} {t('homePremium.completedProjects')}
-                      </span>
-                    </p>
-                    {location ? (
-                      <p className="home-pro-card__langs">
-                        <MapPin className="h-3.5 w-3.5" aria-hidden />
-                        {location}
-                      </p>
-                    ) : null}
-                    {langs.length > 0 ? (
-                      <p className="home-pro-card__langs">
-                        <Languages className="h-3.5 w-3.5" aria-hidden />
-                        {langs.join(', ')}
-                      </p>
-                    ) : null}
-                  </div>
-                </button>
-              </article>
-            )
-          })}
-        </div>
-      )}
     </section>
   )
 }

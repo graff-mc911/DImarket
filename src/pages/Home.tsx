@@ -120,7 +120,7 @@ export function Home() {
         loading={loading}
         metrics={metrics}
       />
-      <HomeTopCompanies companies={companies} loading={loading} />
+      <HomeTopCompanies companies={companies} loading={loading} metrics={metrics} />
       <HomeWhyDimarket />
       <HomeCustomerReviews reviews={data?.reviews ?? []} />
       <HomeFeaturedCompanies />

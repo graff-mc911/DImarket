@@ -45,40 +45,44 @@ export function HomeFeaturedCompanies() {
   return (
     <section
       className="home-section home-section--muted home-section--tight layout-page-gutter"
-      aria-labelledby="home-companies-title"
+      aria-labelledby="home-brands-title"
     >
-      <div className="home-section__head home-section__head--center">
-        <div>
-          <p className="home-section__eyebrow">{t('homePremium.companiesEyebrow')}</p>
-          <h2 id="home-companies-title" className="home-section__title">
-            {t('homePremium.companiesTitle')}
-          </h2>
-          <p className="home-section__subtitle">{t('homePremium.companiesSubtitle')}</p>
+      <div className="cabinet-sheet">
+        <div className="cabinet-sheet__head">
+          <div className="dimarket-categories__head mb-0" style={{ textAlign: 'center' }}>
+            <p className="dimarket-categories__eyebrow">{t('homePremium.companiesEyebrow')}</p>
+            <h2 id="home-brands-title" className="dimarket-categories__title">
+              {t('homePremium.companiesTitle')}
+            </h2>
+            <p className="home-section__subtitle" style={{ marginTop: '0.35rem' }}>
+              {t('homePremium.companiesSubtitle')}
+            </p>
+          </div>
         </div>
-      </div>
 
-      <ul className="home-companies-grid">
-        {FEATURED_COMPANIES.map((c) => (
-          <li key={c.id}>
-            <a
-              className="home-company-logo"
-              href={c.website}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                className="home-company-logo__media"
-                src={c.image}
-                alt={c.name}
-                width={1024}
-                height={576}
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-          </li>
-        ))}
-      </ul>
+        <ul className="cabinet-sheet__grid cabinet-sheet__grid--brands">
+          {FEATURED_COMPANIES.map((c) => (
+            <li key={c.id}>
+              <a
+                className="home-company-logo"
+                href={c.website}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  className="home-company-logo__media"
+                  src={c.image}
+                  alt={c.name}
+                  width={1024}
+                  height={576}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   )
 }
