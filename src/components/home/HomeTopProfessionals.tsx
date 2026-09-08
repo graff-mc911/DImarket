@@ -1,19 +1,29 @@
-import { Languages, MapPin, ShieldCheck, Star } from 'lucide-react'
+import { ChevronRight, Languages, MapPin, ShieldCheck, Star, Wrench } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
-import type { HomeProfessional } from '../../lib/homeMarketplace'
+import type { HomeMetrics, HomeProfessional } from '../../lib/homeMarketplace'
 import { formatProfessionalCardTitle } from '../../lib/professionalDisplay'
 import { resolveProfileAvatarUrl } from '../../lib/directoryAvatars'
 import { navigateTo } from '../../lib/navigation'
 import { appendLocationToPath } from '../../lib/globalLocation'
 import type { GeoSearchState } from '../../lib/geoSearch'
 import { ProfileAvatar } from './HomeRailAvatar'
+import { popularCategorySearches } from '../../config/categories'
+import { findServiceBySlug, servicesPath } from '../../lib/serviceTaxonomy'
+import { homeCategoryPath } from '../../lib/homeCategoryAdapter'
+import type { TranslationKey } from '../../lib/i18n'
 
 interface HomeTopProfessionalsProps {
   professionals: HomeProfessional[]
   loading?: boolean
+  metrics?: Pick<HomeMetrics, 'professionals' | 'countries'>
 }
 
-export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessionalsProps) {
+/** Owner-cabinet style: outer sheet + inner framed feature + popular category chips. */
+export function HomeTopProfessionals({
+  professionals,
+  loading,
+  metrics,
+}: HomeTopProfessionalsProps) {
   const { t, location, setLocation } = useApp()
 
   const openMastersCatalog = () => {
@@ -25,97 +35,140 @@ export function HomeTopProfessionals({ professionals, loading }: HomeTopProfessi
     navigateTo(appendLocationToPath('/professionals', geo))
   }
 
+  const openPopular = (itemId: string) => {
+    if (itemId === 'buy-sell' || itemId === 'sellRent' || itemId === 'buySell') {
+      navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'buy-sell', href: '/sell-rent' }), location))
+      return
+    }
+    if (itemId === 'jobs') {
+      navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'jobs', href: '/vacancies' }), location))
+      return
+    }
+    const resolved = findServiceBySlug(itemId)
+    if (resolved) {
+      navigateTo(appendLocationToPath(servicesPath(resolved.subcategory.slug), location))
+      return
+    }
+    navigateTo(appendLocationToPath(`/professionals?q=${encodeURIComponent(itemId)}`, location))
+  }
+
+  const prosCount = metrics?.professionals ?? professionals.length
+  const countriesCount = metrics?.countries ?? 0
+  const metaLine = [
+    prosCount > 0 ? `${prosCount} проф.` : null,
+    countriesCount > 0 ? `${countriesCount} країн` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ')
+
   return (
     <section className="home-section layout-page-gutter" aria-labelledby="home-pros-title">
-      <div className="home-section__head home-section__head--center">
-        <div>
-          <h2 id="home-pros-title" className="home-section__title home-section__title--sm">
-            <button
-              type="button"
-              className="home-section__title-btn"
-              onClick={openMastersCatalog}
-            >
-              {t('homePremium.prosTitle')}
-            </button>
-          </h2>
-          <p className="home-section__subtitle">{t('homePremium.prosSubtitle')}</p>
+      <div className="cabinet-sheet">
+        <article className="cabinet-sheet__feature">
           <button
             type="button"
-            className="home-section__link"
+            className="cabinet-sheet__feature-head"
             onClick={openMastersCatalog}
+            aria-label={t('homePremium.prosTitle')}
           >
+            <span className="dimarket-category-card__icon" aria-hidden>
+              <Wrench className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
+            </span>
+            <span className="dimarket-category-card__body">
+              <strong id="home-pros-title">{t('homePremium.prosTitle')}</strong>
+              <span>{metaLine || t('homePremium.prosSubtitle')}</span>
+            </span>
+            <ChevronRight className="dimarket-category-card__chevron h-5 w-5" aria-hidden />
+          </button>
+
+          <div className="cabinet-sheet__feature-chips" aria-label={t('dimarket.popularSearchesLabel')}>
+            {popularCategorySearches.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="cabinet-sheet__chip"
+                onClick={() => openPopular(item.id)}
+              >
+                {t(`dimarket.popular.${item.id}` as TranslationKey)}
+              </button>
+            ))}
+          </div>
+        </article>
+
+        {loading ? (
+          <div className="cabinet-sheet__grid cabinet-sheet__grid--pros" aria-busy="true">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="home-pro-card home-pro-card--skeleton" />
+            ))}
+          </div>
+        ) : professionals.length === 0 ? (
+          <p className="home-section__empty">{t('home.noProfessionals')}</p>
+        ) : (
+          <div className="cabinet-sheet__grid cabinet-sheet__grid--pros" role="list">
+            {professionals.map((pro) => {
+              const name = formatProfessionalCardTitle(pro, t('professional.defaultName'))
+              const avatar = resolveProfileAvatarUrl(pro)
+              const langs = (pro.languages ?? []).slice(0, 3)
+              const place = (pro.location || '').trim()
+
+              return (
+                <article key={pro.id} className="home-pro-card" role="listitem">
+                  <button
+                    type="button"
+                    className="home-pro-card__hit"
+                    onClick={openMastersCatalog}
+                  >
+                    <div className="home-pro-card__avatar">
+                      <ProfileAvatar
+                        name={name}
+                        profileId={pro.id}
+                        src={avatar}
+                        userRole={pro.user_role}
+                      />
+                    </div>
+                    <div className="home-pro-card__info">
+                      <div className="home-pro-card__name-row">
+                        <h3>{name}</h3>
+                        {pro.is_verified ? (
+                          <span className="home-pro-card__verified">
+                            <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
+                            {t('homePremium.verified')}
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="home-pro-card__rating">
+                        <Star className="h-4 w-4 fill-[#ff9900] text-[#ff9900]" aria-hidden />
+                        {(pro.rating ?? 0) > 0 ? Number(pro.rating).toFixed(1) : t('professional.new')}
+                        <span>
+                          · {pro.completed_jobs ?? 0} {t('homePremium.completedProjects')}
+                        </span>
+                      </p>
+                      {place ? (
+                        <p className="home-pro-card__langs">
+                          <MapPin className="h-3.5 w-3.5" aria-hidden />
+                          {place}
+                        </p>
+                      ) : null}
+                      {langs.length > 0 ? (
+                        <p className="home-pro-card__langs">
+                          <Languages className="h-3.5 w-3.5" aria-hidden />
+                          {langs.join(', ')}
+                        </p>
+                      ) : null}
+                    </div>
+                  </button>
+                </article>
+              )
+            })}
+          </div>
+        )}
+
+        <div className="mt-4 text-center">
+          <button type="button" className="home-section__link" onClick={openMastersCatalog}>
             {t('homePremium.seeAllPros')}
           </button>
         </div>
       </div>
-
-      {loading ? (
-        <div className="home-rail home-rail--pros home-rail--grid4" aria-busy="true">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="home-pro-card home-pro-card--skeleton" />
-          ))}
-        </div>
-      ) : professionals.length === 0 ? (
-        <p className="home-section__empty">{t('home.noProfessionals')}</p>
-      ) : (
-        <div className="home-rail home-rail--pros home-rail--grid4" role="list">
-          {professionals.map((pro) => {
-            const name = formatProfessionalCardTitle(pro, t('professional.defaultName'))
-            const avatar = resolveProfileAvatarUrl(pro)
-            const langs = (pro.languages ?? []).slice(0, 3)
-            const location = (pro.location || '').trim()
-
-            return (
-              <article key={pro.id} className="home-pro-card" role="listitem">
-                <button
-                  type="button"
-                  className="home-pro-card__hit"
-                  onClick={openMastersCatalog}
-                >
-                  <div className="home-pro-card__avatar">
-                    <ProfileAvatar
-                      name={name}
-                      profileId={pro.id}
-                      src={avatar}
-                      userRole={pro.user_role}
-                    />
-                  </div>
-                  <div className="home-pro-card__info">
-                    <div className="home-pro-card__name-row">
-                      <h3>{name}</h3>
-                      {pro.is_verified ? (
-                        <span className="home-pro-card__verified">
-                          <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-                          {t('homePremium.verified')}
-                        </span>
-                      ) : null}
-                    </div>
-                    <p className="home-pro-card__rating">
-                      <Star className="h-4 w-4 fill-[#ff9900] text-[#ff9900]" aria-hidden />
-                      {(pro.rating ?? 0) > 0 ? Number(pro.rating).toFixed(1) : t('professional.new')}
-                      <span>
-                        · {pro.completed_jobs ?? 0} {t('homePremium.completedProjects')}
-                      </span>
-                    </p>
-                    {location ? (
-                      <p className="home-pro-card__langs">
-                        <MapPin className="h-3.5 w-3.5" aria-hidden />
-                        {location}
-                      </p>
-                    ) : null}
-                    {langs.length > 0 ? (
-                      <p className="home-pro-card__langs">
-                        <Languages className="h-3.5 w-3.5" aria-hidden />
-                        {langs.join(', ')}
-                      </p>
-                    ) : null}
-                  </div>
-                </button>
-              </article>
-            )
-          })}
-        </div>
-      )}
     </section>
   )
 }

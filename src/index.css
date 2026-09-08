@@ -4151,9 +4151,10 @@ select.select-glass.geo-filter-select::-ms-expand {
 .cabinet-sheet__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0;
-  border: 1px solid var(--glass-border);
-  background: #ffffff;
+  /* White gutters between fully bordered cells = owner double-frame look */
+  gap: 0.75rem;
+  border: none;
+  background: transparent;
 }
 
 @media (min-width: 640px) {
@@ -4168,13 +4169,27 @@ select.select-glass.geo-filter-select::-ms-expand {
   }
 }
 
+.cabinet-sheet__grid--pros {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .cabinet-sheet__grid--pros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .cabinet-sheet__grid--pros {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 .cabinet-sheet .dimarket-category-card,
 .glass-panel .dimarket-category-card {
   box-shadow: none;
-  border: none;
-  border-right: 1px solid var(--glass-border);
-  border-bottom: 1px solid var(--glass-border);
-  background: transparent;
+  border: 1px solid var(--glass-border);
+  background: #ffffff;
   border-radius: 0;
 }
 
@@ -4184,8 +4199,74 @@ select.select-glass.geo-filter-select::-ms-expand {
 .glass-panel .dimarket-category-card:focus-within {
   transform: none;
   box-shadow: none;
-  background: rgba(248, 250, 252, 0.72);
-  border-color: var(--glass-border);
+  background: rgba(248, 250, 252, 0.85);
+  border-color: var(--glass-border-strong);
+}
+
+/* Featured block inside sheet (Топ майстри) — inner frame + chips */
+.cabinet-sheet__feature {
+  border: 1px solid var(--glass-border);
+  background: #ffffff;
+  margin-bottom: 0.75rem;
+}
+
+.cabinet-sheet__feature-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  align-items: center;
+  width: 100%;
+  padding: 1.15rem;
+  text-align: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.cabinet-sheet__feature-head .dimarket-category-card__body {
+  justify-items: center;
+}
+
+.cabinet-sheet__feature-head .dimarket-category-card__body strong {
+  white-space: normal;
+  text-align: center;
+}
+
+.cabinet-sheet__feature-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  padding: 0 1.15rem 1.15rem;
+  border-top: 1px solid var(--glass-border);
+  background: rgba(248, 250, 252, 0.55);
+  padding-top: 1rem;
+}
+
+.cabinet-sheet__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 0;
+  background: #ffffff;
+  color: var(--ink-900);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0.5rem 0.72rem;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.cabinet-sheet__chip:hover,
+.cabinet-sheet__chip:focus-visible {
+  border-color: var(--glass-border-strong);
+  background: rgba(248, 250, 252, 0.95);
+  color: var(--ink-800);
+}
+
+.cabinet-sheet__chip span {
+  color: var(--label-ink);
+  font-weight: 700;
 }
 
 /* Expanded cell spans full sheet width */
