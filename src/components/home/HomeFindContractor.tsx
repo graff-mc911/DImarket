@@ -32,7 +32,7 @@ const DEFAULT_CITIES = [
   'Bilbao', 'Düsseldorf', 'Kharkiv', 'Łódź',
 ]
 
-/** Homepage "find contractor" city grid — same square cabinet cards as owner UI. */
+/** Homepage "find contractor" city grid — nested in one owner-cabinet sheet. */
 export function HomeFindContractor() {
   const { t, location, setLocation } = useApp()
 
@@ -67,38 +67,46 @@ export function HomeFindContractor() {
       className="dimarket-categories layout-page-gutter py-6"
       aria-labelledby="home-find-contractor-title"
     >
-      <div className="dimarket-categories__head mb-5" style={{ textAlign: 'left' }}>
-        <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
-          {t('header.findProfessionals')}
-        </p>
-        <h2 id="home-find-contractor-title" className="dimarket-categories__title" style={{ textAlign: 'left' }}>
-          {t('homePremium.findContractorPrefix')}{' '}
-          <strong>{t('homePremium.findContractorHighlight')}</strong>
-        </h2>
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {cities.map((city) => (
-          <article key={city} className="dimarket-category-card">
-            <button
-              type="button"
-              className="dimarket-category-card__button"
-              onClick={() => openCityMasters(city)}
-              aria-label={`${t('header.findProfessionals')}: ${city}`}
+      <div className="cabinet-sheet">
+        <div className="cabinet-sheet__head">
+          <div className="dimarket-categories__head mb-0" style={{ textAlign: 'left' }}>
+            <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
+              {t('header.findProfessionals')}
+            </p>
+            <h2
+              id="home-find-contractor-title"
+              className="dimarket-categories__title"
+              style={{ textAlign: 'left' }}
             >
-              <span className="dimarket-category-card__icon" aria-hidden>
-                <MapPin className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
-              </span>
-              <span className="dimarket-category-card__body">
-                <strong>{city}</strong>
-                <span>{t('header.findProfessionals')}</span>
-              </span>
-              <span className="dimarket-category-card__chevron" aria-hidden>
-                ›
-              </span>
-            </button>
-          </article>
-        ))}
+              {t('homePremium.findContractorPrefix')}{' '}
+              <strong>{t('homePremium.findContractorHighlight')}</strong>
+            </h2>
+          </div>
+        </div>
+
+        <div className="cabinet-sheet__grid">
+          {cities.map((city) => (
+            <article key={city} className="dimarket-category-card">
+              <button
+                type="button"
+                className="dimarket-category-card__button"
+                onClick={() => openCityMasters(city)}
+                aria-label={`${t('header.findProfessionals')}: ${city}`}
+              >
+                <span className="dimarket-category-card__icon" aria-hidden>
+                  <MapPin className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
+                </span>
+                <span className="dimarket-category-card__body">
+                  <strong>{city}</strong>
+                  <span>{t('header.findProfessionals')}</span>
+                </span>
+                <span className="dimarket-category-card__chevron" aria-hidden>
+                  ›
+                </span>
+              </button>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   )
