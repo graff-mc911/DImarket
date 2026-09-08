@@ -4128,6 +4128,81 @@ select.select-glass.geo-filter-select::-ms-expand {
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 }
 
+/* Owner-cabinet sheet: ONE large white panel on beige canvas.
+   Nested cards become thin-framed cells on white — not floating tiles. */
+.cabinet-sheet {
+  background: #ffffff;
+  border: 1px solid var(--glass-border);
+  border-radius: 0;
+  box-shadow: var(--card-shadow);
+  padding: 1.15rem 1.15rem 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .cabinet-sheet {
+    padding: 1.35rem 1.5rem 1.5rem;
+  }
+}
+
+.cabinet-sheet__head {
+  margin-bottom: 1.15rem;
+}
+
+.cabinet-sheet__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border: 1px solid var(--glass-border);
+  background: #ffffff;
+}
+
+@media (min-width: 640px) {
+  .cabinet-sheet__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .cabinet-sheet__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.cabinet-sheet .dimarket-category-card,
+.glass-panel .dimarket-category-card {
+  box-shadow: none;
+  border: none;
+  border-right: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+  background: transparent;
+  border-radius: 0;
+}
+
+.cabinet-sheet .dimarket-category-card:hover,
+.cabinet-sheet .dimarket-category-card:focus-within,
+.glass-panel .dimarket-category-card:hover,
+.glass-panel .dimarket-category-card:focus-within {
+  transform: none;
+  box-shadow: none;
+  background: rgba(248, 250, 252, 0.72);
+  border-color: var(--glass-border);
+}
+
+/* Expanded cell spans full sheet width */
+.cabinet-sheet__cell--span {
+  grid-column: 1 / -1;
+}
+
+.cabinet-sheet .home-pro-card,
+.cabinet-sheet .home-why-card,
+.cabinet-sheet .home-review-card,
+.cabinet-sheet .home-project-card {
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--glass-border) !important;
+  background: #ffffff !important;
+}
+
 .dimarket-category-card:hover,
 .dimarket-category-card:focus-within {
   transform: translateY(-4px);

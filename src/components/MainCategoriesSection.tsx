@@ -150,171 +150,175 @@ export function MainCategoriesSection({
       className={`dimarket-categories home-section layout-page-gutter py-6 ${className}`.trim()}
       aria-labelledby={`${id}-title`}
     >
-      <div className="dimarket-categories__head mb-5" style={{ textAlign: 'left' }}>
-        <div className="dimarket-categories__head-row dimarket-categories__head-row--start">
-          <div>
-            <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
-              {sectionEyebrow}
-            </p>
-            <TitleTag
-              id={`${id}-title`}
-              className="dimarket-categories__title"
-              style={{ textAlign: 'left' }}
-            >
-              {sectionTitle}
-            </TitleTag>
-            {showSearch ? (
-              <p className="mt-2 max-w-2xl text-sm leading-6 md:text-base">{sectionSubtitle}</p>
-            ) : null}
-          </div>
-          {seeAllHref ? (
-            <button
-              type="button"
-              className="home-section__link"
-              onClick={() => navigateTo(seeAllHref)}
-            >
-              {t('homePremium.seeAllCategories')}
-            </button>
-          ) : null}
-        </div>
-      </div>
-
-      {showSearch ? (
-        <>
-          <div className="dimarket-search mb-5" role="search">
-            <label className="dimarket-search__input">
-              <Search className="h-5 w-5" aria-hidden />
-              <input
-                type="search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={t('dimarket.searchPlaceholder')}
-                aria-label={t('dimarket.searchPlaceholder')}
-              />
-            </label>
-            <label className="dimarket-search__location">
-              <MapPin className="h-5 w-5" aria-hidden />
-              <span>{t('dimarket.locationLabel')}</span>
-              <select
-                value={selectValue}
-                onChange={(event) => setLocation(geoFromCountrySlug(event.target.value, location))}
-                aria-label={t('dimarket.locationLabel')}
-                title={locationDisplay}
-              >
-                <option value="all-europe">
-                  {hasActiveLocation(location) && selectValue === 'all-europe'
-                    ? locationDisplay
-                    : t('dimarket.loc.all-europe')}
-                </option>
-                {categoryLocationOptions
-                  .filter((option) => option.id !== 'all-europe')
-                  .map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {selectValue === option.id && hasActiveLocation(location)
-                        ? locationDisplay
-                        : t(`dimarket.loc.${option.id}` as TranslationKey)}
-                    </option>
-                  ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="dimarket-popular mb-5" aria-label={t('dimarket.popularSearchesLabel')}>
-            <span>{t('dimarket.popularSearchesLabel')}</span>
-            <div>
-              {popularCategorySearches.map((item) => (
-                <button key={item.id} type="button" onClick={() => handlePopularClick(item.id)}>
-                  {t(`dimarket.popular.${item.id}` as TranslationKey)}
-                </button>
-              ))}
-            </div>
-          </div>
-        </>
-      ) : (
-        <label className="dimarket-search__input mb-5 max-w-xl">
-          <Search className="h-4 w-4 shrink-0" aria-hidden />
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={t('mega.searchPlaceholder')}
-            aria-label={t('mega.searchPlaceholder')}
-          />
-        </label>
-      )}
-
-      {filtered.length === 0 ? (
-        <p className="dimarket-categories__empty">{t('dimarket.noResults')}</p>
-      ) : (
-        <div
-          className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
-          data-category-count={filtered.length}
-          data-includes-buy-sell={filtered.some((c) => c.id === 'buy-sell') ? '1' : '0'}
-          data-includes-jobs={filtered.some((c) => c.id === 'jobs') ? '1' : '0'}
-        >
-          {filtered.map((category) => {
-            const expanded = expandedId === category.id
-            const categoryTitle = localizedTitle(category.title, lang, category.slug)
-            const Icon = resolveCategoryIcon(category.slug)
-            const countHint =
-              category.subcategories.length > 0
-                ? `${category.subcategories.length} ${t('dimarket.servicesLabel')}`
-                : t('dimarket.openCategory')
-            const sub = expanded
-              ? `${category.subcategories.length} · ${t('marketplace.viewServices')}`
-              : countHint
-
-            return (
-              <article
-                key={category.id}
-                className={`dimarket-category-card${expanded ? ' sm:col-span-2 xl:col-span-3' : ''}`}
-              >
+      <div className="cabinet-sheet">
+        <div className="cabinet-sheet__head">
+          <div className="dimarket-categories__head mb-0" style={{ textAlign: 'left' }}>
+            <div className="dimarket-categories__head-row dimarket-categories__head-row--start">
+              <div>
+                <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
+                  {sectionEyebrow}
+                </p>
+                <TitleTag
+                  id={`${id}-title`}
+                  className="dimarket-categories__title"
+                  style={{ textAlign: 'left' }}
+                >
+                  {sectionTitle}
+                </TitleTag>
+                {showSearch ? (
+                  <p className="mt-2 max-w-2xl text-sm leading-6 md:text-base">{sectionSubtitle}</p>
+                ) : null}
+              </div>
+              {seeAllHref ? (
                 <button
                   type="button"
-                  className="dimarket-category-card__button"
-                  onClick={() => toggle(category)}
-                  onDoubleClick={() => openCategory(category)}
-                  aria-expanded={expanded}
-                  aria-label={`${expanded ? t('dimarket.closeCategory') : t('dimarket.openCategory')}: ${categoryTitle}`}
+                  className="home-section__link"
+                  onClick={() => navigateTo(seeAllHref)}
                 >
-                  <span className="dimarket-category-card__icon" aria-hidden>
-                    <Icon className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
-                  </span>
-                  <span className="dimarket-category-card__body">
-                    <strong>{categoryTitle}</strong>
-                    <span>{sub}</span>
-                  </span>
-                  <ChevronRight className="dimarket-category-card__chevron h-5 w-5" aria-hidden />
+                  {t('homePremium.seeAllCategories')}
                 </button>
-
-                {expanded ? (
-                  <div className="dimarket-subcategories">
-                    <div>
-                      <button
-                        type="button"
-                        className="dimarket-subcategory-chip dimarket-subcategory-chip--primary"
-                        onClick={() => openCategory(category)}
-                      >
-                        {t('marketplace.viewServices')}
-                      </button>
-                      {category.subcategories.map((subcategory) => (
-                        <button
-                          key={subcategory.id}
-                          type="button"
-                          className="dimarket-subcategory-chip"
-                          onClick={() => handleSubcategoryClick(category, subcategory)}
-                        >
-                          {localizedTitle(subcategory.title, lang, subcategory.slug)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
-              </article>
-            )
-          })}
+              ) : null}
+            </div>
+          </div>
         </div>
-      )}
+
+        {showSearch ? (
+          <>
+            <div className="dimarket-search mb-4" role="search">
+              <label className="dimarket-search__input">
+                <Search className="h-5 w-5" aria-hidden />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={t('dimarket.searchPlaceholder')}
+                  aria-label={t('dimarket.searchPlaceholder')}
+                />
+              </label>
+              <label className="dimarket-search__location">
+                <MapPin className="h-5 w-5" aria-hidden />
+                <span>{t('dimarket.locationLabel')}</span>
+                <select
+                  value={selectValue}
+                  onChange={(event) => setLocation(geoFromCountrySlug(event.target.value, location))}
+                  aria-label={t('dimarket.locationLabel')}
+                  title={locationDisplay}
+                >
+                  <option value="all-europe">
+                    {hasActiveLocation(location) && selectValue === 'all-europe'
+                      ? locationDisplay
+                      : t('dimarket.loc.all-europe')}
+                  </option>
+                  {categoryLocationOptions
+                    .filter((option) => option.id !== 'all-europe')
+                    .map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {selectValue === option.id && hasActiveLocation(location)
+                          ? locationDisplay
+                          : t(`dimarket.loc.${option.id}` as TranslationKey)}
+                      </option>
+                    ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="dimarket-popular mb-4" aria-label={t('dimarket.popularSearchesLabel')}>
+              <span>{t('dimarket.popularSearchesLabel')}</span>
+              <div>
+                {popularCategorySearches.map((item) => (
+                  <button key={item.id} type="button" onClick={() => handlePopularClick(item.id)}>
+                    {t(`dimarket.popular.${item.id}` as TranslationKey)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <label className="dimarket-search__input mb-4 max-w-xl">
+            <Search className="h-4 w-4 shrink-0" aria-hidden />
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t('mega.searchPlaceholder')}
+              aria-label={t('mega.searchPlaceholder')}
+            />
+          </label>
+        )}
+
+        {filtered.length === 0 ? (
+          <p className="dimarket-categories__empty">{t('dimarket.noResults')}</p>
+        ) : (
+          <div
+            className="cabinet-sheet__grid"
+            data-category-count={filtered.length}
+            data-includes-buy-sell={filtered.some((c) => c.id === 'buy-sell') ? '1' : '0'}
+            data-includes-jobs={filtered.some((c) => c.id === 'jobs') ? '1' : '0'}
+          >
+            {filtered.map((category) => {
+              const expanded = expandedId === category.id
+              const categoryTitle = localizedTitle(category.title, lang, category.slug)
+              const Icon = resolveCategoryIcon(category.slug)
+              const countHint =
+                category.subcategories.length > 0
+                  ? `${category.subcategories.length} ${t('dimarket.servicesLabel')}`
+                  : t('dimarket.openCategory')
+              const sub = expanded
+                ? `${category.subcategories.length} · ${t('marketplace.viewServices')}`
+                : countHint
+
+              return (
+                <article
+                  key={category.id}
+                  className={`dimarket-category-card${expanded ? ' cabinet-sheet__cell--span' : ''}`}
+                >
+                  <button
+                    type="button"
+                    className="dimarket-category-card__button"
+                    onClick={() => toggle(category)}
+                    onDoubleClick={() => openCategory(category)}
+                    aria-expanded={expanded}
+                    aria-label={`${expanded ? t('dimarket.closeCategory') : t('dimarket.openCategory')}: ${categoryTitle}`}
+                  >
+                    <span className="dimarket-category-card__icon" aria-hidden>
+                      <Icon className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
+                    </span>
+                    <span className="dimarket-category-card__body">
+                      <strong>{categoryTitle}</strong>
+                      <span>{sub}</span>
+                    </span>
+                    <ChevronRight className="dimarket-category-card__chevron h-5 w-5" aria-hidden />
+                  </button>
+
+                  {expanded ? (
+                    <div className="dimarket-subcategories">
+                      <div>
+                        <button
+                          type="button"
+                          className="dimarket-subcategory-chip dimarket-subcategory-chip--primary"
+                          onClick={() => openCategory(category)}
+                        >
+                          {t('marketplace.viewServices')}
+                        </button>
+                        {category.subcategories.map((subcategory) => (
+                          <button
+                            key={subcategory.id}
+                            type="button"
+                            className="dimarket-subcategory-chip"
+                            onClick={() => handleSubcategoryClick(category, subcategory)}
+                          >
+                            {localizedTitle(subcategory.title, lang, subcategory.slug)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </article>
+              )
+            })}
+          </div>
+        )}
+      </div>
     </section>
   )
 }

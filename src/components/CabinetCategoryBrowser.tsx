@@ -127,122 +127,126 @@ export function CabinetCategoryBrowser({
 
   return (
     <section className={`dimarket-categories layout-page-gutter py-6 ${className}`.trim()}>
-      <div className="dimarket-categories__head mb-5" style={{ textAlign: 'left' }}>
-        <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
-          {mode === 'professionals' ? t('professionals.eyebrow') : t('marketplace.mainCategories')}
-        </p>
-        {headingAs === 'h2' ? (
-          <h2 className="dimarket-categories__title" style={{ textAlign: 'left' }}>
-            {title}
-          </h2>
-        ) : (
-          <h1 className="dimarket-categories__title" style={{ textAlign: 'left' }}>
-            {title}
-          </h1>
-        )}
-        <p className="mt-2 max-w-2xl text-sm leading-6 md:text-base">{subtitle}</p>
-      </div>
-
-      <label className="dimarket-search__input mb-5 max-w-xl">
-        <Search className="h-4 w-4 shrink-0" aria-hidden />
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('mega.searchPlaceholder')}
-          aria-label={t('mega.searchPlaceholder')}
-        />
-      </label>
-
-      {loading ? (
-        <p className="text-sm" style={{ color: 'var(--dimarket-muted)' }}>
-          {t('marketplace.loading')}
-        </p>
-      ) : filteredMains.length === 0 ? (
-        <p className="dimarket-categories__empty">{t('marketplace.noCategories')}</p>
-      ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {filteredMains.map((cat) => {
-            const Icon = resolveCategoryIcon(cat.icon_key || cat.slug)
-            const label = marketplaceCategoryLabel(cat, language.code)
-            const isOpen = expandedId === cat.id
-            const services = servicesByParent[cat.id] ?? []
-            const countHint =
-              typeof cat.professionals_count === 'number' && cat.professionals_count > 0
-                ? `${cat.professionals_count} проф.`
-                : typeof cat.services_count === 'number' && cat.services_count > 0
-                  ? `${cat.services_count} послуг`
-                  : null
-            const sub = isOpen
-              ? loadingServices
-                ? t('marketplace.loading')
-                : services.length > 0
-                  ? `${services.length} · ${t('marketplace.viewServices')}`
-                  : t('marketplace.noServices')
-              : countHint || 'Натисніть, щоб відкрити'
-
-            return (
-              <article
-                key={cat.id}
-                className={`dimarket-category-card ${isOpen ? 'sm:col-span-2 xl:col-span-3' : ''}`}
-              >
-                <button
-                  type="button"
-                  className="dimarket-category-card__button"
-                  onClick={() => toggle(cat)}
-                  onDoubleClick={() => goCategory(cat)}
-                  aria-expanded={isOpen}
-                  aria-label={`${isOpen ? 'Згорнути' : 'Відкрити'}: ${label}`}
-                >
-                  <span className="dimarket-category-card__icon" aria-hidden>
-                    <Icon className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
-                  </span>
-                  <span className="dimarket-category-card__body">
-                    <strong>{label}</strong>
-                    <span>{sub}</span>
-                  </span>
-                  <ChevronRight className="dimarket-category-card__chevron h-5 w-5" aria-hidden />
-                </button>
-
-                {isOpen ? (
-                  <div className="dimarket-subcategories">
-                    <div>
-                      <button
-                        type="button"
-                        className="dimarket-subcategory-chip dimarket-subcategory-chip--primary"
-                        onClick={() => goCategory(cat)}
-                      >
-                        {mode === 'professionals'
-                          ? t('professionals.browseLink')
-                          : t('marketplace.viewServices')}
-                      </button>
-                      {loadingServices && services.length === 0 ? (
-                        <p className="basis-full px-1 py-1 text-sm" style={{ color: 'var(--dimarket-muted)' }}>
-                          {t('marketplace.loading')}
-                        </p>
-                      ) : null}
-                      {services.map((service) => (
-                        <button
-                          key={service.id}
-                          type="button"
-                          className="dimarket-subcategory-chip"
-                          onClick={() => goService(service, cat)}
-                        >
-                          {marketplaceCategoryLabel(service, language.code)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
-              </article>
-            )
-          })}
+      <div className="cabinet-sheet">
+        <div className="cabinet-sheet__head">
+          <div className="dimarket-categories__head mb-0" style={{ textAlign: 'left' }}>
+            <p className="dimarket-categories__eyebrow" style={{ textAlign: 'left' }}>
+              {mode === 'professionals' ? t('professionals.eyebrow') : t('marketplace.mainCategories')}
+            </p>
+            {headingAs === 'h2' ? (
+              <h2 className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+                {title}
+              </h2>
+            ) : (
+              <h1 className="dimarket-categories__title" style={{ textAlign: 'left' }}>
+                {title}
+              </h1>
+            )}
+            <p className="mt-2 max-w-2xl text-sm leading-6 md:text-base">{subtitle}</p>
+          </div>
         </div>
-      )}
 
-      <p className="mt-4 text-sm" style={{ color: 'var(--dimarket-muted)' }}>
-        {`Показано ${filteredMains.length} з ${mains.length}.`}
-      </p>
+        <label className="dimarket-search__input mb-4 max-w-xl">
+          <Search className="h-4 w-4 shrink-0" aria-hidden />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t('mega.searchPlaceholder')}
+            aria-label={t('mega.searchPlaceholder')}
+          />
+        </label>
+
+        {loading ? (
+          <p className="text-sm" style={{ color: 'var(--dimarket-muted)' }}>
+            {t('marketplace.loading')}
+          </p>
+        ) : filteredMains.length === 0 ? (
+          <p className="dimarket-categories__empty">{t('marketplace.noCategories')}</p>
+        ) : (
+          <div className="cabinet-sheet__grid">
+            {filteredMains.map((cat) => {
+              const Icon = resolveCategoryIcon(cat.icon_key || cat.slug)
+              const label = marketplaceCategoryLabel(cat, language.code)
+              const isOpen = expandedId === cat.id
+              const services = servicesByParent[cat.id] ?? []
+              const countHint =
+                typeof cat.professionals_count === 'number' && cat.professionals_count > 0
+                  ? `${cat.professionals_count} проф.`
+                  : typeof cat.services_count === 'number' && cat.services_count > 0
+                    ? `${cat.services_count} послуг`
+                    : null
+              const sub = isOpen
+                ? loadingServices
+                  ? t('marketplace.loading')
+                  : services.length > 0
+                    ? `${services.length} · ${t('marketplace.viewServices')}`
+                    : t('marketplace.noServices')
+                : countHint || 'Натисніть, щоб відкрити'
+
+              return (
+                <article
+                  key={cat.id}
+                  className={`dimarket-category-card ${isOpen ? 'cabinet-sheet__cell--span' : ''}`}
+                >
+                  <button
+                    type="button"
+                    className="dimarket-category-card__button"
+                    onClick={() => toggle(cat)}
+                    onDoubleClick={() => goCategory(cat)}
+                    aria-expanded={isOpen}
+                    aria-label={`${isOpen ? 'Згорнути' : 'Відкрити'}: ${label}`}
+                  >
+                    <span className="dimarket-category-card__icon" aria-hidden>
+                      <Icon className="h-8 w-8 text-[color:var(--icon-well-ink)]" />
+                    </span>
+                    <span className="dimarket-category-card__body">
+                      <strong>{label}</strong>
+                      <span>{sub}</span>
+                    </span>
+                    <ChevronRight className="dimarket-category-card__chevron h-5 w-5" aria-hidden />
+                  </button>
+
+                  {isOpen ? (
+                    <div className="dimarket-subcategories">
+                      <div>
+                        <button
+                          type="button"
+                          className="dimarket-subcategory-chip dimarket-subcategory-chip--primary"
+                          onClick={() => goCategory(cat)}
+                        >
+                          {mode === 'professionals'
+                            ? t('professionals.browseLink')
+                            : t('marketplace.viewServices')}
+                        </button>
+                        {loadingServices && services.length === 0 ? (
+                          <p className="basis-full px-1 py-1 text-sm" style={{ color: 'var(--dimarket-muted)' }}>
+                            {t('marketplace.loading')}
+                          </p>
+                        ) : null}
+                        {services.map((service) => (
+                          <button
+                            key={service.id}
+                            type="button"
+                            className="dimarket-subcategory-chip"
+                            onClick={() => goService(service, cat)}
+                          >
+                            {marketplaceCategoryLabel(service, language.code)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </article>
+              )
+            })}
+          </div>
+        )}
+
+        <p className="mt-4 text-sm" style={{ color: 'var(--dimarket-muted)' }}>
+          {`Показано ${filteredMains.length} з ${mains.length}.`}
+        </p>
+      </div>
     </section>
   )
 }

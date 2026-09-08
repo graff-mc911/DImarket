@@ -287,7 +287,7 @@ export function OwnerProfilesManager() {
         </button>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="cabinet-sheet__grid mt-4">
         {FILTERS.map((f) => {
           const Icon = f.icon
           const isOpen = expanded && filter === f.id
@@ -295,7 +295,7 @@ export function OwnerProfilesManager() {
           return (
             <article
               key={f.id}
-              className={`dimarket-category-card ${isOpen ? 'sm:col-span-2 xl:col-span-3' : ''}`}
+              className={`dimarket-category-card ${isOpen ? 'cabinet-sheet__cell--span' : ''}`}
             >
               <button
                 type="button"
