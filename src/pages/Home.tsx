@@ -115,7 +115,11 @@ export function Home() {
       <HomeCategoriesPreview categories={data?.categories ?? []} loading={loading} />
       <HomePopularProjects projects={projects} loading={loading} />
       <HomeFindContractor />
-      <HomeTopProfessionals professionals={professionals} loading={loading} />
+      <HomeTopProfessionals
+        professionals={professionals}
+        loading={loading}
+        metrics={metrics}
+      />
       <HomeTopCompanies companies={companies} loading={loading} />
       <HomeWhyDimarket />
       <HomeCustomerReviews reviews={data?.reviews ?? []} />
