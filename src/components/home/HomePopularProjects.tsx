@@ -4,6 +4,7 @@ import { formatHomeBudget } from '../../lib/homeMarketplace'
 import { listingCityLabel } from '../../lib/listingLocation'
 import { navigateTo } from '../../lib/navigation'
 import type { ListingWithImages } from '../../lib/types'
+import { HomeEmptyPanel } from './HomeEmptyPanel'
 
 interface HomePopularProjectsProps {
   projects: ListingWithImages[]
@@ -45,7 +46,15 @@ export function HomePopularProjects({ projects, loading }: HomePopularProjectsPr
             ))}
           </div>
         ) : projects.length === 0 ? (
-          <p className="home-section__empty">{t('homePremium.noProjects')}</p>
+          <HomeEmptyPanel
+            icon={Briefcase}
+            title={t('homePremium.noProjects')}
+            description={t('homePremium.projectsSubtitle')}
+            primaryLabel={t('homePremium.postProject')}
+            onPrimary={() => navigateTo('/create-ad')}
+            secondaryLabel={t('homePremium.seeAllProjects')}
+            onSecondary={() => navigateTo('/listings')}
+          />
         ) : (
           <div className="cabinet-sheet__grid cabinet-sheet__grid--pros" role="list">
             {projects.slice(0, 4).map((project) => {
@@ -88,11 +97,13 @@ export function HomePopularProjects({ projects, loading }: HomePopularProjectsPr
           </div>
         )}
 
-        <div className="mt-4 text-center">
-          <button type="button" className="home-section__link" onClick={() => navigateTo('/listings')}>
-            {t('homePremium.seeAllProjects')}
-          </button>
-        </div>
+        {projects.length > 0 || loading ? (
+          <div className="mt-4 text-center">
+            <button type="button" className="home-section__link" onClick={() => navigateTo('/listings')}>
+              {t('homePremium.seeAllProjects')}
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   )

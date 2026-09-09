@@ -13,6 +13,7 @@ import {
   type MarketplaceCategory,
 } from '../../lib/marketplaceCategories'
 import { navigateTo } from '../../lib/navigation'
+import { appendLocationToPath } from '../../lib/globalLocation'
 
 interface HomeHeroProps {
   categories: MarketplaceCategory[]
@@ -28,7 +29,7 @@ type HeroSlide = {
 }
 
 export function HomeHero({ categories }: HomeHeroProps) {
-  const { t, language } = useApp()
+  const { t, language, location } = useApp()
   const [slide, setSlide] = useState(0)
 
   const slides = useMemo<HeroSlide[]>(() => {
@@ -94,6 +95,23 @@ export function HomeHero({ categories }: HomeHeroProps) {
               <h1 id="home-hero-title" className="home-hero__title">
                 {t('homePremium.heroTitle')}
               </h1>
+              <p className="home-hero__subtitle">{t('homePremium.heroSubtitle')}</p>
+              <div className="home-hero__actions">
+                <button
+                  type="button"
+                  className="home-btn home-btn--primary home-hero__cta"
+                  onClick={() => navigateTo('/create-ad')}
+                >
+                  {t('homePremium.postProject')}
+                </button>
+                <button
+                  type="button"
+                  className="home-btn home-btn--ghost home-hero__cta home-hero__cta--ghost"
+                  onClick={() => navigateTo(appendLocationToPath('/professionals', location))}
+                >
+                  {t('homePremium.seeAllPros')}
+                </button>
+              </div>
             </div>
           </div>
 

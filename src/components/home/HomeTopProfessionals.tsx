@@ -7,6 +7,7 @@ import { navigateTo } from '../../lib/navigation'
 import { appendLocationToPath } from '../../lib/globalLocation'
 import type { GeoSearchState } from '../../lib/geoSearch'
 import { ProfileAvatar } from './HomeRailAvatar'
+import { HomeEmptyPanel } from './HomeEmptyPanel'
 
 interface HomeTopProfessionalsProps {
   professionals: HomeProfessional[]
@@ -68,7 +69,15 @@ export function HomeTopProfessionals({
             ))}
           </div>
         ) : professionals.length === 0 ? (
-          <p className="home-section__empty">{t('home.noProfessionals')}</p>
+          <HomeEmptyPanel
+            icon={Wrench}
+            title={t('home.noProfessionals')}
+            description={t('homePremium.prosSubtitle')}
+            primaryLabel={t('home.registerAsProfessional')}
+            onPrimary={() => navigateTo('/register')}
+            secondaryLabel={t('homePremium.seeAllPros')}
+            onSecondary={openMastersCatalog}
+          />
         ) : (
           <div className="cabinet-sheet__grid cabinet-sheet__grid--pros" role="list">
             {professionals.map((pro) => {
@@ -129,11 +138,13 @@ export function HomeTopProfessionals({
           </div>
         )}
 
-        <div className="mt-4 text-center">
-          <button type="button" className="home-section__link" onClick={openMastersCatalog}>
-            {t('homePremium.seeAllPros')}
-          </button>
-        </div>
+        {(professionals.length > 0 || loading) && (
+          <div className="mt-4 text-center">
+            <button type="button" className="home-section__link" onClick={openMastersCatalog}>
+              {t('homePremium.seeAllPros')}
+            </button>
+          </div>
+        )}
       </div>
     </section>
   )
