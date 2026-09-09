@@ -4169,6 +4169,17 @@ select.select-glass.geo-filter-select::-ms-expand {
   }
 }
 
+/* Home categories: always 3 per row from tablet up (6 hubs → two neat rows) */
+.home-categories-preview .cabinet-sheet__grid {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .home-categories-preview .cabinet-sheet__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 .cabinet-sheet__grid--pros {
   grid-template-columns: 1fr;
 }

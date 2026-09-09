@@ -9,6 +9,7 @@ export const HOME_CATEGORY_SLUGS = [
   'buy-sell',
   'hvac',
   'rentals',
+  'accounting-finance',
 ] as const
 
 interface HomeCategoriesPreviewProps {
@@ -25,6 +26,7 @@ export function HomeCategoriesPreview({ categories, loading }: HomeCategoriesPre
   return (
     <MainCategoriesSection
       id="choose-category"
+      className="home-categories-preview"
       title={t('header.categories')}
       categories={categories}
       loading={loading}
