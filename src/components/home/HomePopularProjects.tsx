@@ -49,7 +49,6 @@ export function HomePopularProjects({ projects, loading }: HomePopularProjectsPr
           <HomeEmptyPanel
             icon={Briefcase}
             title={t('homePremium.noProjects')}
-            description={t('homePremium.projectsSubtitle')}
             primaryLabel={t('homePremium.postProject')}
             onPrimary={() => navigateTo('/create-ad')}
             secondaryLabel={t('homePremium.seeAllProjects')}
