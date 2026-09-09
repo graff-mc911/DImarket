@@ -7,10 +7,6 @@ import { navigateTo } from '../../lib/navigation'
 import { appendLocationToPath } from '../../lib/globalLocation'
 import type { GeoSearchState } from '../../lib/geoSearch'
 import { ProfileAvatar } from './HomeRailAvatar'
-import { popularCategorySearches } from '../../config/categories'
-import { findServiceBySlug, servicesPath } from '../../lib/serviceTaxonomy'
-import { homeCategoryPath } from '../../lib/homeCategoryAdapter'
-import type { TranslationKey } from '../../lib/i18n'
 
 interface HomeTopCompaniesProps {
   companies: HomeProfessional[]
@@ -18,7 +14,7 @@ interface HomeTopCompaniesProps {
   metrics?: Pick<HomeMetrics, 'countries'>
 }
 
-/** Owner-cabinet style: outer sheet + inner framed feature + popular category chips. */
+/** Owner-cabinet style: outer sheet + inner framed feature head + company cards. */
 export function HomeTopCompanies({ companies, loading, metrics }: HomeTopCompaniesProps) {
   const { t, location, setLocation } = useApp()
 
@@ -29,23 +25,6 @@ export function HomeTopCompanies({ companies, loading, metrics }: HomeTopCompani
       setLocation(geo)
     }
     navigateTo(appendLocationToPath('/companies', geo))
-  }
-
-  const openPopular = (itemId: string) => {
-    if (itemId === 'buy-sell' || itemId === 'sellRent' || itemId === 'buySell') {
-      navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'buy-sell', href: '/sell-rent' }), location))
-      return
-    }
-    if (itemId === 'jobs') {
-      navigateTo(appendLocationToPath(homeCategoryPath({ slug: 'jobs', href: '/vacancies' }), location))
-      return
-    }
-    const resolved = findServiceBySlug(itemId)
-    if (resolved) {
-      navigateTo(appendLocationToPath(servicesPath(resolved.subcategory.slug), location))
-      return
-    }
-    navigateTo(appendLocationToPath(`/companies?q=${encodeURIComponent(itemId)}`, location))
   }
 
   const companiesCount = companies.length
@@ -76,19 +55,6 @@ export function HomeTopCompanies({ companies, loading, metrics }: HomeTopCompani
             </span>
             <ChevronRight className="dimarket-category-card__chevron h-5 w-5" aria-hidden />
           </button>
-
-          <div className="cabinet-sheet__feature-chips" aria-label={t('dimarket.popularSearchesLabel')}>
-            {popularCategorySearches.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className="cabinet-sheet__chip"
-                onClick={() => openPopular(item.id)}
-              >
-                {t(`dimarket.popular.${item.id}` as TranslationKey)}
-              </button>
-            ))}
-          </div>
         </article>
 
         {loading ? (
