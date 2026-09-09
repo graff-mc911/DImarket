@@ -34,6 +34,11 @@ export interface MainCategoriesSectionProps {
   seeAllHref?: string
   /** Page `/categories` needs h1; home embed uses h2. */
   headingAs?: 'h1' | 'h2'
+  /**
+   * Optional home preview: only these public hub slugs, in this order.
+   * Full `/categories` omits this and shows the complete catalog.
+   */
+  includeSlugs?: readonly string[]
   /** Preloaded categories (skip internal fetch) — kept for call-site compat. */
   categories?: MarketplaceCategory[]
   loading?: boolean
@@ -75,6 +80,7 @@ export function MainCategoriesSection({
   showSearch = true,
   seeAllHref,
   headingAs = 'h2',
+  includeSlugs,
   className = '',
 }: MainCategoriesSectionProps) {
   const { language, t, location, setLocation } = useApp()
@@ -93,12 +99,15 @@ export function MainCategoriesSection({
     const publicCategories = serviceCategories.filter(
       (category) => !isDocumentsProceduresPublicCategory(category.slug),
     )
+    const scoped = includeSlugs?.length
+      ? includeSlugs
+          .map((slug) => publicCategories.find((category) => category.slug === slug))
+          .filter((category): category is ServiceCategory => Boolean(category))
+      : publicCategories
     const q = query.trim().toLowerCase()
-    if (!q) return publicCategories
-    return publicCategories.filter((category) =>
-      categorySearchText(category, lang).includes(q),
-    )
-  }, [query, lang])
+    if (!q) return scoped
+    return scoped.filter((category) => categorySearchText(category, lang).includes(q))
+  }, [query, lang, includeSlugs])
 
   const sectionTitle = title ?? t('dimarket.title')
   const sectionSubtitle = subtitle ?? t('dimarket.subtitle')

@@ -2,14 +2,23 @@ import { useApp } from '../../contexts/AppContext'
 import type { MarketplaceCategory } from '../../lib/marketplaceCategories'
 import { MainCategoriesSection } from '../MainCategoriesSection'
 
+/** Home hubs only — full catalog stays on /categories. */
+export const HOME_CATEGORY_SLUGS = [
+  'specialists',
+  'jobs',
+  'buy-sell',
+  'hvac',
+  'rentals',
+] as const
+
 interface HomeCategoriesPreviewProps {
   categories?: MarketplaceCategory[]
   loading?: boolean
 }
 
 /**
- * Home «Категорії» — full static catalog (`serviceCategories`) with
- * «Усі категорії» → /categories. See docs/CATEGORIES_SOURCE_OF_TRUTH.md.
+ * Home «Категорії» — short hub list + «Усі категорії» → /categories.
+ * See docs/CATEGORIES_SOURCE_OF_TRUTH.md.
  */
 export function HomeCategoriesPreview({ categories, loading }: HomeCategoriesPreviewProps) {
   const { t } = useApp()
@@ -20,6 +29,7 @@ export function HomeCategoriesPreview({ categories, loading }: HomeCategoriesPre
       categories={categories}
       loading={loading}
       showSearch={false}
+      includeSlugs={HOME_CATEGORY_SLUGS}
       seeAllHref="/categories"
       headingAs="h2"
     />
