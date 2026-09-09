@@ -136,13 +136,13 @@ export function HomeTopCompanies({ companies, loading, metrics }: HomeTopCompani
           </div>
         )}
 
-        <div className="mt-4 text-center">
-          {companies.length > 0 || loading ? (
+        {(companies.length > 0 || loading) && (
+          <div className="mt-4 text-center">
             <button type="button" className="home-section__link" onClick={openCompaniesCatalog}>
               {t('homePremium.seeAllCompanies')}
             </button>
-          ) : null}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   )
