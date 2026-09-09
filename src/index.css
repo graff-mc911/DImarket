@@ -4987,6 +4987,7 @@ select.select-glass.geo-filter-select::-ms-expand {
   margin: 0;
   max-width: none;
   text-align: center;
+  color: #ffb84d;
 }
 
 .home-hero__search {
@@ -9086,6 +9087,11 @@ body,
 .dimarket-categories h3 {
   color: var(--ink-900);
   font-family: var(--font-sans);
+}
+
+/* Hero H1 sits on dark gradient — keep light orange readable */
+.home-premium .home-hero__title {
+  color: #ffb84d;
 }
 
 .home-section__eyebrow,
