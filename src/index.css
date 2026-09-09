@@ -5348,6 +5348,18 @@ select.select-glass.geo-filter-select::-ms-expand {
   gap: 0.75rem;
 }
 
+.home-empty-panel__actions .home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.55rem 1rem;
+  background: #ff9900;
+  color: #1a1612;
+  border: 0;
+  font-weight: 750;
+}
+
 @media (max-width: 767px) {
   .home-empty-panel {
     padding: 1rem 0.85rem;
@@ -5361,7 +5373,7 @@ select.select-glass.geo-filter-select::-ms-expand {
 
   .home-empty-panel__actions .home-btn {
     width: 100%;
-    justify-content: center;
+    min-height: 2.85rem;
   }
 }
 
