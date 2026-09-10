@@ -236,7 +236,8 @@ export function resolveLayoutFrame(
 export function defaultObjectFitForLayout(
   layout: AdBannerLayoutKey,
 ): 'cover' | 'contain' {
-  return layout === 'side' ? 'cover' : 'contain'
+  /* Story / center fills the media pane; letterboxing looked broken on mobile. */
+  return layout === 'leaderboard' || layout === 'mobile' ? 'contain' : 'cover'
 }
 
 export function layoutFrameImageStyle(frame: AdLayoutFrame): CSSProperties {

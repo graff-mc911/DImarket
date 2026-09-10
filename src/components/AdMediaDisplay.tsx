@@ -55,8 +55,7 @@ function AdMediaImageFill({
 }) {
   const imgStyle = resolveImageStyle(layoutKey, frameStyle ?? null)
   const naturalHeight =
-    !frameStyle &&
-    (!layoutKey || layoutKey === 'center' || layoutKey === 'leaderboard' || layoutKey === 'mobile')
+    !frameStyle && (layoutKey === 'leaderboard' || layoutKey === 'mobile')
   const resolvedSrc = resolvePublicAdMediaUrl(src)
 
   return (
