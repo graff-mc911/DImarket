@@ -39,11 +39,11 @@ import { estimatorTypeFromCatalogId } from '../lib/estimatorMainCategories'
 import {
   BZ_POPULAR_PROJECTS,
   EMPTY_BZ_QUOTE,
-  areaSqmFromBudget,
   budgetTierFromBand,
   initialQuoteScreen,
   isLowBudget,
   nextScreenAfter,
+  parseAreaSqmInput,
   prevScreenBefore,
   screensForQuoteType,
   validateQuoteScreen,
@@ -715,17 +715,21 @@ export function CostEstimator() {
     ]
       .filter(Boolean)
       .join('. ')
-    const desc =
+    const descBase =
       draft.description.trim().length >= 15
         ? draft.description.trim()
         : q.length >= 15
           ? `${q}. ${extra}`.trim()
           : `${label}. ${q || label}. ${extra} ${draft.city || state.location.city || ''}`.trim()
-    const perSqm = getProjectType(typeId).perSqm
-    const area =
-      Number(state.measurements.areaSqm) > 0
-        ? Number(state.measurements.areaSqm)
-        : areaSqmFromBudget(draft.budget, perSqm)
+    const areaFromDraft = parseAreaSqmInput(draft.areaSqm)
+    const areaFromState = Number(state.measurements.areaSqm) > 0 ? Number(state.measurements.areaSqm) : null
+    const area = areaFromDraft ?? areaFromState
+    if (!(area && area > 0)) {
+      setQuoteScreen('area')
+      setQuoteFieldError(t('costEstimator.quote.errors.area'))
+      return
+    }
+    const desc = /m²|m2|кв\.?\s*м/i.test(descBase) ? descBase : `${descBase} Area: ${area} m².`
     const nextState: EstimatorState = {
       ...state,
       projectTypeId: typeId,
@@ -1732,21 +1736,21 @@ export function CostEstimator() {
         <div className="space-y-5">
           <div className="grid gap-3 sm:grid-cols-2">
             <NumField
-              label="Area (m²) *"
+              label={`${t('costEstimator.measure.area')} *`}
               value={state.measurements.areaSqm}
               onChange={(n) =>
                 patch({ measurements: { ...state.measurements, areaSqm: n } })
               }
             />
             <NumField
-              label="Rooms"
+              label={t('costEstimator.measure.rooms')}
               value={state.measurements.rooms}
               onChange={(n) =>
                 patch({ measurements: { ...state.measurements, rooms: n || null } })
               }
             />
             <NumField
-              label="Length (m)"
+              label={t('costEstimator.measure.length')}
               value={state.measurements.lengthM}
               onChange={(n) => {
                 const lengthM = n || null
@@ -1759,7 +1763,7 @@ export function CostEstimator() {
               }}
             />
             <NumField
-              label="Width (m)"
+              label={t('costEstimator.measure.width')}
               value={state.measurements.widthM}
               onChange={(n) => {
                 const widthM = n || null
@@ -1772,14 +1776,14 @@ export function CostEstimator() {
               }}
             />
             <NumField
-              label="Height (m)"
+              label={t('costEstimator.measure.height')}
               value={state.measurements.heightM}
               onChange={(n) =>
                 patch({ measurements: { ...state.measurements, heightM: n || null } })
               }
             />
             <NumField
-              label="Floors"
+              label={t('costEstimator.measure.floors')}
               value={state.measurements.floors}
               onChange={(n) =>
                 patch({ measurements: { ...state.measurements, floors: n || null } })

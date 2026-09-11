@@ -16,6 +16,7 @@ import {
   BZ_RELATIONSHIP_OPTIONS,
   BZ_URGENCY_OPTIONS,
   isLowBudget,
+  parseAreaSqmInput,
   progressPercent,
   screensForQuoteType,
   type BzAuthContext,
@@ -497,6 +498,45 @@ export function EstimatorQuoteWizard({
             options={BZ_DESIGN_OPTIONS.map((o) => ({ id: o.id, labelKey: o.labelKey }))}
             value={draft.designStatus}
             onSelect={(id) => onSelectDesign(id as NonNullable<BzQuoteDraft['designStatus']>)}
+          />
+        </div>
+      ) : null}
+
+      {screen === 'area' ? (
+        <div className="bz-quote__survey">
+          <h2 className="bz-quote__question">{t('costEstimator.quote.areaTitle')}</h2>
+          <p className="bz-quote__lead">{t('costEstimator.quote.areaHint')}</p>
+          <label className="bz-quote__field-label" htmlFor="bz-quote-area">
+            {t('costEstimator.quote.areaLabel')}
+          </label>
+          <div className="bz-quote__input-row">
+            <input
+              id="bz-quote-area"
+              className="bz-quote__input"
+              type="number"
+              min={1}
+              step="any"
+              inputMode="decimal"
+              autoFocus
+              placeholder={t('costEstimator.quote.areaPlaceholder')}
+              value={draft.areaSqm != null && draft.areaSqm > 0 ? String(draft.areaSqm) : ''}
+              onChange={(e) => onPatch({ areaSqm: parseAreaSqmInput(e.target.value) })}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  onContinue()
+                }
+              }}
+            />
+            <span className="bz-quote__suffix" aria-hidden>
+              m²
+            </span>
+          </div>
+          <FieldError message={fieldError} />
+          <ContinueButton
+            label={continueLabel}
+            disabled={!(Number(draft.areaSqm) > 0)}
+            onClick={onContinue}
           />
         </div>
       ) : null}

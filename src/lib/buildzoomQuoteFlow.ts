@@ -7,15 +7,15 @@
  *
  * remodel (kt) — every type except new construction and home addition:
  *   title → urgency → property-type → email → phone → name
- *   → expected-responses → location → property-relationship → budget → description → password
+ *   → expected-responses → location → property-relationship → area → budget → description → password
  *
  * home addition (Zs) — projectTypeGroupId HOME_ADDITION:
  *   title → urgency → property-type → email → phone → name
- *   → expected-responses → location → design-status → budget → description → password
+ *   → expected-responses → location → design-status → area → budget → description → password
  *
  * new construction (vJ) — projectTypeGroupId NEW_CONSTRUCTION:
  *   title → urgency → land-ownership-status → email → phone → name
- *   → expected-responses → location → design-status → budget → description → password
+ *   → expected-responses → location → design-status → area → budget → description → password
  *
  * Logged-in (setUserScreen): drop email, name; drop phone if a number already exists.
  * After description, existing users skip password (description.continue isNew check).
@@ -143,6 +143,7 @@ export type BzQuoteScreen =
   | 'location'
   | 'relationship'
   | 'design'
+  | 'area'
   | 'budget'
   | 'description'
   | 'password'
@@ -168,6 +169,8 @@ export type BzQuoteDraft = {
   longitude: number | null
   relationship: (typeof BZ_RELATIONSHIP_OPTIONS)[number]['id'] | null
   designStatus: (typeof BZ_DESIGN_OPTIONS)[number]['id'] | null
+  /** Total floor area in m² — required for estimates. */
+  areaSqm: number | null
   budget: (typeof BZ_BUDGET_OPTIONS)[number]['id'] | null
   financing: boolean
   description: string
@@ -198,6 +201,7 @@ export const EMPTY_BZ_QUOTE: BzQuoteDraft = {
   longitude: null,
   relationship: null,
   designStatus: null,
+  areaSqm: null,
   budget: null,
   financing: false,
   description: '',
@@ -222,6 +226,7 @@ export const BZ_SCREEN_LISTS: Record<BzQuoteGroup, BzQuoteScreen[]> = {
     'bids',
     'location',
     'relationship',
+    'area',
     'budget',
     'description',
     'password',
@@ -236,6 +241,7 @@ export const BZ_SCREEN_LISTS: Record<BzQuoteGroup, BzQuoteScreen[]> = {
     'bids',
     'location',
     'design',
+    'area',
     'budget',
     'description',
     'password',
@@ -250,6 +256,7 @@ export const BZ_SCREEN_LISTS: Record<BzQuoteGroup, BzQuoteScreen[]> = {
     'bids',
     'location',
     'design',
+    'area',
     'budget',
     'description',
     'password',
@@ -351,12 +358,20 @@ export function budgetTierFromBand(budget: string | null | undefined): PricingTi
   return 'premium'
 }
 
+/** @deprecated Do not use for estimates — area must come from user input. Kept for legacy sessions. */
 export function areaSqmFromBudget(budget: string | null | undefined, perSqm: number) {
   const parsed = parseBudgetBand(budget)
   const rate = perSqm > 0 ? perSqm : 90
   if (!parsed) return 10
   const mid = (parsed.min + Math.min(parsed.max, 1_000_000)) / 2
   return Math.min(400, Math.max(8, Math.round(mid / rate)))
+}
+
+export function parseAreaSqmInput(raw: string | number | null | undefined): number | null {
+  if (raw == null || raw === '') return null
+  const n = typeof raw === 'number' ? raw : Number(String(raw).trim().replace(',', '.'))
+  if (!Number.isFinite(n) || n <= 0) return null
+  return Math.round(n * 10) / 10
 }
 
 export function validateQuoteScreen(
@@ -379,6 +394,11 @@ export function validateQuoteScreen(
   }
   if (screen === 'location' && !draft.city.trim()) {
     return 'costEstimator.quote.errors.location'
+  }
+  if (screen === 'area') {
+    const area = Number(draft.areaSqm)
+    if (!(area > 0)) return 'costEstimator.quote.errors.area'
+    if (area > 50_000) return 'costEstimator.quote.errors.areaTooLarge'
   }
   if (screen === 'budget') {
     if (!draft.budget) return 'costEstimator.quote.errors.budget'

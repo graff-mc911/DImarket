@@ -8598,6 +8598,33 @@ body,
   font-weight: 700;
   color: #1a2330;
 }
+.bz-quote__lead {
+  margin: -8px 0 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #5b6573;
+}
+.bz-quote__field-label {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5b6573;
+}
+.bz-quote__input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bz-quote__input-row .bz-quote__input {
+  flex: 1;
+}
+.bz-quote__suffix {
+  flex: 0 0 auto;
+  font-size: 14px;
+  font-weight: 600;
+  color: #5b6573;
+}
 .bz-quote__input,
 .bz-quote__select,
 .bz-quote__textarea {
