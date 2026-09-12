@@ -9465,3 +9465,244 @@ body,
 .home-section__link:hover {
   color: var(--ink-800) !important;
 }
+
+/* ==== Purchase cost calculator (home cabinet-sheet language) ==== */
+.purchase-cost-calculator__layout {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 960px) {
+  .purchase-cost-calculator__layout {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+}
+
+.purchase-cost-calculator--embedded .dimarket-categories__title {
+  font-size: 1.25rem;
+}
+
+.purchase-cost-calculator__controls,
+.purchase-cost-calculator__results {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.purchase-cost-calculator__field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.purchase-cost-calculator__field > span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--label-ink, #64748b);
+}
+
+.purchase-cost-calculator__select,
+.purchase-cost-calculator__input {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0;
+  background: #fff;
+  color: var(--ink-900, #1e293b);
+  padding: 0.7rem 0.8rem;
+  font-size: 0.95rem;
+  outline: none;
+  box-shadow: inset 0 0 0 1px transparent;
+}
+
+.purchase-cost-calculator__select:focus,
+.purchase-cost-calculator__input:focus {
+  border-color: #ff9900;
+  box-shadow: inset 0 0 0 1px rgba(255, 153, 0, 0.35);
+}
+
+.purchase-cost-calculator__price-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: stretch;
+}
+
+.purchase-cost-calculator__currency {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-right: 0;
+  background: #f7f3ec;
+  color: var(--ink-700, #64748b);
+  font-weight: 700;
+}
+
+.purchase-cost-calculator__tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.purchase-cost-calculator__tab,
+.purchase-cost-calculator__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2.6rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0;
+  background: #fff;
+  color: var(--ink-800, #334155);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.purchase-cost-calculator__tab:hover,
+.purchase-cost-calculator__chip:hover {
+  border-color: #ff9900;
+}
+
+.purchase-cost-calculator__tab.is-active,
+.purchase-cost-calculator__chip.is-active {
+  border-color: #ff9900;
+  background: rgba(255, 153, 0, 0.1);
+  color: var(--ink-900, #1e293b);
+  box-shadow: inset 0 0 0 1px rgba(255, 153, 0, 0.25);
+}
+
+.purchase-cost-calculator__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.purchase-cost-calculator__hint,
+.purchase-cost-calculator__disclaimer {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-600, #64748b);
+}
+
+.purchase-cost-calculator__panel {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: #fff;
+  padding: 0.9rem 1rem;
+}
+
+.purchase-cost-calculator__panel-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+  color: var(--ink-900, #1e293b);
+}
+
+.purchase-cost-calculator__panel-head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.purchase-cost-calculator__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.purchase-cost-calculator__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+  font-size: 0.92rem;
+  color: var(--ink-700, #64748b);
+}
+
+.purchase-cost-calculator__row--base {
+  border-top: 0;
+  padding-top: 0;
+  color: var(--ink-900, #1e293b);
+}
+
+.purchase-cost-calculator__row strong {
+  color: var(--ink-900, #1e293b);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.purchase-cost-calculator__rate {
+  font-style: normal;
+  font-weight: 700;
+  color: #c96d2c;
+}
+
+.purchase-cost-calculator__totals {
+  display: grid;
+  gap: 0.65rem;
+}
+
+@media (min-width: 640px) {
+  .purchase-cost-calculator__totals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.purchase-cost-calculator__total-card {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  padding: 0.9rem 1rem;
+  background: #fff;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.purchase-cost-calculator__total-card span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--label-ink, #64748b);
+}
+
+.purchase-cost-calculator__total-card strong {
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-900, #1e293b);
+}
+
+.purchase-cost-calculator__total-card--final {
+  border-color: #ff9900;
+  background: linear-gradient(180deg, #fff8ef 0%, #ffffff 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 153, 0, 0.25);
+}
+
+.purchase-cost-calculator__total-card--final strong {
+  color: #9a3412;
+}
+
+.purchase-cost-calculator__tip,
+.purchase-cost-calculator__empty {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: #f7f3ec;
+  padding: 0.85rem 1rem;
+  color: var(--ink-800, #334155);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.purchase-cost-calculator__tip p,
+.purchase-cost-calculator__empty p {
+  margin: 0;
+}
+

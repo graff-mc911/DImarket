@@ -159,6 +159,14 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     surfaces: ['mobile-more', 'header-dept-extra'],
   },
   {
+    id: 'purchase-calculator',
+    path: '/purchase-calculator',
+    aliases: ['/purchase-cost', '/kalkulyator-pokupky'],
+    labelKey: 'nav.purchaseCalculator',
+    labelKeyBySurface: { 'header-dept-extra': 'header.purchaseCalculator' },
+    surfaces: ['mobile-more', 'header-dept-extra', 'footer-services'],
+  },
+  {
     id: 'publish',
     path: '/create-ad',
     labelKey: 'nav.publish',
@@ -463,6 +471,9 @@ const EXTRA_RESERVED_SEGMENTS = [
   'ai',
   'admin',
   'estimate',
+  'purchase-calculator',
+  'purchase-cost',
+  'kalkulyator-pokupky',
   'commercial-agents',
   'categories',
 ] as const
@@ -476,6 +487,7 @@ export function navEntriesFor(surface: NavSurface): NavEntry[] {
  */
 export const HEADER_DEPT_BEFORE_ORDER = ['search'] as const
 export const HEADER_DEPT_AFTER_ORDER = [
+  'purchase-calculator',
   'cost-estimator',
   'publish',
   'analytics',

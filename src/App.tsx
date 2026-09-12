@@ -169,6 +169,11 @@ const CostEstimatorHistory = lazyWithRetry(() =>
     default: m.CostEstimatorHistory,
   })),
 )
+const PurchaseCostCalculatorPage = lazyWithRetry(() =>
+  import('./pages/PurchaseCostCalculatorPage').then((m) => ({
+    default: m.PurchaseCostCalculatorPage,
+  })),
+)
 const Notifications = lazyWithRetry(() =>
   import('./pages/Notifications').then((m) => ({ default: m.Notifications })),
 )
@@ -393,6 +398,10 @@ function App() {
       case '/estimate':      return <CostEstimator />
       case '/cost-estimator/history':
       case '/estimate/history': return <CostEstimatorHistory />
+      case '/purchase-calculator':
+      case '/purchase-cost':
+      case '/kalkulyator-pokupky':
+        return <PurchaseCostCalculatorPage />
       case '/settings':      return <Settings />
       case '/notifications': return <Notifications />
       case '/profile':       return <Profile />
