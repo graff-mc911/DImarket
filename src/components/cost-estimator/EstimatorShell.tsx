@@ -27,6 +27,7 @@ type EstimatorShellProps = {
   variant?: 'wizard' | 'intake'
 }
 
+/** Cost-estimator chrome — same owner-cabinet language as home. */
 export function EstimatorShell({
   step,
   title,
@@ -49,9 +50,11 @@ export function EstimatorShell({
   const backText = backLabel || t('common.back')
 
   return (
-    <div className={`estimator-page${intake ? ' estimator-page--intake' : ''}`}>
+    <div className={`home-premium estimator-page${intake ? ' estimator-page--intake' : ''}`}>
       <div className="estimator-page__inner">
-        <p className="estimator-page__brand">{t('costEstimator.brandLine')}</p>
+        <p className="estimator-page__brand dimarket-categories__eyebrow">
+          {t('costEstimator.brandLine')}
+        </p>
         {!intake ? (
           <div className="estimator-page__progress">
             <div className="estimator-page__progress-meta">
@@ -70,11 +73,7 @@ export function EstimatorShell({
                 <span
                   key={key}
                   className={
-                    i + 1 === step
-                      ? 'is-current'
-                      : i + 1 < step
-                        ? 'is-done'
-                        : undefined
+                    i + 1 === step ? 'is-current' : i + 1 < step ? 'is-done' : undefined
                   }
                 >
                   {t(key)}
@@ -84,13 +83,17 @@ export function EstimatorShell({
           </div>
         ) : null}
 
-        <div className="estimator-page__card">
-          {title ? <h1 className="estimator-page__title">{title}</h1> : null}
-          {subtitle ? <p className="estimator-page__subtitle">{subtitle}</p> : null}
+        <div className={`cabinet-sheet estimator-page__card${intake ? ' estimator-page__card--intake' : ''}`}>
+          {title ? (
+            <div className="cabinet-sheet__head">
+              <h1 className="estimator-page__title dimarket-categories__title">{title}</h1>
+              {subtitle ? <p className="estimator-page__subtitle">{subtitle}</p> : null}
+            </div>
+          ) : null}
 
           {error ? <p className="estimator-page__error">{error}</p> : null}
 
-          <div className={intake ? 'estimator-page__intake-body' : 'mt-8'}>{children}</div>
+          <div className={intake ? 'estimator-page__intake-body' : 'mt-6'}>{children}</div>
 
           {(onBack || onNext || footerExtra) && (
             <div className="estimator-page__footer">
