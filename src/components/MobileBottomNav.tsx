@@ -61,6 +61,7 @@ const MORE_ICONS: Record<string, ReactNode> = {
   'official-documents': <FileText className="h-5 w-5" aria-hidden />,
   'publish-request': <ClipboardList className="h-5 w-5" aria-hidden />,
   'cost-estimator': <Calculator className="h-5 w-5" aria-hidden />,
+  'purchase-calculator': <Calculator className="h-5 w-5" aria-hidden />,
   publish: <Plus className="h-5 w-5" aria-hidden />,
   pricing: <CreditCard className="h-5 w-5" aria-hidden />,
   assistant: <Bot className="h-5 w-5" aria-hidden />,

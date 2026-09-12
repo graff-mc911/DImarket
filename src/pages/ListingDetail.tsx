@@ -30,14 +30,52 @@ import { navigateTo }  from '../lib/navigation'
 import { getListingThemeImageUrl, listingShowsImage, shouldCompactListingThemeImage } from '../lib/listingThemeImage'
 import { isSuppressedListing } from '../lib/suppressedListings'
 import type { ListingWithImages, Profile } from '../lib/types'
+import type { AssetType } from '../types/calculator'
 import { ContractorMatches } from '../components/matching/ContractorMatches'
 import { ListingInlineChat } from '../components/listing/ListingInlineChat'
 import { PageContentAds } from '../components/CenterPageAd'
+import { PurchaseCostCalculator } from '../components/calculator/PurchaseCostCalculator'
 import { pipelineNextAction, pipelineNextForPro } from '../lib/pipelineNext'
 import { PipelineNextCta, PipelineStageChip } from '../components/pipeline/PipelineNext'
 
 interface ListingDetailProps {
   listingId: string
+}
+
+function listingHaystack(listing: ListingWithImages): string {
+  return [
+    listing.category?.slug,
+    listing.category?.name,
+    listing.title,
+    listing.location,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+}
+
+function shouldShowPurchaseCalculator(listing: ListingWithImages): boolean {
+  const text = listingHaystack(listing)
+  if (listing.category?.slug === 'sell-rent' || listing.category?.slug?.includes('sell')) return true
+  return /real\s*estate|property|apartment|house|villa|flat|нерухом|квартир|будинок|авто|car|vehicle|auto|bmw|toyota|mercedes/.test(
+    text,
+  )
+}
+
+function inferPurchaseAssetType(listing: ListingWithImages): AssetType {
+  const text = listingHaystack(listing)
+  if (/авто|car|vehicle|auto|bmw|toyota|mercedes|audi|vw|seat/.test(text)) return 'car'
+  return 'real_estate'
+}
+
+function inferPurchaseCountry(listing: ListingWithImages): string {
+  const text = listingHaystack(listing)
+  if (/poland|польщ|warsaw|krakow|wrocław|wroclaw/.test(text)) return 'PL'
+  if (/germany|німечч|berlin|munich|hamburg|frankfurt/.test(text)) return 'DE'
+  if (/france|франц|paris|lyon|marseille/.test(text)) return 'FR'
+  if (/italy|італ|rome|milan|roma|milano/.test(text)) return 'IT'
+  if (/spain|іспан|madrid|barcelona|valencia|alicante|torrevieja|torrevieja/.test(text)) return 'ES'
+  return 'ES'
 }
 
 export function ListingDetail({ listingId }: ListingDetailProps) {
@@ -393,6 +431,17 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
             {listing.listing_type === 'service_request' && user?.id === listing.author_id && (
               <div className="mt-4">
                 <ContractorMatches listingId={listing.id} />
+              </div>
+            )}
+
+            {shouldShowPurchaseCalculator(listing) && (
+              <div className="mt-6">
+                <PurchaseCostCalculator
+                  embedded
+                  initialAssetType={inferPurchaseAssetType(listing)}
+                  initialPrice={listing.price ?? undefined}
+                  initialCountry={inferPurchaseCountry(listing)}
+                />
               </div>
             )}
 
