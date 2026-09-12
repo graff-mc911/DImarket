@@ -8,6 +8,7 @@
  */
 
 import type { CalculatorRulesMap, CountryCalculatorConfig } from '../types/calculator'
+import { EU_UA_CALCULATOR_CONFIGS } from './euCalculatorPresets'
 
 /** Spain — Torrevieja / Valencian Community baseline for real estate. */
 export const SPAIN_CALCULATOR_CONFIG: CountryCalculatorConfig = {
@@ -283,7 +284,6 @@ export const POLAND_CALCULATOR_CONFIG: CountryCalculatorConfig = {
     ],
   },
   cars: {
-    notes: 'New-car turnkey rules not in baseline preset; extend `new` when market data is confirmed.',
     used: [
       {
         id: 'pl-car-used-pcc',
@@ -300,18 +300,36 @@ export const POLAND_CALCULATOR_CONFIG: CountryCalculatorConfig = {
         calculation: { kind: 'fixed', amount: 160 },
       },
     ],
-    new: [],
+    new: [
+      {
+        id: 'pl-car-new-vat',
+        name: 'VAT',
+        type: 'tax',
+        isMandatory: true,
+        calculation: { kind: 'percent_of_base', ratePercent: 23 },
+        oftenIncludedInBasePrice: true,
+      },
+      {
+        id: 'pl-car-new-registration',
+        name: 'Registration Fee',
+        type: 'fee',
+        isMandatory: true,
+        calculation: { kind: 'fixed', amount: 160 },
+      },
+    ],
   },
 }
 
 /**
- * Registry of all purchase-cost country configs.
- * Extend by adding another `CountryCalculatorConfig` and a key here.
+ * Registry of all purchase-cost country configs (EU + Ukraine).
+ * Extend by adding another `CountryCalculatorConfig` and a key here,
+ * or a preset in `euCalculatorPresets.ts`.
  */
 export const CALCULATOR_RULES: CalculatorRulesMap = {
   ES: SPAIN_CALCULATOR_CONFIG,
   DE: GERMANY_CALCULATOR_CONFIG,
   PL: POLAND_CALCULATOR_CONFIG,
+  ...EU_UA_CALCULATOR_CONFIGS,
 }
 
 export const CALCULATOR_COUNTRY_CODES = Object.keys(CALCULATOR_RULES) as Array<

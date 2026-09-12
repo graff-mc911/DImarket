@@ -29,18 +29,25 @@ export type PurchaseCostCalculatorProps = {
   className?: string
 }
 
-type CountryOption = { code: string; supported: boolean }
-
-const COUNTRY_OPTIONS: CountryOption[] = [
-  { code: 'ES', supported: true },
-  { code: 'DE', supported: true },
-  { code: 'PL', supported: true },
-  { code: 'FR', supported: false },
-  { code: 'IT', supported: false },
-]
+type CountryOption = { code: string; name: string }
 
 const PROPERTY_QUICK = [100_000, 200_000, 300_000] as const
 const CAR_QUICK = [10_000, 20_000, 35_000] as const
+
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  EUR: '€',
+  PLN: 'zł',
+  UAH: '₴',
+  CZK: 'Kč',
+  HUF: 'Ft',
+  RON: 'lei',
+  SEK: 'kr',
+  DKK: 'kr',
+  BGN: 'лв',
+}
+
+const SUFFIX_CURRENCIES = new Set(['PLN', 'UAH', 'CZK', 'HUF', 'RON', 'SEK', 'DKK', 'BGN'])
+
 
 const ITEM_LABEL_UK: Record<string, string> = {
   'es-re-resale-itp': 'ITP (податок на передачу)',
@@ -74,7 +81,8 @@ const ITEM_LABEL_UK: Record<string, string> = {
 }
 
 function currencySymbol(code: string | undefined): string {
-  return code === 'PLN' ? 'zł' : '€'
+  if (!code) return '€'
+  return CURRENCY_SYMBOLS[code] ?? code
 }
 
 function formatMoney(amount: number, currencyCode: string): string {
@@ -83,12 +91,7 @@ function formatMoney(amount: number, currencyCode: string): string {
     minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
     maximumFractionDigits: 2,
   }).format(amount)
-  return currencyCode === 'PLN' ? `${body} ${symbol}` : `${symbol}${body}`
-}
-
-function normalizeCountry(code: string | undefined): string {
-  const upper = (code || 'ES').trim().toUpperCase()
-  return COUNTRY_OPTIONS.some((c) => c.code === upper) ? upper : 'ES'
+  return SUFFIX_CURRENCIES.has(currencyCode) ? `${body} ${symbol}` : `${symbol}${body}`
 }
 
 function countryLabelKey(code: string): TranslationKey {
@@ -113,12 +116,29 @@ export function PurchaseCostCalculator({
 }: PurchaseCostCalculatorProps) {
   const { t, language } = useApp()
 
+  const countryOptions = useMemo<CountryOption[]>(() => {
+    return listCalculatorCountries()
+      .map((c) => ({
+        code: String(c.countryCode).toUpperCase(),
+        name: c.countryName,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, language.code || 'en'))
+  }, [language.code])
+
   const supportedCodes = useMemo(
-    () => new Set(listCalculatorCountries().map((c) => String(c.countryCode).toUpperCase())),
-    [],
+    () => new Set(countryOptions.map((c) => c.code)),
+    [countryOptions],
   )
 
-  const [countryCode, setCountryCode] = useState(() => normalizeCountry(initialCountry))
+  const normalizeCountry = (code: string | undefined): string => {
+    const upper = (code || 'ES').trim().toUpperCase()
+    return supportedCodes.has(upper) ? upper : 'ES'
+  }
+
+  const [countryCode, setCountryCode] = useState(() => {
+    const upper = (initialCountry || 'ES').trim().toUpperCase()
+    return upper || 'ES'
+  })
   const [assetType, setAssetType] = useState<AssetType>(initialAssetType)
   const [propertyCondition, setPropertyCondition] = useState<PropertyCondition>('resale')
   const [carCondition, setCarCondition] = useState<CarCondition>('used')
@@ -206,10 +226,9 @@ export function PurchaseCostCalculator({
               onChange={(e) => setCountryCode(normalizeCountry(e.target.value))}
               className="purchase-cost-calculator__select"
             >
-              {COUNTRY_OPTIONS.map((opt) => (
+              {countryOptions.map((opt) => (
                 <option key={opt.code} value={opt.code}>
                   {t(countryLabelKey(opt.code))}
-                  {!opt.supported ? ' · soon' : ''}
                 </option>
               ))}
             </select>

@@ -24,6 +24,7 @@ const DEPT_ITEMS = [
   /^Companies$|^Компан/i,
   /Manufacturers|Виробник/i,
   /^Jobs$|^Вакансії$/i,
+  /Purchase calculator|Калькулятор покупки/i,
   /Cost estimator|Калькулятор вартості/i,
   /^Sell$|^Опублікувати$/i,
   /Analytics|Аналітика/i,
