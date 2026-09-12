@@ -21,8 +21,9 @@ import {
   type AdOverlayVariantKey,
 } from '../lib/adSlotDisplay'
 
+/** Outline matches home cabinet orange rim (`--brand-primary`). */
 export const adOverlayGlow =
-  'rounded-none border border-[rgba(219,148,94,0.2)] bg-[rgba(255,252,248,0.98)] shadow-[0_0_22px_4px_rgba(15,17,17,0.16)] transition duration-300 hover:border-[rgba(219,148,94,0.32)] hover:shadow-[0_0_22px_4px_rgba(15,17,17,0.16)]'
+  'rounded-none border-2 border-[var(--brand-primary)] bg-[rgba(255,252,248,0.98)] shadow-[0_0_22px_4px_rgba(15,17,17,0.16)] transition duration-300 hover:border-[var(--brand-primary-hover)] hover:shadow-[0_0_22px_4px_rgba(15,17,17,0.16)]'
 
 type AdOverlayVariant = AdOverlayVariantKey
 

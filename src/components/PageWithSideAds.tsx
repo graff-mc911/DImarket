@@ -34,7 +34,8 @@ interface PageWithSideAdsProps {
   inSideAdsGrid?: boolean
 }
 
-/** Обгортка контенту; бокові рейки — у SideAdRailsLayout (App.tsx) */
+/** Обгортка контенту; бокові рейки — у SideAdRailsLayout (App.tsx).
+ *  `home-premium` поширює мову головної (beige canvas, cabinet rims) на всі сторінки. */
 export function PageWithSideAds({
   children,
   className = '',
@@ -42,14 +43,14 @@ export function PageWithSideAds({
 }: PageWithSideAdsProps) {
   if (inSideAdsGrid) {
     return (
-      <div className={`page-bg min-h-full pb-8 ${className}`}>
+      <div className={`page-bg home-premium min-h-full pb-8 ${className}`}>
         <div className="layout-page-content min-w-0">{children}</div>
       </div>
     )
   }
 
   return (
-    <div className={`page-bg min-h-screen pb-8 ${className}`}>
+    <div className={`page-bg home-premium min-h-screen pb-8 ${className}`}>
       <div className="layout-page-gutter min-w-0">{children}</div>
     </div>
   )

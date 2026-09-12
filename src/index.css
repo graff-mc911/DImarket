@@ -884,11 +884,16 @@
     background: var(--panel-strong);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-card);
+    /* Clear outline like home cabinet sheets */
+    border: 2px solid var(--brand-primary);
+    border-radius: 0;
     color: inherit;
     text-decoration: none;
     box-shadow: var(--card-shadow);
+    box-sizing: border-box;
+  }
+  .ad-story:hover {
+    border-color: var(--brand-primary-hover);
   }
   @media (min-width: 768px) {
     .ad-story {
@@ -4450,6 +4455,48 @@ select.select-glass.geo-filter-select::-ms-expand {
   border-color: var(--brand-primary-hover) !important;
 }
 
+/* Site-wide: marketplace / account surfaces inherit home cabinet language.
+   PageWithSideAds wraps every route in `.home-premium`. */
+.home-premium .amazon-section-card,
+.home-premium .amazon-filter-sidebar,
+.home-premium .amazon-buy-box,
+.home-premium .amazon-deal-card,
+.home-premium .amazon-pdp-image,
+.home-premium .product-card,
+.home-premium .glass-panel,
+.home-premium .glass-card,
+.home-premium .soft-card,
+.home-premium .hero-glass,
+.home-premium .directory-hero,
+.home-premium .directory-expert,
+.home-premium .cat-ai-card,
+.home-premium .cat-service-tile,
+.home-premium .estimator-page__card,
+.home-premium .adv-search__filters,
+.home-premium .adv-search__sidebar,
+.home-premium .map-results-sidebar {
+  border: 1px solid var(--brand-primary) !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  box-shadow: var(--card-shadow);
+  box-sizing: border-box;
+}
+
+.home-premium .amazon-section-card:hover,
+.home-premium .product-card:hover,
+.home-premium .glass-panel:hover,
+.home-premium .directory-expert:hover,
+.home-premium .cat-ai-card:hover {
+  border-color: var(--brand-primary-hover) !important;
+}
+
+/* Transparent intake shell stays frameless; inner tiles still rimmed above. */
+.home-premium .estimator-page--intake .estimator-page__card {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 /* Mobile home: one equal-width column like «Знайти майстрів» city cards. */
 @media (max-width: 639.98px) {
   .home-premium .layout-page-gutter.dimarket-categories,
@@ -6715,7 +6762,7 @@ select.select-glass.geo-filter-select::-ms-expand {
    ============================================================ */
 
 .cat-page {
-  background: #f6f4f1;
+  background: #ebe8e3;
 }
 
 .cat-page__ads {
@@ -7439,16 +7486,14 @@ select.select-glass.geo-filter-select::-ms-expand {
 
 /* —— Advanced Search —— */
 .adv-search {
-  --adv-ink: #2a241c;
+  --adv-ink: #1e293b;
   --adv-muted: var(--label-ink);
-  --adv-line: rgba(42, 36, 28, 0.12);
-  --adv-accent: #c48a4a;
-  --adv-surface: #fffdf9;
-  --adv-panel: #f6f1ea;
+  --adv-line: rgba(148, 163, 184, 0.28);
+  --adv-accent: var(--brand-primary);
+  --adv-surface: #ffffff;
+  --adv-panel: #ffffff;
   padding-bottom: 3.5rem;
-  background:
-    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(196, 138, 74, 0.14), transparent 55%),
-    linear-gradient(180deg, #faf6f1 0%, #fff 40%, #faf6f1 100%);
+  background: #ebe8e3;
 }
 
 .adv-search__hero {
@@ -8339,7 +8384,7 @@ body,
 /* Cost estimator — BuildZoom-simple intake, DImarket colors */
 .estimator-page {
   min-height: calc(100vh - 4rem);
-  background: #f6f4f1;
+  background: #ebe8e3;
   padding: 2rem 1rem 7rem;
 }
 
@@ -8350,7 +8395,7 @@ body,
 }
 
 .estimator-page--intake {
-  background: #f6f4f1;
+  background: #ebe8e3;
   padding: 1.25rem 1rem 4rem;
   min-height: calc(100vh - 4rem);
 }
@@ -8524,7 +8569,7 @@ body,
   height: 80px;
   padding: 0 4px;
   border: 0;
-  border-radius: var(--radius-card);
+  border-radius: 0;
   background: #fff;
   font-size: 10px;
   font-weight: 700;
@@ -8537,8 +8582,10 @@ body,
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: var(--radius-card);
+  border-radius: 0;
+  border: 1px solid var(--brand-primary);
   box-shadow: var(--card-shadow);
+  box-sizing: border-box;
 }
 .bz-needs-help__tile:hover,
 .bz-needs-help__tile.is-active {
@@ -8547,6 +8594,7 @@ body,
 }
 .bz-needs-help__tile:hover::before,
 .bz-needs-help__tile.is-active::before {
+  border-color: var(--brand-primary-hover);
   box-shadow: var(--card-shadow);
 }
 .bz-needs-help__icon {
@@ -9340,7 +9388,7 @@ body,
 .directory-hero.amazon-section-card {
   border-radius: 0 !important;
   background: #ffffff !important;
-  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  border: 1px solid var(--brand-primary) !important;
   box-shadow: 0 8px 24px rgba(47, 42, 36, 0.08) !important;
   background-image: none !important;
 }
