@@ -4415,7 +4415,9 @@ select.select-glass.geo-filter-select::-ms-expand {
   background: #ffffff !important;
 }
 
-/* Home cards: thin orange outer rim (match Find Masters city tiles). */
+/* Home section sheets + inner cards: thin orange outer rim. */
+.home-premium .cabinet-sheet,
+.home-premium .cabinet-sheet__map,
 .home-premium .cabinet-sheet .dimarket-category-card,
 .home-premium .cabinet-sheet .cabinet-sheet__feature,
 .home-premium .cabinet-sheet .home-pro-card,
