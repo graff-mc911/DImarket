@@ -51,6 +51,7 @@ type EstimatorIntakeProps = {
   onSubmit: () => void
 }
 
+/** Intake UI in home cabinet language (no BuildZoom yellow wash). */
 export function EstimatorIntake({
   query,
   selectedId,
@@ -87,84 +88,88 @@ export function EstimatorIntake({
   }, [])
 
   return (
-    <div id="needs-help" className="bz-needs-help">
-      <div className="bz-needs-help__gradient" />
-      <div className="bz-needs-help__gradient bz-needs-help__gradient--bottom" />
-      <div className="bz-needs-help__content">
-        <div className="bz-needs-help__prompt" ref={wrapRef}>
-          <h2 className="bz-needs-help__lead">
-            <label htmlFor="estimator-help-input">{t('costEstimator.needHelpWith')}</label>
-          </h2>
-          <span className={query ? 'bz-needs-help__cursor is-off' : 'bz-needs-help__cursor'} aria-hidden>
-            |
-          </span>
-          <div className="bz-needs-help__field-wrap">
-            <input
-              id="estimator-help-input"
-              className="bz-needs-help__field"
-              value={query}
-              autoComplete="off"
-              onChange={(e) => {
-                onQueryChange(e.target.value)
-                setOpen(true)
-              }}
-              onFocus={() => setOpen(true)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  setOpen(false)
-                  onSubmit()
-                }
-                if (e.key === 'Escape') setOpen(false)
-              }}
-            />
-            {open && suggestions.length > 0 ? (
-              <ul className="bz-needs-help__dropdown" role="listbox">
-                {suggestions.map(({ pt, label }) => (
-                  <li key={pt.id}>
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={selectedId === pt.id}
-                      className={
-                        selectedId === pt.id
-                          ? 'bz-needs-help__option is-active'
-                          : 'bz-needs-help__option'
-                      }
-                      onClick={() => {
-                        onPick(pt.id, false)
-                        setOpen(false)
-                      }}
-                    >
-                      {label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
+    <div id="needs-help" className="estimator-intake">
+      <div className="estimator-intake__prompt" ref={wrapRef}>
+        <h2 className="estimator-intake__lead">
+          <label htmlFor="estimator-help-input">{t('costEstimator.needHelpWith')}</label>
+        </h2>
+        <div className="estimator-intake__field-wrap">
+          <input
+            id="estimator-help-input"
+            className="estimator-intake__field"
+            value={query}
+            autoComplete="off"
+            placeholder="…"
+            onChange={(e) => {
+              onQueryChange(e.target.value)
+              setOpen(true)
+            }}
+            onFocus={() => setOpen(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                setOpen(false)
+                onSubmit()
+              }
+              if (e.key === 'Escape') setOpen(false)
+            }}
+          />
+          {open && suggestions.length > 0 ? (
+            <ul className="estimator-intake__dropdown" role="listbox">
+              {suggestions.map(({ pt, label }) => (
+                <li key={pt.id}>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={selectedId === pt.id}
+                    className={
+                      selectedId === pt.id
+                        ? 'estimator-intake__option is-active'
+                        : 'estimator-intake__option'
+                    }
+                    onClick={() => {
+                      onPick(pt.id, false)
+                      setOpen(false)
+                    }}
+                  >
+                    {label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
+      </div>
 
-        <div className="bz-needs-help__categories">
-          <p className="bz-needs-help__hint">{t('costEstimator.chooseHint')}</p>
-          {BZ_HOMEPAGE_CARDS.map((card) => {
-            const active = selectedId === card.id
-            return (
-              <button
-                key={card.id}
-                type="button"
-                className={active ? 'bz-needs-help__tile is-active' : 'bz-needs-help__tile'}
-                onClick={() => onPick(card.id, true)}
-              >
-                <span className={`bz-needs-help__icon bz-needs-help__icon--${card.icon}`} aria-hidden />
-                <span>{t(card.labelKey as never)}</span>
-              </button>
-            )
-          })}
-          <button type="button" className="bz-needs-help__cta" onClick={onSubmit}>
-            {t('costEstimator.getQuotes')}
-          </button>
-        </div>
+      <p className="estimator-intake__hint">{t('costEstimator.chooseHint')}</p>
+
+      <div className="cabinet-sheet__grid estimator-intake__grid" role="list">
+        {BZ_HOMEPAGE_CARDS.map((card) => {
+          const active = selectedId === card.id
+          return (
+            <button
+              key={card.id}
+              type="button"
+              role="listitem"
+              className={
+                active ? 'estimator-intake__tile is-active' : 'estimator-intake__tile'
+              }
+              onClick={() => onPick(card.id, true)}
+            >
+              <span
+                className={`estimator-intake__icon estimator-intake__icon--${card.icon}`}
+                aria-hidden
+              />
+              <span className="estimator-intake__tile-label">{t(card.labelKey as never)}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="estimator-intake__actions">
+        <button type="button" className="estimator-intake__cta" onClick={onSubmit}>
+          {t('costEstimator.getQuotes')}
+        </button>
       </div>
     </div>
   )
