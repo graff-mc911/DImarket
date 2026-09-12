@@ -10,6 +10,7 @@ import {
   calculateRealEstateCost,
   spainCarRegistrationTaxRate,
 } from '../calculatorService.ts'
+import { listCalculatorCountries } from '../../config/calculatorRules.ts'
 
 describe('calculateRealEstateCost — Spain', () => {
   it('resale at €200,000 → taxes/fees ≈ €22,000, total ≈ €222,000', () => {
@@ -104,7 +105,7 @@ describe('calculateRealEstateCost — other countries (config fallback)', () => 
     assert.throws(
       () =>
         calculateRealEstateCost({
-          countryCode: 'FR',
+          countryCode: 'US',
           basePrice: 100_000,
           condition: 'resale',
         }),
@@ -206,5 +207,59 @@ describe('calculateCarCost — other countries (config fallback)', () => {
     })
     assert.equal(result.totalTaxesAndFees, 40)
     assert.equal(result.finalTotalPrice, 15_040)
+  })
+})
+
+describe('EU + Ukraine coverage', () => {
+  it('registers all 27 EU countries plus Ukraine', () => {
+    const codes = listCalculatorCountries().map((c) => c.countryCode).sort()
+    assert.equal(codes.length, 28)
+    for (const code of [
+      'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE',
+      'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'UA',
+    ]) {
+      assert.ok(codes.includes(code), `missing ${code}`)
+    }
+  })
+
+  it('calculates resale real estate for every country', () => {
+    for (const country of listCalculatorCountries()) {
+      const result = calculateRealEstateCost({
+        countryCode: country.countryCode,
+        basePrice: 200_000,
+        condition: 'resale',
+      })
+      assert.equal(result.basePrice, 200_000)
+      assert.ok(result.finalTotalPrice >= result.basePrice)
+      assert.ok(Array.isArray(result.items))
+    }
+  })
+
+  it('calculates used cars for every country', () => {
+    for (const country of listCalculatorCountries()) {
+      const result = calculateCarCost({
+        countryCode: country.countryCode,
+        basePrice: 10_000,
+        condition: 'used',
+      })
+      assert.equal(result.basePrice, 10_000)
+      assert.ok(result.finalTotalPrice >= result.basePrice)
+    }
+  })
+
+  it('France resale and Ukraine domestic car estimates run', () => {
+    const fr = calculateRealEstateCost({
+      countryCode: 'FR',
+      basePrice: 250_000,
+      condition: 'resale',
+    })
+    assert.ok(fr.totalTaxesAndFees > 10_000)
+
+    const ua = calculateCarCost({
+      countryCode: 'UA',
+      basePrice: 400_000,
+      condition: 'used',
+    })
+    assert.ok(ua.totalTaxesAndFees >= 3000)
   })
 })
