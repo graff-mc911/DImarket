@@ -4415,6 +4415,73 @@ select.select-glass.geo-filter-select::-ms-expand {
   background: #ffffff !important;
 }
 
+/* Home cards: thin orange outer rim (match Find Masters city tiles). */
+.home-premium .cabinet-sheet .dimarket-category-card,
+.home-premium .cabinet-sheet .cabinet-sheet__feature,
+.home-premium .cabinet-sheet .home-pro-card,
+.home-premium .cabinet-sheet .home-why-card,
+.home-premium .cabinet-sheet .home-review-card,
+.home-premium .cabinet-sheet .home-project-card,
+.home-premium .cabinet-sheet .home-company-logo,
+.home-premium .cabinet-sheet .home-faq__item,
+.home-premium .cabinet-sheet .home-trust__card,
+.home-premium .cabinet-sheet .directory-expert,
+.home-premium .cabinet-sheet .home-empty-panel {
+  border: 1px solid var(--brand-primary) !important;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.home-premium .cabinet-sheet .dimarket-category-card:hover,
+.home-premium .cabinet-sheet .dimarket-category-card:focus-within,
+.home-premium .cabinet-sheet .cabinet-sheet__feature:hover,
+.home-premium .cabinet-sheet .cabinet-sheet__feature:focus-within {
+  border-color: var(--brand-primary-hover) !important;
+}
+
+/* Mobile home: one equal-width column like «Знайти майстрів» city cards. */
+@media (max-width: 639.98px) {
+  .home-premium .layout-page-gutter.dimarket-categories,
+  .home-premium .layout-page-gutter.home-section {
+    padding-inline: max(var(--layout-gutter), env(safe-area-inset-left, 0px))
+      max(var(--layout-gutter), env(safe-area-inset-right, 0px));
+  }
+
+  .home-premium .cabinet-sheet {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+  }
+
+  .home-premium .cabinet-sheet__grid,
+  .home-premium .cabinet-sheet__grid--pros,
+  .home-premium .cabinet-sheet__grid--brands,
+  .home-premium .cabinet-sheet__grid--trust,
+  .home-premium .home-categories-preview .cabinet-sheet__grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.75rem;
+  }
+
+  .home-premium .cabinet-sheet__feature,
+  .home-premium .cabinet-sheet .dimarket-category-card,
+  .home-premium .cabinet-sheet .home-pro-card,
+  .home-premium .cabinet-sheet .home-why-card,
+  .home-premium .cabinet-sheet .home-review-card,
+  .home-premium .cabinet-sheet .home-project-card,
+  .home-premium .cabinet-sheet .home-company-logo,
+  .home-premium .cabinet-sheet .home-faq__item,
+  .home-premium .cabinet-sheet .home-trust__card,
+  .home-premium .cabinet-sheet .directory-expert,
+  .home-premium .cabinet-sheet .home-empty-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: 0;
+  }
+}
+
 .dimarket-category-card:hover,
 .dimarket-category-card:focus-within {
   transform: translateY(-4px);
