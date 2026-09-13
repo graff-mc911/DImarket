@@ -434,7 +434,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                                 <div className="min-w-0">
                                   <div className="flex items-center gap-2">
                                     <h3 className="truncate font-bold" style={{ color: 'var(--ink-900)' }}>
-                                      {profile.full_name || 'Майстер'}
+                                      {profile.full_name || t('pro.fallbackName')}
                                     </h3>
                                     <VerificationBadge level={profile.verification_level} />
                                     {(!profile.verification_level || profile.verification_level === 'none') &&
@@ -464,7 +464,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                                     {profile.is_professional && (
                                       <span className="flex items-center gap-1">
                                         <Building2 className="h-3 w-3" />
-                                        Майстер
+                                        {t('pro.fallbackName')}
                                       </span>
                                     )}
                                   </div>

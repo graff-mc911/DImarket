@@ -93,19 +93,19 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
       if (cancelled) return
 
       if (qError) { setError(qError.message); return }
-      if (!data)  { setError('Профіль не знайдено.'); return }
+      if (!data)  { setError(t('pro.notFound')); return }
 
       const { isLikelyQaOrTestProfile, isProfileSoftRemoved } = await import('../lib/publicProfileVisibility')
       // Soft-deleted / owner-hidden / QA profiles are not publicly viewable.
       if (isProfileSoftRemoved(data as never) || isLikelyQaOrTestProfile(data as never)) {
-        setError('Профіль не знайдено.')
+        setError(t('pro.notFound'))
         setProfile(null)
         return
       }
 
       setProfile(data)
     } catch (e) {
-      if (!cancelled) setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      if (!cancelled) setError(e instanceof Error ? e.message : t('pro.loadError'))
     } finally {
       if (!cancelled) setLoading(false)
     }
@@ -217,7 +217,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
             До каталогу майстрів
           </button>
           <div className="glass-panel p-8 text-center">
-            <p className="muted-text">{error || 'Профіль недоступний.'}</p>
+            <p className="muted-text">{error || t('pro.unavailable')}</p>
           </div>
         </div>
       </div>
@@ -247,10 +247,10 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
             {avatarPhoto ? (
               <div className="aspect-square bg-[#f7fafa] sm:aspect-[4/3]">
                 <ProfileAvatar
-                  name={profile.full_name || 'Майстер'}
+                  name={profile.full_name || t('pro.fallbackName')}
                   profileId={profile.id}
                   src={avatarPhoto}
-                  alt={profile.full_name || 'Майстер'}
+                  alt={profile.full_name || t('pro.fallbackName')}
                   className="h-full w-full object-cover"
                   userRole={profile.user_role}
                 />
@@ -263,7 +263,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           </div>
 
           <div className="mt-4 lg:hidden">
-            <h1 className="text-xl font-normal text-[var(--ink-900)]">{profile.full_name || 'Майстер'}</h1>
+            <h1 className="text-xl font-normal text-[var(--ink-900)]">{profile.full_name || t('pro.fallbackName')}</h1>
             {profile.location && (
               <p className="mt-1 text-sm text-[var(--ink-600)]">{profile.location}</p>
             )}
@@ -361,7 +361,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           )}
 
           <h1 className="hidden text-xl font-normal text-[var(--ink-900)] lg:block">
-            {profile.full_name || 'Майстер'}
+            {profile.full_name || t('pro.fallbackName')}
           </h1>
 
           <div className="mt-2 flex items-center gap-2">
