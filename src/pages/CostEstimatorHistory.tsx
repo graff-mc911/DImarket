@@ -90,7 +90,7 @@ export function CostEstimatorHistory() {
 
   const shareRow = async (row: SavedCostEstimateRow) => {
     const url = `${window.location.origin}/cost-estimator?id=${encodeURIComponent(row.id)}`
-    const text = `${row.title} — ${formatEuro(Number(row.total_standard) || 0)} (reference estimate)`
+    const text = `${row.title} — ${formatEuro(Number(row.total_standard) || 0)} ${t('costEstimator.historyShareSuffix')}`
     try {
       if (navigator.share) {
         await navigator.share({ title: row.title, text, url })
@@ -129,11 +129,11 @@ export function CostEstimatorHistory() {
             <table className="w-full text-left text-[12px]">
               <thead>
                 <tr className="text-[11px] uppercase tracking-wide text-[color:var(--label-ink)]">
-                  <th className="pb-2">Estimate</th>
-                  <th className="pb-2">Economy</th>
-                  <th className="pb-2">Standard</th>
-                  <th className="pb-2">Premium</th>
-                  <th className="pb-2">Area</th>
+                  <th className="pb-2">{t('costEstimator.historyColEstimate')}</th>
+                  <th className="pb-2">{t('costEstimator.historyColEconomy')}</th>
+                  <th className="pb-2">{t('costEstimator.historyColStandard')}</th>
+                  <th className="pb-2">{t('costEstimator.historyColPremium')}</th>
+                  <th className="pb-2">{t('costEstimator.historyColArea')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -152,17 +152,17 @@ export function CostEstimatorHistory() {
         ) : null}
 
         {loading ? (
-          <p className="mt-8 text-[14px] text-[color:var(--label-ink)]">Loading…</p>
+          <p className="mt-8 text-[14px] text-[color:var(--label-ink)]">{t('costEstimator.historyLoading')}</p>
         ) : rows.length === 0 ? (
           <div className="mt-10 rounded-none border border-dashed border-[rgba(148,163,184,0.35)] bg-white/70 px-6 py-12 text-center">
             <FileText className="mx-auto h-8 w-8 text-[rgba(148,163,184,0.35)]" />
-            <p className="mt-3 text-[15px] font-semibold text-[color:var(--ink-900)]">No saved estimates yet</p>
+            <p className="mt-3 text-[15px] font-semibold text-[color:var(--ink-900)]">{t('costEstimator.historyEmpty')}</p>
             <button
               type="button"
               className="mt-4 rounded-full bg-[#2f2a24] px-5 py-2.5 text-[13px] font-semibold text-white"
               onClick={() => navigateTo('/cost-estimator')}
             >
-              Create estimate
+              {t('costEstimator.historyCreate')}
             </button>
           </div>
         ) : (
@@ -223,7 +223,7 @@ export function CostEstimatorHistory() {
                     onClick={() => exportRow(row)}
                   >
                     <FileText className="h-3.5 w-3.5" />
-                    PDF
+                    {t('costEstimator.historyPdf')}
                   </button>
                   <button
                     type="button"
@@ -231,7 +231,7 @@ export function CostEstimatorHistory() {
                     onClick={() => exportCsvRow(row)}
                   >
                     <FileSpreadsheet className="h-3.5 w-3.5" />
-                    CSV
+                    {t('costEstimator.historyCsv')}
                   </button>
                   <button
                     type="button"
@@ -239,7 +239,7 @@ export function CostEstimatorHistory() {
                     onClick={() => void shareRow(row)}
                   >
                     <Share2 className="h-3.5 w-3.5" />
-                    Share
+                    {t('costEstimator.historyShare')}
                   </button>
                   <button
                     type="button"
@@ -249,7 +249,7 @@ export function CostEstimatorHistory() {
                     }
                   >
                     <Archive className="h-3.5 w-3.5" />
-                    Archive
+                    {t('costEstimator.historyArchive')}
                   </button>
                   <button
                     type="button"

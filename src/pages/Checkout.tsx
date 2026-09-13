@@ -20,7 +20,7 @@ import { navigateTo } from '../lib/navigation'
 type CheckoutStatus = 'loading' | 'success' | 'error' | 'no_session'
 
 export function Checkout() {
-  const { user, authReady } = useApp()
+  const { user, authReady, t } = useApp()
   const [status, setStatus]         = useState<CheckoutStatus>('loading')
   const [message, setMessage]       = useState('')
   const [paymentType, setPaymentType] = useState('')
@@ -275,11 +275,11 @@ export function Checkout() {
   const getRedirectLabel = () => {
     switch (paymentType) {
       case 'premium_profile':
-      case 'verified_badge':   return 'Переглянути профіль'
-      case 'featured_listing': return 'Мої оголошення'
+      case 'verified_badge':   return t('checkout.viewProfile')
+      case 'featured_listing': return t('checkout.myListings')
       case 'ad_campaign':      return 'Мої кампанії'
       case 'project_escrow':    return 'До менеджера проєкту'
-      default:                 return 'На головну'
+      default:                 return t('checkout.backHome')
     }
   }
 
@@ -332,7 +332,7 @@ export function Checkout() {
                   onClick={() => navigateTo('/')}
                   className="btn-secondary w-full justify-center rounded-full"
                 >
-                  На головну
+                  {t('checkout.backHome')}
                 </button>
               </div>
             </>
@@ -346,11 +346,11 @@ export function Checkout() {
                 <XCircle className="h-10 w-10" style={{ color: '#b91c1c' }} />
               </div>
               <h1 className="mt-6 text-2xl font-extrabold" style={{ color: 'var(--ink-900)' }}>
-                {status === 'no_session' ? 'Сторінка недоступна' : 'Щось пішло не так'}
+                {status === 'no_session' ? t('common.pageUnavailable') : t('common.somethingWrong')}
               </h1>
               <p className="muted-text mt-3 text-sm leading-relaxed">
                 {status === 'no_session'
-                  ? 'Ця сторінка відкривається тільки після оплати через Stripe.'
+                  ? t('checkout.stripeOnly')
                   : message}
               </p>
 
@@ -367,7 +367,7 @@ export function Checkout() {
                   onClick={() => navigateTo('/')}
                   className="btn-secondary w-full justify-center rounded-full"
                 >
-                  На головну
+                  {t('checkout.backHome')}
                 </button>
               </div>
             </>

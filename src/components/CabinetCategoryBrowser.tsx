@@ -172,9 +172,9 @@ export function CabinetCategoryBrowser({
               const services = servicesByParent[cat.id] ?? []
               const countHint =
                 typeof cat.professionals_count === 'number' && cat.professionals_count > 0
-                  ? `${cat.professionals_count} проф.`
+                  ? t('home.prosAbbrev').replace('{n}', String(cat.professionals_count))
                   : typeof cat.services_count === 'number' && cat.services_count > 0
-                    ? `${cat.services_count} послуг`
+                    ? t('home.servicesAbbrev').replace('{n}', String(cat.services_count))
                     : null
               const sub = isOpen
                 ? loadingServices

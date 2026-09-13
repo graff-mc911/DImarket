@@ -357,7 +357,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                                 onClick={() => removeFromFavorites(item.id, 'listings')}
                                 className="shrink-0 flex h-9 w-9 items-center justify-center rounded-full transition hover:scale-110"
                                 style={{ background: 'rgba(239,68,68,0.10)', color: '#b91c1c' }}
-                                title="Видалити зі збережених"
+                                title={t('favorites.remove')}
                               >
                                 <BookmarkX className="h-4 w-4" />
                               </button>
@@ -483,7 +483,7 @@ ON saved_items FOR ALL USING (auth.uid() = user_id);`}
                                 onClick={() => removeFromFavorites(item.id, 'profiles')}
                                 className="shrink-0 flex h-9 w-9 items-center justify-center rounded-full transition hover:scale-110"
                                 style={{ background: 'rgba(239,68,68,0.10)', color: '#b91c1c' }}
-                                title="Видалити зі збережених"
+                                title={t('favorites.remove')}
                               >
                                 <BookmarkX className="h-4 w-4" />
                               </button>

@@ -2,6 +2,7 @@ import type { TranslationKey } from './en'
 import { documentsUk } from './documents'
 import { costCalculatorUk } from './costCalculator'
 import { purchaseCalculatorUk } from './purchaseCalculator'
+import { uiHardcodedFixUk } from './uiHardcodedFix'
 
 // Complete uk UI translations — full TranslationKey coverage.
 export const ukTranslations: Partial<Record<TranslationKey, string>> = {
@@ -2928,4 +2929,5 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   ...documentsUk,
   ...costCalculatorUk,
   ...purchaseCalculatorUk,
+  ...uiHardcodedFixUk,
 }

@@ -142,7 +142,7 @@ export function BoostProfile() {
                           className="btn-primary mt-4 w-full justify-center rounded-full disabled:opacity-50"
                         >
                           {isActive ? <Loader className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-                          {isActive ? 'Переходимо...' : 'Придбати'}
+                          {isActive ? t('common.processing') : t('boost.buy')}
                         </button>
                       )}
                     </div>
@@ -206,7 +206,7 @@ export function BoostProfile() {
                       {loading === verifiedPackage.id
                         ? <Loader className="h-4 w-4 animate-spin" />
                         : <ShieldCheck className="h-4 w-4" />}
-                      {loading === verifiedPackage.id ? 'Переходимо...' : 'Отримати бейдж'}
+                      {loading === verifiedPackage.id ? t('common.processing') : t('boost.getBadge')}
                     </button>
                   )}
                 </div>

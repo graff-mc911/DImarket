@@ -45,7 +45,7 @@ interface ProfessionalDetailProps {
 type ActiveTab = 'about' | 'portfolio' | 'reviews'
 
 export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
-  const { user, profile: viewerProfile } = useApp()
+  const { user, profile: viewerProfile, t } = useApp()
 
   const [profile, setProfile]           = useState<Profile | null>(null)
   const [loading, setLoading]           = useState(true)
@@ -272,9 +272,9 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           {/* Таби */}
           <div className="mt-4 flex gap-1 overflow-x-auto border-b border-[#e7e7e7]">
             {([
-              { key: 'about', label: 'Про майстра' },
-              { key: 'portfolio', label: 'Портфоліо' },
-              { key: 'reviews', label: 'Відгуки (' + (profile.total_reviews || 0) + ')' },
+              { key: 'about', label: t('pro.about') },
+              { key: 'portfolio', label: t('pro.portfolio') },
+              { key: 'reviews', label: t('pro.reviews').replace('{count}', String(profile.total_reviews || 0)) },
             ] as { key: ActiveTab; label: string }[]).map(tab => (
               <button
                 key={tab.key}
@@ -293,7 +293,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
 
           {activeTab === 'about' && (
             <div className="amazon-section-card mt-4">
-              <h2 className="text-lg font-bold text-[var(--ink-900)]">Про майстра</h2>
+              <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('pro.about')}</h2>
               {profile.bio ? (
                 <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-[var(--ink-700)]">
                   {profile.bio}
@@ -306,7 +306,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
 
           {activeTab === 'portfolio' && (
             <div className="amazon-section-card mt-4">
-              <h2 className="text-lg font-bold text-[var(--ink-900)]">Портфоліо</h2>
+              <h2 className="text-lg font-bold text-[var(--ink-900)]">{t('pro.portfolio')}</h2>
               <div className="mt-4">
                 <PortfolioManager
                   profileId={profileId}
@@ -367,7 +367,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
           <div className="mt-2 flex items-center gap-2">
             {renderStars(Math.round(profile.rating))}
             <span className="text-sm amazon-link">
-              {profile.rating > 0 ? profile.rating.toFixed(1) : 'Новий'}
+              {profile.rating > 0 ? profile.rating.toFixed(1) : t('pro.new')}
             </span>
             <span className="text-sm text-[var(--ink-500)]">({profile.total_reviews} відгуків)</span>
           </div>
@@ -430,7 +430,7 @@ export function ProfessionalDetail({ profileId }: ProfessionalDetailProps) {
               className="btn-secondary mt-2 w-full py-2.5 text-sm"
             >
               {isSaved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
-              {isSaved ? 'В збережених' : 'Зберегти майстра'}
+              {isSaved ? t('pro.saved') : t('pro.save')}
             </button>
           )}
 

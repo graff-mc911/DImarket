@@ -211,7 +211,7 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
             type="button"
             onClick={toggleSave}
             disabled={savingInProgress}
-            title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
+            title={isSaved ? t('favorites.remove') : t('favorites.save')}
             className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[var(--ink-500)] shadow-sm transition hover:bg-white disabled:opacity-50"
             style={isSaved ? { color: '#ef4444' } : undefined}
           >
@@ -231,7 +231,7 @@ export function ListingCard({ listing, isLast = false, variant = 'grid' }: Listi
             type="button"
             onClick={toggleSave}
             disabled={savingInProgress}
-            title={isSaved ? 'Видалити зі збережених' : 'Зберегти'}
+            title={isSaved ? t('favorites.remove') : t('favorites.save')}
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--ink-500)] transition hover:bg-[#f7fafa] disabled:opacity-50"
             style={isSaved ? { color: '#ef4444' } : undefined}
           >

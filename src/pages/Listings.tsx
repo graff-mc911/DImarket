@@ -399,10 +399,10 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
           {activeFiltersCount > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {searchQuery && (
-                <FilterTag label={'Пошук: ' + searchQuery} onRemove={() => setSearchQuery('')} />
+                <FilterTag label={t('listing.searchPrefix').replace('{q}', searchQuery)} onRemove={() => setSearchQuery('')} />
               )}
               {locationQuery && (
-                <FilterTag label={'Місто: ' + locationQuery} onRemove={() => setLocationQuery('')} />
+                <FilterTag label={t('listing.cityPrefix').replace('{city}', locationQuery)} onRemove={() => setLocationQuery('')} />
               )}
               {selectedCategory && !fixedCategorySlug && (
                 <FilterTag
@@ -423,7 +423,7 @@ export function Listings({ fixedCategorySlug }: ListingsProps = {}) {
                 />
               )}
               {maxPrice && (
-                <FilterTag label={'Макс. ціна: ' + maxPrice} onRemove={() => setMaxPrice('')} />
+                <FilterTag label={t('listing.maxPricePrefix').replace('{price}', maxPrice)} onRemove={() => setMaxPrice('')} />
               )}
             </div>
           )}

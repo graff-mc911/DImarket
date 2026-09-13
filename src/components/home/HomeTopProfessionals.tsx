@@ -35,8 +35,8 @@ export function HomeTopProfessionals({
   const prosCount = metrics?.professionals ?? professionals.length
   const countriesCount = metrics?.countries ?? 0
   const metaLine = [
-    prosCount > 0 ? `${prosCount} проф.` : null,
-    countriesCount > 0 ? `${countriesCount} країн` : null,
+    prosCount > 0 ? t('home.prosAbbrev').replace('{n}', String(prosCount)) : null,
+    countriesCount > 0 ? t('home.countriesAbbrev').replace('{n}', String(countriesCount)) : null,
   ]
     .filter(Boolean)
     .join(' · ')
