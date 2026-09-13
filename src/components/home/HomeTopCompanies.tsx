@@ -31,8 +31,8 @@ export function HomeTopCompanies({ companies, loading, metrics }: HomeTopCompani
   const companiesCount = companies.length
   const countriesCount = metrics?.countries ?? 0
   const metaLine = [
-    companiesCount > 0 ? `${companiesCount} комп.` : null,
-    countriesCount > 0 ? `${countriesCount} країн` : null,
+    companiesCount > 0 ? t('home.companiesAbbrev').replace('{n}', String(companiesCount)) : null,
+    countriesCount > 0 ? t('home.countriesAbbrev').replace('{n}', String(countriesCount)) : null,
   ]
     .filter(Boolean)
     .join(' · ')

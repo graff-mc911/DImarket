@@ -2,6 +2,7 @@
 import { documentsEn } from './documents'
 import { costCalculatorEn } from './costCalculator'
 import { purchaseCalculatorEn } from './purchaseCalculator'
+import { uiHardcodedFixEn } from './uiHardcodedFix'
 
 export const enTranslations = {
   'header.browse': 'Browse',
@@ -2931,6 +2932,7 @@ export const enTranslations = {
   ...documentsEn,
   ...costCalculatorEn,
   ...purchaseCalculatorEn,
+  ...uiHardcodedFixEn,
 } as const
 
 export type TranslationKey = keyof typeof enTranslations

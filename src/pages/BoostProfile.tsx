@@ -44,7 +44,7 @@ export function BoostProfile() {
       window.location.href = result.url
     } catch (err) {
       console.error('Помилка оплати:', err)
-      setError(err instanceof Error ? err.message : 'Помилка оплати. Спробуйте ще раз.')
+      setError(err instanceof Error ? err.message : t('boost.payError'))
       setLoading(null)
     }
   }
@@ -95,10 +95,10 @@ export function BoostProfile() {
               {/* Переваги */}
               <div className="mb-6 space-y-2">
                 {[
-                  'Ваш профіль вгорі пошукової видачі',
-                  'Помаранчева преміум-смужка на картці',
-                  'Більше переглядів і звернень від клієнтів',
-                  'Пріоритет у результатах фільтрації',
+                  t('boost.premiumBenefits.1'),
+                  t('boost.premiumBenefits.2'),
+                  t('boost.premiumBenefits.3'),
+                  t('boost.premiumBenefits.4'),
                 ].map((benefit) => (
                   <div key={benefit} className="flex items-center gap-2 text-sm" style={{ color: 'var(--ink-700)' }}>
                     <div className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: 'var(--accent-700)' }} />
@@ -126,7 +126,9 @@ export function BoostProfile() {
                         {pkg.duration_days} днів
                       </div>
                       <div className="mt-1 text-xs font-semibold" style={{ color: 'var(--ink-700)' }}>
-                        {pkg.name.replace('Преміум профіль — ', '')}
+                        {pkg.name
+                          .replace(t('boost.premiumNamePrefix'), '')
+                          .replace('Premium profile — ', '')}
                       </div>
 
                       {alreadyHas ? (
@@ -142,7 +144,7 @@ export function BoostProfile() {
                           className="btn-primary mt-4 w-full justify-center rounded-full disabled:opacity-50"
                         >
                           {isActive ? <Loader className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-                          {isActive ? 'Переходимо...' : 'Придбати'}
+                          {isActive ? t('common.processing') : t('boost.buy')}
                         </button>
                       )}
                     </div>
@@ -169,10 +171,10 @@ export function BoostProfile() {
 
                 <div className="mb-6 space-y-2">
                   {[
-                    'Зелена галочка ✓ на вашому профілі',
-                    'Підвищена довіра від клієнтів',
-                    'Пріоритет при однаковому рейтингу',
-                    'Термін дії — 1 рік',
+                    t('boost.verifiedBenefits.1'),
+                    t('boost.verifiedBenefits.2'),
+                    t('boost.verifiedBenefits.3'),
+                    t('boost.verifiedBenefits.4'),
                   ].map((benefit) => (
                     <div key={benefit} className="flex items-center gap-2 text-sm" style={{ color: 'var(--ink-700)' }}>
                       <div className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: '#15803d' }} />
@@ -206,7 +208,7 @@ export function BoostProfile() {
                       {loading === verifiedPackage.id
                         ? <Loader className="h-4 w-4 animate-spin" />
                         : <ShieldCheck className="h-4 w-4" />}
-                      {loading === verifiedPackage.id ? 'Переходимо...' : 'Отримати бейдж'}
+                      {loading === verifiedPackage.id ? t('common.processing') : t('boost.getBadge')}
                     </button>
                   )}
                 </div>

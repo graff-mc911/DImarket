@@ -259,7 +259,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
             До каталогу оголошень
           </button>
           <div className="glass-panel p-8 text-center">
-            <p className="muted-text">{error || 'Оголошення недоступне.'}</p>
+            <p className="muted-text">{error || t('listing.unavailable')}</p>
           </div>
         </div>
       </div>
@@ -339,7 +339,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
                       opacity: i === activeImage ? 1 : 0.7,
                     }}
                   >
-                    <img src={img} alt={'Фото ' + (i + 1)} className="h-full w-full object-cover" />
+                    <img src={img} alt={t('listing.photo').replace('{n}', String(i + 1))} className="h-full w-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -384,7 +384,9 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 shrink-0" />
                 <span style={daysLeft <= 3 && daysLeft > 0 ? { color: '#b91c1c' } : {}}>
-                  {daysLeft > 0 ? 'Ще ' + daysLeft + ' ' + t('listing.daysLeft') : 'Термін завершився'}
+                  {daysLeft > 0
+                    ? t('listing.daysLeft').replace('{days}', String(daysLeft))
+                    : t('listing.ended')}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -486,22 +488,22 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
                 className="btn-primary w-full py-2.5 text-sm"
               >
                 <Heart className="h-4 w-4" style={{ fill: isSaved ? 'currentColor' : 'none' }} />
-                {isSaved ? 'В збережених' : 'Зберегти оголошення'}
+                {isSaved ? t('listing.saved') : t('listing.save')}
               </button>
             ) : (
               <button type="button" onClick={() => navigateTo('/login')} className="btn-primary w-full py-2.5 text-sm">
-                Увійти для контакту
+                {t('listing.loginToContact')}
               </button>
             )}
             <button type="button" onClick={() => navigateTo('/create-ad')} className="btn-secondary w-full py-2.5 text-sm">
-              Створити схоже оголошення
+              {t('listing.createSimilar')}
             </button>
           </div>
 
           <div className="amazon-pdp-divider" />
 
           <div>
-            <h3 className="text-sm font-bold text-[var(--ink-900)]">Контакти</h3>
+            <h3 className="text-sm font-bold text-[var(--ink-900)]">{t('listing.contacts')}</h3>
             <div className="mt-2 space-y-2 text-sm text-[var(--ink-700)]">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-[var(--accent-600)]" />
@@ -526,7 +528,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
             <>
               <div className="amazon-pdp-divider" />
               <div>
-                <h3 className="text-sm font-bold text-[var(--ink-900)]">Про автора</h3>
+                <h3 className="text-sm font-bold text-[var(--ink-900)]">{t('listing.aboutAuthor')}</h3>
                 <button
                   type="button"
                   onClick={() => navigateTo('/professional/' + author.id)}
@@ -545,7 +547,7 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
                   )}
                   <div className="min-w-0">
                     <p className="truncate font-medium text-sm text-[var(--ink-900)]">
-                      {author.full_name || 'Автор'}
+                      {author.full_name || t('listing.author')}
                     </p>
                     {author.rating > 0 && (
                       <div className="mt-0.5 flex items-center gap-1 text-xs">

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useApp } from '../contexts/AppContext'
 
 interface Message {
   sender: 'user' | 'bot'
@@ -11,12 +12,13 @@ export interface AiChatWidgetProps {
 }
 
 export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
+  const { t } = useApp()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'bot',
-      text: 'Вітаю! Я віртуальний помічник Dimarket. Чим можу допомогти з документами чи пошуком фахівця?'
-    }
+      text: t('chat.welcome'),
+    },
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -55,8 +57,8 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
         ...prev,
         {
           sender: 'bot',
-          text: 'Віджет не налаштовано: відсутній WEBHOOK. Зверніться до адміністратора.'
-        }
+          text: t('chat.webhookMissing'),
+        },
       ])
       setLoading(false)
       return
@@ -69,8 +71,8 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
         body: JSON.stringify({
           message: userMessage,
           chat_id: 'web_user_' + Math.random().toString(36).substring(2, 9),
-          source: 'dimarket_website'
-        })
+          source: 'dimarket_website',
+        }),
       })
 
       if (!response.ok) {
@@ -108,10 +110,10 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
             borderRadius: '0',
             fontWeight: 'bold',
             cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
           }}
         >
-          💬 Чат з помічником
+          {t('chat.open')}
         </button>
       ) : (
         <div
@@ -123,18 +125,18 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
             boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden'
+            overflow: 'hidden',
           }}
         >
           <div style={{ background: '#0f172a', color: '#fff', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 'bold', color: '#FFD700' }}>Dimarket AI Assistant</span>
+            <span style={{ fontWeight: 'bold', color: '#FFD700' }}>{t('chat.title')}</span>
             <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '16px' }}>✕</button>
           </div>
 
           {/* show configuration warning if webhook missing */}
           {!resolvedWebhookUrl && (
             <div style={{ padding: '8px 12px', background: '#fff7f7', color: '#7f1d1d', fontSize: 13 }}>
-              Віджет не налаштовано: встановіть VITE_AI_WEBHOOK_URL у .env або передайте webhookUrl prop.
+              {t('chat.webhookMissing')}
             </div>
           )}
 
@@ -150,7 +152,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
                   borderRadius: '0',
                   maxWidth: '80%',
                   fontSize: '14px',
-                  whiteSpace: 'pre-line'
+                  whiteSpace: 'pre-line',
                 }}
               >
                 {m.text}
@@ -169,7 +171,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ webhookUrl }) => {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Напишіть запит..."
+              placeholder={t('chat.placeholder')}
               style={{ flex: 1, border: '1px solid #cbd5e1', borderRadius: '0', padding: '8px', outline: 'none', fontSize: '14px' }}
             />
             <button type="submit" disabled={loading} style={{ background: '#FFD700', border: 'none', padding: '8px 14px', marginLeft: '6px', borderRadius: '0', fontWeight: 'bold', cursor: 'pointer' }}>➤</button>

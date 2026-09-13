@@ -66,7 +66,7 @@ export function MyListings() {
   }
 
   const deleteListing = async (id: string) => {
-    if (!confirm('Видалити оголошення?')) return
+    if (!confirm(t('common.deleteListingConfirm'))) return
     await supabase.from('listings').update({ status: 'deleted' }).eq('id', id)
     loadMyListings()
   }
@@ -104,7 +104,7 @@ export function MyListings() {
   }
 
   const statusFilters = [
-    { value: '', label: 'Всі' },
+    { value: '', label: t('common.all') },
     { value: 'active', label: t('myListings.status.active') },
     { value: 'expired', label: t('myListings.status.expired') },
     { value: 'sold', label: t('myListings.status.sold') },
