@@ -48,36 +48,13 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
 
 const SUFFIX_CURRENCIES = new Set(['PLN', 'UAH', 'CZK', 'HUF', 'RON', 'SEK', 'DKK', 'BGN'])
 
-
-const ITEM_LABEL_UK: Record<string, string> = {
-  'es-re-resale-itp': 'ITP (податок на передачу)',
-  'es-re-resale-notary': 'Нотаріус',
-  'es-re-resale-registry': 'Реєстр власності',
-  'es-re-resale-legal-gestoria': 'Юридичні / Gestoría',
-  'es-re-new-iva': 'IVA (ПДВ)',
-  'es-re-new-ajd': 'AJD (гербовий збір)',
-  'es-re-new-notary-registry-legal': 'Нотаріус + реєстр + юрист',
-  'es-car-used-itp': 'ITP (податок на передачу)',
-  'es-car-used-dgt-transfer': 'Збір DGT за переоформлення',
-  'es-car-used-gestoria': 'Gestoria / адмін. збір',
-  'es-car-new-iedmt': 'IEDMT (реєстраційний податок CO₂)',
-  'es-car-new-dgt-registration': 'Збір DGT за реєстрацію',
-  'es-car-new-plates-docs': 'Номери та документи',
-  'de-re-resale-grunderwerbsteuer': 'Grunderwerbsteuer (податок на купівлю)',
-  'de-re-resale-notary-registry': 'Нотаріус + земельний реєстр',
-  'de-re-new-grunderwerbsteuer': 'Grunderwerbsteuer (податок на купівлю)',
-  'de-re-new-notary-registry': 'Нотаріус + земельний реєстр',
-  'de-car-used-transfer': 'Збір за переоформлення',
-  'de-car-new-vat': 'ПДВ (MwSt)',
-  'de-car-new-registration': 'Реєстраційний збір',
-  'pl-re-resale-pcc': 'PCC (податок на цивільно-правові угоди)',
-  'pl-re-resale-notary': 'Нотаріус',
-  'pl-re-resale-registry': 'Збір земельного реєстру',
-  'pl-re-new-vat': 'ПДВ (житло ≤150 м²)',
-  'pl-re-new-notary': 'Нотаріус',
-  'pl-re-new-registry': 'Збір земельного реєстру',
-  'pl-car-used-pcc': 'PCC (податок на угоду)',
-  'pl-car-used-registration': 'Реєстраційний збір',
+const LANGUAGE_TO_BCP47: Record<string, string> = {
+  uk: 'uk-UA',
+  de: 'de-DE',
+  pl: 'pl-PL',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  ru: 'ru-RU',
 }
 
 function currencySymbol(code: string | undefined): string {
@@ -85,9 +62,10 @@ function currencySymbol(code: string | undefined): string {
   return CURRENCY_SYMBOLS[code] ?? code
 }
 
-function formatMoney(amount: number, currencyCode: string): string {
+function formatMoney(amount: number, currencyCode: string, languageCode: string): string {
   const symbol = currencySymbol(currencyCode)
-  const body = new Intl.NumberFormat('uk-UA', {
+  const locale = LANGUAGE_TO_BCP47[languageCode] ?? 'en-GB'
+  const body = new Intl.NumberFormat(locale, {
     minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
     maximumFractionDigits: 2,
   }).format(amount)
@@ -98,9 +76,15 @@ function countryLabelKey(code: string): TranslationKey {
   return `purchaseCalc.country.${code}` as TranslationKey
 }
 
-function itemLabel(id: string, fallback: string, languageCode: string): string {
-  if (languageCode === 'uk' && ITEM_LABEL_UK[id]) return ITEM_LABEL_UK[id]
-  return fallback
+function itemLabel(
+  id: string,
+  fallback: string,
+  t: (key: TranslationKey) => string,
+): string {
+  const key = (`purchaseCalc.item.${id}`) as TranslationKey
+  const translated = t(key)
+  if (translated === key) return fallback
+  return translated
 }
 
 /**
@@ -370,7 +354,7 @@ export function PurchaseCostCalculator({
                   }
                   onClick={() => setBasePrice(amount)}
                 >
-                  {formatMoney(amount, 'EUR')}
+                  {formatMoney(amount, 'EUR', language.code)}
                 </button>
               ))}
             </div>
@@ -411,19 +395,19 @@ export function PurchaseCostCalculator({
 
                 <div className="purchase-cost-calculator__row purchase-cost-calculator__row--base">
                   <span>{t('purchaseCalc.basePriceRow')}</span>
-                  <strong>{formatMoney(result.basePrice, currency)}</strong>
+                  <strong>{formatMoney(result.basePrice, currency, language.code)}</strong>
                 </div>
 
                 <ul className="purchase-cost-calculator__items">
                   {result.items.map((row) => (
                     <li key={row.id} className="purchase-cost-calculator__row">
                       <span>
-                        {itemLabel(row.id, row.name, language.code)}
+                        {itemLabel(row.id, row.name, t)}
                         {row.ratePercent != null ? (
                           <em className="purchase-cost-calculator__rate"> {row.ratePercent}%</em>
                         ) : null}
                       </span>
-                      <strong>{formatMoney(row.amount, currency)}</strong>
+                      <strong>{formatMoney(row.amount, currency, language.code)}</strong>
                     </li>
                   ))}
                 </ul>
@@ -432,11 +416,11 @@ export function PurchaseCostCalculator({
               <div className="purchase-cost-calculator__totals">
                 <div className="purchase-cost-calculator__total-card purchase-cost-calculator__total-card--extra">
                   <span>{t('purchaseCalc.extraCosts')}</span>
-                  <strong>{formatMoney(result.totalTaxesAndFees, currency)}</strong>
+                  <strong>{formatMoney(result.totalTaxesAndFees, currency, language.code)}</strong>
                 </div>
                 <div className="purchase-cost-calculator__total-card purchase-cost-calculator__total-card--final">
                   <span>{t('purchaseCalc.finalTotal')}</span>
-                  <strong>{formatMoney(result.finalTotalPrice, currency)}</strong>
+                  <strong>{formatMoney(result.finalTotalPrice, currency, language.code)}</strong>
                 </div>
               </div>
 
@@ -444,8 +428,11 @@ export function PurchaseCostCalculator({
                 <Sparkles className="h-4 w-4 shrink-0" aria-hidden />
                 <p>
                   {t('purchaseCalc.tip')
-                    .replace('{budget}', formatMoney(tipBudget, currency))
-                    .replace('{maxAsset}', formatMoney(Math.max(0, tipMaxAsset), currency))}
+                    .replace('{budget}', formatMoney(tipBudget, currency, language.code))
+                    .replace(
+                      '{maxAsset}',
+                      formatMoney(Math.max(0, tipMaxAsset), currency, language.code),
+                    )}
                 </p>
               </div>
 

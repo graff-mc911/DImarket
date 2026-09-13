@@ -101,12 +101,20 @@ const localeLoaders: Record<Exclude<LanguageCode, 'en'>, () => Promise<PartialLo
 }
 
 let aiPack: Partial<Record<AiAssistantLocaleCode, PartialLocale>> | null = null
+let featurePacks: Partial<Record<LanguageCode, PartialLocale>> | null = null
 
 async function loadAiAssistantPack() {
   if (aiPack) return aiPack
   const mod = await import('../Translations/aiAssistant')
   aiPack = mod.allAiAssistantTranslations
   return aiPack
+}
+
+async function loadLocaleFeaturePacks() {
+  if (featurePacks) return featurePacks
+  const mod = await import('../Translations/localeFeaturePacks')
+  featurePacks = mod.localeFeaturePacks
+  return featurePacks
 }
 
 async function withEnglishFallback(
@@ -120,10 +128,14 @@ async function withEnglishFallback(
     ai = pack[languageCode as AiAssistantLocaleCode]
   }
 
+  const features = await loadLocaleFeaturePacks()
+  const feature = features[languageCode]
+
   return {
     ...enTranslations,
     ...localeTranslations,
     ...(ai ?? {}),
+    ...(feature ?? {}),
   }
 }
 
