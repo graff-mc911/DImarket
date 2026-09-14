@@ -6751,6 +6751,21 @@ select.select-glass.geo-filter-select::-ms-expand {
 /* Premium footer additions */
 .premium-footer {
   background: #1a2330;
+  color: #c9cdd3;
+}
+
+/*
+ * Column titles are <h3> inside .layout-page-content, which the owner-cabinet
+ * typography lock paints with --ink-900. That wins over Tailwind text-white
+ * (0,1,1 vs 0,1,0) and makes "Компанія / Послуги / …" invisible on navy.
+ */
+.premium-footer h1,
+.premium-footer h2,
+.premium-footer h3,
+.premium-footer .layout-page-content h1,
+.premium-footer .layout-page-content h2,
+.premium-footer .layout-page-content h3 {
+  color: #ffffff;
 }
 /* ============================================================
    Premium category page
@@ -9721,6 +9736,13 @@ body,
 .dimarket-categories h3 {
   color: var(--ink-900);
   font-family: var(--font-sans);
+}
+
+/* Dark footer: keep column headings light despite the lock above */
+.premium-footer .layout-page-content h1,
+.premium-footer .layout-page-content h2,
+.premium-footer .layout-page-content h3 {
+  color: #ffffff;
 }
 
 /* Home matches Advanced Search display face (Fraunces) on titles only */
