@@ -351,6 +351,57 @@ export function Advertising() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authReady, user?.id])
 
+  // Keep latest form snapshot for unload/unmount flush (debounce alone drops pending writes).
+  const draftSnapshotRef = useRef<Omit<AdCampaignFormDraft, 'v' | 'savedAt'>>({
+    userId: user?.id ?? null,
+    editingCampaignId,
+    title,
+    description,
+    linkUrl,
+    startsAt,
+    endsAt,
+    selectedSlots,
+    geoMode,
+    selectedCountries,
+    selectedRegions,
+    selectedCities,
+    durationWeeks,
+    mediaType,
+    mediaUrl,
+    slideUrls,
+    mediaStyle,
+    slotMedia,
+  })
+  draftSnapshotRef.current = {
+    userId: user?.id ?? null,
+    editingCampaignId,
+    title,
+    description,
+    linkUrl,
+    startsAt,
+    endsAt,
+    selectedSlots,
+    geoMode,
+    selectedCountries,
+    selectedRegions,
+    selectedCities,
+    durationWeeks,
+    mediaType,
+    mediaUrl,
+    slideUrls,
+    mediaStyle,
+    slotMedia,
+  }
+
+  const persistDraftSnapshot = useCallback((draft: Omit<AdCampaignFormDraft, 'v' | 'savedAt'>) => {
+    const probe = { v: 1 as const, savedAt: '', ...draft }
+    if (draftHasMeaningfulContent(probe)) {
+      writeAdCampaignDraft(draft)
+    } else {
+      clearAdCampaignDraft()
+    }
+  }, [])
+
   // Restore local draft after auth is ready (survives navigating away from /advertising)
   useEffect(() => {
     if (!authReady || draftHydratedRef.current) return
@@ -385,44 +436,23 @@ export function Advertising() {
     setSlideUrls(draft.slideUrls)
     setMediaStyle(draft.mediaStyle)
     setFeedback({ type: 'success', text: t('advertising.draft.restored') })
-    const tmr = window.setTimeout(() => {
+    // Do not use a cleanup-cancelled timeout here: `t` changes when i18nTick
+    // bumps after language pack load, which previously left skipPersist stuck true
+    // and disabled autosave for the whole mount (form vanished after leave/return).
+    queueMicrotask(() => {
       skipPersistRef.current = false
-    }, 0)
-    return () => window.clearTimeout(tmr)
-  }, [authReady, user?.id, t])
+    })
+    // Intentionally omit `t` — identity changes on i18nTick and must not re-run hydrate.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authReady, user?.id])
 
   // Autosave draft while editing
   useEffect(() => {
     if (!authReady || skipPersistRef.current || !draftHydratedRef.current) return
 
-    const draft: Omit<AdCampaignFormDraft, 'v' | 'savedAt'> = {
-      userId: user?.id ?? null,
-      editingCampaignId,
-      title,
-      description,
-      linkUrl,
-      startsAt,
-      endsAt,
-      selectedSlots,
-      geoMode,
-      selectedCountries,
-      selectedRegions,
-      selectedCities,
-      durationWeeks,
-      mediaType,
-      mediaUrl,
-      slideUrls,
-      mediaStyle,
-      slotMedia,
-    }
-
+    const draft = draftSnapshotRef.current
     const tmr = window.setTimeout(() => {
-      const probe = { v: 1 as const, savedAt: '', ...draft }
-      if (draftHasMeaningfulContent(probe)) {
-        writeAdCampaignDraft(draft)
-      } else {
-        clearAdCampaignDraft()
-      }
+      persistDraftSnapshot(draft)
     }, 400)
     return () => window.clearTimeout(tmr)
   }, [
@@ -445,7 +475,26 @@ export function Advertising() {
     slideUrls,
     mediaStyle,
     slotMedia,
+    persistDraftSnapshot,
   ])
+
+  // Flush pending draft on tab close / external navigation / SPA leave
+  useEffect(() => {
+    if (!authReady) return
+
+    const flush = () => {
+      if (skipPersistRef.current || !draftHydratedRef.current) return
+      persistDraftSnapshot(draftSnapshotRef.current)
+    }
+
+    window.addEventListener('pagehide', flush)
+    window.addEventListener('beforeunload', flush)
+    return () => {
+      window.removeEventListener('pagehide', flush)
+      window.removeEventListener('beforeunload', flush)
+      flush()
+    }
+  }, [authReady, persistDraftSnapshot])
 
   useEffect(() => {
     if (!feedback) return
