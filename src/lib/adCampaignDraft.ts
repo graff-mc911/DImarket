@@ -146,6 +146,12 @@ export function draftHasMeaningfulContent(draft: AdCampaignFormDraft): boolean {
       draft.mediaUrl.trim() ||
       draft.slideUrls.length ||
       Object.keys(draft.slotMedia).length ||
-      draft.editingCampaignId,
+      draft.editingCampaignId ||
+      draft.selectedSlots.length > 1 ||
+      draft.selectedSlots[0] !== centerSlotId('home') ||
+      draft.geoMode !== 'global' ||
+      draft.selectedCountries.length ||
+      draft.selectedRegions.length ||
+      draft.selectedCities.length,
   )
 }

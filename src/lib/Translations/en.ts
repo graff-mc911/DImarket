@@ -1036,7 +1036,7 @@ export const enTranslations = {
   'listing.forSale': 'For Sale',
   'listing.wanted': 'Wanted',
   'listing.contactForPrice': 'Contact for price',
-  'listing.daysLeft': 'days left',
+  'listing.daysLeft': '{days} days left',
   'listing.views': 'views',
   'listing.chatTitle': 'Messages',
   'listing.chatPrivateHint': 'Only you and the other person in this listing thread can see these messages.',

@@ -203,7 +203,7 @@ export function MyListings() {
                               {listing.status === 'active' && (
                                 <span className={daysLeft < 3 ? 'flex items-center gap-1 text-red-500' : 'flex items-center gap-1'}>
                                   <Clock className="w-3 h-3" />
-                                  {daysLeft} {t('listing.daysLeft')}
+                                  {t('listing.daysLeft').replace('{days}', String(daysLeft))}
                                 </span>
                               )}
                             </div>

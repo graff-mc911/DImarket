@@ -1037,7 +1037,7 @@ export const ukTranslations: Partial<Record<TranslationKey, string>> = {
   'listing.forSale': 'Продаж',
   'listing.wanted': 'Куплю',
   'listing.contactForPrice': 'Ціна за домовленістю',
-  'listing.daysLeft': 'днів',
+  'listing.daysLeft': 'Ще {days} дн.',
   'listing.views': 'переглядів',
   'listing.chatTitle': 'Переписка',
   'listing.chatPrivateHint': 'Повідомлення бачать лише ви та співрозмовник по цьому оголошенню.',

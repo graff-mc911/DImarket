@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   CheckCircle2,
   Pencil,
@@ -36,6 +36,15 @@ import {
   toOwnerLocalInput,
   type OwnerAdFormValues,
 } from '../lib/ownerAdCampaign'
+import {
+  clearOwnerAdFormDraft,
+  ownerAdDraftHasUnsavedContent,
+  readOwnerAdFormDraft,
+  readOwnerAdsUrlState,
+  syncOwnerAdsUrlState,
+  writeOwnerAdFormDraft,
+  type OwnerAdFormDraft,
+} from '../lib/ownerAdFormDraft'
 import {
   fallbackAdGeoCatalog,
   fetchAdGeoCatalog,
@@ -91,6 +100,21 @@ export function OwnerAdManager({
 }: OwnerAdManagerProps) {
   const { t } = useApp()
   const { refresh: refreshPublicAds } = usePaidAds()
+  const draftHydratedRef = useRef(false)
+  const skipPersistRef = useRef(true)
+  const pendingScrollToFormRef = useRef(false)
+  const draftSnapshotRef = useRef<{
+    formOpen: boolean
+    editingId: string | null
+    form: OwnerAdFormValues
+    mediaUrl: string
+    slideUrls: string[]
+    mediaStyle: AdMediaStyle
+    bannerMediaType: AdCampaignMediaState['mediaType']
+    slotMedia: SlotMediaMap
+    placementPreviewPage: PlacementEditorPageId
+  } | null>(null)
+
   const [formOpen, setFormOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<OwnerAdFormValues>(EMPTY_FORM)
@@ -106,6 +130,7 @@ export function OwnerAdManager({
   const [slotMedia, setSlotMedia] = useState<SlotMediaMap>({})
   const [geoData, setGeoData] = useState<AdGeoCountry[]>([])
   const [geoLoading, setGeoLoading] = useState(true)
+  const [draftBanner, setDraftBanner] = useState<OwnerAdFormDraft | null>(null)
 
   const reportError = (text: string) => {
     setFormFeedback({ type: 'error', text })
@@ -162,7 +187,169 @@ export function OwnerAdManager({
     }))
   }
 
+  draftSnapshotRef.current = {
+    formOpen,
+    editingId,
+    form,
+    mediaUrl,
+    slideUrls,
+    mediaStyle,
+    bannerMediaType,
+    slotMedia,
+    placementPreviewPage,
+  }
+
+  const applyDraftToForm = (draft: OwnerAdFormDraft) => {
+    skipPersistRef.current = true
+    setEditingId(draft.editingId)
+    setForm(draft.form)
+    setPlacementPreviewPage(draft.placementPreviewPage)
+    setSlotMedia(draft.slotMedia)
+    applyMediaState({
+      mediaUrl: draft.mediaUrl,
+      slideUrls: draft.slideUrls,
+      mediaStyle: draft.mediaStyle,
+      mediaType: draft.bannerMediaType,
+    })
+    setFormOpen(draft.formOpen)
+    setFormFeedback(null)
+    if (draft.formOpen) pendingScrollToFormRef.current = true
+    queueMicrotask(() => {
+      skipPersistRef.current = false
+    })
+  }
+
+  // Restore composer from storage + URL (?ads=create|edit)
+  useEffect(() => {
+    if (draftHydratedRef.current) return
+    draftHydratedRef.current = true
+
+    const urlState = readOwnerAdsUrlState()
+    const draft = readOwnerAdFormDraft(ownerId)
+
+    if (draft?.formOpen) {
+      applyDraftToForm(draft)
+      setDraftBanner(null)
+      syncOwnerAdsUrlState({ formOpen: true, editingId: draft.editingId })
+      return
+    }
+
+    if (urlState.formOpen) {
+      if (urlState.editingId) {
+        const campaign = campaigns.find((c) => c.id === urlState.editingId)
+        if (campaign) {
+          skipPersistRef.current = true
+          setEditingId(campaign.id)
+          const nextForm = campaignToOwnerForm(campaign)
+          setForm(nextForm)
+          setPlacementPreviewPage(previewEditorPageFromSlots(nextForm.selectedSlots))
+          setSlotMedia(slotMediaMapFromCampaign(campaign))
+          applyMediaState(mediaStateFromCampaign(campaign))
+          setFormFeedback(null)
+          setFormOpen(true)
+          pendingScrollToFormRef.current = true
+          queueMicrotask(() => {
+            skipPersistRef.current = false
+          })
+        } else {
+          // Campaign list not loaded yet — keep URL; retry when campaigns arrive
+          draftHydratedRef.current = false
+        }
+      } else {
+        skipPersistRef.current = true
+        setEditingId(null)
+        setForm({ ...EMPTY_FORM, startsAt: toOwnerLocalInput(new Date().toISOString()) })
+        setPlacementPreviewPage('home')
+        setSlotMedia({})
+        applyMediaState(emptyCampaignMediaState())
+        setFormFeedback(null)
+        setFormOpen(true)
+        pendingScrollToFormRef.current = true
+        queueMicrotask(() => {
+          skipPersistRef.current = false
+        })
+      }
+      setDraftBanner(null)
+      return
+    }
+
+    if (draft && ownerAdDraftHasUnsavedContent(draft)) {
+      setDraftBanner(draft)
+    }
+    skipPersistRef.current = false
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ownerId, campaigns])
+
+  // Autosave open composer
+  useEffect(() => {
+    if (skipPersistRef.current || !draftHydratedRef.current) return
+    syncOwnerAdsUrlState({ formOpen, editingId })
+    if (!formOpen) {
+      clearOwnerAdFormDraft()
+      return
+    }
+    const tmr = window.setTimeout(() => {
+      writeOwnerAdFormDraft({
+        ownerId,
+        formOpen,
+        editingId,
+        form,
+        mediaUrl,
+        slideUrls,
+        mediaStyle,
+        bannerMediaType,
+        slotMedia,
+        placementPreviewPage,
+      })
+    }, 300)
+    return () => window.clearTimeout(tmr)
+  }, [
+    ownerId,
+    formOpen,
+    editingId,
+    form,
+    mediaUrl,
+    slideUrls,
+    mediaStyle,
+    bannerMediaType,
+    slotMedia,
+    placementPreviewPage,
+  ])
+
+  // Flush draft on leave / unmount so debounce cannot drop the last keystrokes
+  useEffect(() => {
+    const flush = () => {
+      if (skipPersistRef.current || !draftHydratedRef.current) return
+      const snap = draftSnapshotRef.current
+      if (!snap?.formOpen) return
+      writeOwnerAdFormDraft({ ownerId, ...snap })
+    }
+    window.addEventListener('pagehide', flush)
+    window.addEventListener('beforeunload', flush)
+    return () => {
+      window.removeEventListener('pagehide', flush)
+      window.removeEventListener('beforeunload', flush)
+      flush()
+    }
+  }, [ownerId])
+
+  // After restore, scroll the composer into view (not the page footer).
+  useEffect(() => {
+    if (!formOpen || !pendingScrollToFormRef.current) return
+    pendingScrollToFormRef.current = false
+    const el = document.getElementById('owner-ad-form')
+    if (!el) return
+    const html = document.documentElement
+    const prev = html.style.scrollBehavior
+    html.style.scrollBehavior = 'auto'
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'auto', block: 'start' })
+      html.style.scrollBehavior = prev
+    })
+  }, [formOpen])
+
   const openCreate = () => {
+    setDraftBanner(null)
     setEditingId(null)
     setForm({ ...EMPTY_FORM, startsAt: toOwnerLocalInput(new Date().toISOString()) })
     setPlacementPreviewPage('home')
@@ -170,9 +357,12 @@ export function OwnerAdManager({
     applyMediaState(emptyCampaignMediaState())
     setFormFeedback(null)
     setFormOpen(true)
+    pendingScrollToFormRef.current = true
+    syncOwnerAdsUrlState({ formOpen: true, editingId: null })
   }
 
   const openEdit = (campaign: AdCampaign) => {
+    setDraftBanner(null)
     setEditingId(campaign.id)
     const nextForm = campaignToOwnerForm(campaign)
     setForm(nextForm)
@@ -181,14 +371,36 @@ export function OwnerAdManager({
     applyMediaState(mediaStateFromCampaign(campaign))
     setFormFeedback(null)
     setFormOpen(true)
+    pendingScrollToFormRef.current = true
+    syncOwnerAdsUrlState({ formOpen: true, editingId: campaign.id })
   }
 
   const closeForm = (opts?: { keepFeedback?: boolean }) => {
+    skipPersistRef.current = true
+    clearOwnerAdFormDraft()
+    setDraftBanner(null)
     setFormOpen(false)
     setEditingId(null)
     setForm(EMPTY_FORM)
     if (!opts?.keepFeedback) setFormFeedback(null)
     applyMediaState(emptyCampaignMediaState())
+    syncOwnerAdsUrlState({ formOpen: false, editingId: null })
+    queueMicrotask(() => {
+      skipPersistRef.current = false
+    })
+  }
+
+  const continueDraft = () => {
+    if (!draftBanner) return
+    applyDraftToForm(draftBanner)
+    setDraftBanner(null)
+    syncOwnerAdsUrlState({ formOpen: true, editingId: draftBanner.editingId })
+  }
+
+  const discardDraft = () => {
+    clearOwnerAdFormDraft()
+    setDraftBanner(null)
+    syncOwnerAdsUrlState({ formOpen: false, editingId: null })
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -437,10 +649,32 @@ export function OwnerAdManager({
         </div>
       )}
 
+      {draftBanner && !formOpen && (
+        <div className="mt-4 rounded-none border border-[rgba(99,102,241,0.28)] bg-[rgba(238,242,255,0.92)] px-4 py-3 text-sm text-[#3730a3]">
+          <p className="font-semibold">Є незбережені зміни</p>
+          <p className="mt-1 text-[#4338ca]">
+            {draftBanner.editingId ? 'Чернетка редагування реклами.' : 'Чернетка нової реклами.'}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button type="button" onClick={continueDraft} className="btn-primary rounded-full px-4 py-2 text-sm">
+              Продовжити редагування
+            </button>
+            <button
+              type="button"
+              onClick={discardDraft}
+              className="btn-secondary rounded-full px-4 py-2 text-sm"
+            >
+              Відхилити
+            </button>
+          </div>
+        </div>
+      )}
+
       {formOpen && (
         <form
+          id="owner-ad-form"
           onSubmit={handleSave}
-          className="mt-5 rounded-none border border-[rgba(99,102,241,0.22)] bg-[rgba(255,255,255,0.35)] p-5 md:p-6"
+          className="mt-5 scroll-mt-24 rounded-none border border-[rgba(99,102,241,0.22)] bg-[rgba(255,255,255,0.35)] p-5 md:p-6"
         >
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-lg font-extrabold text-[color:var(--ink-900)]">

@@ -9,7 +9,7 @@ export const uiHardcodedFixEn = {
   'listing.loginToContact': 'Sign in to contact',
   'listing.createSimilar': 'Create a similar listing',
   'listing.ended': 'Listing ended',
-  'listing.daysLeft': '{days} days left',
+
   'listing.unavailable': 'Listing unavailable.',
   'listing.photo': 'Photo {n}',
   'listing.searchPrefix': 'Search: {q}',
@@ -85,7 +85,7 @@ export const uiHardcodedFixEn = {
   'costEstimator.historyCsv': 'CSV',
   'costEstimator.historyShareSuffix': '— reference estimate',
 
-  'nav.costEstimator': 'Cost estimator',
+
 } as const
 
 export const uiHardcodedFixUk: Record<string, string> = {

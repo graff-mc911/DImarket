@@ -442,6 +442,19 @@ export function Advertising() {
     queueMicrotask(() => {
       skipPersistRef.current = false
     })
+    // Keep user on the form section after restore (not scrolled to footer/top).
+    requestAnimationFrame(() => {
+      document.getElementById('ad-form')?.scrollIntoView({ behavior: 'auto', block: 'start' })
+    })
+    try {
+      const url = new URL(window.location.href)
+      if (url.pathname.startsWith('/advertising') && url.searchParams.get('compose') !== '1') {
+        url.searchParams.set('compose', '1')
+        window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`)
+      }
+    } catch {
+      /* ignore */
+    }
     // Intentionally omit `t` — identity changes on i18nTick and must not re-run hydrate.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authReady, user?.id])
