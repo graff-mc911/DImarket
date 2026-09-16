@@ -54,7 +54,7 @@ export function ProjectStoryBanner({
       href={href}
       target={sponsored ? '_blank' : undefined}
       rel={sponsored ? 'noreferrer sponsored' : undefined}
-      className={`ad-story ${className}`.trim()}
+      className={`ad-story${sponsored ? ' ad-story--sponsored' : ''}${className ? ` ${className}` : ''}`.trim()}
       onClick={handleClick}
     >
       <div className="ad-story__media">
@@ -80,8 +80,21 @@ export function ProjectStoryBanner({
             ))}
           </dl>
         ) : null}
-        {quoted ? <blockquote className="ad-story__quote">{quoted}</blockquote> : null}
+        {quoted ? <blockquote className="ad-story__quote">{formatAdDescriptionDisplay(quoted)}</blockquote> : null}
       </div>
     </a>
   )
+}
+
+/** Keep advertiser line breaks; also split jammed " * Tel:" style contact blobs. */
+export function formatAdDescriptionDisplay(raw: string): string {
+  let s = raw.replace(/\r\n/g, '\n').trim()
+  if (!s) return s
+  s = s.replace(/\s+\*\s+/g, '\n')
+  s = s.replace(
+    /\s+(?=(?:Tel|Web|Email|Phone|Website|Address|Direcci[oó]n|Тел|Веб|Адреса|E-?mail)\s*:)/gi,
+    '\n',
+  )
+  s = s.replace(/\n{3,}/g, '\n\n')
+  return s.trim()
 }

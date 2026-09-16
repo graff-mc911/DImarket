@@ -10,7 +10,7 @@ import {
 import { campaignWithSlotMedia, mediaStateFromCampaignAndSlot } from '../lib/adSlotMedia'
 import { layoutKeyFromOverlayVariant } from '../lib/adBannerLayouts'
 import { AdMediaDisplay } from './AdMediaDisplay'
-import { ProjectStoryBanner, type ProjectStoryRow } from './ProjectStoryBanner'
+import { ProjectStoryBanner, formatAdDescriptionDisplay, type ProjectStoryRow } from './ProjectStoryBanner'
 import { useApp } from '../contexts/AppContext'
 import { AD_TEXT_PANEL_CLASS, adSlotTailwind } from '../lib/adSlotLayout'
 import { resolvePublicAdMediaUrl } from '../lib/adMediaStorage'
@@ -98,7 +98,7 @@ const variantStyles: Record<
     text: 'px-2 py-1',
     brand: 'text-[9px]',
     title: 'text-xs line-clamp-2 leading-tight',
-    meta: 'text-[10px] line-clamp-1 leading-tight',
+    meta: 'text-[10px] line-clamp-4 leading-snug',
   },
   leaderboard: {
     shell: adSlotTailwind.leaderboard,
@@ -211,7 +211,11 @@ function AdTextContent({
       {title && (
         <h3 className={`font-extrabold text-[var(--ink-900)] ${styles.title}`}>{title}</h3>
       )}
-      {desc && <p className={`text-[var(--ink-700)] ${styles.meta}`}>{desc}</p>}
+      {desc && (
+        <p className={`whitespace-pre-line break-words text-[var(--ink-700)] ${styles.meta}`}>
+          {formatAdDescriptionDisplay(desc)}
+        </p>
+      )}
       {geo && <p className={`text-[var(--ink-500)] ${styles.meta}`}>{geo}</p>}
     </div>
   )

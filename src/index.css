@@ -955,6 +955,9 @@
       min-height: 0;
       aspect-ratio: 16 / 10;
     }
+    .ad-story--sponsored .ad-story__media {
+      aspect-ratio: auto;
+    }
     .ad-story__body {
       padding: 1.15rem 1.1rem 1.2rem; /* ~15% tighter than desktop */
     }
@@ -1018,6 +1021,98 @@
     color: var(--label-ink);
     font-size: 0.92rem;
     line-height: 1.55;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /**
+   * Paid creatives (UA OBRA-style full banners): never crop with cover/16:10.
+   * Show the full uploaded artwork; keep contact text readable under it.
+   */
+  .ad-story--sponsored {
+    min-height: 0;
+  }
+
+  .ad-story--sponsored .ad-story__media {
+    min-height: 0;
+    aspect-ratio: auto;
+    overflow: hidden;
+    background: #f1f5f9;
+  }
+
+  .ad-story--sponsored .ad-story__photo,
+  .ad-story--sponsored .ad-story__fill,
+  .ad-story--sponsored .ad-story__media .relative,
+  .ad-story--sponsored .ad-story__media .relative > div,
+  .ad-story--sponsored .ad-story__fill > div,
+  .ad-story--sponsored .ad-story__media img,
+  .ad-story--sponsored .ad-story__media video,
+  .ad-story--sponsored .ad-story__fill img,
+  .ad-story--sponsored .ad-story__fill video {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: min(52vh, 24rem) !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    display: block !important;
+  }
+
+  .ad-story--sponsored .ad-story__body {
+    min-width: 0;
+  }
+
+  .ad-story--sponsored .ad-story__quote {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  @media (min-width: 768px) {
+    .ad-story--sponsored {
+      align-items: start;
+      min-height: 0;
+    }
+
+    .ad-story--sponsored .ad-story__media {
+      align-self: start;
+      min-height: 0;
+    }
+
+    .ad-story--sponsored .ad-story__photo,
+    .ad-story--sponsored .ad-story__fill,
+    .ad-story--sponsored .ad-story__media .relative,
+    .ad-story--sponsored .ad-story__media .relative > div,
+    .ad-story--sponsored .ad-story__fill > div,
+    .ad-story--sponsored .ad-story__media img,
+    .ad-story--sponsored .ad-story__media video,
+    .ad-story--sponsored .ad-story__fill img,
+    .ad-story--sponsored .ad-story__fill video {
+      max-height: min(42vh, 20rem) !important;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .ad-story--sponsored .ad-story__media {
+      aspect-ratio: auto;
+      min-height: 0;
+    }
+
+    .ad-story--sponsored .ad-story__body {
+      padding: 1rem 1rem 1.15rem;
+    }
+
+    .ad-story--sponsored .ad-story__quote {
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
   }
 
   .ad-slot-leaderboard__media {
