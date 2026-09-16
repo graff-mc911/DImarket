@@ -232,6 +232,25 @@ export function resolveLayoutFrame(
   }
 }
 
+/** Wide / phone banners: height follows the uploaded creative unless the user cropped it. */
+export function isFluidBannerLayout(layout: AdBannerLayoutKey | undefined): boolean {
+  return layout === 'mobile' || layout === 'leaderboard'
+}
+
+/** True when frame differs from layout defaults (fit/position/scale). */
+export function frameIsCustomized(
+  frame: AdLayoutFrame | null | undefined,
+  layout: AdBannerLayoutKey,
+): boolean {
+  if (!frame) return false
+  const defFit = defaultObjectFitForLayout(layout)
+  const fit = frame.fit ?? defFit
+  const px = frame.positionX ?? 50
+  const py = frame.positionY ?? 50
+  const scale = frame.scale ?? 1
+  return fit !== defFit || px !== 50 || py !== 50 || Math.abs(scale - 1) > 0.001
+}
+
 /** Стандартний object-fit, якщо користувач не налаштовував кадр вручну. */
 export function defaultObjectFitForLayout(
   layout: AdBannerLayoutKey,

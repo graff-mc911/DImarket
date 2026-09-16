@@ -1027,11 +1027,38 @@
     min-height: 0;
   }
 
+  /* Full client creatives on phone — never force the old 68px crop strip. */
   .ad-slot-mobile-inline__media {
-    height: var(--ad-mobile-inline-image-h, 4.25rem);
-    max-height: var(--ad-mobile-inline-image-h, 4.25rem);
-    min-height: var(--ad-mobile-inline-image-h, 4.25rem);
     width: 100%;
+    height: auto;
+    max-height: none;
+    min-height: 0;
+  }
+
+  /**
+   * Fluid mobile / leaderboard creatives: keep the full uploaded artwork readable.
+   * Cap extreme portrait uploads so they don't dominate the feed.
+   */
+  .ad-slot-fluid-media {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ad-slot-fluid-media > img,
+  .ad-slot-fluid-media > video {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: min(42vh, 20rem);
+    object-fit: contain;
+    object-position: center;
+  }
+
+  @media (min-width: 768px) {
+    .ad-slot-fluid-media > img,
+    .ad-slot-fluid-media > video {
+      max-height: min(36vh, 17.5rem);
+    }
   }
 
   /** Inline-реклама між секціями — лише телефон / планшет (< 1280px) */

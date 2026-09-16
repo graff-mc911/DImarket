@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
-import type { AdBannerLayoutKey } from '../lib/adBannerLayouts'
+import { AD_BANNER_LAYOUT_META, type AdBannerLayoutKey } from '../lib/adBannerLayouts'
 import {
   COLLAGE_MAX_BY_LAYOUT,
   collageGridClass,
+  frameIsCustomized,
+  isFluidBannerLayout,
   layoutDefaultImageStyle,
   layoutFrameImageStyle,
   resolveDisplayMode,
@@ -39,6 +41,15 @@ function resolveImageStyle(
   }
 }
 
+const NATURAL_IMG_STYLE: CSSProperties = {
+  width: '100%',
+  height: 'auto',
+  maxHeight: 'min(42vh, 20rem)',
+  display: 'block',
+  objectFit: 'contain',
+  objectPosition: 'center',
+}
+
 /** Зображення в слоті — без stretch; висота від реального aspect-ratio контейнера / asset. */
 function AdMediaImageFill({
   src,
@@ -46,38 +57,53 @@ function AdMediaImageFill({
   className = '',
   layoutKey,
   frameStyle,
+  customizedFrame,
+  fillBox = false,
 }: {
   src: string
   alt: string
   className?: string
   layoutKey?: AdBannerLayoutKey
   frameStyle?: CSSProperties | null
+  customizedFrame?: boolean
+  /** Absolute slideshow layer: fill the already-sized parent box. */
+  fillBox?: boolean
 }) {
   const imgStyle = resolveImageStyle(layoutKey, frameStyle ?? null)
-  const naturalHeight =
-    !frameStyle && (layoutKey === 'leaderboard' || layoutKey === 'mobile')
+  const fluid = isFluidBannerLayout(layoutKey)
+  // Client creatives (e.g. full designed banners) keep native ratio on phone/leaderboard.
+  // Only a real crop (cover / pan / zoom) switches to a fixed aspect shell.
+  const naturalHeight = !fillBox && (fluid ? !customizedFrame : !frameStyle && !layoutKey)
+  const aspectShell =
+    !fillBox && fluid && customizedFrame && layoutKey
+      ? AD_BANNER_LAYOUT_META[layoutKey].aspectClass
+      : null
   const resolvedSrc = resolvePublicAdMediaUrl(src)
+  const fillContainStyle: CSSProperties = {
+    width: '100%',
+    height: '100%',
+    display: 'block',
+    objectFit: (frameStyle?.objectFit as 'cover' | 'contain' | undefined) ?? 'contain',
+    objectPosition: (frameStyle?.objectPosition as string | undefined) ?? 'center',
+    ...(frameStyle?.transform ? { transform: frameStyle.transform, transformOrigin: frameStyle.transformOrigin } : {}),
+  }
 
   return (
     <div
       className={`relative w-full overflow-hidden bg-transparent ${
-        naturalHeight ? 'h-auto' : 'h-full'
+        fillBox
+          ? 'h-full'
+          : naturalHeight
+            ? 'ad-slot-fluid-media h-auto'
+            : aspectShell
+              ? aspectShell
+              : 'h-full'
       } ${className}`}
     >
       <img
         src={resolvedSrc}
         alt={alt}
-        style={
-          naturalHeight
-            ? {
-                width: '100%',
-                height: 'auto',
-                display: 'block',
-                objectFit: 'contain',
-                objectPosition: 'center',
-              }
-            : imgStyle
-        }
+        style={naturalHeight ? NATURAL_IMG_STYLE : fillBox ? fillContainStyle : imgStyle}
         className={
           naturalHeight
             ? 'block h-auto w-full max-w-full'
@@ -130,9 +156,13 @@ export function AdMediaDisplay({
     () => (layoutKey ? resolveLayoutFrame(resolvedStyle, layoutKey) : null),
     [resolvedStyle, layoutKey],
   )
+  const customizedFrame = useMemo(
+    () => (layoutKey ? frameIsCustomized(customFrame, layoutKey) : Boolean(customFrame)),
+    [customFrame, layoutKey],
+  )
   const frameStyle = useMemo(
-    () => (customFrame ? layoutFrameImageStyle(customFrame) : null),
-    [customFrame],
+    () => (customizedFrame && customFrame ? layoutFrameImageStyle(customFrame) : null),
+    [customizedFrame, customFrame],
   )
 
   useEffect(() => {
@@ -152,10 +182,18 @@ export function AdMediaDisplay({
 
   if (mediaType === 'video' && src) {
     return (
-      <div className={`relative overflow-hidden bg-[#1a1816] ${className}`}>
+      <div
+        className={`relative overflow-hidden bg-[#1a1816] ${
+          isFluidBannerLayout(layoutKey) ? 'ad-slot-fluid-media h-auto' : ''
+        } ${className}`}
+      >
         <video
           src={src}
-          className="block h-full w-full object-contain"
+          className={
+            isFluidBannerLayout(layoutKey)
+              ? 'block h-auto w-full object-contain'
+              : 'block h-full w-full object-contain'
+          }
           muted
           playsInline
           loop
@@ -176,8 +214,13 @@ export function AdMediaDisplay({
   if (displayMode === 'collage' && slides.length >= 2 && layoutKey) {
     const max = COLLAGE_MAX_BY_LAYOUT[layoutKey]
     const collageSlides = slides.slice(0, max)
+    const fluid = isFluidBannerLayout(layoutKey)
     return (
-      <div className={`relative h-full w-full overflow-hidden bg-[#1a1816] ${className}`}>
+      <div
+        className={`relative w-full overflow-hidden bg-[#1a1816] ${
+          fluid ? `ad-slot-fluid-media ${AD_BANNER_LAYOUT_META[layoutKey].aspectClass}` : 'h-full'
+        } ${className}`}
+      >
         <div className={`grid h-full w-full gap-px ${collageGridClass(layoutKey, collageSlides.length)}`}>
           {collageSlides.map((url, i) => (
             <AdMediaImageFill
@@ -187,6 +230,7 @@ export function AdMediaDisplay({
               className="min-h-0 min-w-0"
               layoutKey={layoutKey}
               frameStyle={frameStyle}
+              customizedFrame={customizedFrame}
             />
           ))}
         </div>
@@ -204,7 +248,51 @@ export function AdMediaDisplay({
         className={className}
         layoutKey={layoutKey}
         frameStyle={frameStyle}
+        customizedFrame={customizedFrame}
       />
+    )
+  }
+
+  const fluidRotate = isFluidBannerLayout(layoutKey)
+
+  // Fluid banners: first slide sizes the box; layers sit absolutely on top
+  // (absolute-only stacks collapse when the parent is height:auto).
+  if (fluidRotate) {
+    return (
+      <div className={`relative w-full overflow-hidden bg-[#1a1816] ${className}`}>
+        <div className="invisible pointer-events-none select-none" aria-hidden>
+          <AdMediaImageFill
+            src={slides[0]}
+            alt=""
+            layoutKey={layoutKey}
+            frameStyle={frameStyle}
+            customizedFrame={customizedFrame}
+          />
+        </div>
+        {slides.map((url, i) => {
+          const active = i === slideIndex
+          return (
+            <div key={`${url}-${i}`} className={slideshowLayerClass(active, transition)}>
+              <AdMediaImageFill
+                src={url}
+                alt={alt}
+                layoutKey={layoutKey}
+                frameStyle={frameStyle}
+                customizedFrame={customizedFrame}
+                fillBox
+              />
+            </div>
+          )
+        })}
+        <div className="pointer-events-none absolute bottom-1.5 right-1.5 z-[2] flex gap-1">
+          {slides.map((_, i) => (
+            <span
+              key={i}
+              className={`h-1.5 w-1.5 rounded-full ${i === slideIndex ? 'bg-white' : 'bg-white/40'}`}
+            />
+          ))}
+        </div>
+      </div>
     )
   }
 
@@ -213,15 +301,13 @@ export function AdMediaDisplay({
       {slides.map((url, i) => {
         const active = i === slideIndex
         return (
-          <div
-            key={`${url}-${i}`}
-            className={slideshowLayerClass(active, transition)}
-          >
+          <div key={`${url}-${i}`} className={slideshowLayerClass(active, transition)}>
             <AdMediaImageFill
               src={url}
               alt={alt}
               layoutKey={layoutKey}
               frameStyle={frameStyle}
+              customizedFrame={customizedFrame}
             />
           </div>
         )

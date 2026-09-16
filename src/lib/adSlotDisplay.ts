@@ -129,7 +129,15 @@ export function adSlotImageStyle(
   }
 
   if (variant === 'mobile-inline' || variant === 'mobile-sticky') {
-    return undefined
+    // Same adaptive path as leaderboard — client banner art keeps its ratio on phones.
+    return {
+      width: '100%',
+      height: 'auto',
+      maxHeight: 'none',
+      minHeight: 0,
+      flexShrink: 0,
+      overflow: 'hidden',
+    }
   }
 
   return {
